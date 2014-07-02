@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.bd.gitlab.views.MarqueeTextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/text"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:minHeight="?android:attr/listPreferredItemHeight"
+    android:padding="8dp"
+    android:paddingRight="?android:attr/scrollbarSize"
+    android:drawablePadding="8dp"
+    android:ellipsize="marquee"
+    android:marqueeRepeatLimit ="marquee_forever"
+    android:scrollHorizontally="true"
+    android:fadingEdge="horizontal"
+    android:singleLine="true"
+    android:textAppearance="?android:attr/textAppearanceMedium"
+    android:textSize="18sp" >
+    
+</com.bd.gitlab.views.MarqueeTextView>

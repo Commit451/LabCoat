@@ -1,0 +1,30 @@
+- 1.5.6: Recompiled with downwards compatibility & removed material theme.
+- 1.5.5: Added GitLab 7.0 compatibility & implemented Material theme.
+- 1.5.4: Bugfixes.
+- 1.5.3: Added rotation lock & fixed security flaw.
+- 1.5.2: Bugfixes.
+- 1.5.1: App now remembers last selected project and added support for self-signed certificates.
+- 1.5.0: Added commit diff view.
+- 1.4.5: Bugfixes.
+- 1.4.4: Rewrote HTTP Requests.
+- 1.4.3: Rotating the phone now no longer causes reloads.
+- 1.4.2: Minor bugfixes.
+- 1.4.1: File saving, new login screen & several other small fixes.
+- 1.4.0: Added branch switching.
+- 1.3.1: Local URLs & IPs are now allowed.
+- 1.3.0: Added pull to refresh.
+- 1.2.1: Fixed issue, where notes wouldn't fit on screen.
+- 1.2.0: Namespaces, Markdown support, Group support (GitLab 6.1 needed).
+- 1.1.1: Replaced corrupted application file.
+- 1.1.0: Lowered minimum OS requirement to 2.1.
+- 1.0.10: When connected to GitLab 5.2 or lower servers file browsing is now disabled.
+- 1.0.9: Fixed bug which crashed the app when trying to view files with spaces in filename.
+- 1.0.8: Several small fixes.
+- 1.0.7: Fixed crash.
+- 1.0.6: Added private-token login.
+- 1.0.5: Fixed bug in login screen.
+- 1.0.4: Added support for SSL servers.
+- 1.0.3: Improved Error Handling.
+- 1.0.2: Server URL doesn't require "http://" anymore.
+- 1.0.1: Bugfix.
+- 1.0.0: Initial release.

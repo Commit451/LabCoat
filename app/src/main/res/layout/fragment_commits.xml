@@ -1,0 +1,35 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <EditText
+        android:id="@+id/repo_url"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:clickable="true"
+        android:cursorVisible="false"
+        android:drawableRight="@drawable/ic_action_copy"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:inputType="textUri"
+        android:maxLines="1" />
+
+    <uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout
+        android:id="@+id/ptr_layout"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/repo_url"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <ListView
+            android:id="@+id/fragmentList"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" >
+        </ListView>
+
+    </uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout>
+
+</RelativeLayout>

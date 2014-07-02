@@ -1,0 +1,59 @@
+import com.android.build.gradle.tasks.PackageApplication
+
+apply plugin: 'android'
+apply from: 'signing.gradle'
+
+android {
+    compileSdkVersion 19
+    buildToolsVersion '19.1.0'
+
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 19
+        versionCode 36
+        versionName "1.5.6"
+    }
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+            runProguard false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            debuggable false
+            jniDebugBuild false
+            zipAlign true
+        }
+    }
+    packagingOptions {
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+    }
+}
+
+dependencies {
+    compile 'commons-io:commons-io:2.4'
+    compile 'commons-lang:commons-lang:2.6'
+    compile 'commons-codec:commons-codec:1.3'
+    compile 'com.google.code.gson:gson:2.2.4'
+    compile 'net.danlew:android.joda:2.3.2'
+    compile 'com.squareup.picasso:picasso:2.3.2'
+    compile 'com.squareup.retrofit:retrofit:1.6.0'
+    compile 'com.jakewharton:butterknife:5.1.1'
+    compile 'com.github.chrisbanes.actionbarpulltorefresh:library:0.9.3'
+    compile 'de.keyboardsurfer.android.widget:crouton:1.8.4'
+    compile 'com.android.support:support-v4:19.1.0'
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+}
+
+task copyNativeLibs(type: Copy) {
+    from(new File(getProjectDir(), 'native-libs')) { include '**/*.so' }
+    into new File(buildDir, 'native-libs')
+}
+
+tasks.withType(Compile) { compileTask -> compileTask.dependsOn copyNativeLibs }
+
+clean.dependsOn 'cleanCopyNativeLibs'
+
+tasks.withType(PackageApplication) { pkgTask ->
+    pkgTask.jniFolders = new HashSet<File>()
+    pkgTask.jniFolders.add(new File(buildDir, 'native-libs'))
+}

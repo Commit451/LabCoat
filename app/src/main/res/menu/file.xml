@@ -1,0 +1,19 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+   
+    <item
+        android:id="@+id/action_open"
+        android:orderInCategory="99"
+        android:enabled="false"
+        android:showAsAction="always"
+        android:title="@string/action_open"
+        android:icon="@drawable/ic_action_open_dark" />
+    
+    <item 
+        android:id="@+id/action_save"
+        android:orderInCategory="100"
+        android:enabled="false"
+        android:showAsAction="always"
+        android:title="@string/action_save"
+        android:icon="@drawable/ic_action_save_dark"/>
+
+</menu>
