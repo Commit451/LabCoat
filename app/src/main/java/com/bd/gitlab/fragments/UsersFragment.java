@@ -80,6 +80,8 @@ public class UsersFragment extends Fragment implements OnItemClickListener, OnRe
 			errorText.setText(R.string.not_in_group);
 			listView.setVisibility(View.GONE);
 			addUserButton.setVisibility(View.GONE);
+			if(ptrLayout != null && ptrLayout.isRefreshing())
+				ptrLayout.setRefreshComplete();
 			return;
 		}
 		
