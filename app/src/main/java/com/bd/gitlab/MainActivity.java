@@ -403,9 +403,14 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 			
 			Repository.branches = new ArrayList<Branch>(branches);
 			Branch[] spinnerData = new Branch[Repository.branches.size()];
+			int selectedBranchIndex = -1;
 			
 			for(int i = 0; i < Repository.branches.size(); i++)
+			{
 				spinnerData[i] = Repository.branches.get(i);
+				if(Repository.selectedProject != null && spinnerData[i].getName().equals(Repository.selectedProject.getDefaultBranch()))
+					selectedBranchIndex = i;
+			}
 			
 			actionBar.setDisplayShowTitleEnabled(false);
 			actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
@@ -414,6 +419,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
             if(context == null) context = MainActivity.this;
 			// Set up the dropdown list navigation in the action bar.
 			actionBar.setListNavigationCallbacks(new ArrayAdapter<Branch>(context, android.R.layout.simple_list_item_1, android.R.id.text1, spinnerData), MainActivity.this);
+			if(selectedBranchIndex >= 0)
+				actionBar.setSelectedNavigationItem(selectedBranchIndex);
 			
 			if(Repository.branches.size() == 0) {
 				Repository.selectedBranch = null;
