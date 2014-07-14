@@ -130,6 +130,9 @@ public class DiffView extends LinearLayout {
 		content.setPadding(PADDING_CONTENT_H, PADDING_CONTENT_V, PADDING_CONTENT_H, PADDING_CONTENT_V);
 		row.addView(content);
 		
+		if(line.lineType == null) //lineContent probably equals "\ No newline at end of file"
+			return row;
+		
 		switch(line.lineType) {
 			case NORMAL:
 				oldLine.setBackgroundColor(LINE_BG);
