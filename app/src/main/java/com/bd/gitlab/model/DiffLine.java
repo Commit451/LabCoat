@@ -1,6 +1,8 @@
 package com.bd.gitlab.model;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class DiffLine {
 	
@@ -10,6 +12,7 @@ public class DiffLine {
 	private String author_name;
 	private String author_email;
 	private Date created_at;
+	private String message;
 	
 	public String getId() {
 		return id;
@@ -51,5 +54,32 @@ public class DiffLine {
 	}
 	public void setCreatedAt(Date created_at) {
 		this.created_at = created_at;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+	public void setMessage(String message) {
+		this.message = message;
+	}
+
+	public List<Line> getLines() {
+		ArrayList<Line> lines = new ArrayList<Line>();
+
+		String[] temp = message.split("\\r?\\n");
+
+		for(String s : temp) {
+			Line line = new Line();
+			line.lineContent = s;
+
+			lines.add(line);
+		}
+
+		return lines;
+	}
+
+	public class Line {
+
+		public String lineContent;
 	}
 }
