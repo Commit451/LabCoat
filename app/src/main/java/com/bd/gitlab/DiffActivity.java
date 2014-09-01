@@ -11,7 +11,6 @@ import retrofit.client.Response;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
 
@@ -63,7 +62,6 @@ public class DiffActivity extends Activity {
 
 		@Override
 		public void failure(RetrofitError e) {
-			Log.e("GitLabMessage", "Failed");
 			RetrofitHelper.printDebugInfo(DiffActivity.this, e);
 		}
 	};
