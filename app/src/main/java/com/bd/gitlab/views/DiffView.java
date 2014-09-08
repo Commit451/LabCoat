@@ -35,6 +35,8 @@ public class DiffView extends LinearLayout {
 	
 	private Diff diff;
 	
+	private WrappedHorizontalScrollView scrollView;
+
 	/*
 	 * Superclass constructors
 	 */
@@ -66,10 +68,17 @@ public class DiffView extends LinearLayout {
 		setLayoutParams(params);
 		
 		addView(generateHeader());
+
+		scrollView = new WrappedHorizontalScrollView(getContext());
+		scrollView.setFillViewport(true);
+		LinearLayout lineView = new LinearLayout(getContext());
+		lineView.setOrientation(VERTICAL);
+		scrollView.addView(lineView);
+		addView(scrollView);
 		
 		ArrayList<Diff.Line> lines = (ArrayList<Diff.Line>) diff.getLines();
 		for(Diff.Line line : lines)
-			addView(generateRow(line));
+			lineView.addView(generateRow(line));
 		
 		setBackgroundResource(R.drawable.border);
 		setPadding(1, 1, 1, 1);
@@ -159,5 +168,11 @@ public class DiffView extends LinearLayout {
 		}
 		
 		return row;
+	}
+
+	public void setWrapped(boolean wrapped) {
+		scrollView.setWrapped(wrapped);
+		scrollView.invalidate();
+		scrollView.requestLayout();
 	}
 }

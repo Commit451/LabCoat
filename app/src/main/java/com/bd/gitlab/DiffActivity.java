@@ -11,6 +11,7 @@ import retrofit.client.Response;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
 
@@ -82,14 +83,31 @@ public class DiffActivity extends Activity {
 			Crouton.makeText(DiffActivity.this, R.string.connection_error, Style.ALERT);
 		}
 	};
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch(item.getItemId()) {
 			case android.R.id.home:
 				finish();
 				return true;
+			case R.id.text_wrap_checkbox:
+				item.setChecked(!item.isChecked());
+				setTextWrap(item.isChecked());
+				return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}
 	
+	private void setTextWrap(boolean checked) {
+		((MessageView)messageContainer.getChildAt(0)).setWrapped(checked);
+		for(int i = 0; i < diffContainer.getChildCount(); ++i) {
+			((DiffView)diffContainer.getChildAt(i)).setWrapped(checked);
+		}
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.diff, menu);
+		return true;
+	}
 }

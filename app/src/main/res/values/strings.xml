@@ -67,6 +67,9 @@
     <!-- Commits -->
     <string name="copy_notification">URL copied to clipboard&#8230;</string>
 
+    <!-- Diffs -->
+    <string name="text_wrap_checkbox">Wrap text</string>
+
     <!-- Files -->
     <string name="file_saved">File saved successfully to Download folder</string>
 

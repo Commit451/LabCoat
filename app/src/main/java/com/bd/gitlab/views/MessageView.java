@@ -5,14 +5,13 @@ import android.util.AttributeSet;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bd.gitlab.model.Diff;
 import com.bd.gitlab.model.DiffLine;
 
 import java.util.ArrayList;
 
 public class MessageView extends LinearLayout {
 
-	private DiffLine diffLine;
+	private WrappedHorizontalScrollView scrollView;
 
 	public MessageView(Context context) {
 		super(context);
@@ -29,13 +28,17 @@ public class MessageView extends LinearLayout {
 	public MessageView(Context context, DiffLine diffLine) {
 		this(context);
 
-		this.diffLine = diffLine;
+		scrollView = new WrappedHorizontalScrollView(getContext());
+		scrollView.setFillViewport(true);
+		LinearLayout innerView = new LinearLayout(getContext());
+		scrollView.addView(innerView);
+		addView(scrollView);
 
-		setOrientation(VERTICAL);
+		innerView.setOrientation(LinearLayout.VERTICAL);
 
 		ArrayList<DiffLine.Line> lines = (ArrayList<DiffLine.Line>) diffLine.getLines();
 		for(DiffLine.Line line : lines)
-			addView(generateRow(line));
+			innerView.addView(generateRow(line));
 	}
 
 	private LinearLayout generateRow(DiffLine.Line line) {
@@ -43,12 +46,18 @@ public class MessageView extends LinearLayout {
 			return null;
 
 		LinearLayout row = new LinearLayout(getContext());
-		row.setOrientation(HORIZONTAL);
+		row.setOrientation(LinearLayout.HORIZONTAL);
 
 		TextView content = new TextView(getContext());
 		content.setText(line.lineContent);
 		row.addView(content);
 
 		return row;
+	}
+
+	public void setWrapped(boolean wrapped) {
+		scrollView.setWrapped(wrapped);
+		scrollView.invalidate();
+		scrollView.requestLayout();
 	}
 }
