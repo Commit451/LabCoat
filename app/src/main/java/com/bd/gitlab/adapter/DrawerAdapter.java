@@ -1,13 +1,13 @@
 package com.bd.gitlab.adapter;
 
-import java.util.ArrayList;
-
 import android.content.Context;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
 
 import com.bd.gitlab.R;
@@ -15,13 +15,18 @@ import com.bd.gitlab.model.Project;
 import com.bd.gitlab.model.User;
 import com.bd.gitlab.tools.Repository;
 
-public class DrawerAdapter extends BaseAdapter {
-	
+import java.util.ArrayList;
+
+public class DrawerAdapter extends BaseAdapter implements Filterable {
+
 	private ArrayList<Project> projects;
 	private LayoutInflater inflater;
+	private Filter filter = new FilterByName();
+	private ArrayList<Project> allProjects;
 
 	public DrawerAdapter(Context context, ArrayList<Project> projects) {
 		this.projects = projects;
+		allProjects = new ArrayList<Project>(projects);
 		
 		if(context != null)
 			inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -66,5 +71,42 @@ public class DrawerAdapter extends BaseAdapter {
 		}
 
 		return convertView;
+	}
+
+	@Override
+	public Filter getFilter() {
+		return filter;
+	}
+
+	private class FilterByName extends Filter {
+
+		@SuppressWarnings("unchecked")
+		@Override
+		protected void publishResults(CharSequence constraint, FilterResults results) {
+			projects.clear();
+			for (Project project : (ArrayList<Project>) results.values)
+				projects.add(project);
+			notifyDataSetChanged();
+		}
+
+		@Override
+		protected FilterResults performFiltering(CharSequence constraint) {
+			FilterResults result = new FilterResults();
+			if (constraint == null || constraint.length() == 0) {
+				result.values = allProjects;
+				result.count = allProjects.size();
+			} else {
+				ArrayList<Project> filteredList = new ArrayList<Project>();
+				for (Project project : allProjects) {
+					if (project.toString().toLowerCase().contains(constraint.toString().toLowerCase()))
+						filteredList.add(project);
+				}
+				result.values = filteredList;
+				result.count = filteredList.size();
+			}
+
+			return result;
+		}
+
 	}
 }

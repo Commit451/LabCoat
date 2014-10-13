@@ -1,19 +1,7 @@
 package com.bd.gitlab;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
-
 import android.app.ActionBar;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -28,14 +16,19 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.bd.gitlab.adapter.DrawerAdapter;
@@ -52,16 +45,27 @@ import com.bd.gitlab.tools.RetrofitHelper;
 
 import net.danlew.android.joda.ResourceZoneInfoProvider;
 
-import de.keyboardsurfer.android.widget.crouton.Configuration.Builder;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 public class MainActivity extends FragmentActivity implements ActionBar.OnNavigationListener, OnItemClickListener {
 	
 	@InjectView(R.id.drawer_layout) DrawerLayout drawerLayout;
-	@InjectView(R.id.left_drawer) ListView drawerList;
+	@InjectView(R.id.left_drawer) LinearLayout drawerLeft;
+	@InjectView(R.id.left_drawer_list) ListView drawerList;
 	@InjectView(R.id.pager) ViewPager viewPager;
-	
+	@InjectView(R.id.filter_project) EditText filterProjectEdit;
+
 	private ActionBar actionBar;
 	private ActionBarDrawerToggle drawerToggle;
 
@@ -86,7 +90,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 		drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.ic_navigation_drawer, R.string.drawer_open, R.string.drawer_close) {
 			
 			public void onDrawerClosed(View view) {
-				// invalidateOptionsMenu();
+				hideSoftKeyboard();
 			}
 			
 			public void onDrawerOpened(View drawerView) {
@@ -129,6 +133,22 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 		// Set up the ViewPager with the sections adapter.
 		viewPager.setAdapter(sectionsPagerAdapter);
 		viewPager.setOffscreenPageLimit(3);
+
+		filterProjectEdit.addTextChangedListener(new TextWatcher() {
+
+			@Override
+			public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
+				Repository.drawerAdapter.getFilter().filter(filterProjectEdit.getText().toString());
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
+			}
+
+			@Override
+			public void afterTextChanged(Editable s) {
+			}
+		});
 	}
 	
 	@Override
@@ -159,10 +179,11 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch(item.getItemId()) {
 			case android.R.id.home:
-				if(drawerLayout.isDrawerOpen(drawerList))
-					drawerLayout.closeDrawer(drawerList);
-				else
-					drawerLayout.openDrawer(drawerList);
+				if(drawerLayout.isDrawerOpen(drawerLeft)) {
+
+					drawerLayout.closeDrawer(drawerLeft);
+				} else
+					drawerLayout.openDrawer(drawerLeft);
 				return true;
 			case R.id.action_logout:
 				Repository.setLoggedIn(false);
@@ -206,8 +227,14 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 			Repository.getService().getBranches(Repository.selectedProject.getId(), branchesCallback);
 		}
 		
-		if(drawerLayout.isDrawerOpen(drawerList))
-			drawerLayout.closeDrawer(drawerList);
+		if(drawerLayout.isDrawerOpen(drawerLeft)) {
+			drawerLayout.closeDrawer(drawerLeft);
+		}
+	}
+
+	public void hideSoftKeyboard() {
+		InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+		inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
 	}
 	
 	@Override
@@ -282,7 +309,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 					fragment = new UsersFragment();
 					break;
 			}
-			
+
 			return fragment;
 		}
 		
