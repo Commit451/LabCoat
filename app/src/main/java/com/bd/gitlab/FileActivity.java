@@ -178,8 +178,13 @@ public class FileActivity extends Activity {
 		
 		MimeTypeMap myMime = MimeTypeMap.getSingleton();
 		Intent newIntent = new Intent(Intent.ACTION_VIEW);
-		
-		String mimeType = myMime.getMimeTypeFromExtension(fileExt(file.toString()).substring(1));
+
+		String fileExt = fileExt(file.toString());
+		if (fileExt == null) {
+			Crouton.makeText(this, R.string.open_error, Style.ALERT).show();
+			return;
+		}
+		String mimeType = myMime.getMimeTypeFromExtension(fileExt.substring(1));
 		newIntent.setDataAndType(Uri.fromFile(file), mimeType);
 		newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		
