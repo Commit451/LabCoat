@@ -176,24 +176,29 @@ public class FileActivity extends Activity {
 	private void openFile() {
 		File file = saveBlob();
 		
-		MimeTypeMap myMime = MimeTypeMap.getSingleton();
-		Intent newIntent = new Intent(Intent.ACTION_VIEW);
+		if(file == null) {
+            Crouton.makeText(this, R.string.open_error, Style.ALERT).show();
+            return;
+        }
 
-		String fileExt = fileExt(file.toString());
-		if (fileExt == null) {
-			Crouton.makeText(this, R.string.open_error, Style.ALERT).show();
-			return;
-		}
-		String mimeType = myMime.getMimeTypeFromExtension(fileExt.substring(1));
-		newIntent.setDataAndType(Uri.fromFile(file), mimeType);
-		newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		
-		try {
-			startActivity(newIntent);
-		}
-		catch(android.content.ActivityNotFoundException e) {
-			Crouton.makeText(this, R.string.open_error, Style.ALERT).show();
-		}
+        MimeTypeMap myMime = MimeTypeMap.getSingleton();
+        Intent newIntent = new Intent(Intent.ACTION_VIEW);
+
+        String fileExt = fileExt(file.toString());
+        if (fileExt == null) {
+            Crouton.makeText(this, R.string.open_error, Style.ALERT).show();
+            return;
+        }
+        String mimeType = myMime.getMimeTypeFromExtension(fileExt.substring(1));
+        newIntent.setDataAndType(Uri.fromFile(file), mimeType);
+        newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        try {
+            startActivity(newIntent);
+        }
+        catch(android.content.ActivityNotFoundException e) {
+            Crouton.makeText(this, R.string.open_error, Style.ALERT).show();
+        }
 	}
 	
 	private String fileExt(String url) {

@@ -28,31 +28,29 @@
 
     </RelativeLayout>
 	
-    <LinearLayout android:id="@+id/left_drawer"
+    <LinearLayout
+        android:id="@+id/left_drawer"
         android:layout_width="300dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="#212121"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="@android:color/white">
 
-        <EditText
+        <com.bd.gitlab.views.FilterEditText
             android:id="@+id/filter_project"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textCursorDrawable="@null"
-            android:textColor="#FFF"
+            android:layout_height="64dp"
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="6dp"
             android:hint="@string/filter_projects"
-            android:singleLine="true"
-            android:lines="1"
-            android:maxLines="1"/>
+            android:drawableRight="@drawable/ic_input_delete" />
 
-        <ListView android:id="@+id/left_drawer_list"
+        <ListView
+            android:id="@+id/left_drawer_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:choiceMode="singleChoice"
-            android:divider="#11ffffff"
-            android:dividerHeight="1dp"
-            android:background="#212121"/>
+            android:dividerHeight="1dp" />
 
     </LinearLayout>
 

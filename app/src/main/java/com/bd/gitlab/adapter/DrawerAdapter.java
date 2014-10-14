@@ -19,14 +19,15 @@ import java.util.ArrayList;
 
 public class DrawerAdapter extends BaseAdapter implements Filterable {
 
-	private ArrayList<Project> projects;
 	private LayoutInflater inflater;
 	private Filter filter = new FilterByName();
+
+    private ArrayList<Project> projects;
 	private ArrayList<Project> allProjects;
 
 	public DrawerAdapter(Context context, ArrayList<Project> projects) {
 		this.projects = projects;
-		allProjects = new ArrayList<Project>(projects);
+		this.allProjects = new ArrayList<Project>(projects);
 		
 		if(context != null)
 			inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -62,11 +63,11 @@ public class DrawerAdapter extends BaseAdapter implements Filterable {
 		text.setText(projects.get(position).toString());
 
 		if(Repository.selectedProject != null && Repository.selectedProject.equals(projects.get(position))) {
-			text.setTextColor(Color.WHITE);
+            text.setTextColor(convertView.getResources().getColor(android.R.color.primary_text_light));
             text.setCompoundDrawablesWithIntrinsicBounds(null, null, convertView.getResources().getDrawable(R.drawable.ic_selected), null);
 		}
 		else {
-            text.setTextColor(convertView.getResources().getColor(android.R.color.secondary_text_dark));
+            text.setTextColor(convertView.getResources().getColor(android.R.color.secondary_text_light));
 			text.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
 		}
 
@@ -84,7 +85,7 @@ public class DrawerAdapter extends BaseAdapter implements Filterable {
 		@Override
 		protected void publishResults(CharSequence constraint, FilterResults results) {
 			projects.clear();
-			for (Project project : (ArrayList<Project>) results.values)
+			for(Project project : (ArrayList<Project>) results.values)
 				projects.add(project);
 			notifyDataSetChanged();
 		}
@@ -92,13 +93,14 @@ public class DrawerAdapter extends BaseAdapter implements Filterable {
 		@Override
 		protected FilterResults performFiltering(CharSequence constraint) {
 			FilterResults result = new FilterResults();
-			if (constraint == null || constraint.length() == 0) {
+			if(constraint == null || constraint.length() == 0) {
 				result.values = allProjects;
 				result.count = allProjects.size();
-			} else {
+			}
+            else {
 				ArrayList<Project> filteredList = new ArrayList<Project>();
-				for (Project project : allProjects) {
-					if (project.toString().toLowerCase().contains(constraint.toString().toLowerCase()))
+				for(Project project : allProjects) {
+					if(project.toString().toLowerCase().contains(constraint.toString().toLowerCase()))
 						filteredList.add(project);
 				}
 				result.values = filteredList;
@@ -107,6 +109,5 @@ public class DrawerAdapter extends BaseAdapter implements Filterable {
 
 			return result;
 		}
-
 	}
 }

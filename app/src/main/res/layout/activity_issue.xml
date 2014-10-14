@@ -10,15 +10,15 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/lsep2"
         android:layout_alignParentTop="true"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/activity_vertical_margin" >
+        android:paddingLeft="16dp"
+        android:paddingTop="16dp" >
 
         <LinearLayout
             android:id="@+id/lin1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingRight="@dimen/activity_horizontal_margin" >
+            android:paddingRight="16dp" >
 
             <TextView
                 android:id="@+id/title"
@@ -46,8 +46,8 @@
                 android:id="@+id/description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/activity_vertical_margin"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:layout_marginBottom="16dp"
+                android:layout_marginTop="16dp"
                 android:text="Description"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 

@@ -43,7 +43,7 @@
 
     <string name="file_load_error">Failed to load file&#8230;</string>
     <string name="save_error">Could not write to storage medium</string>
-    <string name="open_error">No handler for this type of file</string>
+    <string name="open_error">File could not be opened</string>
 
     <string name="input_error">Please enter a title</string>
     <string name="user_error">User could not be added&#8230;</string>
@@ -63,7 +63,7 @@
     <string name="add_button">Add</string>
     <string name="remove_button">Remove</string>
     <string name="ok_button">OK</string>
-    <string name="filter_projects">Projects filter...</string>
+    <string name="filter_projects">Filter projects&#8230;</string>
 
     <!-- Commits -->
     <string name="copy_notification">URL copied to clipboard&#8230;</string>

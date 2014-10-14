@@ -42,6 +42,8 @@ import com.bd.gitlab.model.Project;
 import com.bd.gitlab.model.User;
 import com.bd.gitlab.tools.Repository;
 import com.bd.gitlab.tools.RetrofitHelper;
+import com.bd.gitlab.views.DrawableClickListener;
+import com.bd.gitlab.views.FilterEditText;
 
 import net.danlew.android.joda.ResourceZoneInfoProvider;
 
@@ -52,8 +54,10 @@ import java.util.Locale;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
+
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -64,7 +68,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 	@InjectView(R.id.left_drawer) LinearLayout drawerLeft;
 	@InjectView(R.id.left_drawer_list) ListView drawerList;
 	@InjectView(R.id.pager) ViewPager viewPager;
-	@InjectView(R.id.filter_project) EditText filterProjectEdit;
+	@InjectView(R.id.filter_project) FilterEditText filterProjectEdit;
 
 	private ActionBar actionBar;
 	private ActionBarDrawerToggle drawerToggle;
@@ -83,10 +87,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 		actionBar.setHomeButtonEnabled(true);
 		
 		drawerList.setOnItemClickListener(this);
-		
 		LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		drawerList.addHeaderView(inflater.inflate(R.layout.drawer_list_header, null), null, false);
-		
 		drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.ic_navigation_drawer, R.string.drawer_open, R.string.drawer_close) {
 			
 			public void onDrawerClosed(View view) {
@@ -97,8 +98,28 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 				// invalidateOptionsMenu();
 			}
 		};
-		
-		drawerLayout.setDrawerListener(drawerToggle);
+        drawerLayout.setDrawerListener(drawerToggle);
+
+        filterProjectEdit.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
+                Repository.drawerAdapter.getFilter().filter(filterProjectEdit.getText().toString());
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+        filterProjectEdit.setDrawableClickListener(new DrawableClickListener() {
+            @Override
+            public void onClick(DrawablePosition target) {
+                filterProjectEdit.setText("");
+            }
+        });
 		
 		// Workaround that forces the overflow menu
 		try {
@@ -133,22 +154,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 		// Set up the ViewPager with the sections adapter.
 		viewPager.setAdapter(sectionsPagerAdapter);
 		viewPager.setOffscreenPageLimit(3);
-
-		filterProjectEdit.addTextChangedListener(new TextWatcher() {
-
-			@Override
-			public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
-				Repository.drawerAdapter.getFilter().filter(filterProjectEdit.getText().toString());
-			}
-
-			@Override
-			public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
-			}
-
-			@Override
-			public void afterTextChanged(Editable s) {
-			}
-		});
 	}
 	
 	@Override
@@ -179,10 +184,9 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch(item.getItemId()) {
 			case android.R.id.home:
-				if(drawerLayout.isDrawerOpen(drawerLeft)) {
-
+				if(drawerLayout.isDrawerOpen(drawerLeft))
 					drawerLayout.closeDrawer(drawerLeft);
-				} else
+				else
 					drawerLayout.openDrawer(drawerLeft);
 				return true;
 			case R.id.action_logout:
@@ -217,8 +221,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 	
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		if(Repository.selectedProject == null || !Repository.selectedProject.equals(Repository.projects.get(position - 1))) {
-			Repository.selectedProject = Repository.projects.get(position - 1);
+		if(Repository.selectedProject == null || !Repository.selectedProject.equals(Repository.projects.get(position))) {
+			Repository.selectedProject = Repository.projects.get(position);
 			Repository.setLastProject(Repository.selectedProject.toString());
 			Repository.issueAdapter = null;
 			Repository.userAdapter = null;
@@ -465,7 +469,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
                 loadData();
 
                 actionBar.setDisplayShowTitleEnabled(true);
-                actionBar.setNavigationMode(ActionBar.DISPLAY_SHOW_TITLE);
+                actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 
                 return;
             }
