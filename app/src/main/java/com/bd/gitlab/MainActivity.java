@@ -122,7 +122,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
         });
 		
 		// Workaround that forces the overflow menu
-		try {
+        try {
 			ViewConfiguration config = ViewConfiguration.get(this);
 			Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
 			if(menuKeyField != null) {

@@ -38,7 +38,7 @@
         <com.bd.gitlab.views.FilterEditText
             android:id="@+id/filter_project"
             android:layout_width="match_parent"
-            android:layout_height="64dp"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="6dp"
             android:layout_marginRight="6dp"
             android:hint="@string/filter_projects"
