@@ -28,13 +28,32 @@
 
     </RelativeLayout>
 	
-    <ListView android:id="@+id/left_drawer"
-        android:layout_width="240dp"
+    <LinearLayout android:id="@+id/left_drawer"
+        android:layout_width="300dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:choiceMode="singleChoice"
-        android:divider="#11ffffff"
-        android:dividerHeight="1dp"
-        android:background="#212121"/>
+        android:background="#212121"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/filter_project"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textCursorDrawable="@null"
+            android:textColor="#FFF"
+            android:hint="@string/filter_projects"
+            android:singleLine="true"
+            android:lines="1"
+            android:maxLines="1"/>
+
+        <ListView android:id="@+id/left_drawer_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:choiceMode="singleChoice"
+            android:divider="#11ffffff"
+            android:dividerHeight="1dp"
+            android:background="#212121"/>
+
+    </LinearLayout>
 
 </android.support.v4.widget.DrawerLayout>

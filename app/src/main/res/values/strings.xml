@@ -63,6 +63,7 @@
     <string name="add_button">Add</string>
     <string name="remove_button">Remove</string>
     <string name="ok_button">OK</string>
+    <string name="filter_projects">Projects filter...</string>
 
     <!-- Commits -->
     <string name="copy_notification">URL copied to clipboard&#8230;</string>
