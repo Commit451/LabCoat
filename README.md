@@ -37,7 +37,6 @@ This project uses many open source libraries such as:
 * [Butter Knife](https://github.com/JakeWharton/butterknife)
 * [Gson](https://code.google.com/p/google-gson/)
 * [joda-time-android](https://github.com/dlew/joda-time-android)
-* [ActionBar-PullToRefresh](https://github.com/chrisbanes/ActionBar-PullToRefresh)
 * [Crouton](https://github.com/keyboardsurfer/Crouton)
 
 ## Contributing
