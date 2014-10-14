@@ -10,14 +10,11 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
-import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
-import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,11 +33,11 @@ import com.bd.gitlab.tools.RetrofitHelper;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
-public class CommitsFragment extends Fragment implements OnRefreshListener, OnItemClickListener {
+public class CommitsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, OnItemClickListener {
 	
 	@InjectView(R.id.fragmentList) ListView listView;
 	@InjectView(R.id.repo_url) EditText repoUrl;
-    @InjectView(R.id.ptr_layout) PullToRefreshLayout ptrLayout;
+    @InjectView(R.id.swipe_layout) SwipeRefreshLayout swipeLayout;
 	
 	public CommitsFragment() {}
 	
@@ -51,7 +48,8 @@ public class CommitsFragment extends Fragment implements OnRefreshListener, OnIt
 		
 		listView.setOnItemClickListener(this);
 
-        ActionBarPullToRefresh.from(getActivity()).allChildrenArePullable().listener(this).setup(ptrLayout);
+        swipeLayout.setOnRefreshListener(this);
+        swipeLayout.setColorSchemeResources(android.R.color.holo_blue_bright, android.R.color.holo_green_light, android.R.color.holo_orange_light, android.R.color.holo_red_light);
 		
 		if(Repository.selectedProject != null)
 			loadData();
@@ -66,7 +64,7 @@ public class CommitsFragment extends Fragment implements OnRefreshListener, OnIt
 	}
 	
 	@Override
-	public void onRefreshStarted(View view) {
+	public void onRefresh() {
 		loadData();
 	}
 	
@@ -77,15 +75,15 @@ public class CommitsFragment extends Fragment implements OnRefreshListener, OnIt
 		repoUrl.setText("git@" + Repository.getServerUrl().replaceAll("http://", "").replaceAll("https://", "") + ":" + Repository.selectedProject.getPathWithNamespace() + ".git");
 		
 		if(Repository.selectedBranch == null) {
-            if(ptrLayout != null && ptrLayout.isRefreshing())
-                ptrLayout.setRefreshComplete();
+            if(swipeLayout != null && swipeLayout.isRefreshing())
+                swipeLayout.setRefreshing(false);
 
             listView.setAdapter(null);
             return;
         }
 		
-		if(ptrLayout != null && !ptrLayout.isRefreshing())
-            ptrLayout.setRefreshing(true);
+		if(swipeLayout != null && !swipeLayout.isRefreshing())
+            swipeLayout.setRefreshing(true);
 		
 		Repository.getService().getCommits(Repository.selectedProject.getId(), Repository.selectedBranch.getName(), commitsCallback);
 	}
@@ -94,8 +92,8 @@ public class CommitsFragment extends Fragment implements OnRefreshListener, OnIt
 		
 		@Override
 		public void success(List<DiffLine> commits, Response resp) {
-			if(ptrLayout != null && ptrLayout.isRefreshing())
-                ptrLayout.setRefreshComplete();
+			if(swipeLayout != null && swipeLayout.isRefreshing())
+                swipeLayout.setRefreshing(false);
 			
 			if(commits.size() > 0)
 				Repository.newestCommit = commits.get(0);
@@ -110,8 +108,8 @@ public class CommitsFragment extends Fragment implements OnRefreshListener, OnIt
 		public void failure(RetrofitError e) {
 			RetrofitHelper.printDebugInfo(getActivity(), e);
 
-			if(ptrLayout != null && ptrLayout.isRefreshing())
-                ptrLayout.setRefreshComplete();
+			if(swipeLayout != null && swipeLayout.isRefreshing())
+                swipeLayout.setRefreshing(false);
 
 			Crouton.makeText(getActivity(), R.string.connection_error_commits, Style.ALERT).show();
 			listView.setAdapter(null);

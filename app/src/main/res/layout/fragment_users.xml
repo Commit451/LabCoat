@@ -1,39 +1,40 @@
-<RelativeLayout
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.SwipeRefreshLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/swipe_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <Button
-        android:id="@+id/add_user_button"
-        style="?android:attr/buttonBarButtonStyle"
-        android:enabled="false"
-        android:drawableLeft="@drawable/ic_action_add"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:text="@string/add_user" />
-
-    <uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout
-        android:id="@+id/ptr_layout"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/add_user_button" >
+        android:layout_height="match_parent" >
+
+        <Button
+            android:id="@+id/add_user_button"
+            style="?android:attr/buttonBarButtonStyle"
+            android:enabled="false"
+            android:drawableLeft="@drawable/ic_action_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:text="@string/add_user" />
 
         <ListView
             android:id="@+id/fragmentList"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent" />
+            android:layout_height="fill_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/add_user_button" />
 
-    </uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout>
-    
-	<TextView 
-        android:id="@+id/error_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:gravity="center"
-        android:visibility="gone"/>
+        <TextView
+            android:id="@+id/error_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:gravity="center"
+            android:visibility="gone"/>
+
+    </RelativeLayout>
 	
-</RelativeLayout>
+</android.support.v4.widget.SwipeRefreshLayout>

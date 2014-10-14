@@ -10,15 +10,12 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
-import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
-import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,11 +34,11 @@ import com.bd.gitlab.tools.RetrofitHelper;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
-public class IssuesFragment extends Fragment implements OnItemClickListener, OnRefreshListener {
+public class IssuesFragment extends Fragment implements OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
 	
 	@InjectView(R.id.add_issue_button) Button addIssueButton;
 	@InjectView(R.id.fragmentList) ListView listView;
-    @InjectView(R.id.ptr_layout) PullToRefreshLayout ptrLayout;
+    @InjectView(R.id.swipe_layout) SwipeRefreshLayout swipeLayout;
 	
 	public IssuesFragment() {}
 	
@@ -52,7 +49,8 @@ public class IssuesFragment extends Fragment implements OnItemClickListener, OnR
 		
 		listView.setOnItemClickListener(this);
 
-        ActionBarPullToRefresh.from(getActivity()).allChildrenArePullable().listener(this).setup(ptrLayout);
+        swipeLayout.setOnRefreshListener(this);
+        swipeLayout.setColorSchemeResources(android.R.color.holo_blue_bright, android.R.color.holo_green_light, android.R.color.holo_orange_light, android.R.color.holo_red_light);
 		
 		if(Repository.selectedProject != null)
 			loadData();
@@ -67,13 +65,13 @@ public class IssuesFragment extends Fragment implements OnItemClickListener, OnR
 	}
 	
 	@Override
-	public void onRefreshStarted(View view) {
+	public void onRefresh() {
 		loadData();
 	}
 	
 	public void loadData() {
-		if(ptrLayout != null && !ptrLayout.isRefreshing())
-            ptrLayout.setRefreshing(true);
+		if(swipeLayout != null && !swipeLayout.isRefreshing())
+            swipeLayout.setRefreshing(true);
 		
 		Repository.getService().getIssues(Repository.selectedProject.getId(), issuesCallback);
 	}
@@ -82,8 +80,8 @@ public class IssuesFragment extends Fragment implements OnItemClickListener, OnR
 		
 		@Override
 		public void success(List<Issue> issues, Response resp) {
-			if(ptrLayout != null && ptrLayout.isRefreshing())
-                ptrLayout.setRefreshComplete();
+			if(swipeLayout != null && swipeLayout.isRefreshing())
+                swipeLayout.setRefreshing(false);
 			
 			IssuesAdapter issueAdapter = new IssuesAdapter(getActivity(), issues);
 			listView.setAdapter(issueAdapter);
@@ -97,8 +95,8 @@ public class IssuesFragment extends Fragment implements OnItemClickListener, OnR
 		public void failure(RetrofitError e) {
 			RetrofitHelper.printDebugInfo(getActivity(), e);
 			
-			if(ptrLayout != null && ptrLayout.isRefreshing())
-                ptrLayout.setRefreshComplete();
+			if(swipeLayout != null && swipeLayout.isRefreshing())
+                swipeLayout.setRefreshing(false);
 			
 			Crouton.makeText(getActivity(), R.string.connection_error_issues, Style.ALERT).show();
 			listView.setAdapter(null);

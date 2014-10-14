@@ -10,13 +10,10 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
-import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
-import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,13 +32,13 @@ import com.bd.gitlab.tools.RetrofitHelper;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
-public class FilesFragment extends Fragment implements OnItemClickListener, OnRefreshListener {
+public class FilesFragment extends Fragment implements OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
 	
 	private ArrayList<String> path;
 	
 	@InjectView(R.id.fragmentList) ListView listView;
 	@InjectView(R.id.error_text) TextView errorText;
-    @InjectView(R.id.ptr_layout) PullToRefreshLayout ptrLayout;
+    @InjectView(R.id.swipe_layout) SwipeRefreshLayout swipeLayout;
 	
 	public FilesFragment() {}
 	
@@ -52,7 +49,8 @@ public class FilesFragment extends Fragment implements OnItemClickListener, OnRe
 		
 		listView.setOnItemClickListener(this);
 
-        ActionBarPullToRefresh.from(getActivity()).allChildrenArePullable().listener(this).setup(ptrLayout);
+        swipeLayout.setOnRefreshListener(this);
+        swipeLayout.setColorSchemeResources(android.R.color.holo_blue_bright, android.R.color.holo_green_light, android.R.color.holo_orange_light, android.R.color.holo_red_light);
 		
 		path = new ArrayList<String>();
 		
@@ -74,7 +72,7 @@ public class FilesFragment extends Fragment implements OnItemClickListener, OnRe
 	}
 	
 	@Override
-	public void onRefreshStarted(View view) {
+	public void onRefresh() {
 		loadFiles();
 	}
 	
@@ -83,8 +81,8 @@ public class FilesFragment extends Fragment implements OnItemClickListener, OnRe
 		if(Repository.selectedBranch != null)
 			branch = Repository.selectedBranch.getName();
 		
-		if(ptrLayout != null && !ptrLayout.isRefreshing())
-            ptrLayout.setRefreshing(true);
+		if(swipeLayout != null && !swipeLayout.isRefreshing())
+            swipeLayout.setRefreshing(true);
 		
 		String currentPath = "";
         for(String p : path) {
@@ -98,8 +96,8 @@ public class FilesFragment extends Fragment implements OnItemClickListener, OnRe
 		
 		@Override
 		public void success(List<TreeItem> files, Response resp) {
-            if(ptrLayout != null && ptrLayout.isRefreshing())
-                ptrLayout.setRefreshComplete();
+            if(swipeLayout != null && swipeLayout.isRefreshing())
+                swipeLayout.setRefreshing(false);
 			
 			FilesAdapter filesAdapter = new FilesAdapter(getActivity(), files);
 			listView.setAdapter(filesAdapter);
@@ -107,8 +105,8 @@ public class FilesFragment extends Fragment implements OnItemClickListener, OnRe
 		
 		@Override
 		public void failure(RetrofitError e) {
-			if(ptrLayout != null && ptrLayout.isRefreshing())
-                ptrLayout.setRefreshComplete();
+			if(swipeLayout != null && swipeLayout.isRefreshing())
+                swipeLayout.setRefreshing(false);
 			
 			if(e.getResponse().getStatus() == 404) {
 				errorText.setVisibility(View.VISIBLE);
