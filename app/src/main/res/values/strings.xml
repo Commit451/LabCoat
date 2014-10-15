@@ -7,7 +7,6 @@
     <string name="action_lock_orientation">Lock orientation</string>
     <string name="action_unlock_orientation">Unlock orientation</string>
     <string name="action_logout">Logout</string>
-    <string name="action_remove_ads">Remove ads</string>
     <string name="action_save">Save</string>
     <string name="action_open">Open</string>
 
@@ -36,7 +35,6 @@
     <string name="connection_error_issues">Failed to load issues&#8230;</string>
     <string name="connection_error_files">Failed to load files&#8230;</string>
     <string name="connection_error_users">Failed to load users&#8230;</string>
-    <string name="billing_error">Connection failed&#8230; Please retry in a few seconds.</string>
 
     <string name="login_error">Login failed&#8230; Please double-check your login information.</string>
     <string name="login_input_error">Please enter a valid url.</string>
@@ -83,11 +81,6 @@
     <string name="remove_user_dialog_title">Remove user?</string>
     <string name="add_user">Add user to group</string>
     <string name="add_user_dialog_title">Add user</string>
-
-    <!-- Ads -->
-    <string name="remove_ads_title">Ads removed</string>
-    <string name="remove_ads_message">Thank you for your support!</string>
-    <string name="thumbs_up_content_description">Thumbs Up</string>
 
     <string-array name="role_names">
         <item>Guest</item>

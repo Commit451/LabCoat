@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">GitLab</string>
+
+    <!-- Menu -->
+    <string name="action_lock_orientation">Rotierung sperren</string>
+    <string name="action_unlock_orientation">Rotierung entsperren</string>
+    <string name="action_logout">Logout</string>
+    <string name="action_save">Speichern</string>
+    <string name="action_open">Öffnen</string>
+
+    <!-- Tabs -->
+    <string name="title_section1">Commits</string>
+    <string name="title_section2">Issues</string>
+    <string name="title_section3">Dateien</string>
+    <string name="title_section4">Benutzer</string>
+
+    <!-- Login -->
+    <string name="login_button">Login</string>
+    <string name="url_hint">URL&#8230; (z.B. https://gitlab.com)</string>
+    <string name="user_hint">Benutzername oder E-Mail&#8230;</string>
+    <string name="password_hint">Passwort&#8230;</string>
+    <string name="token_hint">Private Token&#8230;</string>
+    <string name="login_activity">Login</string>
+    <string name="login_progress_dialog">Anmeldung läuft. Bitte warten&#8230;</string>
+    <string name="token_link"><u>Login mit Private Token&#8230;</u></string>
+    <string name="normal_link"><u>Login mit Benutzername oder E-Mail&#8230;</u></string>
+    <string name="certificate_title">Zertifikat nicht zuverlässig</string>
+    <string name="certificate_message">Das Zertifikat des Servers stammt nicht von einer zuverlässigen Zertifizierungsstelle.\n\nDies könnte bedeuten, dass Ihre Verbindung abgehört wird.\n\nUm ein selbst-signiertes Zertifikat zu verwenden, folgen Sie bitte diesen <a href="https://support.google.com/nexus/answer/2844832?hl=en">Schritten</a>.</string>
+
+    <!-- Error messages -->
+    <string name="connection_error">Verbindung fehlgeschlagen&#8230;</string>
+    <string name="connection_error_commits">Commits konnten nicht geladen werden&#8230;</string>
+    <string name="connection_error_issues">Issues konnten nicht geladen werden&#8230;</string>
+    <string name="connection_error_files">Dateien konnten nicht geladen werden&#8230;</string>
+    <string name="connection_error_users">Benutzer konnten nicht geladen werden&#8230;</string>
+
+    <string name="login_error">Login fehlgeschlagen&#8230; Bitte überprüfen Sie die Anmeldedaten.</string>
+    <string name="login_input_error">Bitte geben Sie eine gültige URL ein.</string>
+
+    <string name="file_load_error">Dateien konnten nicht geladen werden&#8230;</string>
+    <string name="save_error">Es konnte nicht auf das Speichermedium geschrieben werden</string>
+    <string name="open_error">Datei konnte nicht geöffnet werden</string>
+
+    <string name="input_error">Bitte geben Sie einen Titel ein</string>
+    <string name="user_error">Benutzer konnte nicht hinzugefügt werden&#8230;</string>
+    <string name="user_remove_error">Benutzer konnte nicht entfernt werden&#8230;</string>
+
+    <string name="files_not_supported">Um die Dateien anschauen zu können wird GitLab 5.3 oder höher benötigt&#8230;</string>
+    <string name="groups_not_supported">Um die Benutzer eine Gruppe bearbeiten zu können wird GitLab 6.1 oder höher benötigt&#8230;</string>
+    <string name="not_in_group">Benutzerverwaltung ist nur bei Projekten die einer Gruppe zugeordnet sind möglich&#8230;</string>
+
+    <!-- General -->
+    <string name="projects">Projekte</string>
+    <string name="selected_content_description">Selektiert</string>
+    <string name="main_progress_dialog">Verbindung zum Server wird aufgebaut. Bitte warten&#8230;</string>
+    <string name="progress_dialog">Bitte warten&#8230;</string>
+    <string name="cancel_button">Abbrechen</string>
+    <string name="save_button">Speichern</string>
+    <string name="add_button">Hinzufügen</string>
+    <string name="remove_button">Entfernen</string>
+    <string name="ok_button">OK</string>
+    <string name="filter_projects">Projekte filtern&#8230;</string>
+
+    <!-- Commits -->
+    <string name="copy_notification">URL wurde kopiert&#8230;</string>
+
+    <!-- Files -->
+    <string name="file_saved">Datei wurde erfolgreich in den Downloads Ordner gespeichert</string>
+
+    <!-- Issues -->
+    <string name="new_note_hint">Kommentar hinzufügen&#8230;</string>
+    <string name="add_issue">Neues Issue hinzufügen&#8230;</string>
+    <string name="add_issue_dialog_title">Neue Issue</string>
+    <string name="title_hint">Titel&#8230;</string>
+    <string name="description_hint">Beschreibung&#8230;</string>
+    <string name="add_note_content_description">Kommentar hinzufügen&#8230;</string>
+
+    <!-- User -->
+    <string name="remove_user_dialog_title">Benutzer entfernen?</string>
+    <string name="add_user">Benutzer zu Gruppe hinzufügen</string>
+    <string name="add_user_dialog_title">Benutzer hinzufügen</string>
+
+    <string-array name="role_names">
+        <item>Gast</item>
+        <item>Reporter</item>
+        <item>Entwickler</item>
+        <item>Master</item>
+        <item>Besitzer</item>
+    </string-array>
+
+</resources>

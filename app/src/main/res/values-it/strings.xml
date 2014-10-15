@@ -7,7 +7,6 @@
     <string name="action_lock_orientation">Blocca rotazione</string>
     <string name="action_unlock_orientation">Sblocca rotazione</string>
     <string name="action_logout">Logout</string>
-    <string name="action_remove_ads">Rimuovi ads</string>
     <string name="action_save">Salva</string>
     <string name="action_open">Apri</string>
 
@@ -35,7 +34,6 @@
     <string name="connection_error_issues">Impossibile caricare gli issue&#8230;</string>
     <string name="connection_error_files">Impossibile caricare i file&#8230;</string>
     <string name="connection_error_users">Impossibile caricare gli utenti&#8230;</string>
-    <string name="billing_error">Connessione fallita&#8230; Riprova tra pochi secondi.</string>
 
     <string name="login_error">Login fallito&#8230; Controlla le tue credenziali.</string>
     <string name="login_input_error">Immettere una url valida.</string>
@@ -82,11 +80,6 @@
     <string name="remove_user_dialog_title">Rimuovere l\'utente?</string>
     <string name="add_user">Aggiungi utente al gruppo</string>
     <string name="add_user_dialog_title">Aggiungi utente</string>
-
-    <!-- Ads -->
-    <string name="remove_ads_title">Ads rimosso</string>
-    <string name="remove_ads_message">Grazie per il tuo supporto!</string>
-    <string name="thumbs_up_content_description">Thumbs Up</string>
 
     <string-array name="role_names">
         <item>Ospite</item>
