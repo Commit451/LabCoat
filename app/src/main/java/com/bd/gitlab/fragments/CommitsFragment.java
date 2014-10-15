@@ -3,6 +3,7 @@ package com.bd.gitlab.fragments;
 import java.util.List;
 
 import android.text.InputType;
+import android.widget.HeaderViewListAdapter;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
@@ -141,7 +142,7 @@ public class CommitsFragment extends Fragment implements SwipeRefreshLayout.OnRe
 	
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		Repository.selectedCommit = ((CommitsAdapter) listView.getAdapter()).getItem(position);
+		Repository.selectedCommit = ((CommitsAdapter) ((HeaderViewListAdapter) listView.getAdapter()).getWrappedAdapter()).getItem(position - 1);
 		startActivity(new Intent(getActivity(), DiffActivity.class));
 	}
 }
