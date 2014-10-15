@@ -62,6 +62,13 @@ public class DrawerAdapter extends BaseAdapter implements Filterable {
         final TextView text = (TextView) convertView.findViewById(R.id.text);
 		text.setText(projects.get(position).toString());
 
+        text.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                v.setSelected(true);
+            }
+        });
+
 		if(Repository.selectedProject != null && Repository.selectedProject.equals(projects.get(position))) {
             text.setTextColor(convertView.getResources().getColor(android.R.color.primary_text_light));
             text.setCompoundDrawablesWithIntrinsicBounds(null, null, convertView.getResources().getDrawable(R.drawable.ic_selected), null);
