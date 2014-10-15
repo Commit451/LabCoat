@@ -79,7 +79,6 @@ public class DiffLine {
 	}
 
 	public class Line {
-
 		public String lineContent;
 	}
 }

@@ -26,9 +26,9 @@ import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 public class DiffActivity extends Activity {
-	
+
+    @InjectView(R.id.message_container)	LinearLayout messageContainer;
 	@InjectView(R.id.diff_container) LinearLayout diffContainer;
-	@InjectView(R.id.message_container)	LinearLayout messageContainer;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +64,8 @@ public class DiffActivity extends Activity {
 		@Override
 		public void failure(RetrofitError e) {
 			RetrofitHelper.printDebugInfo(DiffActivity.this, e);
+
+            Crouton.makeText(DiffActivity.this, R.string.connection_error, Style.ALERT);
 		}
 	};
 	
@@ -99,9 +101,10 @@ public class DiffActivity extends Activity {
 	}
 	
 	private void setTextWrap(boolean checked) {
-		((MessageView)messageContainer.getChildAt(0)).setWrapped(checked);
+		((MessageView) messageContainer.getChildAt(0)).setWrapped(checked);
+
 		for(int i = 0; i < diffContainer.getChildCount(); ++i) {
-			((DiffView)diffContainer.getChildAt(i)).setWrapped(checked);
+			((DiffView) diffContainer.getChildAt(i)).setWrapped(checked);
 		}
 	}
 

@@ -66,6 +66,9 @@
     <!-- Commits -->
     <string name="copy_notification">URL wurde kopiert&#8230;</string>
 
+    <!-- Diffs -->
+    <string name="text_wrap_checkbox">Zeilenumbruch</string>
+
     <!-- Files -->
     <string name="file_saved">Datei wurde erfolgreich in den Downloads Ordner gespeichert</string>
 

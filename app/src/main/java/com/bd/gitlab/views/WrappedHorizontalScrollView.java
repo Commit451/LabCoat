@@ -37,12 +37,15 @@ public class WrappedHorizontalScrollView extends HorizontalScrollView {
 		int width = MeasureSpec.getSize(widthMeasureSpec);
 		int maxHeight = 0;
 		int childMeasuredState = 0;
+
 		if(getChildCount() > 0) {
 			final View child = getChildAt(0);
 			final LayoutParams lp = (LayoutParams) child.getLayoutParams();
+
 			childMeasuredState = child.getMeasuredState();
 			int childWidthMeasureSpec = MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY);
 			int childHeightMeasureSpec = getChildMeasureSpec(heightMeasureSpec, 0, lp.height);
+
 			child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
 			maxHeight = child.getMeasuredHeight();
 		}
