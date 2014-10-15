@@ -194,18 +194,13 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 				startActivity(new Intent(this, LoginActivity.class));
 				return true;
             case R.id.action_lock_orientation:
-                if(!rotationLocked) {
+                item.setChecked(!item.isChecked());
+                rotationLocked = item.isChecked();
+
+                if(rotationLocked)
                     setRequestedOrientation(Repository.getScreenOrientation(this));
-                    item.setTitle(R.string.action_unlock_orientation);
-
-                    rotationLocked = true;
-                }
-                else {
+                else
                     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
-                    item.setTitle(R.string.action_lock_orientation);
-
-                    rotationLocked = false;
-                }
                 return true;
 			default:
 				return super.onOptionsItemSelected(item);

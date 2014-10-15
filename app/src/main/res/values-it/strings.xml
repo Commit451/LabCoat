@@ -5,7 +5,6 @@
 
     <!-- Menu -->
     <string name="action_lock_orientation">Blocca rotazione</string>
-    <string name="action_unlock_orientation">Sblocca rotazione</string>
     <string name="action_logout">Logout</string>
     <string name="action_save">Salva</string>
     <string name="action_open">Apri</string>
