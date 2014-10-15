@@ -84,9 +84,13 @@ public class LoginActivity extends Activity {
 			Crouton.makeText(LoginActivity.this, R.string.login_error, Style.ALERT).show();
 			return;
 		}
-		else if(!url.startsWith("http://") && !url.startsWith("https://"))
-			urlInput.setText("http://" + urlInput.getText().toString());
-		
+        else if(url.startsWith("http://") && url.endsWith(".git"))
+            urlInput.setText(url.substring(0, nthOccurrence(url, '/', 2)));
+        else if(url.startsWith("git@") && url.endsWith(".git"))
+            urlInput.setText("http://" + url.substring(4, url.indexOf(':')));
+        else if(!url.startsWith("http://") && !url.startsWith("https://"))
+            urlInput.setText("http://" + urlInput.getText().toString());
+
 		if(isNormalLogin) {
 			connect(true);
 		}
@@ -94,7 +98,14 @@ public class LoginActivity extends Activity {
 			connect(false);
 		}
 	}
-	
+
+    public static int nthOccurrence(String str, char c, int n) {
+        int pos = str.indexOf(c, 0);
+        while (n-- > 0 && pos != -1)
+            pos = str.indexOf(c, pos + 1);
+        return pos;
+    }
+
 	@Override
 	public void onBackPressed() {
 		moveTaskToBack(true);
