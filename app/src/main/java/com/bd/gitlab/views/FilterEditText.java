@@ -1,17 +1,15 @@
 package com.bd.gitlab.views;
 
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import com.bd.gitlab.R;
 
 public class FilterEditText extends EditText {
-
-    int actionX, actionY;
 
     private DrawableClickListener clickListener;
 
@@ -35,27 +33,16 @@ public class FilterEditText extends EditText {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        Rect bounds;
         if(event.getAction() == MotionEvent.ACTION_DOWN) {
-            actionX = (int) event.getX();
-            actionY = (int) event.getY();
+            if(getText().length() > 0 && this.getCompoundDrawables()[2] != null) {
+                int actionX = (int) event.getRawX();
+                int drawableX = getRight();
 
-            if(getText().length() > 0) {
-                bounds = this.getCompoundDrawables()[2].getBounds();
+                drawableX -= getCompoundDrawables()[2].getBounds().width();
+                drawableX -= ((ViewGroup.MarginLayoutParams) getLayoutParams()).rightMargin;
+                drawableX -= 15;
 
-                int x, y;
-                int extraTapArea = 13;
-
-                x = (int) (actionX + extraTapArea);
-                y = (int) (actionY - extraTapArea);
-                x = getWidth() - x;
-
-                if(x <= 0)
-                    x += extraTapArea;
-                if(y <= 0)
-                    y = actionY;
-
-                if(bounds.contains(x, y) && clickListener != null) {
+                if(actionX >= drawableX && clickListener != null) {
                     playSoundEffect(android.view.SoundEffectConstants.CLICK);
                     clickListener.onClick(DrawableClickListener.DrawablePosition.RIGHT);
                     event.setAction(MotionEvent.ACTION_CANCEL);
