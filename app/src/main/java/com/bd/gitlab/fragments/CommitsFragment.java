@@ -2,9 +2,9 @@ package com.bd.gitlab.fragments;
 
 import java.util.List;
 
+import android.text.InputType;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import butterknife.OnClick;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -33,10 +33,10 @@ import com.bd.gitlab.tools.RetrofitHelper;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
-public class CommitsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, OnItemClickListener {
-	
+public class CommitsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, View.OnClickListener, OnItemClickListener {
+
+    private EditText repoUrl;
 	@InjectView(R.id.fragmentList) ListView listView;
-	@InjectView(R.id.repo_url) EditText repoUrl;
     @InjectView(R.id.swipe_layout) SwipeRefreshLayout swipeLayout;
 	
 	public CommitsFragment() {}
@@ -47,6 +47,16 @@ public class CommitsFragment extends Fragment implements SwipeRefreshLayout.OnRe
 		ButterKnife.inject(this, view);
 		
 		listView.setOnItemClickListener(this);
+        repoUrl = new EditText(getActivity());
+        repoUrl.setClickable(true);
+        repoUrl.setCursorVisible(false);
+        repoUrl.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_action_copy, 0);
+        repoUrl.setFocusable(false);
+        repoUrl.setFocusableInTouchMode(false);
+        repoUrl.setInputType(InputType.TYPE_TEXT_VARIATION_URI);
+        repoUrl.setMaxLines(1);
+        repoUrl.setOnClickListener(this);
+        listView.addHeaderView(repoUrl);
 
         swipeLayout.setOnRefreshListener(this);
         swipeLayout.setColorSchemeResources(android.R.color.holo_blue_bright, android.R.color.holo_green_light, android.R.color.holo_orange_light, android.R.color.holo_red_light);
@@ -116,8 +126,8 @@ public class CommitsFragment extends Fragment implements SwipeRefreshLayout.OnRe
 		}
 	};
 
-	@OnClick(R.id.repo_url)
-	public void onRepoClick() {
+    @Override
+	public void onClick(View v) {
         android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
         android.content.ClipData clip = android.content.ClipData.newPlainText("Copied Text", repoUrl.getText().toString());
         clipboard.setPrimaryClip(clip);

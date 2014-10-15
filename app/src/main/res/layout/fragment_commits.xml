@@ -5,31 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <LinearLayout
+    <ListView
+        android:id="@+id/fragmentList"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:orientation="vertical" >
-
-        <EditText
-            android:id="@+id/repo_url"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:clickable="true"
-            android:cursorVisible="false"
-            android:drawableRight="@drawable/ic_action_copy"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:inputType="textUri"
-            android:maxLines="1" />
-
-
-        <ListView
-            android:id="@+id/fragmentList"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent" />
-
-    </LinearLayout>
+        android:layout_height="fill_parent" />
 
 </android.support.v4.widget.SwipeRefreshLayout>
