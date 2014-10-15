@@ -412,14 +412,17 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 			
 			if(Repository.selectedProject != null)
 				Repository.getService().getBranches(Repository.selectedProject.getId(), branchesCallback);
+            else
+                if(pd != null && pd.isShowing())
+                    pd.cancel();
 		}
 		
 		@Override
 		public void failure(RetrofitError e) {
 			RetrofitHelper.printDebugInfo(MainActivity.this, e);
-			
-			if(pd != null && pd.isShowing())
-				pd.cancel();
+
+            if(pd != null && pd.isShowing())
+                pd.cancel();
 			
 			Crouton.makeText(MainActivity.this, R.string.connection_error, Style.ALERT).show();
 		}
