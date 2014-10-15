@@ -6,6 +6,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 
+import com.melnykov.fab.FloatingActionButton;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -21,7 +22,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.Button;
 import android.widget.ListView;
 
 import com.bd.gitlab.IssueActivity;
@@ -35,8 +35,8 @@ import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
 public class IssuesFragment extends Fragment implements OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
-	
-	@InjectView(R.id.add_issue_button) Button addIssueButton;
+
+	@InjectView(R.id.add_issue_button) FloatingActionButton addIssueButton;
 	@InjectView(R.id.fragmentList) ListView listView;
     @InjectView(R.id.swipe_layout) SwipeRefreshLayout swipeLayout;
 	
@@ -48,6 +48,7 @@ public class IssuesFragment extends Fragment implements OnItemClickListener, Swi
 		ButterKnife.inject(this, view);
 		
 		listView.setOnItemClickListener(this);
+        addIssueButton.attachToListView(listView);
 
         swipeLayout.setOnRefreshListener(this);
         swipeLayout.setColorSchemeResources(android.R.color.holo_blue_bright, android.R.color.holo_green_light, android.R.color.holo_orange_light, android.R.color.holo_red_light);
@@ -62,9 +63,9 @@ public class IssuesFragment extends Fragment implements OnItemClickListener, Swi
 	public void onDestroyView() {
 		super.onDestroyView();
         ButterKnife.reset(this);
-	}
-	
-	@Override
+    }
+
+    @Override
 	public void onRefresh() {
 		loadData();
 	}
@@ -87,7 +88,7 @@ public class IssuesFragment extends Fragment implements OnItemClickListener, Swi
 			listView.setAdapter(issueAdapter);
 			
 			Repository.issueAdapter = issueAdapter;
-			
+
 			addIssueButton.setEnabled(true);
 		}
 		
@@ -106,7 +107,7 @@ public class IssuesFragment extends Fragment implements OnItemClickListener, Swi
 	public boolean onBackPressed() {
 		return false;
 	}
-	
+
 	@OnClick(R.id.add_issue_button)
 	public void onAddIssueClick() {
 		FragmentTransaction ft = getFragmentManager().beginTransaction();

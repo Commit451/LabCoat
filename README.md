@@ -38,6 +38,7 @@ This project uses many open source libraries such as:
 * [Gson](https://code.google.com/p/google-gson/)
 * [joda-time-android](https://github.com/dlew/joda-time-android)
 * [Crouton](https://github.com/keyboardsurfer/Crouton)
+* [FloatingActionButton](https://github.com/makovkastar/FloatingActionButton)
 
 ## Contributing
 

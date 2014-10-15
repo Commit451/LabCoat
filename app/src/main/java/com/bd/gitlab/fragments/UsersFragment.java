@@ -6,6 +6,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 
+import com.melnykov.fab.FloatingActionButton;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -20,7 +21,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -35,7 +35,7 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 
 public class UsersFragment extends Fragment implements OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
 	
-	@InjectView(R.id.add_user_button) Button addUserButton;
+	@InjectView(R.id.add_user_button) FloatingActionButton addUserButton;
 	@InjectView(R.id.fragmentList) ListView listView;
 	@InjectView(R.id.error_text) TextView errorText;
     @InjectView(R.id.swipe_layout) SwipeRefreshLayout swipeLayout;
@@ -48,6 +48,7 @@ public class UsersFragment extends Fragment implements OnItemClickListener, Swip
         ButterKnife.inject(this, view);
 		
 		listView.setOnItemClickListener(this);
+        addUserButton.attachToListView(listView);
 
         swipeLayout.setOnRefreshListener(this);
         swipeLayout.setColorSchemeResources(android.R.color.holo_blue_bright, android.R.color.holo_green_light, android.R.color.holo_orange_light, android.R.color.holo_red_light);
