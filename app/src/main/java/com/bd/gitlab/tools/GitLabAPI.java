@@ -60,10 +60,13 @@ public interface GitLabAPI {
 	
 	@GET("/projects/{id}/repository/commits?per_page=100")
 	void getCommits(@Path("id") long projectId, @Query("ref_name") String branchName, Callback<List<DiffLine>> cb);
+
+	@GET("/projects/{id}/repository/commits/{sha}")
+	void getCommit(@Path("id") long projectId, @Path("sha") String commitSHA, Callback<DiffLine> cb);
 	
 	@GET("/projects/{id}/repository/commits/{sha}/diff")
 	void getCommitDiff(@Path("id") long projectId, @Path("sha") String commitSHA, Callback<List<Diff>> cb);
-	
+
 	/* --- ISSUE --- */
 	
 	@GET("/projects/{id}/issues?per_page=100")

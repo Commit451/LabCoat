@@ -9,12 +9,22 @@
     android:paddingBottom="16dp"
     android:scrollbarStyle="outsideOverlay"
     tools:context=".DiffActivity" >
-
     <LinearLayout
-        android:id="@+id/diff_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical" >
+        <LinearLayout
+            android:id="@+id/message_container"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/diff_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+        </LinearLayout>
     </LinearLayout>
 
 </ScrollView>
