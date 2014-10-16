@@ -65,7 +65,7 @@
     <string name="copy_notification">URL copiata nella clipboard&#8230;</string>
 
     <!-- Diffs -->
-    <string name="text_wrap_checkbox">Wrap text</string> <!-- NOT TRANSLATED -->
+    <string name="text_wrap_checkbox">Wrap su testo</string>
 
     <!-- Files -->
     <string name="file_saved">File salvato nella cartella di Download</string>
