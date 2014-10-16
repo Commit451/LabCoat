@@ -1,8 +1,12 @@
 package com.bd.gitlab.tools;
 
 import java.io.IOException;
+import java.net.ConnectException;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 
+import de.keyboardsurfer.android.widget.crouton.Crouton;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 
@@ -68,8 +72,10 @@ public class RetrofitHelper {
         errorMessage += ExceptionUtils.getStackTrace(error);
 		error.printStackTrace();
 
+        if(error.getCause() instanceof SocketTimeoutException || error.getCause() instanceof UnknownHostException || error.getCause() instanceof ConnectException)
+            return;
         //Ask user if he wants to send errorMessage
-        if(context != null)
+        else if(context != null)
             DebugDataHelper.sendErrorReport(context, errorMessage);
 	}
 }
