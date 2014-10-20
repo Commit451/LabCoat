@@ -7,7 +7,7 @@ report any bugs or feature requests and to see the list of known issues.
 
 ## Screenshots
 
-[Screenshots](https://github.com/ekx/GitLabAndroid/blob/master/screenshots.png)
+![Screenshots](https://github.com/ekx/GitLabAndroid/blob/master/screenshots.png)
 
 ## License
 
