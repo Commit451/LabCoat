@@ -1,3 +1,4 @@
+- 1.6.0: Updated app for material theme + various other features and fixes.
 - 1.5.6: Recompiled with downwards compatibility & removed material theme.
 - 1.5.5: Added GitLab 7.0 compatibility & implemented Material theme.
 - 1.5.4: Bugfixes.

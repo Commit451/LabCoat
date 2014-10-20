@@ -5,6 +5,10 @@ This is the source code for the unofficial GitLab Android app.
 Please see the [issues](https://github.com/ekx/GitLabAndroid/issues) section to
 report any bugs or feature requests and to see the list of known issues.
 
+## Screenshots
+
+[Screenshots](https://github.com/ekx/GitLabAndroid/blob/master/screenshots.png)
+
 ## License
 
 * [Apache Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.html)
