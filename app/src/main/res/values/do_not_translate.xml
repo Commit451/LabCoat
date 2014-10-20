@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="role_values">
+    <string-array name="role_values" translatable="false">
         <item>10</item>
         <item>20</item>
         <item>30</item>
@@ -9,6 +9,6 @@
     </string-array>
     
     <!-- Navigation Drawer Strings -->
-    <string name="drawer_open">Drawer opened</string>
-    <string name="drawer_close">Drawer closed</string>
+    <string name="drawer_open" translatable="false">Drawer opened</string>
+    <string name="drawer_close" translatable="false">Drawer closed</string>
 </resources>
