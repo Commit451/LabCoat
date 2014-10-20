@@ -210,6 +210,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 	@Override
 	public boolean onNavigationItemSelected(int itemPosition, long itemId) {
 		Repository.selectedBranch = Repository.branches.get(itemPosition);
+        Repository.setLastBranch(Repository.selectedBranch.getName());
 		loadData();
 		return true;
 	}
@@ -385,18 +386,18 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 		@Override
 		public void success(List<Project> projects, Response resp) {
 			Repository.projects = new ArrayList<Project>(projects);
-			
+
 			if(Repository.projects.size() != 0) {
 				if(Repository.getLastProject().length() == 0)
 					Repository.selectedProject = Repository.projects.get(0);
 				else if(Repository.projects.size() > 0) {
 					String lastProject = Repository.getLastProject();
-					
+
 					for(Project p : Repository.projects) {
 						if(p.toString().equals(lastProject))
 							Repository.selectedProject = p;
 					}
-					
+
 					if(Repository.selectedProject == null)
 						Repository.selectedProject = Repository.projects.get(0);
 				}
@@ -437,8 +438,11 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 			for(int i = 0; i < Repository.branches.size(); i++)
 			{
 				spinnerData[i] = Repository.branches.get(i);
-				if(Repository.selectedProject != null && spinnerData[i].getName().equals(Repository.selectedProject.getDefaultBranch()))
-					selectedBranchIndex = i;
+
+                if(Repository.getLastBranch().equals(spinnerData[i].getName()))
+                    selectedBranchIndex = i;
+                else if(selectedBranchIndex == -1 && Repository.selectedProject != null && spinnerData[i].getName().equals(Repository.selectedProject.getDefaultBranch()))
+                    selectedBranchIndex = i;
 			}
 			
 			actionBar.setDisplayShowTitleEnabled(false);

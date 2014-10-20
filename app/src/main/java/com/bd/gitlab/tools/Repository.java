@@ -70,7 +70,8 @@ public class Repository extends Application {
 	private static final String LOGGED_IN = "logged_in";
 	private static final String SERVER_URL = "server_url";
 	private static final String PRIVATE_TOKEN = "private_token";
-	private static final String LAST_PROJECT = "last_project";
+    private static final String LAST_PROJECT = "last_project";
+    private static final String LAST_BRANCH = "last_branch";
 	
 	private static SharedPreferences preferences;
 	private static GitLabAPI service;
@@ -156,16 +157,26 @@ public class Repository extends Application {
 	public static String getPrivateToken() {
 		return preferences.getString(PRIVATE_TOKEN, "");
 	}
-	
-	public static void setLastProject(String lastProject) {
-		SharedPreferences.Editor editor = preferences.edit();
-		editor.putString(LAST_PROJECT, lastProject);
-		editor.commit();
-	}
-	
-	public static String getLastProject() {
-		return preferences.getString(LAST_PROJECT, "");
-	}
+
+    public static void setLastProject(String lastProject) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(LAST_PROJECT, lastProject);
+        editor.commit();
+    }
+
+    public static String getLastProject() {
+        return preferences.getString(LAST_PROJECT, "");
+    }
+
+    public static void setLastBranch(String lastBranch) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(LAST_BRANCH, lastBranch);
+        editor.commit();
+    }
+
+    public static String getLastBranch() {
+        return preferences.getString(LAST_BRANCH, "");
+    }
 	
 	public static void setListViewSize(ListView listView) {
 		ListAdapter listAdapter = listView.getAdapter();
