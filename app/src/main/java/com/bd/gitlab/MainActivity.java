@@ -9,13 +9,13 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Point;
 import android.os.Bundle;
-import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -24,12 +24,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
+import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 
 import com.bd.gitlab.adapter.DrawerAdapter;
 import com.bd.gitlab.fragments.CommitsFragment;
@@ -87,17 +83,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 		actionBar.setHomeButtonEnabled(true);
 		
 		drawerList.setOnItemClickListener(this);
-		LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.ic_navigation_drawer, R.string.drawer_open, R.string.drawer_close) {
-			
-			public void onDrawerClosed(View view) {
-				hideSoftKeyboard();
-			}
-			
-			public void onDrawerOpened(View drawerView) {
-				// invalidateOptionsMenu();
-			}
-		};
+		drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close);
         drawerLayout.setDrawerListener(drawerToggle);
 
         filterProjectEdit.addTextChangedListener(new TextWatcher() {

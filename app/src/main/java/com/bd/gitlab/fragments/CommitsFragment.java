@@ -3,7 +3,7 @@ package com.bd.gitlab.fragments;
 import java.util.List;
 
 import android.text.InputType;
-import android.widget.HeaderViewListAdapter;
+import android.widget.*;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
@@ -19,10 +19,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.EditText;
-import android.widget.ListView;
 
 import com.bd.gitlab.DiffActivity;
 import com.bd.gitlab.R;
@@ -57,6 +54,7 @@ public class CommitsFragment extends Fragment implements SwipeRefreshLayout.OnRe
         repoUrl.setInputType(InputType.TYPE_TEXT_VARIATION_URI);
         repoUrl.setMaxLines(1);
         repoUrl.setOnClickListener(this);
+		repoUrl.setPadding(26, 26, 26, 26);
         listView.addHeaderView(repoUrl);
 
         swipeLayout.setOnRefreshListener(this);
