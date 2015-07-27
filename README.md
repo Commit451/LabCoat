@@ -1,5 +1,7 @@
 # GitLab for Android [![Google Play](http://developer.android.com/images/brand/en_generic_rgb_wo_45.png)](https://play.google.com/store/apps/details?id=com.bd.gitlab)
 
+[![Build Status](https://travis-ci.org/Commit451/GitLabAndroid.svg?branch=master)](https://travis-ci.org/Commit451/GitLabAndroid)
+
 This is the source code for the unofficial GitLab Android app.
 
 Please see the [issues](https://github.com/ekx/GitLabAndroid/issues) section to
@@ -19,7 +21,7 @@ To build the project create a file called 'signing.gradle' in the 'app' director
 
 ```
 android {
-    signingConfigs { 
+    signingConfigs {
         release {
             storeFile file("..")
             storePassword ".."
