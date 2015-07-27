@@ -79,7 +79,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 		ButterKnife.bind(this);
 		
 		actionBar = getActionBar();
-		actionBar.setIcon(getResources().getDrawable(R.drawable.ic_actionbar));
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		actionBar.setHomeButtonEnabled(true);
 		

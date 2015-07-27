@@ -11,7 +11,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="40dp"
         android:contentDescription="@string/app_name"
-        android:src="@drawable/logo" />
+        android:src="@mipmap/ic_launcher" />
 
     <EditText
         android:id="@+id/url_input"
