@@ -1,6 +1,5 @@
 package com.bd.gitlab;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -15,6 +14,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -59,7 +59,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class MainActivity extends FragmentActivity implements ActionBar.OnNavigationListener, OnItemClickListener {
+public class MainActivity extends BaseActivity implements ActionBar.OnNavigationListener, OnItemClickListener {
 	
 	@Bind(R.id.drawer_layout) DrawerLayout drawerLayout;
 	@Bind(R.id.left_drawer) LinearLayout drawerLeft;
@@ -78,7 +78,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 		setContentView(R.layout.activity_main);
 		ButterKnife.bind(this);
 		
-		actionBar = getActionBar();
+		actionBar = getSupportActionBar();
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		actionBar.setHomeButtonEnabled(true);
 		

@@ -1,6 +1,5 @@
 package com.bd.gitlab;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -40,7 +39,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class IssueActivity extends Activity {
+public class IssueActivity extends BaseActivity {
 	
 	@Bind(R.id.scroll1) ScrollView scroll;
 	
@@ -84,9 +83,9 @@ public class IssueActivity extends Activity {
 		long tempId = Repository.selectedIssue.getIid();
 		if(tempId < 1)
 			tempId = Repository.selectedIssue.getId();
-		
-		getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setTitle("Issue #" + tempId);
+
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setTitle("Issue #" + tempId);
 		
 		title.setText(Repository.selectedIssue.getTitle());
 		

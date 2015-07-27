@@ -1,6 +1,5 @@
 package com.bd.gitlab;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,7 +22,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class DiffActivity extends Activity {
+public class DiffActivity extends BaseActivity {
 
     @Bind(R.id.message_container)	LinearLayout messageContainer;
 	@Bind(R.id.diff_container) LinearLayout diffContainer;
@@ -45,8 +44,8 @@ public class DiffActivity extends Activity {
 	}
 	
 	private void init() {
-		getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setTitle(Repository.selectedCommit.getShortId());
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setTitle(Repository.selectedCommit.getShortId());
 
 		Repository.getService().getCommit(Repository.selectedProject.getId(), Repository.selectedCommit.getId(), commitCallback);
 		Repository.getService().getCommitDiff(Repository.selectedProject.getId(), Repository.selectedCommit.getId(), diffCallback);

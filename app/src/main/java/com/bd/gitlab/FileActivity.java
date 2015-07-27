@@ -1,7 +1,6 @@
 package com.bd.gitlab;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -31,7 +30,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class FileActivity extends Activity {
+public class FileActivity extends BaseActivity {
 	
 	@Bind(R.id.file_blob) WebView fileBlobView;
 	
@@ -62,8 +61,8 @@ public class FileActivity extends Activity {
 	
 	@SuppressLint("SetJavaScriptEnabled")
 	private void setupUI() {
-		getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setTitle(Repository.selectedFile.getName());
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setTitle(Repository.selectedFile.getName());
 		
 		fileBlobView.getSettings().setJavaScriptEnabled(true);
 	}

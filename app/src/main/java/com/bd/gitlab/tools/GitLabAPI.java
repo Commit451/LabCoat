@@ -1,20 +1,9 @@
 package com.bd.gitlab.tools;
 
-import java.util.List;
-
-import retrofit.Callback;
-import retrofit.client.Response;
-import retrofit.http.DELETE;
-import retrofit.http.GET;
-import retrofit.http.POST;
-import retrofit.http.PUT;
-import retrofit.http.Path;
-import retrofit.http.Query;
-
 import com.bd.gitlab.model.Branch;
-import com.bd.gitlab.model.DiffLine;
 import com.bd.gitlab.model.DeleteResponse;
 import com.bd.gitlab.model.Diff;
+import com.bd.gitlab.model.DiffLine;
 import com.bd.gitlab.model.Group;
 import com.bd.gitlab.model.Issue;
 import com.bd.gitlab.model.Milestone;
@@ -24,15 +13,29 @@ import com.bd.gitlab.model.Session;
 import com.bd.gitlab.model.TreeItem;
 import com.bd.gitlab.model.User;
 
+import java.util.List;
+
+import retrofit.Callback;
+import retrofit.client.Response;
+import retrofit.http.Body;
+import retrofit.http.DELETE;
+import retrofit.http.GET;
+import retrofit.http.POST;
+import retrofit.http.PUT;
+import retrofit.http.Path;
+import retrofit.http.Query;
+
 public interface GitLabAPI {
 	
 	/* --- LOGIN --- */
 	
 	@POST("/session")
-	void getSessionByUsername(@Query("login") String login, @Query("password") String password, Callback<Session> cb);
+	void getSessionByUsername(@Query("login") String login, @Query("password") String password,
+							  @Body String blankBodySoRetrofitDoesntCry, Callback<Session> cb);
 	
 	@POST("/session")
-	void getSessionByEmail(@Query("email") String email, @Query("password") String password, Callback<Session> cb);
+	void getSessionByEmail(@Query("email") String email, @Query("password") String password,
+						   @Body String blankBodySoRetrofitDoesntCry, Callback<Session> cb);
 	
 	/* --- MAIN --- */
 	

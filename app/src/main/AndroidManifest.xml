@@ -11,7 +11,7 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@android:style/Theme.DeviceDefault.Light.DarkActionBar" >
+        android:theme="@style/AppTheme" >
 
         <activity
             android:name="com.bd.gitlab.MainActivity"
@@ -27,7 +27,7 @@
             android:name="com.bd.gitlab.LoginActivity"
             android:label="@string/login_activity"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.DeviceDefault.NoActionBar" />
+            android:theme="@style/AppTheme" />
         <activity
             android:name="com.bd.gitlab.FileActivity"
             android:configChanges="orientation|screenSize"

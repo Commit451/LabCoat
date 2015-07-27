@@ -1,6 +1,5 @@
 package com.bd.gitlab;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -30,7 +29,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class LoginActivity extends Activity {
+public class LoginActivity extends BaseActivity {
 	
 	@Bind(R.id.url_input) TextView urlInput;
 	@Bind(R.id.user_input) TextView userInput;
@@ -136,9 +135,9 @@ public class LoginActivity extends Activity {
 	
 	private void connectByAuth() {
 		if(userInput.getText().toString().contains("@"))
-			Repository.getService().getSessionByEmail(userInput.getText().toString(), passwordInput.getText().toString(), sessionCallback);
+			Repository.getService().getSessionByEmail(userInput.getText().toString(), passwordInput.getText().toString(), "", sessionCallback);
 		else
-			Repository.getService().getSessionByUsername(userInput.getText().toString(), passwordInput.getText().toString(), sessionCallback);
+			Repository.getService().getSessionByUsername(userInput.getText().toString(), passwordInput.getText().toString(), "", sessionCallback);
 	}
 	
 	private Callback<Session> sessionCallback = new Callback<Session>() {
