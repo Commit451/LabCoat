@@ -1,25 +1,19 @@
 package com.bd.gitlab.fragments;
 
-import java.util.List;
-
-import android.text.InputType;
-import android.widget.*;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.EditText;
+import android.widget.HeaderViewListAdapter;
+import android.widget.ListView;
 
 import com.bd.gitlab.DiffActivity;
 import com.bd.gitlab.R;
@@ -28,21 +22,28 @@ import com.bd.gitlab.model.DiffLine;
 import com.bd.gitlab.tools.Repository;
 import com.bd.gitlab.tools.RetrofitHelper;
 
+import java.util.List;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 public class CommitsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, View.OnClickListener, OnItemClickListener {
 
     private EditText repoUrl;
-	@InjectView(R.id.fragmentList) ListView listView;
-    @InjectView(R.id.swipe_layout) SwipeRefreshLayout swipeLayout;
+	@Bind(R.id.fragmentList) ListView listView;
+    @Bind(R.id.swipe_layout) SwipeRefreshLayout swipeLayout;
 	
 	public CommitsFragment() {}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_commits, container, false);
-		ButterKnife.inject(this, view);
+		ButterKnife.bind(this, view);
 		
 		listView.setOnItemClickListener(this);
         repoUrl = new EditText(getActivity());
@@ -69,7 +70,7 @@ public class CommitsFragment extends Fragment implements SwipeRefreshLayout.OnRe
 	@Override
 	public void onDestroyView() {
 		super.onDestroyView();
-        ButterKnife.reset(this);
+        ButterKnife.unbind(this);
 	}
 	
 	@Override

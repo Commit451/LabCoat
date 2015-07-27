@@ -1,15 +1,5 @@
 package com.bd.gitlab;
 
-import java.util.List;
-
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-import butterknife.OnClick;
-
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -27,20 +17,28 @@ import com.bd.gitlab.model.Session;
 import com.bd.gitlab.tools.Repository;
 import com.bd.gitlab.tools.RetrofitHelper;
 
+import java.util.List;
+
 import javax.net.ssl.SSLHandshakeException;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 public class LoginActivity extends Activity {
 	
-	@InjectView(R.id.url_input) TextView urlInput;
-	@InjectView(R.id.user_input) TextView userInput;
-	@InjectView(R.id.password_input) TextView passwordInput;
-	@InjectView(R.id.token_input) TextView tokenInput;
+	@Bind(R.id.url_input) TextView urlInput;
+	@Bind(R.id.user_input) TextView userInput;
+	@Bind(R.id.password_input) TextView passwordInput;
+	@Bind(R.id.token_input) TextView tokenInput;
 	
-	@InjectView(R.id.normal_login) RelativeLayout normalLogin;
-	@InjectView(R.id.token_login) RelativeLayout tokenLogin;
+	@Bind(R.id.normal_login) RelativeLayout normalLogin;
+	@Bind(R.id.token_login) RelativeLayout tokenLogin;
 	
 	private boolean isNormalLogin = true;
 	
@@ -48,7 +46,7 @@ public class LoginActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
-		ButterKnife.inject(this);
+		ButterKnife.bind(this);
 	}
 	
 	@Override

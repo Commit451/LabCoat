@@ -1,12 +1,5 @@
 package com.bd.gitlab.fragments;
 
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
-
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -19,8 +12,13 @@ import com.bd.gitlab.model.DeleteResponse;
 import com.bd.gitlab.tools.Repository;
 import com.bd.gitlab.tools.RetrofitHelper;
 
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 public class RemoveUserDialogFragment extends DialogFragment {
 	
@@ -36,7 +34,7 @@ public class RemoveUserDialogFragment extends DialogFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.dialog_remove_user, container, false);
-		ButterKnife.inject(this, view);
+		ButterKnife.bind(this, view);
 		
 		getDialog().setTitle(getString(R.string.remove_user_dialog_title));
 		
@@ -46,7 +44,7 @@ public class RemoveUserDialogFragment extends DialogFragment {
 	@Override
 	public void onDestroyView() {
 		super.onDestroyView();
-        ButterKnife.reset(this);
+        ButterKnife.unbind(this);
 	}
 	
 	@OnClick(R.id.remove_button)

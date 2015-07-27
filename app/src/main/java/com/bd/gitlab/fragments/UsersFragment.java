@@ -1,16 +1,5 @@
 package com.bd.gitlab.fragments;
 
-import java.util.List;
-
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-import butterknife.OnClick;
-
-import com.melnykov.fab.FloatingActionButton;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
-
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -29,23 +18,32 @@ import com.bd.gitlab.adapter.UserAdapter;
 import com.bd.gitlab.model.User;
 import com.bd.gitlab.tools.Repository;
 import com.bd.gitlab.tools.RetrofitHelper;
+import com.melnykov.fab.FloatingActionButton;
 
+import java.util.List;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 public class UsersFragment extends Fragment implements OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
 	
-	@InjectView(R.id.add_user_button) FloatingActionButton addUserButton;
-	@InjectView(R.id.fragmentList) ListView listView;
-	@InjectView(R.id.error_text) TextView errorText;
-    @InjectView(R.id.swipe_layout) SwipeRefreshLayout swipeLayout;
+	@Bind(R.id.add_user_button) FloatingActionButton addUserButton;
+	@Bind(R.id.fragmentList) ListView listView;
+	@Bind(R.id.error_text) TextView errorText;
+    @Bind(R.id.swipe_layout) SwipeRefreshLayout swipeLayout;
 	
 	public UsersFragment() {}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_users, container, false);
-        ButterKnife.inject(this, view);
+        ButterKnife.bind(this, view);
 		
 		listView.setOnItemClickListener(this);
         addUserButton.attachToListView(listView);
@@ -62,7 +60,7 @@ public class UsersFragment extends Fragment implements OnItemClickListener, Swip
 	@Override
 	public void onDestroyView() {
 		super.onDestroyView();
-		ButterKnife.reset(this);
+		ButterKnife.unbind(this);
 	}
 	
 	@Override

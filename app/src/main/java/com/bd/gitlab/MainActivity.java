@@ -41,6 +41,7 @@ import com.bd.gitlab.tools.RetrofitHelper;
 import com.bd.gitlab.views.DrawableClickListener;
 import com.bd.gitlab.views.FilterEditText;
 
+import net.danlew.android.joda.JodaTimeAndroid;
 import net.danlew.android.joda.ResourceZoneInfoProvider;
 
 import java.lang.reflect.Field;
@@ -48,8 +49,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
@@ -60,11 +61,11 @@ import retrofit.client.Response;
 
 public class MainActivity extends FragmentActivity implements ActionBar.OnNavigationListener, OnItemClickListener {
 	
-	@InjectView(R.id.drawer_layout) DrawerLayout drawerLayout;
-	@InjectView(R.id.left_drawer) LinearLayout drawerLeft;
-	@InjectView(R.id.left_drawer_list) ListView drawerList;
-	@InjectView(R.id.pager) ViewPager viewPager;
-	@InjectView(R.id.filter_project) FilterEditText filterProjectEdit;
+	@Bind(R.id.drawer_layout) DrawerLayout drawerLayout;
+	@Bind(R.id.left_drawer) LinearLayout drawerLeft;
+	@Bind(R.id.left_drawer_list) ListView drawerList;
+	@Bind(R.id.pager) ViewPager viewPager;
+	@Bind(R.id.filter_project) FilterEditText filterProjectEdit;
 
 	private ActionBar actionBar;
 	private ActionBarDrawerToggle drawerToggle;
@@ -75,7 +76,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		ButterKnife.inject(this);
+		ButterKnife.bind(this);
 		
 		actionBar = getActionBar();
 		actionBar.setIcon(getResources().getDrawable(R.drawable.ic_actionbar));
@@ -119,8 +120,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 		catch(Exception ex) {
 			ex.printStackTrace();
 		}
-
-        ResourceZoneInfoProvider.init(this);
 		
 		Repository.init(this);
 		

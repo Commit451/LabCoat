@@ -1,10 +1,5 @@
 package com.bd.gitlab.fragments;
 
-import butterknife.ButterKnife;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
-
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,8 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import butterknife.InjectView;
-import butterknife.OnClick;
 
 import com.bd.gitlab.IssueActivity;
 import com.bd.gitlab.R;
@@ -22,14 +15,20 @@ import com.bd.gitlab.model.Issue;
 import com.bd.gitlab.tools.Repository;
 import com.bd.gitlab.tools.RetrofitHelper;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 public class AddIssueDialogFragment extends DialogFragment {
 	
-	@InjectView(R.id.title_input)
+	@Bind(R.id.title_input)
 	EditText titleInput;
-	@InjectView(R.id.description_input)
+	@Bind(R.id.description_input)
 	EditText descriptionInput;
 	
 	private ProgressDialog pd;
@@ -44,7 +43,7 @@ public class AddIssueDialogFragment extends DialogFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.dialog_add_issue, container, false);
-		ButterKnife.inject(this, view);
+		ButterKnife.bind(this, view);
 		
 		getDialog().setTitle(getString(R.string.add_issue_dialog_title));
 		
@@ -54,7 +53,7 @@ public class AddIssueDialogFragment extends DialogFragment {
 	@Override
 	public void onDestroyView() {
 		super.onDestroyView();
-        ButterKnife.reset(this);
+        ButterKnife.unbind(this);
 	}
 	
 	@OnClick(R.id.save_button)

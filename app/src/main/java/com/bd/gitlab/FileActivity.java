@@ -1,21 +1,5 @@
 package com.bd.gitlab;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringEscapeUtils;
-
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
@@ -30,12 +14,26 @@ import android.webkit.WebView;
 import com.bd.gitlab.tools.Repository;
 import com.bd.gitlab.tools.RetrofitHelper;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringEscapeUtils;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 public class FileActivity extends Activity {
 	
-	@InjectView(R.id.file_blob) WebView fileBlobView;
+	@Bind(R.id.file_blob) WebView fileBlobView;
 	
 	private MenuItem openFile;
 	private MenuItem saveFile;
@@ -46,7 +44,7 @@ public class FileActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_file);
-		ButterKnife.inject(this);
+		ButterKnife.bind(this);
 		
 		if(Repository.selectedFile != null) {
 			setupUI();

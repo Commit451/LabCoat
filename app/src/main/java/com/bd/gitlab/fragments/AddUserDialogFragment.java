@@ -1,10 +1,5 @@
 package com.bd.gitlab.fragments;
 
-import butterknife.ButterKnife;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
-
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -13,8 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import butterknife.InjectView;
-import butterknife.OnClick;
 
 import com.bd.gitlab.R;
 import com.bd.gitlab.adapter.UserAdapter;
@@ -22,14 +15,20 @@ import com.bd.gitlab.model.User;
 import com.bd.gitlab.tools.Repository;
 import com.bd.gitlab.tools.RetrofitHelper;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 public class AddUserDialogFragment extends DialogFragment {
 	
-	@InjectView(R.id.user_spinner)
+	@Bind(R.id.user_spinner)
 	Spinner userSpinner;
-	@InjectView(R.id.role_spinner)
+	@Bind(R.id.role_spinner)
 	Spinner roleSpinner;
 	
 	private ProgressDialog pd;
@@ -44,7 +43,7 @@ public class AddUserDialogFragment extends DialogFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.dialog_add_user, container, false);
-		ButterKnife.inject(this, view);
+		ButterKnife.bind(this, view);
 		
 		getDialog().setTitle(getString(R.string.add_user_dialog_title));
 		
@@ -60,7 +59,7 @@ public class AddUserDialogFragment extends DialogFragment {
 	@Override
 	public void onDestroyView() {
 		super.onDestroyView();
-        ButterKnife.reset(this);
+        ButterKnife.unbind(this);
 	}
 	
 	@OnClick(R.id.add_button)

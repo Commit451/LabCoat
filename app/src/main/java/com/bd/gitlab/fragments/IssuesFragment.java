@@ -1,16 +1,5 @@
 package com.bd.gitlab.fragments;
 
-import java.util.List;
-
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-import butterknife.OnClick;
-
-import com.melnykov.fab.FloatingActionButton;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -30,22 +19,31 @@ import com.bd.gitlab.adapter.IssuesAdapter;
 import com.bd.gitlab.model.Issue;
 import com.bd.gitlab.tools.Repository;
 import com.bd.gitlab.tools.RetrofitHelper;
+import com.melnykov.fab.FloatingActionButton;
 
+import java.util.List;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 public class IssuesFragment extends Fragment implements OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
 
-	@InjectView(R.id.add_issue_button) FloatingActionButton addIssueButton;
-	@InjectView(R.id.fragmentList) ListView listView;
-    @InjectView(R.id.swipe_layout) SwipeRefreshLayout swipeLayout;
+	@Bind(R.id.add_issue_button) FloatingActionButton addIssueButton;
+	@Bind(R.id.fragmentList) ListView listView;
+    @Bind(R.id.swipe_layout) SwipeRefreshLayout swipeLayout;
 	
 	public IssuesFragment() {}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_issues, container, false);
-		ButterKnife.inject(this, view);
+		ButterKnife.bind(this, view);
 		
 		listView.setOnItemClickListener(this);
         addIssueButton.attachToListView(listView);
@@ -62,7 +60,7 @@ public class IssuesFragment extends Fragment implements OnItemClickListener, Swi
 	@Override
 	public void onDestroyView() {
 		super.onDestroyView();
-        ButterKnife.reset(this);
+        ButterKnife.unbind(this);
     }
 
     @Override

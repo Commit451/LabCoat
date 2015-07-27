@@ -1,14 +1,5 @@
 package com.bd.gitlab;
 
-import java.util.List;
-
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -22,19 +13,26 @@ import com.bd.gitlab.tools.RetrofitHelper;
 import com.bd.gitlab.views.DiffView;
 import com.bd.gitlab.views.MessageView;
 
+import java.util.List;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 public class DiffActivity extends Activity {
 
-    @InjectView(R.id.message_container)	LinearLayout messageContainer;
-	@InjectView(R.id.diff_container) LinearLayout diffContainer;
+    @Bind(R.id.message_container)	LinearLayout messageContainer;
+	@Bind(R.id.diff_container) LinearLayout diffContainer;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_diff);
-		ButterKnife.inject(this);
+		ButterKnife.bind(this);
 		
 		init();
 	}

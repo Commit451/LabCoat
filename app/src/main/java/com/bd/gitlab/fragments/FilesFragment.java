@@ -1,15 +1,5 @@
 package com.bd.gitlab.fragments;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -29,23 +19,31 @@ import com.bd.gitlab.model.TreeItem;
 import com.bd.gitlab.tools.Repository;
 import com.bd.gitlab.tools.RetrofitHelper;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 public class FilesFragment extends Fragment implements OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
 	
 	private ArrayList<String> path;
 	
-	@InjectView(R.id.fragmentList) ListView listView;
-	@InjectView(R.id.error_text) TextView errorText;
-    @InjectView(R.id.swipe_layout) SwipeRefreshLayout swipeLayout;
+	@Bind(R.id.fragmentList) ListView listView;
+	@Bind(R.id.error_text) TextView errorText;
+    @Bind(R.id.swipe_layout) SwipeRefreshLayout swipeLayout;
 	
 	public FilesFragment() {}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_files, container, false);
-		ButterKnife.inject(this, view);
+		ButterKnife.bind(this, view);
 		
 		listView.setOnItemClickListener(this);
 
@@ -63,7 +61,7 @@ public class FilesFragment extends Fragment implements OnItemClickListener, Swip
 	@Override
 	public void onDestroyView() {
 		super.onDestroyView();
-        ButterKnife.reset(this);
+        ButterKnife.unbind(this);
 	}
 	
 	public void loadData() {

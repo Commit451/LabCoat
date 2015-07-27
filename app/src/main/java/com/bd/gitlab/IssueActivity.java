@@ -1,18 +1,5 @@
 package com.bd.gitlab;
 
-import in.uncod.android.bypass.Bypass;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-import butterknife.OnClick;
-
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
-
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -40,22 +27,32 @@ import com.bd.gitlab.model.User;
 import com.bd.gitlab.tools.Repository;
 import com.bd.gitlab.tools.RetrofitHelper;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
+import in.uncod.android.bypass.Bypass;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 public class IssueActivity extends Activity {
 	
-	@InjectView(R.id.scroll1) ScrollView scroll;
+	@Bind(R.id.scroll1) ScrollView scroll;
 	
-	@InjectView(R.id.title) TextView title;
-	@InjectView(R.id.state_spinner) Spinner stateSpinner;
-	@InjectView(R.id.assignee_spinner) Spinner assigneeSpinner;
-	@InjectView(R.id.milestone_spinner) Spinner milestoneSpinner;
-	@InjectView(R.id.description) TextView description;
-	@InjectView(R.id.note_list) ListView noteList;
+	@Bind(R.id.title) TextView title;
+	@Bind(R.id.state_spinner) Spinner stateSpinner;
+	@Bind(R.id.assignee_spinner) Spinner assigneeSpinner;
+	@Bind(R.id.milestone_spinner) Spinner milestoneSpinner;
+	@Bind(R.id.description) TextView description;
+	@Bind(R.id.note_list) ListView noteList;
 	
-	@InjectView(R.id.progressbar_loading) ProgressBar progressBar;
-	@InjectView(R.id.new_note_edit) EditText newNoteEdit;
+	@Bind(R.id.progressbar_loading) ProgressBar progressBar;
+	@Bind(R.id.new_note_edit) EditText newNoteEdit;
 	
 	private ProgressDialog pd;
 	
@@ -63,7 +60,7 @@ public class IssueActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_issue);
-		ButterKnife.inject(this);
+		ButterKnife.bind(this);
 		
 		if(Repository.selectedIssue != null) {
 			setupUI();
