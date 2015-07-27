@@ -35,7 +35,7 @@
         android:orientation="vertical"
         android:background="@android:color/white">
 
-        <com.bd.gitlab.views.FilterEditText
+        <com.commit451.gitlab.views.FilterEditText
             android:id="@+id/filter_project"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

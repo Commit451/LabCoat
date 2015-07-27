@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.bd.gitlab" >
+    package="com.commit451.gitlab" >
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
-        android:name=".GitLabApp"
+        android:name="com.commit451.gitlab.GitLabApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
 
         <activity
-            android:name="com.bd.gitlab.MainActivity"
+            android:name="com.commit451.gitlab.MainActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/app_name" >
             <intent-filter>
@@ -24,33 +24,33 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.bd.gitlab.LoginActivity"
+            android:name="com.commit451.gitlab.LoginActivity"
             android:label="@string/login_activity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
-            android:name="com.bd.gitlab.FileActivity"
+            android:name="com.commit451.gitlab.FileActivity"
             android:configChanges="orientation|screenSize"
-            android:parentActivityName="com.bd.gitlab.MainActivity" >
+            android:parentActivityName="com.commit451.gitlab.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.bd.gitlab.MainActivity" />
+                android:value="com.commit451.gitlab.MainActivity" />
         </activity>
         <activity
-            android:name="com.bd.gitlab.IssueActivity"
+            android:name="com.commit451.gitlab.IssueActivity"
             android:configChanges="orientation|screenSize"
-            android:parentActivityName="com.bd.gitlab.MainActivity" >
+            android:parentActivityName="com.commit451.gitlab.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.bd.gitlab.MainActivity" />
+                android:value="com.commit451.gitlab.MainActivity" />
         </activity>
         <activity
-            android:name="com.bd.gitlab.DiffActivity"
+            android:name="com.commit451.gitlab.DiffActivity"
             android:configChanges="orientation|screenSize"
-            android:parentActivityName="com.bd.gitlab.MainActivity" >
+            android:parentActivityName="com.commit451.gitlab.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.bd.gitlab.MainActivity" />
+                android:value="com.commit451.gitlab.MainActivity" />
         </activity>
 
     </application>
