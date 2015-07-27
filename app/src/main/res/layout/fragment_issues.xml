@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <android.support.v4.widget.SwipeRefreshLayout
+    <com.commit451.gitlab.views.GitLabSwipeRefreshLayout
         android:id="@+id/swipe_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
@@ -16,7 +16,7 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true" />
 
-    </android.support.v4.widget.SwipeRefreshLayout>
+    </com.commit451.gitlab.views.GitLabSwipeRefreshLayout>
 
     <com.melnykov.fab.FloatingActionButton
         android:id="@+id/add_issue_button"

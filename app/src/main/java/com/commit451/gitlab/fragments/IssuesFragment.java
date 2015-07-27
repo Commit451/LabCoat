@@ -49,8 +49,7 @@ public class IssuesFragment extends Fragment implements OnItemClickListener, Swi
         addIssueButton.attachToListView(listView);
 
         swipeLayout.setOnRefreshListener(this);
-        swipeLayout.setColorSchemeResources(android.R.color.holo_blue_bright, android.R.color.holo_green_light, android.R.color.holo_orange_light, android.R.color.holo_red_light);
-		
+
 		if(Repository.selectedProject != null)
 			loadData();
 		

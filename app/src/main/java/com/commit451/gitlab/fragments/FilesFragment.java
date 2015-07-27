@@ -48,8 +48,7 @@ public class FilesFragment extends Fragment implements OnItemClickListener, Swip
 		listView.setOnItemClickListener(this);
 
         swipeLayout.setOnRefreshListener(this);
-        swipeLayout.setColorSchemeResources(android.R.color.holo_blue_bright, android.R.color.holo_green_light, android.R.color.holo_orange_light, android.R.color.holo_red_light);
-		
+
 		path = new ArrayList<String>();
 		
 		if(Repository.selectedProject != null)

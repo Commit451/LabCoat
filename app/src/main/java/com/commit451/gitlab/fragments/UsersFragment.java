@@ -49,8 +49,7 @@ public class UsersFragment extends Fragment implements OnItemClickListener, Swip
         addUserButton.attachToListView(listView);
 
         swipeLayout.setOnRefreshListener(this);
-        swipeLayout.setColorSchemeResources(android.R.color.holo_blue_bright, android.R.color.holo_green_light, android.R.color.holo_orange_light, android.R.color.holo_red_light);
-		
+
 		if(Repository.selectedProject != null)
 			loadData();
 		
