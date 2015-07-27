@@ -1,26 +1,26 @@
 import com.android.build.gradle.tasks.PackageApplication
 
-apply plugin: 'android'
+apply plugin: 'com.android.application'
 apply from: 'signing.gradle'
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion '21.1.1'
+    compileSdkVersion 22
+    buildToolsVersion '21.1.2'
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 21
+        targetSdkVersion 22
         versionCode 37
         versionName "1.6.0"
     }
     buildTypes {
         release {
             signingConfig signingConfigs.release
-            runProguard false
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
             debuggable false
-            jniDebugBuild false
-            zipAlign true
+            jniDebuggable false
+            zipAlignEnabled true
         }
     }
     packagingOptions {
@@ -40,8 +40,8 @@ dependencies {
     compile 'com.jakewharton:butterknife:5.1.2'
     compile 'de.keyboardsurfer.android.widget:crouton:1.8.5@aar'
     compile 'com.melnykov:floatingactionbutton:1.0.4'
-    compile 'com.android.support:support-v4:21.0.0'
-    compile 'com.android.support:appcompat-v7:21.0.0'
+    compile 'com.android.support:support-v4:22.1.1'
+    compile 'com.android.support:appcompat-v7:22.1.1'
     compile fileTree(dir: 'libs', include: ['*.jar'])
 }
 
@@ -50,7 +50,7 @@ task copyNativeLibs(type: Copy) {
     into new File(buildDir, 'native-libs')
 }
 
-tasks.withType(Compile) { compileTask -> compileTask.dependsOn copyNativeLibs }
+tasks.withType(JavaCompile) { compileTask -> compileTask.dependsOn copyNativeLibs }
 
 clean.dependsOn 'cleanCopyNativeLibs'
 
