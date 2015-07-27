@@ -1,8 +1,5 @@
 package com.bd.gitlab.adapter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +9,9 @@ import android.widget.TextView;
 
 import com.bd.gitlab.R;
 import com.bd.gitlab.model.TreeItem;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FilesAdapter extends BaseAdapter {
 	
@@ -43,17 +43,22 @@ public class FilesAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		if(convertView == null) convertView = inflater.inflate(R.layout.simple_list_item, parent, false);
+		if(convertView == null) {
+			convertView = inflater.inflate(R.layout.simple_list_item, parent, false);
+		}
 
 		final TextView text = (TextView) convertView.findViewById(R.id.text);
         text.setText(treeItems.get(position).getName());
 
-		if(treeItems.get(position).getType().equals("tree"))
+		if(treeItems.get(position).getType().equals("tree")) {
 			text.setCompoundDrawablesWithIntrinsicBounds(convertView.getResources().getDrawable(R.drawable.ic_folder), null, null, null);
-		else if(treeItems.get(position).getType().equals("submodule"))
-            text.setCompoundDrawablesWithIntrinsicBounds(convertView.getResources().getDrawable(R.drawable.ic_repo), null, null, null);
-		else
-            text.setCompoundDrawablesWithIntrinsicBounds(convertView.getResources().getDrawable(R.drawable.ic_doc), null, null, null);
+		}
+		else if(treeItems.get(position).getType().equals("submodule")) {
+			text.setCompoundDrawablesWithIntrinsicBounds(convertView.getResources().getDrawable(R.drawable.ic_repo), null, null, null);
+		}
+		else {
+			text.setCompoundDrawablesWithIntrinsicBounds(convertView.getResources().getDrawable(R.drawable.ic_doc), null, null, null);
+		}
 
 		return convertView;
 	}
