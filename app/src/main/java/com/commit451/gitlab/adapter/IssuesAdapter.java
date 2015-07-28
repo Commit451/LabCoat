@@ -1,98 +1,63 @@
 package com.commit451.gitlab.adapter;
 
-import android.content.Context;
-import android.graphics.Color;
-import android.view.LayoutInflater;
+import android.content.Intent;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.TextView;
 
+import com.commit451.gitlab.IssueActivity;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.Issue;
 import com.commit451.gitlab.tools.Repository;
-import com.commit451.gitlab.views.CompoundTextView;
-import com.squareup.picasso.Picasso;
+import com.commit451.gitlab.viewHolders.IssueViewHolder;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import fr.tkeunebr.gravatar.Gravatar;
+/**
+ * Created by Jawn on 7/28/2015.
+ */
+public class IssuesAdapter extends RecyclerView.Adapter<IssueViewHolder> {
 
-public class IssuesAdapter extends BaseAdapter {
-	
-	private ArrayList<Issue> issues;
-	private LayoutInflater inflater;
+    private List<Issue> mValues;
 
-	public IssuesAdapter(Context context, List<Issue> issues) {
-		this.issues = new ArrayList<Issue>(issues);
-		
-		if(context != null) {
-			inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		}
-	}
-	
-	@Override
-	public int getCount() {
-		return issues.size();
-	}
+    public Issue getValueAt(int position) {
+        return mValues.get(position);
+    }
 
-	@Override
-	public Issue getItem(int position) {
-		return issues.get(position);
-	}
+    public IssuesAdapter(List<Issue> items) {
+        mValues = items;
+    }
 
-	@Override
-	public long getItemId(int position) {
-		return position;
-	}
-	
-	public void addIssue(Issue issue) {
-		issues.add(0, issue);
-	}
+    private final View.OnClickListener onProjectClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            int position = (int) v.getTag(R.id.list_position);
+            Repository.selectedIssue = getValueAt(position);
+            v.getContext().startActivity(new Intent(v.getContext(), IssueActivity.class));
+        }
+    };
 
-	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
-		if(convertView == null) convertView = inflater.inflate(R.layout.list_item, parent, false);
+    @Override
+    public IssueViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        IssueViewHolder holder = IssueViewHolder.create(parent);
+        holder.itemView.setOnClickListener(onProjectClickListener);
+        return holder;
+    }
 
-		final TextView title = (TextView) convertView.findViewById(R.id.title);
-		final CompoundTextView summary = (CompoundTextView) convertView.findViewById(R.id.summary);
-		final TextView custom = (TextView) convertView.findViewById(R.id.custom);
-		
-		long tempId = issues.get(position).getIid();
-		if(tempId < 1)
-			tempId = issues.get(position).getId();
-		
-		title.setText("#" + tempId + ": " + issues.get(position).getTitle());
-		
-		String state = issues.get(position).getState();
-		custom.setText(state);
-		if(state != null && (state.equals("opened") || state.equals("reopened"))) {
-			custom.setTextColor(Color.parseColor("#30C830"));
-		}
-		else if(state != null && (state.equals("closed"))) {
-			custom.setTextColor(Color.parseColor("#FF0000"));
-		}
+    @Override
+    public void onBindViewHolder(final IssueViewHolder holder, int position) {
+        Issue issue = getValueAt(position);
+        holder.bind(issue);
+        holder.itemView.setTag(R.id.list_position, position);
+    }
 
-        float percent = Repository.displayWidth / 720f;
-        int size = (int) (40f * percent);
-		
-		String assigneeName = "Unassigned";
-		String assigneeAvatarUrl = "http://www.gravatar.com/avatar/00000000000000000000000000000000?s=" + size;
-		
-		if(issues.get(position).getAssignee() != null) {
-			assigneeName = issues.get(position).getAssignee().getName();
+    @Override
+    public int getItemCount() {
+        return mValues.size();
+    }
 
-            if(issues.get(position).getAssignee().getEmail() != null)
-                assigneeAvatarUrl = Gravatar.init().with(issues.get(position).getAssignee().getEmail()).size(size).build();
-            else if(issues.get(position).getAssignee().getAvatarUrl() != null)
-                assigneeAvatarUrl = issues.get(position).getAssignee().getAvatarUrl() + "&s=" + size;
-		}
-		
-		summary.setText(assigneeName);
-        Picasso.with(convertView.getContext()).load(assigneeAvatarUrl).into(summary);
-
-		return convertView;
-	}
-
+    public void addIssue(Issue issue) {
+        mValues.add(0, issue);
+        notifyItemInserted(0);
+    }
 }

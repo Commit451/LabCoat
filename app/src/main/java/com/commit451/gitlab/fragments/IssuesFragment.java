@@ -1,20 +1,17 @@
 package com.commit451.gitlab.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ListView;
 
-import com.commit451.gitlab.IssueActivity;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.IssuesAdapter;
 import com.commit451.gitlab.model.Issue;
@@ -30,10 +27,10 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class IssuesFragment extends Fragment implements OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
+public class IssuesFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
 	@Bind(R.id.add_issue_button) View addIssueButton;
-	@Bind(R.id.fragmentList) ListView listView;
+	@Bind(R.id.list) RecyclerView listView;
     @Bind(R.id.swipe_layout) SwipeRefreshLayout swipeLayout;
 	
 	public IssuesFragment() {}
@@ -42,9 +39,8 @@ public class IssuesFragment extends Fragment implements OnItemClickListener, Swi
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_issues, container, false);
 		ButterKnife.bind(this, view);
-		
-		listView.setOnItemClickListener(this);
 
+		listView.setLayoutManager(new LinearLayoutManager(getActivity()));
         swipeLayout.setOnRefreshListener(this);
 
 		if(Repository.selectedProject != null)
@@ -65,8 +61,9 @@ public class IssuesFragment extends Fragment implements OnItemClickListener, Swi
 	}
 	
 	public void loadData() {
-		if(swipeLayout != null && !swipeLayout.isRefreshing())
-            swipeLayout.setRefreshing(true);
+		if(swipeLayout != null && !swipeLayout.isRefreshing()) {
+			swipeLayout.setRefreshing(true);
+		}
 		
 		Repository.getService().getIssues(Repository.selectedProject.getId(), issuesCallback);
 	}
@@ -77,9 +74,9 @@ public class IssuesFragment extends Fragment implements OnItemClickListener, Swi
 		public void success(List<Issue> issues, Response resp) {
 			if(swipeLayout != null && swipeLayout.isRefreshing())
                 swipeLayout.setRefreshing(false);
-			
-			IssuesAdapter issueAdapter = new IssuesAdapter(getActivity(), issues);
-			listView.setAdapter(issueAdapter);
+
+			IssuesAdapter issueAdapter = new IssuesAdapter(issues);
+			listView.setAdapter(new IssuesAdapter(issues));
 			
 			Repository.issueAdapter = issueAdapter;
 
@@ -107,11 +104,5 @@ public class IssuesFragment extends Fragment implements OnItemClickListener, Swi
 		FragmentTransaction ft = getFragmentManager().beginTransaction();
 		DialogFragment newFragment = AddIssueDialogFragment.newInstance();
 		newFragment.show(ft, "dialog");
-	}
-	
-	@Override
-	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		Repository.selectedIssue = ((IssuesAdapter) listView.getAdapter()).getItem(position);
-		startActivity(new Intent(getActivity(), IssueActivity.class));
 	}
 }
