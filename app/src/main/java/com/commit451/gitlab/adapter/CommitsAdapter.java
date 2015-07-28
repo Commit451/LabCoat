@@ -1,70 +1,58 @@
 package com.commit451.gitlab.adapter;
 
-import android.content.Context;
-import android.text.format.DateUtils;
-import android.view.LayoutInflater;
+import android.content.Intent;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.TextView;
 
+import com.commit451.gitlab.DiffActivity;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.DiffLine;
 import com.commit451.gitlab.tools.Repository;
-import com.commit451.gitlab.views.CompoundTextView;
-import com.squareup.picasso.Picasso;
+import com.commit451.gitlab.viewHolders.CommitViewHolder;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import fr.tkeunebr.gravatar.Gravatar;
+/**
+ * Created by Jawn on 7/28/2015.
+ */
+public class CommitsAdapter extends RecyclerView.Adapter<CommitViewHolder> {
 
-public class CommitsAdapter extends BaseAdapter {
+    private List<DiffLine> mValues;
 
-	private ArrayList<DiffLine> commits;
-	private LayoutInflater inflater;
-	
-	public CommitsAdapter(Context context, List<DiffLine> commits) {
-		this.commits = new ArrayList<DiffLine>(commits);
-		
-		if(context != null) {
-			inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		}
-	}
-	
-	@Override
-	public int getCount() {
-		return commits.size();
-	}
-	
-	@Override
-	public DiffLine getItem(int position) {
-		return commits.get(position);
-	}
-	
-	@Override
-	public long getItemId(int position) {
-		return position;
-	}
-	
-	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
-		if(convertView == null) convertView = inflater.inflate(R.layout.list_item, parent, false);
+    public DiffLine getValueAt(int position) {
+        return mValues.get(position);
+    }
 
-        final TextView title = (TextView) convertView.findViewById(R.id.title);
-		final CompoundTextView summary = (CompoundTextView) convertView.findViewById(R.id.summary);
-		final TextView custom = (TextView) convertView.findViewById(R.id.custom);
-		
-		title.setText(commits.get(position).getTitle());
-        summary.setText(commits.get(position).getAuthorName());
-		custom.setText(DateUtils.getRelativeTimeSpanString(commits.get(position).getCreatedAt().getTime()));
-		
-		float percent = Repository.displayWidth / 720f;
-		int size = (int) (40f * percent);
+    public CommitsAdapter(List<DiffLine> items) {
+        mValues = items;
+    }
 
-        String url = Gravatar.init().with(commits.get(position).getAuthorEmail()).size(size).build();
-        Picasso.with(convertView.getContext()).load(url).into(summary);
-		
-		return convertView;
-	}
+    private final View.OnClickListener onProjectClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            int position = (int) v.getTag(R.id.list_position);
+            Repository.selectedCommit = getValueAt(position);
+            v.getContext().startActivity(new Intent(v.getContext(), DiffActivity.class));
+        }
+    };
+
+    @Override
+    public CommitViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        CommitViewHolder holder = CommitViewHolder.create(parent);
+        holder.itemView.setOnClickListener(onProjectClickListener);
+        return holder;
+    }
+
+    @Override
+    public void onBindViewHolder(final CommitViewHolder holder, int position) {
+        DiffLine commit = getValueAt(position);
+        holder.bind(commit);
+        holder.itemView.setTag(R.id.list_position, position);
+    }
+
+    @Override
+    public int getItemCount() {
+        return mValues.size();
+    }
 }

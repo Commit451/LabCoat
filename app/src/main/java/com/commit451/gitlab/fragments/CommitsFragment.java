@@ -1,19 +1,15 @@
 package com.commit451.gitlab.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.HeaderViewListAdapter;
-import android.widget.ListView;
 
-import com.commit451.gitlab.DiffActivity;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.CommitsAdapter;
 import com.commit451.gitlab.model.DiffLine;
@@ -28,9 +24,9 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class CommitsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, OnItemClickListener {
+public class CommitsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
-	@Bind(R.id.fragmentList) ListView listView;
+	@Bind(R.id.list) RecyclerView listView;
     @Bind(R.id.swipe_layout) SwipeRefreshLayout swipeLayout;
 	
 	public CommitsFragment() {}
@@ -39,9 +35,8 @@ public class CommitsFragment extends Fragment implements SwipeRefreshLayout.OnRe
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_commits, container, false);
 		ButterKnife.bind(this, view);
-		
-		listView.setOnItemClickListener(this);
 
+		listView.setLayoutManager(new LinearLayoutManager(getActivity()));
         swipeLayout.setOnRefreshListener(this);
 
 		if(Repository.selectedProject != null)
@@ -78,21 +73,27 @@ public class CommitsFragment extends Fragment implements SwipeRefreshLayout.OnRe
 		
 		Repository.getService().getCommits(Repository.selectedProject.getId(), Repository.selectedBranch.getName(), commitsCallback);
 	}
+
+	public boolean onBackPressed() {
+		return false;
+	}
 	
 	private Callback<List<DiffLine>> commitsCallback = new Callback<List<DiffLine>>() {
 		
 		@Override
 		public void success(List<DiffLine> commits, Response resp) {
-			if(swipeLayout != null && swipeLayout.isRefreshing())
-                swipeLayout.setRefreshing(false);
+            if (swipeLayout == null) {
+                return;
+            }
+            swipeLayout.setRefreshing(false);
 			
-			if(commits.size() > 0)
+			if(commits.size() > 0) {
 				Repository.newestCommit = commits.get(0);
-			else
+			}
+			else {
 				Repository.newestCommit = null;
-			
-			CommitsAdapter commitsAdapter = new CommitsAdapter(getActivity(), commits);
-			listView.setAdapter(commitsAdapter);
+			}
+			listView.setAdapter(new CommitsAdapter(commits));
 		}
 		
 		@Override
@@ -107,14 +108,4 @@ public class CommitsFragment extends Fragment implements SwipeRefreshLayout.OnRe
 			listView.setAdapter(null);
 		}
 	};
-	
-	public boolean onBackPressed() {
-		return false;
-	}
-	
-	@Override
-	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		Repository.selectedCommit = ((CommitsAdapter) ((HeaderViewListAdapter) listView.getAdapter()).getWrappedAdapter()).getItem(position - 1);
-		startActivity(new Intent(getActivity(), DiffActivity.class));
-	}
 }
