@@ -3,4 +3,6 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="padding_normal">16dp</dimen>
+    <dimen name="actionbarSize">56dp</dimen>
+    <dimen name="doubleActionbarSize">112dp</dimen>
 </resources>

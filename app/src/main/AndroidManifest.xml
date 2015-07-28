@@ -14,19 +14,17 @@
         android:theme="@style/AppTheme" >
 
         <activity
-            android:name="com.commit451.gitlab.MainActivity" >
+            android:name="com.commit451.gitlab.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name="com.commit451.gitlab.LoginActivity"
-            android:theme="@style/AppThemeNoAB" />
+            android:name="com.commit451.gitlab.LoginActivity" />
         <activity
             android:name="com.commit451.gitlab.FileActivity"
             android:configChanges="orientation|screenSize"
-            android:theme="@style/AppThemeNoAB"
             android:parentActivityName="com.commit451.gitlab.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -35,7 +33,6 @@
         <activity
             android:name="com.commit451.gitlab.IssueActivity"
             android:configChanges="orientation|screenSize"
-            android:theme="@style/AppThemeNoAB"
             android:parentActivityName="com.commit451.gitlab.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -44,7 +41,6 @@
         <activity
             android:name="com.commit451.gitlab.DiffActivity"
             android:configChanges="orientation|screenSize"
-            android:theme="@style/AppThemeNoAB"
             android:parentActivityName="com.commit451.gitlab.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

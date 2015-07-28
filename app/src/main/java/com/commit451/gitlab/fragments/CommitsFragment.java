@@ -1,17 +1,14 @@
 package com.commit451.gitlab.fragments;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.EditText;
 import android.widget.HeaderViewListAdapter;
 import android.widget.ListView;
 
@@ -32,9 +29,8 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class CommitsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, View.OnClickListener, OnItemClickListener {
+public class CommitsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, OnItemClickListener {
 
-    private EditText repoUrl;
 	@Bind(R.id.fragmentList) ListView listView;
     @Bind(R.id.swipe_layout) SwipeRefreshLayout swipeLayout;
 	
@@ -46,17 +42,6 @@ public class CommitsFragment extends Fragment implements SwipeRefreshLayout.OnRe
 		ButterKnife.bind(this, view);
 		
 		listView.setOnItemClickListener(this);
-        repoUrl = new EditText(getActivity());
-        repoUrl.setClickable(true);
-        repoUrl.setCursorVisible(false);
-        repoUrl.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_action_copy, 0);
-        repoUrl.setFocusable(false);
-        repoUrl.setFocusableInTouchMode(false);
-        repoUrl.setInputType(InputType.TYPE_TEXT_VARIATION_URI);
-        repoUrl.setMaxLines(1);
-        repoUrl.setOnClickListener(this);
-		repoUrl.setPadding(26, 26, 26, 26);
-        listView.addHeaderView(repoUrl);
 
         swipeLayout.setOnRefreshListener(this);
 
@@ -80,9 +65,7 @@ public class CommitsFragment extends Fragment implements SwipeRefreshLayout.OnRe
 	public void loadData() {
 		if(Repository.selectedProject == null)
 			return;
-		
-		repoUrl.setText("git@" + Repository.getServerUrl().replaceAll("http://", "").replaceAll("https://", "") + ":" + Repository.selectedProject.getPathWithNamespace() + ".git");
-		
+
 		if(Repository.selectedBranch == null) {
             if(swipeLayout != null && swipeLayout.isRefreshing())
                 swipeLayout.setRefreshing(false);
@@ -124,15 +107,6 @@ public class CommitsFragment extends Fragment implements SwipeRefreshLayout.OnRe
 			listView.setAdapter(null);
 		}
 	};
-
-    @Override
-	public void onClick(View v) {
-        android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-        android.content.ClipData clip = android.content.ClipData.newPlainText("Copied Text", repoUrl.getText().toString());
-        clipboard.setPrimaryClip(clip);
-		
-		Crouton.makeText(this.getActivity(), R.string.copy_notification, Style.CONFIRM).show();
-	}
 	
 	public boolean onBackPressed() {
 		return false;

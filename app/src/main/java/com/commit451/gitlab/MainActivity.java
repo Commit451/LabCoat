@@ -1,18 +1,18 @@
 package com.commit451.gitlab;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,6 +23,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Spinner;
 
 import com.commit451.gitlab.adapter.DrawerAdapter;
 import com.commit451.gitlab.fragments.CommitsFragment;
@@ -50,30 +51,62 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class MainActivity extends BaseActivity implements ActionBar.OnNavigationListener, OnItemClickListener {
-	
+
+	@Bind(R.id.toolbar) Toolbar toolbar;
+	@Bind(R.id.tabs) TabLayout tabs;
+	@Bind(R.id.branch_spinner) Spinner branchSpinner;
 	@Bind(R.id.drawer_layout) DrawerLayout drawerLayout;
 	@Bind(R.id.left_drawer) LinearLayout drawerLeft;
 	@Bind(R.id.left_drawer_list) ListView drawerList;
 	@Bind(R.id.pager) ViewPager viewPager;
 
-	private ActionBar actionBar;
-	private ActionBarDrawerToggle drawerToggle;
+	private final AdapterView.OnItemSelectedListener spinnerItemSelectedListener = new AdapterView.OnItemSelectedListener() {
+		@Override
+		public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+			Repository.selectedBranch = Repository.branches.get(position);
+			Repository.setLastBranch(Repository.selectedBranch.getName());
+			loadData();
+		}
 
-    private boolean rotationLocked = false;
+		@Override
+		public void onNothingSelected(AdapterView<?> parent) { }
+	};
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		ButterKnife.bind(this);
-		
-		actionBar = getSupportActionBar();
-		actionBar.setDisplayHomeAsUpEnabled(true);
-		actionBar.setHomeButtonEnabled(true);
+
+		toolbar.setNavigationIcon(R.drawable.ic_menu);
+		toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				drawerLayout.openDrawer(GravityCompat.START);
+			}
+		});
+		toolbar.inflateMenu(R.menu.main);
+		toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+			@Override
+			public boolean onMenuItemClick(MenuItem item) {
+				switch(item.getItemId()) {
+					case android.R.id.home:
+						if(drawerLayout.isDrawerOpen(drawerLeft))
+							drawerLayout.closeDrawer(drawerLeft);
+						else
+							drawerLayout.openDrawer(drawerLeft);
+						return true;
+					case R.id.action_logout:
+						Repository.setLoggedIn(false);
+						startActivity(new Intent(MainActivity.this, LoginActivity.class));
+						return true;
+					default:
+						return false;
+				}
+			}
+		});
 		
 		drawerList.setOnItemClickListener(this);
-		drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close);
-        drawerLayout.setDrawerListener(drawerToggle);
 		
 		// Workaround that forces the overflow menu
         try {
@@ -106,18 +139,7 @@ public class MainActivity extends BaseActivity implements ActionBar.OnNavigation
 		// Set up the ViewPager with the sections adapter.
 		viewPager.setAdapter(sectionsPagerAdapter);
 		viewPager.setOffscreenPageLimit(3);
-	}
-	
-	@Override
-	protected void onPostCreate(Bundle savedInstanceState) {
-		super.onPostCreate(savedInstanceState);
-		drawerToggle.syncState();
-	}
-	
-	@Override
-	public void onConfigurationChanged(Configuration newConfig) {
-		super.onConfigurationChanged(newConfig);
-		drawerToggle.onConfigurationChanged(newConfig);
+		tabs.setupWithViewPager(viewPager);
 	}
 	
 	@Override
@@ -157,7 +179,7 @@ public class MainActivity extends BaseActivity implements ActionBar.OnNavigation
 		loadData();
 		return true;
 	}
-	
+
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		if(Repository.selectedProject == null || !Repository.selectedProject.equals(Repository.projects.get(position))) {
@@ -166,10 +188,10 @@ public class MainActivity extends BaseActivity implements ActionBar.OnNavigation
 			Repository.issueAdapter = null;
 			Repository.userAdapter = null;
 			Repository.drawerAdapter.notifyDataSetChanged();
-			
+
 			Repository.getService().getBranches(Repository.selectedProject.getId(), branchesCallback);
 		}
-		
+
 		if(drawerLayout.isDrawerOpen(drawerLeft)) {
 			drawerLayout.closeDrawer(drawerLeft);
 		}
@@ -328,7 +350,7 @@ public class MainActivity extends BaseActivity implements ActionBar.OnNavigation
 		
 		@Override
 		public void success(List<Project> projects, Response resp) {
-			Repository.projects = new ArrayList<Project>(projects);
+			Repository.projects = new ArrayList<>(projects);
 
 			if(Repository.projects.size() != 0) {
 				if(Repository.getLastProject().length() == 0)
@@ -374,7 +396,7 @@ public class MainActivity extends BaseActivity implements ActionBar.OnNavigation
 			if(pd != null && pd.isShowing())
 				pd.cancel();
 			
-			Repository.branches = new ArrayList<Branch>(branches);
+			Repository.branches = new ArrayList<>(branches);
 			Branch[] spinnerData = new Branch[Repository.branches.size()];
 			int selectedBranchIndex = -1;
 			
@@ -387,16 +409,13 @@ public class MainActivity extends BaseActivity implements ActionBar.OnNavigation
                 else if(selectedBranchIndex == -1 && Repository.selectedProject != null && spinnerData[i].getName().equals(Repository.selectedProject.getDefaultBranch()))
                     selectedBranchIndex = i;
 			}
-			
-			actionBar.setDisplayShowTitleEnabled(false);
-			actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
 
-            Context context = actionBar.getThemedContext();
-            if(context == null) context = MainActivity.this;
 			// Set up the dropdown list navigation in the action bar.
-			actionBar.setListNavigationCallbacks(new ArrayAdapter<Branch>(context, android.R.layout.simple_list_item_1, android.R.id.text1, spinnerData), MainActivity.this);
-			if(selectedBranchIndex >= 0)
-				actionBar.setSelectedNavigationItem(selectedBranchIndex);
+			branchSpinner.setAdapter(new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, spinnerData));
+			if (selectedBranchIndex >= 0) {
+				branchSpinner.setSelection(selectedBranchIndex);
+			}
+			branchSpinner.setOnItemSelectedListener(spinnerItemSelectedListener);
 			
 			if(Repository.branches.size() == 0) {
 				Repository.selectedBranch = null;
@@ -412,10 +431,6 @@ public class MainActivity extends BaseActivity implements ActionBar.OnNavigation
             if(e.getResponse().getStatus() == 500) {
                 Repository.selectedBranch = null;
                 loadData();
-
-                actionBar.setDisplayShowTitleEnabled(true);
-                actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-
                 return;
             }
 
