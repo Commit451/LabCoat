@@ -17,10 +17,10 @@
 
     <!-- Login -->
     <string name="login_button">Login</string>
-    <string name="url_hint">URL&#8230; (z.B. https://gitlab.com)</string>
-    <string name="user_hint">Benutzername oder E-Mail&#8230;</string>
-    <string name="password_hint">Passwort&#8230;</string>
-    <string name="token_hint">Private Token&#8230;</string>
+    <string name="url_hint">URL (z.B. https://gitlab.com)</string>
+    <string name="user_hint">Benutzername oder E-Mail</string>
+    <string name="password_hint">Passwort</string>
+    <string name="token_hint">Private Token</string>
     <string name="login_activity">Login</string>
     <string name="login_progress_dialog">Anmeldung läuft. Bitte warten&#8230;</string>
     <string name="token_link"><u>Login mit Private Token&#8230;</u></string>

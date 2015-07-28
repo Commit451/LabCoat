@@ -1,143 +1,137 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent">
 
     <ImageView
-        android:id="@+id/title"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
         android:layout_marginTop="40dp"
+        android:layout_gravity="center_horizontal"
         android:contentDescription="@string/app_name"
         android:src="@mipmap/ic_launcher" />
 
-    <EditText
-        android:id="@+id/url_input"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/title"
-        android:layout_centerHorizontal="true"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="40dp"
-        android:ems="10"
-        android:hint="@string/url_hint"
-        android:inputType="textUri" >
+        android:orientation="vertical"
+        android:layout_gravity="center">
 
-        <requestFocus />
-    </EditText>
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/url_hint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    <RelativeLayout
-        android:id="@+id/normal_login"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/url_input"
-        android:layout_marginTop="60dp" >
+            <EditText
+                android:id="@+id/url_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/title"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="40dp"
+                android:ems="10"
+                android:hint="@string/url_hint"
+                android:text="@string/url_gitlab"
+                android:inputType="textUri">
 
-        <EditText
-            android:id="@+id/user_input"
+            </EditText>
+
+        </android.support.design.widget.TextInputLayout>
+
+        <LinearLayout
+            android:id="@+id/normal_login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:ems="10"
-            android:hint="@string/user_hint"
-            android:inputType="textEmailAddress" />
+            android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/password_input"
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/user_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:ems="10"
+                android:hint="@string/user_hint"
+                android:inputType="textEmailAddress" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/password_hint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/password_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/user_input"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="20dp"
+                android:ems="10"
+                android:hint="@string/password_hint"
+                android:inputType="textPassword" />
+
+        </android.support.design.widget.TextInputLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/token_login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/user_input"
-            android:layout_centerHorizontal="true"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="20dp"
-            android:ems="10"
-            android:hint="@string/password_hint"
-            android:inputType="textPassword" />
+            android:orientation="vertical"
+            android:visibility="gone">
 
-        <TextView
-            android:id="@+id/show_token_link"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/password_input"
-            android:layout_centerHorizontal="true"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="15dp"
-            android:text="@string/token_link"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#33b5e5" />
-        
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/token_login"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/url_input"
-        android:layout_marginTop="40dp"
-        android:visibility="gone" >
-
-        <EditText
-            android:id="@+id/token_input"
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/token_hint"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="20dp"
-            android:inputType="textVisiblePassword"
-            android:ems="10"
-            android:hint="@string/token_hint" />
-        
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/token_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="20dp"
+                android:ems="10"
+                android:hint="@string/token_hint"
+                android:inputType="textVisiblePassword" />
+        </android.support.design.widget.TextInputLayout>
+        </LinearLayout>
+
         <TextView
             android:id="@+id/show_normal_link"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/token_input"
-            android:layout_centerHorizontal="true"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_marginTop="15dp"
             android:text="@string/normal_link"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#33b5e5" />
-        
-    </RelativeLayout>
+            android:textColor="?attr/colorAccent"
+            android:gravity="center_horizontal"
+            android:background="?attr/selectableItemBackground"/>
 
-    <View
-        android:id="@+id/lsep"
-        android:layout_width="match_parent"
-        android:layout_height="1dip"
-        android:layout_above="@+id/lin"
-        android:layout_marginLeft="16dip"
-        android:layout_marginRight="16dip"
-        android:background="?android:attr/dividerHorizontal" />
-
-    <LinearLayout
-        android:id="@+id/lin"
-        style="?android:attr/buttonBarStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:orientation="horizontal" >
-
-        <Button
-            android:id="@+id/login_button"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="0dip"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:focusable="true"
-            android:state_enabled="false"
-            android:text="@string/login_button" />
     </LinearLayout>
 
-</RelativeLayout>
+    <Button
+        android:id="@+id/login_button"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|bottom"
+        android:text="@string/login_button" />
+
+</FrameLayout>

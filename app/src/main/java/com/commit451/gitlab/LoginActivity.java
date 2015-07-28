@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
 import android.view.View;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.commit451.gitlab.model.Project;
@@ -35,9 +34,8 @@ public class LoginActivity extends BaseActivity {
 	@Bind(R.id.user_input) TextView userInput;
 	@Bind(R.id.password_input) TextView passwordInput;
 	@Bind(R.id.token_input) TextView tokenInput;
-	
-	@Bind(R.id.normal_login) RelativeLayout normalLogin;
-	@Bind(R.id.token_login) RelativeLayout tokenLogin;
+	@Bind(R.id.normal_login) View normalLogin;
+	@Bind(R.id.token_login) View tokenLogin;
 	
 	private boolean isNormalLogin = true;
 	
@@ -55,20 +53,17 @@ public class LoginActivity extends BaseActivity {
 		Crouton.cancelAllCroutons();
 	}
 	
-	@OnClick(R.id.show_token_link)
-	public void showTokenLogin() {
-		normalLogin.setVisibility(View.GONE);
-		tokenLogin.setVisibility(View.VISIBLE);
-		
-		isNormalLogin = false;
-	}
-	
 	@OnClick(R.id.show_normal_link)
 	public void showNormalLogin() {
-		normalLogin.setVisibility(View.VISIBLE);
-		tokenLogin.setVisibility(View.GONE);
-		
-		isNormalLogin = true;
+		if (normalLogin.getVisibility() == View.VISIBLE) {
+			normalLogin.setVisibility(View.GONE);
+			tokenLogin.setVisibility(View.VISIBLE);
+			isNormalLogin = false;
+		} else {
+			normalLogin.setVisibility(View.VISIBLE);
+			tokenLogin.setVisibility(View.GONE);
+			isNormalLogin = true;
+		}
 	}
 	
 	@OnClick(R.id.login_button)

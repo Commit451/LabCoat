@@ -1,7 +1,6 @@
 package com.commit451.gitlab.tools;
 
 import android.app.Activity;
-import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -40,7 +39,7 @@ import java.util.Date;
 import retrofit.RestAdapter;
 import retrofit.converter.GsonConverter;
 
-public class Repository extends Application {
+public class Repository {
 	
 	public static ArrayList<Project> projects;
 	public static ArrayList<Branch> branches;
