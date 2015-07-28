@@ -13,7 +13,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -90,12 +89,6 @@ public class MainActivity extends BaseActivity implements ActionBar.OnNavigation
 			@Override
 			public boolean onMenuItemClick(MenuItem item) {
 				switch(item.getItemId()) {
-					case android.R.id.home:
-						if(drawerLayout.isDrawerOpen(drawerLeft))
-							drawerLayout.closeDrawer(drawerLeft);
-						else
-							drawerLayout.openDrawer(drawerLeft);
-						return true;
 					case R.id.action_logout:
 						Repository.setLoggedIn(false);
 						startActivity(new Intent(MainActivity.this, LoginActivity.class));
@@ -146,30 +139,6 @@ public class MainActivity extends BaseActivity implements ActionBar.OnNavigation
 	public void onDestroy() {
 		super.onDestroy();
 		Crouton.cancelAllCroutons();
-	}
-	
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
-	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch(item.getItemId()) {
-			case android.R.id.home:
-				if(drawerLayout.isDrawerOpen(drawerLeft))
-					drawerLayout.closeDrawer(drawerLeft);
-				else
-					drawerLayout.openDrawer(drawerLeft);
-				return true;
-			case R.id.action_logout:
-				Repository.setLoggedIn(false);
-				startActivity(new Intent(this, LoginActivity.class));
-				return true;
-			default:
-				return super.onOptionsItemSelected(item);
-		}
 	}
 	
 	@Override

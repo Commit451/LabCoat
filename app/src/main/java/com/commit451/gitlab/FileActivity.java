@@ -36,9 +36,6 @@ public class FileActivity extends BaseActivity {
 	@Bind(R.id.toolbar) Toolbar toolbar;
 	@Bind(R.id.file_blob) WebView fileBlobView;
 	
-	private MenuItem openFile;
-	private MenuItem saveFile;
-	
 	private byte[] fileBlob;
 	
 	@Override
@@ -71,21 +68,32 @@ public class FileActivity extends BaseActivity {
 			}
 		});
 		toolbar.setTitle(Repository.selectedFile.getName());
+		toolbar.inflateMenu(R.menu.file);
+		toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+			@Override
+			public boolean onMenuItemClick(MenuItem item) {
+				switch(item.getItemId()) {
+					case android.R.id.home:
+						finish();
+						return true;
+					case R.id.action_open:
+						openFile();
+						return true;
+					case R.id.action_save:
+						saveBlob();
+						return true;
+				}
+				return false;
+			}
+		});
 		
 		fileBlobView.getSettings().setJavaScriptEnabled(true);
 	}
 	
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.file, menu);
-		
-		openFile = menu.getItem(0);
-		saveFile = menu.getItem(1);
-		
-		return true;
-	}
-	
-	private void enableMenu() {
+	private void enableMenu(Menu menu) {
+		MenuItem openFile = menu.getItem(0);
+		MenuItem saveFile = menu.getItem(1);
+
 		if(openFile != null) {
 			openFile.setEnabled(true);
 			openFile.setIcon(R.drawable.ic_action_open);
@@ -95,23 +103,6 @@ public class FileActivity extends BaseActivity {
 			saveFile.setEnabled(true);
 			saveFile.setIcon(R.drawable.ic_action_save);
 		}
-	}
-	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch(item.getItemId()) {
-			case android.R.id.home:
-				finish();
-				return true;
-			case R.id.action_open:
-				openFile();
-				return true;
-			case R.id.action_save:
-				saveBlob();
-				return true;
-		}
-		
-		return super.onOptionsItemSelected(item);
 	}
 	
 	private Callback<Response> blobCallback = new Callback<Response>() {
@@ -134,7 +125,7 @@ public class FileActivity extends BaseActivity {
 			String temp = "<!DOCTYPE html><html><head><link href=\"github.css\" rel=\"stylesheet\" /></head><body><pre><code>" + StringEscapeUtils.escapeHtml(content) + "</code></pre><script src=\"highlight.pack.js\"></script><script>hljs.initHighlightingOnLoad();</script></body></html>";
 			fileBlobView.loadDataWithBaseURL("file:///android_asset/", temp, "text/html", "utf8", null);
 			
-			enableMenu();
+			enableMenu(toolbar.getMenu());
 		}
 		
 		@Override

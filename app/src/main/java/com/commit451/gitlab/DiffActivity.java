@@ -2,7 +2,6 @@ package com.commit451.gitlab;
 
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -35,14 +34,12 @@ public class DiffActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_diff);
 		ButterKnife.bind(this);
-		
 		init();
 	}
 	
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		
 		Crouton.cancelAllCroutons();
 	}
 	
@@ -55,6 +52,22 @@ public class DiffActivity extends BaseActivity {
 			}
 		});
 		toolbar.setTitle(Repository.selectedCommit.getShortId());
+		toolbar.inflateMenu(R.menu.diff);
+		toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+			@Override
+			public boolean onMenuItemClick(MenuItem item) {
+				switch(item.getItemId()) {
+					case android.R.id.home:
+						finish();
+						return true;
+					case R.id.text_wrap_checkbox:
+						item.setChecked(!item.isChecked());
+						setTextWrap(item.isChecked());
+						return true;
+				}
+				return false;
+			}
+		});
 
 		Repository.getService().getCommit(Repository.selectedProject.getId(), Repository.selectedCommit.getId(), commitCallback);
 		Repository.getService().getCommitDiff(Repository.selectedProject.getId(), Repository.selectedCommit.getId(), diffCallback);
@@ -90,20 +103,6 @@ public class DiffActivity extends BaseActivity {
 			Crouton.makeText(DiffActivity.this, R.string.connection_error, Style.ALERT);
 		}
 	};
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch(item.getItemId()) {
-			case android.R.id.home:
-				finish();
-				return true;
-			case R.id.text_wrap_checkbox:
-				item.setChecked(!item.isChecked());
-				setTextWrap(item.isChecked());
-				return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
 	
 	private void setTextWrap(boolean checked) {
 		((MessageView) messageContainer.getChildAt(0)).setWrapped(checked);
@@ -111,11 +110,5 @@ public class DiffActivity extends BaseActivity {
 		for(int i = 0; i < diffContainer.getChildCount(); ++i) {
 			((DiffView) diffContainer.getChildAt(i)).setWrapped(checked);
 		}
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.diff, menu);
-		return true;
 	}
 }

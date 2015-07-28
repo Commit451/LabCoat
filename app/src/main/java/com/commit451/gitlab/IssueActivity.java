@@ -4,7 +4,6 @@ import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.method.LinkMovementMethod;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -95,6 +94,21 @@ public class IssueActivity extends BaseActivity {
 			}
 		});
 		toolbar.setTitle("Issue #" + tempId);
+		toolbar.inflateMenu(R.menu.issue);
+		toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+			@Override
+			public boolean onMenuItemClick(MenuItem item) {
+				switch(item.getItemId()) {
+					case android.R.id.home:
+						finish();
+						return true;
+					case R.id.action_save:
+						save();
+						return true;
+				}
+				return false;
+			}
+		});
 		
 		title.setText(Repository.selectedIssue.getTitle());
 		
@@ -140,26 +154,6 @@ public class IssueActivity extends BaseActivity {
 		description.setMovementMethod(LinkMovementMethod.getInstance());
 		
 		Repository.setListViewSize(noteList);
-	}
-	
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.issue, menu);
-		return true;
-	}
-	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch(item.getItemId()) {
-			case android.R.id.home:
-				finish();
-				return true;
-			case R.id.action_save:
-				save();
-				return true;
-		}
-		
-		return super.onOptionsItemSelected(item);
 	}
 	
 	private void loadNotes() {
