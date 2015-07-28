@@ -61,7 +61,7 @@ public class AddIssueDialogFragment extends DialogFragment {
 		if(titleInput.getText().toString().trim().length() > 0) {
 			pd = ProgressDialog.show(AddIssueDialogFragment.this.getActivity(), "", getResources().getString(R.string.progress_dialog), true);
 			
-			Repository.getService().postIssue(Repository.selectedProject.getId(), titleInput.getText().toString().trim(), descriptionInput.getText().toString().trim(), issueCallback);
+			Repository.getService().postIssue(Repository.selectedProject.getId(), titleInput.getText().toString().trim(), descriptionInput.getText().toString().trim(), "", issueCallback);
 		}
 		else
 			Crouton.makeText(AddIssueDialogFragment.this.getActivity(), R.string.input_error, Style.ALERT, (ViewGroup) getView()).show();

@@ -196,7 +196,7 @@ public class IssueActivity extends BaseActivity {
 		imm.hideSoftInputFromWindow(newNoteEdit.getWindowToken(), 0);
 		newNoteEdit.setText("");
 		
-		Repository.getService().postIssueNote(Repository.selectedProject.getId(), Repository.selectedIssue.getId(), body, noteCallback);
+		Repository.getService().postIssueNote(Repository.selectedProject.getId(), Repository.selectedIssue.getId(), body, "", noteCallback);
 	}
 	
 	private Callback<Note> noteCallback = new Callback<Note>() {
@@ -240,7 +240,8 @@ public class IssueActivity extends BaseActivity {
 		if((selection.equals("reopened") || selection.equals("opened")) && Repository.selectedIssue.getState().equals("closed"))
 			value = "reopen";
 		
-		Repository.getService().editIssue(Repository.selectedProject.getId(), Repository.selectedIssue.getId(), value, assigneeSpinner.getSelectedItemId(), milestoneSpinner.getSelectedItemId(), issueCallback);
+		Repository.getService().editIssue(Repository.selectedProject.getId(), Repository.selectedIssue.getId(), value, assigneeSpinner.getSelectedItemId(), milestoneSpinner.getSelectedItemId(),
+				"", issueCallback);
 	}
 	
 	private Callback<Issue> issueCallback = new Callback<Issue>() {

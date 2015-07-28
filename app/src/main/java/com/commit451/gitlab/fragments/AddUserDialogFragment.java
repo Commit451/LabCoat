@@ -72,7 +72,7 @@ public class AddUserDialogFragment extends DialogFragment {
 		long userId = ((User) userSpinner.getSelectedItem()).getId();
 		String accessLevel = getActivity().getResources().getStringArray(R.array.role_values)[roleSpinner.getSelectedItemPosition()];
 		
-		Repository.getService().addGroupMember(Repository.selectedProject.getGroup().getId(), userId, accessLevel, userCallback);
+		Repository.getService().addGroupMember(Repository.selectedProject.getGroup().getId(), userId, accessLevel, "", userCallback);
 	}
 	
 	private Callback<User> userCallback = new Callback<User>() {

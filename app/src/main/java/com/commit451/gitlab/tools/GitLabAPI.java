@@ -76,16 +76,19 @@ public interface GitLabAPI {
 	void getIssues(@Path("id") long projectId, Callback<List<Issue>> cb);
 	
 	@POST("/projects/{id}/issues")
-	void postIssue(@Path("id") long projectId, @Query("title") String title, @Query("description") String description, Callback<Issue> cb);
+	void postIssue(@Path("id") long projectId, @Query("title") String title, @Query("description") String description,
+				   @Body String blankBodySoRetrofitDoesntCry, Callback<Issue> cb);
 	
 	@PUT("/projects/{id}/issues/{issue_id}")
-	void editIssue(@Path("id") long projectId, @Path("issue_id") long issueId, @Query("state_event") String stateEvent, @Query("assignee_id") long assigneeId, @Query("milestone_id") long milestoneId, Callback<Issue> cb);
+	void editIssue(@Path("id") long projectId, @Path("issue_id") long issueId, @Query("state_event") String stateEvent, @Query("assignee_id") long assigneeId, @Query("milestone_id") long milestoneId,
+				   @Body String blankBodySoRetrofitDoesntCry, Callback<Issue> cb);
 	
 	@GET("/projects/{id}/issues/{issue_id}/notes?per_page=100")
 	void getIssueNotes(@Path("id") long projectId, @Path("issue_id") long issueId, Callback<List<Note>> cb);
 	
 	@POST("/projects/{id}/issues/{issue_id}/notes")
-	void postIssueNote(@Path("id") long projectId, @Path("issue_id") long issueId, @Query("body") String body, Callback<Note> cb);
+	void postIssueNote(@Path("id") long projectId, @Path("issue_id") long issueId, @Query("body") String body,
+					   @Body String blankBodySoRetrofitDoesntCry, Callback<Note> cb);
 	
 	/* --- FILES --- */
 	
@@ -101,7 +104,8 @@ public interface GitLabAPI {
 	void getGroupMembers(@Path("id") long groupId, Callback<List<User>> cb);
 	
 	@POST("/groups/{id}/members")
-	void addGroupMember(@Path("id") long groupId, @Query("user_id") long userId, @Query("access_level") String accessLevel, Callback<User> cb);
+	void addGroupMember(@Path("id") long groupId, @Query("user_id") long userId, @Query("access_level") String accessLevel,
+						@Body String blankBodySoRetrofitDoesntCry, Callback<User> cb);
 	
 	@DELETE("/groups/{id}/members/{user_id}")
 	void removeGroupMember(@Path("id") long groupId, @Path("user_id") long userId, Callback<DeleteResponse> cb);
