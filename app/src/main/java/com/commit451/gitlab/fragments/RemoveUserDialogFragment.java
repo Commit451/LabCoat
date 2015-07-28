@@ -2,11 +2,11 @@ package com.commit451.gitlab.fragments;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.DeleteResponse;
@@ -67,7 +67,7 @@ public class RemoveUserDialogFragment extends DialogFragment {
 				Repository.userAdapter.removeUser(response.getUserId());
 			}
 			else {
-				Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.user_remove_error), Snackbar.LENGTH_SHORT)
+				Toast.makeText(getActivity(), getString(R.string.user_remove_error), Toast.LENGTH_SHORT)
 						.show();
 			}
 			
@@ -80,7 +80,7 @@ public class RemoveUserDialogFragment extends DialogFragment {
 			
 			if(pd != null && pd.isShowing())
 				pd.cancel();
-			Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.user_remove_error), Snackbar.LENGTH_SHORT)
+			Toast.makeText(getActivity(), getString(R.string.user_remove_error), Toast.LENGTH_SHORT)
 					.show();
 			RemoveUserDialogFragment.this.dismiss();
 		}

@@ -2,13 +2,13 @@ package com.commit451.gitlab.fragments;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.UserAdapter;
@@ -84,7 +84,7 @@ public class AddUserDialogFragment extends DialogFragment {
 			if(user.getId() != 0)
 				Repository.userAdapter.addUser(user);
 			else {
-				Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.user_error), Snackbar.LENGTH_SHORT)
+				Toast.makeText(getActivity(), getString(R.string.user_error), Toast.LENGTH_SHORT)
 						.show();
 			}
 			
@@ -97,7 +97,7 @@ public class AddUserDialogFragment extends DialogFragment {
 			
 			if(pd != null && pd.isShowing())
 				pd.cancel();
-			Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.user_error), Snackbar.LENGTH_SHORT)
+			Toast.makeText(getActivity(), getString(R.string.user_error), Toast.LENGTH_SHORT)
 					.show();
 			AddUserDialogFragment.this.dismiss();
 		}

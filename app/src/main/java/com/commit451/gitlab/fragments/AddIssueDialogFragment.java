@@ -3,12 +3,12 @@ package com.commit451.gitlab.fragments;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.commit451.gitlab.IssueActivity;
 import com.commit451.gitlab.R;
@@ -59,11 +59,10 @@ public class AddIssueDialogFragment extends DialogFragment {
 	public void onSaveClick() {
 		if(titleInput.getText().toString().trim().length() > 0) {
 			pd = ProgressDialog.show(AddIssueDialogFragment.this.getActivity(), "", getResources().getString(R.string.progress_dialog), true);
-			
 			Repository.getService().postIssue(Repository.selectedProject.getId(), titleInput.getText().toString().trim(), descriptionInput.getText().toString().trim(), "", issueCallback);
 		}
 		else {
-			Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.input_error), Snackbar.LENGTH_SHORT)
+			Toast.makeText(getActivity(), getString(R.string.connection_error), Toast.LENGTH_SHORT)
 					.show();
 		}
 	}
@@ -97,7 +96,7 @@ public class AddIssueDialogFragment extends DialogFragment {
 			
 			if(pd != null && pd.isShowing())
 				pd.cancel();
-			Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
+			Toast.makeText(getActivity(), getString(R.string.connection_error), Toast.LENGTH_SHORT)
 					.show();
 		}
 	};
