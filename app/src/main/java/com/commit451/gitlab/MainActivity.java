@@ -3,7 +3,6 @@ package com.commit451.gitlab;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -14,15 +13,16 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.*;
+import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 
 import com.commit451.gitlab.adapter.DrawerAdapter;
 import com.commit451.gitlab.fragments.CommitsFragment;
@@ -35,8 +35,6 @@ import com.commit451.gitlab.model.Project;
 import com.commit451.gitlab.model.User;
 import com.commit451.gitlab.tools.Repository;
 import com.commit451.gitlab.tools.RetrofitHelper;
-import com.commit451.gitlab.views.DrawableClickListener;
-import com.commit451.gitlab.views.FilterEditText;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -45,10 +43,8 @@ import java.util.Locale;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
-
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -59,7 +55,6 @@ public class MainActivity extends BaseActivity implements ActionBar.OnNavigation
 	@Bind(R.id.left_drawer) LinearLayout drawerLeft;
 	@Bind(R.id.left_drawer_list) ListView drawerList;
 	@Bind(R.id.pager) ViewPager viewPager;
-	@Bind(R.id.filter_project) FilterEditText filterProjectEdit;
 
 	private ActionBar actionBar;
 	private ActionBarDrawerToggle drawerToggle;
@@ -79,27 +74,6 @@ public class MainActivity extends BaseActivity implements ActionBar.OnNavigation
 		drawerList.setOnItemClickListener(this);
 		drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close);
         drawerLayout.setDrawerListener(drawerToggle);
-
-        filterProjectEdit.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
-                Repository.drawerAdapter.getFilter().filter(filterProjectEdit.getText().toString());
-            }
-
-            @Override
-            public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-            }
-        });
-        filterProjectEdit.setDrawableClickListener(new DrawableClickListener() {
-            @Override
-            public void onClick(DrawablePosition target) {
-                filterProjectEdit.setText("");
-            }
-        });
 		
 		// Workaround that forces the overflow menu
         try {
@@ -171,15 +145,6 @@ public class MainActivity extends BaseActivity implements ActionBar.OnNavigation
 				Repository.setLoggedIn(false);
 				startActivity(new Intent(this, LoginActivity.class));
 				return true;
-            case R.id.action_lock_orientation:
-                item.setChecked(!item.isChecked());
-                rotationLocked = item.isChecked();
-
-                if(rotationLocked)
-                    setRequestedOrientation(Repository.getScreenOrientation(this));
-                else
-                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
-                return true;
 			default:
 				return super.onOptionsItemSelected(item);
 		}
