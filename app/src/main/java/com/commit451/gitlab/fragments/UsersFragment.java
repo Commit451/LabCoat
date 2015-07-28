@@ -18,7 +18,6 @@ import com.commit451.gitlab.adapter.UserAdapter;
 import com.commit451.gitlab.model.User;
 import com.commit451.gitlab.tools.Repository;
 import com.commit451.gitlab.tools.RetrofitHelper;
-import com.melnykov.fab.FloatingActionButton;
 
 import java.util.List;
 
@@ -33,7 +32,7 @@ import retrofit.client.Response;
 
 public class UsersFragment extends Fragment implements OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
 	
-	@Bind(R.id.add_user_button) FloatingActionButton addUserButton;
+	@Bind(R.id.add_user_button) View addUserButton;
 	@Bind(R.id.fragmentList) ListView listView;
 	@Bind(R.id.error_text) TextView errorText;
     @Bind(R.id.swipe_layout) SwipeRefreshLayout swipeLayout;
@@ -46,7 +45,6 @@ public class UsersFragment extends Fragment implements OnItemClickListener, Swip
         ButterKnife.bind(this, view);
 		
 		listView.setOnItemClickListener(this);
-        addUserButton.attachToListView(listView);
 
         swipeLayout.setOnRefreshListener(this);
 

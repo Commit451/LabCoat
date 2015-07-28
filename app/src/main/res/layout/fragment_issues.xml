@@ -18,13 +18,12 @@
 
     </com.commit451.gitlab.views.GitLabSwipeRefreshLayout>
 
-    <com.melnykov.fab.FloatingActionButton
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/add_issue_button"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
         android:layout_gravity="bottom|right"
-        android:layout_margin="16dp"
-        android:enabled="false"
-        android:src="@drawable/ic_action_add" />
+        android:src="@drawable/ic_add"
+        android:layout_margin="@dimen/padding_normal"/>
 
 </FrameLayout>

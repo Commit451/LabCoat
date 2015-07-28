@@ -19,7 +19,6 @@ import com.commit451.gitlab.adapter.IssuesAdapter;
 import com.commit451.gitlab.model.Issue;
 import com.commit451.gitlab.tools.Repository;
 import com.commit451.gitlab.tools.RetrofitHelper;
-import com.melnykov.fab.FloatingActionButton;
 
 import java.util.List;
 
@@ -34,7 +33,7 @@ import retrofit.client.Response;
 
 public class IssuesFragment extends Fragment implements OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
 
-	@Bind(R.id.add_issue_button) FloatingActionButton addIssueButton;
+	@Bind(R.id.add_issue_button) View addIssueButton;
 	@Bind(R.id.fragmentList) ListView listView;
     @Bind(R.id.swipe_layout) SwipeRefreshLayout swipeLayout;
 	
@@ -46,7 +45,6 @@ public class IssuesFragment extends Fragment implements OnItemClickListener, Swi
 		ButterKnife.bind(this, view);
 		
 		listView.setOnItemClickListener(this);
-        addIssueButton.attachToListView(listView);
 
         swipeLayout.setOnRefreshListener(this);
 
