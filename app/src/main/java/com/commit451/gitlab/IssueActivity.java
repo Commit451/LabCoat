@@ -2,6 +2,7 @@ package com.commit451.gitlab;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.method.LinkMovementMethod;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -39,7 +40,8 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class IssueActivity extends BaseActivity {
-	
+
+	@Bind(R.id.toolbar) Toolbar toolbar;
 	@Bind(R.id.scroll1) ScrollView scroll;
 	
 	@Bind(R.id.title) TextView title;
@@ -64,8 +66,9 @@ public class IssueActivity extends BaseActivity {
 			setupUI();
 			loadNotes();
 		}
-		else
+		else {
 			finish();
+		}
 	}
 	
 	@Override
@@ -80,15 +83,22 @@ public class IssueActivity extends BaseActivity {
 	 */
 	private void setupUI() {
 		long tempId = Repository.selectedIssue.getIid();
-		if(tempId < 1)
+		if(tempId < 1) {
 			tempId = Repository.selectedIssue.getId();
+		}
 
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		getSupportActionBar().setTitle("Issue #" + tempId);
+		toolbar.setNavigationIcon(R.drawable.ic_back);
+		toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				onBackPressed();
+			}
+		});
+		toolbar.setTitle("Issue #" + tempId);
 		
 		title.setText(Repository.selectedIssue.getTitle());
 		
-		ArrayList<String> temp3 = new ArrayList<String>();
+		ArrayList<String> temp3 = new ArrayList<>();
 		if(Repository.selectedIssue.getState().equals("opened")) {
 			temp3.add("opened");
 			temp3.add("closed");

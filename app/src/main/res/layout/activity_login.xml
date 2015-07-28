@@ -15,7 +15,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_gravity="center">
+        android:layout_gravity="center"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin">
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/url_hint"
@@ -28,10 +30,6 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/title"
                 android:layout_centerHorizontal="true"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginTop="40dp"
-                android:ems="10"
                 android:hint="@string/url_hint"
                 android:text="@string/url_gitlab"
                 android:inputType="textUri">
@@ -55,8 +53,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
                 android:ems="10"
                 android:hint="@string/user_hint"
                 android:inputType="textEmailAddress" />
@@ -74,10 +70,6 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/user_input"
                 android:layout_centerHorizontal="true"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginTop="20dp"
-                android:ems="10"
                 android:hint="@string/password_hint"
                 android:inputType="textPassword" />
 
@@ -102,10 +94,6 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginTop="20dp"
-                android:ems="10"
                 android:hint="@string/token_hint"
                 android:inputType="textVisiblePassword" />
         </android.support.design.widget.TextInputLayout>
@@ -126,12 +114,16 @@
 
     </LinearLayout>
 
-    <Button
+    <TextView
         android:id="@+id/login_button"
-        style="?android:attr/buttonBarButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal|bottom"
-        android:text="@string/login_button" />
+        android:padding="@dimen/padding_normal"
+        android:layout_gravity="bottom"
+        android:gravity="center_horizontal"
+        android:textColor="?attr/colorAccent"
+        android:text="@string/login_button"
+        android:textAllCaps="true"
+        android:background="?attr/selectableItemBackground"/>
 
 </FrameLayout>

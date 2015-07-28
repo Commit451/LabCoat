@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
 
@@ -38,12 +39,22 @@ public class LoginActivity extends BaseActivity {
 	@Bind(R.id.token_login) View tokenLogin;
 	
 	private boolean isNormalLogin = true;
-	
+
+	private final TextView.OnEditorActionListener onEditorActionListener = new TextView.OnEditorActionListener() {
+		@Override
+		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+			onLoginClick();
+			return true;
+		}
+	};
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
 		ButterKnife.bind(this);
+		passwordInput.setOnEditorActionListener(onEditorActionListener);
+		tokenInput.setOnEditorActionListener(onEditorActionListener);
 	}
 	
 	@Override

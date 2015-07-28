@@ -1,8 +1,10 @@
 package com.commit451.gitlab;
 
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.LinearLayout;
 
 import com.commit451.gitlab.model.Diff;
@@ -24,6 +26,7 @@ import retrofit.client.Response;
 
 public class DiffActivity extends BaseActivity {
 
+	@Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.message_container)	LinearLayout messageContainer;
 	@Bind(R.id.diff_container) LinearLayout diffContainer;
 	
@@ -44,8 +47,14 @@ public class DiffActivity extends BaseActivity {
 	}
 	
 	private void init() {
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		getSupportActionBar().setTitle(Repository.selectedCommit.getShortId());
+		toolbar.setNavigationIcon(R.drawable.ic_back);
+		toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				onBackPressed();
+			}
+		});
+		toolbar.setTitle(Repository.selectedCommit.getShortId());
 
 		Repository.getService().getCommit(Repository.selectedProject.getId(), Repository.selectedCommit.getId(), commitCallback);
 		Repository.getService().getCommitDiff(Repository.selectedProject.getId(), Repository.selectedCommit.getId(), diffCallback);

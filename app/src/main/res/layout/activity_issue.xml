@@ -5,6 +5,19 @@
     android:layout_height="match_parent"
     tools:context=".IssueActivity" >
 
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary" />
+
+    </android.support.design.widget.AppBarLayout>
+
     <ScrollView
         android:id="@+id/scroll1"
         android:layout_width="match_parent"
@@ -12,7 +25,8 @@
         android:layout_above="@+id/lsep2"
         android:layout_alignParentTop="true"
         android:paddingLeft="16dp"
-        android:paddingTop="16dp" >
+        android:paddingTop="@dimen/padding_normal"
+        android:layout_marginTop="?attr/actionBarSize" >
 
         <LinearLayout
             android:id="@+id/lin1"
@@ -86,7 +100,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:background="#ffffff"
+        android:background="#000000"
         android:orientation="horizontal"
         android:paddingLeft="5dp"
         android:paddingRight="5dp"

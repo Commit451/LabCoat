@@ -5,8 +5,10 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.webkit.WebView;
 
@@ -31,7 +33,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class FileActivity extends BaseActivity {
-	
+	@Bind(R.id.toolbar) Toolbar toolbar;
 	@Bind(R.id.file_blob) WebView fileBlobView;
 	
 	private MenuItem openFile;
@@ -61,8 +63,14 @@ public class FileActivity extends BaseActivity {
 	
 	@SuppressLint("SetJavaScriptEnabled")
 	private void setupUI() {
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		getSupportActionBar().setTitle(Repository.selectedFile.getName());
+		toolbar.setNavigationIcon(R.drawable.ic_back);
+		toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				onBackPressed();
+			}
+		});
+		toolbar.setTitle(Repository.selectedFile.getName());
 		
 		fileBlobView.getSettings().setJavaScriptEnabled(true);
 	}
