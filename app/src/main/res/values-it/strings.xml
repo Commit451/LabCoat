@@ -69,6 +69,7 @@
 
     <!-- Files -->
     <string name="file_saved">File salvato nella cartella di Download</string>
+    <string name="no_files_found">Nessun file trovato.</string>
 
     <!-- Issues -->
     <string name="new_note_hint">Aggiungi commento&#8230;</string>

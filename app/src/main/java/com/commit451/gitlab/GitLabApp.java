@@ -7,6 +7,8 @@ import com.squareup.otto.Bus;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
+import timber.log.Timber;
+
 /**
  * App for one time init things
  * Created by Jawn on 7/27/2015.
@@ -24,6 +26,9 @@ public class GitLabApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        if (BuildConfig.DEBUG) {
+            Timber.plant(new Timber.DebugTree());
+        }
         Repository.init(this);
         JodaTimeAndroid.init(this);
     }

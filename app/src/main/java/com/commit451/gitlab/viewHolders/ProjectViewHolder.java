@@ -25,8 +25,7 @@ public class ProjectViewHolder extends RecyclerView.ViewHolder {
         return new ProjectViewHolder(view);
     }
 
-    @Bind(R.id.project_title)
-    TextView title;
+    @Bind(R.id.project_title) TextView title;
 
     public ProjectViewHolder(View view) {
         super(view);

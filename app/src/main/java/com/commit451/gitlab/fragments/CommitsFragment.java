@@ -23,11 +23,13 @@ import butterknife.ButterKnife;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+import timber.log.Timber;
 
 public class CommitsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
 	@Bind(R.id.list) RecyclerView listView;
     @Bind(R.id.swipe_layout) SwipeRefreshLayout swipeLayout;
+    @Bind(R.id.message_text) View messageView;
 	
 	public CommitsFragment() {}
 	
@@ -39,8 +41,9 @@ public class CommitsFragment extends Fragment implements SwipeRefreshLayout.OnRe
 		listView.setLayoutManager(new LinearLayoutManager(getActivity()));
         swipeLayout.setOnRefreshListener(this);
 
-		if(Repository.selectedProject != null)
-			loadData();
+		if(Repository.selectedProject != null) {
+            loadData();
+        }
 		
 		return view;
 	}
@@ -57,19 +60,22 @@ public class CommitsFragment extends Fragment implements SwipeRefreshLayout.OnRe
 	}
 	
 	public void loadData() {
-		if(Repository.selectedProject == null)
-			return;
+		if(Repository.selectedProject == null) {
+            return;
+        }
 
 		if(Repository.selectedBranch == null) {
-            if(swipeLayout != null && swipeLayout.isRefreshing())
+            if(swipeLayout != null && swipeLayout.isRefreshing()) {
                 swipeLayout.setRefreshing(false);
+            }
 
             listView.setAdapter(null);
             return;
         }
 		
-		if(swipeLayout != null && !swipeLayout.isRefreshing())
+		if(swipeLayout != null && !swipeLayout.isRefreshing()) {
             swipeLayout.setRefreshing(true);
+        }
 		
 		Repository.getService().getCommits(Repository.selectedProject.getId(), Repository.selectedBranch.getName(), commitsCallback);
 	}
@@ -89,9 +95,12 @@ public class CommitsFragment extends Fragment implements SwipeRefreshLayout.OnRe
 			
 			if(commits.size() > 0) {
 				Repository.newestCommit = commits.get(0);
+                messageView.setVisibility(View.GONE);
 			}
 			else {
+                Timber.d("No commits have been made");
 				Repository.newestCommit = null;
+                messageView.setVisibility(View.VISIBLE);
 			}
 			listView.setAdapter(new CommitsAdapter(commits));
 		}
@@ -100,8 +109,10 @@ public class CommitsFragment extends Fragment implements SwipeRefreshLayout.OnRe
 		public void failure(RetrofitError e) {
 			RetrofitHelper.printDebugInfo(getActivity(), e);
 
-			if(swipeLayout != null && swipeLayout.isRefreshing())
+			if(swipeLayout != null && swipeLayout.isRefreshing()) {
                 swipeLayout.setRefreshing(false);
+            }
+            messageView.setVisibility(View.VISIBLE);
 
 			Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.connection_error_commits), Snackbar.LENGTH_SHORT)
 					.show();

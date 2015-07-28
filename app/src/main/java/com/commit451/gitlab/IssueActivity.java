@@ -115,33 +115,28 @@ public class IssueActivity extends BaseActivity {
 		}
 		stateSpinner.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, temp3));
 		stateSpinner.setSelection(temp3.indexOf(Repository.selectedIssue.getState()));
-		
-		if(Repository.userAdapter != null) {
-			assigneeSpinner.setAdapter(Repository.userAdapter);
-			if(Repository.selectedIssue.getAssignee() != null)
-				assigneeSpinner.setSelection(Repository.userAdapter.getPosition(Repository.selectedIssue.getAssignee()), true);
+
+		if(Repository.selectedIssue.getAssignee() != null) {
+			ArrayList<User> temp = new ArrayList<User>();
+			temp.add(Repository.selectedIssue.getAssignee());
+			assigneeSpinner.setAdapter(new UserAdapter(this, temp));
 		}
-		else {
-			if(Repository.selectedIssue.getAssignee() != null) {
-				ArrayList<User> temp = new ArrayList<User>();
-				temp.add(Repository.selectedIssue.getAssignee());
-				assigneeSpinner.setAdapter(new UserAdapter(this, temp));
-			}
-			
-			Repository.getService().getUsersFallback(Repository.selectedProject.getId(), usersCallback);
-		}
+
+		Repository.getService().getUsersFallback(Repository.selectedProject.getId(), usersCallback);
 		
 		ArrayList<Milestone> temp2 = new ArrayList<Milestone>();
-		if(Repository.selectedIssue.getMilestone() != null)
+		if(Repository.selectedIssue.getMilestone() != null) {
 			temp2.add(Repository.selectedIssue.getMilestone());
+		}
 		milestoneSpinner.setAdapter(new MilestonesAdapter(this, temp2));
 		
 		Repository.getService().getMilestones(Repository.selectedProject.getId(), milestonesCallback);
 		
 		Bypass bypass = new Bypass();
 		String desc = Repository.selectedIssue.getDescription();
-		if(desc == null)
+		if(desc == null) {
 			desc = "";
+		}
 		description.setText(bypass.markdownToSpannable(desc));
 		description.setMovementMethod(LinkMovementMethod.getInstance());
 		
@@ -294,6 +289,9 @@ public class IssueActivity extends BaseActivity {
 			MilestonesAdapter ma = new MilestonesAdapter(IssueActivity.this, milestones);
 			milestoneSpinner.setAdapter(ma);
 			milestoneSpinner.setSelection(ma.getPosition(Repository.selectedIssue.getMilestone()), true);
+			if (milestones.isEmpty()) {
+				milestoneSpinner.setVisibility(View.GONE);
+			}
 		}
 		
 		@Override

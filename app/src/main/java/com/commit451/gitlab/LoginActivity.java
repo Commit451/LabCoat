@@ -6,11 +6,11 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.text.method.LinkMovementMethod;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.commit451.gitlab.model.Project;
 import com.commit451.gitlab.model.Session;
@@ -76,7 +76,7 @@ public class LoginActivity extends BaseActivity {
 		String url = urlInput.getText().toString();
 		
 		if(url.length() == 0) {
-			Snackbar.make(getWindow().getDecorView(), getString(R.string.login_error), Snackbar.LENGTH_SHORT)
+			Toast.makeText(this, getString(R.string.login_error), Toast.LENGTH_SHORT)
 					.show();
 			return;
 		}
@@ -210,7 +210,7 @@ public class LoginActivity extends BaseActivity {
             connect(auth);
         }
         else {
-			Snackbar.make(getWindow().getDecorView(), getString(R.string.login_error), Snackbar.LENGTH_SHORT)
+			Toast.makeText(this, getString(R.string.login_error), Toast.LENGTH_SHORT)
 					.show();
 		}
     }

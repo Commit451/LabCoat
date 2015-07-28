@@ -64,13 +64,14 @@
     <string name="filter_projects">Filter projects&#8230;</string>
 
     <!-- Commits -->
-    <string name="copy_notification">URL copied to clipboard&#8230;</string>
+    <string name="no_commits_found">No commits found.</string>
 
     <!-- Diffs -->
     <string name="text_wrap_checkbox">Wrap text</string>
 
     <!-- Files -->
     <string name="file_saved">File saved successfully to Download folder</string>
+    <string name="no_files_found">No files found.</string>
 
     <!-- Issues -->
     <string name="new_note_hint">Add comment&#8230;</string>
@@ -84,6 +85,7 @@
     <string name="remove_user_dialog_title">Remove user?</string>
     <string name="add_user">Add user to group</string>
     <string name="add_user_dialog_title">Add user</string>
+    <string name="no_users_found">No users found.</string>
 
     <string-array name="role_names">
         <item>Guest</item>

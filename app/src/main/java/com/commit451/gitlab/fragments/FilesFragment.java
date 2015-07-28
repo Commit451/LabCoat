@@ -43,7 +43,6 @@ public class FilesFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 		View view = inflater.inflate(R.layout.fragment_files, container, false);
 		ButterKnife.bind(this, view);
 
-
 		list.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         swipeLayout.setOnRefreshListener(this);
@@ -104,7 +103,7 @@ public class FilesFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 			if(swipeLayout != null && swipeLayout.isRefreshing())
                 swipeLayout.setRefreshing(false);
 			
-			if(e.getResponse().getStatus() == 404) {
+			if(e.getResponse() != null && e.getResponse().getStatus() == 404) {
 				errorText.setVisibility(View.VISIBLE);
 				list.setVisibility(View.GONE);
 			}
@@ -114,7 +113,7 @@ public class FilesFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 				}
 				list.setAdapter(null);
 				
-				if(e.getResponse().getStatus() != 500) {
+				if(e.getResponse() != null && e.getResponse().getStatus() != 500) {
                     RetrofitHelper.printDebugInfo(getActivity(), e);
 					Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.connection_error_files), Snackbar.LENGTH_SHORT)
 							.show();

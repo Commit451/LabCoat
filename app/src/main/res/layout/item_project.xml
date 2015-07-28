@@ -9,7 +9,7 @@
         android:id="@+id/project_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="@dimen/text_size_large"
+        android:textSize="@dimen/text_size_normal"
         android:padding="@dimen/padding_normal"/>
 
 </LinearLayout>

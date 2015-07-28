@@ -70,6 +70,7 @@
 
     <!-- Files -->
     <string name="file_saved">Datei wurde erfolgreich in den Downloads Ordner gespeichert</string>
+    <string name="no_files_found">Kein ergebnis.</string>
 
     <!-- Issues -->
     <string name="new_note_hint">Kommentar hinzufügen&#8230;</string>

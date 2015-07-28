@@ -4,27 +4,27 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
+    <com.commit451.gitlab.views.GitLabSwipeRefreshLayout
+        android:id="@+id/swipe_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </com.commit451.gitlab.views.GitLabSwipeRefreshLayout>
+
     <TextView
         android:id="@+id/error_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:gravity="center"
+        android:layout_gravity="center"
+        android:text="@string/no_users_found"
         android:visibility="gone"/>
-
-    <com.commit451.gitlab.views.GitLabSwipeRefreshLayout
-        android:id="@+id/swipe_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" >
-
-        <ListView
-            android:id="@+id/fragmentList"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@+id/add_user_button" />
-
-    </com.commit451.gitlab.views.GitLabSwipeRefreshLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/add_user_button"

@@ -10,7 +10,7 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import com.commit451.gitlab.adapter.IssuesAdapter;
-import com.commit451.gitlab.adapter.UserAdapter;
+import com.commit451.gitlab.adapter.NewUserAdapter;
 import com.commit451.gitlab.model.Branch;
 import com.commit451.gitlab.model.DiffLine;
 import com.commit451.gitlab.model.Group;
@@ -51,7 +51,7 @@ public class Repository {
 	public static DiffLine newestCommit;
 
 	public static IssuesAdapter issueAdapter;
-	public static UserAdapter userAdapter;
+	public static NewUserAdapter userAdapter;
 	
 	public static float displayWidth;
 	
