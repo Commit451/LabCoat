@@ -12,20 +12,17 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.Spinner;
 
-import com.commit451.gitlab.adapter.DrawerAdapter;
+import com.commit451.gitlab.events.CloseDrawerEvent;
+import com.commit451.gitlab.events.ProjectChangedEvent;
 import com.commit451.gitlab.fragments.CommitsFragment;
 import com.commit451.gitlab.fragments.FilesFragment;
 import com.commit451.gitlab.fragments.IssuesFragment;
@@ -37,6 +34,7 @@ import com.commit451.gitlab.model.User;
 import com.commit451.gitlab.tools.Repository;
 import com.commit451.gitlab.tools.RetrofitHelper;
 import com.commit451.gitlab.views.GitLabNavigationView;
+import com.squareup.otto.Subscribe;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -49,15 +47,13 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class MainActivity extends BaseActivity implements ActionBar.OnNavigationListener, OnItemClickListener {
+public class MainActivity extends BaseActivity {
 
 	@Bind(R.id.toolbar) Toolbar toolbar;
 	@Bind(R.id.tabs) TabLayout tabs;
 	@Bind(R.id.branch_spinner) Spinner branchSpinner;
 	@Bind(R.id.drawer_layout) DrawerLayout drawerLayout;
 	@Bind(R.id.navigation_view) GitLabNavigationView navigationView;
-	@Bind(R.id.left_drawer) LinearLayout drawerLeft;
-	@Bind(R.id.left_drawer_list) ListView drawerList;
 	@Bind(R.id.pager) ViewPager viewPager;
 
 	private final AdapterView.OnItemSelectedListener spinnerItemSelectedListener = new AdapterView.OnItemSelectedListener() {
@@ -71,12 +67,17 @@ public class MainActivity extends BaseActivity implements ActionBar.OnNavigation
 		@Override
 		public void onNothingSelected(AdapterView<?> parent) { }
 	};
+
+	EventReceiver eventReceiver;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		ButterKnife.bind(this);
+
+		eventReceiver = new EventReceiver();
+		GitLabApp.bus().register(eventReceiver);
 
 		toolbar.setNavigationIcon(R.drawable.ic_menu);
 		toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -100,8 +101,6 @@ public class MainActivity extends BaseActivity implements ActionBar.OnNavigation
 			}
 		});
 		
-		drawerList.setOnItemClickListener(this);
-		
 		// Workaround that forces the overflow menu
         try {
 			ViewConfiguration config = ViewConfiguration.get(this);
@@ -114,8 +113,6 @@ public class MainActivity extends BaseActivity implements ActionBar.OnNavigation
 		catch(Exception ex) {
 			ex.printStackTrace();
 		}
-		
-		Repository.init(this);
 		
 		if(!Repository.isLoggedIn())
 			startActivity(new Intent(this, LoginActivity.class));
@@ -135,30 +132,11 @@ public class MainActivity extends BaseActivity implements ActionBar.OnNavigation
 		viewPager.setOffscreenPageLimit(3);
 		tabs.setupWithViewPager(viewPager);
 	}
-	
-	@Override
-	public boolean onNavigationItemSelected(int itemPosition, long itemId) {
-		Repository.selectedBranch = Repository.branches.get(itemPosition);
-        Repository.setLastBranch(Repository.selectedBranch.getName());
-		loadData();
-		return true;
-	}
 
 	@Override
-	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		if(Repository.selectedProject == null || !Repository.selectedProject.equals(Repository.projects.get(position))) {
-			Repository.selectedProject = Repository.projects.get(position);
-			Repository.setLastProject(Repository.selectedProject.toString());
-			Repository.issueAdapter = null;
-			Repository.userAdapter = null;
-			Repository.drawerAdapter.notifyDataSetChanged();
-
-			Repository.getService().getBranches(Repository.selectedProject.getId(), branchesCallback);
-		}
-
-		if(drawerLayout.isDrawerOpen(drawerLeft)) {
-			drawerLayout.closeDrawer(drawerLeft);
-		}
+	protected void onDestroy() {
+		GitLabApp.bus().unregister(eventReceiver);
+		super.onDestroy();
 	}
 
 	public void hideSoftKeyboard() {
@@ -252,13 +230,13 @@ public class MainActivity extends BaseActivity implements ActionBar.OnNavigation
 			Locale l = Locale.getDefault();
 			switch(position) {
 				case 0:
-					return getString(R.string.title_section1).toUpperCase(l);
+					return getString(R.string.title_section1);
 				case 1:
-					return getString(R.string.title_section2).toUpperCase(l);
+					return getString(R.string.title_section2);
 				case 2:
-					return getString(R.string.title_section3).toUpperCase(l);
+					return getString(R.string.title_section3);
 				case 3:
-					return getString(R.string.title_section4).toUpperCase(l);
+					return getString(R.string.title_section4);
 			}
 			return null;
 		}
@@ -277,7 +255,7 @@ public class MainActivity extends BaseActivity implements ActionBar.OnNavigation
 		
 		@Override
 		public void success(List<Group> groups, Response resp) {
-			Repository.groups = new ArrayList<Group>(groups);
+			Repository.groups = new ArrayList<>(groups);
 			
 			Repository.getService().getUsers(usersCallback);
 		}
@@ -285,7 +263,6 @@ public class MainActivity extends BaseActivity implements ActionBar.OnNavigation
 		@Override
 		public void failure(RetrofitError e) {
 			RetrofitHelper.printDebugInfo(MainActivity.this, e);
-			
 			Repository.getService().getUsers(usersCallback);
 		}
 	};
@@ -332,9 +309,6 @@ public class MainActivity extends BaseActivity implements ActionBar.OnNavigation
 						Repository.selectedProject = Repository.projects.get(0);
 				}
 			}
-			
-			Repository.drawerAdapter = new DrawerAdapter(MainActivity.this, Repository.projects);
-			drawerList.setAdapter(Repository.drawerAdapter);
 			
 			if(Repository.selectedProject != null)
 				Repository.getService().getBranches(Repository.selectedProject.getId(), branchesCallback);
@@ -407,4 +381,17 @@ public class MainActivity extends BaseActivity implements ActionBar.OnNavigation
 					.show();
 		}
 	};
+
+	private class EventReceiver {
+
+		@Subscribe
+		public void onCloseDrawerEvent(CloseDrawerEvent event) {
+			drawerLayout.closeDrawers();
+		}
+
+        @Subscribe
+        public void onProjectChanged(ProjectChangedEvent event) {
+            Repository.getService().getBranches(Repository.selectedProject.getId(), branchesCallback);
+        }
+	}
 }

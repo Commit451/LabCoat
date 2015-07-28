@@ -4,8 +4,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
+import com.commit451.gitlab.events.CloseDrawerEvent;
+import com.commit451.gitlab.events.ProjectChangedEvent;
 import com.commit451.gitlab.model.Project;
+import com.commit451.gitlab.tools.Repository;
 import com.commit451.gitlab.viewHolders.ProjectViewHolder;
 
 import java.util.List;
@@ -29,9 +33,16 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectViewHolder> {
         @Override
         public void onClick(View v) {
             int position = (int) v.getTag(R.id.list_position);
-
-            //do the things
-
+            if(Repository.selectedProject == null || !Repository.selectedProject.equals(Repository.projects.get(position))) {
+                //TODO make the event bus control most of this. NO MORE STATIC UI
+                Repository.selectedProject = Repository.projects.get(position);
+                Repository.setLastProject(Repository.selectedProject.toString());
+                Repository.issueAdapter = null;
+                Repository.userAdapter = null;
+                notifyDataSetChanged();
+            }
+            GitLabApp.bus().post(new CloseDrawerEvent());
+            GitLabApp.bus().post(new ProjectChangedEvent(position));
         }
     };
 
