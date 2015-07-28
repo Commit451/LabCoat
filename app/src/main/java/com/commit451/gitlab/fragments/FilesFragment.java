@@ -2,6 +2,7 @@ package com.commit451.gitlab.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
@@ -24,8 +25,6 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import de.keyboardsurfer.android.widget.crouton.Crouton;
-import de.keyboardsurfer.android.widget.crouton.Style;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -117,7 +116,8 @@ public class FilesFragment extends Fragment implements OnItemClickListener, Swip
 				
 				if(e.getResponse().getStatus() != 500) {
                     RetrofitHelper.printDebugInfo(getActivity(), e);
-                    Crouton.makeText(getActivity(), R.string.connection_error_files, Style.ALERT).show();
+					Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.connection_error_files), Snackbar.LENGTH_SHORT)
+							.show();
                 }
 			}
 		}

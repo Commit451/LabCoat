@@ -2,6 +2,7 @@ package com.commit451.gitlab.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -25,8 +26,6 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import de.keyboardsurfer.android.widget.crouton.Crouton;
-import de.keyboardsurfer.android.widget.crouton.Style;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -93,8 +92,8 @@ public class IssuesFragment extends Fragment implements OnItemClickListener, Swi
 			
 			if(swipeLayout != null && swipeLayout.isRefreshing())
                 swipeLayout.setRefreshing(false);
-			
-			Crouton.makeText(getActivity(), R.string.connection_error_issues, Style.ALERT).show();
+			Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.connection_error_issues), Snackbar.LENGTH_SHORT)
+					.show();
 			listView.setAdapter(null);
 		}
 	};

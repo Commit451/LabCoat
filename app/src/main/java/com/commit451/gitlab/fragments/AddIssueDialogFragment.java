@@ -3,6 +3,7 @@ package com.commit451.gitlab.fragments;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,8 +19,6 @@ import com.commit451.gitlab.tools.RetrofitHelper;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import de.keyboardsurfer.android.widget.crouton.Crouton;
-import de.keyboardsurfer.android.widget.crouton.Style;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -63,8 +62,10 @@ public class AddIssueDialogFragment extends DialogFragment {
 			
 			Repository.getService().postIssue(Repository.selectedProject.getId(), titleInput.getText().toString().trim(), descriptionInput.getText().toString().trim(), "", issueCallback);
 		}
-		else
-			Crouton.makeText(AddIssueDialogFragment.this.getActivity(), R.string.input_error, Style.ALERT, (ViewGroup) getView()).show();
+		else {
+			Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.input_error), Snackbar.LENGTH_SHORT)
+					.show();
+		}
 	}
 	
 	@OnClick(R.id.cancel_button)
@@ -96,8 +97,8 @@ public class AddIssueDialogFragment extends DialogFragment {
 			
 			if(pd != null && pd.isShowing())
 				pd.cancel();
-			
-			Crouton.makeText(AddIssueDialogFragment.this.getActivity(), R.string.connection_error, Style.ALERT).show();
+			Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
+					.show();
 		}
 	};
 }

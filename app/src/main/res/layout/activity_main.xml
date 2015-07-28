@@ -52,7 +52,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:orientation="vertical"
-        android:background="@android:color/white">
+        android:background="?android:attr/colorForegroundInverse">
 
         <ListView
             android:id="@+id/left_drawer_list"
@@ -60,6 +60,11 @@
             android:layout_height="wrap_content"
             android:choiceMode="singleChoice"
             android:dividerHeight="1dp" />
+
+        <com.commit451.gitlab.views.GitLabNavigationView
+            android:id="@+id/navigation_view"
+            android:layout_width="300dp"
+            android:layout_height="match_parent"/>
 
     </LinearLayout>
 

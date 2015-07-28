@@ -1,6 +1,7 @@
 package com.commit451.gitlab;
 
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,8 +18,6 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import de.keyboardsurfer.android.widget.crouton.Crouton;
-import de.keyboardsurfer.android.widget.crouton.Style;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -35,12 +34,6 @@ public class DiffActivity extends BaseActivity {
 		setContentView(R.layout.activity_diff);
 		ButterKnife.bind(this);
 		init();
-	}
-	
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		Crouton.cancelAllCroutons();
 	}
 	
 	private void init() {
@@ -82,8 +75,8 @@ public class DiffActivity extends BaseActivity {
 		@Override
 		public void failure(RetrofitError e) {
 			RetrofitHelper.printDebugInfo(DiffActivity.this, e);
-
-            Crouton.makeText(DiffActivity.this, R.string.connection_error, Style.ALERT);
+			Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
+					.show();
 		}
 	};
 	
@@ -99,8 +92,8 @@ public class DiffActivity extends BaseActivity {
 		@Override
 		public void failure(RetrofitError e) {
 			RetrofitHelper.printDebugInfo(DiffActivity.this, e);
-			
-			Crouton.makeText(DiffActivity.this, R.string.connection_error, Style.ALERT);
+			Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
+					.show();
 		}
 	};
 	

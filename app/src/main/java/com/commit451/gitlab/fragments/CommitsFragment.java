@@ -2,6 +2,7 @@ package com.commit451.gitlab.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
@@ -23,8 +24,6 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import de.keyboardsurfer.android.widget.crouton.Crouton;
-import de.keyboardsurfer.android.widget.crouton.Style;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -103,7 +102,8 @@ public class CommitsFragment extends Fragment implements SwipeRefreshLayout.OnRe
 			if(swipeLayout != null && swipeLayout.isRefreshing())
                 swipeLayout.setRefreshing(false);
 
-			Crouton.makeText(getActivity(), R.string.connection_error_commits, Style.ALERT).show();
+			Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.connection_error_commits), Snackbar.LENGTH_SHORT)
+					.show();
 			listView.setAdapter(null);
 		}
 	};

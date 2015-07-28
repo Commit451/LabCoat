@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.text.method.LinkMovementMethod;
 import android.view.KeyEvent;
 import android.view.View;
@@ -23,8 +24,6 @@ import javax.net.ssl.SSLHandshakeException;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import de.keyboardsurfer.android.widget.crouton.Crouton;
-import de.keyboardsurfer.android.widget.crouton.Style;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -57,13 +56,6 @@ public class LoginActivity extends BaseActivity {
 		tokenInput.setOnEditorActionListener(onEditorActionListener);
 	}
 	
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		
-		Crouton.cancelAllCroutons();
-	}
-	
 	@OnClick(R.id.show_normal_link)
 	public void showNormalLogin() {
 		if (normalLogin.getVisibility() == View.VISIBLE) {
@@ -84,7 +76,8 @@ public class LoginActivity extends BaseActivity {
 		String url = urlInput.getText().toString();
 		
 		if(url.length() == 0) {
-			Crouton.makeText(LoginActivity.this, R.string.login_error, Style.ALERT).show();
+			Snackbar.make(getWindow().getDecorView(), getString(R.string.login_error), Snackbar.LENGTH_SHORT)
+					.show();
 			return;
 		}
         else if(url.startsWith("http://") && url.endsWith(".git"))
@@ -216,7 +209,9 @@ public class LoginActivity extends BaseActivity {
             urlInput.setText(urlInput.getText().toString().replace("http://", "https://"));
             connect(auth);
         }
-        else
-            Crouton.makeText(LoginActivity.this, R.string.login_error, Style.ALERT).show();
+        else {
+			Snackbar.make(getWindow().getDecorView(), getString(R.string.login_error), Snackbar.LENGTH_SHORT)
+					.show();
+		}
     }
 }

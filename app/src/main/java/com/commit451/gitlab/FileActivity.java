@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,15 +19,12 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import de.keyboardsurfer.android.widget.crouton.Crouton;
-import de.keyboardsurfer.android.widget.crouton.Style;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -50,13 +48,6 @@ public class FileActivity extends BaseActivity {
 		}
 	}
 	
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		
-		Crouton.cancelAllCroutons();
-	}
-	
 	@SuppressLint("SetJavaScriptEnabled")
 	private void setupUI() {
 		toolbar.setNavigationIcon(R.drawable.ic_back);
@@ -67,14 +58,10 @@ public class FileActivity extends BaseActivity {
 			}
 		});
 		toolbar.setTitle(Repository.selectedFile.getName());
-		toolbar.inflateMenu(R.menu.file);
 		toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
 			@Override
 			public boolean onMenuItemClick(MenuItem item) {
 				switch(item.getItemId()) {
-					case android.R.id.home:
-						finish();
-						return true;
 					case R.id.action_open:
 						openFile();
 						return true;
@@ -115,7 +102,8 @@ public class FileActivity extends BaseActivity {
 		@Override
 		public void failure(RetrofitError e) {
 			RetrofitHelper.printDebugInfo(FileActivity.this, e);
-			Crouton.makeText(FileActivity.this, R.string.connection_error, Style.ALERT).show();
+			Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
+					.show();
 		}
 	};
 	
@@ -134,20 +122,21 @@ public class FileActivity extends BaseActivity {
 				FileOutputStream f = new FileOutputStream(newFile);
 				f.write(fileBlob);
 				f.close();
-				
-				Crouton.makeText(this, R.string.file_saved, Style.CONFIRM).show();
+
+				Snackbar.make(getWindow().getDecorView(), getString(R.string.file_saved), Snackbar.LENGTH_SHORT)
+						.show();
 				
 				return newFile;
 			}
-			catch(FileNotFoundException e) {
-				Crouton.makeText(this, R.string.save_error, Style.ALERT).show();
-			}
 			catch(IOException e) {
-				Crouton.makeText(this, R.string.save_error, Style.ALERT).show();
+				Snackbar.make(getWindow().getDecorView(), getString(R.string.save_error), Snackbar.LENGTH_SHORT)
+						.show();
 			}
 		}
-		else
-			Crouton.makeText(this, R.string.save_error, Style.ALERT).show();
+		else {
+			Snackbar.make(getWindow().getDecorView(), getString(R.string.save_error), Snackbar.LENGTH_SHORT)
+					.show();
+		}
 		
 		return null;
 	}
@@ -156,7 +145,8 @@ public class FileActivity extends BaseActivity {
 		File file = saveBlob();
 		
 		if(file == null) {
-            Crouton.makeText(this, R.string.open_error, Style.ALERT).show();
+			Snackbar.make(getWindow().getDecorView(), getString(R.string.open_error), Snackbar.LENGTH_SHORT)
+					.show();
             return;
         }
 
@@ -165,7 +155,8 @@ public class FileActivity extends BaseActivity {
 
         String fileExt = fileExt(file.toString());
         if (fileExt == null) {
-            Crouton.makeText(this, R.string.open_error, Style.ALERT).show();
+			Snackbar.make(getWindow().getDecorView(), getString(R.string.open_error), Snackbar.LENGTH_SHORT)
+					.show();
             return;
         }
         String mimeType = myMime.getMimeTypeFromExtension(fileExt.substring(1));
@@ -176,7 +167,8 @@ public class FileActivity extends BaseActivity {
             startActivity(newIntent);
         }
         catch(android.content.ActivityNotFoundException e) {
-            Crouton.makeText(this, R.string.open_error, Style.ALERT).show();
+			Snackbar.make(getWindow().getDecorView(), getString(R.string.open_error), Snackbar.LENGTH_SHORT)
+					.show();
         }
 	}
 	

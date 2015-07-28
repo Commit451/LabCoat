@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -35,6 +36,7 @@ import com.commit451.gitlab.model.Project;
 import com.commit451.gitlab.model.User;
 import com.commit451.gitlab.tools.Repository;
 import com.commit451.gitlab.tools.RetrofitHelper;
+import com.commit451.gitlab.views.GitLabNavigationView;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -43,8 +45,6 @@ import java.util.Locale;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import de.keyboardsurfer.android.widget.crouton.Crouton;
-import de.keyboardsurfer.android.widget.crouton.Style;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -55,6 +55,7 @@ public class MainActivity extends BaseActivity implements ActionBar.OnNavigation
 	@Bind(R.id.tabs) TabLayout tabs;
 	@Bind(R.id.branch_spinner) Spinner branchSpinner;
 	@Bind(R.id.drawer_layout) DrawerLayout drawerLayout;
+	@Bind(R.id.navigation_view) GitLabNavigationView navigationView;
 	@Bind(R.id.left_drawer) LinearLayout drawerLeft;
 	@Bind(R.id.left_drawer_list) ListView drawerList;
 	@Bind(R.id.pager) ViewPager viewPager;
@@ -133,12 +134,6 @@ public class MainActivity extends BaseActivity implements ActionBar.OnNavigation
 		viewPager.setAdapter(sectionsPagerAdapter);
 		viewPager.setOffscreenPageLimit(3);
 		tabs.setupWithViewPager(viewPager);
-	}
-	
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		Crouton.cancelAllCroutons();
 	}
 	
 	@Override
@@ -299,7 +294,7 @@ public class MainActivity extends BaseActivity implements ActionBar.OnNavigation
 		
 		@Override
 		public void success(List<User> users, Response resp) {
-			Repository.users = new ArrayList<User>(users);
+			Repository.users = new ArrayList<>(users);
 			
 			Repository.getService().getProjects(projectsCallback);
 		}
@@ -310,8 +305,9 @@ public class MainActivity extends BaseActivity implements ActionBar.OnNavigation
 			
 			if(pd != null && pd.isShowing())
 				pd.cancel();
-			
-			Crouton.makeText(MainActivity.this, R.string.connection_error, Style.ALERT).show();
+
+			Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
+					.show();
 		}
 	};
 	
@@ -342,9 +338,12 @@ public class MainActivity extends BaseActivity implements ActionBar.OnNavigation
 			
 			if(Repository.selectedProject != null)
 				Repository.getService().getBranches(Repository.selectedProject.getId(), branchesCallback);
-            else
-                if(pd != null && pd.isShowing())
-                    pd.cancel();
+            else {
+				if (pd != null && pd.isShowing()) {
+					pd.cancel();
+				}
+			}
+			navigationView.setProjects(projects);
 		}
 		
 		@Override
@@ -353,8 +352,8 @@ public class MainActivity extends BaseActivity implements ActionBar.OnNavigation
 
             if(pd != null && pd.isShowing())
                 pd.cancel();
-			
-			Crouton.makeText(MainActivity.this, R.string.connection_error, Style.ALERT).show();
+			Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
+					.show();
 		}
 	};
 	
@@ -404,7 +403,8 @@ public class MainActivity extends BaseActivity implements ActionBar.OnNavigation
             }
 
             RetrofitHelper.printDebugInfo(MainActivity.this, e);
-			Crouton.makeText(MainActivity.this, R.string.connection_error, Style.ALERT).show();
+			Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
+					.show();
 		}
 	};
 }

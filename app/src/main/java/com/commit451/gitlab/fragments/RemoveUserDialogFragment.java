@@ -2,6 +2,7 @@ package com.commit451.gitlab.fragments;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,8 +15,6 @@ import com.commit451.gitlab.tools.RetrofitHelper;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import de.keyboardsurfer.android.widget.crouton.Crouton;
-import de.keyboardsurfer.android.widget.crouton.Style;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -67,8 +66,10 @@ public class RemoveUserDialogFragment extends DialogFragment {
 			if(response.getUserId() != 0) {
 				Repository.userAdapter.removeUser(response.getUserId());
 			}
-			else
-				Crouton.makeText(RemoveUserDialogFragment.this.getActivity(), R.string.user_remove_error, Style.ALERT).show();
+			else {
+				Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.user_remove_error), Snackbar.LENGTH_SHORT)
+						.show();
+			}
 			
 			RemoveUserDialogFragment.this.dismiss();
 		}
@@ -79,8 +80,8 @@ public class RemoveUserDialogFragment extends DialogFragment {
 			
 			if(pd != null && pd.isShowing())
 				pd.cancel();
-			
-			Crouton.makeText(RemoveUserDialogFragment.this.getActivity(), R.string.user_remove_error, Style.ALERT).show();
+			Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.user_remove_error), Snackbar.LENGTH_SHORT)
+					.show();
 			RemoveUserDialogFragment.this.dismiss();
 		}
 	};

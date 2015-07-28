@@ -1,6 +1,7 @@
 package com.commit451.gitlab.fragments;
 
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -24,8 +25,6 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import de.keyboardsurfer.android.widget.crouton.Crouton;
-import de.keyboardsurfer.android.widget.crouton.Style;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -116,7 +115,8 @@ public class UsersFragment extends Fragment implements OnItemClickListener, Swip
 				addUserButton.setVisibility(View.VISIBLE);
 
                 RetrofitHelper.printDebugInfo(getActivity(), e);
-				Crouton.makeText(getActivity(), R.string.connection_error_users, Style.ALERT).show();
+				Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.connection_error_users), Snackbar.LENGTH_SHORT)
+						.show();
 				listView.setAdapter(null);
 			}
 		}
