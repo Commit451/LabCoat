@@ -1,31 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.commit451.gitlab.views.GitLabSwipeRefreshLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/swipe_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
+    <com.commit451.gitlab.views.GitLabSwipeRefreshLayout
+        android:id="@+id/swipe_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-        <ListView
-            android:id="@+id/fragmentList"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true" />
-
-        <TextView
-            android:id="@+id/error_text"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/list"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:text="@string/files_not_supported"
-            android:gravity="center"
-            android:visibility="gone"/>
+            android:layout_height="match_parent"/>
 
-    </RelativeLayout>
+    </com.commit451.gitlab.views.GitLabSwipeRefreshLayout>
 
-</com.commit451.gitlab.views.GitLabSwipeRefreshLayout>
+    <TextView
+        android:id="@+id/error_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="@string/files_not_supported"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:visibility="gone"/>
+
+</FrameLayout>
 
