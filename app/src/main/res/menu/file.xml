@@ -7,13 +7,13 @@
         android:enabled="false"
         app:showAsAction="ifRoom"
         android:title="@string/action_open"
-        android:icon="@drawable/ic_action_open_dark" />
+        android:icon="@drawable/ic_edit" />
     
     <item 
         android:id="@+id/action_save"
         android:enabled="false"
         app:showAsAction="ifRoom"
         android:title="@string/action_save"
-        android:icon="@drawable/ic_action_save_dark"/>
+        android:icon="@drawable/ic_save"/>
 
 </menu>

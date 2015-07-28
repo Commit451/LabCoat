@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.MimeTypeMap;
@@ -90,21 +89,6 @@ public class FileActivity extends BaseActivity {
 		fileBlobView.getSettings().setJavaScriptEnabled(true);
 	}
 	
-	private void enableMenu(Menu menu) {
-		MenuItem openFile = menu.getItem(0);
-		MenuItem saveFile = menu.getItem(1);
-
-		if(openFile != null) {
-			openFile.setEnabled(true);
-			openFile.setIcon(R.drawable.ic_action_open);
-		}
-		
-		if(saveFile != null) {
-			saveFile.setEnabled(true);
-			saveFile.setIcon(R.drawable.ic_action_save);
-		}
-	}
-	
 	private Callback<Response> blobCallback = new Callback<Response>() {
 		
 		@Override
@@ -124,8 +108,8 @@ public class FileActivity extends BaseActivity {
 			
 			String temp = "<!DOCTYPE html><html><head><link href=\"github.css\" rel=\"stylesheet\" /></head><body><pre><code>" + StringEscapeUtils.escapeHtml(content) + "</code></pre><script src=\"highlight.pack.js\"></script><script>hljs.initHighlightingOnLoad();</script></body></html>";
 			fileBlobView.loadDataWithBaseURL("file:///android_asset/", temp, "text/html", "utf8", null);
-			
-			enableMenu(toolbar.getMenu());
+
+			toolbar.inflateMenu(R.menu.file);
 		}
 		
 		@Override

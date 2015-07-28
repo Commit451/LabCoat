@@ -6,6 +6,6 @@
         android:id="@+id/action_save"
         app:showAsAction="ifRoom"
         android:title="@string/action_save"
-        android:icon="@drawable/ic_action_save"/>
+        android:icon="@drawable/ic_save"/>
 
 </menu>

@@ -100,7 +100,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:background="#000000"
+        android:background="?attr/colorPrimary"
         android:orientation="horizontal"
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
@@ -128,7 +128,7 @@
             android:state_enabled="false"
             android:focusable="true"
             android:contentDescription="@string/add_note_content_description"
-            android:src="@drawable/ic_action_send" />
+            android:src="@drawable/ic_send" />
 
     </RelativeLayout>
 
