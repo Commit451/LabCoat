@@ -8,10 +8,10 @@ import android.text.method.LinkMovementMethod;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -49,9 +49,9 @@ public class IssueActivity extends BaseActivity {
 	@Bind(R.id.description) TextView description;
 	@Bind(R.id.note_list) ListView noteList;
 	
-	@Bind(R.id.progressbar_loading) ProgressBar progressBar;
+	@Bind(R.id.progressbar_loading) View progressBar;
 	@Bind(R.id.new_note_edit) EditText newNoteEdit;
-	
+
 	private ProgressDialog pd;
 	
 	@Override
@@ -115,6 +115,21 @@ public class IssueActivity extends BaseActivity {
 		}
 		stateSpinner.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, temp3));
 		stateSpinner.setSelection(temp3.indexOf(Repository.selectedIssue.getState()));
+		//Hack so that the onItemSelected does not get triggered the first time we create the view
+		stateSpinner.post(new Runnable() {
+			@Override
+			public void run() {
+				stateSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+					@Override
+					public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+						changeStatus();
+					}
+
+					@Override
+					public void onNothingSelected(AdapterView<?> parent) {}
+				});
+			}
+		});
 
 		if(Repository.selectedIssue.getAssignee() != null) {
 			ArrayList<User> temp = new ArrayList<User>();
@@ -146,6 +161,24 @@ public class IssueActivity extends BaseActivity {
 	private void loadNotes() {
 		progressBar.setVisibility(View.VISIBLE);
 		Repository.getService().getIssueNotes(Repository.selectedProject.getId(), Repository.selectedIssue.getId(), notesCallback);
+	}
+
+	private void changeStatus() {
+		String selection = stateSpinner.getSelectedItem().toString();
+		String value = "";
+		if(selection.equals("closed") && (Repository.selectedIssue.getState().equals("opened") || Repository.selectedIssue.getState().equals("reopened"))) {
+			value = "close";
+		}
+		if((selection.equals("reopened") || selection.equals("opened")) && Repository.selectedIssue.getState().equals("closed")) {
+			value = "reopen";
+		}
+
+		Repository.getService().editIssue(
+				Repository.selectedProject.getId(),
+				Repository.selectedIssue.getId(),
+				value,
+				"",
+				issueCallback);
 	}
 	
 	private Callback<List<Note>> notesCallback = new Callback<List<Note>>() {
@@ -229,8 +262,12 @@ public class IssueActivity extends BaseActivity {
 		if((selection.equals("reopened") || selection.equals("opened")) && Repository.selectedIssue.getState().equals("closed"))
 			value = "reopen";
 		
-		Repository.getService().editIssue(Repository.selectedProject.getId(), Repository.selectedIssue.getId(), value, assigneeSpinner.getSelectedItemId(), milestoneSpinner.getSelectedItemId(),
-				"", issueCallback);
+		Repository.getService().editIssue(
+				Repository.selectedProject.getId(),
+				Repository.selectedIssue.getId(),
+				value,
+				"",
+				issueCallback);
 	}
 	
 	private Callback<Issue> issueCallback = new Callback<Issue>() {
@@ -244,16 +281,18 @@ public class IssueActivity extends BaseActivity {
 			Repository.selectedIssue.setAssignee((User) assigneeSpinner.getSelectedItem());
 			Repository.selectedIssue.setMilestone((Milestone) milestoneSpinner.getSelectedItem());
 			
-			if(Repository.issueAdapter != null)
+			if(Repository.issueAdapter != null) {
 				Repository.issueAdapter.notifyDataSetChanged();
+			}
 		}
 		
 		@Override
 		public void failure(RetrofitError e) {
 			RetrofitHelper.printDebugInfo(IssueActivity.this, e);
 			
-			if(pd != null && pd.isShowing())
+			if(pd != null && pd.isShowing()) {
 				pd.cancel();
+			}
 			Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
 					.show();
 		}

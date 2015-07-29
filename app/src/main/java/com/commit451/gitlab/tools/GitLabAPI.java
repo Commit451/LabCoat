@@ -82,6 +82,13 @@ public interface GitLabAPI {
 	@PUT("/projects/{id}/issues/{issue_id}")
 	void editIssue(@Path("id") long projectId, @Path("issue_id") long issueId, @Query("state_event") String stateEvent, @Query("assignee_id") long assigneeId, @Query("milestone_id") long milestoneId,
 				   @Body String blankBodySoRetrofitDoesntCry, Callback<Issue> cb);
+
+	@PUT("/projects/{id}/issues/{issue_id}")
+	void editIssue(@Path("id") long projectId,
+				   @Path("issue_id") long issueId,
+				   @Query("state_event") String stateEvent,
+				   @Body String blankBodySoRetrofitDoesntCry,
+				   Callback<Issue> cb);
 	
 	@GET("/projects/{id}/issues/{issue_id}/notes?per_page=100")
 	void getIssueNotes(@Path("id") long projectId, @Path("issue_id") long issueId, Callback<List<Note>> cb);
