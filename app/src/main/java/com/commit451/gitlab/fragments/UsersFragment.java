@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.NewUserAdapter;
+import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.User;
 import com.commit451.gitlab.tools.Repository;
 import com.commit451.gitlab.tools.RetrofitHelper;
@@ -78,8 +79,8 @@ public class UsersFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 			}
 			return;
 		}
-		
-		Repository.getService().getGroupMembers(Repository.selectedProject.getGroup().getId(), usersCallback);
+
+        GitLabClient.instance().getGroupMembers(Repository.selectedProject.getGroup().getId(), usersCallback);
 	}
 	
 	public Callback<List<User>> usersCallback = new Callback<List<User>>() {

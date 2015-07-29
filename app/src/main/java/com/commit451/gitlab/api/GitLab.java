@@ -1,4 +1,4 @@
-package com.commit451.gitlab.tools;
+package com.commit451.gitlab.api;
 
 import com.commit451.gitlab.model.Branch;
 import com.commit451.gitlab.model.DeleteResponse;
@@ -25,7 +25,7 @@ import retrofit.http.PUT;
 import retrofit.http.Path;
 import retrofit.http.Query;
 
-public interface GitLabAPI {
+public interface GitLab {
 	
 	/* --- LOGIN --- */
 	

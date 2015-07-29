@@ -21,6 +21,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.events.CloseDrawerEvent;
 import com.commit451.gitlab.events.ProjectChangedEvent;
 import com.commit451.gitlab.fragments.CommitsFragment;
@@ -31,6 +32,7 @@ import com.commit451.gitlab.model.Branch;
 import com.commit451.gitlab.model.Group;
 import com.commit451.gitlab.model.Project;
 import com.commit451.gitlab.model.User;
+import com.commit451.gitlab.tools.Prefs;
 import com.commit451.gitlab.tools.Repository;
 import com.commit451.gitlab.tools.RetrofitHelper;
 import com.commit451.gitlab.views.GitLabNavigationView;
@@ -60,7 +62,7 @@ public class MainActivity extends BaseActivity {
 		@Override
 		public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 			Repository.selectedBranch = Repository.branches.get(position);
-			Repository.setLastBranch(Repository.selectedBranch.getName());
+			Prefs.setLastBranch(MainActivity.this, Repository.selectedBranch.getName());
 			loadData();
 		}
 
@@ -92,7 +94,7 @@ public class MainActivity extends BaseActivity {
 			public boolean onMenuItemClick(MenuItem item) {
 				switch(item.getItemId()) {
 					case R.id.action_logout:
-						Repository.setLoggedIn(false);
+						Prefs.setLoggedIn(MainActivity.this, false);
 						startActivity(new Intent(MainActivity.this, LoginActivity.class));
 						return true;
 					default:
@@ -114,10 +116,12 @@ public class MainActivity extends BaseActivity {
 			ex.printStackTrace();
 		}
 		
-		if(!Repository.isLoggedIn())
-			startActivity(new Intent(this, LoginActivity.class));
-		else
-			connect();
+		if(!Prefs.isLoggedIn(this)) {
+            startActivity(new Intent(this, LoginActivity.class));
+        }
+		else {
+            connect();
+        }
 
         Point size = new Point();
         getWindowManager().getDefaultDisplay().getSize(size);
@@ -248,7 +252,7 @@ public class MainActivity extends BaseActivity {
 	
 	private void connect() {
 		pd = ProgressDialog.show(MainActivity.this, "", getResources().getString(R.string.main_progress_dialog), true);
-		Repository.getService().getGroups(groupsCallback);
+        GitLabClient.instance().getGroups(groupsCallback);
 	}
 	
 	private Callback<List<Group>> groupsCallback = new Callback<List<Group>>() {
@@ -256,14 +260,14 @@ public class MainActivity extends BaseActivity {
 		@Override
 		public void success(List<Group> groups, Response resp) {
 			Repository.groups = new ArrayList<>(groups);
-			
-			Repository.getService().getUsers(usersCallback);
+
+            GitLabClient.instance().getUsers(usersCallback);
 		}
 		
 		@Override
 		public void failure(RetrofitError e) {
 			RetrofitHelper.printDebugInfo(MainActivity.this, e);
-			Repository.getService().getUsers(usersCallback);
+            GitLabClient.instance().getUsers(usersCallback);
 		}
 	};
 	
@@ -272,8 +276,8 @@ public class MainActivity extends BaseActivity {
 		@Override
 		public void success(List<User> users, Response resp) {
 			Repository.users = new ArrayList<>(users);
-			
-			Repository.getService().getProjects(projectsCallback);
+
+            GitLabClient.instance().getProjects(projectsCallback);
 		}
 		
 		@Override
@@ -295,10 +299,10 @@ public class MainActivity extends BaseActivity {
 			Repository.projects = new ArrayList<>(projects);
 
 			if(Repository.projects.size() != 0) {
-				if(Repository.getLastProject().length() == 0)
+				if(Prefs.getLastProject(MainActivity.this).length() == 0)
 					Repository.selectedProject = Repository.projects.get(0);
 				else if(Repository.projects.size() > 0) {
-					String lastProject = Repository.getLastProject();
+					String lastProject = Prefs.getLastProject(MainActivity.this);
 
 					for(Project p : Repository.projects) {
 						if(p.toString().equals(lastProject))
@@ -311,7 +315,7 @@ public class MainActivity extends BaseActivity {
 			}
 			
 			if(Repository.selectedProject != null)
-				Repository.getService().getBranches(Repository.selectedProject.getId(), branchesCallback);
+                GitLabClient.instance().getBranches(Repository.selectedProject.getId(), branchesCallback);
             else {
 				if (pd != null && pd.isShowing()) {
 					pd.cancel();
@@ -346,7 +350,7 @@ public class MainActivity extends BaseActivity {
 			{
 				spinnerData[i] = Repository.branches.get(i);
 
-                if(Repository.getLastBranch().equals(spinnerData[i].getName()))
+                if(Prefs.getLastBranch(MainActivity.this).equals(spinnerData[i].getName()))
                     selectedBranchIndex = i;
                 else if(selectedBranchIndex == -1 && Repository.selectedProject != null && spinnerData[i].getName().equals(Repository.selectedProject.getDefaultBranch()))
                     selectedBranchIndex = i;
@@ -391,7 +395,7 @@ public class MainActivity extends BaseActivity {
 
         @Subscribe
         public void onProjectChanged(ProjectChangedEvent event) {
-            Repository.getService().getBranches(Repository.selectedProject.getId(), branchesCallback);
+            GitLabClient.instance().getBranches(Repository.selectedProject.getId(), branchesCallback);
         }
 	}
 }

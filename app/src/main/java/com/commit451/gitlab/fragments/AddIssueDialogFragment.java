@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.commit451.gitlab.IssueActivity;
 import com.commit451.gitlab.R;
+import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.Issue;
 import com.commit451.gitlab.tools.Repository;
 import com.commit451.gitlab.tools.RetrofitHelper;
@@ -59,7 +60,7 @@ public class AddIssueDialogFragment extends DialogFragment {
 	public void onSaveClick() {
 		if(titleInput.getText().toString().trim().length() > 0) {
 			pd = ProgressDialog.show(AddIssueDialogFragment.this.getActivity(), "", getResources().getString(R.string.progress_dialog), true);
-			Repository.getService().postIssue(Repository.selectedProject.getId(), titleInput.getText().toString().trim(), descriptionInput.getText().toString().trim(), "", issueCallback);
+			GitLabClient.instance().postIssue(Repository.selectedProject.getId(), titleInput.getText().toString().trim(), descriptionInput.getText().toString().trim(), "", issueCallback);
 		}
 		else {
 			Toast.makeText(getActivity(), getString(R.string.connection_error), Toast.LENGTH_SHORT)

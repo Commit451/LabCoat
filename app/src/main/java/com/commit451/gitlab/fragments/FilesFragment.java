@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.commit451.gitlab.FileActivity;
 import com.commit451.gitlab.R;
+import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.TreeItem;
 import com.commit451.gitlab.tools.Repository;
 import com.commit451.gitlab.tools.RetrofitHelper;
@@ -84,8 +85,8 @@ public class FilesFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         for(String p : path) {
             currentPath += p;
         }
-		
-		Repository.getService().getTree(Repository.selectedProject.getId(), branch, currentPath, filesCallback);
+
+		GitLabClient.instance().getTree(Repository.selectedProject.getId(), branch, currentPath, filesCallback);
 	}
 	
 	private Callback<List<TreeItem>> filesCallback = new Callback<List<TreeItem>>() {

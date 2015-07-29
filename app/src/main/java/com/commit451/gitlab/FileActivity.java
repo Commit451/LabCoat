@@ -12,6 +12,7 @@ import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.webkit.WebView;
 
+import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.tools.Repository;
 import com.commit451.gitlab.tools.RetrofitHelper;
 
@@ -43,8 +44,8 @@ public class FileActivity extends BaseActivity {
 		
 		if(Repository.selectedFile != null) {
 			setupUI();
-			
-			Repository.getService().getBlob(Repository.selectedProject.getId(), Repository.newestCommit.getId(), getIntent().getExtras().getString("path") + Repository.selectedFile.getName(), blobCallback);
+
+			GitLabClient.instance().getBlob(Repository.selectedProject.getId(), Repository.newestCommit.getId(), getIntent().getExtras().getString("path") + Repository.selectedFile.getName(), blobCallback);
 		}
 	}
 	

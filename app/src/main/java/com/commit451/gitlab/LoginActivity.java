@@ -12,9 +12,10 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.Project;
 import com.commit451.gitlab.model.Session;
-import com.commit451.gitlab.tools.Repository;
+import com.commit451.gitlab.tools.Prefs;
 import com.commit451.gitlab.tools.RetrofitHelper;
 
 import java.util.List;
@@ -71,7 +72,7 @@ public class LoginActivity extends BaseActivity {
 	
 	@OnClick(R.id.login_button)
 	public void onLoginClick() {
-		Repository.resetService();
+		GitLabClient.reset();
 		
 		String url = urlInput.getText().toString();
 		
@@ -113,9 +114,9 @@ public class LoginActivity extends BaseActivity {
 	
 	private void connect(boolean byAuth) {
 		pd = ProgressDialog.show(LoginActivity.this, "", getResources().getString(R.string.login_progress_dialog), true);
-		Repository.setServerUrl("");
-		Repository.setPrivateToken("");
-		Repository.setLoggedIn(false);
+		Prefs.setServerUrl(this, "");
+		Prefs.setPrivateToken(this, "");
+		Prefs.setLoggedIn(this, false);
 
 		String serverURL = urlInput.getText().toString();
 		
@@ -124,7 +125,7 @@ public class LoginActivity extends BaseActivity {
 		else
 			serverURL = serverURL.trim();
 		
-		Repository.setServerUrl(serverURL);
+		Prefs.setServerUrl(this, serverURL);
 		
 		if(byAuth)
 			connectByAuth();
@@ -134,9 +135,9 @@ public class LoginActivity extends BaseActivity {
 	
 	private void connectByAuth() {
 		if(userInput.getText().toString().contains("@"))
-			Repository.getService().getSessionByEmail(userInput.getText().toString(), passwordInput.getText().toString(), "", sessionCallback);
+			GitLabClient.instance().getSessionByEmail(userInput.getText().toString(), passwordInput.getText().toString(), "", sessionCallback);
 		else
-			Repository.getService().getSessionByUsername(userInput.getText().toString(), passwordInput.getText().toString(), "", sessionCallback);
+			GitLabClient.instance().getSessionByUsername(userInput.getText().toString(), passwordInput.getText().toString(), "", sessionCallback);
 	}
 	
 	private Callback<Session> sessionCallback = new Callback<Session>() {
@@ -146,8 +147,8 @@ public class LoginActivity extends BaseActivity {
 			if(pd != null && pd.isShowing())
 				pd.cancel();
 			
-			Repository.setLoggedIn(true);
-			Repository.setPrivateToken(session.private_token);
+			Prefs.setLoggedIn(LoginActivity.this, true);
+			Prefs.setPrivateToken(LoginActivity.this, session.private_token);
 			
 			Intent i = new Intent(LoginActivity.this, MainActivity.class);
 			i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -161,8 +162,8 @@ public class LoginActivity extends BaseActivity {
 	};
 	
 	private void connectByToken() {
-		Repository.setPrivateToken(tokenInput.getText().toString());
-		Repository.getService().getProjects(tokenCallback);
+		Prefs.setPrivateToken(this, tokenInput.getText().toString());
+		GitLabClient.instance().getProjects(tokenCallback);
 	}
 	
 	private Callback<List<Project>> tokenCallback = new Callback<List<Project>>() {
@@ -172,7 +173,7 @@ public class LoginActivity extends BaseActivity {
 			if(pd != null && pd.isShowing())
 				pd.cancel();
 			
-			Repository.setLoggedIn(true);
+			Prefs.setLoggedIn(LoginActivity.this, true);
 			
 			Intent i = new Intent(LoginActivity.this, MainActivity.class);
 			i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

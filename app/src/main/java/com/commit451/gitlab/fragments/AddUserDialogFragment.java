@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.UserAdapter;
+import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.User;
 import com.commit451.gitlab.tools.Repository;
 import com.commit451.gitlab.tools.RetrofitHelper;
@@ -70,8 +71,8 @@ public class AddUserDialogFragment extends DialogFragment {
 		
 		long userId = ((User) userSpinner.getSelectedItem()).getId();
 		String accessLevel = getActivity().getResources().getStringArray(R.array.role_values)[roleSpinner.getSelectedItemPosition()];
-		
-		Repository.getService().addGroupMember(Repository.selectedProject.getGroup().getId(), userId, accessLevel, "", userCallback);
+
+		GitLabClient.instance().addGroupMember(Repository.selectedProject.getGroup().getId(), userId, accessLevel, "", userCallback);
 	}
 	
 	private Callback<User> userCallback = new Callback<User>() {

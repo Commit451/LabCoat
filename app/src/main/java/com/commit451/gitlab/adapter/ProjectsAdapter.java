@@ -9,6 +9,7 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.events.CloseDrawerEvent;
 import com.commit451.gitlab.events.ProjectChangedEvent;
 import com.commit451.gitlab.model.Project;
+import com.commit451.gitlab.tools.Prefs;
 import com.commit451.gitlab.tools.Repository;
 import com.commit451.gitlab.viewHolders.ProjectViewHolder;
 
@@ -36,7 +37,7 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectViewHolder> {
             if(Repository.selectedProject == null || !Repository.selectedProject.equals(Repository.projects.get(position))) {
                 //TODO make the event bus control most of this. NO MORE STATIC UI
                 Repository.selectedProject = Repository.projects.get(position);
-                Repository.setLastProject(Repository.selectedProject.toString());
+                Prefs.setLastProject(v.getContext(), Repository.selectedProject.toString());
                 Repository.issueAdapter = null;
                 Repository.userAdapter = null;
                 notifyDataSetChanged();

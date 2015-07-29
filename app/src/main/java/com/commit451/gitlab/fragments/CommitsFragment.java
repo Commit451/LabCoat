@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.CommitsAdapter;
+import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.DiffLine;
 import com.commit451.gitlab.tools.Repository;
 import com.commit451.gitlab.tools.RetrofitHelper;
@@ -76,8 +77,8 @@ public class CommitsFragment extends Fragment implements SwipeRefreshLayout.OnRe
 		if(swipeLayout != null && !swipeLayout.isRefreshing()) {
             swipeLayout.setRefreshing(true);
         }
-		
-		Repository.getService().getCommits(Repository.selectedProject.getId(), Repository.selectedBranch.getName(), commitsCallback);
+
+        GitLabClient.instance().getCommits(Repository.selectedProject.getId(), Repository.selectedBranch.getName(), commitsCallback);
 	}
 
 	public boolean onBackPressed() {

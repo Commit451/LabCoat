@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.commit451.gitlab.adapter.MilestonesAdapter;
 import com.commit451.gitlab.adapter.NoteAdapter;
 import com.commit451.gitlab.adapter.UserAdapter;
+import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.Issue;
 import com.commit451.gitlab.model.Milestone;
 import com.commit451.gitlab.model.Note;
@@ -137,15 +138,15 @@ public class IssueActivity extends BaseActivity {
 			assigneeSpinner.setAdapter(new UserAdapter(this, temp));
 		}
 
-		Repository.getService().getUsersFallback(Repository.selectedProject.getId(), usersCallback);
+        GitLabClient.instance().getUsersFallback(Repository.selectedProject.getId(), usersCallback);
 		
 		ArrayList<Milestone> temp2 = new ArrayList<Milestone>();
 		if(Repository.selectedIssue.getMilestone() != null) {
 			temp2.add(Repository.selectedIssue.getMilestone());
 		}
 		milestoneSpinner.setAdapter(new MilestonesAdapter(this, temp2));
-		
-		Repository.getService().getMilestones(Repository.selectedProject.getId(), milestonesCallback);
+
+        GitLabClient.instance().getMilestones(Repository.selectedProject.getId(), milestonesCallback);
 		
 		Bypass bypass = new Bypass();
 		String desc = Repository.selectedIssue.getDescription();
@@ -160,7 +161,7 @@ public class IssueActivity extends BaseActivity {
 	
 	private void loadNotes() {
 		progressBar.setVisibility(View.VISIBLE);
-		Repository.getService().getIssueNotes(Repository.selectedProject.getId(), Repository.selectedIssue.getId(), notesCallback);
+        GitLabClient.instance().getIssueNotes(Repository.selectedProject.getId(), Repository.selectedIssue.getId(), notesCallback);
 	}
 
 	private void changeStatus() {
@@ -173,7 +174,7 @@ public class IssueActivity extends BaseActivity {
 			value = "reopen";
 		}
 
-		Repository.getService().editIssue(
+        GitLabClient.instance().editIssue(
 				Repository.selectedProject.getId(),
 				Repository.selectedIssue.getId(),
 				value,
@@ -216,8 +217,8 @@ public class IssueActivity extends BaseActivity {
 		InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 		imm.hideSoftInputFromWindow(newNoteEdit.getWindowToken(), 0);
 		newNoteEdit.setText("");
-		
-		Repository.getService().postIssueNote(Repository.selectedProject.getId(), Repository.selectedIssue.getId(), body, "", noteCallback);
+
+        GitLabClient.instance().postIssueNote(Repository.selectedProject.getId(), Repository.selectedIssue.getId(), body, "", noteCallback);
 	}
 	
 	private Callback<Note> noteCallback = new Callback<Note>() {
@@ -261,8 +262,8 @@ public class IssueActivity extends BaseActivity {
 			value = "close";
 		if((selection.equals("reopened") || selection.equals("opened")) && Repository.selectedIssue.getState().equals("closed"))
 			value = "reopen";
-		
-		Repository.getService().editIssue(
+
+        GitLabClient.instance().editIssue(
 				Repository.selectedProject.getId(),
 				Repository.selectedIssue.getId(),
 				value,

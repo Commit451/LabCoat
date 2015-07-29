@@ -23,9 +23,15 @@ public class GitLabApp extends Application {
         return bus;
     }
 
+    private static GitLabApp instance;
+    public static GitLabApp instance() {
+        return instance;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
+        instance = this;
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
         }

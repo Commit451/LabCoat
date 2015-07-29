@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.IssuesAdapter;
+import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.Issue;
 import com.commit451.gitlab.tools.Repository;
 import com.commit451.gitlab.tools.RetrofitHelper;
@@ -64,8 +65,8 @@ public class IssuesFragment extends Fragment implements SwipeRefreshLayout.OnRef
 		if(swipeLayout != null && !swipeLayout.isRefreshing()) {
 			swipeLayout.setRefreshing(true);
 		}
-		
-		Repository.getService().getIssues(Repository.selectedProject.getId(), issuesCallback);
+
+		GitLabClient.instance().getIssues(Repository.selectedProject.getId(), issuesCallback);
 	}
 	
 	private Callback<List<Issue>> issuesCallback = new Callback<List<Issue>>() {

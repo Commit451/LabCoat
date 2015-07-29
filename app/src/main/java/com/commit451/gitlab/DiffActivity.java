@@ -7,6 +7,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.Diff;
 import com.commit451.gitlab.model.DiffLine;
 import com.commit451.gitlab.tools.Repository;
@@ -62,8 +63,8 @@ public class DiffActivity extends BaseActivity {
 			}
 		});
 
-		Repository.getService().getCommit(Repository.selectedProject.getId(), Repository.selectedCommit.getId(), commitCallback);
-		Repository.getService().getCommitDiff(Repository.selectedProject.getId(), Repository.selectedCommit.getId(), diffCallback);
+		GitLabClient.instance().getCommit(Repository.selectedProject.getId(), Repository.selectedCommit.getId(), commitCallback);
+		GitLabClient.instance().getCommitDiff(Repository.selectedProject.getId(), Repository.selectedCommit.getId(), diffCallback);
 	}
 
 	private Callback<DiffLine> commitCallback = new Callback<DiffLine>() {

@@ -1,24 +1,25 @@
 package com.commit451.gitlab.tools;
 
+import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
+
+import com.commit451.gitlab.GitLabApp;
+import com.commit451.gitlab.LoginActivity;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
+
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import javax.net.ssl.SSLHandshakeException;
 
 import retrofit.RetrofitError;
 import retrofit.client.Header;
-
-import android.content.Context;
-import android.content.Intent;
-import android.util.Log;
-
-import com.commit451.gitlab.LoginActivity;
-
-import javax.net.ssl.SSLHandshakeException;
 
 public class RetrofitHelper {
 	
@@ -28,7 +29,7 @@ public class RetrofitHelper {
 		if(error == null)
 			return;
         else if(error.getCause() instanceof SSLHandshakeException && context != null) {
-            Repository.setLoggedIn(false);
+            Prefs.setLoggedIn(GitLabApp.instance(), false);
             context.startActivity(new Intent(context, LoginActivity.class));
             return;
         }
@@ -71,10 +72,8 @@ public class RetrofitHelper {
         errorMessage += ExceptionUtils.getStackTrace(error);
 		error.printStackTrace();
 
-        if(error.getCause() instanceof SocketTimeoutException || error.getCause() instanceof UnknownHostException || error.getCause() instanceof ConnectException)
+        if(error.getCause() instanceof SocketTimeoutException || error.getCause() instanceof UnknownHostException || error.getCause() instanceof ConnectException) {
             return;
-        //Ask user if he wants to send errorMessage
-        else if(context != null)
-            DebugDataHelper.sendErrorReport(context, errorMessage);
+        }
 	}
 }
