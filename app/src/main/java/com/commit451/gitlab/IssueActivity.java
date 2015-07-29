@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.text.method.LinkMovementMethod;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -87,21 +86,6 @@ public class IssueActivity extends BaseActivity {
 			}
 		});
 		toolbar.setTitle("Issue #" + tempId);
-		toolbar.inflateMenu(R.menu.issue);
-		toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-			@Override
-			public boolean onMenuItemClick(MenuItem item) {
-				switch(item.getItemId()) {
-					case android.R.id.home:
-						finish();
-						return true;
-					case R.id.action_save:
-						save();
-						return true;
-				}
-				return false;
-			}
-		});
 		
 		title.setText(Repository.selectedIssue.getTitle());
 		
@@ -252,24 +236,6 @@ public class IssueActivity extends BaseActivity {
 					.show();
 		}
 	};
-	
-	private void save() {
-		pd = ProgressDialog.show(IssueActivity.this, "", getResources().getString(R.string.progress_dialog), true);
-		
-		String selection = stateSpinner.getSelectedItem().toString();
-		String value = "";
-		if(selection.equals("closed") && (Repository.selectedIssue.getState().equals("opened") || Repository.selectedIssue.getState().equals("reopened")))
-			value = "close";
-		if((selection.equals("reopened") || selection.equals("opened")) && Repository.selectedIssue.getState().equals("closed"))
-			value = "reopen";
-
-        GitLabClient.instance().editIssue(
-				Repository.selectedProject.getId(),
-				Repository.selectedIssue.getId(),
-				value,
-				"",
-				issueCallback);
-	}
 	
 	private Callback<Issue> issueCallback = new Callback<Issue>() {
 		

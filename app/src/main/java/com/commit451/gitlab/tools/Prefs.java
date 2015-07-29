@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 /**
+ * Shared prefs things
  * Created by Jawn on 7/28/2015.
  */
 public class Prefs {

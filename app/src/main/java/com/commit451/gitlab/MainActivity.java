@@ -374,7 +374,7 @@ public class MainActivity extends BaseActivity {
 			if(pd != null && pd.isShowing())
 				pd.cancel();
 
-            if(e.getResponse().getStatus() == 500) {
+            if(e.getResponse() != null && e.getResponse().getStatus() == 500) {
                 Repository.selectedBranch = null;
                 loadData();
                 return;
