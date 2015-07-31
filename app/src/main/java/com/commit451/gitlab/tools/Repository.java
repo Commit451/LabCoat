@@ -34,9 +34,6 @@ public class Repository {
 	public static DiffLine selectedCommit;
 	
 	public static DiffLine newestCommit;
-
-	public static IssuesAdapter issueAdapter;
-	public static NewUserAdapter userAdapter;
 	
 	public static float displayWidth;
 	
@@ -54,9 +51,6 @@ public class Repository {
 		selectedUser = null;
 		
 		newestCommit = null;
-
-		issueAdapter = null;
-		userAdapter = null;
 	}
 
 	public static void setListViewSize(ListView listView) {

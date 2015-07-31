@@ -247,10 +247,7 @@ public class IssueActivity extends BaseActivity {
 			Repository.selectedIssue.setState(stateSpinner.getSelectedItem().toString());
 			Repository.selectedIssue.setAssignee((User) assigneeSpinner.getSelectedItem());
 			Repository.selectedIssue.setMilestone((Milestone) milestoneSpinner.getSelectedItem());
-			
-			if(Repository.issueAdapter != null) {
-				Repository.issueAdapter.notifyDataSetChanged();
-			}
+			//TODO notify the main activity when a issue changes so it will update in the list
 		}
 		
 		@Override

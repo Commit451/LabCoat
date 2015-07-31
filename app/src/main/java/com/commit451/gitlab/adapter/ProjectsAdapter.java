@@ -38,8 +38,6 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectViewHolder> {
                 //TODO make the event bus control most of this. NO MORE STATIC UI
                 Repository.selectedProject = Repository.projects.get(position);
                 Prefs.setLastProject(v.getContext(), Repository.selectedProject.toString());
-                Repository.issueAdapter = null;
-                Repository.userAdapter = null;
                 notifyDataSetChanged();
             }
             GitLabApp.bus().post(new CloseDrawerEvent());

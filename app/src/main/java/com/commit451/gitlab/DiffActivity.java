@@ -63,6 +63,7 @@ public class DiffActivity extends BaseActivity {
 			}
 		});
 
+		//TODO make this use RecyclerViews, cause this is insane
 		GitLabClient.instance().getCommit(Repository.selectedProject.getId(), Repository.selectedCommit.getId(), commitCallback);
 		GitLabClient.instance().getCommitDiff(Repository.selectedProject.getId(), Repository.selectedCommit.getId(), diffCallback);
 	}

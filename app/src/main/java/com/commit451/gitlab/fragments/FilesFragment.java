@@ -13,12 +13,17 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.commit451.gitlab.FileActivity;
+import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
+import com.commit451.gitlab.api.GitLab;
 import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.events.CloseDrawerEvent;
+import com.commit451.gitlab.events.ProjectChangedEvent;
 import com.commit451.gitlab.model.TreeItem;
 import com.commit451.gitlab.tools.Repository;
 import com.commit451.gitlab.tools.RetrofitHelper;
 import com.commit451.gitlab.viewHolders.FileViewHolder;
+import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,14 +33,17 @@ import butterknife.ButterKnife;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+import timber.log.Timber;
 
 public class FilesFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
-	
+
 	private ArrayList<String> path;
 
 	@Bind(R.id.error_text) TextView errorText;
     @Bind(R.id.swipe_layout) SwipeRefreshLayout swipeLayout;
 	@Bind(R.id.list) RecyclerView list;
+
+	EventReceiver eventReceiver;
 	
 	public FilesFragment() {}
 	
@@ -47,12 +55,13 @@ public class FilesFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 		list.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         swipeLayout.setOnRefreshListener(this);
-
-		path = new ArrayList<>();
 		
 		if(Repository.selectedProject != null) {
 			loadData();
 		}
+
+		eventReceiver = new EventReceiver();
+		GitLabApp.bus().register(eventReceiver);
 		
 		return view;
 	}
@@ -61,10 +70,12 @@ public class FilesFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 	public void onDestroyView() {
 		super.onDestroyView();
         ButterKnife.unbind(this);
+		GitLabApp.bus().unregister(eventReceiver);
 	}
 	
 	public void loadData() {
-		path = new ArrayList<>();
+        Timber.d("loadData");
+        path = new ArrayList<>();
 		loadFiles();
 	}
 	
@@ -96,13 +107,20 @@ public class FilesFragment extends Fragment implements SwipeRefreshLayout.OnRefr
             if(swipeLayout != null && swipeLayout.isRefreshing()) {
 				swipeLayout.setRefreshing(false);
 			}
-			list.setAdapter(new FilesAdapter(files));
+            if (files != null && !files.isEmpty()) {
+                list.setVisibility(View.VISIBLE);
+                list.setAdapter(new FilesAdapter(files));
+                errorText.setVisibility(View.GONE);
+            } else {
+                errorText.setVisibility(View.VISIBLE);
+            }
 		}
 		
 		@Override
 		public void failure(RetrofitError e) {
-			if(swipeLayout != null && swipeLayout.isRefreshing())
+			if(swipeLayout != null && swipeLayout.isRefreshing()) {
                 swipeLayout.setRefreshing(false);
+            }
 			
 			if(e.getResponse() != null && e.getResponse().getStatus() == 404) {
 				errorText.setVisibility(View.VISIBLE);
@@ -131,6 +149,14 @@ public class FilesFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 		}
 		
 		return false;
+	}
+
+	private class EventReceiver {
+
+		@Subscribe
+		public void onProjectChanged(ProjectChangedEvent event) {
+			loadData();
+		}
 	}
 
 	public class FilesAdapter extends RecyclerView.Adapter<FileViewHolder> {

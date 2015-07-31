@@ -12,12 +12,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.IssuesAdapter;
 import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.events.ProjectChangedEvent;
 import com.commit451.gitlab.model.Issue;
 import com.commit451.gitlab.tools.Repository;
 import com.commit451.gitlab.tools.RetrofitHelper;
+import com.squareup.otto.Subscribe;
 
 import java.util.List;
 
@@ -33,7 +36,9 @@ public class IssuesFragment extends Fragment implements SwipeRefreshLayout.OnRef
 	@Bind(R.id.add_issue_button) View addIssueButton;
 	@Bind(R.id.list) RecyclerView listView;
     @Bind(R.id.swipe_layout) SwipeRefreshLayout swipeLayout;
-	
+
+	EventReceiver eventReceiver;
+
 	public IssuesFragment() {}
 	
 	@Override
@@ -44,8 +49,12 @@ public class IssuesFragment extends Fragment implements SwipeRefreshLayout.OnRef
 		listView.setLayoutManager(new LinearLayoutManager(getActivity()));
         swipeLayout.setOnRefreshListener(this);
 
-		if(Repository.selectedProject != null)
+		if(Repository.selectedProject != null) {
 			loadData();
+		}
+
+		eventReceiver = new EventReceiver();
+		GitLabApp.bus().register(eventReceiver);
 		
 		return view;
 	}
@@ -54,6 +63,7 @@ public class IssuesFragment extends Fragment implements SwipeRefreshLayout.OnRef
 	public void onDestroyView() {
 		super.onDestroyView();
         ButterKnife.unbind(this);
+		GitLabApp.bus().unregister(eventReceiver);
     }
 
     @Override
@@ -76,10 +86,7 @@ public class IssuesFragment extends Fragment implements SwipeRefreshLayout.OnRef
 			if(swipeLayout != null && swipeLayout.isRefreshing())
                 swipeLayout.setRefreshing(false);
 
-			IssuesAdapter issueAdapter = new IssuesAdapter(issues);
 			listView.setAdapter(new IssuesAdapter(issues));
-			
-			Repository.issueAdapter = issueAdapter;
 
 			addIssueButton.setEnabled(true);
 		}
@@ -105,5 +112,13 @@ public class IssuesFragment extends Fragment implements SwipeRefreshLayout.OnRef
 		FragmentTransaction ft = getFragmentManager().beginTransaction();
 		DialogFragment newFragment = AddIssueDialogFragment.newInstance();
 		newFragment.show(ft, "dialog");
+	}
+
+	private class EventReceiver {
+
+		@Subscribe
+		public void onProjectChanged(ProjectChangedEvent event) {
+			loadData();
+		}
 	}
 }

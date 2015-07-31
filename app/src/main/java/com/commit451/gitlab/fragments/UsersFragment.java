@@ -13,12 +13,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.NewUserAdapter;
 import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.events.ProjectChangedEvent;
 import com.commit451.gitlab.model.User;
 import com.commit451.gitlab.tools.Repository;
 import com.commit451.gitlab.tools.RetrofitHelper;
+import com.squareup.otto.Subscribe;
 
 import java.util.List;
 
@@ -35,7 +38,9 @@ public class UsersFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 	@Bind(R.id.list) RecyclerView listView;
 	@Bind(R.id.error_text) TextView errorText;
     @Bind(R.id.swipe_layout) SwipeRefreshLayout swipeLayout;
-	
+
+	EventReceiver eventReceiver;
+
 	public UsersFragment() {}
 	
 	@Override
@@ -49,7 +54,10 @@ public class UsersFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 		if(Repository.selectedProject != null) {
 			loadData();
 		}
-		
+
+		eventReceiver = new EventReceiver();
+		GitLabApp.bus().register(eventReceiver);
+
 		return view;
 	}
 	
@@ -57,6 +65,7 @@ public class UsersFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 	public void onDestroyView() {
 		super.onDestroyView();
 		ButterKnife.unbind(this);
+		GitLabApp.bus().unregister(eventReceiver);
 	}
 	
 	@Override
@@ -95,8 +104,7 @@ public class UsersFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 			listView.setVisibility(View.VISIBLE);
 			addUserButton.setVisibility(View.VISIBLE);
 
-			Repository.userAdapter = new NewUserAdapter(users);
-			listView.setAdapter(Repository.userAdapter);
+			listView.setAdapter(new NewUserAdapter(users));
 			
 			addUserButton.setEnabled(true);
 		}
@@ -123,5 +131,13 @@ public class UsersFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 		FragmentTransaction ft = getFragmentManager().beginTransaction();
 		DialogFragment newFragment = AddUserDialogFragment.newInstance();
 		newFragment.show(ft, "dialog");
+	}
+
+	private class EventReceiver {
+
+		@Subscribe
+		public void onProjectChanged(ProjectChangedEvent event) {
+			loadData();
+		}
 	}
 }

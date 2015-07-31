@@ -104,6 +104,7 @@ public class DiffView extends LinearLayout {
 		TextView title = new TextView(getContext());
 		title.setText(diff.getNewPath());
 		title.setTypeface(title.getTypeface(), Typeface.BOLD);
+		title.setTextColor(Color.BLACK);
 		title.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 		title.setPadding(PADDING_HEADER_H, PADDING_HEADER_V, PADDING_HEADER_H, PADDING_HEADER_V);
 		header.addView(title);
@@ -121,6 +122,7 @@ public class DiffView extends LinearLayout {
 		
 		TextView oldLine = new TextView(getContext());
 		oldLine.setText(line.oldLine);
+		oldLine.setTextColor(Color.BLACK);
 		oldLine.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT));
 		oldLine.setEms(2);
 		oldLine.setGravity(Gravity.CENTER_HORIZONTAL);
@@ -128,6 +130,7 @@ public class DiffView extends LinearLayout {
 		
 		TextView newLine = new TextView(getContext());
 		newLine.setText(line.newLine);
+		newLine.setTextColor(Color.BLACK);
 		newLine.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT));
 		newLine.setEms(2);
 		newLine.setGravity(Gravity.CENTER_HORIZONTAL);
@@ -135,6 +138,7 @@ public class DiffView extends LinearLayout {
 		
 		TextView content = new TextView(getContext());
 		content.setText(line.lineContent);
+		content.setTextColor(Color.BLACK);
 		content.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 		content.setPadding(PADDING_CONTENT_H, PADDING_CONTENT_V, PADDING_CONTENT_H, PADDING_CONTENT_V);
 		row.addView(content);

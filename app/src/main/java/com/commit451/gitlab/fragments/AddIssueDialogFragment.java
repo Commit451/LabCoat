@@ -77,14 +77,11 @@ public class AddIssueDialogFragment extends DialogFragment {
 		
 		@Override
 		public void success(Issue issue, Response resp) {
-			if(pd != null && pd.isShowing())
+			if(pd != null && pd.isShowing()) {
 				pd.cancel();
-			
-			if(Repository.issueAdapter != null) {
-				Repository.issueAdapter.addIssue(issue);
-				Repository.issueAdapter.notifyDataSetChanged();
 			}
-			
+
+			//TODO update the parent list when a new issue is created
 			Repository.selectedIssue = issue;
 			startActivity(new Intent(getActivity(), IssueActivity.class));
 			
@@ -95,8 +92,9 @@ public class AddIssueDialogFragment extends DialogFragment {
 		public void failure(RetrofitError e) {
 			RetrofitHelper.printDebugInfo(getActivity(), e);
 			
-			if(pd != null && pd.isShowing())
+			if(pd != null && pd.isShowing()) {
 				pd.cancel();
+			}
 			Toast.makeText(getActivity(), getString(R.string.connection_error), Toast.LENGTH_SHORT)
 					.show();
 		}

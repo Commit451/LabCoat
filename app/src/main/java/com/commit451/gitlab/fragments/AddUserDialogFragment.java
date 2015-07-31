@@ -82,8 +82,9 @@ public class AddUserDialogFragment extends DialogFragment {
 			if(pd != null && pd.isShowing())
 				pd.cancel();
 			
-			if(user.getId() != 0)
-				Repository.userAdapter.addUser(user);
+			if(user.getId() != 0) {
+				//TODO tell the parent to add the user to the list
+			}
 			else {
 				Toast.makeText(getActivity(), getString(R.string.user_error), Toast.LENGTH_SHORT)
 						.show();
