@@ -5,10 +5,11 @@
 
     <dimen name="padding_normal">16dp</dimen>
 
-    <dimen name="actionbarSize">56dp</dimen>
-    <dimen name="doubleActionbarSize">112dp</dimen>
-
     <dimen name="text_size_normal">22sp</dimen>
     <dimen name="text_size_large">32sp</dimen>
     <dimen name="text_size_huge">42sp</dimen>
+
+    <dimen name="actionbarSize">56dp</dimen>
+    <dimen name="doubleActionbarSize">112dp</dimen>
+    <dimen name="image_size">48dp</dimen>
 </resources>

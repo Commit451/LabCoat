@@ -1,123 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".IssueActivity" >
 
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/appbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary" />
-
-    </android.support.design.widget.AppBarLayout>
-
-    <ScrollView
-        android:id="@+id/scroll1"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/lsep2"
-        android:layout_alignParentTop="true"
-        android:paddingLeft="16dp"
-        android:paddingTop="@dimen/padding_normal"
-        android:layout_marginTop="?attr/actionBarSize" >
+        android:layout_marginBottom="?attr/actionBarSize"
+        android:orientation="vertical">
 
-        <LinearLayout
-            android:id="@+id/lin1"
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/appbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingRight="16dp" >
+            android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Title"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
-
-            <Spinner
-                android:id="@+id/state_spinner"
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-            
-            <Spinner
-                android:id="@+id/assignee_spinner"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary" />
+
+        </android.support.design.widget.AppBarLayout>
+
+        <com.commit451.gitlab.views.GitLabSwipeRefreshLayout
+            android:id="@+id/swipe_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/list"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"/>
 
-            <Spinner
-                android:id="@+id/milestone_spinner"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+        </com.commit451.gitlab.views.GitLabSwipeRefreshLayout>
 
-            <TextView
-                android:id="@+id/description"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:layout_marginTop="16dp"
-                android:text="Description"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-
-            <com.pnikosis.materialishprogress.ProgressWheel
-                android:id="@+id/progressbar_loading"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                app:matProg_barColor="?attr/colorAccent"
-                app:matProg_progressIndeterminate="true"
-                android:visibility="gone"/>
-
-            <View
-                android:id="@+id/lsep"
-                android:layout_width="match_parent"
-                android:layout_height="1dip"
-                android:background="?android:attr/dividerHorizontal" />
-
-            <ListView
-                android:id="@+id/note_list"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
-    </ScrollView>
-
-    <View
-        android:id="@+id/lsep2"
-        android:layout_width="match_parent"
-        android:layout_height="1dip"
-        android:layout_above="@+id/rel1"
-        android:background="?android:attr/dividerHorizontal" />
+    </LinearLayout>
     
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/rel1"
-        style="?android:attr/buttonBarStyle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:background="?attr/colorPrimary"
+        android:layout_height="?attr/actionBarSize"
         android:orientation="horizontal"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp"
-        android:paddingTop="5dp"
-        android:focusable="true" 
-		android:focusableInTouchMode="true" >
+        android:layout_gravity="bottom"
+        android:background="?attr/colorPrimary" >
 
         <EditText
             android:id="@+id/new_note_edit"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:layout_toLeftOf="@+id/new_note_button"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
             android:hint="@string/new_note_hint"
             android:inputType="text" />
 
@@ -126,13 +62,12 @@
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
+            android:layout_gravity="right"
             android:state_enabled="false"
             android:focusable="true"
             android:contentDescription="@string/add_note_content_description"
             android:src="@drawable/ic_send" />
 
-    </RelativeLayout>
+    </LinearLayout>
 
-</RelativeLayout>
+</FrameLayout>

@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/selectableItemBackground">
+
+    <ImageView
+        android:id="@+id/project_image"
+        android:layout_width="@dimen/image_size"
+        android:layout_height="@dimen/image_size"
+        android:src="@drawable/ic_project"
+        android:contentDescription="@null"/>
 
     <TextView
         android:id="@+id/project_title"

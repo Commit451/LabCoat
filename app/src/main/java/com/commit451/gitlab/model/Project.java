@@ -3,6 +3,7 @@ package com.commit451.gitlab.model;
 import java.util.Date;
 
 import com.commit451.gitlab.tools.Repository;
+import com.google.gson.annotations.SerializedName;
 
 public class Project {
 	
@@ -19,6 +20,8 @@ public class Project {
 	private boolean wall_enabled;
 	private boolean wiki_enabled;
 	private Date created_at;
+	@SerializedName("avatar_url")
+	private String avatarUrl;
 	
 	public long getId() {
 		return id;
@@ -136,7 +139,15 @@ public class Project {
 		else
 			return name;
 	}
-	
+
+	public String getAvatarUrl() {
+		return avatarUrl;
+	}
+
+	public void setAvatarUrl(String avatarUrl) {
+		this.avatarUrl = avatarUrl;
+	}
+
 	public Group getGroup() {
 		if(Repository.groups == null)
 			return null;
