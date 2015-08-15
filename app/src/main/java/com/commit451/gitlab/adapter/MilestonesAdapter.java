@@ -48,7 +48,7 @@ public class MilestonesAdapter extends BaseAdapter {
 	
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		if(convertView == null) convertView = inflater.inflate(R.layout.twoline_list_item, parent, false);
+		if(convertView == null) convertView = inflater.inflate(R.layout.item_milestone, parent, false);
 
 		final TextView title = (TextView) convertView.findViewById(R.id.title);
 		final TextView summary = (TextView) convertView.findViewById(R.id.summary);

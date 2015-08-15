@@ -1,13 +1,17 @@
 package com.commit451.gitlab.model;
 
-import java.util.Date;
+import org.parceler.Parcel;
 
+import java.util.Date;
+@Parcel
 public class Note {
 	
-	private long id;
-	private String body;
-	private User author;
-	private Date created_at;
+	long id;
+	String body;
+	User author;
+	Date created_at;
+
+	public Note(){}
 	
 	public long getId() {
 		return id;

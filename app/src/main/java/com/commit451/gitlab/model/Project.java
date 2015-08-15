@@ -1,27 +1,32 @@
 package com.commit451.gitlab.model;
 
-import java.util.Date;
-
 import com.commit451.gitlab.tools.Repository;
 import com.google.gson.annotations.SerializedName;
 
+import org.parceler.Parcel;
+
+import java.util.Date;
+
+@Parcel
 public class Project {
 	
-	private long id;
-	private String name;
-	private String description;
-	private String default_branch;
-	private User owner;
-	private boolean is_public;
-	private String path;
-	private String path_with_namespace;
-	private boolean issues_enabled;
-	private boolean merge_requests_enabled;
-	private boolean wall_enabled;
-	private boolean wiki_enabled;
-	private Date created_at;
+	long id;
+	String name;
+	String description;
+	String default_branch;
+	User owner;
+	boolean is_public;
+	String path;
+	String path_with_namespace;
+	boolean issues_enabled;
+	boolean merge_requests_enabled;
+	boolean wall_enabled;
+	boolean wiki_enabled;
+	Date created_at;
 	@SerializedName("avatar_url")
-	private String avatarUrl;
+	String avatarUrl;
+
+	public Project(){}
 	
 	public long getId() {
 		return id;

@@ -15,7 +15,6 @@ import com.commit451.gitlab.adapter.UserAdapter;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.User;
 import com.commit451.gitlab.tools.Repository;
-import com.commit451.gitlab.tools.RetrofitHelper;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -23,6 +22,7 @@ import butterknife.OnClick;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+import timber.log.Timber;
 
 public class AddUserDialogFragment extends DialogFragment {
 	
@@ -95,7 +95,7 @@ public class AddUserDialogFragment extends DialogFragment {
 		
 		@Override
 		public void failure(RetrofitError e) {
-			RetrofitHelper.printDebugInfo(getActivity(), e);
+			Timber.e(e.toString());
 			
 			if(pd != null && pd.isShowing())
 				pd.cancel();

@@ -16,7 +16,6 @@ import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.Project;
 import com.commit451.gitlab.model.Session;
 import com.commit451.gitlab.tools.Prefs;
-import com.commit451.gitlab.tools.RetrofitHelper;
 
 import java.util.List;
 
@@ -28,6 +27,7 @@ import butterknife.OnClick;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+import timber.log.Timber;
 
 public class LoginActivity extends BaseActivity {
 	
@@ -148,7 +148,7 @@ public class LoginActivity extends BaseActivity {
 				pd.cancel();
 			
 			Prefs.setLoggedIn(LoginActivity.this, true);
-			Prefs.setPrivateToken(LoginActivity.this, session.private_token);
+			Prefs.setPrivateToken(LoginActivity.this, session.getPrivateToken());
 			
 			Intent i = new Intent(LoginActivity.this, MainActivity.class);
 			i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -187,7 +187,7 @@ public class LoginActivity extends BaseActivity {
 	};
 
     private void handleConnectionError(RetrofitError e, boolean auth) {
-        RetrofitHelper.printDebugInfo(null, e);
+        Timber.e(e.toString());
 
         if(pd != null && pd.isShowing())
             pd.cancel();

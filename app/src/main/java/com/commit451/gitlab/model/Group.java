@@ -1,11 +1,16 @@
 package com.commit451.gitlab.model;
 
+import org.parceler.Parcel;
+
+@Parcel
 public class Group {
 	
-	private long id;
-	private String name;
-	private String path;
-	private long owner_id;
+	long id;
+	String name;
+	String path;
+	long owner_id;
+
+	public Group(){}
 	
 	public long getId() {
 		return id;

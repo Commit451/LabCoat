@@ -1,21 +1,25 @@
 package com.commit451.gitlab.model;
 
-import java.util.Date;
+import org.parceler.Parcel;
 
+import java.util.Date;
+@Parcel
 public class Issue {
 	
-	private long id;
-	private long iid;
-	private long project_id;
-	private String title;
-	private String description;
-	private String[] labels;
-	private Milestone milestone;
-	private User assignee;
-	private User author;
-	private String state;
-	private Date updated_at;
-	private Date created_at;
+	long id;
+	long iid;
+	long project_id;
+	String title;
+	String description;
+	String[] labels;
+	Milestone milestone;
+	User assignee;
+	User author;
+	String state;
+	Date updated_at;
+	Date created_at;
+
+	public Issue(){}
 	
 	public long getId() {
 		return id;

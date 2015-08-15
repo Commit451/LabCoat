@@ -1,26 +1,30 @@
 package com.commit451.gitlab.model;
 
-import java.util.Date;
+import org.parceler.Parcel;
 
+import java.util.Date;
+@Parcel
 public class Session {
 
-    public long id;
-	public String username;
-	public String email;
-	public String name;
-	public String private_token;
-	public boolean blocked;
-	public Date created_at;
-	public String bio;
-	public String skype;
-	public String linkedin;
-	public String twitter;
-	public boolean dark_scheme;
-	public long theme_id;
-	public boolean is_admin;
-    public boolean can_create_group;
-	public boolean can_create_team;
-	public boolean can_create_project;
+    long id;
+	String username;
+	String email;
+	String name;
+	String private_token;
+	boolean blocked;
+    Date created_at;
+	String bio;
+	String skype;
+	String linkedin;
+	String twitter;
+	boolean dark_scheme;
+	long theme_id;
+	boolean is_admin;
+    boolean can_create_group;
+	boolean can_create_team;
+	boolean can_create_project;
+
+    public Session(){}
 
     public long getId() {
         return id;

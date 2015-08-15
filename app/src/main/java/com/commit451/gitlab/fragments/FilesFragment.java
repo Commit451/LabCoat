@@ -15,13 +15,10 @@ import android.widget.TextView;
 import com.commit451.gitlab.FileActivity;
 import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.api.GitLab;
 import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.events.CloseDrawerEvent;
 import com.commit451.gitlab.events.ProjectChangedEvent;
 import com.commit451.gitlab.model.TreeItem;
 import com.commit451.gitlab.tools.Repository;
-import com.commit451.gitlab.tools.RetrofitHelper;
 import com.commit451.gitlab.viewHolders.FileViewHolder;
 import com.squareup.otto.Subscribe;
 
@@ -133,7 +130,7 @@ public class FilesFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 				list.setAdapter(null);
 				
 				if(e.getResponse() != null && e.getResponse().getStatus() != 500) {
-                    RetrofitHelper.printDebugInfo(getActivity(), e);
+					Timber.e(e.toString());
 					Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.connection_error_files), Snackbar.LENGTH_SHORT)
 							.show();
                 }

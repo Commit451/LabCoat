@@ -14,7 +14,6 @@ import android.webkit.WebView;
 
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.tools.Repository;
-import com.commit451.gitlab.tools.RetrofitHelper;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringEscapeUtils;
@@ -29,6 +28,7 @@ import butterknife.ButterKnife;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+import timber.log.Timber;
 
 public class FileActivity extends BaseActivity {
 	@Bind(R.id.toolbar) Toolbar toolbar;
@@ -102,7 +102,7 @@ public class FileActivity extends BaseActivity {
 		
 		@Override
 		public void failure(RetrofitError e) {
-			RetrofitHelper.printDebugInfo(FileActivity.this, e);
+			Timber.e(e.toString());
 			Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
 					.show();
 		}

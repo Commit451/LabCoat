@@ -1,11 +1,16 @@
 package com.commit451.gitlab.model;
 
+import org.parceler.Parcel;
+
+@Parcel
 public class TreeItem {
 	
-	private String name;
-	private String type;
-	private long mode;
-	private String id;
+	String name;
+	String type;
+	long mode;
+	String id;
+
+	public TreeItem(){}
 	
 	public String getName() {
 		return name;

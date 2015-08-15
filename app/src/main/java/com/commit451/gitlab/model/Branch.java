@@ -1,8 +1,13 @@
 package com.commit451.gitlab.model;
 
+import org.parceler.Parcel;
+
+@Parcel
 public class Branch {
-	private String name;
-	private boolean protected_;
+	String name;
+	boolean protected_;
+
+	public Branch(){}
 	
 	public String getName() {
 		return name;

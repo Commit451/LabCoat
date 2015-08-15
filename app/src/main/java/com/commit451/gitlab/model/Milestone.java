@@ -1,14 +1,18 @@
 package com.commit451.gitlab.model;
 
-import java.util.Date;
+import org.parceler.Parcel;
 
+import java.util.Date;
+@Parcel
 public class Milestone {
 	 
-	private long id;
-	private String title;
-	private String description;
-	private Date due_date;
-	private boolean closed;
+	long id;
+	String title;
+	String description;
+	Date due_date;
+	boolean closed;
+
+	public Milestone(){}
 	
 	public long getId() {
 		return id;

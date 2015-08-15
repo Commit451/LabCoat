@@ -1,18 +1,22 @@
 package com.commit451.gitlab.model;
 
+import org.parceler.Parcel;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
+@Parcel
 public class DiffLine {
 	
-	private String id;
-	private String short_id;
-	private String title;
-	private String author_name;
-	private String author_email;
-	private Date created_at;
-	private String message;
+	String id;
+	String short_id;
+	String title;
+	String author_name;
+	String author_email;
+	Date created_at;
+	String message;
+
+	public DiffLine(){}
 	
 	public String getId() {
 		return id;

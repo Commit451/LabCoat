@@ -1,6 +1,5 @@
 package com.commit451.gitlab.adapter;
 
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +32,7 @@ public class IssuesAdapter extends RecyclerView.Adapter<IssueViewHolder> {
         public void onClick(View v) {
             int position = (int) v.getTag(R.id.list_position);
             Repository.selectedIssue = getValueAt(position);
-            v.getContext().startActivity(new Intent(v.getContext(), IssueActivity.class));
+            v.getContext().startActivity(IssueActivity.newInstance(v.getContext(), getValueAt(position)));
         }
     };
 

@@ -20,7 +20,6 @@ import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.events.ProjectChangedEvent;
 import com.commit451.gitlab.model.User;
 import com.commit451.gitlab.tools.Repository;
-import com.commit451.gitlab.tools.RetrofitHelper;
 import com.squareup.otto.Subscribe;
 
 import java.util.List;
@@ -31,6 +30,7 @@ import butterknife.OnClick;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+import timber.log.Timber;
 
 public class UsersFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 	
@@ -116,7 +116,7 @@ public class UsersFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 			}
 			errorText.setVisibility(View.VISIBLE);
 			addUserButton.setVisibility(View.GONE);
-			RetrofitHelper.printDebugInfo(getActivity(), e);
+			Timber.e(e.toString());
 			Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.connection_error_users), Snackbar.LENGTH_SHORT)
 					.show();
 		}

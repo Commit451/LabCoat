@@ -1,6 +1,8 @@
 package com.commit451.gitlab;
 
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -19,6 +21,8 @@ import com.commit451.gitlab.model.Note;
 import com.commit451.gitlab.model.User;
 import com.commit451.gitlab.tools.Repository;
 
+import org.parceler.Parcels;
+
 import java.util.List;
 
 import butterknife.Bind;
@@ -30,6 +34,14 @@ import retrofit.client.Response;
 import timber.log.Timber;
 
 public class IssueActivity extends BaseActivity {
+
+	private static final String EXTRA_SELECTED_ISSUE = "extra_selected_issue";
+
+	public static Intent newInstance(Context context, Issue issue) {
+		Intent intent = new Intent(context, IssueActivity.class);
+		intent.putExtra(EXTRA_SELECTED_ISSUE, Parcels.wrap(issue));
+		return intent;
+	}
 
 	@Bind(R.id.toolbar) Toolbar toolbar;
 	
@@ -48,6 +60,8 @@ public class IssueActivity extends BaseActivity {
 		setContentView(R.layout.activity_issue);
 		ButterKnife.bind(this);
 
+		Issue issue = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_SELECTED_ISSUE));
+		Timber.d("Issue " + issue.getDescription());
 
         long tempId = Repository.selectedIssue.getIid();
         if(tempId < 1) {

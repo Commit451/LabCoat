@@ -11,7 +11,6 @@ import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.Diff;
 import com.commit451.gitlab.model.DiffLine;
 import com.commit451.gitlab.tools.Repository;
-import com.commit451.gitlab.tools.RetrofitHelper;
 import com.commit451.gitlab.views.DiffView;
 import com.commit451.gitlab.views.MessageView;
 
@@ -22,6 +21,7 @@ import butterknife.ButterKnife;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+import timber.log.Timber;
 
 public class DiffActivity extends BaseActivity {
 
@@ -76,7 +76,7 @@ public class DiffActivity extends BaseActivity {
 
 		@Override
 		public void failure(RetrofitError e) {
-			RetrofitHelper.printDebugInfo(DiffActivity.this, e);
+			Timber.e(e.toString());
 			Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
 					.show();
 		}
@@ -93,7 +93,7 @@ public class DiffActivity extends BaseActivity {
 		
 		@Override
 		public void failure(RetrofitError e) {
-			RetrofitHelper.printDebugInfo(DiffActivity.this, e);
+			Timber.e(e.toString());
 			Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
 					.show();
 		}

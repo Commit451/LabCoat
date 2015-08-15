@@ -1,17 +1,21 @@
 package com.commit451.gitlab.model;
 
-import java.util.Date;
+import org.parceler.Parcel;
 
+import java.util.Date;
+@Parcel
 public class User {
 	
-	private long id;
-	private String username;
-    private String email;
-	private String avatar_url;
-	private String name;
-	private boolean blocked;
-	private Date created_at;
-	private int access_level;
+	long id;
+	String username;
+    String email;
+	String avatar_url;
+	String name;
+	boolean blocked;
+	Date created_at;
+	int access_level;
+
+	public User(){}
 
 	public long getId() {
 		return id;

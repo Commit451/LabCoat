@@ -1,18 +1,22 @@
 package com.commit451.gitlab.model;
 
+import org.parceler.Parcel;
+
 import java.util.ArrayList;
 import java.util.List;
-
+@Parcel
 public class Diff {
 	
-	private String diff;
-	private String new_path;
-	private String old_path;
-	private int a_mode;
-	private int b_mode;
-	private boolean new_file;
-	private boolean renamed_file;
-	private boolean deleted_file;
+	String diff;
+	String new_path;
+	String old_path;
+	int a_mode;
+	int b_mode;
+	boolean new_file;
+	boolean renamed_file;
+	boolean deleted_file;
+
+	public Diff(){}
 	
 	public String getDiff() {
 		return diff;

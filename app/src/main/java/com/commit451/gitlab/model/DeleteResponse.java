@@ -1,16 +1,21 @@
 package com.commit451.gitlab.model;
 
+import org.parceler.Parcel;
+
 import java.util.Date;
 
+@Parcel
 public class DeleteResponse {
 	
-	private long id;
-	private long group_id;
-	private long user_id;
-	private long group_access;
-	private long notification_level;
-	private Date created_at;
-	private Date updated_at;
+	long id;
+	long group_id;
+	long user_id;
+	long group_access;
+	long notification_level;
+	Date created_at;
+	Date updated_at;
+
+    public DeleteResponse(){}
 	
 	public long getId() {
 		return id;

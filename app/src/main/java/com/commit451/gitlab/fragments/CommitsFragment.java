@@ -15,7 +15,6 @@ import com.commit451.gitlab.adapter.CommitsAdapter;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.DiffLine;
 import com.commit451.gitlab.tools.Repository;
-import com.commit451.gitlab.tools.RetrofitHelper;
 
 import java.util.List;
 
@@ -108,7 +107,7 @@ public class CommitsFragment extends Fragment implements SwipeRefreshLayout.OnRe
 		
 		@Override
 		public void failure(RetrofitError e) {
-			RetrofitHelper.printDebugInfo(getActivity(), e);
+			Timber.e(e.toString());
 
 			if(swipeLayout != null && swipeLayout.isRefreshing()) {
                 swipeLayout.setRefreshing(false);

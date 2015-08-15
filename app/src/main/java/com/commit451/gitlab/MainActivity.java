@@ -34,7 +34,6 @@ import com.commit451.gitlab.model.Project;
 import com.commit451.gitlab.model.User;
 import com.commit451.gitlab.tools.Prefs;
 import com.commit451.gitlab.tools.Repository;
-import com.commit451.gitlab.tools.RetrofitHelper;
 import com.commit451.gitlab.views.GitLabNavigationView;
 import com.squareup.otto.Subscribe;
 
@@ -48,6 +47,7 @@ import butterknife.ButterKnife;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+import timber.log.Timber;
 
 public class MainActivity extends BaseActivity {
 
@@ -266,7 +266,7 @@ public class MainActivity extends BaseActivity {
 		
 		@Override
 		public void failure(RetrofitError e) {
-			RetrofitHelper.printDebugInfo(MainActivity.this, e);
+			Timber.e(e.toString());
             GitLabClient.instance().getUsers(usersCallback);
 		}
 	};
@@ -282,7 +282,7 @@ public class MainActivity extends BaseActivity {
 		
 		@Override
 		public void failure(RetrofitError e) {
-			RetrofitHelper.printDebugInfo(MainActivity.this, e);
+			Timber.e(e.toString());
 			
 			if(pd != null && pd.isShowing())
 				pd.cancel();
@@ -326,7 +326,7 @@ public class MainActivity extends BaseActivity {
 		
 		@Override
 		public void failure(RetrofitError e) {
-			RetrofitHelper.printDebugInfo(MainActivity.this, e);
+			Timber.e(e.toString());
 
             if(pd != null && pd.isShowing())
                 pd.cancel();
@@ -380,7 +380,7 @@ public class MainActivity extends BaseActivity {
                 return;
             }
 
-            RetrofitHelper.printDebugInfo(MainActivity.this, e);
+			Timber.e(e.toString());
 			Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
 					.show();
 		}
