@@ -12,6 +12,9 @@ import android.widget.ArrayAdapter;
 import com.commit451.gitlab.R;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Automagically fills in email accounts
@@ -36,19 +39,21 @@ public class EmailAutoCompleteTextView extends AppCompatAutoCompleteTextView {
 
     private void init() {
         if (isInEditMode()) { return; }
-        ArrayList<String> accounts = getEmailAccounts();
+        Collection<String> accounts = getEmailAccounts();
         if (accounts != null && !accounts.isEmpty()) {
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.support_simple_spinner_dropdown_item, accounts);
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),
+                    R.layout.support_simple_spinner_dropdown_item,
+                    new ArrayList<>(accounts));
             setAdapter(adapter);
         }
     }
 
     /**
-     * Get all the accounts that appear to be email accounts
+     * Get all the accounts that appear to be email accounts. HashSet so that we do not get duplicates
      * @return list of email accounts
      */
-    private ArrayList<String> getEmailAccounts() {
-        ArrayList<String> emailAccounts = new ArrayList<>();
+    private Set<String> getEmailAccounts() {
+        HashSet<String> emailAccounts = new HashSet<>();
         AccountManager manager = (AccountManager) getContext().getSystemService(Context.ACCOUNT_SERVICE);
         final Account[] accounts = manager.getAccounts();
         for (Account account : accounts) {
