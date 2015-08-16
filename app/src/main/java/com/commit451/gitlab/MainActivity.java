@@ -60,8 +60,9 @@ public class MainActivity extends BaseActivity {
 	private final AdapterView.OnItemSelectedListener spinnerItemSelectedListener = new AdapterView.OnItemSelectedListener() {
 		@Override
 		public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-			Repository.selectedBranch = Repository.branches.get(position);
-			Prefs.setLastBranch(MainActivity.this, Repository.selectedBranch.getName());
+			Branch selectedBranch = Repository.branches.get(position);
+			GitLabApp.instance().setSelectedBranch(selectedBranch);
+			Prefs.setLastBranch(MainActivity.this, selectedBranch.getName());
 			loadData();
 		}
 
@@ -171,8 +172,9 @@ public class MainActivity extends BaseActivity {
 	}
 	
 	private void loadData() {
-		if(Repository.selectedProject == null)
+		if(GitLabApp.instance().getSelectedProject() == null) {
 			return;
+		}
 		
 		CommitsFragment commitsFragment = (CommitsFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.pager + ":0");
 		commitsFragment.loadData();
@@ -295,22 +297,25 @@ public class MainActivity extends BaseActivity {
 
 			if(Repository.projects.size() != 0) {
 				if(Prefs.getLastProject(MainActivity.this).length() == 0)
-					Repository.selectedProject = Repository.projects.get(0);
+					GitLabApp.instance().setSelectedProject(Repository.projects.get(0));
 				else if(Repository.projects.size() > 0) {
 					String lastProject = Prefs.getLastProject(MainActivity.this);
 
 					for(Project p : Repository.projects) {
-						if(p.toString().equals(lastProject))
-							Repository.selectedProject = p;
+						if(p.toString().equals(lastProject)) {
+							GitLabApp.instance().setSelectedProject(p);
+						}
 					}
 
-					if(Repository.selectedProject == null)
-						Repository.selectedProject = Repository.projects.get(0);
+					if(GitLabApp.instance().getSelectedProject() == null) {
+						GitLabApp.instance().setSelectedProject(Repository.projects.get(0));
+					}
 				}
 			}
 			
-			if(Repository.selectedProject != null)
-                GitLabClient.instance().getBranches(Repository.selectedProject.getId(), branchesCallback);
+			if(GitLabApp.instance().getSelectedProject() != null) {
+				GitLabClient.instance().getBranches(GitLabApp.instance().getSelectedProject().getId(), branchesCallback);
+			}
             else {
                 progress.setVisibility(View.GONE);
 			}
@@ -342,7 +347,7 @@ public class MainActivity extends BaseActivity {
 
                 if(Prefs.getLastBranch(MainActivity.this).equals(spinnerData[i].getName()))
                     selectedBranchIndex = i;
-                else if(selectedBranchIndex == -1 && Repository.selectedProject != null && spinnerData[i].getName().equals(Repository.selectedProject.getDefaultBranch()))
+                else if(selectedBranchIndex == -1 && GitLabApp.instance().getSelectedProject() != null && spinnerData[i].getName().equals(GitLabApp.instance().getSelectedProject().getDefaultBranch()))
                     selectedBranchIndex = i;
 			}
 
@@ -354,7 +359,7 @@ public class MainActivity extends BaseActivity {
 			branchSpinner.setOnItemSelectedListener(spinnerItemSelectedListener);
 			
 			if(Repository.branches.size() == 0) {
-				Repository.selectedBranch = null;
+				GitLabApp.instance().setSelectedBranch(null);
 				loadData();
 			}
 		}
@@ -364,7 +369,7 @@ public class MainActivity extends BaseActivity {
             progress.setVisibility(View.GONE);
 
             if(e.getResponse() != null && e.getResponse().getStatus() == 500) {
-                Repository.selectedBranch = null;
+				GitLabApp.instance().setSelectedBranch(null);
                 loadData();
                 return;
             }
@@ -384,7 +389,7 @@ public class MainActivity extends BaseActivity {
 
         @Subscribe
         public void onProjectChanged(ProjectChangedEvent event) {
-            GitLabClient.instance().getBranches(Repository.selectedProject.getId(), branchesCallback);
+            GitLabClient.instance().getBranches(GitLabApp.instance().getSelectedProject().getId(), branchesCallback);
         }
 	}
 }

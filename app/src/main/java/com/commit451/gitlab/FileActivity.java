@@ -16,7 +16,6 @@ import android.webkit.WebView;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.DiffLine;
 import com.commit451.gitlab.model.TreeItem;
-import com.commit451.gitlab.tools.Repository;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringEscapeUtils;
@@ -66,7 +65,7 @@ public class FileActivity extends BaseActivity {
 		if(file != null) {
 			setupUI();
 			GitLabClient.instance().getBlob(
-                    Repository.selectedProject.getId(),
+                    GitLabApp.instance().getSelectedProject().getId(),
                     commit.getId(),
                     path + file.getName(),
                     blobCallback);

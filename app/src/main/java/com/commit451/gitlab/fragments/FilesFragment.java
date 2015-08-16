@@ -17,7 +17,6 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.events.ProjectChangedEvent;
 import com.commit451.gitlab.model.TreeItem;
-import com.commit451.gitlab.tools.Repository;
 import com.commit451.gitlab.viewHolders.FileViewHolder;
 import com.squareup.otto.Subscribe;
 
@@ -52,7 +51,7 @@ public class FilesFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 
         swipeLayout.setOnRefreshListener(this);
 		
-		if(Repository.selectedProject != null) {
+		if(GitLabApp.instance().getSelectedProject() != null) {
 			loadData();
 		}
 
@@ -82,8 +81,8 @@ public class FilesFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 	
 	private void loadFiles() {
 		String branch = "master";
-		if(Repository.selectedBranch != null)
-			branch = Repository.selectedBranch.getName();
+		if(GitLabApp.instance().getSelectedBranch() != null)
+			branch = GitLabApp.instance().getSelectedBranch().getName();
 		
 		if(swipeLayout != null && !swipeLayout.isRefreshing())
             swipeLayout.setRefreshing(true);
@@ -93,7 +92,7 @@ public class FilesFragment extends Fragment implements SwipeRefreshLayout.OnRefr
             currentPath += p;
         }
 
-		GitLabClient.instance().getTree(Repository.selectedProject.getId(), branch, currentPath, filesCallback);
+		GitLabClient.instance().getTree(GitLabApp.instance().getSelectedProject().getId(), branch, currentPath, filesCallback);
 	}
 	
 	private Callback<List<TreeItem>> filesCallback = new Callback<List<TreeItem>>() {

@@ -12,7 +12,6 @@ import android.widget.LinearLayout;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.Diff;
 import com.commit451.gitlab.model.DiffLine;
-import com.commit451.gitlab.tools.Repository;
 import com.commit451.gitlab.views.DiffView;
 import com.commit451.gitlab.views.MessageView;
 
@@ -79,8 +78,8 @@ public class DiffActivity extends BaseActivity {
 		});
 
 		//TODO make this use RecyclerViews, cause this is insane
-		GitLabClient.instance().getCommit(Repository.selectedProject.getId(), commit.getId(), commitCallback);
-		GitLabClient.instance().getCommitDiff(Repository.selectedProject.getId(), commit.getId(), diffCallback);
+		GitLabClient.instance().getCommit(GitLabApp.instance().getSelectedProject().getId(), commit.getId(), commitCallback);
+		GitLabClient.instance().getCommitDiff(GitLabApp.instance().getSelectedProject().getId(), commit.getId(), diffCallback);
 	}
 
 	private Callback<DiffLine> commitCallback = new Callback<DiffLine>() {

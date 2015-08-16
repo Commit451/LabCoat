@@ -17,7 +17,6 @@ import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.dialogs.NewIssueDialog;
 import com.commit451.gitlab.events.ProjectChangedEvent;
 import com.commit451.gitlab.model.Issue;
-import com.commit451.gitlab.tools.Repository;
 import com.squareup.otto.Subscribe;
 
 import java.util.List;
@@ -48,7 +47,7 @@ public class IssuesFragment extends Fragment implements SwipeRefreshLayout.OnRef
 		listView.setLayoutManager(new LinearLayoutManager(getActivity()));
         swipeLayout.setOnRefreshListener(this);
 
-		if(Repository.selectedProject != null) {
+		if(GitLabApp.instance().getSelectedProject() != null) {
 			loadData();
 		}
 
@@ -75,7 +74,7 @@ public class IssuesFragment extends Fragment implements SwipeRefreshLayout.OnRef
 			swipeLayout.setRefreshing(true);
 		}
 
-		GitLabClient.instance().getIssues(Repository.selectedProject.getId(), issuesCallback);
+		GitLabClient.instance().getIssues(GitLabApp.instance().getSelectedProject().getId(), issuesCallback);
 	}
 	
 	private Callback<List<Issue>> issuesCallback = new Callback<List<Issue>>() {

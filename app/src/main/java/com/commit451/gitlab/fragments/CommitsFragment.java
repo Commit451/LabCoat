@@ -10,11 +10,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.CommitsAdapter;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.DiffLine;
-import com.commit451.gitlab.tools.Repository;
 
 import java.util.List;
 
@@ -39,7 +39,7 @@ public class CommitsFragment extends Fragment implements SwipeRefreshLayout.OnRe
 		listView.setLayoutManager(new LinearLayoutManager(getActivity()));
         swipeLayout.setOnRefreshListener(this);
 
-		if(Repository.selectedProject != null) {
+		if(GitLabApp.instance().getSelectedProject() != null) {
             loadData();
         }
 		
@@ -58,11 +58,11 @@ public class CommitsFragment extends Fragment implements SwipeRefreshLayout.OnRe
 	}
 	
 	public void loadData() {
-		if(Repository.selectedProject == null) {
+		if(GitLabApp.instance().getSelectedProject() == null) {
             return;
         }
 
-		if(Repository.selectedBranch == null) {
+		if(GitLabApp.instance().getSelectedBranch() == null) {
             if(swipeLayout != null && swipeLayout.isRefreshing()) {
                 swipeLayout.setRefreshing(false);
             }
@@ -75,7 +75,7 @@ public class CommitsFragment extends Fragment implements SwipeRefreshLayout.OnRe
             swipeLayout.setRefreshing(true);
         }
 
-        GitLabClient.instance().getCommits(Repository.selectedProject.getId(), Repository.selectedBranch.getName(), commitsCallback);
+        GitLabClient.instance().getCommits(GitLabApp.instance().getSelectedProject().getId(), GitLabApp.instance().getSelectedBranch().getName(), commitsCallback);
 	}
 
 	public boolean onBackPressed() {

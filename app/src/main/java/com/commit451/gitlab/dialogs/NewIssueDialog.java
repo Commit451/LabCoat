@@ -8,11 +8,11 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.IssueActivity;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.Issue;
-import com.commit451.gitlab.tools.Repository;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -46,7 +46,7 @@ public class NewIssueDialog extends AppCompatDialog {
             progress.setVisibility(View.VISIBLE);
             progress.setAlpha(0.0f);
             progress.animate().alpha(1.0f);
-            GitLabClient.instance().postIssue(Repository.selectedProject.getId(), titleInput.getText().toString().trim(), descriptionInput.getText().toString().trim(), "", issueCallback);
+            GitLabClient.instance().postIssue(GitLabApp.instance().getSelectedProject().getId(), titleInput.getText().toString().trim(), descriptionInput.getText().toString().trim(), "", issueCallback);
         }
         else {
             titleInputLayout.setError(getContext().getString(R.string.required_field));

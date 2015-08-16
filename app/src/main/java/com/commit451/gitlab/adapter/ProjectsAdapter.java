@@ -34,10 +34,10 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectViewHolder> {
         @Override
         public void onClick(View v) {
             int position = (int) v.getTag(R.id.list_position);
-            if(Repository.selectedProject == null || !Repository.selectedProject.equals(Repository.projects.get(position))) {
+            if(GitLabApp.instance().getSelectedProject() == null || !GitLabApp.instance().getSelectedProject().equals(Repository.projects.get(position))) {
                 //TODO make the event bus control most of this. NO MORE STATIC UI
-                Repository.selectedProject = Repository.projects.get(position);
-                Prefs.setLastProject(v.getContext(), Repository.selectedProject.toString());
+                GitLabApp.instance().setSelectedProject(Repository.projects.get(position));
+                Prefs.setLastProject(v.getContext(), GitLabApp.instance().getSelectedProject().toString());
                 notifyDataSetChanged();
             }
             GitLabApp.bus().post(new CloseDrawerEvent());

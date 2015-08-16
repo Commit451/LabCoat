@@ -18,7 +18,6 @@ import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.dialogs.NewUserDialog;
 import com.commit451.gitlab.events.ProjectChangedEvent;
 import com.commit451.gitlab.model.User;
-import com.commit451.gitlab.tools.Repository;
 import com.squareup.otto.Subscribe;
 
 import java.util.List;
@@ -50,7 +49,7 @@ public class UsersFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 		listView.setLayoutManager(new LinearLayoutManager(getActivity()));
         swipeLayout.setOnRefreshListener(this);
 
-		if(Repository.selectedProject != null) {
+		if(GitLabApp.instance().getSelectedProject() != null) {
 			loadData();
 		}
 
@@ -77,7 +76,7 @@ public class UsersFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 			swipeLayout.setRefreshing(true);
 		}
 		
-		if(Repository.selectedProject.getGroup() == null) {
+		if(GitLabApp.instance().getSelectedProject().getGroup() == null) {
 			errorText.setVisibility(View.VISIBLE);
 			errorText.setText(R.string.not_in_group);
 			listView.setVisibility(View.GONE);
@@ -88,7 +87,7 @@ public class UsersFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 			return;
 		}
 
-        GitLabClient.instance().getGroupMembers(Repository.selectedProject.getGroup().getId(), usersCallback);
+        GitLabClient.instance().getGroupMembers(GitLabApp.instance().getSelectedProject().getGroup().getId(), usersCallback);
 	}
 	
 	public Callback<List<User>> usersCallback = new Callback<List<User>>() {

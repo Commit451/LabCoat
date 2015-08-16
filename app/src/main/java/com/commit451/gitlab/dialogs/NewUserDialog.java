@@ -7,6 +7,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.UserAdapter;
 import com.commit451.gitlab.api.GitLabClient;
@@ -47,7 +48,7 @@ public class NewUserDialog extends AppCompatDialog {
 
     @OnClick(R.id.add_button)
     public void onAddClick() {
-        if(Repository.selectedProject.getGroup() == null) {
+        if(GitLabApp.instance().getSelectedProject().getGroup() == null) {
             return;
         }
 
@@ -58,7 +59,7 @@ public class NewUserDialog extends AppCompatDialog {
         long userId = ((User) userSpinner.getSelectedItem()).getId();
         String accessLevel = getContext().getResources().getStringArray(R.array.role_values)[roleSpinner.getSelectedItemPosition()];
 
-        GitLabClient.instance().addGroupMember(Repository.selectedProject.getGroup().getId(), userId, accessLevel, "", userCallback);
+        GitLabClient.instance().addGroupMember(GitLabApp.instance().getSelectedProject().getGroup().getId(), userId, accessLevel, "", userCallback);
     }
 
     private Callback<User> userCallback = new Callback<User>() {

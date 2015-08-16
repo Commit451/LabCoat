@@ -18,7 +18,6 @@ import com.commit451.gitlab.model.Issue;
 import com.commit451.gitlab.model.Milestone;
 import com.commit451.gitlab.model.Note;
 import com.commit451.gitlab.model.User;
-import com.commit451.gitlab.tools.Repository;
 
 import org.parceler.Parcels;
 
@@ -89,9 +88,9 @@ public class IssueActivity extends BaseActivity {
     private void load() {
 		swipeRefreshLayout.setRefreshing(true);
         //TODO chain these
-        GitLabClient.instance().getIssueNotes(Repository.selectedProject.getId(), issue.getId(), notesCallback);
-        GitLabClient.instance().getMilestones(Repository.selectedProject.getId(), milestonesCallback);
-        GitLabClient.instance().getUsersFallback(Repository.selectedProject.getId(), usersCallback);
+        GitLabClient.instance().getIssueNotes(GitLabApp.instance().getSelectedProject().getId(), issue.getId(), notesCallback);
+        GitLabClient.instance().getMilestones(GitLabApp.instance().getSelectedProject().getId(), milestonesCallback);
+        GitLabClient.instance().getUsersFallback(GitLabApp.instance().getSelectedProject().getId(), usersCallback);
 	}
 
 	private void changeStatus() {
@@ -145,7 +144,7 @@ public class IssueActivity extends BaseActivity {
 		imm.hideSoftInputFromWindow(newNoteEdit.getWindowToken(), 0);
 		newNoteEdit.setText("");
 
-        GitLabClient.instance().postIssueNote(Repository.selectedProject.getId(), issue.getId(), body, "", noteCallback);
+        GitLabClient.instance().postIssueNote(GitLabApp.instance().getSelectedProject().getId(), issue.getId(), body, "", noteCallback);
 	}
 	
 	private Callback<Note> noteCallback = new Callback<Note>() {

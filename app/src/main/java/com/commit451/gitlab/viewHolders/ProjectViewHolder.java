@@ -8,9 +8,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.Project;
-import com.commit451.gitlab.tools.Repository;
 import com.squareup.picasso.Picasso;
 
 import butterknife.Bind;
@@ -39,7 +39,7 @@ public class ProjectViewHolder extends RecyclerView.ViewHolder {
 
     public void bind(Project project) {
         title.setText(project.getName());
-        if (project.equals(Repository.selectedProject)) {
+        if (project.equals(GitLabApp.instance().getSelectedProject())) {
             itemView.setPressed(true);
             itemView.setSelected(true);
             title.setTextColor(itemView.getResources().getColor(R.color.orange));
