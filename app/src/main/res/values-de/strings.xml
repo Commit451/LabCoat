@@ -50,6 +50,7 @@
     <string name="groups_not_supported">Um die Benutzer eine Gruppe bearbeiten zu können wird GitLab 6.1 oder höher benötigt&#8230;</string>
     <string name="not_in_group">Benutzerverwaltung ist nur bei Projekten die einer Gruppe zugeordnet sind möglich&#8230;</string>
 
+    <string name="required_field">Pflichtfeld</string>
     <!-- General -->
     <string name="projects">Projekte</string>
     <string name="selected_content_description">Selektiert</string>

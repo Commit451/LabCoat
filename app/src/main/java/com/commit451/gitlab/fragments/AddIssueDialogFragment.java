@@ -1,7 +1,6 @@
 package com.commit451.gitlab.fragments;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
@@ -82,8 +81,7 @@ public class AddIssueDialogFragment extends DialogFragment {
 			}
 
 			//TODO update the parent list when a new issue is created
-			Repository.selectedIssue = issue;
-			startActivity(new Intent(getActivity(), IssueActivity.class));
+			startActivity(IssueActivity.newInstance(getActivity(), issue));
 			
 			AddIssueDialogFragment.this.dismiss();
 		}

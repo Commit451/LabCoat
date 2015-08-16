@@ -23,45 +23,46 @@
     <string name="password_hint">Password</string>
     <string name="token_hint">Private token</string>
     <string name="login_activity">Login</string>
-    <string name="login_progress_dialog">Logging in. Please wait&#8230;</string>
-    <string name="token_link"><u>Login using private token&#8230;</u></string>
-    <string name="normal_link"><u>Login using username or email&#8230;</u></string>
+    <string name="login_progress_dialog">Logging in. Please wait</string>
+    <string name="token_link"><u>Login using private token</u></string>
+    <string name="normal_link"><u>Login using username or email</u></string>
     <string name="certificate_title">Certificate not trusted</string>
     <string name="certificate_message">The certificate the server used was not issued by a trusted authority.\n\nThis could mean a hacker is trying to intercept your communications.\n\nTo use a self-signed certificate, please follow this <a href="https://support.google.com/nexus/answer/2844832?hl=en">guide</a>.</string>
 
     <!-- Error messages -->
-    <string name="connection_error">Connection failed&#8230;</string>
-    <string name="connection_error_commits">Failed to load commits&#8230;</string>
-    <string name="connection_error_issues">Failed to load issues&#8230;</string>
-    <string name="connection_error_files">Failed to load files&#8230;</string>
-    <string name="connection_error_users">Failed to load users&#8230;</string>
+    <string name="connection_error">Connection failed</string>
+    <string name="connection_error_commits">Failed to load commits</string>
+    <string name="connection_error_issues">Failed to load issues</string>
+    <string name="connection_error_files">Failed to load files</string>
+    <string name="connection_error_users">Failed to load users</string>
 
-    <string name="login_error">Login failed&#8230; Please double-check your login information.</string>
+    <string name="login_error">Login failed Please double-check your login information.</string>
     <string name="login_input_error">Please enter a valid url.</string>
 
-    <string name="file_load_error">Failed to load file&#8230;</string>
+    <string name="file_load_error">Failed to load file</string>
     <string name="save_error">Could not write to storage medium</string>
     <string name="open_error">File could not be opened</string>
 
     <string name="input_error">Please enter a title</string>
-    <string name="user_error">User could not be added&#8230;</string>
-    <string name="user_remove_error">User could not be removed&#8230;</string>
+    <string name="user_error">User could not be added</string>
+    <string name="user_remove_error">User could not be removed</string>
 
-    <string name="files_not_supported">To browse files GitLab 5.3 or higher is needed&#8230;</string>
-    <string name="groups_not_supported">To add and remove users from groups GitLab 6.1 or higher is needed&#8230;</string>
-    <string name="not_in_group">User management is only available for projects that are assigned to groups&#8230;</string>
+    <string name="files_not_supported">To browse files GitLab 5.3 or higher is needed</string>
+    <string name="groups_not_supported">To add and remove users from groups GitLab 6.1 or higher is needed</string>
+    <string name="not_in_group">User management is only available for projects that are assigned to groups</string>
 
+    <string name="required_field">Required Field</string>
     <!-- General -->
     <string name="projects">Projects</string>
     <string name="selected_content_description">Selected</string>
-    <string name="main_progress_dialog">Connecting to server. Please wait&#8230;</string>
-    <string name="progress_dialog">Please wait&#8230;</string>
+    <string name="main_progress_dialog">Connecting to server. Please wait</string>
+    <string name="progress_dialog">Please wait</string>
     <string name="cancel_button">Cancel</string>
     <string name="save_button">Save</string>
     <string name="add_button">Add</string>
     <string name="remove_button">Remove</string>
     <string name="ok_button">OK</string>
-    <string name="filter_projects">Filter projects&#8230;</string>
+    <string name="filter_projects">Filter projects</string>
 
     <!-- Commits -->
     <string name="no_commits_found">No commits found.</string>
@@ -74,12 +75,12 @@
     <string name="no_files_found">No files found.</string>
 
     <!-- Issues -->
-    <string name="new_note_hint">Add comment&#8230;</string>
-    <string name="add_issue">Add new issue&#8230;</string>
+    <string name="new_note_hint">Add comment</string>
+    <string name="add_issue">Add new issue</string>
     <string name="add_issue_dialog_title">New issue</string>
-    <string name="title_hint">Title&#8230;</string>
-    <string name="description_hint">Description&#8230;</string>
-    <string name="add_note_content_description">Add note&#8230;</string>
+    <string name="title_hint">Title</string>
+    <string name="description_hint">Description</string>
+    <string name="add_note_content_description">Add note</string>
 
     <!-- User -->
     <string name="remove_user_dialog_title">Remove user?</string>

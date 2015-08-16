@@ -3,6 +3,7 @@ package com.commit451.gitlab.adapter;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
+import com.commit451.gitlab.model.Issue;
 import com.commit451.gitlab.model.Milestone;
 import com.commit451.gitlab.model.Note;
 import com.commit451.gitlab.model.User;
@@ -26,8 +27,10 @@ public class NotesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private ArrayList<Note> mNotes;
     private ArrayList<User> mUsers;
     private ArrayList<Milestone> mMilestones;
+    private Issue mIssue;
 
-    public NotesAdapter() {
+    public NotesAdapter(Issue issue) {
+        mIssue = issue;
         mNotes = new ArrayList<>();
         mUsers = new ArrayList<>();
         mMilestones = new ArrayList<>();
@@ -47,7 +50,7 @@ public class NotesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof IssueHeaderViewHolder) {
-            ((IssueHeaderViewHolder) holder).bind();
+            ((IssueHeaderViewHolder) holder).bind(mIssue);
         } else if (holder instanceof NoteViewHolder) {
             Note note = getNoteAt(position);
             ((NoteViewHolder) holder).bind(note);

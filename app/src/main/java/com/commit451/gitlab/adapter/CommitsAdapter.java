@@ -1,6 +1,5 @@
 package com.commit451.gitlab.adapter;
 
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,7 +7,6 @@ import android.view.ViewGroup;
 import com.commit451.gitlab.DiffActivity;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.DiffLine;
-import com.commit451.gitlab.tools.Repository;
 import com.commit451.gitlab.viewHolders.CommitViewHolder;
 
 import java.util.List;
@@ -32,8 +30,7 @@ public class CommitsAdapter extends RecyclerView.Adapter<CommitViewHolder> {
         @Override
         public void onClick(View v) {
             int position = (int) v.getTag(R.id.list_position);
-            Repository.selectedCommit = getValueAt(position);
-            v.getContext().startActivity(new Intent(v.getContext(), DiffActivity.class));
+            v.getContext().startActivity(DiffActivity.newInstance(v.getContext(), getValueAt(position)));
         }
     };
 

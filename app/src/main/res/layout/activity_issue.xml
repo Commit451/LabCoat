@@ -70,4 +70,6 @@
 
     </LinearLayout>
 
+    <include layout="@layout/progress"/>
+
 </FrameLayout>

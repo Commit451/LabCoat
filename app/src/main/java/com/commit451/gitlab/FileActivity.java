@@ -1,6 +1,7 @@
 package com.commit451.gitlab;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,15 +14,17 @@ import android.webkit.MimeTypeMap;
 import android.webkit.WebView;
 
 import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.model.DiffLine;
+import com.commit451.gitlab.model.TreeItem;
 import com.commit451.gitlab.tools.Repository;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringEscapeUtils;
+import org.parceler.Parcels;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -31,9 +34,25 @@ import retrofit.client.Response;
 import timber.log.Timber;
 
 public class FileActivity extends BaseActivity {
+
+	private static final String EXTRA_COMMIT = "extra_commit";
+    private static final String EXTRA_FILE = "extra_file";
+    private static final String EXTRA_PATH = "extra_path";
+
+	public static Intent newIntent(Context context, DiffLine commit, TreeItem file, String path) {
+		Intent intent = new Intent(context, FileActivity.class);
+        intent.putExtra(EXTRA_COMMIT, Parcels.wrap(commit));
+        intent.putExtra(EXTRA_FILE, Parcels.wrap(file));
+        intent.putExtra(EXTRA_PATH, path);
+        return intent;
+	}
+
 	@Bind(R.id.toolbar) Toolbar toolbar;
 	@Bind(R.id.file_blob) WebView fileBlobView;
-	
+
+    DiffLine commit;
+    TreeItem file;
+    String path;
 	private byte[] fileBlob;
 	
 	@Override
@@ -41,11 +60,16 @@ public class FileActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_file);
 		ButterKnife.bind(this);
-		
-		if(Repository.selectedFile != null) {
+		commit = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_COMMIT));
+        file = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_FILE));
+        path = getIntent().getStringExtra(EXTRA_PATH);
+		if(file != null) {
 			setupUI();
-
-			GitLabClient.instance().getBlob(Repository.selectedProject.getId(), Repository.newestCommit.getId(), getIntent().getExtras().getString("path") + Repository.selectedFile.getName(), blobCallback);
+			GitLabClient.instance().getBlob(
+                    Repository.selectedProject.getId(),
+                    commit.getId(),
+                    path + file.getName(),
+                    blobCallback);
 		}
 	}
 	
@@ -58,7 +82,7 @@ public class FileActivity extends BaseActivity {
 				onBackPressed();
 			}
 		});
-		toolbar.setTitle(Repository.selectedFile.getName());
+		toolbar.setTitle(file.getName());
 		toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
 			@Override
 			public boolean onMenuItemClick(MenuItem item) {
@@ -87,9 +111,6 @@ public class FileActivity extends BaseActivity {
 				fileBlob = IOUtils.toByteArray(response.getBody().in());
 				content = new String(fileBlob, "UTF-8");
 			}
-			catch(UnsupportedEncodingException e) {
-				e.printStackTrace();
-			}
 			catch(IOException e) {
 				e.printStackTrace();
 			}
@@ -117,7 +138,7 @@ public class FileActivity extends BaseActivity {
 			if(!downloadFolder.exists())
 				downloadFolder.mkdir();
 			
-			File newFile = new File(downloadFolder, Repository.selectedFile.getName());
+			File newFile = new File(downloadFolder, file.getName());
 			
 			try {
 				FileOutputStream f = new FileOutputStream(newFile);

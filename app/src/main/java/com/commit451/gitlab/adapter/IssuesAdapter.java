@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import com.commit451.gitlab.IssueActivity;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.Issue;
-import com.commit451.gitlab.tools.Repository;
 import com.commit451.gitlab.viewHolders.IssueViewHolder;
 
 import java.util.List;
@@ -31,7 +30,6 @@ public class IssuesAdapter extends RecyclerView.Adapter<IssueViewHolder> {
         @Override
         public void onClick(View v) {
             int position = (int) v.getTag(R.id.list_position);
-            Repository.selectedIssue = getValueAt(position);
             v.getContext().startActivity(IssueActivity.newInstance(v.getContext(), getValueAt(position)));
         }
     };

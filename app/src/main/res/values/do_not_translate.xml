@@ -7,8 +7,4 @@
         <item>40</item>
         <item>50</item>
     </string-array>
-    
-    <!-- Navigation Drawer Strings -->
-    <string name="drawer_open" translatable="false">Drawer opened</string>
-    <string name="drawer_close" translatable="false">Drawer closed</string>
 </resources>

@@ -49,6 +49,7 @@
     <string name="groups_not_supported">Per aggiungere o rimuovere utenti dai gruppi è necessario GitLab 6.1 o superiore&#8230;</string>
     <string name="not_in_group">Lo user management è disponibile solo per progetti assegnati a gruppi&#8230;</string>
 
+    <string name="required_field">Campo Obbligatorio</string>
     <!-- General -->
     <string name="projects">Progetti</string>
     <string name="selected_content_description">Selezionato</string>

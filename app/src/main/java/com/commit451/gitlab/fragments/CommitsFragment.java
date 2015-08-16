@@ -31,8 +31,6 @@ public class CommitsFragment extends Fragment implements SwipeRefreshLayout.OnRe
     @Bind(R.id.swipe_layout) SwipeRefreshLayout swipeLayout;
     @Bind(R.id.message_text) View messageView;
 	
-	public CommitsFragment() {}
-	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_commits, container, false);
@@ -94,12 +92,10 @@ public class CommitsFragment extends Fragment implements SwipeRefreshLayout.OnRe
             swipeLayout.setRefreshing(false);
 			
 			if(commits.size() > 0) {
-				Repository.newestCommit = commits.get(0);
                 messageView.setVisibility(View.GONE);
 			}
 			else {
                 Timber.d("No commits have been made");
-				Repository.newestCommit = null;
                 messageView.setVisibility(View.VISIBLE);
 			}
 			listView.setAdapter(new CommitsAdapter(commits));

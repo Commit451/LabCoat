@@ -96,10 +96,10 @@ public class UsersFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 		
 		@Override
 		public void success(List<User> users, Response resp) {
-			if(swipeLayout != null && swipeLayout.isRefreshing()) {
-				swipeLayout.setRefreshing(false);
+			if (getView() == null) {
+				return;
 			}
-			
+			swipeLayout.setRefreshing(false);
 			errorText.setVisibility(View.GONE);
 			listView.setVisibility(View.VISIBLE);
 			addUserButton.setVisibility(View.VISIBLE);
@@ -111,9 +111,10 @@ public class UsersFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 		
 		@Override
 		public void failure(RetrofitError e) {
-			if(swipeLayout != null && swipeLayout.isRefreshing()) {
-				swipeLayout.setRefreshing(false);
+			if (getView() == null) {
+				return;
 			}
+			swipeLayout.setRefreshing(false);
 			errorText.setVisibility(View.VISIBLE);
 			addUserButton.setVisibility(View.GONE);
 			Timber.e(e.toString());

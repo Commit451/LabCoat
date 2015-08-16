@@ -1,5 +1,7 @@
 package com.commit451.gitlab;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
@@ -14,6 +16,8 @@ import com.commit451.gitlab.tools.Repository;
 import com.commit451.gitlab.views.DiffView;
 import com.commit451.gitlab.views.MessageView;
 
+import org.parceler.Parcels;
+
 import java.util.List;
 
 import butterknife.Bind;
@@ -25,15 +29,26 @@ import timber.log.Timber;
 
 public class DiffActivity extends BaseActivity {
 
+	private static final String EXTRA_COMMIT = "extra_commit";
+
+	public static Intent newInstance(Context context, DiffLine commit) {
+		Intent intent = new Intent(context, DiffActivity.class);
+		intent.putExtra(EXTRA_COMMIT, Parcels.wrap(commit));
+		return intent;
+	}
+
 	@Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.message_container)	LinearLayout messageContainer;
 	@Bind(R.id.diff_container) LinearLayout diffContainer;
+
+    DiffLine commit;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_diff);
 		ButterKnife.bind(this);
+        commit = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_COMMIT));
 		init();
 	}
 	
@@ -45,7 +60,7 @@ public class DiffActivity extends BaseActivity {
 				onBackPressed();
 			}
 		});
-		toolbar.setTitle(Repository.selectedCommit.getShortId());
+		toolbar.setTitle(commit.getShortId());
 		toolbar.inflateMenu(R.menu.diff);
 		toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
 			@Override
@@ -64,8 +79,8 @@ public class DiffActivity extends BaseActivity {
 		});
 
 		//TODO make this use RecyclerViews, cause this is insane
-		GitLabClient.instance().getCommit(Repository.selectedProject.getId(), Repository.selectedCommit.getId(), commitCallback);
-		GitLabClient.instance().getCommitDiff(Repository.selectedProject.getId(), Repository.selectedCommit.getId(), diffCallback);
+		GitLabClient.instance().getCommit(Repository.selectedProject.getId(), commit.getId(), commitCallback);
+		GitLabClient.instance().getCommitDiff(Repository.selectedProject.getId(), commit.getId(), diffCallback);
 	}
 
 	private Callback<DiffLine> commitCallback = new Callback<DiffLine>() {

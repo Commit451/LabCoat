@@ -1,6 +1,5 @@
 package com.commit451.gitlab;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -44,15 +43,13 @@ public class IssueActivity extends BaseActivity {
 	}
 
 	@Bind(R.id.toolbar) Toolbar toolbar;
-	
 	@Bind(R.id.swipe_layout) SwipeRefreshLayout swipeRefreshLayout;
 	@Bind(R.id.list) RecyclerView listView;
-
 	@Bind(R.id.new_note_edit) EditText newNoteEdit;
+	@Bind(R.id.progress) View progress;
 
 	private NotesAdapter notesAdapter;
-
-	private ProgressDialog pd;
+    Issue issue;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -60,12 +57,11 @@ public class IssueActivity extends BaseActivity {
 		setContentView(R.layout.activity_issue);
 		ButterKnife.bind(this);
 
-		Issue issue = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_SELECTED_ISSUE));
-		Timber.d("Issue " + issue.getDescription());
+		issue = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_SELECTED_ISSUE));
 
-        long tempId = Repository.selectedIssue.getIid();
+        long tempId = issue.getIid();
         if(tempId < 1) {
-            tempId = Repository.selectedIssue.getId();
+            tempId = issue.getId();
         }
 
         toolbar.setNavigationIcon(R.drawable.ic_back);
@@ -77,7 +73,7 @@ public class IssueActivity extends BaseActivity {
         });
         toolbar.setTitle("Issue #" + tempId);
 
-        notesAdapter = new NotesAdapter();
+        notesAdapter = new NotesAdapter(issue);
         listView.setLayoutManager(new LinearLayoutManager(this));
         listView.setAdapter(notesAdapter);
 
@@ -93,7 +89,7 @@ public class IssueActivity extends BaseActivity {
     private void load() {
 		swipeRefreshLayout.setRefreshing(true);
         //TODO chain these
-        GitLabClient.instance().getIssueNotes(Repository.selectedProject.getId(), Repository.selectedIssue.getId(), notesCallback);
+        GitLabClient.instance().getIssueNotes(Repository.selectedProject.getId(), issue.getId(), notesCallback);
         GitLabClient.instance().getMilestones(Repository.selectedProject.getId(), milestonesCallback);
         GitLabClient.instance().getUsersFallback(Repository.selectedProject.getId(), usersCallback);
 	}
@@ -140,35 +136,30 @@ public class IssueActivity extends BaseActivity {
 		if(body.length() < 1) {
             return;
         }
-		
-		pd = ProgressDialog.show(IssueActivity.this, "", getResources().getString(R.string.progress_dialog), true);
-		
+
+		progress.setVisibility(View.VISIBLE);
+		progress.setAlpha(0.0f);
+		progress.animate().alpha(1.0f);
 		// Clear text & collapse keyboard
 		InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 		imm.hideSoftInputFromWindow(newNoteEdit.getWindowToken(), 0);
 		newNoteEdit.setText("");
 
-        GitLabClient.instance().postIssueNote(Repository.selectedProject.getId(), Repository.selectedIssue.getId(), body, "", noteCallback);
+        GitLabClient.instance().postIssueNote(Repository.selectedProject.getId(), issue.getId(), body, "", noteCallback);
 	}
 	
 	private Callback<Note> noteCallback = new Callback<Note>() {
 		
 		@Override
 		public void success(Note note, Response resp) {
-			if(pd != null && pd.isShowing()) {
-                pd.cancel();
-            }
+			progress.setVisibility(View.GONE);
 			notesAdapter.addNote(note);
 		}
 		
 		@Override
 		public void failure(RetrofitError e) {
             Timber.e(e.toString());
-			
-			if(pd != null && pd.isShowing()) {
-                pd.cancel();
-            }
-
+			progress.setVisibility(View.GONE);
 			Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
 					.show();
 		}
@@ -178,9 +169,7 @@ public class IssueActivity extends BaseActivity {
 		
 		@Override
 		public void success(Issue issue, Response resp) {
-			if(pd != null && pd.isShowing()) {
-				pd.cancel();
-			}
+			progress.setVisibility(View.GONE);
 			
 //			Repository.selectedIssue.setState(stateSpinner.getSelectedItem().toString());
 //			Repository.selectedIssue.setAssignee((User) assigneeSpinner.getSelectedItem());
@@ -191,9 +180,7 @@ public class IssueActivity extends BaseActivity {
 		@Override
 		public void failure(RetrofitError e) {
 			Timber.e(e.toString());
-			if(pd != null && pd.isShowing()) {
-				pd.cancel();
-			}
+			progress.setVisibility(View.GONE);
 			Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
 					.show();
 		}

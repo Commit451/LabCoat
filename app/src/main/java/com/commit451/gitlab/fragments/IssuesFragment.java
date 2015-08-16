@@ -2,9 +2,7 @@ package com.commit451.gitlab.fragments;
 
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,6 +14,7 @@ import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.IssuesAdapter;
 import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.dialogs.NewIssueDialog;
 import com.commit451.gitlab.events.ProjectChangedEvent;
 import com.commit451.gitlab.model.Issue;
 import com.commit451.gitlab.tools.Repository;
@@ -109,9 +108,7 @@ public class IssuesFragment extends Fragment implements SwipeRefreshLayout.OnRef
 
 	@OnClick(R.id.add_issue_button)
 	public void onAddIssueClick() {
-		FragmentTransaction ft = getFragmentManager().beginTransaction();
-		DialogFragment newFragment = AddIssueDialogFragment.newInstance();
-		newFragment.show(ft, "dialog");
+		new NewIssueDialog(getActivity()).show();
 	}
 
 	private class EventReceiver {

@@ -1,6 +1,5 @@
 package com.commit451.gitlab.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -172,21 +171,19 @@ public class FilesFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 			@Override
 			public void onClick(View v) {
 				int position = (int) v.getTag(R.id.list_position);
-				Repository.selectedFile = getValueAt(position);
+				TreeItem treeItem = getValueAt(position);
 
-				if(Repository.selectedFile.getType().equals("tree")) {
-					path.add(Repository.selectedFile.getName() + "/");
+				if(treeItem.getType().equals("tree")) {
+					path.add(treeItem.getName() + "/");
 					loadFiles();
 				}
-				else if(Repository.selectedFile.getType().equals("blob")) {
+				else if(treeItem.getType().equals("blob")) {
 					String pathExtra = "";
 					for(String p : path) {
 						pathExtra += p;
 					}
 
-					Intent i = new Intent(getActivity(), FileActivity.class);
-					i.putExtra("path", pathExtra);
-					startActivity(i);
+					startActivity(FileActivity.newIntent(getActivity(), null, treeItem, pathExtra));
 				}
 			}
 		};

@@ -9,7 +9,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.tools.Repository;
+import com.commit451.gitlab.model.Issue;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -37,10 +37,10 @@ public class IssueHeaderViewHolder extends RecyclerView.ViewHolder {
         ButterKnife.bind(this, view);
     }
 
-    public void bind() {
-        title.setText(Repository.selectedIssue.getTitle());
+    public void bind(Issue issue) {
+        title.setText(issue.getTitle());
         Bypass bypass = new Bypass();
-        String desc = Repository.selectedIssue.getDescription();
+        String desc = issue.getDescription();
         if(desc == null) {
             desc = "";
         }
