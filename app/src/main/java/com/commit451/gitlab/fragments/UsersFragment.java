@@ -2,9 +2,7 @@ package com.commit451.gitlab.fragments;
 
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,6 +15,7 @@ import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.NewUserAdapter;
 import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.dialogs.NewUserDialog;
 import com.commit451.gitlab.events.ProjectChangedEvent;
 import com.commit451.gitlab.model.User;
 import com.commit451.gitlab.tools.Repository;
@@ -129,9 +128,7 @@ public class UsersFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 	
 	@OnClick(R.id.add_user_button)
 	public void onAddUserClick() {
-		FragmentTransaction ft = getFragmentManager().beginTransaction();
-		DialogFragment newFragment = AddUserDialogFragment.newInstance();
-		newFragment.show(ft, "dialog");
+		new NewUserDialog(getActivity()).show();
 	}
 
 	private class EventReceiver {
