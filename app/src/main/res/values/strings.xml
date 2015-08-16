@@ -55,7 +55,6 @@
     <!-- General -->
     <string name="projects">Projects</string>
     <string name="selected_content_description">Selected</string>
-    <string name="main_progress_dialog">Connecting to server. Please wait</string>
     <string name="progress_dialog">Please wait</string>
     <string name="cancel_button">Cancel</string>
     <string name="save_button">Save</string>

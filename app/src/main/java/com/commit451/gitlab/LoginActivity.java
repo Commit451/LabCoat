@@ -2,7 +2,6 @@ package com.commit451.gitlab;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -37,6 +36,7 @@ public class LoginActivity extends BaseActivity {
 	@Bind(R.id.token_input) TextView tokenInput;
 	@Bind(R.id.normal_login) View normalLogin;
 	@Bind(R.id.token_login) View tokenLogin;
+	@Bind(R.id.progress) View progress;
 	
 	private boolean isNormalLogin = true;
 
@@ -108,22 +108,15 @@ public class LoginActivity extends BaseActivity {
 		moveTaskToBack(true);
 	}
 	
-	/* --- CONNECT --- */
-	
-	private ProgressDialog pd;
-	
 	private void connect(boolean byAuth) {
-		pd = ProgressDialog.show(LoginActivity.this, "", getResources().getString(R.string.login_progress_dialog), true);
+        progress.setVisibility(View.VISIBLE);
+        progress.setAlpha(0.0f);
+        progress.animate().alpha(1.0f);
 		Prefs.setServerUrl(this, "");
 		Prefs.setPrivateToken(this, "");
 		Prefs.setLoggedIn(this, false);
 
 		String serverURL = urlInput.getText().toString();
-		
-		if(serverURL == null)
-			serverURL = "";
-		else
-			serverURL = serverURL.trim();
 		
 		Prefs.setServerUrl(this, serverURL);
 		
@@ -144,8 +137,7 @@ public class LoginActivity extends BaseActivity {
 		
 		@Override
 		public void success(Session session, Response resp) {
-			if(pd != null && pd.isShowing())
-				pd.cancel();
+			progress.setVisibility(View.GONE);
 			
 			Prefs.setLoggedIn(LoginActivity.this, true);
 			Prefs.setPrivateToken(LoginActivity.this, session.getPrivateToken());
@@ -170,9 +162,8 @@ public class LoginActivity extends BaseActivity {
 		
 		@Override
 		public void success(List<Project> projects, Response resp) {
-			if(pd != null && pd.isShowing())
-				pd.cancel();
-			
+            progress.setVisibility(View.GONE);
+
 			Prefs.setLoggedIn(LoginActivity.this, true);
 			
 			Intent i = new Intent(LoginActivity.this, MainActivity.class);
@@ -189,8 +180,7 @@ public class LoginActivity extends BaseActivity {
     private void handleConnectionError(RetrofitError e, boolean auth) {
         Timber.e(e.toString());
 
-        if(pd != null && pd.isShowing())
-            pd.cancel();
+        progress.setVisibility(View.GONE);
 
         if(e.getCause() instanceof SSLHandshakeException) {
             Dialog d = new AlertDialog.Builder(this)

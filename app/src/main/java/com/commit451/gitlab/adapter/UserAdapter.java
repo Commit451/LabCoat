@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.User;
-import com.commit451.gitlab.tools.Repository;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -85,9 +84,8 @@ public class UserAdapter extends BaseAdapter {
             summary.setText(users.get(position).getUsername());
 		
 		custom.setText(users.get(position).getAccessLevel(convertView.getResources().getStringArray(R.array.role_names)));
-		
-		float percent = Repository.displayWidth / 720f;
-		int size = (int) (96f * percent);
+
+		int size = convertView.getResources().getDimensionPixelSize(R.dimen.image_size);
 
         String url = "http://www.gravatar.com/avatar/00000000000000000000000000000000?s=" + size;
 

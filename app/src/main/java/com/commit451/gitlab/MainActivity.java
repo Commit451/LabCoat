@@ -1,8 +1,6 @@
 package com.commit451.gitlab;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -56,6 +54,7 @@ public class MainActivity extends BaseActivity {
 	@Bind(R.id.branch_spinner) Spinner branchSpinner;
 	@Bind(R.id.drawer_layout) DrawerLayout drawerLayout;
 	@Bind(R.id.navigation_view) GitLabNavigationView navigationView;
+    @Bind(R.id.progress) View progress;
 	@Bind(R.id.pager) ViewPager viewPager;
 
 	private final AdapterView.OnItemSelectedListener spinnerItemSelectedListener = new AdapterView.OnItemSelectedListener() {
@@ -122,10 +121,6 @@ public class MainActivity extends BaseActivity {
 		else {
             connect();
         }
-
-        Point size = new Point();
-        getWindowManager().getDefaultDisplay().getSize(size);
-		Repository.displayWidth = size.x;
 		
 		// Create the adapter that will return a fragment for each of the three
 		// primary sections of the app.
@@ -245,14 +240,16 @@ public class MainActivity extends BaseActivity {
 			return null;
 		}
 	}
-	
+
 	/* --- CONNECT --- */
-	
-	private ProgressDialog pd;
-	
+
+
 	private void connect() {
-		pd = ProgressDialog.show(MainActivity.this, "", getResources().getString(R.string.main_progress_dialog), true);
-        GitLabClient.instance().getGroups(groupsCallback);
+		//TODO move connection into the fragments
+        progress.setVisibility(View.VISIBLE);
+        progress.setAlpha(0.0f);
+        progress.animate().alpha(1.0f);
+		GitLabClient.instance().getGroups(groupsCallback);
 	}
 	
 	private Callback<List<Group>> groupsCallback = new Callback<List<Group>>() {
@@ -283,9 +280,7 @@ public class MainActivity extends BaseActivity {
 		@Override
 		public void failure(RetrofitError e) {
 			Timber.e(e.toString());
-			
-			if(pd != null && pd.isShowing())
-				pd.cancel();
+            progress.setVisibility(View.GONE);
 
 			Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
 					.show();
@@ -317,9 +312,7 @@ public class MainActivity extends BaseActivity {
 			if(Repository.selectedProject != null)
                 GitLabClient.instance().getBranches(Repository.selectedProject.getId(), branchesCallback);
             else {
-				if (pd != null && pd.isShowing()) {
-					pd.cancel();
-				}
+                progress.setVisibility(View.GONE);
 			}
 			navigationView.setProjects(projects);
 		}
@@ -327,9 +320,7 @@ public class MainActivity extends BaseActivity {
 		@Override
 		public void failure(RetrofitError e) {
 			Timber.e(e.toString());
-
-            if(pd != null && pd.isShowing())
-                pd.cancel();
+            progress.setVisibility(View.GONE);
 			Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
 					.show();
 		}
@@ -339,8 +330,7 @@ public class MainActivity extends BaseActivity {
 		
 		@Override
 		public void success(List<Branch> branches, Response resp) {
-			if(pd != null && pd.isShowing())
-				pd.cancel();
+            progress.setVisibility(View.GONE);
 			
 			Repository.branches = new ArrayList<>(branches);
 			Branch[] spinnerData = new Branch[Repository.branches.size()];
@@ -371,8 +361,7 @@ public class MainActivity extends BaseActivity {
 		
 		@Override
 		public void failure(RetrofitError e) {
-			if(pd != null && pd.isShowing())
-				pd.cancel();
+            progress.setVisibility(View.GONE);
 
             if(e.getResponse() != null && e.getResponse().getStatus() == 500) {
                 Repository.selectedBranch = null;

@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.User;
-import com.commit451.gitlab.tools.Repository;
 import com.squareup.picasso.Picasso;
 
 import butterknife.Bind;
@@ -49,8 +48,7 @@ public class UserViewHolder extends RecyclerView.ViewHolder {
 
         custom.setText(user.getAccessLevel(itemView.getResources().getStringArray(R.array.role_names)));
 
-        float percent = Repository.displayWidth / 720f;
-        int size = (int) (96f * percent);
+        int size = itemView.getResources().getDimensionPixelSize(R.dimen.image_size);
 
         String url = "http://www.gravatar.com/avatar/00000000000000000000000000000000?s=" + size;
 

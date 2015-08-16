@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.Issue;
-import com.commit451.gitlab.tools.Repository;
 import com.commit451.gitlab.views.CompoundTextView;
 import com.squareup.picasso.Picasso;
 
@@ -55,8 +54,7 @@ public class IssueViewHolder extends RecyclerView.ViewHolder {
             custom.setTextColor(Color.parseColor("#FF0000"));
         }
 
-        float percent = Repository.displayWidth / 720f;
-        int size = (int) (40f * percent);
+        int size = itemView.getResources().getDimensionPixelSize(R.dimen.image_size);
 
         String assigneeName = "Unassigned";
         String assigneeAvatarUrl = "http://www.gravatar.com/avatar/00000000000000000000000000000000?s=" + size;
@@ -65,7 +63,10 @@ public class IssueViewHolder extends RecyclerView.ViewHolder {
             assigneeName = issue.getAssignee().getName();
 
             if(issue.getAssignee().getEmail() != null)
-                assigneeAvatarUrl = Gravatar.init().with(issue.getAssignee().getEmail()).size(size).build();
+                assigneeAvatarUrl = Gravatar.init()
+                        .with(issue.getAssignee().getEmail())
+                        .size(itemView.getResources().getDimensionPixelSize(R.dimen.image_size))
+                        .build();
             else if(issue.getAssignee().getAvatarUrl() != null)
                 assigneeAvatarUrl = issue.getAssignee().getAvatarUrl() + "&s=" + size;
         }

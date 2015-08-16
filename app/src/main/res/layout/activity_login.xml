@@ -126,4 +126,6 @@
         android:textAllCaps="true"
         android:background="?attr/selectableItemBackground"/>
 
+    <include layout="@layout/progress"/>
+
 </FrameLayout>

@@ -20,8 +20,6 @@ public class Repository {
 	public static Branch selectedBranch;
 	public static User selectedUser;
 	
-	public static float displayWidth;
-	
 	public static void init(Context context) {
 		
 		projects = null;

@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.DiffLine;
-import com.commit451.gitlab.tools.Repository;
 import com.commit451.gitlab.views.CompoundTextView;
 import com.squareup.picasso.Picasso;
 
@@ -43,10 +42,10 @@ public class CommitViewHolder extends RecyclerView.ViewHolder {
         summary.setText(commit.getAuthorName());
         custom.setText(DateUtils.getRelativeTimeSpanString(commit.getCreatedAt().getTime()));
 
-        float percent = Repository.displayWidth / 720f;
-        int size = (int) (40f * percent);
-
-        String url = Gravatar.init().with(commit.getAuthorEmail()).size(size).build();
+        String url = Gravatar.init()
+                .with(commit.getAuthorEmail())
+                .size(itemView.getResources().getDimensionPixelSize(R.dimen.image_size))
+                .build();
         Picasso.with(itemView.getContext()).load(url).into(summary);
     }
 }
