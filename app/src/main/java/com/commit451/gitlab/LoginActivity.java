@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.TextInputLayout;
 import android.text.method.LinkMovementMethod;
 import android.view.KeyEvent;
 import android.view.View;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.Project;
 import com.commit451.gitlab.model.Session;
+import com.commit451.gitlab.tools.KeyboardUtil;
 import com.commit451.gitlab.tools.Prefs;
 
 import java.util.List;
@@ -29,10 +31,14 @@ import retrofit.client.Response;
 import timber.log.Timber;
 
 public class LoginActivity extends BaseActivity {
-	
+
+    @Bind(R.id.url_hint) TextInputLayout urlHint;
 	@Bind(R.id.url_input) TextView urlInput;
+    @Bind(R.id.user_input_hint) TextInputLayout userHint;
 	@Bind(R.id.user_input) TextView userInput;
+    @Bind(R.id.password_hint) TextInputLayout passwordHint;
 	@Bind(R.id.password_input) TextView passwordInput;
+    @Bind(R.id.token_hint) TextInputLayout tokenHint;
 	@Bind(R.id.token_input) TextView tokenInput;
 	@Bind(R.id.normal_login) View normalLogin;
 	@Bind(R.id.token_login) View tokenLogin;
@@ -72,6 +78,16 @@ public class LoginActivity extends BaseActivity {
 	
 	@OnClick(R.id.login_button)
 	public void onLoginClick() {
+		KeyboardUtil.hideKeyboard(this);
+        if (hasEmptyFields(urlHint)) {
+            return;
+        }
+        if (isNormalLogin && hasEmptyFields(urlHint, userHint, passwordHint)) {
+           return;
+        }
+        if (!isNormalLogin && hasEmptyFields(tokenHint)) {
+            return;
+        }
 		GitLabClient.reset();
 		
 		String url = urlInput.getText().toString();
@@ -140,6 +156,7 @@ public class LoginActivity extends BaseActivity {
 			progress.setVisibility(View.GONE);
 			
 			Prefs.setLoggedIn(LoginActivity.this, true);
+            Prefs.setUserId(LoginActivity.this, session.getId());
 			Prefs.setPrivateToken(LoginActivity.this, session.getPrivateToken());
 			
 			Intent i = new Intent(LoginActivity.this, MainActivity.class);

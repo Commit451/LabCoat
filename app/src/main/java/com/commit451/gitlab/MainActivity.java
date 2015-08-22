@@ -13,8 +13,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewConfiguration;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
@@ -35,10 +33,8 @@ import com.commit451.gitlab.tools.Repository;
 import com.commit451.gitlab.views.GitLabNavigationView;
 import com.squareup.otto.Subscribe;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -103,23 +99,11 @@ public class MainActivity extends BaseActivity {
 			}
 		});
 		
-		// Workaround that forces the overflow menu
-        try {
-			ViewConfiguration config = ViewConfiguration.get(this);
-			Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
-			if(menuKeyField != null) {
-				menuKeyField.setAccessible(true);
-				menuKeyField.setBoolean(config, false);
-			}
-		}
-		catch(Exception ex) {
-			ex.printStackTrace();
-		}
-		
 		if(!Prefs.isLoggedIn(this)) {
             startActivity(new Intent(this, LoginActivity.class));
         }
 		else {
+			navigationView.setUserId(Prefs.getUserId(this));
             connect();
         }
 		
@@ -137,11 +121,6 @@ public class MainActivity extends BaseActivity {
 	protected void onDestroy() {
 		GitLabApp.bus().unregister(eventReceiver);
 		super.onDestroy();
-	}
-
-	public void hideSoftKeyboard() {
-		InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-		inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
 	}
 	
 	@Override
@@ -228,7 +207,6 @@ public class MainActivity extends BaseActivity {
 		
 		@Override
 		public CharSequence getPageTitle(int position) {
-			Locale l = Locale.getDefault();
 			switch(position) {
 				case 0:
 					return getString(R.string.title_section1);
@@ -259,7 +237,6 @@ public class MainActivity extends BaseActivity {
 		@Override
 		public void success(List<Group> groups, Response resp) {
 			Repository.groups = new ArrayList<>(groups);
-
             GitLabClient.instance().getUsers(usersCallback);
 		}
 		

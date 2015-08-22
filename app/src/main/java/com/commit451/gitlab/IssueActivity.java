@@ -8,9 +8,11 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.commit451.gitlab.adapter.NotesAdapter;
 import com.commit451.gitlab.api.GitLabClient;
@@ -65,16 +67,24 @@ public class IssueActivity extends BaseActivity {
 
         toolbar.setNavigationIcon(R.drawable.ic_back);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+			@Override
+			public void onClick(View v) {
+				onBackPressed();
+			}
+		});
         toolbar.setTitle("Issue #" + tempId);
 
         notesAdapter = new NotesAdapter(issue);
         listView.setLayoutManager(new LinearLayoutManager(this));
         listView.setAdapter(notesAdapter);
+
+		newNoteEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+			@Override
+			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+				postNote();
+				return true;
+			}
+		});
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -91,6 +101,24 @@ public class IssueActivity extends BaseActivity {
         GitLabClient.instance().getIssueNotes(GitLabApp.instance().getSelectedProject().getId(), issue.getId(), notesCallback);
         GitLabClient.instance().getMilestones(GitLabApp.instance().getSelectedProject().getId(), milestonesCallback);
         GitLabClient.instance().getUsersFallback(GitLabApp.instance().getSelectedProject().getId(), usersCallback);
+	}
+
+	private void postNote() {
+		String body = newNoteEdit.getText().toString();
+
+		if(body.length() < 1) {
+			return;
+		}
+
+		progress.setVisibility(View.VISIBLE);
+		progress.setAlpha(0.0f);
+		progress.animate().alpha(1.0f);
+		// Clear text & collapse keyboard
+		InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+		imm.hideSoftInputFromWindow(newNoteEdit.getWindowToken(), 0);
+		newNoteEdit.setText("");
+
+		GitLabClient.instance().postIssueNote(GitLabApp.instance().getSelectedProject().getId(), issue.getId(), body, "", noteCallback);
 	}
 
 	private void changeStatus() {
@@ -130,21 +158,7 @@ public class IssueActivity extends BaseActivity {
 	
 	@OnClick(R.id.new_note_button)
 	public void onNewNoteClick() {
-		String body = newNoteEdit.getText().toString();
-		
-		if(body.length() < 1) {
-            return;
-        }
-
-		progress.setVisibility(View.VISIBLE);
-		progress.setAlpha(0.0f);
-		progress.animate().alpha(1.0f);
-		// Clear text & collapse keyboard
-		InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-		imm.hideSoftInputFromWindow(newNoteEdit.getWindowToken(), 0);
-		newNoteEdit.setText("");
-
-        GitLabClient.instance().postIssueNote(GitLabApp.instance().getSelectedProject().getId(), issue.getId(), body, "", noteCallback);
+		postNote();
 	}
 	
 	private Callback<Note> noteCallback = new Callback<Note>() {

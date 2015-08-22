@@ -55,7 +55,7 @@
             android:layout_weight="1"
             android:layout_gravity="center_vertical"
             android:hint="@string/new_note_hint"
-            android:inputType="text" />
+            android:inputType="text|textCapWords|textAutoComplete" />
 
         <ImageButton
             android:id="@+id/new_note_button"

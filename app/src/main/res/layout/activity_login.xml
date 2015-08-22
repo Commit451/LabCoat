@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/purple">
 
     <ImageView
         android:layout_width="100dp"
@@ -45,6 +46,7 @@
             android:orientation="vertical">
 
         <android.support.design.widget.TextInputLayout
+            android:id="@+id/user_input_hint"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -103,9 +105,7 @@
             android:id="@+id/show_normal_link"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="15dp"
+            android:padding="20dp"
             android:text="@string/normal_link"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="?attr/colorAccent"

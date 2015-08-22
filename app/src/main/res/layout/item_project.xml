@@ -1,16 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/selectableItemBackground">
-
-    <ImageView
-        android:id="@+id/project_image"
-        android:layout_width="@dimen/image_size"
-        android:layout_height="@dimen/image_size"
-        android:src="@drawable/ic_project"
-        android:contentDescription="@null"/>
+    android:foreground="?attr/selectableItemBackground">
 
     <TextView
         android:id="@+id/project_title"
@@ -19,4 +11,4 @@
         android:textSize="@dimen/text_size_normal"
         android:padding="@dimen/padding_normal"/>
 
-</LinearLayout>
+</FrameLayout>

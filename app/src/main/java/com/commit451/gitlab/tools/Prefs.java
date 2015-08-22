@@ -12,6 +12,7 @@ public class Prefs {
 
     private static final String LOGGED_IN = "logged_in";
     private static final String SERVER_URL = "server_url";
+    private static final String USER_ID = "user_id";
     private static final String PRIVATE_TOKEN = "private_token";
     private static final String LAST_PROJECT = "last_project";
     private static final String LAST_BRANCH = "last_branch";
@@ -68,5 +69,15 @@ public class Prefs {
 
     public static String getLastBranch(Context context) {
         return getSharedPrefs(context).getString(LAST_BRANCH, "");
+    }
+
+    public static void setUserId(Context context, long userId) {
+        SharedPreferences.Editor editor = getSharedPrefs(context).edit();
+        editor.putLong(USER_ID, userId);
+        editor.commit();
+    }
+
+    public static long getUserId(Context context) {
+        return getSharedPrefs(context).getLong(USER_ID, -1);
     }
 }

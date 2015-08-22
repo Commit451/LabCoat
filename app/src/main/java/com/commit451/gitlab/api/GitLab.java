@@ -106,6 +106,9 @@ public interface GitLab {
 	void getBlob(@Path("id") long projectId, @Path("sha") String commitId, @Query("filepath") String path, Callback<Response> cb);
 	
 	/* --- USER --- */
+
+	@GET("/users/{id}")
+	void getUser(@Path("id") long userId, Callback<User> userCallback);
 	
 	@GET("/groups/{id}/members?per_page=100")
 	void getGroupMembers(@Path("id") long groupId, Callback<List<User>> cb);
