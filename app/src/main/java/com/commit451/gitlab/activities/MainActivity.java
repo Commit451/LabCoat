@@ -11,7 +11,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -84,20 +84,6 @@ public class MainActivity extends BaseActivity {
 			@Override
 			public void onClick(View v) {
 				drawerLayout.openDrawer(GravityCompat.START);
-			}
-		});
-		toolbar.inflateMenu(R.menu.main);
-		toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-			@Override
-			public boolean onMenuItemClick(MenuItem item) {
-				switch(item.getItemId()) {
-					case R.id.action_logout:
-						Prefs.setLoggedIn(MainActivity.this, false);
-						startActivity(new Intent(MainActivity.this, LoginActivity.class));
-						return true;
-					default:
-						return false;
-				}
 			}
 		});
 		
@@ -274,22 +260,21 @@ public class MainActivity extends BaseActivity {
 		public void success(List<Project> projects, Response resp) {
 			Repository.projects = new ArrayList<>(projects);
 
-			if(Repository.projects.size() != 0) {
-				if(Prefs.getLastProject(MainActivity.this).length() == 0)
-					GitLabApp.instance().setSelectedProject(Repository.projects.get(0));
-				else if(Repository.projects.size() > 0) {
-					String lastProject = Prefs.getLastProject(MainActivity.this);
+			if(!projects.isEmpty()) {
+                String lastProject = Prefs.getLastProject(MainActivity.this);
+				if(TextUtils.isEmpty(lastProject)){
+					GitLabApp.instance().setSelectedProject(projects.get(0));
+				} else {
+                    for(Project p : projects) {
+                        if(p.toString().equals(lastProject)) {
+                            GitLabApp.instance().setSelectedProject(p);
+                        }
+                    }
 
-					for(Project p : Repository.projects) {
-						if(p.toString().equals(lastProject)) {
-							GitLabApp.instance().setSelectedProject(p);
-						}
-					}
-
-					if(GitLabApp.instance().getSelectedProject() == null) {
-						GitLabApp.instance().setSelectedProject(Repository.projects.get(0));
-					}
-				}
+                    if(GitLabApp.instance().getSelectedProject() == null) {
+                        GitLabApp.instance().setSelectedProject(projects.get(0));
+                    }
+                }
 			}
 			
 			if(GitLabApp.instance().getSelectedProject() != null) {
@@ -315,19 +300,20 @@ public class MainActivity extends BaseActivity {
 		@Override
 		public void success(List<Branch> branches, Response resp) {
             progress.setVisibility(View.GONE);
-			
 			Repository.branches = new ArrayList<>(branches);
-			Branch[] spinnerData = new Branch[Repository.branches.size()];
+
+			Branch[] spinnerData = new Branch[branches.size()];
 			int selectedBranchIndex = -1;
 			
-			for(int i = 0; i < Repository.branches.size(); i++)
-			{
-				spinnerData[i] = Repository.branches.get(i);
+			for(int i = 0; i < branches.size(); i++) {
+				spinnerData[i] = branches.get(i);
 
-                if(Prefs.getLastBranch(MainActivity.this).equals(spinnerData[i].getName()))
+                if(Prefs.getLastBranch(MainActivity.this).equals(spinnerData[i].getName())) {
                     selectedBranchIndex = i;
-                else if(selectedBranchIndex == -1 && GitLabApp.instance().getSelectedProject() != null && spinnerData[i].getName().equals(GitLabApp.instance().getSelectedProject().getDefaultBranch()))
+                }
+                else if(selectedBranchIndex == -1 && GitLabApp.instance().getSelectedProject() != null && spinnerData[i].getName().equals(GitLabApp.instance().getSelectedProject().getDefaultBranch())) {
                     selectedBranchIndex = i;
+                }
 			}
 
 			// Set up the dropdown list navigation in the action bar.
@@ -337,7 +323,7 @@ public class MainActivity extends BaseActivity {
 			}
 			branchSpinner.setOnItemSelectedListener(spinnerItemSelectedListener);
 			
-			if(Repository.branches.size() == 0) {
+			if(branches.isEmpty()) {
 				GitLabApp.instance().setSelectedBranch(null);
 				loadData();
 			}

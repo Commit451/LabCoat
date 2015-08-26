@@ -11,21 +11,21 @@ import org.parceler.Parcel;
 public class FileResponse {
 
     @SerializedName("file_name")
-    private String mFileName;
+    String mFileName;
     @SerializedName("file_path")
-    private String mFilePath;
+    String mFilePath;
     @SerializedName("size")
-    private long mSize;
+    long mSize;
     @SerializedName("encoding")
-    private String mEncoding;
+    String mEncoding;
     @SerializedName("content")
-    private String mContent;
+    String mContent;
     @SerializedName("ref")
-    private String mRef;
+    String mRef;
     @SerializedName("blob_id")
-    private String mBlobId;
+    String mBlobId;
     @SerializedName("commit_id")
-    private String mCommitId;
+    String mCommitId;
 
     public String getFileName() {
         return mFileName;

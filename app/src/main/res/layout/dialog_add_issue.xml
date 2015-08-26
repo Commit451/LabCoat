@@ -2,7 +2,8 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:layout_margin="8dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -21,7 +22,7 @@
                 android:layout_margin="5dp"
                 android:ems="10"
                 android:hint="@string/title_hint"
-                android:inputType="text">
+                android:inputType="text|textCapWords">
 
                 <requestFocus />
             </EditText>
@@ -40,7 +41,7 @@
                 android:layout_margin="5dp"
                 android:ems="10"
                 android:hint="@string/description_hint"
-                android:inputType="text" />
+                android:inputType="text|textCapSentences" />
 
         </android.support.design.widget.TextInputLayout>
 
