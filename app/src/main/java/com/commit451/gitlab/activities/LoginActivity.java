@@ -1,4 +1,4 @@
-package com.commit451.gitlab;
+package com.commit451.gitlab.activities;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.Project;
 import com.commit451.gitlab.model.Session;

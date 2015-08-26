@@ -1,8 +1,10 @@
-package com.commit451.gitlab;
+package com.commit451.gitlab.activities;
 
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+
+import com.commit451.gitlab.R;
 
 /**
  * Created by Jawn on 7/27/2015.

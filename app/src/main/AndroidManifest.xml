@@ -15,37 +15,37 @@
         android:theme="@style/AppTheme" >
 
         <activity
-            android:name="com.commit451.gitlab.MainActivity">
+            android:name=".activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name="com.commit451.gitlab.LoginActivity" />
+            android:name=".activities.LoginActivity" />
         <activity
-            android:name="com.commit451.gitlab.FileActivity"
+            android:name=".activities.FileActivity"
             android:configChanges="orientation|screenSize"
-            android:parentActivityName="com.commit451.gitlab.MainActivity" >
+            android:parentActivityName=".activities.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.commit451.gitlab.MainActivity" />
+                android:value=".activities.MainActivity" />
         </activity>
         <activity
-            android:name="com.commit451.gitlab.IssueActivity"
+            android:name=".activities.IssueActivity"
             android:configChanges="orientation|screenSize"
-            android:parentActivityName="com.commit451.gitlab.MainActivity" >
+            android:parentActivityName=".activities.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.commit451.gitlab.MainActivity" />
+                android:value=".activities.MainActivity" />
         </activity>
         <activity
-            android:name="com.commit451.gitlab.DiffActivity"
+            android:name=".activities.DiffActivity"
             android:configChanges="orientation|screenSize"
-            android:parentActivityName="com.commit451.gitlab.MainActivity" >
+            android:parentActivityName=".activities.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.commit451.gitlab.MainActivity" />
+                android:value=".activities.MainActivity" />
         </activity>
 
     </application>

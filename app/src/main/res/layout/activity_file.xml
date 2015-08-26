@@ -19,10 +19,12 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <WebView
+    <com.commit451.gitlab.views.BetterWebView
         android:id="@+id/file_blob"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="?attr/actionBarSize"/>
+
+    <include layout="@layout/progress"/>
 
 </android.support.design.widget.CoordinatorLayout>

@@ -1,4 +1,4 @@
-package com.commit451.gitlab;
+package com.commit451.gitlab.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,6 +17,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import com.commit451.gitlab.GitLabApp;
+import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.events.CloseDrawerEvent;
 import com.commit451.gitlab.events.ProjectChangedEvent;

@@ -5,11 +5,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.Issue;
-import com.commit451.gitlab.views.CompoundTextView;
 import com.squareup.picasso.Picasso;
 
 import butterknife.Bind;
@@ -17,7 +17,7 @@ import butterknife.ButterKnife;
 import fr.tkeunebr.gravatar.Gravatar;
 
 /**
- * Files, yay!
+ * issues, yay!
  * Created by Jawn on 6/11/2015.
  */
 public class IssueViewHolder extends RecyclerView.ViewHolder {
@@ -28,9 +28,10 @@ public class IssueViewHolder extends RecyclerView.ViewHolder {
         return new IssueViewHolder(view);
     }
 
-    @Bind(R.id.title) TextView title;
-    @Bind(R.id.summary) CompoundTextView summary;
-    @Bind(R.id.custom) TextView custom;
+    @Bind(R.id.issue_image) ImageView image;
+    @Bind(R.id.issue_message) TextView message;
+    @Bind(R.id.issue_creator) TextView creator;
+    @Bind(R.id.issue_state) TextView stateView;
 
     public IssueViewHolder(View view) {
         super(view);
@@ -43,15 +44,15 @@ public class IssueViewHolder extends RecyclerView.ViewHolder {
             tempId = issue.getId();
         }
 
-        title.setText("#" + tempId + ": " + issue.getTitle());
+        message.setText("#" + tempId + ": " + issue.getTitle());
 
         String state = issue.getState();
-        custom.setText(state);
+        stateView.setText(state);
         if(state != null && (state.equals("opened") || state.equals("reopened"))) {
-            custom.setTextColor(Color.parseColor("#30C830"));
+            stateView.setTextColor(Color.parseColor("#30C830"));
         }
         else if(state != null && (state.equals("closed"))) {
-            custom.setTextColor(Color.parseColor("#FF0000"));
+            stateView.setTextColor(Color.parseColor("#FF0000"));
         }
 
         int size = itemView.getResources().getDimensionPixelSize(R.dimen.image_size);
@@ -71,7 +72,7 @@ public class IssueViewHolder extends RecyclerView.ViewHolder {
                 assigneeAvatarUrl = issue.getAssignee().getAvatarUrl() + "&s=" + size;
         }
 
-        summary.setText(assigneeName);
-        Picasso.with(itemView.getContext()).load(assigneeAvatarUrl).into(summary);
+        creator.setText(assigneeName);
+        Picasso.with(itemView.getContext()).load(assigneeAvatarUrl).into(image);
     }
 }

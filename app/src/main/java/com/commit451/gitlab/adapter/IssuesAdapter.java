@@ -4,7 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.commit451.gitlab.IssueActivity;
+import com.commit451.gitlab.activities.IssueActivity;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.Issue;
 import com.commit451.gitlab.viewHolders.IssueViewHolder;

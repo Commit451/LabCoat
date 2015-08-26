@@ -1,42 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/list_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:padding="8dp"
     android:minHeight="?android:attr/listPreferredItemHeight"
-    android:paddingRight="?android:attr/scrollbarSize"
-    android:paddingLeft="8dp"
     android:background="?attr/selectableItemBackground">
 
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/commit_image"
+        android:layout_width="@dimen/image_size"
+        android:layout_height="@dimen/image_size"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_gravity="center_vertical"
+        android:contentDescription="@null"
+        tools:src="@drawable/ic_doc"
+        />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/commit_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_small"
+            android:maxLines="2"
+            android:ellipsize="end"
+            tools:text="I commited all the code at once cause I am cool. So sorry"/>
+
+        <TextView
+            android:id="@+id/commit_author"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_tiny"
+            android:textColor="@color/white_60"
+            tools:text="Jawnnypoo"/>
+
+    </LinearLayout>
     <TextView
-        android:id="@+id/title"
+        android:id="@+id/commit_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:ellipsize="marquee"
-        android:fadingEdge="horizontal"
-        android:singleLine="true"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textSize="@dimen/text_size_tiny"
+        android:layout_gravity="bottom"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        tools:text="Max 25, 2019"/>
 
-    <com.commit451.gitlab.views.CompoundTextView
-        android:id="@+id/summary"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/title"
-        android:layout_below="@+id/title"
-        android:orientation="horizontal"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textColor="?android:attr/textColorSecondary"
-        android:drawablePadding="4dp" />
-
-    <TextView
-        android:id="@+id/custom"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/summary"
-        android:layout_alignParentRight="true"
-        android:textStyle="bold"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textColor="?android:attr/textColorSecondary" />
-
-</RelativeLayout>
+</LinearLayout>

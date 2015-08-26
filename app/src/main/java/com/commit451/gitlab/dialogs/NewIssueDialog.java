@@ -9,7 +9,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.commit451.gitlab.GitLabApp;
-import com.commit451.gitlab.IssueActivity;
+import com.commit451.gitlab.activities.IssueActivity;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.Issue;

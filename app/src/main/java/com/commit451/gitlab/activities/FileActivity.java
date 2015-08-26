@@ -1,6 +1,5 @@
-package com.commit451.gitlab;
+package com.commit451.gitlab.activities;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -8,22 +7,20 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.webkit.WebView;
 
+import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.model.DiffLine;
-import com.commit451.gitlab.model.TreeItem;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringEscapeUtils;
-import org.parceler.Parcels;
+import com.commit451.gitlab.model.FileResponse;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -34,45 +31,73 @@ import timber.log.Timber;
 
 public class FileActivity extends BaseActivity {
 
-	private static final String EXTRA_COMMIT = "extra_commit";
-    private static final String EXTRA_FILE = "extra_file";
+	private static final String EXTRA_PROJECT_ID = "extra_project_id";
     private static final String EXTRA_PATH = "extra_path";
+	private static final String EXTRA_REF = "extra_ref";
 
-	public static Intent newIntent(Context context, DiffLine commit, TreeItem file, String path) {
+	public static Intent newIntent(Context context, long projectId, String path, String ref) {
 		Intent intent = new Intent(context, FileActivity.class);
-        intent.putExtra(EXTRA_COMMIT, Parcels.wrap(commit));
-        intent.putExtra(EXTRA_FILE, Parcels.wrap(file));
+        intent.putExtra(EXTRA_PROJECT_ID, projectId);
         intent.putExtra(EXTRA_PATH, path);
+        intent.putExtra(EXTRA_REF, ref);
         return intent;
 	}
 
 	@Bind(R.id.toolbar) Toolbar toolbar;
 	@Bind(R.id.file_blob) WebView fileBlobView;
+    @Bind(R.id.progress) View progress;
 
-    DiffLine commit;
-    TreeItem file;
-    String path;
-	private byte[] fileBlob;
+	long mProjectId;
+	String mPath;
+	String mRef;
+
+    String mFileName;
+    byte[] mBlob;
+
+	private final Callback<FileResponse> mFileResponseCallback = new Callback<FileResponse>() {
+		@Override
+		public void success(FileResponse fileResponse, Response response) {
+            progress.setVisibility(View.GONE);
+            String text = getString(R.string.file_load_error);
+            // Receiving side
+            mFileName = fileResponse.getFileName();
+            mBlob = Base64.decode(fileResponse.getContent(), Base64.DEFAULT);
+            try {
+                text = new String(mBlob, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                Timber.e(e.toString());
+            }
+			String temp = "<!DOCTYPE html><html><head><link href=\"github.css\" rel=\"stylesheet\" /></head><body><pre><code>" + text + "</code></pre><script src=\"highlight.pack.js\"></script><script>hljs.initHighlightingOnLoad();</script></body></html>";
+			fileBlobView.loadDataWithBaseURL("file:///android_asset/", temp, "text/html", "utf8", null);
+            toolbar.setTitle(fileResponse.getFileName());
+            toolbar.inflateMenu(R.menu.file);
+		}
+
+		@Override
+		public void failure(RetrofitError error) {
+            progress.setVisibility(View.GONE);
+			Snackbar.make(getWindow().getDecorView(), R.string.file_load_error, Snackbar.LENGTH_SHORT)
+					.show();
+		}
+	};
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_file);
 		ButterKnife.bind(this);
-		commit = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_COMMIT));
-        file = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_FILE));
-        path = getIntent().getStringExtra(EXTRA_PATH);
-		if(file != null) {
-			setupUI();
-			GitLabClient.instance().getBlob(
-                    GitLabApp.instance().getSelectedProject().getId(),
-                    commit.getId(),
-                    path + file.getName(),
-                    blobCallback);
-		}
+		mProjectId = getIntent().getLongExtra(EXTRA_PROJECT_ID, -1);
+		mPath = getIntent().getStringExtra(EXTRA_PATH);
+		mRef = getIntent().getStringExtra(EXTRA_REF);
+		setupUI();
+        load();
 	}
-	
-	@SuppressLint("SetJavaScriptEnabled")
+
+	private void load() {
+        progress.setVisibility(View.VISIBLE);
+		GitLabClient.instance().getFile(mProjectId, mPath, mRef, mFileResponseCallback);
+	}
+
 	private void setupUI() {
 		toolbar.setNavigationIcon(R.drawable.ic_back);
 		toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -81,7 +106,6 @@ public class FileActivity extends BaseActivity {
 				onBackPressed();
 			}
 		});
-		toolbar.setTitle(file.getName());
 		toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
 			@Override
 			public boolean onMenuItemClick(MenuItem item) {
@@ -96,57 +120,25 @@ public class FileActivity extends BaseActivity {
 				return false;
 			}
 		});
-		
-		fileBlobView.getSettings().setJavaScriptEnabled(true);
-	}
-	
-	private Callback<Response> blobCallback = new Callback<Response>() {
-		
-		@Override
-		public void success(Response response, Response resp) {
-			String content = getResources().getString(R.string.file_load_error);
-			
-			try {
-				fileBlob = IOUtils.toByteArray(response.getBody().in());
-				content = new String(fileBlob, "UTF-8");
-			}
-			catch(IOException e) {
-				e.printStackTrace();
-			}
-			
-			String temp = "<!DOCTYPE html><html><head><link href=\"github.css\" rel=\"stylesheet\" /></head><body><pre><code>" + StringEscapeUtils.escapeHtml(content) + "</code></pre><script src=\"highlight.pack.js\"></script><script>hljs.initHighlightingOnLoad();</script></body></html>";
-			fileBlobView.loadDataWithBaseURL("file:///android_asset/", temp, "text/html", "utf8", null);
 
-			toolbar.inflateMenu(R.menu.file);
-		}
-		
-		@Override
-		public void failure(RetrofitError e) {
-			Timber.e(e.toString());
-			Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
-					.show();
-		}
-	};
+	}
 	
 	private File saveBlob() {
 		String state = Environment.getExternalStorageState();
-		
-		if(Environment.MEDIA_MOUNTED.equals(state) && fileBlob != null) {
-			File downloadFolder = new File(Environment.getExternalStorageDirectory(), "Download");
-			
-			if(!downloadFolder.exists())
-				downloadFolder.mkdir();
-			
-			File newFile = new File(downloadFolder, file.getName());
-			
+
+		if(Environment.MEDIA_MOUNTED.equals(state) && mBlob != null) {
+			File downloadFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+
+			File newFile = new File(downloadFolder, mFileName);
+
 			try {
 				FileOutputStream f = new FileOutputStream(newFile);
-				f.write(fileBlob);
+				f.write(mBlob);
 				f.close();
 
 				Snackbar.make(getWindow().getDecorView(), getString(R.string.file_saved), Snackbar.LENGTH_SHORT)
 						.show();
-				
+
 				return newFile;
 			}
 			catch(IOException e) {
@@ -158,13 +150,13 @@ public class FileActivity extends BaseActivity {
 			Snackbar.make(getWindow().getDecorView(), getString(R.string.save_error), Snackbar.LENGTH_SHORT)
 					.show();
 		}
-		
+
 		return null;
 	}
 	
 	private void openFile() {
 		File file = saveBlob();
-		
+
 		if(file == null) {
 			Snackbar.make(getWindow().getDecorView(), getString(R.string.open_error), Snackbar.LENGTH_SHORT)
 					.show();

@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.commit451.gitlab.FileActivity;
+import com.commit451.gitlab.activities.FileActivity;
 import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
@@ -81,11 +81,13 @@ public class FilesFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 	
 	private void loadFiles() {
 		String branch = "master";
-		if(GitLabApp.instance().getSelectedBranch() != null)
+		if(GitLabApp.instance().getSelectedBranch() != null) {
 			branch = GitLabApp.instance().getSelectedBranch().getName();
+		}
 		
-		if(swipeLayout != null && !swipeLayout.isRefreshing())
-            swipeLayout.setRefreshing(true);
+		if(swipeLayout != null && !swipeLayout.isRefreshing()) {
+			swipeLayout.setRefreshing(true);
+		}
 		
 		String currentPath = "";
         for(String p : path) {
@@ -181,8 +183,9 @@ public class FilesFragment extends Fragment implements SwipeRefreshLayout.OnRefr
 					for(String p : path) {
 						pathExtra += p;
 					}
-
-					startActivity(FileActivity.newIntent(getActivity(), null, treeItem, pathExtra));
+                    pathExtra = pathExtra + treeItem.getName();
+					startActivity(FileActivity.newIntent(getActivity(), GitLabApp.instance().getSelectedProject().getId(),
+                            pathExtra, GitLabApp.instance().getSelectedBranch().getName()));
 				}
 			}
 		};

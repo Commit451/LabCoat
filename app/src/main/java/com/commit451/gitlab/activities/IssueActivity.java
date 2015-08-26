@@ -1,4 +1,4 @@
-package com.commit451.gitlab;
+package com.commit451.gitlab.activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +14,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.commit451.gitlab.GitLabApp;
+import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.NotesAdapter;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.Issue;

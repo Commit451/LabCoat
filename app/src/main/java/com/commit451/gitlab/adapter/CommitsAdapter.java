@@ -4,7 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.commit451.gitlab.DiffActivity;
+import com.commit451.gitlab.activities.DiffActivity;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.DiffLine;
 import com.commit451.gitlab.viewHolders.CommitViewHolder;

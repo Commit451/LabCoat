@@ -2,20 +2,18 @@ package com.commit451.gitlab.views;
 
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import com.commit451.gitlab.LoginActivity;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.ProjectsAdapter;
 import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.dialogs.LogoutDialog;
 import com.commit451.gitlab.model.Project;
 import com.commit451.gitlab.model.User;
-import com.commit451.gitlab.tools.Prefs;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -39,10 +37,7 @@ public class GitLabNavigationView extends FrameLayout{
 
     @OnClick(R.id.drawer_header)
     void onHeaderClick() {
-        Prefs.setLoggedIn(getContext(), false);
-        Prefs.setUserId(getContext(), -1);
-        Prefs.setPrivateToken(getContext(), null);
-        getContext().startActivity(new Intent(getContext(), LoginActivity.class));
+        new LogoutDialog(getContext()).show();
     }
 
     private final Callback<User> userCallback = new Callback<User>() {

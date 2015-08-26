@@ -5,11 +5,11 @@ import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.DiffLine;
-import com.commit451.gitlab.views.CompoundTextView;
 import com.squareup.picasso.Picasso;
 
 import butterknife.Bind;
@@ -28,9 +28,10 @@ public class CommitViewHolder extends RecyclerView.ViewHolder {
         return new CommitViewHolder(view);
     }
 
-    @Bind(R.id.title) TextView title;
-    @Bind(R.id.summary) CompoundTextView summary;
-    @Bind(R.id.custom) TextView custom;
+    @Bind(R.id.commit_image) ImageView image;
+    @Bind(R.id.commit_message) TextView message;
+    @Bind(R.id.commit_author) TextView author;
+    @Bind(R.id.commit_time) TextView time;
 
     public CommitViewHolder(View view) {
         super(view);
@@ -38,14 +39,17 @@ public class CommitViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(DiffLine commit) {
-        title.setText(commit.getTitle());
-        summary.setText(commit.getAuthorName());
-        custom.setText(DateUtils.getRelativeTimeSpanString(commit.getCreatedAt().getTime()));
-
         String url = Gravatar.init()
                 .with(commit.getAuthorEmail())
                 .size(itemView.getResources().getDimensionPixelSize(R.dimen.image_size))
                 .build();
-        Picasso.with(itemView.getContext()).load(url).into(summary);
+
+        Picasso.with(itemView.getContext())
+                .load(url)
+                .into(image);
+
+        message.setText(commit.getTitle());
+        author.setText(commit.getAuthorName());
+        time.setText(DateUtils.getRelativeTimeSpanString(commit.getCreatedAt().getTime()));
     }
 }

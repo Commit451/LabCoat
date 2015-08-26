@@ -23,6 +23,7 @@ import retrofit.converter.GsonConverter;
  */
 public class GitLabClient {
 
+    private static final String API_VERSION = "/api/v3";
     private static GitLab gitLab;
 
     public static GitLab instance() {
@@ -42,7 +43,7 @@ public class GitLabClient {
                     .setRequestInterceptor(new GitLabInterceptor())
                     .setLogLevel(BuildConfig.DEBUG ? RestAdapter.LogLevel.FULL : RestAdapter.LogLevel.BASIC)
                     .setConverter(new GsonConverter(gson))
-                    .setEndpoint(Prefs.getServerUrl(GitLabApp.instance()) + "/api/v3")
+                    .setEndpoint(Prefs.getServerUrl(GitLabApp.instance()) + API_VERSION)
                     .build();
             gitLab = restAdapter.create(GitLab.class);
         }

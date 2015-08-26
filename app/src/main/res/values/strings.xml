@@ -62,6 +62,7 @@
     <string name="remove_button">Remove</string>
     <string name="ok_button">OK</string>
     <string name="filter_projects">Filter projects</string>
+    <string name="logout_title">Are you sure you want to log out?</string>
 
     <!-- Commits -->
     <string name="no_commits_found">No commits found.</string>

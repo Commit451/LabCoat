@@ -1,4 +1,4 @@
-package com.commit451.gitlab;
+package com.commit451.gitlab.activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -9,6 +9,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import com.commit451.gitlab.GitLabApp;
+import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.Diff;
 import com.commit451.gitlab.model.DiffLine;
