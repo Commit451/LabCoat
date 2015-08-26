@@ -9,11 +9,12 @@
     android:minHeight="?android:attr/listPreferredItemHeight"
     android:orientation="horizontal">
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@mipmap/ic_launcher"
+        android:layout_marginLeft="@dimen/padding_normal"
         android:layout_gravity="center_vertical"
         android:contentDescription="@null"/>
 

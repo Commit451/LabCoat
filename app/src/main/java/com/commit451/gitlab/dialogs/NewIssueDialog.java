@@ -12,6 +12,7 @@ import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.activities.IssueActivity;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.events.IssueCreatedEvent;
 import com.commit451.gitlab.model.Issue;
 
 import butterknife.Bind;
@@ -63,6 +64,7 @@ public class NewIssueDialog extends AppCompatDialog {
         @Override
         public void success(Issue issue, Response resp) {
             //TODO update the parent list when a new issue is created
+            GitLabApp.bus().post(new IssueCreatedEvent(issue));
             getContext().startActivity(IssueActivity.newInstance(getContext(), issue));
             dismiss();
         }

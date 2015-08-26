@@ -15,6 +15,7 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.IssuesAdapter;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.dialogs.NewIssueDialog;
+import com.commit451.gitlab.events.IssueCreatedEvent;
 import com.commit451.gitlab.events.ProjectChangedEvent;
 import com.commit451.gitlab.model.Issue;
 import com.squareup.otto.Subscribe;
@@ -35,6 +36,7 @@ public class IssuesFragment extends Fragment implements SwipeRefreshLayout.OnRef
 	@Bind(R.id.list) RecyclerView listView;
     @Bind(R.id.swipe_layout) SwipeRefreshLayout swipeLayout;
 
+	IssuesAdapter issuesAdapter;
 	EventReceiver eventReceiver;
 
 	public IssuesFragment() {}
@@ -45,6 +47,8 @@ public class IssuesFragment extends Fragment implements SwipeRefreshLayout.OnRef
 		ButterKnife.bind(this, view);
 
 		listView.setLayoutManager(new LinearLayoutManager(getActivity()));
+		issuesAdapter = new IssuesAdapter();
+		listView.setAdapter(issuesAdapter);
         swipeLayout.setOnRefreshListener(this);
 
 		if(GitLabApp.instance().getSelectedProject() != null) {
@@ -81,10 +85,10 @@ public class IssuesFragment extends Fragment implements SwipeRefreshLayout.OnRef
 		
 		@Override
 		public void success(List<Issue> issues, Response resp) {
-			if(swipeLayout != null && swipeLayout.isRefreshing())
-                swipeLayout.setRefreshing(false);
-
-			listView.setAdapter(new IssuesAdapter(issues));
+			if(swipeLayout != null && swipeLayout.isRefreshing()) {
+				swipeLayout.setRefreshing(false);
+			}
+			issuesAdapter.setIssues(issues);
 
 			addIssueButton.setEnabled(true);
 		}
@@ -115,6 +119,11 @@ public class IssuesFragment extends Fragment implements SwipeRefreshLayout.OnRef
 		@Subscribe
 		public void onProjectChanged(ProjectChangedEvent event) {
 			loadData();
+		}
+
+		@Subscribe
+		public void onIssueAdded(IssueCreatedEvent event) {
+			issuesAdapter.addIssue(event.issue);
 		}
 	}
 }

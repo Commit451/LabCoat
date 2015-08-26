@@ -4,26 +4,27 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.commit451.gitlab.activities.IssueActivity;
 import com.commit451.gitlab.R;
+import com.commit451.gitlab.activities.IssueActivity;
 import com.commit451.gitlab.model.Issue;
 import com.commit451.gitlab.viewHolders.IssueViewHolder;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Created by Jawn on 7/28/2015.
  */
 public class IssuesAdapter extends RecyclerView.Adapter<IssueViewHolder> {
 
-    private List<Issue> mValues;
+    private ArrayList<Issue> mValues;
 
     public Issue getValueAt(int position) {
         return mValues.get(position);
     }
 
-    public IssuesAdapter(List<Issue> items) {
-        mValues = items;
+    public IssuesAdapter() {
+        mValues = new ArrayList<>();
     }
 
     private final View.OnClickListener onProjectClickListener = new View.OnClickListener() {
@@ -51,6 +52,14 @@ public class IssuesAdapter extends RecyclerView.Adapter<IssueViewHolder> {
     @Override
     public int getItemCount() {
         return mValues.size();
+    }
+
+    public void setIssues(Collection<Issue> issues) {
+        mValues.clear();
+        if (issues != null) {
+            mValues.addAll(issues);
+        }
+        notifyDataSetChanged();
     }
 
     public void addIssue(Issue issue) {
