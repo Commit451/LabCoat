@@ -19,7 +19,6 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.NotesAdapter;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.Issue;
-import com.commit451.gitlab.model.Milestone;
 import com.commit451.gitlab.model.Note;
 import com.commit451.gitlab.model.User;
 
@@ -81,12 +80,12 @@ public class IssueActivity extends BaseActivity {
         listView.setAdapter(notesAdapter);
 
 		newNoteEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-			@Override
-			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-				postNote();
-				return true;
-			}
-		});
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                postNote();
+                return true;
+            }
+        });
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -99,10 +98,7 @@ public class IssueActivity extends BaseActivity {
 
     private void load() {
 		swipeRefreshLayout.setRefreshing(true);
-        //TODO chain these
         GitLabClient.instance().getIssueNotes(GitLabApp.instance().getSelectedProject().getId(), issue.getId(), notesCallback);
-        GitLabClient.instance().getMilestones(GitLabApp.instance().getSelectedProject().getId(), milestonesCallback);
-        GitLabClient.instance().getUsersFallback(GitLabApp.instance().getSelectedProject().getId(), usersCallback);
 	}
 
 	private void postNote() {
@@ -121,24 +117,6 @@ public class IssueActivity extends BaseActivity {
 		newNoteEdit.setText("");
 
 		GitLabClient.instance().postIssueNote(GitLabApp.instance().getSelectedProject().getId(), issue.getId(), body, "", noteCallback);
-	}
-
-	private void changeStatus() {
-//		String selection = stateSpinner.getSelectedItem().toString();
-//		String value = "";
-//		if(selection.equals("closed") && (Repository.selectedIssue.getState().equals("opened") || Repository.selectedIssue.getState().equals("reopened"))) {
-//			value = "close";
-//		}
-//		if((selection.equals("reopened") || selection.equals("opened")) && Repository.selectedIssue.getState().equals("closed")) {
-//			value = "reopen";
-//		}
-//
-//        GitLabClient.instance().editIssue(
-//				Repository.selectedProject.getId(),
-//				Repository.selectedIssue.getId(),
-//				value,
-//				"",
-//				issueCallback);
 	}
 	
 	private Callback<List<Note>> notesCallback = new Callback<List<Note>>() {
@@ -180,65 +158,17 @@ public class IssueActivity extends BaseActivity {
 		}
 	};
 	
-	private Callback<Issue> issueCallback = new Callback<Issue>() {
-		
-		@Override
-		public void success(Issue issue, Response resp) {
-			progress.setVisibility(View.GONE);
-			
-//			Repository.selectedIssue.setState(stateSpinner.getSelectedItem().toString());
-//			Repository.selectedIssue.setAssignee((User) assigneeSpinner.getSelectedItem());
-//			Repository.selectedIssue.setMilestone((Milestone) milestoneSpinner.getSelectedItem());
-			//TODO notify the main activity when a issue changes so it will update in the list
-		}
-		
-		@Override
-		public void failure(RetrofitError e) {
-			Timber.e(e.toString());
-			progress.setVisibility(View.GONE);
-			Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
-					.show();
-		}
-	};
-	
 	private Callback<List<User>> usersCallback = new Callback<List<User>>() {
 		
 		@Override
 		public void success(List<User> users, Response resp) {
 			swipeRefreshLayout.setRefreshing(false);
             notesAdapter.addUsers(users);
-//			UserAdapter ua = new UserAdapter(IssueActivity.this, users);
-//			assigneeSpinner.setAdapter(ua);
-//			assigneeSpinner.setSelection(ua.getPosition(Repository.selectedIssue.getAssignee()), true);
 		}
 		
 		@Override
 		public void failure(RetrofitError e) {
 			Timber.e(e.toString());
-			swipeRefreshLayout.setRefreshing(false);
-			Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
-					.show();
-		}
-	};
-	
-	private Callback<List<Milestone>> milestonesCallback = new Callback<List<Milestone>>() {
-		
-		@Override
-		public void success(List<Milestone> milestones, Response resp) {
-			swipeRefreshLayout.setRefreshing(false);
-
-            notesAdapter.addMilestones(milestones);
-//			MilestonesAdapter ma = new MilestonesAdapter(IssueActivity.this, milestones);
-//			milestoneSpinner.setAdapter(ma);
-//			milestoneSpinner.setSelection(ma.getPosition(Repository.selectedIssue.getMilestone()), true);
-//			if (milestones.isEmpty()) {
-//				milestoneSpinner.setVisibility(View.GONE);
-//			}
-		}
-		
-		@Override
-		public void failure(RetrofitError e) {
-            Timber.e(e.toString());
 			swipeRefreshLayout.setRefreshing(false);
 			Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
 					.show();

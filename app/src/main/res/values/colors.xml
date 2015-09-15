@@ -11,6 +11,7 @@
     <color name="grey">#373D47</color>
     <color name="grey_60">#99373D47</color>
     <color name="grey_dark">#1E242E</color>
+    <color name="window_background_color">#303030</color>
 
     <color name="purple">#554488</color>
     <color name="purple_dark">#3C2B6F</color>

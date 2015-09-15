@@ -2,7 +2,6 @@ package com.commit451.gitlab.fragments;
 
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,7 +15,6 @@ import com.commit451.gitlab.adapter.IssuesAdapter;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.dialogs.NewIssueDialog;
 import com.commit451.gitlab.events.IssueCreatedEvent;
-import com.commit451.gitlab.events.ProjectChangedEvent;
 import com.commit451.gitlab.model.Issue;
 import com.squareup.otto.Subscribe;
 
@@ -30,7 +28,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 import timber.log.Timber;
 
-public class IssuesFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class IssuesFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
 
 	@Bind(R.id.add_issue_button) View addIssueButton;
 	@Bind(R.id.list) RecyclerView listView;
@@ -115,11 +113,6 @@ public class IssuesFragment extends Fragment implements SwipeRefreshLayout.OnRef
 	}
 
 	private class EventReceiver {
-
-		@Subscribe
-		public void onProjectChanged(ProjectChangedEvent event) {
-			loadData();
-		}
 
 		@Subscribe
 		public void onIssueAdded(IssueCreatedEvent event) {

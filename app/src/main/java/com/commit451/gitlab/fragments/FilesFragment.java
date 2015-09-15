@@ -2,7 +2,6 @@ package com.commit451.gitlab.fragments;
 
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,9 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.commit451.gitlab.activities.FileActivity;
 import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
+import com.commit451.gitlab.activities.FileActivity;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.events.ProjectChangedEvent;
 import com.commit451.gitlab.model.TreeItem;
@@ -30,7 +29,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 import timber.log.Timber;
 
-public class FilesFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class FilesFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
 
 	private ArrayList<String> path;
 
@@ -67,8 +66,9 @@ public class FilesFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         ButterKnife.unbind(this);
 		GitLabApp.bus().unregister(eventReceiver);
 	}
-	
-	public void loadData() {
+
+	@Override
+	protected void loadData() {
         Timber.d("loadData");
         path = new ArrayList<>();
 		loadFiles();

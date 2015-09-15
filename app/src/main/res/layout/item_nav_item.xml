@@ -4,10 +4,19 @@
     android:layout_height="match_parent"
     android:foreground="?attr/selectableItemBackground">
 
+    <ImageView
+        android:id="@+id/nav_image"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:src="@drawable/ic_about"
+        android:layout_gravity="center_vertical"
+        android:contentDescription="@null"/>
+
     <TextView
-        android:id="@+id/project_title"
+        android:id="@+id/nav_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="40dp"
         android:textSize="14sp"
         android:padding="@dimen/padding_normal"/>
 

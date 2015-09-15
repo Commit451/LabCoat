@@ -12,6 +12,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -22,6 +23,7 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.events.CloseDrawerEvent;
 import com.commit451.gitlab.events.ProjectChangedEvent;
+import com.commit451.gitlab.events.ReloadDataEvent;
 import com.commit451.gitlab.fragments.CommitsFragment;
 import com.commit451.gitlab.fragments.FilesFragment;
 import com.commit451.gitlab.fragments.IssuesFragment;
@@ -61,11 +63,23 @@ public class MainActivity extends BaseActivity {
 			Branch selectedBranch = Repository.branches.get(position);
 			GitLabApp.instance().setSelectedBranch(selectedBranch);
 			Prefs.setLastBranch(MainActivity.this, selectedBranch.getName());
-			loadData();
+			broadcastLoad();
 		}
 
 		@Override
 		public void onNothingSelected(AdapterView<?> parent) { }
+	};
+
+	private final Toolbar.OnMenuItemClickListener mMenuItemClickListener = new Toolbar.OnMenuItemClickListener() {
+		@Override
+		public boolean onMenuItemClick(MenuItem menuItem) {
+			switch (menuItem.getItemId()) {
+				case R.id.action_about:
+					startActivity(AboutActivity.newInstance(MainActivity.this));
+					return true;
+			}
+			return false;
+		}
 	};
 
 	EventReceiver eventReceiver;
@@ -86,6 +100,8 @@ public class MainActivity extends BaseActivity {
 				drawerLayout.openDrawer(GravityCompat.START);
 			}
 		});
+		toolbar.inflateMenu(R.menu.main);
+		toolbar.setOnMenuItemClickListener(mMenuItemClickListener);
 		
 		if(!Prefs.isLoggedIn(this)) {
             startActivity(new Intent(this, LoginActivity.class));
@@ -137,24 +153,10 @@ public class MainActivity extends BaseActivity {
 		if(!handled)
 			finish();
 	}
-	
-	private void loadData() {
-		if(GitLabApp.instance().getSelectedProject() == null) {
-			return;
-		}
-		
-		CommitsFragment commitsFragment = (CommitsFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.pager + ":0");
-		commitsFragment.loadData();
-		
-		IssuesFragment issuesFragment = (IssuesFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.pager + ":1");
-		issuesFragment.loadData();
-		
-		FilesFragment filesFragment = (FilesFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.pager + ":2");
-		filesFragment.loadData();
-		
-		UsersFragment usersFragment = (UsersFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.pager + ":3");
-		usersFragment.loadData();
-	}
+
+	private void broadcastLoad() {
+        GitLabApp.bus().post(new ReloadDataEvent());
+    }
 	
 	/**
 	 * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
@@ -325,7 +327,7 @@ public class MainActivity extends BaseActivity {
 			
 			if(branches.isEmpty()) {
 				GitLabApp.instance().setSelectedBranch(null);
-				loadData();
+				broadcastLoad();
 			}
 		}
 		
@@ -335,7 +337,7 @@ public class MainActivity extends BaseActivity {
 
             if(e.getResponse() != null && e.getResponse().getStatus() == 500) {
 				GitLabApp.instance().setSelectedBranch(null);
-                loadData();
+                broadcastLoad();
                 return;
             }
 

@@ -8,6 +8,8 @@
     <string name="action_logout">Logout</string>
     <string name="action_save">Save</string>
     <string name="action_open">Open</string>
+    <string name="action_share">Share</string>
+    <string name="action_about">About</string>
 
     <!-- Tabs -->
     <string name="title_section1">Commits</string>
@@ -50,6 +52,8 @@
     <string name="files_not_supported">To browse files GitLab 5.3 or higher is needed</string>
     <string name="groups_not_supported">To add and remove users from groups GitLab 6.1 or higher is needed</string>
     <string name="not_in_group">User management is only available for projects that are assigned to groups</string>
+    <string name="error_could_not_share">Could not share the link</string>
+    <string name="error_no_browser">No browser on device. What are you doing?</string>
 
     <string name="required_field">Required Field</string>
     <!-- General -->
@@ -95,5 +99,12 @@
         <item>Master</item>
         <item>Owner</item>
     </string-array>
+
+    <!-- About -->
+    <string name="about">About</string>
+    <string name="contributors">Contributors</string>
+    <string name="sauce">See the Sauce</string>
+    <string name="source_url">https://github.com/Commit451/GitLabAndroid</string>
+    <string name="failed_to_load_contributors">Failed to load contributors :(</string>
 
 </resources>

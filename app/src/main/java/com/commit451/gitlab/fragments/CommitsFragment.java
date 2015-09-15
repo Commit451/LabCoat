@@ -2,7 +2,6 @@ package com.commit451.gitlab.fragments;
 
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -25,18 +24,26 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 import timber.log.Timber;
 
-public class CommitsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class CommitsFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
 
 	@Bind(R.id.list) RecyclerView listView;
+	CommitsAdapter adapter;
     @Bind(R.id.swipe_layout) SwipeRefreshLayout swipeLayout;
     @Bind(R.id.message_text) View messageView;
-	
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		adapter = new CommitsAdapter();
+	}
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_commits, container, false);
 		ButterKnife.bind(this, view);
 
 		listView.setLayoutManager(new LinearLayoutManager(getActivity()));
+		listView.setAdapter(adapter);
         swipeLayout.setOnRefreshListener(this);
 
 		if(GitLabApp.instance().getSelectedProject() != null) {
@@ -56,8 +63,9 @@ public class CommitsFragment extends Fragment implements SwipeRefreshLayout.OnRe
 	public void onRefresh() {
 		loadData();
 	}
-	
-	public void loadData() {
+
+    @Override
+	protected void loadData() {
 		if(GitLabApp.instance().getSelectedProject() == null) {
             return;
         }
@@ -67,7 +75,7 @@ public class CommitsFragment extends Fragment implements SwipeRefreshLayout.OnRe
                 swipeLayout.setRefreshing(false);
             }
 
-            listView.setAdapter(null);
+            adapter.setData(null);
             return;
         }
 		
@@ -98,7 +106,7 @@ public class CommitsFragment extends Fragment implements SwipeRefreshLayout.OnRe
                 Timber.d("No commits have been made");
                 messageView.setVisibility(View.VISIBLE);
 			}
-			listView.setAdapter(new CommitsAdapter(commits));
+			adapter.setData(commits);
 		}
 		
 		@Override
@@ -112,7 +120,7 @@ public class CommitsFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
 			Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.connection_error_commits), Snackbar.LENGTH_SHORT)
 					.show();
-			listView.setAdapter(null);
+			adapter.setData(null);
 		}
 	};
 }

@@ -2,7 +2,6 @@ package com.commit451.gitlab.fragments;
 
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -30,7 +29,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 import timber.log.Timber;
 
-public class UsersFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class UsersFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
 	
 	@Bind(R.id.add_user_button) View addUserButton;
 	@Bind(R.id.list) RecyclerView listView;

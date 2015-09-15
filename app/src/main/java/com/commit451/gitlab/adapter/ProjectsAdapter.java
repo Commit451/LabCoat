@@ -8,19 +8,22 @@ import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.events.CloseDrawerEvent;
 import com.commit451.gitlab.events.ProjectChangedEvent;
+import com.commit451.gitlab.model.NavItem;
 import com.commit451.gitlab.model.Project;
 import com.commit451.gitlab.tools.Prefs;
 import com.commit451.gitlab.tools.Repository;
 import com.commit451.gitlab.viewHolders.ProjectViewHolder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Jawn on 7/28/2015.
  */
-public class ProjectsAdapter extends RecyclerView.Adapter<ProjectViewHolder> {
+public class ProjectsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<Project> mValues;
+    private List<NavItem> mNavItems;
 
     public Project getValueAt(int position) {
         return mValues.get(position);
@@ -28,6 +31,8 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectViewHolder> {
 
     public ProjectsAdapter(List<Project> items) {
         mValues = items;
+        mNavItems = new ArrayList<>();
+
     }
 
     private final View.OnClickListener onProjectClickListener = new View.OnClickListener() {
@@ -46,17 +51,19 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectViewHolder> {
     };
 
     @Override
-    public ProjectViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         ProjectViewHolder holder = ProjectViewHolder.create(parent);
         holder.itemView.setOnClickListener(onProjectClickListener);
         return holder;
     }
 
     @Override
-    public void onBindViewHolder(final ProjectViewHolder holder, int position) {
-        Project project = getValueAt(position);
-        holder.bind(project);
-        holder.itemView.setTag(R.id.list_position, position);
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
+        if (holder instanceof ProjectViewHolder) {
+            Project project = getValueAt(position);
+            ((ProjectViewHolder) holder).bind(project);
+            holder.itemView.setTag(R.id.list_position, position);
+        }
     }
 
     @Override

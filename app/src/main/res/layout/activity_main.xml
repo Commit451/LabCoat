@@ -35,7 +35,7 @@
                 android:id="@+id/tabs"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:tabMode="scrollable"/>
+                app:tabMode="fixed"/>
 
         </android.support.design.widget.AppBarLayout>
 
@@ -58,6 +58,6 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:clickable="true"
-        android:background="?android:attr/colorForegroundInverse"/>
+        android:background="@color/window_background_color"/>
 
 </android.support.v4.widget.DrawerLayout>
