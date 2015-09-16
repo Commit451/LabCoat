@@ -25,8 +25,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Response;
 import timber.log.Timber;
 
 public class UsersFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
@@ -86,13 +85,16 @@ public class UsersFragment extends BaseFragment implements SwipeRefreshLayout.On
 			return;
 		}
 
-        GitLabClient.instance().getGroupMembers(GitLabApp.instance().getSelectedProject().getGroup().getId(), usersCallback);
+        GitLabClient.instance().getGroupMembers(GitLabApp.instance().getSelectedProject().getGroup().getId()).enqueue(usersCallback);
 	}
 	
 	public Callback<List<User>> usersCallback = new Callback<List<User>>() {
-		
+
 		@Override
-		public void success(List<User> users, Response resp) {
+		public void onResponse(Response<List<User>> response) {
+			if (!response.isSuccess()) {
+				return;
+			}
 			if (getView() == null) {
 				return;
 			}
@@ -101,20 +103,20 @@ public class UsersFragment extends BaseFragment implements SwipeRefreshLayout.On
 			listView.setVisibility(View.VISIBLE);
 			addUserButton.setVisibility(View.VISIBLE);
 
-			listView.setAdapter(new NewUserAdapter(users));
-			
+			listView.setAdapter(new NewUserAdapter(response.body()));
+
 			addUserButton.setEnabled(true);
 		}
-		
+
 		@Override
-		public void failure(RetrofitError e) {
+		public void onFailure(Throwable t) {
 			if (getView() == null) {
 				return;
 			}
 			swipeLayout.setRefreshing(false);
 			errorText.setVisibility(View.VISIBLE);
 			addUserButton.setVisibility(View.GONE);
-			Timber.e(e.toString());
+			Timber.e(t.toString());
 			Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.connection_error_users), Snackbar.LENGTH_SHORT)
 					.show();
 		}

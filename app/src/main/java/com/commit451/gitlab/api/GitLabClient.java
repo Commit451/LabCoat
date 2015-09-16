@@ -1,6 +1,5 @@
 package com.commit451.gitlab.api;
 
-import com.commit451.gitlab.BuildConfig;
 import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.tools.Prefs;
 import com.google.gson.Gson;
@@ -9,21 +8,21 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
+import com.squareup.okhttp.OkHttpClient;
 
 import org.joda.time.format.ISODateTimeFormat;
 
 import java.lang.reflect.Type;
 import java.util.Date;
 
-import retrofit.RestAdapter;
-import retrofit.converter.GsonConverter;
+import retrofit.GsonConverterFactory;
+import retrofit.Retrofit;
 
 /**
  * Created by Jawn on 7/28/2015.
  */
 public class GitLabClient {
 
-    private static final String API_VERSION = "/api/v3";
     private static GitLab gitLab;
 
     public static GitLab instance() {
@@ -38,12 +37,14 @@ public class GitLabClient {
                 }
             });
             Gson gson = gsonBuilder.create();
+            OkHttpClient client = new OkHttpClient();
+            client.interceptors().add(new TimberRequestInterceptor());
+            client.networkInterceptors().add(new ApiKeyRequestInterceptor());
 
-            RestAdapter restAdapter = new RestAdapter.Builder()
-                    .setRequestInterceptor(new GitLabInterceptor())
-                    .setLogLevel(BuildConfig.DEBUG ? RestAdapter.LogLevel.FULL : RestAdapter.LogLevel.BASIC)
-                    .setConverter(new GsonConverter(gson))
-                    .setEndpoint(Prefs.getServerUrl(GitLabApp.instance()) + API_VERSION)
+            Retrofit restAdapter = new Retrofit.Builder()
+                    .baseUrl(Prefs.getServerUrl(GitLabApp.instance()))
+                    .client(client)
+                    .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();
             gitLab = restAdapter.create(GitLab.class);
         }

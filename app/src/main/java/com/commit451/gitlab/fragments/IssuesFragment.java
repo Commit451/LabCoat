@@ -24,8 +24,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Response;
 import timber.log.Timber;
 
 public class IssuesFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
@@ -76,27 +75,30 @@ public class IssuesFragment extends BaseFragment implements SwipeRefreshLayout.O
 			swipeLayout.setRefreshing(true);
 		}
 
-		GitLabClient.instance().getIssues(GitLabApp.instance().getSelectedProject().getId(), issuesCallback);
+		GitLabClient.instance().getIssues(GitLabApp.instance().getSelectedProject().getId()).enqueue(issuesCallback);
 	}
 	
 	private Callback<List<Issue>> issuesCallback = new Callback<List<Issue>>() {
-		
+
 		@Override
-		public void success(List<Issue> issues, Response resp) {
+		public void onResponse(Response<List<Issue>> response) {
+			if (!response.isSuccess()) {
+				return;
+			}
 			if(swipeLayout != null && swipeLayout.isRefreshing()) {
 				swipeLayout.setRefreshing(false);
 			}
-			issuesAdapter.setIssues(issues);
+			issuesAdapter.setIssues(response.body());
 
 			addIssueButton.setEnabled(true);
 		}
-		
+
 		@Override
-		public void failure(RetrofitError e) {
-			Timber.e(e.toString());
-			
+		public void onFailure(Throwable t) {
+			Timber.e(t.toString());
+
 			if(swipeLayout != null && swipeLayout.isRefreshing())
-                swipeLayout.setRefreshing(false);
+				swipeLayout.setRefreshing(false);
 			Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.connection_error_issues), Snackbar.LENGTH_SHORT)
 					.show();
 			listView.setAdapter(null);

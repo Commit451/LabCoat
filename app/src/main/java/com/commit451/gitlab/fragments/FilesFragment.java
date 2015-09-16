@@ -25,8 +25,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Response;
 import timber.log.Timber;
 
 public class FilesFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
@@ -94,47 +93,53 @@ public class FilesFragment extends BaseFragment implements SwipeRefreshLayout.On
             currentPath += p;
         }
 
-		GitLabClient.instance().getTree(GitLabApp.instance().getSelectedProject().getId(), branch, currentPath, filesCallback);
+		GitLabClient.instance().getTree(GitLabApp.instance().getSelectedProject().getId(), branch, currentPath).enqueue(filesCallback);
 	}
 	
 	private Callback<List<TreeItem>> filesCallback = new Callback<List<TreeItem>>() {
-		
+
+
 		@Override
-		public void success(List<TreeItem> files, Response resp) {
-            if(swipeLayout != null && swipeLayout.isRefreshing()) {
+		public void onResponse(Response<List<TreeItem>> response) {
+			if (!response.isSuccess()) {
+				if(response.code() == 404) {
+					errorText.setVisibility(View.VISIBLE);
+					list.setVisibility(View.GONE);
+				}
+				else {
+					if(path.size() > 0) {
+						path.remove(path.size() - 1);
+					}
+					list.setAdapter(null);
+
+					if(response.code() != 500) {
+						Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.connection_error_files), Snackbar.LENGTH_SHORT)
+								.show();
+					}
+				}
+				return;
+			}
+			if(swipeLayout != null && swipeLayout.isRefreshing()) {
 				swipeLayout.setRefreshing(false);
 			}
-            if (files != null && !files.isEmpty()) {
-                list.setVisibility(View.VISIBLE);
-                list.setAdapter(new FilesAdapter(files));
-                errorText.setVisibility(View.GONE);
-            } else {
-                errorText.setVisibility(View.VISIBLE);
-            }
-		}
-		
-		@Override
-		public void failure(RetrofitError e) {
-			if(swipeLayout != null && swipeLayout.isRefreshing()) {
-                swipeLayout.setRefreshing(false);
-            }
-			
-			if(e.getResponse() != null && e.getResponse().getStatus() == 404) {
+			if (response.body() != null && !response.body().isEmpty()) {
+				list.setVisibility(View.VISIBLE);
+				list.setAdapter(new FilesAdapter(response.body()));
+				errorText.setVisibility(View.GONE);
+			} else {
 				errorText.setVisibility(View.VISIBLE);
-				list.setVisibility(View.GONE);
 			}
-			else {
-				if(path.size() > 0) {
-					path.remove(path.size() - 1);
-				}
-				list.setAdapter(null);
-				
-				if(e.getResponse() != null && e.getResponse().getStatus() != 500) {
-					Timber.e(e.toString());
-					Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.connection_error_files), Snackbar.LENGTH_SHORT)
-							.show();
-                }
+		}
+
+		@Override
+		public void onFailure(Throwable t) {
+			if(swipeLayout != null && swipeLayout.isRefreshing()) {
+				swipeLayout.setRefreshing(false);
 			}
+			Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.connection_error_files), Snackbar.LENGTH_SHORT)
+					.show();
+			Timber.e(t.toString());
+
 		}
 	};
 	

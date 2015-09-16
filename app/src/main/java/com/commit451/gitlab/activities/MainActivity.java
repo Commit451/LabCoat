@@ -43,8 +43,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Response;
 import timber.log.Timber;
 
 public class MainActivity extends BaseActivity {
@@ -219,103 +218,118 @@ public class MainActivity extends BaseActivity {
         progress.setVisibility(View.VISIBLE);
         progress.setAlpha(0.0f);
         progress.animate().alpha(1.0f);
-		GitLabClient.instance().getGroups(groupsCallback);
+		GitLabClient.instance().getGroups().enqueue(groupsCallback);
 	}
 	
 	private Callback<List<Group>> groupsCallback = new Callback<List<Group>>() {
-		
+
 		@Override
-		public void success(List<Group> groups, Response resp) {
-			Repository.groups = new ArrayList<>(groups);
-            GitLabClient.instance().getUsers(usersCallback);
+		public void onResponse(Response<List<Group>> response) {
+			if (!response.isSuccess()) {
+				return;
+			}
+			Repository.groups = new ArrayList<>(response.body());
+			GitLabClient.instance().getUsers().enqueue(usersCallback);
 		}
-		
+
 		@Override
-		public void failure(RetrofitError e) {
-			Timber.e(e.toString());
-            GitLabClient.instance().getUsers(usersCallback);
+		public void onFailure(Throwable t) {
+			Timber.e(t.toString());
+			GitLabClient.instance().getUsers().enqueue(usersCallback);
 		}
 	};
 	
 	private Callback<List<User>> usersCallback = new Callback<List<User>>() {
-		
-		@Override
-		public void success(List<User> users, Response resp) {
-			Repository.users = new ArrayList<>(users);
 
-            GitLabClient.instance().getProjects(projectsCallback);
+		@Override
+		public void onResponse(Response<List<User>> response) {
+			if (!response.isSuccess()) {
+				return;
+			}
+			Repository.users = new ArrayList<>(response.body());
+			GitLabClient.instance().getProjects().enqueue(projectsCallback);
 		}
-		
-		@Override
-		public void failure(RetrofitError e) {
-			Timber.e(e.toString());
-            progress.setVisibility(View.GONE);
 
+		@Override
+		public void onFailure(Throwable t) {
+			Timber.e(t.toString());
+			progress.setVisibility(View.GONE);
 			Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
 					.show();
 		}
 	};
 	
 	private Callback<List<Project>> projectsCallback = new Callback<List<Project>>() {
-		
-		@Override
-		public void success(List<Project> projects, Response resp) {
-			Repository.projects = new ArrayList<>(projects);
 
-			if(!projects.isEmpty()) {
-                String lastProject = Prefs.getLastProject(MainActivity.this);
+		@Override
+		public void onResponse(Response<List<Project>> response) {
+			if (!response.isSuccess()) {
+				return;
+			}
+			Repository.projects = new ArrayList<>(response.body());
+
+			if(!response.body().isEmpty()) {
+				String lastProject = Prefs.getLastProject(MainActivity.this);
 				if(TextUtils.isEmpty(lastProject)){
-					GitLabApp.instance().setSelectedProject(projects.get(0));
+					GitLabApp.instance().setSelectedProject(response.body().get(0));
 				} else {
-                    for(Project p : projects) {
-                        if(p.toString().equals(lastProject)) {
-                            GitLabApp.instance().setSelectedProject(p);
-                        }
-                    }
+					for(Project p : response.body()) {
+						if(p.toString().equals(lastProject)) {
+							GitLabApp.instance().setSelectedProject(p);
+						}
+					}
 
-                    if(GitLabApp.instance().getSelectedProject() == null) {
-                        GitLabApp.instance().setSelectedProject(projects.get(0));
-                    }
-                }
+					if(GitLabApp.instance().getSelectedProject() == null) {
+						GitLabApp.instance().setSelectedProject(response.body().get(0));
+					}
+				}
 			}
-			
+
 			if(GitLabApp.instance().getSelectedProject() != null) {
-				GitLabClient.instance().getBranches(GitLabApp.instance().getSelectedProject().getId(), branchesCallback);
+				GitLabClient.instance().getBranches(GitLabApp.instance().getSelectedProject().getId()).enqueue(branchesCallback);
 			}
-            else {
-                progress.setVisibility(View.GONE);
+			else {
+				progress.setVisibility(View.GONE);
 			}
-			navigationView.setProjects(projects);
+			navigationView.setProjects(response.body());
 		}
-		
+
 		@Override
-		public void failure(RetrofitError e) {
-			Timber.e(e.toString());
-            progress.setVisibility(View.GONE);
+		public void onFailure(Throwable t) {
+			Timber.e(t.toString());
+			progress.setVisibility(View.GONE);
 			Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
 					.show();
 		}
 	};
 	
 	private Callback<List<Branch>> branchesCallback = new Callback<List<Branch>>() {
-		
+
 		@Override
-		public void success(List<Branch> branches, Response resp) {
-            progress.setVisibility(View.GONE);
-			Repository.branches = new ArrayList<>(branches);
+		public void onResponse(Response<List<Branch>> response) {
+			if (!response.isSuccess()) {
+				if(response.code() == 500) {
+					GitLabApp.instance().setSelectedBranch(null);
+					broadcastLoad();
+					return;
+				}
+				return;
+			}
+			progress.setVisibility(View.GONE);
+			Repository.branches = new ArrayList<>(response.body());
 
-			Branch[] spinnerData = new Branch[branches.size()];
+			Branch[] spinnerData = new Branch[response.body().size()];
 			int selectedBranchIndex = -1;
-			
-			for(int i = 0; i < branches.size(); i++) {
-				spinnerData[i] = branches.get(i);
 
-                if(Prefs.getLastBranch(MainActivity.this).equals(spinnerData[i].getName())) {
-                    selectedBranchIndex = i;
-                }
-                else if(selectedBranchIndex == -1 && GitLabApp.instance().getSelectedProject() != null && spinnerData[i].getName().equals(GitLabApp.instance().getSelectedProject().getDefaultBranch())) {
-                    selectedBranchIndex = i;
-                }
+			for(int i = 0; i < response.body().size(); i++) {
+				spinnerData[i] = response.body().get(i);
+
+				if(Prefs.getLastBranch(MainActivity.this).equals(spinnerData[i].getName())) {
+					selectedBranchIndex = i;
+				}
+				else if(selectedBranchIndex == -1 && GitLabApp.instance().getSelectedProject() != null && spinnerData[i].getName().equals(GitLabApp.instance().getSelectedProject().getDefaultBranch())) {
+					selectedBranchIndex = i;
+				}
 			}
 
 			// Set up the dropdown list navigation in the action bar.
@@ -324,24 +338,17 @@ public class MainActivity extends BaseActivity {
 				branchSpinner.setSelection(selectedBranchIndex);
 			}
 			branchSpinner.setOnItemSelectedListener(spinnerItemSelectedListener);
-			
-			if(branches.isEmpty()) {
+
+			if(response.body().isEmpty()) {
 				GitLabApp.instance().setSelectedBranch(null);
 				broadcastLoad();
 			}
 		}
-		
+
 		@Override
-		public void failure(RetrofitError e) {
-            progress.setVisibility(View.GONE);
-
-            if(e.getResponse() != null && e.getResponse().getStatus() == 500) {
-				GitLabApp.instance().setSelectedBranch(null);
-                broadcastLoad();
-                return;
-            }
-
-			Timber.e(e.toString());
+		public void onFailure(Throwable t) {
+			progress.setVisibility(View.GONE);
+			Timber.e(t.toString());
 			Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
 					.show();
 		}
@@ -356,7 +363,7 @@ public class MainActivity extends BaseActivity {
 
         @Subscribe
         public void onProjectChanged(ProjectChangedEvent event) {
-            GitLabClient.instance().getBranches(GitLabApp.instance().getSelectedProject().getId(), branchesCallback);
+            GitLabClient.instance().getBranches(GitLabApp.instance().getSelectedProject().getId()).enqueue(branchesCallback);
         }
 	}
 }

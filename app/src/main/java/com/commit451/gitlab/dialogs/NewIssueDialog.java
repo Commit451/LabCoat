@@ -9,8 +9,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.commit451.gitlab.GitLabApp;
-import com.commit451.gitlab.activities.IssueActivity;
 import com.commit451.gitlab.R;
+import com.commit451.gitlab.activities.IssueActivity;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.events.IssueCreatedEvent;
 import com.commit451.gitlab.model.Issue;
@@ -19,8 +19,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Response;
 import timber.log.Timber;
 
 /**
@@ -47,7 +46,7 @@ public class NewIssueDialog extends AppCompatDialog {
             progress.setVisibility(View.VISIBLE);
             progress.setAlpha(0.0f);
             progress.animate().alpha(1.0f);
-            GitLabClient.instance().postIssue(GitLabApp.instance().getSelectedProject().getId(), titleInput.getText().toString().trim(), descriptionInput.getText().toString().trim(), "", issueCallback);
+            GitLabClient.instance().postIssue(GitLabApp.instance().getSelectedProject().getId(), titleInput.getText().toString().trim(), descriptionInput.getText().toString().trim()).enqueue(issueCallback);
         }
         else {
             titleInputLayout.setError(getContext().getString(R.string.required_field));
@@ -62,16 +61,19 @@ public class NewIssueDialog extends AppCompatDialog {
     private Callback<Issue> issueCallback = new Callback<Issue>() {
 
         @Override
-        public void success(Issue issue, Response resp) {
+        public void onResponse(Response<Issue> response) {
+            if (!response.isSuccess()) {
+                return;
+            }
             //TODO update the parent list when a new issue is created
-            GitLabApp.bus().post(new IssueCreatedEvent(issue));
-            getContext().startActivity(IssueActivity.newInstance(getContext(), issue));
+            GitLabApp.bus().post(new IssueCreatedEvent(response.body()));
+            getContext().startActivity(IssueActivity.newInstance(getContext(), response.body()));
             dismiss();
         }
 
         @Override
-        public void failure(RetrofitError e) {
-            Timber.e(e.toString());
+        public void onFailure(Throwable t) {
+            Timber.e(t.toString());
             progress.setVisibility(View.GONE);
             Toast.makeText(getContext(), getContext().getString(R.string.connection_error), Toast.LENGTH_SHORT)
                     .show();

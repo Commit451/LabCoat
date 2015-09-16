@@ -24,8 +24,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Response;
 import timber.log.Timber;
 
 public class DiffActivity extends BaseActivity {
@@ -39,7 +38,7 @@ public class DiffActivity extends BaseActivity {
 	}
 
 	@Bind(R.id.toolbar) Toolbar toolbar;
-    @Bind(R.id.message_container)	LinearLayout messageContainer;
+    @Bind(R.id.message_container) LinearLayout messageContainer;
 	@Bind(R.id.diff_container) LinearLayout diffContainer;
 
     DiffLine commit;
@@ -80,36 +79,41 @@ public class DiffActivity extends BaseActivity {
 		});
 
 		//TODO make this use RecyclerViews, cause this is insane
-		GitLabClient.instance().getCommit(GitLabApp.instance().getSelectedProject().getId(), commit.getId(), commitCallback);
-		GitLabClient.instance().getCommitDiff(GitLabApp.instance().getSelectedProject().getId(), commit.getId(), diffCallback);
+		GitLabClient.instance().getCommit(GitLabApp.instance().getSelectedProject().getId(), commit.getId()).enqueue(commitCallback);
+		GitLabClient.instance().getCommitDiff(GitLabApp.instance().getSelectedProject().getId(), commit.getId()).enqueue(diffCallback);
 	}
 
 	private Callback<DiffLine> commitCallback = new Callback<DiffLine>() {
+
 		@Override
-		public void success(DiffLine diffLine, Response response) {
-			messageContainer.addView(new MessageView(DiffActivity.this, diffLine));
+		public void onResponse(Response<DiffLine> response) {
+			if (response.isSuccess()) {
+				messageContainer.addView(new MessageView(DiffActivity.this, response.body()));
+			}
 		}
 
 		@Override
-		public void failure(RetrofitError e) {
-			Timber.e(e.toString());
+		public void onFailure(Throwable t) {
+			Timber.e(t.toString());
 			Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
 					.show();
 		}
 	};
 	
 	private Callback<List<Diff>> diffCallback = new Callback<List<Diff>>() {
-		
+
 		@Override
-		public void success(List<Diff> diffs, Response resp) {
-			for(Diff diff : diffs) {
-				diffContainer.addView(new DiffView(DiffActivity.this, diff));
+		public void onResponse(Response<List<Diff>> response) {
+			if (response.isSuccess()) {
+				for(Diff diff : response.body()) {
+					diffContainer.addView(new DiffView(DiffActivity.this, diff));
+				}
 			}
 		}
-		
+
 		@Override
-		public void failure(RetrofitError e) {
-			Timber.e(e.toString());
+		public void onFailure(Throwable t) {
+			Timber.e(t.toString());
 			Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
 					.show();
 		}

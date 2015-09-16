@@ -27,8 +27,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Response;
 import timber.log.Timber;
 
 public class LoginActivity extends BaseActivity {
@@ -129,78 +128,86 @@ public class LoginActivity extends BaseActivity {
         progress.setVisibility(View.VISIBLE);
         progress.setAlpha(0.0f);
         progress.animate().alpha(1.0f);
-		Prefs.setServerUrl(this, "");
+
 		Prefs.setPrivateToken(this, "");
 		Prefs.setLoggedIn(this, false);
-
-		String serverURL = urlInput.getText().toString();
+		Prefs.setServerUrl(this, urlInput.getText().toString());
 		
-		Prefs.setServerUrl(this, serverURL);
-		
-		if(byAuth)
-			connectByAuth();
-		else
-			connectByToken();
+		if(byAuth) {
+            connectByAuth();
+        }
+		else {
+            connectByToken();
+        }
 	}
 	
 	private void connectByAuth() {
-		if(userInput.getText().toString().contains("@"))
-			GitLabClient.instance().getSessionByEmail(userInput.getText().toString(), passwordInput.getText().toString(), "", sessionCallback);
-		else
-			GitLabClient.instance().getSessionByUsername(userInput.getText().toString(), passwordInput.getText().toString(), "", sessionCallback);
+		if(userInput.getText().toString().contains("@")) {
+            GitLabClient.instance().getSessionByEmail(userInput.getText().toString(), passwordInput.getText().toString()).enqueue(sessionCallback);
+        }
+		else {
+            GitLabClient.instance().getSessionByUsername(userInput.getText().toString(), passwordInput.getText().toString()).enqueue(sessionCallback);
+        }
 	}
 	
 	private Callback<Session> sessionCallback = new Callback<Session>() {
-		
+
 		@Override
-		public void success(Session session, Response resp) {
+		public void onResponse(Response<Session> response) {
+			if (!response.isSuccess()) {
+                Timber.d("onResponse failed");
+				return;
+			}
 			progress.setVisibility(View.GONE);
-			
+
 			Prefs.setLoggedIn(LoginActivity.this, true);
-            Prefs.setUserId(LoginActivity.this, session.getId());
-			Prefs.setPrivateToken(LoginActivity.this, session.getPrivateToken());
-			
+			Prefs.setUserId(LoginActivity.this, response.body().getId());
+			Prefs.setPrivateToken(LoginActivity.this, response.body().getPrivateToken());
+
 			Intent i = new Intent(LoginActivity.this, MainActivity.class);
 			i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			startActivity(i);
 		}
-		
+
 		@Override
-		public void failure(RetrofitError e) {
-            handleConnectionError(e, true);
+		public void onFailure(Throwable t) {
+			handleConnectionError(t, true);
 		}
 	};
 	
 	private void connectByToken() {
 		Prefs.setPrivateToken(this, tokenInput.getText().toString());
-		GitLabClient.instance().getProjects(tokenCallback);
+		GitLabClient.instance().getProjects().enqueue(tokenCallback);
 	}
 	
 	private Callback<List<Project>> tokenCallback = new Callback<List<Project>>() {
-		
+
 		@Override
-		public void success(List<Project> projects, Response resp) {
-            progress.setVisibility(View.GONE);
+		public void onResponse(Response<List<Project>> response) {
+			if (!response.isSuccess()) {
+				return;
+			}
+			progress.setVisibility(View.GONE);
 
 			Prefs.setLoggedIn(LoginActivity.this, true);
-			
+
 			Intent i = new Intent(LoginActivity.this, MainActivity.class);
 			i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			startActivity(i);
 		}
-		
+
 		@Override
-		public void failure(RetrofitError e) {
-			handleConnectionError(e, false);
+		public void onFailure(Throwable t) {
+			handleConnectionError(t, false);
 		}
 	};
 
-    private void handleConnectionError(RetrofitError e, boolean auth) {
+    private void handleConnectionError(Throwable e, boolean auth) {
         Timber.e(e.toString());
 
         progress.setVisibility(View.GONE);
 
-        if(e.getCause() instanceof SSLHandshakeException) {
+        if(e instanceof SSLHandshakeException) {
             Dialog d = new AlertDialog.Builder(this)
                     .setTitle(R.string.certificate_title)
                     .setMessage(R.string.certificate_message)
@@ -213,12 +220,7 @@ public class LoginActivity extends BaseActivity {
                     .show();
 
             ((TextView)d.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
-        }
-        else if(e.getResponse() != null && (e.getResponse().getStatus() == 301 || e.getResponse().getStatus() == 405) && !urlInput.getText().toString().contains("https://")) {
-            urlInput.setText(urlInput.getText().toString().replace("http://", "https://"));
-            connect(auth);
-        }
-        else {
+        } else {
 			Toast.makeText(this, getString(R.string.login_error), Toast.LENGTH_SHORT)
 					.show();
 		}

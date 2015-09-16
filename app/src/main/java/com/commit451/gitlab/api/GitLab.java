@@ -16,8 +16,7 @@ import com.commit451.gitlab.model.User;
 
 import java.util.List;
 
-import retrofit.Callback;
-import retrofit.http.Body;
+import retrofit.Call;
 import retrofit.http.DELETE;
 import retrofit.http.GET;
 import retrofit.http.POST;
@@ -26,136 +25,109 @@ import retrofit.http.Path;
 import retrofit.http.Query;
 
 public interface GitLab {
-	
+	String API_VERSION = "/api/v3";
 	/* --- LOGIN --- */
 	
-	@POST("/session")
-	void getSessionByUsername(@Query("login") String login,
-                              @Query("password") String password,
-							  @Body String blankBodySoRetrofitDoesntCry,
-                              Callback<Session> cb);
+	@POST(API_VERSION + "/session")
+	Call<Session> getSessionByUsername(@Query("login") String login,
+                              @Query("password") String password);
 	
-	@POST("/session")
-	void getSessionByEmail(@Query("email") String email,
-                           @Query("password") String password,
-						   @Body String blankBodySoRetrofitDoesntCry,
-                           Callback<Session> cb);
+	@POST(API_VERSION + "/session")
+	Call<Session> getSessionByEmail(@Query("email") String email,
+                           @Query("password") String password);
 	
 	/* --- MAIN --- */
 	
-	@GET("/groups?per_page=100")
-	void getGroups(Callback<List<Group>> cb);
+	@GET(API_VERSION + "/groups?per_page=100")
+	Call<List<Group>> getGroups();
 	
-	@GET("/users?per_page=100")
-	void getUsers(Callback<List<User>> cb);
+	@GET(API_VERSION + "/users?per_page=100")
+	Call<List<User>> getUsers();
 	
-	@GET("/projects?per_page=100")
-	void getProjects(Callback<List<Project>> cb);
+	@GET(API_VERSION + "/projects?per_page=100")
+	Call<List<Project>> getProjects();
 	
 	/* --- MISC --- */
 	
-	@GET("/projects/{id}/repository/branches?per_page=100")
-	void getBranches(@Path("id") long projectId,
-                     Callback<List<Branch>> cb);
+	@GET(API_VERSION + "/projects/{id}/repository/branches?per_page=100")
+	Call<List<Branch>> getBranches(@Path("id") long projectId);
 	
-	@GET("/projects/{id}/milestones?per_page=100")
-	void getMilestones(@Path("id") long projectId,
-                       Callback<List<Milestone>> cb);
+	@GET(API_VERSION + "/projects/{id}/milestones?per_page=100")
+	Call<List<Milestone>> getMilestones(@Path("id") long projectId);
 	
-	@GET("/projects/{id}/members?per_page=100")
-	void getUsersFallback(@Path("id") long projectId,
-                          Callback<List<User>> cb);
+	@GET(API_VERSION + "/projects/{id}/members?per_page=100")
+	Call<List<User>> getUsersFallback(@Path("id") long projectId);
 	
 	/* --- COMMITS --- */
 	
-	@GET("/projects/{id}/repository/commits?per_page=100")
-	void getCommits(@Path("id") long projectId,
-                    @Query("ref_name") String branchName,
-                    Callback<List<DiffLine>> cb);
+	@GET(API_VERSION + "/projects/{id}/repository/commits?per_page=100")
+	Call<List<DiffLine>> getCommits(@Path("id") long projectId,
+                    @Query("ref_name") String branchName);
 
-	@GET("/projects/{id}/repository/commits/{sha}")
-	void getCommit(@Path("id") long projectId,
-                   @Path("sha") String commitSHA,
-                   Callback<DiffLine> cb);
+	@GET(API_VERSION + "/projects/{id}/repository/commits/{sha}")
+	Call<DiffLine> getCommit(@Path("id") long projectId,
+                   @Path("sha") String commitSHA);
 	
-	@GET("/projects/{id}/repository/commits/{sha}/diff")
-	void getCommitDiff(@Path("id") long projectId,
-                       @Path("sha") String commitSHA,
-                       Callback<List<Diff>> cb);
+	@GET(API_VERSION + "/projects/{id}/repository/commits/{sha}/diff")
+	Call<List<Diff>> getCommitDiff(@Path("id") long projectId,
+                       @Path("sha") String commitSHA);
 
 	/* --- ISSUE --- */
 	
-	@GET("/projects/{id}/issues?per_page=100")
-	void getIssues(@Path("id") long projectId,
-                   Callback<List<Issue>> cb);
+	@GET(API_VERSION + "/projects/{id}/issues?per_page=100")
+	Call<List<Issue>> getIssues(@Path("id") long projectId);
 	
-	@POST("/projects/{id}/issues")
-	void postIssue(@Path("id") long projectId,
+	@POST(API_VERSION + "/projects/{id}/issues")
+	Call<Issue> postIssue(@Path("id") long projectId,
                    @Query("title") String title,
-                   @Query("description") String description,
-				   @Body String blankBodySoRetrofitDoesntCry,
-                   Callback<Issue> cb);
+                   @Query("description") String description);
 	
-	@PUT("/projects/{id}/issues/{issue_id}")
-	void editIssue(@Path("id") long projectId,
+	@PUT(API_VERSION + "/projects/{id}/issues/{issue_id}")
+	Call<Issue> editIssue(@Path("id") long projectId,
                    @Path("issue_id") long issueId,
                    @Query("state_event") String stateEvent,
                    @Query("assignee_id") long assigneeId,
-                   @Query("milestone_id") long milestoneId,
-				   @Body String blankBodySoRetrofitDoesntCry,
-                   Callback<Issue> cb);
+                   @Query("milestone_id") long milestoneId);
 
-	@PUT("/projects/{id}/issues/{issue_id}")
-	void editIssue(@Path("id") long projectId,
+	@PUT(API_VERSION + "/projects/{id}/issues/{issue_id}")
+	Call<Issue> editIssue(@Path("id") long projectId,
 				   @Path("issue_id") long issueId,
-				   @Query("state_event") String stateEvent,
-				   @Body String blankBodySoRetrofitDoesntCry,
-				   Callback<Issue> cb);
+				   @Query("state_event") String stateEvent);
 	
-	@GET("/projects/{id}/issues/{issue_id}/notes?per_page=100")
-	void getIssueNotes(@Path("id") long projectId,
-                       @Path("issue_id") long issueId,
-                       Callback<List<Note>> cb);
+	@GET(API_VERSION + "/projects/{id}/issues/{issue_id}/notes?per_page=100")
+	Call<List<Note>> getIssueNotes(@Path("id") long projectId,
+                       @Path("issue_id") long issueId);
 	
-	@POST("/projects/{id}/issues/{issue_id}/notes")
-	void postIssueNote(@Path("id") long projectId,
+	@POST(API_VERSION + "/projects/{id}/issues/{issue_id}/notes")
+	Call<Note> postIssueNote(@Path("id") long projectId,
                        @Path("issue_id") long issueId,
-                       @Query("body") String body,
-					   @Body String blankBodySoRetrofitDoesntCry,
-                       Callback<Note> cb);
+                       @Query("body") String body);
 	
 	/* --- FILES --- */
 	
-	@GET("/projects/{id}/repository/tree?per_page=100")
-	void getTree(@Path("id") long projectId,
+	@GET(API_VERSION + "/projects/{id}/repository/tree?per_page=100")
+	Call<List<TreeItem>> getTree(@Path("id") long projectId,
                  @Query("ref_name") String branchName,
-                 @Query("path") String path,
-                 Callback<List<TreeItem>> cb);
+                 @Query("path") String path);
 
-	@GET("/projects/{id}/repository/files")
-	void getFile(@Path("id") long projectId,
+	@GET(API_VERSION + "/projects/{id}/repository/files")
+	Call<FileResponse> getFile(@Path("id") long projectId,
 				 @Query("file_path") String path,
-				 @Query("ref") String ref,
-				 Callback<FileResponse> callback);
+				 @Query("ref") String ref);
 	/* --- USER --- */
 
-	@GET("/users/{id}")
-	void getUser(@Path("id") long userId,
-                 Callback<User> userCallback);
+	@GET(API_VERSION + "/users/{id}")
+	Call<User> getUser(@Path("id") long userId);
 	
-	@GET("/groups/{id}/members?per_page=100")
-	void getGroupMembers(@Path("id") long groupId,
-                         Callback<List<User>> cb);
+	@GET(API_VERSION + "/groups/{id}/members?per_page=100")
+	Call<List<User>> getGroupMembers(@Path("id") long groupId);
 	
-	@POST("/groups/{id}/members")
-	void addGroupMember(@Path("id") long groupId,
+	@POST(API_VERSION + "/groups/{id}/members")
+	Call<User> addGroupMember(@Path("id") long groupId,
                         @Query("user_id") long userId,
-                        @Query("access_level") String accessLevel,
-						@Body String blankBodySoRetrofitDoesntCry,
-                        Callback<User> cb);
+                        @Query("access_level") String accessLevel);
 	
-	@DELETE("/groups/{id}/members/{user_id}")
-	void removeGroupMember(@Path("id") long groupId,
-                           @Path("user_id") long userId,
-                           Callback<DeleteResponse> cb);
+	@DELETE(API_VERSION + "/groups/{id}/members/{user_id}")
+	Call<DeleteResponse> removeGroupMember(@Path("id") long groupId,
+                           @Path("user_id") long userId);
 }

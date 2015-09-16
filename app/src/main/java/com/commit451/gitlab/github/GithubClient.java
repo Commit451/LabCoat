@@ -1,12 +1,11 @@
 package com.commit451.gitlab.github;
 
 
-import com.commit451.gitlab.BuildConfig;
-
 import java.util.List;
 
-import retrofit.Callback;
-import retrofit.RestAdapter;
+import retrofit.Call;
+import retrofit.GsonConverterFactory;
+import retrofit.Retrofit;
 import retrofit.http.GET;
 import retrofit.http.Path;
 
@@ -20,18 +19,17 @@ public class GithubClient {
 
     public interface GitHub {
         @GET("/repos/{owner}/{repo}/contributors")
-        void contributors(
+        Call<List<Contributor>> contributors(
                 @Path("owner") String owner,
-                @Path("repo") String repo,
-                Callback<List<Contributor>> callback);
+                @Path("repo") String repo);
     }
 
     private static GitHub mGithub;
     public static GitHub instance() {
         if (mGithub == null) {
-            RestAdapter restAdapter = new RestAdapter.Builder()
-                    .setEndpoint(API_URL)
-                    .setLogLevel(BuildConfig.DEBUG ? RestAdapter.LogLevel.FULL : RestAdapter.LogLevel.NONE)
+            Retrofit restAdapter = new Retrofit.Builder()
+                    .baseUrl(API_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
                     .build();
             mGithub = restAdapter.create(GitHub.class);
         }

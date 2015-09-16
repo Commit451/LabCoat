@@ -25,8 +25,7 @@ import java.io.UnsupportedEncodingException;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Response;
 import timber.log.Timber;
 
 public class FileActivity extends BaseActivity {
@@ -55,27 +54,31 @@ public class FileActivity extends BaseActivity {
     byte[] mBlob;
 
 	private final Callback<FileResponse> mFileResponseCallback = new Callback<FileResponse>() {
+
 		@Override
-		public void success(FileResponse fileResponse, Response response) {
-            progress.setVisibility(View.GONE);
-            String text = getString(R.string.file_load_error);
-            // Receiving side
-            mFileName = fileResponse.getFileName();
-            mBlob = Base64.decode(fileResponse.getContent(), Base64.DEFAULT);
-            try {
-                text = new String(mBlob, "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                Timber.e(e.toString());
-            }
+		public void onResponse(Response<FileResponse> response) {
+			if (!response.isSuccess()) {
+				return;
+			}
+			progress.setVisibility(View.GONE);
+			String text = getString(R.string.file_load_error);
+			// Receiving side
+			mFileName = response.body().getFileName();
+			mBlob = Base64.decode(response.body().getContent(), Base64.DEFAULT);
+			try {
+				text = new String(mBlob, "UTF-8");
+			} catch (UnsupportedEncodingException e) {
+				Timber.e(e.toString());
+			}
 			String temp = "<!DOCTYPE html><html><head><link href=\"github.css\" rel=\"stylesheet\" /></head><body><pre><code>" + text + "</code></pre><script src=\"highlight.pack.js\"></script><script>hljs.initHighlightingOnLoad();</script></body></html>";
 			fileBlobView.loadDataWithBaseURL("file:///android_asset/", temp, "text/html", "utf8", null);
-            toolbar.setTitle(fileResponse.getFileName());
-            toolbar.inflateMenu(R.menu.file);
+			toolbar.setTitle(mFileName);
+			toolbar.inflateMenu(R.menu.file);
 		}
 
 		@Override
-		public void failure(RetrofitError error) {
-            progress.setVisibility(View.GONE);
+		public void onFailure(Throwable t) {
+			progress.setVisibility(View.GONE);
 			Snackbar.make(getWindow().getDecorView(), R.string.file_load_error, Snackbar.LENGTH_SHORT)
 					.show();
 		}
@@ -95,7 +98,7 @@ public class FileActivity extends BaseActivity {
 
 	private void load() {
         progress.setVisibility(View.VISIBLE);
-		GitLabClient.instance().getFile(mProjectId, mPath, mRef, mFileResponseCallback);
+		GitLabClient.instance().getFile(mProjectId, mPath, mRef).enqueue(mFileResponseCallback);
 	}
 
 	private void setupUI() {

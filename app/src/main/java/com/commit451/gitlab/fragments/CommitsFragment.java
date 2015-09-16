@@ -20,8 +20,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Response;
 import timber.log.Timber;
 
 public class CommitsFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
@@ -83,7 +82,7 @@ public class CommitsFragment extends BaseFragment implements SwipeRefreshLayout.
             swipeLayout.setRefreshing(true);
         }
 
-        GitLabClient.instance().getCommits(GitLabApp.instance().getSelectedProject().getId(), GitLabApp.instance().getSelectedBranch().getName(), commitsCallback);
+        GitLabClient.instance().getCommits(GitLabApp.instance().getSelectedProject().getId(), GitLabApp.instance().getSelectedBranch().getName()).enqueue(commitsCallback);
 	}
 
 	public boolean onBackPressed() {
@@ -91,32 +90,36 @@ public class CommitsFragment extends BaseFragment implements SwipeRefreshLayout.
 	}
 	
 	private Callback<List<DiffLine>> commitsCallback = new Callback<List<DiffLine>>() {
-		
+
+
 		@Override
-		public void success(List<DiffLine> commits, Response resp) {
-            if (swipeLayout == null) {
-                return;
-            }
-            swipeLayout.setRefreshing(false);
-			
-			if(commits.size() > 0) {
-                messageView.setVisibility(View.GONE);
+		public void onResponse(Response<List<DiffLine>> response) {
+			if (!response.isSuccess()) {
+				return;
+			}
+			if (swipeLayout == null) {
+				return;
+			}
+			swipeLayout.setRefreshing(false);
+
+			if(response.body().size() > 0) {
+				messageView.setVisibility(View.GONE);
 			}
 			else {
-                Timber.d("No commits have been made");
-                messageView.setVisibility(View.VISIBLE);
+				Timber.d("No commits have been made");
+				messageView.setVisibility(View.VISIBLE);
 			}
-			adapter.setData(commits);
+			adapter.setData(response.body());
 		}
-		
+
 		@Override
-		public void failure(RetrofitError e) {
-			Timber.e(e.toString());
+		public void onFailure(Throwable t) {
+			Timber.e(t.toString());
 
 			if(swipeLayout != null && swipeLayout.isRefreshing()) {
-                swipeLayout.setRefreshing(false);
-            }
-            messageView.setVisibility(View.VISIBLE);
+				swipeLayout.setRefreshing(false);
+			}
+			messageView.setVisibility(View.VISIBLE);
 
 			Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.connection_error_commits), Snackbar.LENGTH_SHORT)
 					.show();

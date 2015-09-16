@@ -30,8 +30,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Response;
 import timber.log.Timber;
 
 public class IssueActivity extends BaseActivity {
@@ -98,7 +97,7 @@ public class IssueActivity extends BaseActivity {
 
     private void load() {
 		swipeRefreshLayout.setRefreshing(true);
-        GitLabClient.instance().getIssueNotes(GitLabApp.instance().getSelectedProject().getId(), issue.getId(), notesCallback);
+        GitLabClient.instance().getIssueNotes(GitLabApp.instance().getSelectedProject().getId(), issue.getId()).enqueue(notesCallback);
 	}
 
 	private void postNote() {
@@ -116,20 +115,23 @@ public class IssueActivity extends BaseActivity {
 		imm.hideSoftInputFromWindow(newNoteEdit.getWindowToken(), 0);
 		newNoteEdit.setText("");
 
-		GitLabClient.instance().postIssueNote(GitLabApp.instance().getSelectedProject().getId(), issue.getId(), body, "", noteCallback);
+		GitLabClient.instance().postIssueNote(GitLabApp.instance().getSelectedProject().getId(), issue.getId(), body).enqueue(noteCallback);
 	}
 	
 	private Callback<List<Note>> notesCallback = new Callback<List<Note>>() {
-		
+
 		@Override
-		public void success(List<Note> notes, Response resp) {
+		public void onResponse(Response<List<Note>> response) {
+			if (!response.isSuccess()) {
+				return;
+			}
 			swipeRefreshLayout.setRefreshing(false);
-            notesAdapter.addNotes(notes);
+			notesAdapter.addNotes(response.body());
 		}
-		
+
 		@Override
-		public void failure(RetrofitError e) {
-            Timber.e(e.toString());
+		public void onFailure(Throwable t) {
+			Timber.e(t.toString());
 			swipeRefreshLayout.setRefreshing(false);
 			Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
 					.show();
@@ -142,16 +144,19 @@ public class IssueActivity extends BaseActivity {
 	}
 	
 	private Callback<Note> noteCallback = new Callback<Note>() {
-		
+
 		@Override
-		public void success(Note note, Response resp) {
+		public void onResponse(Response<Note> response) {
+			if (!response.isSuccess()) {
+				return;
+			}
 			progress.setVisibility(View.GONE);
-			notesAdapter.addNote(note);
+			notesAdapter.addNote(response.body());
 		}
-		
+
 		@Override
-		public void failure(RetrofitError e) {
-            Timber.e(e.toString());
+		public void onFailure(Throwable t) {
+			Timber.e(t.toString());
 			progress.setVisibility(View.GONE);
 			Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
 					.show();
@@ -159,16 +164,19 @@ public class IssueActivity extends BaseActivity {
 	};
 	
 	private Callback<List<User>> usersCallback = new Callback<List<User>>() {
-		
+
 		@Override
-		public void success(List<User> users, Response resp) {
+		public void onResponse(Response<List<User>> response) {
+			if (!response.isSuccess()) {
+				return;
+			}
 			swipeRefreshLayout.setRefreshing(false);
-            notesAdapter.addUsers(users);
+			notesAdapter.addUsers(response.body());
 		}
-		
+
 		@Override
-		public void failure(RetrofitError e) {
-			Timber.e(e.toString());
+		public void onFailure(Throwable t) {
+			Timber.e(t.toString());
 			swipeRefreshLayout.setRefreshing(false);
 			Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
 					.show();

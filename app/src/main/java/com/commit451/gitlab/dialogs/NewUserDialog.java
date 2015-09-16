@@ -18,8 +18,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Response;
 import timber.log.Timber;
 
 /**
@@ -59,29 +58,31 @@ public class NewUserDialog extends AppCompatDialog {
         long userId = ((User) userSpinner.getSelectedItem()).getId();
         String accessLevel = getContext().getResources().getStringArray(R.array.role_values)[roleSpinner.getSelectedItemPosition()];
 
-        GitLabClient.instance().addGroupMember(GitLabApp.instance().getSelectedProject().getGroup().getId(), userId, accessLevel, "", userCallback);
+        GitLabClient.instance().addGroupMember(GitLabApp.instance().getSelectedProject().getGroup().getId(), userId, accessLevel).enqueue(userCallback);
     }
 
     private Callback<User> userCallback = new Callback<User>() {
 
         @Override
-        public void success(User user, Response resp) {
+        public void onResponse(Response<User> response) {
+            if (!response.isSuccess()) {
+                return;
+            }
             progress.setVisibility(View.GONE);
 
-            if(user.getId() != 0) {
+            if(response.body().getId() != 0) {
                 //TODO tell the parent to add the user to the list
             }
             else {
                 Toast.makeText(getContext(), getContext().getString(R.string.user_error), Toast.LENGTH_SHORT)
                         .show();
             }
-
             dismiss();
         }
 
         @Override
-        public void failure(RetrofitError e) {
-            Timber.e(e.toString());
+        public void onFailure(Throwable t) {
+            Timber.e(t.toString());
 
             progress.setVisibility(View.GONE);
             Toast.makeText(getContext(), getContext().getString(R.string.user_error), Toast.LENGTH_SHORT)

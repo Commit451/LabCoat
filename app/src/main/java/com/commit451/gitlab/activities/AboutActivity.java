@@ -33,32 +33,27 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Response;
 import timber.log.Timber;
 
 /**
+ * Thats what its all about
  * Created by Jawn on 8/25/2015.
  */
 public class AboutActivity extends BaseActivity {
-    private static final String REPO_USER = "Jawnnypoo";
-    private static final String REPO_NAME = "open-meh";
+    private static final String REPO_USER = "Commit451";
+    private static final String REPO_NAME = "GitLabAndroid";
 
     public static Intent newInstance(Context context) {
         Intent intent = new Intent(context, AboutActivity.class);
         return intent;
     }
 
-    @Bind(R.id.root)
-    View root;
-    @Bind(R.id.toolbar)
-    Toolbar toolbar;
-    @Bind(R.id.toolbar_title)
-    TextView toolbarTitle;
-    @Bind(R.id.contributors)
-    TextView contributors;
-    @Bind(R.id.physics_layout)
-    PhysicsFrameLayout physicsLayout;
+    @Bind(R.id.root) View root;
+    @Bind(R.id.toolbar) Toolbar toolbar;
+    @Bind(R.id.toolbar_title) TextView toolbarTitle;
+    @Bind(R.id.contributors) TextView contributors;
+    @Bind(R.id.physics_layout) PhysicsFrameLayout physicsLayout;
     @OnClick(R.id.sauce)
     void onSauceClick() {
         IntentUtil.openPage(root, getString(R.string.source_url));
@@ -83,16 +78,19 @@ public class AboutActivity extends BaseActivity {
     };
 
     private final Callback<List<Contributor>> contributorResponseCallback = new Callback<List<Contributor>>() {
+
         @Override
-        public void success(List<Contributor> contributorList, Response response) {
-            addContributors(contributorList);
+        public void onResponse(Response<List<Contributor>> response) {
+            if (response.isSuccess()) {
+                addContributors(response.body());
+            }
         }
 
         @Override
-        public void failure(RetrofitError error) {
+        public void onFailure(Throwable t) {
             Snackbar.make(getWindow().getDecorView(), R.string.failed_to_load_contributors, Snackbar.LENGTH_SHORT)
                     .show();
-            Timber.e(error.toString());
+            Timber.e(t.toString());
         }
     };
 
@@ -113,7 +111,7 @@ public class AboutActivity extends BaseActivity {
         physicsLayout.getPhysics().enableFling();
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         gravitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
-        GithubClient.instance().contributors(REPO_USER, REPO_NAME, contributorResponseCallback);
+        GithubClient.instance().contributors(REPO_USER, REPO_NAME).enqueue(contributorResponseCallback);
     }
 
     @Override

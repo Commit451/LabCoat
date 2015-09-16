@@ -22,8 +22,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Response;
 import timber.log.Timber;
 
 /**
@@ -41,18 +40,22 @@ public class GitLabNavigationView extends FrameLayout{
     }
 
     private final Callback<User> userCallback = new Callback<User>() {
+
         @Override
-        public void success(User user, Response response) {
+        public void onResponse(Response<User> response) {
+            if (!response.isSuccess()) {
+                return;
+            }
             if (getContext() != null) {
                 Picasso.with(getContext())
-                        .load(user.getAvatarUrl())
+                        .load(response.body().getAvatarUrl())
                         .into(profileImage);
             }
         }
 
         @Override
-        public void failure(RetrofitError error) {
-            Timber.e(error.toString());
+        public void onFailure(Throwable t) {
+            Timber.e(t.toString());
         }
     };
 
@@ -88,6 +91,6 @@ public class GitLabNavigationView extends FrameLayout{
     }
 
     public void setUserId(long userId) {
-        GitLabClient.instance().getUser(userId, userCallback);
+        GitLabClient.instance().getUser(userId).enqueue(userCallback);
     }
 }
