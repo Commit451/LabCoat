@@ -130,4 +130,7 @@ public interface GitLab {
 	@DELETE(API_VERSION + "/groups/{id}/members/{user_id}")
 	Call<DeleteResponse> removeGroupMember(@Path("id") long groupId,
                            @Path("user_id") long userId);
+
+	@GET(API_VERSION + "/users")
+	Call<List<User>> searchUsers(@Query("search") String query);
 }

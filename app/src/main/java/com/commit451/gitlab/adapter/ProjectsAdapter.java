@@ -15,6 +15,7 @@ import com.commit451.gitlab.tools.Repository;
 import com.commit451.gitlab.viewHolders.ProjectViewHolder;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -29,10 +30,17 @@ public class ProjectsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         return mValues.get(position);
     }
 
-    public ProjectsAdapter(List<Project> items) {
-        mValues = items;
+    public ProjectsAdapter() {
+        mValues = new ArrayList<>();
         mNavItems = new ArrayList<>();
+    }
 
+    public void setData(Collection<Project> projects) {
+        mValues.clear();
+        if (projects != null) {
+            mValues.addAll(projects);
+        }
+        notifyDataSetChanged();
     }
 
     private final View.OnClickListener onProjectClickListener = new View.OnClickListener() {

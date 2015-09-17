@@ -1,19 +1,29 @@
 package com.commit451.gitlab.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import org.parceler.Parcel;
 
 import java.util.Date;
 @Parcel
 public class User {
-	
+
+	@SerializedName("id")
 	long id;
+	@SerializedName("username")
 	String username;
+	@SerializedName("email")
     String email;
+	@SerializedName("avatar_url")
 	String avatar_url;
+	@SerializedName("name")
 	String name;
+	@SerializedName("blocked")
 	boolean blocked;
+	@SerializedName("created_at")
 	Date created_at;
-	int access_level;
+	@SerializedName("access_level")
+	int access_level = -1;
 
 	public User(){}
 
@@ -32,13 +42,11 @@ public class User {
 	}
 
     public String getEmail() { return email; }
+
     public void setEmail(String email) { this.email = email; }
 
 	public String getAvatarUrl() {
 		return avatar_url;
-	}
-	public void setAvatarUrl(String avatar_url) {
-		this.avatar_url = avatar_url;
 	}
 
 	public String getName() {
@@ -55,11 +63,8 @@ public class User {
 		this.blocked = blocked;
 	}
 
-	public Date getCreatedAt() {
-		return created_at;
-	}
-	public void setCreatedAt(Date created_at) {
-		this.created_at = created_at;
+	public int getAccessLevel() {
+		return access_level;
 	}
 
 	public String getAccessLevel(String[] names) {
@@ -69,9 +74,6 @@ public class User {
 			return names[temp];
 		
 		return "";
-	}
-	public void setAccessLevel(int access_level) {
-		this.access_level = access_level;
 	}
 	
 	public boolean equals(Object obj) {

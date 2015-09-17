@@ -16,7 +16,7 @@ import butterknife.ButterKnife;
 import fr.tkeunebr.gravatar.Gravatar;
 
 /**
- * Projects, yay!
+ * Users, yay!
  * Created by Jawn on 6/11/2015.
  */
 public class UserViewHolder extends RecyclerView.ViewHolder {
@@ -27,10 +27,10 @@ public class UserViewHolder extends RecyclerView.ViewHolder {
         return new UserViewHolder(view);
     }
 
-    @Bind(R.id.title) TextView title;
-    @Bind(R.id.summary) TextView summary;
-    @Bind(R.id.custom) TextView custom;
-    @Bind(R.id.icon) ImageView icon;
+    @Bind(R.id.user_name) TextView name;
+    @Bind(R.id.user_username) TextView username;
+    @Bind(R.id.user_role) TextView role;
+    @Bind(R.id.user_image) ImageView image;
 
     public UserViewHolder(View view) {
         super(view);
@@ -38,15 +38,17 @@ public class UserViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(User user) {
-        title.setText(user.getName());
-        if(user.getEmail() != null) {
-            summary.setText(user.getEmail());
-        }
-        else {
-            summary.setText(user.getUsername());
+        name.setText(user.getName());
+        if(user.getUsername() != null) {
+            username.setText(user.getUsername());
         }
 
-        custom.setText(user.getAccessLevel(itemView.getResources().getStringArray(R.array.role_names)));
+        if (user.getAccessLevel() != -1) {
+            role.setVisibility(View.VISIBLE);
+            role.setText(user.getAccessLevel(itemView.getResources().getStringArray(R.array.role_names)));
+        } else {
+            role.setVisibility(View.GONE);
+        }
 
         int size = itemView.getResources().getDimensionPixelSize(R.dimen.image_size);
 
@@ -59,6 +61,8 @@ public class UserViewHolder extends RecyclerView.ViewHolder {
             url = user.getAvatarUrl() + "&s=" + size;
         }
 
-        Picasso.with(itemView.getContext()).load(url).into(icon);
+        Picasso.with(itemView.getContext())
+                .load(url)
+                .into(image);
     }
 }

@@ -33,6 +33,7 @@ public class GitLabNavigationView extends FrameLayout{
 
     @Bind(R.id.profile_image) ImageView profileImage;
     @Bind(R.id.list) RecyclerView projectList;
+    ProjectsAdapter mAdapter;
 
     @OnClick(R.id.drawer_header)
     void onHeaderClick() {
@@ -83,11 +84,13 @@ public class GitLabNavigationView extends FrameLayout{
     private void init() {
         inflate(getContext(), R.layout.nav_drawer, this);
         ButterKnife.bind(this);
+        mAdapter = new ProjectsAdapter();
+        projectList.setAdapter(mAdapter);
         projectList.setLayoutManager(new LinearLayoutManager(getContext()));
     }
 
     public void setProjects(List<Project> projects) {
-        projectList.setAdapter(new ProjectsAdapter(projects));
+        mAdapter.setData(projects);
     }
 
     public void setUserId(long userId) {
