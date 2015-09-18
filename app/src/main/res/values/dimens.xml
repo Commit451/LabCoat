@@ -14,6 +14,7 @@
     <dimen name="actionbarSize">56dp</dimen>
     <dimen name="doubleActionbarSize">112dp</dimen>
     <dimen name="image_size">48dp</dimen>
+    <dimen name="larger_image_size">72dp</dimen>
     <dimen name="border_size">2dp</dimen>
     <dimen name="circle_size">96dp</dimen>
 </resources>

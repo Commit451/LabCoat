@@ -106,7 +106,7 @@ public class MainActivity extends BaseActivity {
             startActivity(new Intent(this, LoginActivity.class));
         }
 		else {
-			navigationView.setUserId(Prefs.getUserId(this));
+			navigationView.loadCurrentUser();
             connect();
         }
 		

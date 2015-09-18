@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.ProjectsAdapter;
@@ -21,6 +22,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import fr.tkeunebr.gravatar.Gravatar;
 import retrofit.Callback;
 import retrofit.Response;
 import timber.log.Timber;
@@ -32,6 +34,8 @@ import timber.log.Timber;
 public class GitLabNavigationView extends FrameLayout{
 
     @Bind(R.id.profile_image) ImageView profileImage;
+    @Bind(R.id.profile_user) TextView userName;
+    @Bind(R.id.profile_email) TextView userEmail;
     @Bind(R.id.list) RecyclerView projectList;
     ProjectsAdapter mAdapter;
 
@@ -47,11 +51,7 @@ public class GitLabNavigationView extends FrameLayout{
             if (!response.isSuccess()) {
                 return;
             }
-            if (getContext() != null) {
-                Picasso.with(getContext())
-                        .load(response.body().getAvatarUrl())
-                        .into(profileImage);
-            }
+            bindUser(response.body());
         }
 
         @Override
@@ -93,7 +93,25 @@ public class GitLabNavigationView extends FrameLayout{
         mAdapter.setData(projects);
     }
 
-    public void setUserId(long userId) {
-        GitLabClient.instance().getUser(userId).enqueue(userCallback);
+    public void loadCurrentUser() {
+        GitLabClient.instance().getUser().enqueue(userCallback);
+    }
+
+    private void bindUser(User user) {
+        if (getContext() == null) {
+            return;
+        }
+        if (user.getUsername() != null) {
+            userName.setText(user.getUsername());
+        }
+        int size = getResources().getDimensionPixelSize(R.dimen.larger_image_size);
+        String url = "http://www.gravatar.com/avatar/00000000000000000000000000000000?s=" + size;
+        if(user.getEmail() != null) {
+            url = Gravatar.init().with(user.getEmail()).size(size).build();
+            userEmail.setText(user.getEmail());
+        }
+        Picasso.with(getContext())
+                .load(url)
+                .into(profileImage);
     }
 }

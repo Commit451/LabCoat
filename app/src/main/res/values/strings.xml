@@ -111,4 +111,7 @@
     <string name="source_url">https://github.com/Commit451/GitLabAndroid</string>
     <string name="failed_to_load_contributors">Failed to load contributors :(</string>
 
+    <!-- Account -->
+    <string name="add_account">Add account</string>
+
 </resources>

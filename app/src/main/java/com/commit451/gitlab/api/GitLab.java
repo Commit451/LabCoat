@@ -118,6 +118,12 @@ public interface GitLab {
 
 	@GET(API_VERSION + "/users/{id}")
 	Call<User> getUser(@Path("id") long userId);
+
+	/**
+	 * Get currently authenticated user
+	 */
+	@GET(API_VERSION + "/user")
+	Call<User> getUser();
 	
 	@GET(API_VERSION + "/groups/{id}/members?per_page=100")
 	Call<List<User>> getGroupMembers(@Path("id") long groupId);
