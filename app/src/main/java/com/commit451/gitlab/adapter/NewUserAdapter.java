@@ -69,8 +69,8 @@ public class NewUserAdapter extends RecyclerView.Adapter<UserViewHolder> {
     }
 
     public void addUser(User user) {
-        mValues.add(user);
-        notifyItemInserted(mValues.size() - 1);
+        mValues.add(0, user);
+        notifyItemInserted(0);
     }
 
     public void removeUser(long userId) {

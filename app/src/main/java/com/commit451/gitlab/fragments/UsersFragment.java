@@ -15,8 +15,8 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.activities.AddUserActivity;
 import com.commit451.gitlab.adapter.NewUserAdapter;
 import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.dialogs.NewUserDialog;
 import com.commit451.gitlab.events.ProjectChangedEvent;
+import com.commit451.gitlab.events.UserAddedEvent;
 import com.commit451.gitlab.model.User;
 import com.squareup.otto.Subscribe;
 
@@ -138,7 +138,6 @@ public class UsersFragment extends BaseFragment implements SwipeRefreshLayout.On
 	@OnClick(R.id.add_user_button)
 	public void onAddUserClick() {
 		startActivity(AddUserActivity.newInstance(getActivity()));
-		new NewUserDialog(getActivity()).show();
 	}
 
 	private class EventReceiver {
@@ -146,6 +145,13 @@ public class UsersFragment extends BaseFragment implements SwipeRefreshLayout.On
 		@Subscribe
 		public void onProjectChanged(ProjectChangedEvent event) {
 			loadData();
+		}
+
+		@Subscribe
+		public void onUserAdded(UserAddedEvent event) {
+			if (mAdapter != null) {
+				mAdapter.addUser(event.user);
+			}
 		}
 	}
 }

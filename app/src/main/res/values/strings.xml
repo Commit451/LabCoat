@@ -54,6 +54,7 @@
     <string name="not_in_group">User management is only available for projects that are assigned to groups</string>
     <string name="error_could_not_share">Could not share the link</string>
     <string name="error_no_browser">No browser on device. What are you doing?</string>
+    <string name="error_user_conflict">There is a conflict in adding this user.</string>
 
     <string name="required_field">Required Field</string>
     <!-- General -->
@@ -93,6 +94,7 @@
     <string name="no_users_found">No users found.</string>
     <string name="search_for_user">Search for user</string>
     <string name="set_project_access">Project Access</string>
+    <string name="user_added_successfully">User added successfully</string>
 
     <string-array name="role_names">
         <item>Guest</item>

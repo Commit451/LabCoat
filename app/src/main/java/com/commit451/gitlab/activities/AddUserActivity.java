@@ -20,6 +20,7 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.NewUserAdapter;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.dialogs.UserRoleDialog;
+import com.commit451.gitlab.events.UserAddedEvent;
 import com.commit451.gitlab.model.User;
 import com.commit451.gitlab.tools.KeyboardUtil;
 
@@ -108,10 +109,16 @@ public class AddUserActivity extends BaseActivity {
         @Override
         public void onResponse(Response<User> response) {
             if (!response.isSuccess()) {
+                //Conflict
+                if (response.code() == 409) {
+                    Toast.makeText(AddUserActivity.this, R.string.error_user_conflict, Toast.LENGTH_SHORT).show();
+                }
                 return;
             }
-            Toast.makeText(AddUserActivity.this, "User added successfully", Toast.LENGTH_SHORT).show();
+            Toast.makeText(AddUserActivity.this, R.string.user_added_successfully, Toast.LENGTH_SHORT).show();
+            mUserRoleDialog.dismiss();
             finish();
+            GitLabApp.bus().post(new UserAddedEvent(response.body()));
         }
 
         @Override

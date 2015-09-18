@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v7.app.AppCompatDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.Toast;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.ProjectAccessAdapter;
@@ -23,11 +24,20 @@ public class UserRoleDialog extends AppCompatDialog {
 
     @Bind(R.id.list) RecyclerView mRecyclerView;
     ProjectAccessAdapter mAdapter;
+    String[] mRoleNames;
+    String[] mRoleValues;
 
     private final ProjectAccessAdapter.Listener mAccessListener = new ProjectAccessAdapter.Listener() {
         @Override
         public void onAccessLevelClicked(String accessLevel) {
-            mListener.onAccessLevelClicked(accessLevel);
+            for (int i=0; i<mRoleNames.length; i++) {
+                if (mRoleNames[i].equals(accessLevel)) {
+                    mListener.onAccessLevelClicked(mRoleValues[i]);
+                    return;
+                }
+            }
+            Toast.makeText(getContext(), R.string.user_error, Toast.LENGTH_SHORT)
+                    .show();
         }
     };
 
@@ -35,6 +45,8 @@ public class UserRoleDialog extends AppCompatDialog {
         super(context);
         setContentView(R.layout.dialog_user_role);
         ButterKnife.bind(this);
+        mRoleValues = getContext().getResources().getStringArray(R.array.role_values);
+        mRoleNames = getContext().getResources().getStringArray(R.array.role_names);
         mListener = listener;
         mAdapter = new ProjectAccessAdapter(getContext(), mAccessListener);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
