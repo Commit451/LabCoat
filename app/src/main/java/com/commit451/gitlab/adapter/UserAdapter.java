@@ -1,101 +1,86 @@
 package com.commit451.gitlab.adapter;
 
-import android.content.Context;
-import android.view.LayoutInflater;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.User;
-import com.squareup.picasso.Picasso;
+import com.commit451.gitlab.viewHolders.UserViewHolder;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
-import fr.tkeunebr.gravatar.Gravatar;
+/**
+ * Created by Jawn on 7/28/2015.
+ */
+public class UserAdapter extends RecyclerView.Adapter<UserViewHolder> {
 
-public class UserAdapter extends BaseAdapter {
-	
-	private ArrayList<User> users;
-	private LayoutInflater inflater;
-	
-	public UserAdapter(Context context, List<User> users) {
-		this.users = new ArrayList<User>(users);
-		
-		if(context != null) {
-			inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		}
-	}
-	
-	@Override
-	public int getCount() {
-		return users.size();
-	}
-	
-	@Override
-	public User getItem(int position) {
-		return users.get(position);
-	}
-	
-	@Override
-	public long getItemId(int position) {
-		if(users.get(position) == null)
-			return -1;
-		
-		return users.get(position).getId();
-	}
-	
-	public int getPosition(User user) {
-		return users.indexOf(user);
-	}
-	
-	public void addUser(User user) {
-		users.add(user);
-		notifyDataSetChanged();
-	}
-	
-	public void removeUser(long userId) {
-		for(User u : users) {
-			if(u.getId() == userId) {
-				users.remove(u);
-				break;
-			}
-		}
-		
-		notifyDataSetChanged();
-	}
-	
-	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
-		if(convertView == null) convertView = inflater.inflate(R.layout.user_list_item, parent, false);
+    public interface Listener {
+        void onUserClicked(User user);
+    }
 
-        final TextView title = (TextView) convertView.findViewById(R.id.title);
-		final TextView summary = (TextView) convertView.findViewById(R.id.summary);
-		final TextView custom = (TextView) convertView.findViewById(R.id.custom);
-        final ImageView icon = (ImageView) convertView.findViewById(R.id.icon);
-		
-		title.setText(users.get(position).getName());
-		if(users.get(position).getEmail() != null)
-            summary.setText(users.get(position).getEmail());
-        else
-            summary.setText(users.get(position).getUsername());
-		
-		custom.setText(users.get(position).getAccessLevel(convertView.getResources().getStringArray(R.array.role_names)));
+    private Listener mListener;
 
-		int size = convertView.getResources().getDimensionPixelSize(R.dimen.image_size);
+    private ArrayList<User> mValues;
 
-        String url = "http://www.gravatar.com/avatar/00000000000000000000000000000000?s=" + size;
+    private final View.OnClickListener mItemClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            int position = (int) v.getTag(R.id.list_position);
+            mListener.onUserClicked(getValueAt(position));
+        }
+    };
 
-        if(users.get(position).getEmail() != null)
-            url = Gravatar.init().with(users.get(position).getEmail()).size(size).build();
-        else if(users.get(position).getAvatarUrl() != null)
-            url = users.get(position).getAvatarUrl() + "&s=" + size;
+    public User getValueAt(int position) {
+        return mValues.get(position);
+    }
 
-        Picasso.with(convertView.getContext()).load(url).into(icon);
-		
-		return convertView;
-	}
+    public UserAdapter(Listener listener) {
+        mListener = listener;
+        mValues = new ArrayList<>();
+    }
+
+    public void setData(Collection<User> data) {
+        mValues.clear();
+        if (data != null) {
+            mValues.addAll(data);
+        }
+        notifyDataSetChanged();
+    }
+
+    @Override
+    public UserViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        UserViewHolder holder = UserViewHolder.create(parent);
+        holder.itemView.setOnClickListener(mItemClickListener);
+        return holder;
+    }
+
+    @Override
+    public void onBindViewHolder(final UserViewHolder holder, int position) {
+        User user = getValueAt(position);
+        holder.bind(user);
+        holder.itemView.setTag(R.id.list_position, position);
+    }
+
+    @Override
+    public int getItemCount() {
+        return mValues.size();
+    }
+
+    public void addUser(User user) {
+        mValues.add(0, user);
+        notifyItemInserted(0);
+    }
+
+    public void removeUser(long userId) {
+        for(User u : mValues) {
+            if(u.getId() == userId) {
+                int index = mValues.indexOf(u);
+                mValues.remove(u);
+                notifyItemRemoved(index);
+                break;
+            }
+        }
+    }
 }

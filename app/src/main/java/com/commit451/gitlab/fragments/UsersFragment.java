@@ -13,7 +13,7 @@ import android.widget.TextView;
 import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activities.AddUserActivity;
-import com.commit451.gitlab.adapter.NewUserAdapter;
+import com.commit451.gitlab.adapter.UserAdapter;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.events.ProjectChangedEvent;
 import com.commit451.gitlab.events.UserAddedEvent;
@@ -33,7 +33,7 @@ public class UsersFragment extends BaseFragment implements SwipeRefreshLayout.On
 	
 	@Bind(R.id.add_user_button) View addUserButton;
 	@Bind(R.id.list) RecyclerView listView;
-    NewUserAdapter mAdapter;
+    UserAdapter mAdapter;
 	@Bind(R.id.error_text) TextView errorText;
     @Bind(R.id.swipe_layout) SwipeRefreshLayout swipeLayout;
 
@@ -46,7 +46,7 @@ public class UsersFragment extends BaseFragment implements SwipeRefreshLayout.On
 		View view = inflater.inflate(R.layout.fragment_users, container, false);
         ButterKnife.bind(this, view);
 
-        mAdapter = new NewUserAdapter(new NewUserAdapter.Listener() {
+        mAdapter = new UserAdapter(new UserAdapter.Listener() {
             @Override
             public void onUserClicked(User user) {
                 //TODO go to profile or allow kicking from group or something

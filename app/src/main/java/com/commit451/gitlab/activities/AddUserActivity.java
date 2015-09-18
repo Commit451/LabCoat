@@ -17,7 +17,7 @@ import android.widget.Toast;
 
 import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.adapter.NewUserAdapter;
+import com.commit451.gitlab.adapter.UserAdapter;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.dialogs.UserRoleDialog;
 import com.commit451.gitlab.events.UserAddedEvent;
@@ -47,7 +47,7 @@ public class AddUserActivity extends BaseActivity {
     @Bind(R.id.userSearch) EditText mUserSearch;
     @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
     @Bind(R.id.list) RecyclerView mRecyclerView;
-    NewUserAdapter mAdapter;
+    UserAdapter mAdapter;
     UserRoleDialog mUserRoleDialog;
     User mSelectedUser;
     private final View.OnClickListener mOnBackPressed = new View.OnClickListener() {
@@ -87,7 +87,7 @@ public class AddUserActivity extends BaseActivity {
         }
     };
 
-    private final NewUserAdapter.Listener mUserClickListener = new NewUserAdapter.Listener() {
+    private final UserAdapter.Listener mUserClickListener = new UserAdapter.Listener() {
         @Override
         public void onUserClicked(User user) {
             mSelectedUser = user;
@@ -137,7 +137,7 @@ public class AddUserActivity extends BaseActivity {
         mToolbar.setNavigationOnClickListener(mOnBackPressed);
         mUserSearch.setOnEditorActionListener(mSearchEditorActionListener);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mAdapter = new NewUserAdapter(mUserClickListener);
+        mAdapter = new UserAdapter(mUserClickListener);
         mRecyclerView.setAdapter(mAdapter);
     }
 }
