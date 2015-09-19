@@ -15,14 +15,21 @@
         android:theme="@style/AppTheme" >
 
         <activity
-            android:name=".activities.MainActivity">
+            android:name=".activities.GitlabActivity"
+            android:theme="@android:style/Theme.NoDisplay"
+            android:noHistory="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".activities.MainActivity" />
+
         <activity
             android:name=".activities.LoginActivity" />
+
         <activity
             android:name=".activities.FileActivity"
             android:configChanges="orientation|screenSize"

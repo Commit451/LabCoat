@@ -164,9 +164,9 @@ public class LoginActivity extends BaseActivity {
 			Prefs.setUserId(LoginActivity.this, response.body().getId());
 			Prefs.setPrivateToken(LoginActivity.this, response.body().getPrivateToken());
 
-			Intent i = new Intent(LoginActivity.this, MainActivity.class);
-			i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			Intent i = new Intent(LoginActivity.this, GitlabActivity.class);
 			startActivity(i);
+			finish();
 		}
 
 		@Override

@@ -4,7 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
 
     <LinearLayout
         android:id="@+id/main_content_container"
@@ -54,10 +55,12 @@
 
     <com.commit451.gitlab.views.GitLabNavigationView
         android:id="@+id/navigation_view"
-        android:layout_width="300dp"
+        android:layout_width="304dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:clickable="true"
-        android:background="@color/window_background_color"/>
+        android:background="@color/window_background_color"
+        android:fitsSystemWindows="true"
+        />
 
 </android.support.v4.widget.DrawerLayout>

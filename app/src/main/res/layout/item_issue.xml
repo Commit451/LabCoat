@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/list_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:padding="8dp"
     android:minHeight="?android:attr/listPreferredItemHeight"
     android:background="?attr/selectableItemBackground">
 
@@ -14,23 +12,30 @@
         android:id="@+id/issue_image"
         android:layout_width="@dimen/image_size"
         android:layout_height="@dimen/image_size"
-        android:layout_marginRight="8dp"
-        android:layout_gravity="center_vertical"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="16dp"
+        android:layout_marginLeft="16dp"
         android:contentDescription="@null"
         tools:src="@drawable/ic_doc"
         />
 
-    <LinearLayout
-        android:layout_width="0dp"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/issue_image"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:layout_marginRight="16dp"
+        >
 
         <TextView
             android:id="@+id/issue_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/text_size_small"
+            android:textColor="?android:attr/textColorPrimary"
             android:maxLines="2"
             android:ellipsize="end"
             tools:text="I commited all the code at once cause I am cool. So sorry"/>
@@ -39,19 +44,22 @@
             android:id="@+id/issue_creator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/issue_message"
             android:textSize="@dimen/text_size_tiny"
-            android:textColor="@color/white_60"
-            tools:text="Created by Jawnnypoo"/>
+            android:textColor="?android:attr/textColorSecondary"
+            tools:text="Jawnnypoo"/>
 
-    </LinearLayout>
-    <TextView
-        android:id="@+id/issue_state"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="@dimen/text_size_tiny"
-        android:layout_gravity="bottom"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp"
-        tools:text="Closed"/>
+        <TextView
+            android:id="@+id/issue_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/issue_message"
+            android:layout_alignParentRight="true"
 
-</LinearLayout>
+            android:textSize="@dimen/text_size_tiny"
+            android:textColor="?android:attr/textColorSecondary"
+            tools:text="Closed"/>
+
+    </RelativeLayout>
+
+</RelativeLayout>

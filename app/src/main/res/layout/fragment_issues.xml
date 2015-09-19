@@ -12,7 +12,12 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+
+            android:paddingTop="8dp"
+            android:paddingBottom="88dp"
+            android:clipToPadding="false"
+            />
 
     </com.commit451.gitlab.views.GitLabSwipeRefreshLayout>
 
@@ -22,6 +27,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         android:layout_margin="@dimen/padding_normal"
-        android:src="@drawable/ic_add" />
+        android:src="@drawable/ic_add_white_24dp" />
 
 </FrameLayout>

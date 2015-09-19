@@ -8,7 +8,7 @@
     <FrameLayout
         android:id="@+id/drawer_header"
         android:layout_width="match_parent"
-        android:layout_height="148dp"
+        android:layout_height="@dimen/navigation_drawer_header_height"
         android:foreground="?attr/selectableItemBackground">
 
         <ImageView
@@ -18,10 +18,9 @@
             android:scaleType="fitXY"
             android:src="@drawable/header" />
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/profile_image"
@@ -29,15 +28,16 @@
                 android:layout_height="@dimen/larger_image_size"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp" />
+                android:layout_marginTop="16dp" />
 
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp">
-
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="16dp"
+                android:layout_alignParentBottom="true"
+                >
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -49,7 +49,7 @@
                         android:id="@+id/profile_user"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/window_background_color"
+                        android:textColor="?android:attr/textColorPrimaryInverse"
                         android:singleLine="true"
                         android:ellipsize="end"
                         tools:text="Jawnnypew" />
@@ -58,7 +58,7 @@
                         android:id="@+id/profile_email"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/window_background_color"
+                        android:textColor="?android:attr/textColorSecondaryInverse"
                         android:singleLine="true"
                         android:ellipsize="end"
                         tools:text="poop123@aol.com" />
@@ -73,13 +73,18 @@
                     android:tint="@color/window_background_color"/>
 
             </FrameLayout>
-        </LinearLayout>
+        </RelativeLayout>
 
     </FrameLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:clipToPadding="false"
+        />
 
 </LinearLayout>

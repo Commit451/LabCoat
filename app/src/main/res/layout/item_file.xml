@@ -1,23 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="?attr/selectableItemBackground">
+              xmlns:tools="http://schemas.android.com/tools"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="48dp"
+              android:background="?attr/selectableItemBackground"
+    >
 
     <ImageView
         android:id="@+id/file_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@null"
-        android:layout_gravity="center_vertical"/>
+        android:layout_gravity="center_vertical"
+
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="8dp"
+
+        tools:src="@drawable/ic_folder"
+        />
 
     <TextView
         android:id="@+id/file_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
         android:textSize="@dimen/text_size_small"
-        android:padding="@dimen/padding_normal"
-        android:ellipsize="marquee"/>
+        android:ellipsize="marquee"
+
+        tools:text="build.gradle"
+        />
 
 </LinearLayout>
