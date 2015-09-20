@@ -1,6 +1,7 @@
 package com.commit451.gitlab.api;
 
 import com.commit451.gitlab.model.Branch;
+import com.commit451.gitlab.model.Contributor;
 import com.commit451.gitlab.model.DeleteResponse;
 import com.commit451.gitlab.model.Diff;
 import com.commit451.gitlab.model.DiffLine;
@@ -51,7 +52,7 @@ public interface GitLab {
     @GET(API_VERSION + "/projects?per_page=100")
     Call<List<Project>> getProjects();
 	
-	/* --- MISC --- */
+	/* --- PROJECTS --- */
 
     @GET(API_VERSION + "/projects/{id}/repository/branches?per_page=100")
     Call<List<Branch>> getBranches(@Path("id") long projectId);
@@ -61,6 +62,9 @@ public interface GitLab {
 
     @GET(API_VERSION + "/projects/{id}/members?per_page=100")
     Call<List<User>> getUsersFallback(@Path("id") long projectId);
+
+    @GET(API_VERSION + "/projects/{id}/repository/contributors")
+    Call<List<Contributor>> getContributors(@Path("id") long projectId);
 	
 	/* --- COMMITS --- */
 

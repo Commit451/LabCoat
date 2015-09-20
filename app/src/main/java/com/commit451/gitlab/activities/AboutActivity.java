@@ -15,8 +15,9 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.github.Contributor;
-import com.commit451.gitlab.github.GithubClient;
+import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.model.Contributor;
+import com.commit451.gitlab.tools.ImageUtil;
 import com.commit451.gitlab.tools.IntentUtil;
 import com.commit451.gitlab.tools.WindowUtil;
 import com.jawnnypoo.physicslayout.Physics;
@@ -41,8 +42,7 @@ import timber.log.Timber;
  * Created by Jawn on 8/25/2015.
  */
 public class AboutActivity extends BaseActivity {
-    private static final String REPO_USER = "Commit451";
-    private static final String REPO_NAME = "GitLabAndroid";
+    private static final long REPO_ID = 473568;
 
     public static Intent newInstance(Context context) {
         Intent intent = new Intent(context, AboutActivity.class);
@@ -111,7 +111,7 @@ public class AboutActivity extends BaseActivity {
         physicsLayout.getPhysics().enableFling();
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         gravitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
-        GithubClient.instance().contributors(REPO_USER, REPO_NAME).enqueue(contributorResponseCallback);
+        GitLabClient.instance().getContributors(REPO_ID).enqueue(contributorResponseCallback);
     }
 
     @Override
@@ -156,8 +156,9 @@ public class AboutActivity extends BaseActivity {
                 x = 0;
                 y = (y + imageSize) % physicsLayout.getHeight();
             }
+            String url = ImageUtil.getGravatarUrl(contributor.getEmail(), imageSize);
             Picasso.with(this)
-                    .load(contributor.avatarUrl)
+                    .load(url)
                     .into(imageView);
         }
         physicsLayout.getPhysics().onLayout(true);

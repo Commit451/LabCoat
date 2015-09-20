@@ -108,7 +108,7 @@
     <string name="about">About</string>
     <string name="contributors">Contributors</string>
     <string name="sauce">See the Sauce</string>
-    <string name="source_url">https://github.com/Commit451/GitLabAndroid</string>
+    <string name="source_url">https://gitlab.com/Commit451/GitLabAndroid</string>
     <string name="failed_to_load_contributors">Failed to load contributors :(</string>
 
     <!-- Account -->

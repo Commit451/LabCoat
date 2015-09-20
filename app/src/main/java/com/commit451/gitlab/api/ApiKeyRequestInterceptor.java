@@ -15,6 +15,7 @@ public class ApiKeyRequestInterceptor implements Interceptor {
 
     private static final String KEY_PRIVATE_TOKEN = "PRIVATE-TOKEN";
 
+    //TODO change this to where it does not read from prefs every time (inefficient)
     @Override
     public Response intercept(Chain chain) throws IOException {
         return chain.proceed(chain.request().newBuilder()
