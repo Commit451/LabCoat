@@ -1,6 +1,8 @@
 package com.commit451.gitlab.activities;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -14,6 +16,8 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
@@ -89,8 +93,17 @@ public class MainActivity extends BaseActivity {
 		setContentView(R.layout.activity_main);
 		ButterKnife.bind(this);
 
+		// Setup window flags if Lollipop
+		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+			Window window = getWindow();
+			window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+			window.setStatusBarColor(Color.TRANSPARENT);
+		}
+
 		eventReceiver = new EventReceiver();
 		GitLabApp.bus().register(eventReceiver);
+
+		drawerLayout.setStatusBarBackgroundColor(getResources().getColor(R.color.purple_dark));
 
 		toolbar.setNavigationIcon(R.drawable.ic_menu);
 		toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -102,14 +115,9 @@ public class MainActivity extends BaseActivity {
 		toolbar.inflateMenu(R.menu.main);
 		toolbar.setOnMenuItemClickListener(mMenuItemClickListener);
 		
-		if(!Prefs.isLoggedIn(this)) {
-            startActivity(new Intent(this, LoginActivity.class));
-        }
-		else {
-			navigationView.loadCurrentUser();
-            connect();
-        }
-		
+		navigationView.loadCurrentUser();
+		connect();
+
 		// Create the adapter that will return a fragment for each of the three
 		// primary sections of the app.
 		SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
