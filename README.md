@@ -7,7 +7,7 @@ This is the source code for the unofficial GitLab Android app.
 
 ![Image](https://raw.githubusercontent.com/Commit451/GitLabAndroid/master/ic_launcher-web.png)
 
-Please see the [issues](https://github.com/Commit451/GitLabAndroid/issues) section to
+Please see the [issues](https://gitlab.com/Commit451/GitLabAndroid/issues) section to
 report any bugs or feature requests and to see the list of known issues.
 
 ## Building
