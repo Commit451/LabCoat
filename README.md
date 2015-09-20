@@ -34,7 +34,7 @@ The following 3rd party libraries are the reason this app works. Rapid developme
 - CircleImageView (https://github.com/hdodenhof/CircleImageView)
 
 ## Contributing
-Please fork this repository and contribute back!
+Please fork this repository and contribute back! All Merge Requests should be made agains the `develop` branch, as it is the active branch for develop. Please make your best effort to break up commits as much as possible to improve the reviewing process.
 
 License
 --------
