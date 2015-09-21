@@ -29,6 +29,10 @@ import timber.log.Timber;
 
 public class IssuesFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
 
+	public static IssuesFragment newInstance() {
+		return new IssuesFragment();
+	}
+
 	@Bind(R.id.add_issue_button) View addIssueButton;
 	@Bind(R.id.list) RecyclerView listView;
     @Bind(R.id.swipe_layout) SwipeRefreshLayout swipeLayout;

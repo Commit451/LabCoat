@@ -8,6 +8,7 @@ import com.commit451.gitlab.model.DiffLine;
 import com.commit451.gitlab.model.FileResponse;
 import com.commit451.gitlab.model.Group;
 import com.commit451.gitlab.model.Issue;
+import com.commit451.gitlab.model.MergeRequest;
 import com.commit451.gitlab.model.Milestone;
 import com.commit451.gitlab.model.Note;
 import com.commit451.gitlab.model.Project;
@@ -65,6 +66,9 @@ public interface GitLab {
 
     @GET(API_VERSION + "/projects/{id}/repository/contributors")
     Call<List<Contributor>> getContributors(@Path("id") long projectId);
+
+    @GET(API_VERSION + "/projects/{id}/merge_requests")
+    Call<List<MergeRequest>> getMergeRequests(@Path("id") long projectId);
 	
 	/* --- COMMITS --- */
 

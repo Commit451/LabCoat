@@ -25,6 +25,10 @@ import timber.log.Timber;
 
 public class CommitsFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
 
+	public static CommitsFragment newInstance() {
+		return new CommitsFragment();
+	}
+
 	@Bind(R.id.list) RecyclerView listView;
 	CommitsAdapter adapter;
     @Bind(R.id.swipe_layout) SwipeRefreshLayout swipeLayout;

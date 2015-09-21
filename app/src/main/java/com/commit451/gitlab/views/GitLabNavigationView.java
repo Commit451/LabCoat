@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.support.v4.graphics.ColorUtils;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,6 +23,7 @@ import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.dialogs.LogoutDialog;
 import com.commit451.gitlab.model.Project;
 import com.commit451.gitlab.model.User;
+import com.commit451.gitlab.tools.ImageUtil;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -31,7 +31,6 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import fr.tkeunebr.gravatar.Gravatar;
 import retrofit.Callback;
 import retrofit.Response;
 import timber.log.Timber;
@@ -119,12 +118,7 @@ public class GitLabNavigationView extends FrameLayout {
         if (user.getUsername() != null) {
             userName.setText(user.getUsername());
         }
-        int size = getResources().getDimensionPixelSize(R.dimen.larger_image_size);
-        String url = "http://www.gravatar.com/avatar/00000000000000000000000000000000?s=" + size;
-        if(user.getEmail() != null) {
-            url = Gravatar.init().with(user.getEmail()).size(size).build();
-            userEmail.setText(user.getEmail());
-        }
+        String url = ImageUtil.getGravatarUrl(user, getResources().getDimensionPixelSize(R.dimen.larger_image_size));
         Picasso.with(getContext())
                 .load(url)
                 .into(profileImage);

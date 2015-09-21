@@ -12,6 +12,9 @@ import fr.tkeunebr.gravatar.Gravatar;
 public class ImageUtil {
 
     public static String getGravatarUrl(User user, int size) {
+        if (user == null) {
+            return getGravatarUrl("", size);
+        }
         if (user.getAvatarUrl() != null) {
             return user.getAvatarUrl() + "&s=" + size;
         }

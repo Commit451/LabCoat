@@ -30,8 +30,18 @@ import retrofit.Response;
 import timber.log.Timber;
 
 public class UsersFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
-	
-	@Bind(R.id.add_user_button) View addUserButton;
+
+
+    public static UsersFragment newInstance() {
+
+        Bundle args = new Bundle();
+
+        UsersFragment fragment = new UsersFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Bind(R.id.add_user_button) View addUserButton;
 	@Bind(R.id.list) RecyclerView listView;
     UserAdapter mAdapter;
 	@Bind(R.id.error_text) TextView errorText;

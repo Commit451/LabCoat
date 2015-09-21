@@ -1,14 +1,10 @@
 package com.commit451.gitlab.activities;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -24,6 +20,7 @@ import android.widget.Spinner;
 
 import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
+import com.commit451.gitlab.adapter.SectionsPagerAdapter;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.events.CloseDrawerEvent;
 import com.commit451.gitlab.events.ProjectChangedEvent;
@@ -31,6 +28,7 @@ import com.commit451.gitlab.events.ReloadDataEvent;
 import com.commit451.gitlab.fragments.CommitsFragment;
 import com.commit451.gitlab.fragments.FilesFragment;
 import com.commit451.gitlab.fragments.IssuesFragment;
+import com.commit451.gitlab.fragments.MergeRequestFragment;
 import com.commit451.gitlab.fragments.UsersFragment;
 import com.commit451.gitlab.model.Branch;
 import com.commit451.gitlab.model.Group;
@@ -120,7 +118,7 @@ public class MainActivity extends BaseActivity {
 
 		// Create the adapter that will return a fragment for each of the three
 		// primary sections of the app.
-		SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+		SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
 		
 		// Set up the ViewPager with the sections adapter.
 		viewPager.setAdapter(sectionsPagerAdapter);
@@ -152,9 +150,13 @@ public class MainActivity extends BaseActivity {
 				handled = filesFragment.onBackPressed();
 				break;
 			case 3:
-				UsersFragment usersFragment = (UsersFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.pager + ":3");
-				handled = usersFragment.onBackPressed();
+				MergeRequestFragment mergeRequestFragment = (MergeRequestFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.pager + ":3");
+				handled = mergeRequestFragment.onBackPressed();
 				break;
+            case 4:
+                UsersFragment usersFragment = (UsersFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.pager + ":3");
+                handled = usersFragment.onBackPressed();
+                break;
 		}
 		
 		if(!handled)
@@ -164,59 +166,6 @@ public class MainActivity extends BaseActivity {
 	private void broadcastLoad() {
         GitLabApp.bus().post(new ReloadDataEvent());
     }
-	
-	/**
-	 * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-	 * one of the sections/tabs/pages.
-	 */
-	public class SectionsPagerAdapter extends FragmentPagerAdapter {
-		
-		public SectionsPagerAdapter(FragmentManager fm) {
-			super(fm);
-		}
-		
-		@Override
-		public Fragment getItem(int position) {
-			Fragment fragment = null;
-			
-			switch(position) {
-				case 0:
-					fragment = new CommitsFragment();
-					break;
-				case 1:
-					fragment = new IssuesFragment();
-					break;
-				case 2:
-					fragment = new FilesFragment();
-					break;
-				case 3:
-					fragment = new UsersFragment();
-					break;
-			}
-
-			return fragment;
-		}
-		
-		@Override
-		public int getCount() {
-			return 4;
-		}
-		
-		@Override
-		public CharSequence getPageTitle(int position) {
-			switch(position) {
-				case 0:
-					return getString(R.string.title_section1);
-				case 1:
-					return getString(R.string.title_section2);
-				case 2:
-					return getString(R.string.title_section3);
-				case 3:
-					return getString(R.string.title_section4);
-			}
-			return null;
-		}
-	}
 
 	/* --- CONNECT --- */
 

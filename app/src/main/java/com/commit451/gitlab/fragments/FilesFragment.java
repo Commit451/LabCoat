@@ -30,6 +30,15 @@ import timber.log.Timber;
 
 public class FilesFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
 
+	public static FilesFragment newInstance() {
+		
+		Bundle args = new Bundle();
+		
+		FilesFragment fragment = new FilesFragment();
+		fragment.setArguments(args);
+		return fragment;
+	}
+	
 	private ArrayList<String> path;
 
 	@Bind(R.id.error_text) TextView errorText;
