@@ -11,9 +11,13 @@ import android.view.ViewGroup;
 
 import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
+import com.commit451.gitlab.activities.DiffActivity;
 import com.commit451.gitlab.adapter.CommitsAdapter;
 import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.events.ProjectReloadEvent;
 import com.commit451.gitlab.model.DiffLine;
+import com.commit451.gitlab.model.Project;
+import com.squareup.otto.Subscribe;
 
 import java.util.List;
 
@@ -34,31 +38,44 @@ public class CommitsFragment extends BaseFragment implements SwipeRefreshLayout.
     @Bind(R.id.swipe_layout) SwipeRefreshLayout swipeLayout;
     @Bind(R.id.message_text) View messageView;
 
+    EventReceiver mEventReceiver;
+	Project mProject;
+	String mBranchName;
+
+    private final CommitsAdapter.Listener mCommitsAdapterListener = new CommitsAdapter.Listener() {
+        @Override
+        public void onCommitClicked(DiffLine diffLine) {
+            getActivity().startActivity(DiffActivity.newInstance(getActivity(), mProject, diffLine));
+        }
+    };
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		adapter = new CommitsAdapter();
+		adapter = new CommitsAdapter(mCommitsAdapterListener);
+        mEventReceiver = new EventReceiver();
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.fragment_commits, container, false);
+		return inflater.inflate(R.layout.fragment_commits, container, false);
+	}
+
+	@Override
+	public void onViewCreated(View view, Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
 		ButterKnife.bind(this, view);
 
+        GitLabApp.bus().register(mEventReceiver);
 		listView.setLayoutManager(new LinearLayoutManager(getActivity()));
 		listView.setAdapter(adapter);
-        swipeLayout.setOnRefreshListener(this);
-
-		if(GitLabApp.instance().getSelectedProject() != null) {
-            loadData();
-        }
-		
-		return view;
+		swipeLayout.setOnRefreshListener(this);
 	}
-	
+
 	@Override
 	public void onDestroyView() {
 		super.onDestroyView();
+        GitLabApp.bus().unregister(mEventReceiver);
         ButterKnife.unbind(this);
 	}
 	
@@ -69,24 +86,8 @@ public class CommitsFragment extends BaseFragment implements SwipeRefreshLayout.
 
     @Override
 	protected void loadData() {
-		if(GitLabApp.instance().getSelectedProject() == null) {
-            return;
-        }
-
-		if(GitLabApp.instance().getSelectedBranch() == null) {
-            if(swipeLayout != null && swipeLayout.isRefreshing()) {
-                swipeLayout.setRefreshing(false);
-            }
-
-            adapter.setData(null);
-            return;
-        }
-		
-		if(swipeLayout != null && !swipeLayout.isRefreshing()) {
-            swipeLayout.setRefreshing(true);
-        }
-
-        GitLabClient.instance().getCommits(GitLabApp.instance().getSelectedProject().getId(), GitLabApp.instance().getSelectedBranch().getName()).enqueue(commitsCallback);
+		swipeLayout.setRefreshing(true);
+        GitLabClient.instance().getCommits(mProject.getId(), mBranchName).enqueue(commitsCallback);
 	}
 
 	public boolean onBackPressed() {
@@ -130,4 +131,14 @@ public class CommitsFragment extends BaseFragment implements SwipeRefreshLayout.
 			adapter.setData(null);
 		}
 	};
+
+    private class EventReceiver {
+
+        @Subscribe
+        public void onLoadReady(ProjectReloadEvent event) {
+            mProject = event.project;
+            mBranchName = event.branchName;
+            loadData();
+        }
+    }
 }

@@ -5,7 +5,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.activities.IssueActivity;
 import com.commit451.gitlab.model.Issue;
 import com.commit451.gitlab.viewHolders.IssueViewHolder;
 
@@ -17,13 +16,18 @@ import java.util.Collection;
  */
 public class IssuesAdapter extends RecyclerView.Adapter<IssueViewHolder> {
 
+    public interface Listener {
+        void onIssueClicked(Issue issue);
+    }
+    private Listener mListener;
     private ArrayList<Issue> mValues;
 
     public Issue getValueAt(int position) {
         return mValues.get(position);
     }
 
-    public IssuesAdapter() {
+    public IssuesAdapter(Listener listener) {
+        mListener = listener;
         mValues = new ArrayList<>();
     }
 
@@ -31,7 +35,7 @@ public class IssuesAdapter extends RecyclerView.Adapter<IssueViewHolder> {
         @Override
         public void onClick(View v) {
             int position = (int) v.getTag(R.id.list_position);
-            v.getContext().startActivity(IssueActivity.newInstance(v.getContext(), getValueAt(position)));
+            mListener.onIssueClicked(getValueAt(position));
         }
     };
 

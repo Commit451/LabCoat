@@ -18,6 +18,10 @@ public class ApiKeyRequestInterceptor implements Interceptor {
     //TODO change this to where it does not read from prefs every time (inefficient)
     @Override
     public Response intercept(Chain chain) throws IOException {
+        String privateToken = Prefs.getPrivateToken(GitLabApp.instance());
+        if (privateToken == null) {
+            throw new IllegalStateException("The private token was null");
+        }
         return chain.proceed(chain.request().newBuilder()
                 .header(KEY_PRIVATE_TOKEN, Prefs.getPrivateToken(GitLabApp.instance()))
                 .build());

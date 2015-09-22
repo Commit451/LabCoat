@@ -24,39 +24,41 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".activities.MainActivity" />
+        <activity android:name=".activities.ProjectActivity" />
 
-        <activity
-            android:name=".activities.LoginActivity" />
+        <activity android:name=".activities.LoginActivity" />
+
+        <activity android:name=".activities.ProjectsActivity" />
 
         <activity
             android:name=".activities.FileActivity"
             android:configChanges="orientation|screenSize"
-            android:parentActivityName=".activities.MainActivity" >
+            android:parentActivityName=".activities.ProjectActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.MainActivity" />
+                android:value=".activities.ProjectActivity" />
         </activity>
         <activity
             android:name=".activities.IssueActivity"
             android:configChanges="orientation|screenSize"
-            android:parentActivityName=".activities.MainActivity" >
+            android:parentActivityName=".activities.ProjectActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.MainActivity" />
+                android:value=".activities.ProjectActivity" />
         </activity>
         <activity
             android:name=".activities.DiffActivity"
             android:configChanges="orientation|screenSize"
-            android:parentActivityName=".activities.MainActivity" >
+            android:parentActivityName=".activities.ProjectActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.MainActivity" />
+                android:value=".activities.ProjectActivity" />
         </activity>
 
         <activity android:name=".activities.AboutActivity"/>
         <activity android:name=".activities.AddUserActivity"/>
+        <activity android:name=".activities.UserActivity"/>
+        <activity android:name=".activities.SearchActivity"/>
 
         <meta-data
             android:name="io.fabric.ApiKey"

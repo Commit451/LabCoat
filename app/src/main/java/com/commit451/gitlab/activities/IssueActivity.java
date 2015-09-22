@@ -14,12 +14,12 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.NotesAdapter;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.Issue;
 import com.commit451.gitlab.model.Note;
+import com.commit451.gitlab.model.Project;
 import com.commit451.gitlab.model.User;
 
 import org.parceler.Parcels;
@@ -35,10 +35,12 @@ import timber.log.Timber;
 
 public class IssueActivity extends BaseActivity {
 
+	private static final String EXTRA_PROJECT = "extra_project";
 	private static final String EXTRA_SELECTED_ISSUE = "extra_selected_issue";
 
-	public static Intent newInstance(Context context, Issue issue) {
+	public static Intent newInstance(Context context, Project project, Issue issue) {
 		Intent intent = new Intent(context, IssueActivity.class);
+		intent.putExtra(EXTRA_PROJECT, Parcels.wrap(project));
 		intent.putExtra(EXTRA_SELECTED_ISSUE, Parcels.wrap(issue));
 		return intent;
 	}
@@ -50,7 +52,8 @@ public class IssueActivity extends BaseActivity {
 	@Bind(R.id.progress) View progress;
 
 	private NotesAdapter notesAdapter;
-    Issue issue;
+	Project mProject;
+    Issue mIssue;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -58,11 +61,12 @@ public class IssueActivity extends BaseActivity {
 		setContentView(R.layout.activity_issue);
 		ButterKnife.bind(this);
 
-		issue = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_SELECTED_ISSUE));
+		mProject = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_PROJECT));
+		mIssue = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_SELECTED_ISSUE));
 
-        long tempId = issue.getIid();
+        long tempId = mIssue.getIid();
         if(tempId < 1) {
-            tempId = issue.getId();
+            tempId = mIssue.getId();
         }
 
         toolbar.setNavigationIcon(R.drawable.ic_back);
@@ -74,7 +78,7 @@ public class IssueActivity extends BaseActivity {
 		});
         toolbar.setTitle("Issue #" + tempId);
 
-        notesAdapter = new NotesAdapter(issue);
+        notesAdapter = new NotesAdapter(mIssue);
         listView.setLayoutManager(new LinearLayoutManager(this));
         listView.setAdapter(notesAdapter);
 
@@ -97,7 +101,7 @@ public class IssueActivity extends BaseActivity {
 
     private void load() {
 		swipeRefreshLayout.setRefreshing(true);
-        GitLabClient.instance().getIssueNotes(GitLabApp.instance().getSelectedProject().getId(), issue.getId()).enqueue(notesCallback);
+        GitLabClient.instance().getIssueNotes(mProject.getId(), mIssue.getId()).enqueue(notesCallback);
 	}
 
 	private void postNote() {
@@ -115,7 +119,7 @@ public class IssueActivity extends BaseActivity {
 		imm.hideSoftInputFromWindow(newNoteEdit.getWindowToken(), 0);
 		newNoteEdit.setText("");
 
-		GitLabClient.instance().postIssueNote(GitLabApp.instance().getSelectedProject().getId(), issue.getId(), body).enqueue(noteCallback);
+		GitLabClient.instance().postIssueNote(mProject.getId(), mIssue.getId(), body).enqueue(noteCallback);
 	}
 	
 	private Callback<List<Note>> notesCallback = new Callback<List<Note>>() {

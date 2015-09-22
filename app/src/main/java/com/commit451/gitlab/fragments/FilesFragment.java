@@ -14,7 +14,8 @@ import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activities.FileActivity;
 import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.events.ProjectChangedEvent;
+import com.commit451.gitlab.events.ProjectReloadEvent;
+import com.commit451.gitlab.model.Project;
 import com.commit451.gitlab.model.TreeItem;
 import com.commit451.gitlab.viewHolders.FileViewHolder;
 import com.squareup.otto.Subscribe;
@@ -28,7 +29,7 @@ import retrofit.Callback;
 import retrofit.Response;
 import timber.log.Timber;
 
-public class FilesFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
+public class FilesFragment extends BaseFragment {
 
 	public static FilesFragment newInstance() {
 		
@@ -38,29 +39,35 @@ public class FilesFragment extends BaseFragment implements SwipeRefreshLayout.On
 		fragment.setArguments(args);
 		return fragment;
 	}
-	
-	private ArrayList<String> path;
 
 	@Bind(R.id.error_text) TextView errorText;
     @Bind(R.id.swipe_layout) SwipeRefreshLayout swipeLayout;
 	@Bind(R.id.list) RecyclerView list;
 
 	EventReceiver eventReceiver;
-	
-	public FilesFragment() {}
-	
-	@Override
+    Project mProject;
+    String mBranchName;
+    ArrayList<String> mPath;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mPath = new ArrayList<>();
+    }
+
+    @Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_files, container, false);
 		ButterKnife.bind(this, view);
 
 		list.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        swipeLayout.setOnRefreshListener(this);
-		
-		if(GitLabApp.instance().getSelectedProject() != null) {
-			loadData();
-		}
+        swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadData();
+            }
+        });
 
 		eventReceiver = new EventReceiver();
 		GitLabApp.bus().register(eventReceiver);
@@ -71,42 +78,27 @@ public class FilesFragment extends BaseFragment implements SwipeRefreshLayout.On
 	@Override
 	public void onDestroyView() {
 		super.onDestroyView();
+        GitLabApp.bus().unregister(eventReceiver);
         ButterKnife.unbind(this);
-		GitLabApp.bus().unregister(eventReceiver);
 	}
 
 	@Override
 	protected void loadData() {
         Timber.d("loadData");
-        path = new ArrayList<>();
-		loadFiles();
-	}
-	
-	@Override
-	public void onRefresh() {
-		loadFiles();
-	}
-	
-	private void loadFiles() {
-		String branch = "master";
-		if(GitLabApp.instance().getSelectedBranch() != null) {
-			branch = GitLabApp.instance().getSelectedBranch().getName();
-		}
-		
-		if(swipeLayout != null && !swipeLayout.isRefreshing()) {
-			swipeLayout.setRefreshing(true);
-		}
-		
-		String currentPath = "";
-        for(String p : path) {
+
+        if(swipeLayout != null && !swipeLayout.isRefreshing()) {
+            swipeLayout.setRefreshing(true);
+        }
+
+        String currentPath = "";
+        for(String p : mPath) {
             currentPath += p;
         }
 
-		GitLabClient.instance().getTree(GitLabApp.instance().getSelectedProject().getId(), branch, currentPath).enqueue(filesCallback);
-	}
+        GitLabClient.instance().getTree(mProject.getId(), mBranchName, currentPath).enqueue(filesCallback);
+    }
 	
 	private Callback<List<TreeItem>> filesCallback = new Callback<List<TreeItem>>() {
-
 
 		@Override
 		public void onResponse(Response<List<TreeItem>> response) {
@@ -116,8 +108,8 @@ public class FilesFragment extends BaseFragment implements SwipeRefreshLayout.On
 					list.setVisibility(View.GONE);
 				}
 				else {
-					if(path.size() > 0) {
-						path.remove(path.size() - 1);
+					if(mPath.size() > 0) {
+                        mPath.remove(mPath.size() - 1);
 					}
 					list.setAdapter(null);
 
@@ -153,9 +145,9 @@ public class FilesFragment extends BaseFragment implements SwipeRefreshLayout.On
 	};
 	
 	public boolean onBackPressed() {
-		if(path.size() > 0) {
-			path.remove(path.size() - 1);
-			loadFiles();
+		if(mPath.size() > 0) {
+            mPath.remove(mPath.size() - 1);
+            loadData();
 			return true;
 		}
 		
@@ -165,7 +157,10 @@ public class FilesFragment extends BaseFragment implements SwipeRefreshLayout.On
 	private class EventReceiver {
 
 		@Subscribe
-		public void onProjectChanged(ProjectChangedEvent event) {
+		public void onLoadReady(ProjectReloadEvent event) {
+            mPath.clear();
+            mProject = event.project;
+            mBranchName = event.branchName;
 			loadData();
 		}
 	}
@@ -189,17 +184,16 @@ public class FilesFragment extends BaseFragment implements SwipeRefreshLayout.On
 				TreeItem treeItem = getValueAt(position);
 
 				if(treeItem.getType().equals("tree")) {
-					path.add(treeItem.getName() + "/");
-					loadFiles();
+                    mPath.add(treeItem.getName() + "/");
+					loadData();
 				}
 				else if(treeItem.getType().equals("blob")) {
 					String pathExtra = "";
-					for(String p : path) {
+					for(String p : mPath) {
 						pathExtra += p;
 					}
                     pathExtra = pathExtra + treeItem.getName();
-					startActivity(FileActivity.newIntent(getActivity(), GitLabApp.instance().getSelectedProject().getId(),
-                            pathExtra, GitLabApp.instance().getSelectedBranch().getName()));
+					startActivity(FileActivity.newIntent(getActivity(), mProject.getId(), pathExtra, mBranchName));
 				}
 			}
 		};

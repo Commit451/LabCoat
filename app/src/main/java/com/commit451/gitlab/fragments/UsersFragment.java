@@ -15,8 +15,9 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.activities.AddUserActivity;
 import com.commit451.gitlab.adapter.UserAdapter;
 import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.events.ProjectChangedEvent;
+import com.commit451.gitlab.events.ProjectReloadEvent;
 import com.commit451.gitlab.events.UserAddedEvent;
+import com.commit451.gitlab.model.Project;
 import com.commit451.gitlab.model.User;
 import com.squareup.otto.Subscribe;
 
@@ -47,6 +48,7 @@ public class UsersFragment extends BaseFragment implements SwipeRefreshLayout.On
 	@Bind(R.id.error_text) TextView errorText;
     @Bind(R.id.swipe_layout) SwipeRefreshLayout swipeLayout;
 
+    Project mProject;
 	EventReceiver eventReceiver;
 
 	public UsersFragment() {}
@@ -65,10 +67,6 @@ public class UsersFragment extends BaseFragment implements SwipeRefreshLayout.On
 		listView.setLayoutManager(new LinearLayoutManager(getActivity()));
         listView.setAdapter(mAdapter);
         swipeLayout.setOnRefreshListener(this);
-
-		if(GitLabApp.instance().getSelectedProject() != null) {
-			loadData();
-		}
 
 		eventReceiver = new EventReceiver();
 		GitLabApp.bus().register(eventReceiver);
@@ -89,22 +87,8 @@ public class UsersFragment extends BaseFragment implements SwipeRefreshLayout.On
 	}
 	
 	public void loadData() {
-		if(swipeLayout != null && !swipeLayout.isRefreshing()) {
-			swipeLayout.setRefreshing(true);
-		}
-		
-		if(GitLabApp.instance().getSelectedProject().getGroup() == null) {
-			errorText.setVisibility(View.VISIBLE);
-			errorText.setText(R.string.not_in_group);
-			listView.setVisibility(View.GONE);
-			addUserButton.setVisibility(View.GONE);
-			if(swipeLayout != null && swipeLayout.isRefreshing()) {
-				swipeLayout.setRefreshing(false);
-			}
-			return;
-		}
-
-        GitLabClient.instance().getGroupMembers(GitLabApp.instance().getSelectedProject().getGroup().getId()).enqueue(usersCallback);
+        swipeLayout.setRefreshing(true);
+        GitLabClient.instance().getGroupMembers(mProject.getNamespace().getId()).enqueue(usersCallback);
 	}
 	
 	public Callback<List<User>> usersCallback = new Callback<List<User>>() {
@@ -153,7 +137,8 @@ public class UsersFragment extends BaseFragment implements SwipeRefreshLayout.On
 	private class EventReceiver {
 
 		@Subscribe
-		public void onProjectChanged(ProjectChangedEvent event) {
+		public void onProjectChanged(ProjectReloadEvent event) {
+            mProject = event.project;
 			loadData();
 		}
 

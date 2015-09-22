@@ -11,11 +11,14 @@ import android.view.ViewGroup;
 
 import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
+import com.commit451.gitlab.activities.IssueActivity;
 import com.commit451.gitlab.adapter.IssuesAdapter;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.dialogs.NewIssueDialog;
 import com.commit451.gitlab.events.IssueCreatedEvent;
+import com.commit451.gitlab.events.ProjectReloadEvent;
 import com.commit451.gitlab.model.Issue;
+import com.commit451.gitlab.model.Project;
 import com.squareup.otto.Subscribe;
 
 import java.util.List;
@@ -39,6 +42,14 @@ public class IssuesFragment extends BaseFragment implements SwipeRefreshLayout.O
 
 	IssuesAdapter issuesAdapter;
 	EventReceiver eventReceiver;
+    Project mProject;
+
+	private final IssuesAdapter.Listener mIssuesAdapterListener = new IssuesAdapter.Listener() {
+		@Override
+		public void onIssueClicked(Issue issue) {
+			getActivity().startActivity(IssueActivity.newInstance(getActivity(), mProject, issue));
+		}
+	};
 
 	public IssuesFragment() {}
 	
@@ -48,13 +59,9 @@ public class IssuesFragment extends BaseFragment implements SwipeRefreshLayout.O
 		ButterKnife.bind(this, view);
 
 		listView.setLayoutManager(new LinearLayoutManager(getActivity()));
-		issuesAdapter = new IssuesAdapter();
+		issuesAdapter = new IssuesAdapter(mIssuesAdapterListener);
 		listView.setAdapter(issuesAdapter);
         swipeLayout.setOnRefreshListener(this);
-
-		if(GitLabApp.instance().getSelectedProject() != null) {
-			loadData();
-		}
 
 		eventReceiver = new EventReceiver();
 		GitLabApp.bus().register(eventReceiver);
@@ -79,7 +86,7 @@ public class IssuesFragment extends BaseFragment implements SwipeRefreshLayout.O
 			swipeLayout.setRefreshing(true);
 		}
 
-		GitLabClient.instance().getIssues(GitLabApp.instance().getSelectedProject().getId()).enqueue(issuesCallback);
+		GitLabClient.instance().getIssues(mProject.getId()).enqueue(issuesCallback);
 	}
 	
 	private Callback<List<Issue>> issuesCallback = new Callback<List<Issue>>() {
@@ -120,6 +127,11 @@ public class IssuesFragment extends BaseFragment implements SwipeRefreshLayout.O
 
 	private class EventReceiver {
 
+        @Subscribe
+        public void onReloadData(ProjectReloadEvent event) {
+            mProject = event.project;
+            loadData();
+        }
 		@Subscribe
 		public void onIssueAdded(IssueCreatedEvent event) {
 			issuesAdapter.addIssue(event.issue);

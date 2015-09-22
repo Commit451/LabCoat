@@ -1,32 +1,32 @@
 package com.commit451.gitlab.views;
 
-import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.support.design.widget.NavigationView;
 import android.support.v4.view.ViewCompat;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.TypedValue;
+import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.adapter.ProjectsAdapter;
+import com.commit451.gitlab.activities.ProjectsActivity;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.dialogs.LogoutDialog;
-import com.commit451.gitlab.model.Project;
+import com.commit451.gitlab.events.CloseDrawerEvent;
 import com.commit451.gitlab.model.User;
 import com.commit451.gitlab.tools.ImageUtil;
+import com.commit451.gitlab.tools.NavigationManager;
 import com.squareup.picasso.Picasso;
-
-import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -39,18 +39,37 @@ import timber.log.Timber;
  * Our very own navigation view
  * Created by Jawn on 7/28/2015.
  */
-public class GitLabNavigationView extends FrameLayout {
+public class GitLabNavigationView extends NavigationView {
 
     @Bind(R.id.profile_image) ImageView profileImage;
     @Bind(R.id.profile_user) TextView userName;
     @Bind(R.id.profile_email) TextView userEmail;
-    @Bind(R.id.list) RecyclerView projectList;
     @Bind(R.id.drawer_header) FrameLayout header;
-    ProjectsAdapter mAdapter;
 
     private Drawable mInsetForeground;
     private Rect mInsets;
     private Rect mTempRect = new Rect();
+
+    private final OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new OnNavigationItemSelectedListener() {
+        @Override
+        public boolean onNavigationItemSelected(MenuItem menuItem) {
+            switch (menuItem.getItemId()) {
+                case R.id.nav_projects:
+                    if (getContext() instanceof ProjectsActivity) {
+
+                    } else {
+                        NavigationManager.navigateToProjects((Activity) getContext());
+                    }
+                    GitLabApp.bus().post(new CloseDrawerEvent());
+                    return true;
+                case R.id.nav_about:
+                    GitLabApp.bus().post(new CloseDrawerEvent());
+                    NavigationManager.navigateToAbout((Activity) getContext());
+                    return true;
+            }
+            return false;
+        }
+    };
 
     @OnClick(R.id.drawer_header)
     void onHeaderClick() {
@@ -88,26 +107,28 @@ public class GitLabNavigationView extends FrameLayout {
         init();
     }
 
-    @TargetApi(21)
-    public GitLabNavigationView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-        init();
-    }
-
     private void init() {
-        inflate(getContext(), R.layout.nav_drawer, this);
+        setNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        inflateMenu(R.menu.navigation);
+        inflateHeaderView(R.layout.nav_drawer);
         ButterKnife.bind(this);
-        mAdapter = new ProjectsAdapter();
-        projectList.setAdapter(mAdapter);
-        projectList.setLayoutManager(new LinearLayoutManager(getContext()));
         mInsetForeground = new ColorDrawable(Color.parseColor("#44000000"));
+        setSelectedNavigationItem();
+        loadCurrentUser();
     }
 
-    public void setProjects(List<Project> projects) {
-        mAdapter.setData(projects);
+    private void setSelectedNavigationItem() {
+        for (int i=0; i<getMenu().size(); i++) {
+            MenuItem menuItem = getMenu().getItem(i);
+            if (getContext() instanceof ProjectsActivity && menuItem.getItemId() == R.id.nav_projects) {
+                menuItem.setChecked(true);
+                return;
+            }
+        }
+        throw new IllegalStateException("You need to set a selected nav item for this activity");
     }
 
-    public void loadCurrentUser() {
+    private void loadCurrentUser() {
         GitLabClient.instance().getUser().enqueue(userCallback);
     }
 

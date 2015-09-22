@@ -2,6 +2,7 @@ package com.commit451.gitlab.activities;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,12 +15,11 @@ import android.widget.Toast;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.model.Project;
 import com.commit451.gitlab.model.Session;
+import com.commit451.gitlab.model.User;
 import com.commit451.gitlab.tools.KeyboardUtil;
+import com.commit451.gitlab.tools.NavigationManager;
 import com.commit451.gitlab.tools.Prefs;
-
-import java.util.List;
 
 import javax.net.ssl.SSLHandshakeException;
 
@@ -31,6 +31,11 @@ import retrofit.Response;
 import timber.log.Timber;
 
 public class LoginActivity extends BaseActivity {
+
+	public static Intent newInstance(Context context) {
+		Intent intent = new Intent(context, LoginActivity.class);
+		return intent;
+	}
 
     @Bind(R.id.url_hint) TextInputLayout urlHint;
 	@Bind(R.id.url_input) TextView urlInput;
@@ -161,7 +166,6 @@ public class LoginActivity extends BaseActivity {
 			progress.setVisibility(View.GONE);
 
 			Prefs.setLoggedIn(LoginActivity.this, true);
-			Prefs.setUserId(LoginActivity.this, response.body().getId());
 			Prefs.setPrivateToken(LoginActivity.this, response.body().getPrivateToken());
 
 			Intent i = new Intent(LoginActivity.this, GitlabActivity.class);
@@ -177,30 +181,28 @@ public class LoginActivity extends BaseActivity {
 	
 	private void connectByToken() {
 		Prefs.setPrivateToken(this, tokenInput.getText().toString());
-		GitLabClient.instance().getProjects().enqueue(tokenCallback);
+		GitLabClient.instance().getUser().enqueue(mTestUserCallback);
 	}
-	
-	private Callback<List<Project>> tokenCallback = new Callback<List<Project>>() {
 
-		@Override
-		public void onResponse(Response<List<Project>> response) {
-			if (!response.isSuccess()) {
-				return;
-			}
-			progress.setVisibility(View.GONE);
+    private Callback<User> mTestUserCallback = new Callback<User>() {
+        @Override
+        public void onResponse(Response<User> response) {
+            if (!response.isSuccess()) {
+                return;
+            }
+            progress.setVisibility(View.GONE);
+            Prefs.setLoggedIn(LoginActivity.this, true);
+            NavigationManager.navigateToProjects(LoginActivity.this);
+        }
 
-			Prefs.setLoggedIn(LoginActivity.this, true);
+        @Override
+        public void onFailure(Throwable t) {
+            Timber.e(t.toString());
+            Toast.makeText(LoginActivity.this, R.string.error_creating_account, Toast.LENGTH_SHORT)
+                    .show();
 
-			Intent i = new Intent(LoginActivity.this, MainActivity.class);
-			i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			startActivity(i);
-		}
-
-		@Override
-		public void onFailure(Throwable t) {
-			handleConnectionError(t, false);
-		}
-	};
+        }
+    };
 
     private void handleConnectionError(Throwable e, boolean auth) {
         Timber.e(e.toString());

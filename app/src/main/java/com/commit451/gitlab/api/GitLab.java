@@ -51,11 +51,17 @@ public interface GitLab {
     Call<List<User>> getUsers();
 
     @GET(API_VERSION + "/projects?per_page=100")
-    Call<List<Project>> getProjects();
+    Call<List<Project>> getAllProjects();
+
+    @GET(API_VERSION + "/projects/owned?per_page=100")
+    Call<List<Project>> getMyProjects();
+
+    @GET(API_VERSION + "/projects?per_page=100")
+    Call<List<Project>> searchAllProjects(@Query("search") String query);
 	
 	/* --- PROJECTS --- */
 
-    @GET(API_VERSION + "/projects/{id}/repository/branches?per_page=100")
+    @GET(API_VERSION + "/projects/{id}/repository/branches?per_page=100&order_by=last_activity_at")
     Call<List<Branch>> getBranches(@Path("id") long projectId);
 
     @GET(API_VERSION + "/projects/{id}/milestones?per_page=100")

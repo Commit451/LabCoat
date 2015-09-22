@@ -11,15 +11,15 @@ import org.parceler.Parcel;
 @Parcel
 public class Contributor {
     @SerializedName("name")
-    private String mName;
+    String mName;
     @SerializedName("email")
-    private String mEmail;
+    String mEmail;
     @SerializedName("commits")
-    private Integer mCommits;
+    Integer mCommits;
     @SerializedName("additions")
-    private Integer mAdditions;
+    Integer mAdditions;
     @SerializedName("deletions")
-    private String mDeletions;
+    String mDeletions;
 
     public Contributor() {}
 

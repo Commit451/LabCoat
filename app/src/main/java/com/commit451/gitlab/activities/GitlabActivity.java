@@ -1,9 +1,9 @@
 package com.commit451.gitlab.activities;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 
+import com.commit451.gitlab.tools.NavigationManager;
 import com.commit451.gitlab.tools.Prefs;
 
 /**
@@ -19,15 +19,9 @@ public class GitlabActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         if(!Prefs.isLoggedIn(this)) {
-            Intent login = new Intent(this, LoginActivity.class);
-            login.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(login);
-        }
-        else {
-            // Load MainActivity
-            Intent main = new Intent(this, MainActivity.class);
-            main.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(main);
+            NavigationManager.navigateToLogin(this);
+        } else {
+            NavigationManager.navigateToProjects(this);
         }
 
         // Always finish this activity

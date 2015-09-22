@@ -98,10 +98,11 @@ public class AddUserActivity extends BaseActivity {
     private final UserRoleDialog.Listener mUserRoleDialogListener = new UserRoleDialog.Listener() {
         @Override
         public void onAccessLevelClicked(String accessLevel) {
-            GitLabClient.instance().addGroupMember(
-                    GitLabApp.instance().getSelectedProject().getGroup().getId(),
-                    mSelectedUser.getId(),
-                    accessLevel).enqueue(mAddGroupMemeberCallback);
+            //TODO fix this cause yeah...
+//            GitLabClient.instance().addGroupMember(
+//                    GitLabApp.instance().getSelectedProject().getGroup().getId(),
+//                    mSelectedUser.getId(),
+//                    accessLevel).enqueue(mAddGroupMemeberCallback);
         }
     };
 

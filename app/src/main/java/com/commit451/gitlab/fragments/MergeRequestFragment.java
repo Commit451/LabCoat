@@ -15,7 +15,10 @@ import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.MergeRequestAdapter;
 import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.events.ProjectReloadEvent;
 import com.commit451.gitlab.model.MergeRequest;
+import com.commit451.gitlab.model.Project;
+import com.squareup.otto.Subscribe;
 
 import java.util.List;
 
@@ -41,7 +44,9 @@ public class MergeRequestFragment extends BaseFragment {
     @Bind(R.id.error_text) TextView mErrorText;
     @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
     @Bind(R.id.list) RecyclerView mRecyclerView;
+    EventReceiver mEventReceiver;
     MergeRequestAdapter mMergeRequestAdapter;
+    Project mProject;
 
     private final SwipeRefreshLayout.OnRefreshListener mOnRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {
         @Override
@@ -76,6 +81,12 @@ public class MergeRequestFragment extends BaseFragment {
         }
     };
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mEventReceiver = new EventReceiver();
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -86,6 +97,7 @@ public class MergeRequestFragment extends BaseFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
+        GitLabApp.bus().register(mEventReceiver);
         mSwipeRefreshLayout.setOnRefreshListener(mOnRefreshListener);
         mMergeRequestAdapter = new MergeRequestAdapter();
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -95,6 +107,7 @@ public class MergeRequestFragment extends BaseFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        GitLabApp.bus().unregister(mEventReceiver);
         ButterKnife.unbind(this);
     }
 
@@ -102,10 +115,19 @@ public class MergeRequestFragment extends BaseFragment {
     protected void loadData() {
         super.loadData();
         mSwipeRefreshLayout.setRefreshing(true);
-        GitLabClient.instance().getMergeRequests(GitLabApp.instance().getSelectedProject().getId()).enqueue(mCallback);
+        GitLabClient.instance().getMergeRequests(mProject.getId()).enqueue(mCallback);
     }
 
     public boolean onBackPressed() {
         return false;
+    }
+
+    private class EventReceiver {
+
+        @Subscribe
+        public void onProjectChanged(ProjectReloadEvent event) {
+            mProject = event.project;
+            loadData();
+        }
     }
 }

@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.Project;
 
@@ -26,6 +25,9 @@ public class ProjectViewHolder extends RecyclerView.ViewHolder {
     }
 
     @Bind(R.id.project_title) TextView title;
+    @Bind(R.id.project_description) TextView description;
+    @Bind(R.id.project_stars) TextView stars;
+    @Bind(R.id.project_forks) TextView forks;
 
     public ProjectViewHolder(View view) {
         super(view);
@@ -34,12 +36,20 @@ public class ProjectViewHolder extends RecyclerView.ViewHolder {
 
     public void bind(Project project) {
         title.setText(project.getName());
-        if (project.equals(GitLabApp.instance().getSelectedProject())) {
-            title.setTextColor(itemView.getResources().getColor(R.color.orange));
-            itemView.setBackgroundColor(itemView.getResources().getColor(R.color.grey));
+        if (project.getDescription() != null) {
+            description.setText(project.getDescription());
         } else {
-            itemView.setBackground(null);
-            title.setTextColor(itemView.getResources().getColor(R.color.white));
+            description.setText("");
+        }
+        if (project.getStarCount() == null) {
+            stars.setText("0");
+        } else {
+            stars.setText(project.getStarCount() + "");
+        }
+        if (project.getForksCount() == null) {
+            forks.setText("0");
+        } else {
+            forks.setText(project.getForksCount() + "");
         }
     }
 }

@@ -11,31 +11,31 @@ import org.parceler.Parcel;
 @Parcel
 public class MergeRequest {
     @SerializedName("id")
-    private long mId;
+    long mId;
     @SerializedName("iid")
-    private long mIid;
+    long mIid;
     @SerializedName("target_branch")
-    private String mTargetBranch;
+    String mTargetBranch;
     @SerializedName("source_branch")
-    private String mSourceBranch;
+    String mSourceBranch;
     @SerializedName("project_id")
-    private long mProjectId;
+    long mProjectId;
     @SerializedName("title")
-    private String mTitle;
+    String mTitle;
     @SerializedName("state")
-    private String mState;
+    String mState;
     @SerializedName("upvotes")
-    private long mUpvotes;
+    long mUpvotes;
     @SerializedName("downvotes")
-    private long mDownvotes;
+    long mDownvotes;
     @SerializedName("author")
-    private User mAuthor;
+    User mAuthor;
     @SerializedName("assignee")
-    private User mAssignee;
+    User mAssignee;
     @SerializedName("description")
-    private String mDescription;
+    String mDescription;
     @SerializedName("work_in_progress")
-    private boolean mWorkInProgress;
+    boolean mWorkInProgress;
 
     public MergeRequest() {}
 

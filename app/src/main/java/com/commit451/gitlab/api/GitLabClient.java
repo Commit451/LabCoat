@@ -38,8 +38,8 @@ public class GitLabClient {
             });
             Gson gson = gsonBuilder.create();
             OkHttpClient client = new OkHttpClient();
+            client.interceptors().add(new ApiKeyRequestInterceptor());
             client.interceptors().add(new TimberRequestInterceptor());
-            client.networkInterceptors().add(new ApiKeyRequestInterceptor());
 
             Retrofit restAdapter = new Retrofit.Builder()
                     .baseUrl(Prefs.getServerUrl(GitLabApp.instance()))

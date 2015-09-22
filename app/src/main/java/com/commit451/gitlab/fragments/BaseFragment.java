@@ -5,7 +5,6 @@ import android.support.v4.app.Fragment;
 import android.view.View;
 
 import com.commit451.gitlab.GitLabApp;
-import com.commit451.gitlab.events.ProjectChangedEvent;
 import com.commit451.gitlab.events.ReloadDataEvent;
 import com.squareup.otto.Subscribe;
 
@@ -42,11 +41,6 @@ public class BaseFragment extends Fragment{
 
         @Subscribe
         public void onReloadData(ReloadDataEvent event) {
-            loadData();
-        }
-
-        @Subscribe
-        public void onProjectChanged(ProjectChangedEvent event) {
             loadData();
         }
     }

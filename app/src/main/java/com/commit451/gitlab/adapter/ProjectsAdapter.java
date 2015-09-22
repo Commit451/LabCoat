@@ -4,14 +4,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.events.CloseDrawerEvent;
-import com.commit451.gitlab.events.ProjectChangedEvent;
-import com.commit451.gitlab.model.NavItem;
 import com.commit451.gitlab.model.Project;
-import com.commit451.gitlab.tools.Prefs;
-import com.commit451.gitlab.tools.Repository;
 import com.commit451.gitlab.viewHolders.ProjectViewHolder;
 
 import java.util.ArrayList;
@@ -23,16 +17,25 @@ import java.util.List;
  */
 public class ProjectsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    public interface Listener {
+        void onProjectClicked(Project project);
+    }
+
+    private Listener mListener;
     private List<Project> mValues;
-    private List<NavItem> mNavItems;
 
     public Project getValueAt(int position) {
         return mValues.get(position);
     }
 
-    public ProjectsAdapter() {
+    public ProjectsAdapter(Listener listener) {
+        mListener = listener;
         mValues = new ArrayList<>();
-        mNavItems = new ArrayList<>();
+    }
+
+    public void clearData() {
+        mValues.clear();
+        notifyDataSetChanged();
     }
 
     public void setData(Collection<Project> projects) {
@@ -47,14 +50,7 @@ public class ProjectsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         @Override
         public void onClick(View v) {
             int position = (int) v.getTag(R.id.list_position);
-            if(GitLabApp.instance().getSelectedProject() == null || !GitLabApp.instance().getSelectedProject().equals(Repository.projects.get(position))) {
-                //TODO make the event bus control most of this. NO MORE STATIC UI
-                GitLabApp.instance().setSelectedProject(Repository.projects.get(position));
-                Prefs.setLastProject(v.getContext(), GitLabApp.instance().getSelectedProject().toString());
-                notifyDataSetChanged();
-            }
-            GitLabApp.bus().post(new CloseDrawerEvent());
-            GitLabApp.bus().post(new ProjectChangedEvent(position));
+            mListener.onProjectClicked(getValueAt(position));
         }
     };
 
