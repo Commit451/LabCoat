@@ -44,5 +44,14 @@
             tools:text="Jawnnypoo"/>
 
     </LinearLayout>
+    <TextView
+        android:id="@+id/user_role"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/text_size_tiny"
+        android:layout_gravity="bottom"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        tools:text="Closed"/>
 
 </LinearLayout>

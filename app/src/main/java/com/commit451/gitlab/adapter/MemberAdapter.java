@@ -6,7 +6,7 @@ import android.view.ViewGroup;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.User;
-import com.commit451.gitlab.viewHolders.UserViewHolder;
+import com.commit451.gitlab.viewHolders.MemberViewHolder;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -14,7 +14,7 @@ import java.util.Collection;
 /**
  * Created by Jawn on 7/28/2015.
  */
-public class UserAdapter extends RecyclerView.Adapter<UserViewHolder> {
+public class MemberAdapter extends RecyclerView.Adapter<MemberViewHolder> {
 
     public interface Listener {
         void onUserClicked(User user);
@@ -36,7 +36,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserViewHolder> {
         return mValues.get(position);
     }
 
-    public UserAdapter(Listener listener) {
+    public MemberAdapter(Listener listener) {
         mListener = listener;
         mValues = new ArrayList<>();
     }
@@ -50,14 +50,14 @@ public class UserAdapter extends RecyclerView.Adapter<UserViewHolder> {
     }
 
     @Override
-    public UserViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        UserViewHolder holder = UserViewHolder.create(parent);
+    public MemberViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        MemberViewHolder holder = MemberViewHolder.create(parent);
         holder.itemView.setOnClickListener(mItemClickListener);
         return holder;
     }
 
     @Override
-    public void onBindViewHolder(final UserViewHolder holder, int position) {
+    public void onBindViewHolder(final MemberViewHolder holder, int position) {
         User user = getValueAt(position);
         holder.bind(user);
         holder.itemView.setTag(R.id.list_position, position);

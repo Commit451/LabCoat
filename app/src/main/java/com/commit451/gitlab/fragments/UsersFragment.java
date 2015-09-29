@@ -1,162 +1,142 @@
 package com.commit451.gitlab.fragments;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.activities.AddUserActivity;
-import com.commit451.gitlab.activities.ProjectActivity;
-import com.commit451.gitlab.adapter.UserAdapter;
+import com.commit451.gitlab.adapter.UsersAdapter;
 import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.events.ProjectReloadEvent;
-import com.commit451.gitlab.events.UserAddedEvent;
-import com.commit451.gitlab.model.Project;
 import com.commit451.gitlab.model.User;
-import com.squareup.otto.Subscribe;
+import com.commit451.gitlab.tools.NavigationManager;
 
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import retrofit.Callback;
 import retrofit.Response;
 import timber.log.Timber;
 
-public class UsersFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
+/**
+ * Created by John on 9/28/15.
+ */
+public class UsersFragment extends BaseFragment {
 
+    private static final String EXTRA_QUERY = "extra_query";
 
     public static UsersFragment newInstance() {
+        return newInstance(null);
+    }
 
+    public static UsersFragment newInstance(String query) {
         Bundle args = new Bundle();
-
+        if (query != null) {
+            args.putString(EXTRA_QUERY, query);
+        }
         UsersFragment fragment = new UsersFragment();
         fragment.setArguments(args);
         return fragment;
     }
 
-    @Bind(R.id.add_user_button) View addUserButton;
-	@Bind(R.id.list) RecyclerView listView;
-    UserAdapter mAdapter;
-	@Bind(R.id.error_text) TextView errorText;
-    @Bind(R.id.swipe_layout) SwipeRefreshLayout swipeLayout;
+    @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
+    @Bind(R.id.list) RecyclerView mUsersList;
+    UsersAdapter mUsersAdapter;
+    @Bind(R.id.message_text) TextView mMessageText;
+    String mQuery;
 
-    Project mProject;
-	EventReceiver eventReceiver;
+    private final SwipeRefreshLayout.OnRefreshListener mOnRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {
+        @Override
+        public void onRefresh() {
+            loadData();
+        }
+    };
 
-	public UsersFragment() {}
-	
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.fragment_users, container, false);
-        ButterKnife.bind(this, view);
+    private final UsersAdapter.Listener mUsersAdapterListener = new UsersAdapter.Listener() {
+        @Override
+        public void onUserClicked(User user) {
+            NavigationManager.navigateToUser(getActivity(), user);
+        }
+    };
 
-        mAdapter = new UserAdapter(new UserAdapter.Listener() {
-            @Override
-            public void onUserClicked(User user) {
-                //TODO go to profile or allow kicking from group or something
+    public Callback<List<User>> mSearchCallback = new Callback<List<User>>() {
+
+        @Override
+        public void onResponse(Response<List<User>> response) {
+            mSwipeRefreshLayout.setRefreshing(false);
+            if (!response.isSuccess()) {
+                return;
             }
-        });
-		listView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        listView.setAdapter(mAdapter);
-        swipeLayout.setOnRefreshListener(this);
+            if (getView() == null) {
+                return;
+            }
+            mMessageText.setVisibility(View.GONE);
+            mUsersList.setVisibility(View.VISIBLE);
+            mUsersAdapter.setData(response.body());
+        }
 
-		eventReceiver = new EventReceiver();
-		GitLabApp.bus().register(eventReceiver);
+        @Override
+        public void onFailure(Throwable t) {
+            if (getView() == null) {
+                return;
+            }
+            mMessageText.setVisibility(View.VISIBLE);
+            Timber.e(t.toString());
+            Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.connection_error_users), Snackbar.LENGTH_SHORT)
+                    .show();
+        }
+    };
 
-		if (getActivity() instanceof ProjectActivity) {
-			mProject = ((ProjectActivity) getActivity()).getProject();
-			if (mProject != null) {
-				loadData();
-			}
-		} else {
-			throw new IllegalStateException("Incorrect parent activity");
-		}
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mQuery = getArguments().getString(EXTRA_QUERY);
+    }
 
-		return view;
-	}
-	
-	@Override
-	public void onDestroyView() {
-		super.onDestroyView();
-		ButterKnife.unbind(this);
-		GitLabApp.bus().unregister(eventReceiver);
-	}
-	
-	@Override
-	public void onRefresh() {
-		loadData();
-	}
-	
-	public void loadData() {
-        swipeLayout.setRefreshing(true);
-        GitLabClient.instance().getGroupMembers(mProject.getNamespace().getId()).enqueue(usersCallback);
-	}
-	
-	public Callback<List<User>> usersCallback = new Callback<List<User>>() {
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_projects, container, false);
+    }
 
-		@Override
-		public void onResponse(Response<List<User>> response) {
-			if (!response.isSuccess()) {
-				return;
-			}
-			if (getView() == null) {
-				return;
-			}
-			swipeLayout.setRefreshing(false);
-			errorText.setVisibility(View.GONE);
-			listView.setVisibility(View.VISIBLE);
-			addUserButton.setVisibility(View.VISIBLE);
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        ButterKnife.bind(this, view);
+        mUsersAdapter = new UsersAdapter(mUsersAdapterListener);
+        mUsersList.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mUsersList.setAdapter(mUsersAdapter);
+        mSwipeRefreshLayout.setOnRefreshListener(mOnRefreshListener);
+        if (!TextUtils.isEmpty(mQuery)) {
+            loadData();
+        }
+    }
 
-            mAdapter.setData(response.body());
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
+    }
 
-			addUserButton.setEnabled(true);
-		}
+    @Override
+    protected void loadData() {
+        super.loadData();
+        mMessageText.setVisibility(View.GONE);
+        mSwipeRefreshLayout.setRefreshing(true);
+        GitLabClient.instance().searchUsers(mQuery).enqueue(mSearchCallback);
+    }
 
-		@Override
-		public void onFailure(Throwable t) {
-			if (getView() == null) {
-				return;
-			}
-			swipeLayout.setRefreshing(false);
-			errorText.setVisibility(View.VISIBLE);
-			addUserButton.setVisibility(View.GONE);
-			Timber.e(t.toString());
-			Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.connection_error_users), Snackbar.LENGTH_SHORT)
-					.show();
-		}
-	};
-	
-	public boolean onBackPressed() {
-		return false;
-	}
-	
-	@OnClick(R.id.add_user_button)
-	public void onAddUserClick() {
-		startActivity(AddUserActivity.newInstance(getActivity()));
-	}
-
-	private class EventReceiver {
-
-		@Subscribe
-		public void onProjectChanged(ProjectReloadEvent event) {
-            mProject = event.project;
-			loadData();
-		}
-
-		@Subscribe
-		public void onUserAdded(UserAddedEvent event) {
-			if (mAdapter != null) {
-				mAdapter.addUser(event.user);
-			}
-		}
-	}
+    public void searchQuery(String query) {
+        mUsersAdapter.clearData();
+        mQuery = query;
+        loadData();
+    }
 }
