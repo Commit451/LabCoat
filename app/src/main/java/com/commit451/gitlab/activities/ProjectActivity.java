@@ -65,6 +65,40 @@ public class ProjectActivity extends BaseActivity {
 
     Project mProject;
     String mBranchName;
+
+	private Callback<List<Branch>> mBranchesCallback = new Callback<List<Branch>>() {
+
+		@Override
+		public void onResponse(Response<List<Branch>> response) {
+			if (!response.isSuccess()) {
+				return;
+			}
+			progress.setVisibility(View.GONE);
+
+
+			// Set up the dropdown list navigation in the action bar.
+			branchSpinner.setAdapter(new ArrayAdapter<>(ProjectActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, response.body()));
+			for (int i=0; i<response.body().size(); i++) {
+				if (response.body().get(i).getName().equals(mProject.getDefaultBranch())) {
+					branchSpinner.setSelection(i);
+				}
+			}
+
+			branchSpinner.setOnItemSelectedListener(spinnerItemSelectedListener);
+
+			if(response.body().isEmpty()) {
+				broadcastLoad();
+			}
+		}
+
+		@Override
+		public void onFailure(Throwable t) {
+			progress.setVisibility(View.GONE);
+			Timber.e(t.toString());
+			Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
+					.show();
+		}
+	};
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -123,41 +157,16 @@ public class ProjectActivity extends BaseActivity {
                 break;
 		}
 		
-		if(!handled)
-			finish();
+		if(!handled) {
+            super.onBackPressed();
+        }
 	}
 
-	private Callback<List<Branch>> mBranchesCallback = new Callback<List<Branch>>() {
+	public String getBranchName() {
+		return mBranchName;
+	}
 
-		@Override
-		public void onResponse(Response<List<Branch>> response) {
-			if (!response.isSuccess()) {
-				return;
-			}
-			progress.setVisibility(View.GONE);
-
-
-			// Set up the dropdown list navigation in the action bar.
-			branchSpinner.setAdapter(new ArrayAdapter<>(ProjectActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, response.body()));
-            for (int i=0; i<response.body().size(); i++) {
-                if (response.body().get(i).getName().equals(mProject.getDefaultBranch())) {
-                    branchSpinner.setSelection(i);
-                }
-            }
-
-			branchSpinner.setOnItemSelectedListener(spinnerItemSelectedListener);
-
-			if(response.body().isEmpty()) {
-				broadcastLoad();
-			}
-		}
-
-		@Override
-		public void onFailure(Throwable t) {
-			progress.setVisibility(View.GONE);
-			Timber.e(t.toString());
-			Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
-					.show();
-		}
-	};
+    public Project getProject() {
+        return mProject;
+    }
 }

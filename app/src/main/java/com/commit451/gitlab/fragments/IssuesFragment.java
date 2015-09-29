@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activities.IssueActivity;
+import com.commit451.gitlab.activities.ProjectActivity;
 import com.commit451.gitlab.adapter.IssuesAdapter;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.dialogs.NewIssueDialog;
@@ -65,6 +66,15 @@ public class IssuesFragment extends BaseFragment implements SwipeRefreshLayout.O
 
 		eventReceiver = new EventReceiver();
 		GitLabApp.bus().register(eventReceiver);
+
+		if (getActivity() instanceof ProjectActivity) {
+			mProject = ((ProjectActivity) getActivity()).getProject();
+			if (mProject != null) {
+				loadData();
+			}
+		} else {
+			throw new IllegalStateException("Incorrect parent activity");
+		}
 		
 		return view;
 	}

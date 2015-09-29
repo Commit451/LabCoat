@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activities.AddUserActivity;
+import com.commit451.gitlab.activities.ProjectActivity;
 import com.commit451.gitlab.adapter.UserAdapter;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.events.ProjectReloadEvent;
@@ -70,6 +71,15 @@ public class UsersFragment extends BaseFragment implements SwipeRefreshLayout.On
 
 		eventReceiver = new EventReceiver();
 		GitLabApp.bus().register(eventReceiver);
+
+		if (getActivity() instanceof ProjectActivity) {
+			mProject = ((ProjectActivity) getActivity()).getProject();
+			if (mProject != null) {
+				loadData();
+			}
+		} else {
+			throw new IllegalStateException("Incorrect parent activity");
+		}
 
 		return view;
 	}

@@ -5,6 +5,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.view.ViewGroup;
 import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activities.DiffActivity;
+import com.commit451.gitlab.activities.ProjectActivity;
 import com.commit451.gitlab.adapter.CommitsAdapter;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.events.ProjectReloadEvent;
@@ -70,6 +72,14 @@ public class CommitsFragment extends BaseFragment implements SwipeRefreshLayout.
 		listView.setLayoutManager(new LinearLayoutManager(getActivity()));
 		listView.setAdapter(adapter);
 		swipeLayout.setOnRefreshListener(this);
+        if (getActivity() instanceof ProjectActivity) {
+            mBranchName = ((ProjectActivity) getActivity()).getBranchName();
+            if (!TextUtils.isEmpty(mBranchName)) {
+                loadData();
+            }
+        } else {
+            throw new IllegalStateException("Incorrect parent activity");
+        }
 	}
 
 	@Override

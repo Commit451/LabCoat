@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
+import com.commit451.gitlab.activities.ProjectActivity;
 import com.commit451.gitlab.adapter.MergeRequestAdapter;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.events.ProjectReloadEvent;
@@ -102,6 +103,14 @@ public class MergeRequestFragment extends BaseFragment {
         mMergeRequestAdapter = new MergeRequestAdapter();
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setAdapter(mMergeRequestAdapter);
+        if (getActivity() instanceof ProjectActivity) {
+            mProject = ((ProjectActivity) getActivity()).getProject();
+            if (mProject != null) {
+                loadData();
+            }
+        } else {
+            throw new IllegalStateException("Incorrect parent activity");
+        }
     }
 
     @Override

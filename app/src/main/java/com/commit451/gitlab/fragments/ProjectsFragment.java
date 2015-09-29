@@ -130,6 +130,7 @@ public class ProjectsFragment extends BaseFragment {
     protected void loadData() {
         super.loadData();
         mMessageText.setVisibility(View.GONE);
+        mRecyclerView.setVisibility(View.VISIBLE);
         mSwipeRefreshLayout.setRefreshing(true);
         switch (mMode) {
             case MODE_ALL:

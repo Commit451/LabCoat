@@ -5,6 +5,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activities.FileActivity;
+import com.commit451.gitlab.activities.ProjectActivity;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.events.ProjectReloadEvent;
 import com.commit451.gitlab.model.Project;
@@ -71,6 +73,16 @@ public class FilesFragment extends BaseFragment {
 
 		eventReceiver = new EventReceiver();
 		GitLabApp.bus().register(eventReceiver);
+
+		if (getActivity() instanceof ProjectActivity) {
+            mProject = ((ProjectActivity) getActivity()).getProject();
+			mBranchName = ((ProjectActivity) getActivity()).getBranchName();
+			if (!TextUtils.isEmpty(mBranchName) && mProject != null) {
+				loadData();
+			}
+		} else {
+			throw new IllegalStateException("Incorrect parent activity");
+		}
 		
 		return view;
 	}
@@ -85,10 +97,7 @@ public class FilesFragment extends BaseFragment {
 	@Override
 	protected void loadData() {
         Timber.d("loadData");
-
-        if(swipeLayout != null && !swipeLayout.isRefreshing()) {
-            swipeLayout.setRefreshing(true);
-        }
+        swipeLayout.setRefreshing(true);
 
         String currentPath = "";
         for(String p : mPath) {
