@@ -5,11 +5,11 @@
            android:checkableBehavior="single">
         <item
             android:id="@+id/nav_projects"
-            android:icon="@drawable/ic_project"
+            android:icon="@drawable/ic_project_24dp"
             android:title="@string/nav_projects" />
         <item
             android:id="@+id/nav_snippets"
-            android:icon="@drawable/ic_snippet"
+            android:icon="@drawable/ic_snippet_24dp"
             android:title="@string/nav_snippet" />
     </group>
 
@@ -18,7 +18,7 @@
 
         <item
             android:id="@+id/nav_about"
-            android:icon="@drawable/ic_about"
+            android:icon="@drawable/ic_about_24dp"
             android:title="@string/about" />
 
     </group>

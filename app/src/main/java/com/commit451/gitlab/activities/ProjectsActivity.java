@@ -73,7 +73,7 @@ public class ProjectsActivity extends BaseActivity {
         }
 
         mToolbar.setTitle(R.string.projects);
-        mToolbar.setNavigationIcon(R.drawable.ic_menu);
+        mToolbar.setNavigationIcon(R.drawable.ic_menu_24dp);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

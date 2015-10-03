@@ -100,7 +100,7 @@ public class AboutActivity extends BaseActivity {
         WindowUtil.lockToCurrentOrientation(this);
         setContentView(R.layout.activity_about);
         ButterKnife.bind(this);
-        toolbar.setNavigationIcon(R.drawable.ic_back);
+        toolbar.setNavigationIcon(R.drawable.ic_back_24dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

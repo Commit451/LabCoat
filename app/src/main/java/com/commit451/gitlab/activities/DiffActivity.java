@@ -51,9 +51,9 @@ public class DiffActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_diff);
 		ButterKnife.bind(this);
-        mCommit = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_PROJECT));
+        mProject = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_PROJECT));
         mCommit = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_COMMIT));
-        toolbar.setNavigationIcon(R.drawable.ic_back);
+        toolbar.setNavigationIcon(R.drawable.ic_back_24dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

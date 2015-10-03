@@ -6,12 +6,12 @@
         android:id="@+id/action_open"
         app:showAsAction="ifRoom"
         android:title="@string/action_open"
-        android:icon="@drawable/ic_edit" />
+        android:icon="@drawable/ic_edit_24dp" />
     
     <item 
         android:id="@+id/action_save"
         app:showAsAction="ifRoom"
         android:title="@string/action_save"
-        android:icon="@drawable/ic_save"/>
+        android:icon="@drawable/ic_save_24dp"/>
 
 </menu>

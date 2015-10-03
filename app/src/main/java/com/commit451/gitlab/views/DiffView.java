@@ -92,11 +92,11 @@ public class DiffView extends LinearLayout {
 		
 		ImageView icon = new ImageView(getContext());
 		if(diff.isNewFile())
-			icon.setImageResource(R.drawable.ic_added);
+			icon.setImageResource(R.drawable.ic_add_24dp);
 		else if(diff.isDeletedFile())
-			icon.setImageResource(R.drawable.ic_removed);
+			icon.setImageResource(R.drawable.ic_remove_24dp);
 		else
-			icon.setImageResource(R.drawable.ic_changed);
+			icon.setImageResource(R.drawable.ic_changed_24dp);
 		icon.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 		icon.setPadding(10, 10, 10, 10);
 		header.addView(icon);

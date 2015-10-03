@@ -36,13 +36,13 @@ public class FileViewHolder extends RecyclerView.ViewHolder {
     public void bind(TreeItem treeItem) {
         title.setText(treeItem.getName());
         if(treeItem.getType().equals("tree")) {
-            image.setImageResource(R.drawable.ic_folder);
+            image.setImageResource(R.drawable.ic_folder_24dp);
         }
         else if(treeItem.getType().equals("submodule")) {
-            image.setImageResource(R.drawable.ic_repo);
+            image.setImageResource(R.drawable.ic_repo_24dp);
         }
         else {
-            image.setImageResource(R.drawable.ic_doc);
+            image.setImageResource(R.drawable.ic_file_24dp);
         }
     }
 }

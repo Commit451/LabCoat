@@ -61,7 +61,7 @@
             <ImageView
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:src="@drawable/ic_star"
+                android:src="@drawable/ic_star_24dp"
                 android:contentDescription="@null"/>
 
         </LinearLayout>
@@ -80,7 +80,7 @@
             <ImageView
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:src="@drawable/ic_fork"
+                android:src="@drawable/ic_fork_24dp"
                 android:contentDescription="@null"/>
 
         </LinearLayout>

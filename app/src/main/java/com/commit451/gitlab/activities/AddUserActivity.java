@@ -134,7 +134,7 @@ public class AddUserActivity extends BaseActivity {
         setContentView(R.layout.activity_add_user);
         ButterKnife.bind(this);
         mUserRoleDialog = new UserRoleDialog(this, mUserRoleDialogListener);
-        mToolbar.setNavigationIcon(R.drawable.ic_back);
+        mToolbar.setNavigationIcon(R.drawable.ic_back_24dp);
         mToolbar.setNavigationOnClickListener(mOnBackPressed);
         mUserSearch.setOnEditorActionListener(mSearchEditorActionListener);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));

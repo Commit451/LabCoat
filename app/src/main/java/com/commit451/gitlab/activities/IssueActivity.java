@@ -69,7 +69,7 @@ public class IssueActivity extends BaseActivity {
             tempId = mIssue.getId();
         }
 
-        toolbar.setNavigationIcon(R.drawable.ic_back);
+        toolbar.setNavigationIcon(R.drawable.ic_back_24dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
