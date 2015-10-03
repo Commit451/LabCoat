@@ -18,6 +18,7 @@
     <string name="action_copy_link">Copy link</string>
 
     <!-- Tabs -->
+    <string name="title_overview">Overview</string>
     <string name="title_commits">Commits</string>
     <string name="title_issues">Issues</string>
     <string name="title_files">Files</string>
@@ -25,6 +26,7 @@
     <string name="title_members">Members</string>
 
     <string-array name="main_tabs">
+        <item>@string/title_overview</item>
         <item>@string/title_commits</item>
         <item>@string/title_issues</item>
         <item>@string/title_files</item>
@@ -99,7 +101,10 @@
     <string name="ok_button">OK</string>
     <string name="filter_projects">Filter projects</string>
     <string name="logout_title">Are you sure you want to log out?</string>
+    <string name="failed_to_load">Failed to load</string>
 
+    <!-- Overview -->
+    <string name="no_readme_found">No README found for project</string>
     <!-- Commits -->
     <string name="no_commits_found">No commits found.</string>
 
@@ -118,6 +123,7 @@
     <string name="title_hint">Title</string>
     <string name="description_hint">Description</string>
     <string name="add_note_content_description">Add note</string>
+    <string name="issue_number">Issue #</string>
 
     <!-- User -->
     <string name="remove_user_dialog_title">Remove user?</string>

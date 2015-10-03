@@ -11,13 +11,15 @@ import com.commit451.gitlab.fragments.FilesFragment;
 import com.commit451.gitlab.fragments.IssuesFragment;
 import com.commit451.gitlab.fragments.MembersFragment;
 import com.commit451.gitlab.fragments.MergeRequestFragment;
+import com.commit451.gitlab.fragments.OverviewFragment;
 
 /**
+ * Controls the sections that should be shown in a {@link com.commit451.gitlab.activities.ProjectActivity}
  * Created by Jawn on 9/20/2015.
  */
 public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-    private static final int SECTION_COUNT = 5;
+    private static final int SECTION_COUNT = 6;
 
     private String[] mTitles;
 
@@ -31,14 +33,16 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         switch(position) {
             case 0:
-                return CommitsFragment.newInstance();
+                return OverviewFragment.newInstance();
             case 1:
-                return IssuesFragment.newInstance();
+                return CommitsFragment.newInstance();
             case 2:
-                return FilesFragment.newInstance();
+                return IssuesFragment.newInstance();
             case 3:
-                return MergeRequestFragment.newInstance();
+                return FilesFragment.newInstance();
             case 4:
+                return MergeRequestFragment.newInstance();
+            case 5:
                 return MembersFragment.newInstance();
         }
 
