@@ -25,6 +25,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import retrofit.Callback;
 import retrofit.Response;
+import retrofit.Retrofit;
 import timber.log.Timber;
 
 public class DiffActivity extends BaseActivity {
@@ -86,7 +87,7 @@ public class DiffActivity extends BaseActivity {
 	private Callback<DiffLine> commitCallback = new Callback<DiffLine>() {
 
 		@Override
-		public void onResponse(Response<DiffLine> response) {
+		public void onResponse(Response<DiffLine> response, Retrofit retrofit) {
 			if (response.isSuccess()) {
 				messageContainer.addView(new MessageView(DiffActivity.this, response.body()));
 			}
@@ -103,7 +104,7 @@ public class DiffActivity extends BaseActivity {
 	private Callback<List<Diff>> diffCallback = new Callback<List<Diff>>() {
 
 		@Override
-		public void onResponse(Response<List<Diff>> response) {
+		public void onResponse(Response<List<Diff>> response, Retrofit retrofit) {
 			if (response.isSuccess()) {
 				for(Diff diff : response.body()) {
 					diffContainer.addView(new DiffView(DiffActivity.this, diff));

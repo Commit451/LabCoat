@@ -27,6 +27,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import retrofit.Callback;
 import retrofit.Response;
+import retrofit.Retrofit;
 
 /**
  * Created by Jawn on 9/20/2015.
@@ -58,7 +59,7 @@ public class MergeRequestFragment extends BaseFragment {
 
     private final Callback<List<MergeRequest>> mCallback = new Callback<List<MergeRequest>>() {
         @Override
-        public void onResponse(Response<List<MergeRequest>> response) {
+        public void onResponse(Response<List<MergeRequest>> response, Retrofit retrofit) {
             if (!response.isSuccess()) {
                 return;
             }

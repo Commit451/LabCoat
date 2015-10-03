@@ -1,34 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:orientation="horizontal"
-              android:layout_width="match_parent"
-              android:layout_height="48dp"
-              android:background="?attr/selectableItemBackground"
-    >
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+    android:background="?attr/selectableItemBackground">
 
     <ImageView
         android:id="@+id/file_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@null"
-        android:layout_gravity="center_vertical"
-
+        android:layout_centerVertical="true"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="8dp"
-
-        tools:src="@drawable/ic_folder"
+        tools:src="@drawable/ic_folder_24dp"
         />
 
     <TextView
         android:id="@+id/file_title"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
+        android:layout_centerVertical="true"
         android:textSize="@dimen/text_size_small"
-        android:ellipsize="marquee"
-
-        tools:text="build.gradle"
+        android:layout_toRightOf="@id/file_image"
+        android:layout_toLeftOf="@+id/file_more"
+        tools:text="build.gradle some really long file name that will overflow or something"
         />
 
-</LinearLayout>
+    <ImageView
+        android:id="@id/file_more"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_overflow_24dp"
+        android:padding="8dp"
+        android:layout_gravity="center_vertical"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:contentDescription="@null"/>
+
+</RelativeLayout>

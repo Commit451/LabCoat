@@ -35,6 +35,7 @@ import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit.Callback;
 import retrofit.Response;
+import retrofit.Retrofit;
 import timber.log.Timber;
 
 /**
@@ -77,13 +78,13 @@ public class AboutActivity extends BaseActivity {
         public void onAccuracyChanged(Sensor sensor, int accuracy) { }
     };
 
-    private final Callback<List<Contributor>> contributorResponseCallback = new Callback<List<Contributor>>() {
-
+    private Callback<List<Contributor>> mContributorResponseCallback = new Callback<List<Contributor>>() {
         @Override
-        public void onResponse(Response<List<Contributor>> response) {
-            if (response.isSuccess()) {
-                addContributors(response.body());
+        public void onResponse(Response<List<Contributor>> response, Retrofit retrofit) {
+            if (!response.isSuccess()) {
+                return;
             }
+            addContributors(response.body());
         }
 
         @Override
@@ -111,7 +112,7 @@ public class AboutActivity extends BaseActivity {
         physicsLayout.getPhysics().enableFling();
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         gravitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
-        GitLabClient.instance().getContributors(REPO_ID).enqueue(contributorResponseCallback);
+        GitLabClient.instance().getContributors(REPO_ID).enqueue(mContributorResponseCallback);
     }
 
     @Override

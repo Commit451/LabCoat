@@ -26,6 +26,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import retrofit.Callback;
 import retrofit.Response;
+import retrofit.Retrofit;
 import timber.log.Timber;
 
 public class FileActivity extends BaseActivity {
@@ -56,7 +57,7 @@ public class FileActivity extends BaseActivity {
 	private final Callback<FileResponse> mFileResponseCallback = new Callback<FileResponse>() {
 
 		@Override
-		public void onResponse(Response<FileResponse> response) {
+		public void onResponse(Response<FileResponse> response, Retrofit retrofit) {
 			if (!response.isSuccess()) {
 				return;
 			}

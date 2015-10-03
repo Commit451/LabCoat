@@ -22,6 +22,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import retrofit.Callback;
 import retrofit.Response;
+import retrofit.Retrofit;
 import timber.log.Timber;
 
 /**
@@ -64,7 +65,7 @@ public class ProjectsFragment extends BaseFragment {
 
     private final Callback<List<Project>> mProjectsCallback = new Callback<List<Project>>() {
         @Override
-        public void onResponse(Response<List<Project>> response) {
+        public void onResponse(Response<List<Project>> response, Retrofit retrofit) {
             mSwipeRefreshLayout.setRefreshing(false);
             if (!response.isSuccess()) {
                 mMessageText.setText(R.string.connection_error);

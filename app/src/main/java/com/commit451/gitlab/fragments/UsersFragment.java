@@ -24,6 +24,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import retrofit.Callback;
 import retrofit.Response;
+import retrofit.Retrofit;
 import timber.log.Timber;
 
 /**
@@ -70,7 +71,7 @@ public class UsersFragment extends BaseFragment {
     public Callback<List<User>> mSearchCallback = new Callback<List<User>>() {
 
         @Override
-        public void onResponse(Response<List<User>> response) {
+        public void onResponse(Response<List<User>> response, Retrofit retrofit) {
             mSwipeRefreshLayout.setRefreshing(false);
             if (!response.isSuccess()) {
                 return;

@@ -31,6 +31,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import retrofit.Callback;
 import retrofit.Response;
+import retrofit.Retrofit;
 import timber.log.Timber;
 
 public class IssueActivity extends BaseActivity {
@@ -125,7 +126,7 @@ public class IssueActivity extends BaseActivity {
 	private Callback<List<Note>> notesCallback = new Callback<List<Note>>() {
 
 		@Override
-		public void onResponse(Response<List<Note>> response) {
+		public void onResponse(Response<List<Note>> response, Retrofit retrofit) {
 			if (!response.isSuccess()) {
 				return;
 			}
@@ -150,7 +151,7 @@ public class IssueActivity extends BaseActivity {
 	private Callback<Note> noteCallback = new Callback<Note>() {
 
 		@Override
-		public void onResponse(Response<Note> response) {
+		public void onResponse(Response<Note> response, Retrofit retrofit) {
 			if (!response.isSuccess()) {
 				return;
 			}
@@ -170,7 +171,7 @@ public class IssueActivity extends BaseActivity {
 	private Callback<List<User>> usersCallback = new Callback<List<User>>() {
 
 		@Override
-		public void onResponse(Response<List<User>> response) {
+		public void onResponse(Response<List<User>> response, Retrofit retrofit) {
 			if (!response.isSuccess()) {
 				return;
 			}

@@ -29,6 +29,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import retrofit.Callback;
 import retrofit.Response;
+import retrofit.Retrofit;
 import timber.log.Timber;
 
 public class FilesFragment extends BaseFragment {
@@ -110,7 +111,7 @@ public class FilesFragment extends BaseFragment {
 	private Callback<List<TreeItem>> filesCallback = new Callback<List<TreeItem>>() {
 
 		@Override
-		public void onResponse(Response<List<TreeItem>> response) {
+		public void onResponse(Response<List<TreeItem>> response, Retrofit retrofit) {
 			if (!response.isSuccess()) {
 				if(response.code() == 404) {
 					errorText.setVisibility(View.VISIBLE);

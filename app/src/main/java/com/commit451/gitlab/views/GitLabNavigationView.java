@@ -33,6 +33,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import retrofit.Callback;
 import retrofit.Response;
+import retrofit.Retrofit;
 import timber.log.Timber;
 
 /**
@@ -79,7 +80,7 @@ public class GitLabNavigationView extends NavigationView {
     private final Callback<User> userCallback = new Callback<User>() {
 
         @Override
-        public void onResponse(Response<User> response) {
+        public void onResponse(Response<User> response, Retrofit retrofit) {
             if (!response.isSuccess()) {
                 return;
             }

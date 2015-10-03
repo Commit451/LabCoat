@@ -27,6 +27,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import retrofit.Callback;
 import retrofit.Response;
+import retrofit.Retrofit;
 import timber.log.Timber;
 
 public class CommitsFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
@@ -108,7 +109,7 @@ public class CommitsFragment extends BaseFragment implements SwipeRefreshLayout.
 
 
 		@Override
-		public void onResponse(Response<List<DiffLine>> response) {
+		public void onResponse(Response<List<DiffLine>> response, Retrofit retrofit) {
 			if (!response.isSuccess()) {
 				return;
 			}

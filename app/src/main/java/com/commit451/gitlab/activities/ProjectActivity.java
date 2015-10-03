@@ -36,6 +36,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import retrofit.Callback;
 import retrofit.Response;
+import retrofit.Retrofit;
 import timber.log.Timber;
 
 public class ProjectActivity extends BaseActivity {
@@ -71,7 +72,7 @@ public class ProjectActivity extends BaseActivity {
 	private Callback<List<Branch>> mBranchesCallback = new Callback<List<Branch>>() {
 
 		@Override
-		public void onResponse(Response<List<Branch>> response) {
+		public void onResponse(Response<List<Branch>> response, Retrofit retrofit) {
 			if (!response.isSuccess()) {
 				return;
 			}

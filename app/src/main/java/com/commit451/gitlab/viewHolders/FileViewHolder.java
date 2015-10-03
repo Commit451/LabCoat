@@ -27,6 +27,7 @@ public class FileViewHolder extends RecyclerView.ViewHolder {
 
     @Bind(R.id.file_title) TextView title;
     @Bind(R.id.file_image) ImageView image;
+    @Bind(R.id.file_more) ImageView more;
 
     public FileViewHolder(View view) {
         super(view);

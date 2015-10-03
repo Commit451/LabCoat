@@ -18,6 +18,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import retrofit.Callback;
 import retrofit.Response;
+import retrofit.Retrofit;
 import timber.log.Timber;
 
 /**
@@ -60,7 +61,7 @@ public class NewIssueDialog extends AppCompatDialog {
     private Callback<Issue> issueCallback = new Callback<Issue>() {
 
         @Override
-        public void onResponse(Response<Issue> response) {
+        public void onResponse(Response<Issue> response, Retrofit retrofit) {
             if (!response.isSuccess()) {
                 return;
             }

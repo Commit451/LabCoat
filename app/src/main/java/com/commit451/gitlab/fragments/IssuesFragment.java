@@ -29,6 +29,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import retrofit.Callback;
 import retrofit.Response;
+import retrofit.Retrofit;
 import timber.log.Timber;
 
 public class IssuesFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
@@ -102,7 +103,7 @@ public class IssuesFragment extends BaseFragment implements SwipeRefreshLayout.O
 	private Callback<List<Issue>> issuesCallback = new Callback<List<Issue>>() {
 
 		@Override
-		public void onResponse(Response<List<Issue>> response) {
+		public void onResponse(Response<List<Issue>> response, Retrofit retrofit) {
 			if (!response.isSuccess()) {
 				return;
 			}
