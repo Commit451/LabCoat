@@ -7,6 +7,7 @@ import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -25,6 +26,7 @@ import com.commit451.gitlab.fragments.MergeRequestFragment;
 import com.commit451.gitlab.fragments.MembersFragment;
 import com.commit451.gitlab.model.Branch;
 import com.commit451.gitlab.model.Project;
+import com.commit451.gitlab.tools.IntentUtil;
 
 import org.parceler.Parcels;
 
@@ -99,6 +101,18 @@ public class ProjectActivity extends BaseActivity {
 					.show();
 		}
 	};
+
+	private final Toolbar.OnMenuItemClickListener mOnMenuItemClickListener = new Toolbar.OnMenuItemClickListener() {
+		@Override
+		public boolean onMenuItemClick(MenuItem item) {
+			switch (item.getItemId()) {
+				case R.id.action_share:
+					IntentUtil.share(getWindow().getDecorView(), mProject.getWebUrl());
+					return true;
+			}
+			return false;
+		}
+	};
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -109,11 +123,13 @@ public class ProjectActivity extends BaseActivity {
 
 		toolbar.setNavigationIcon(R.drawable.ic_back_24dp);
 		toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+			@Override
+			public void onClick(View v) {
+				onBackPressed();
+			}
+		});
+		toolbar.inflateMenu(R.menu.menu_repository);
+		toolbar.setOnMenuItemClickListener(mOnMenuItemClickListener);
 
 		SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
 

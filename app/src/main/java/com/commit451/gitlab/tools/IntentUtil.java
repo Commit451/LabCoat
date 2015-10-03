@@ -25,10 +25,12 @@ public class IntentUtil {
     }
 
     public static void share(View root, String url) {
-        Intent i = new Intent(Intent.ACTION_SEND);
-        i.setData(Uri.parse(url));
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, url);
+        root.getContext().startActivity(Intent.createChooser(shareIntent, root.getContext().getString(R.string.action_share)));
         try {
-            root.getContext().startActivity(i);
+            root.getContext().startActivity(shareIntent);
         } catch (ActivityNotFoundException e) {
             Snackbar.make(root, R.string.error_no_browser, Snackbar.LENGTH_SHORT)
                     .show();
