@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -21,6 +22,7 @@ import com.commit451.gitlab.model.Issue;
 import com.commit451.gitlab.model.Note;
 import com.commit451.gitlab.model.Project;
 import com.commit451.gitlab.model.User;
+import com.commit451.gitlab.tools.IntentUtil;
 
 import org.parceler.Parcels;
 
@@ -55,6 +57,18 @@ public class IssueActivity extends BaseActivity {
 	private NotesAdapter notesAdapter;
 	Project mProject;
     Issue mIssue;
+
+    private final Toolbar.OnMenuItemClickListener mOnMenuItemClickListener = new Toolbar.OnMenuItemClickListener() {
+        @Override
+        public boolean onMenuItemClick(MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.action_share:
+                    IntentUtil.share(getWindow().getDecorView(), mIssue.getUrl(mProject));
+                    return true;
+            }
+            return false;
+        }
+    };
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +92,8 @@ public class IssueActivity extends BaseActivity {
 			}
 		});
         toolbar.setTitle("Issue #" + tempId);
+		toolbar.inflateMenu(R.menu.issue);
+        toolbar.setOnMenuItemClickListener(mOnMenuItemClickListener);
 
         notesAdapter = new NotesAdapter(mIssue);
         listView.setLayoutManager(new LinearLayoutManager(this));
