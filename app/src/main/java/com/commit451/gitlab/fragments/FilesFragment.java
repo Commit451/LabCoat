@@ -1,5 +1,8 @@
 package com.commit451.gitlab.fragments;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -7,9 +10,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
@@ -19,6 +25,7 @@ import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.events.ProjectReloadEvent;
 import com.commit451.gitlab.model.Project;
 import com.commit451.gitlab.model.TreeItem;
+import com.commit451.gitlab.tools.IntentUtil;
 import com.commit451.gitlab.viewHolders.FileViewHolder;
 import com.squareup.otto.Subscribe;
 
@@ -210,16 +217,38 @@ public class FilesFragment extends BaseFragment {
 
 		@Override
 		public FileViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-			FileViewHolder holder = FileViewHolder.create(parent);
+			FileViewHolder holder = FileViewHolder.newInstance(parent);
 			holder.itemView.setOnClickListener(onProjectClickListener);
 			return holder;
 		}
 
 		@Override
 		public void onBindViewHolder(final FileViewHolder holder, int position) {
-			TreeItem treeItem = getValueAt(position);
+			final TreeItem treeItem = getValueAt(position);
 			holder.bind(treeItem);
 			holder.itemView.setTag(R.id.list_position, position);
+            holder.popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    switch (item.getItemId()) {
+                        case R.id.action_copy:
+                            ClipboardManager clipboard = (ClipboardManager)
+                                    getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+                            // Creates a new text clip to put on the clipboard
+                            ClipData clip = ClipData.newPlainText(treeItem.getName(), treeItem.getUrl(mProject, mBranchName, mPath));
+                            clipboard.setPrimaryClip(clip);
+                            Toast.makeText(getActivity(), R.string.copied_to_clipboard, Toast.LENGTH_SHORT)
+                                    .show();
+                            return true;
+                        case R.id.action_share:
+                            IntentUtil.share(getView(), treeItem.getUrl(mProject, mBranchName, mPath));
+                            return true;
+                        case R.id.action_open:
+                            IntentUtil.openPage(getView(), treeItem.getUrl(mProject, mBranchName, mPath));
+                    }
+                    return false;
+                }
+            });
 		}
 
 		@Override

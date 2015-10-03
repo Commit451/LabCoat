@@ -1,10 +1,18 @@
 package com.commit451.gitlab.model;
 
+import com.commit451.gitlab.R;
+
 import org.parceler.Parcel;
+
+import java.util.ArrayList;
 
 @Parcel
 public class TreeItem {
-	
+
+	public static final String TYPE_FOLDER = "tree";
+	public static final String TYPE_REPO = "submodule";
+	public static final String TYPE_FILE = "blob";
+
 	String name;
 	String type;
 	long mode;
@@ -15,28 +23,36 @@ public class TreeItem {
 	public String getName() {
 		return name;
 	}
-	public void setName(String name) {
-		this.name = name;
-	}
 	
 	public String getType() {
 		return type;
-	}
-	public void setType(String type) {
-		this.type = type;
 	}
 	
 	public long getMode() {
 		return mode;
 	}
-	public void setMode(long mode) {
-		this.mode = mode;
-	}
 	
 	public String getId() {
 		return id;
 	}
-	public void setId(String id) {
-		this.id = id;
-	}
+
+    public int getDrawableForType() {
+        switch (type) {
+            case TYPE_FILE:
+                return R.drawable.ic_file_24dp;
+            case TYPE_FOLDER:
+                return R.drawable.ic_folder_24dp;
+            case TYPE_REPO:
+                return R.drawable.ic_repo_24dp;
+        }
+        return R.drawable.ic_file_24dp;
+    }
+
+    public String getUrl(Project project, String branchName, ArrayList<String> currentPath) {
+        String path = "/";
+        for (String pathPart : currentPath) {
+            path = path + pathPart;
+        }
+        return project.getWebUrl() + "/tree/" + branchName + path + name;
+    }
 }

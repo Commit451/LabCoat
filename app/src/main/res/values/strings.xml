@@ -11,9 +11,11 @@
     <string name="action_logout">Logout</string>
     <string name="action_save">Save</string>
     <string name="action_open">Open</string>
+    <string name="action_open_in_browser">Open in browser</string>
     <string name="action_share">Share</string>
     <string name="action_about">About</string>
     <string name="action_search">Search</string>
+    <string name="action_copy_link">Copy link</string>
 
     <!-- Tabs -->
     <string name="title_commits">Commits</string>
@@ -107,6 +109,7 @@
     <!-- Files -->
     <string name="file_saved">File saved successfully to Download folder</string>
     <string name="no_files_found">No files found.</string>
+    <string name="copied_to_clipboard">Copied to clipboard</string>
 
     <!-- Issues -->
     <string name="new_note_hint">Add comment</string>
