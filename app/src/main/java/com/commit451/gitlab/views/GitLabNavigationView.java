@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
+import com.commit451.gitlab.activities.GroupsActivity;
 import com.commit451.gitlab.activities.ProjectsActivity;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.dialogs.LogoutDialog;
@@ -60,6 +61,14 @@ public class GitLabNavigationView extends NavigationView {
 
                     } else {
                         NavigationManager.navigateToProjects((Activity) getContext());
+                    }
+                    GitLabApp.bus().post(new CloseDrawerEvent());
+                    return true;
+                case R.id.nav_groups:
+                    if (getContext() instanceof GroupsActivity) {
+
+                    } else {
+                        NavigationManager.navigateToGroups((Activity) getContext());
                     }
                     GitLabApp.bus().post(new CloseDrawerEvent());
                     return true;
@@ -122,6 +131,10 @@ public class GitLabNavigationView extends NavigationView {
         for (int i=0; i<getMenu().size(); i++) {
             MenuItem menuItem = getMenu().getItem(i);
             if (getContext() instanceof ProjectsActivity && menuItem.getItemId() == R.id.nav_projects) {
+                menuItem.setChecked(true);
+                return;
+            }
+            if (getContext() instanceof GroupsActivity && menuItem.getItemId() == R.id.nav_groups) {
                 menuItem.setChecked(true);
                 return;
             }

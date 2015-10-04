@@ -3,6 +3,7 @@ package com.commit451.gitlab.tools;
 import android.app.Activity;
 
 import com.commit451.gitlab.activities.AboutActivity;
+import com.commit451.gitlab.activities.GroupsActivity;
 import com.commit451.gitlab.activities.LoginActivity;
 import com.commit451.gitlab.activities.ProjectActivity;
 import com.commit451.gitlab.activities.ProjectsActivity;
@@ -27,6 +28,10 @@ public class NavigationManager {
 
     public static void navigateToProjects(Activity activity) {
         activity.startActivity(ProjectsActivity.newInstance(activity));
+    }
+
+    public static void navigateToGroups(Activity activity) {
+        activity.startActivity(GroupsActivity.newInstance(activity));
     }
 
     public static void navigateToLogin(Activity activity) {

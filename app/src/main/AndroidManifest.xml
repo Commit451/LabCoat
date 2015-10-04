@@ -30,29 +30,19 @@
 
         <activity android:name=".activities.ProjectsActivity" />
 
+        <activity android:name=".activities.GroupsActivity"/>
+
         <activity
             android:name=".activities.FileActivity"
-            android:configChanges="orientation|screenSize"
-            android:parentActivityName=".activities.ProjectActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.ProjectActivity" />
+            android:configChanges="orientation|screenSize" >
         </activity>
         <activity
             android:name=".activities.IssueActivity"
-            android:configChanges="orientation|screenSize"
-            android:parentActivityName=".activities.ProjectActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.ProjectActivity" />
+            android:configChanges="orientation|screenSize" >
         </activity>
         <activity
             android:name=".activities.DiffActivity"
-            android:configChanges="orientation|screenSize"
-            android:parentActivityName=".activities.ProjectActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.ProjectActivity" />
+            android:configChanges="orientation|screenSize" >
         </activity>
 
         <activity android:name=".activities.AboutActivity"/>

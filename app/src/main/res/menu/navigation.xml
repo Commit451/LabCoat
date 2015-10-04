@@ -8,9 +8,9 @@
             android:icon="@drawable/ic_project_24dp"
             android:title="@string/nav_projects" />
         <item
-            android:id="@+id/nav_snippets"
-            android:icon="@drawable/ic_snippet_24dp"
-            android:title="@string/nav_snippet" />
+            android:id="@+id/nav_groups"
+            android:icon="@drawable/ic_group_24dp"
+            android:title="@string/nav_groups" />
     </group>
 
     <group android:id="@+id/nonCheckableGroup"

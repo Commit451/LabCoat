@@ -5,7 +5,7 @@
 
     <!-- Drawer -->
     <string name="nav_projects">Projects</string>
-    <string name="nav_snippet">Snippets</string>
+    <string name="nav_groups">Groups</string>
     <!-- Menu -->
     <string name="action_lock_orientation">Lock orientation</string>
     <string name="action_logout">Logout</string>
