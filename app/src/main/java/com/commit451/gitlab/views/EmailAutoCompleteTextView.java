@@ -39,6 +39,14 @@ public class EmailAutoCompleteTextView extends AppCompatAutoCompleteTextView {
 
     private void init() {
         if (isInEditMode()) { return; }
+        retrieveAccounts();
+    }
+
+    /**
+     * Manually retrieve the accounts, typically used for API 23+ after getting the permission. Called automatically
+     * on creation, but needs to be recalled if the permission is granted later
+     */
+    public void retrieveAccounts() {
         Collection<String> accounts = getEmailAccounts();
         if (accounts != null && !accounts.isEmpty()) {
             ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),

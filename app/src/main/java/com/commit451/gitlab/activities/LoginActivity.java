@@ -1,12 +1,17 @@
 package com.commit451.gitlab.activities;
 
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.content.ContextCompat;
 import android.text.method.LinkMovementMethod;
 import android.view.KeyEvent;
 import android.view.View;
@@ -20,6 +25,7 @@ import com.commit451.gitlab.model.User;
 import com.commit451.gitlab.tools.KeyboardUtil;
 import com.commit451.gitlab.tools.NavigationManager;
 import com.commit451.gitlab.tools.Prefs;
+import com.commit451.gitlab.views.EmailAutoCompleteTextView;
 
 import javax.net.ssl.SSLHandshakeException;
 
@@ -33,15 +39,18 @@ import timber.log.Timber;
 
 public class LoginActivity extends BaseActivity {
 
+	private static final int PERMISSION_REQUEST_GET_ACCOUNTS = 1337;
+
 	public static Intent newInstance(Context context) {
 		Intent intent = new Intent(context, LoginActivity.class);
 		return intent;
 	}
 
+    @Bind(R.id.root) View mRoot;
     @Bind(R.id.url_hint) TextInputLayout urlHint;
 	@Bind(R.id.url_input) TextView urlInput;
     @Bind(R.id.user_input_hint) TextInputLayout userHint;
-	@Bind(R.id.user_input) TextView userInput;
+	@Bind(R.id.user_input) EmailAutoCompleteTextView userInput;
     @Bind(R.id.password_hint) TextInputLayout passwordHint;
 	@Bind(R.id.password_input) TextView passwordInput;
     @Bind(R.id.token_hint) TextInputLayout tokenHint;
@@ -67,7 +76,36 @@ public class LoginActivity extends BaseActivity {
 		ButterKnife.bind(this);
 		passwordInput.setOnEditorActionListener(onEditorActionListener);
 		tokenInput.setOnEditorActionListener(onEditorActionListener);
+        userInput.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    checkAccountPermission();
+                }
+            }
+        });
+
 	}
+
+    @TargetApi(23)
+    private void checkAccountPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.GET_ACCOUNTS) == PackageManager.PERMISSION_GRANTED) {
+            userInput.retrieveAccounts();
+        } else {
+            requestPermissions(new String[]{Manifest.permission.GET_ACCOUNTS}, PERMISSION_REQUEST_GET_ACCOUNTS);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_REQUEST_GET_ACCOUNTS: {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    userInput.retrieveAccounts();
+                }
+            }
+        }
+    }
 	
 	@OnClick(R.id.show_normal_link)
 	public void showNormalLogin() {
