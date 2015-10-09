@@ -128,6 +128,6 @@
         android:textAllCaps="true"
         android:background="?attr/selectableItemBackground"/>
 
-    <include layout="@layout/progress"/>
+    <include layout="@layout/progress_fullscreen"/>
 
 </FrameLayout>

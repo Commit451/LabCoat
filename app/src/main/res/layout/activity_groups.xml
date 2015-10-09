@@ -24,23 +24,24 @@
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary" />
 
-            <android.support.design.widget.TabLayout
-                android:id="@+id/tabs"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-
         </android.support.design.widget.AppBarLayout>
 
-        <FrameLayout
+        <com.commit451.gitlab.views.GitLabSwipeRefreshLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/swipe_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <android.support.v4.view.ViewPager
-                android:id="@+id/pager"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+            android:layout_height="match_parent" >
 
-            <include layout="@layout/progress"/>
-        </FrameLayout>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:clipToPadding="false"
+                />
+
+        </com.commit451.gitlab.views.GitLabSwipeRefreshLayout>
 
     </LinearLayout>
 

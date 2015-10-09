@@ -133,6 +133,7 @@
     <string name="search_for_user">Search for user</string>
     <string name="set_project_access">Project Access</string>
     <string name="user_added_successfully">User added successfully</string>
+    <string name="no_activity">No Activity</string>
 
     <string-array name="role_names">
         <item>Guest</item>

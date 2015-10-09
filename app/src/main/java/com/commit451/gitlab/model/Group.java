@@ -1,42 +1,47 @@
 package com.commit451.gitlab.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import org.parceler.Parcel;
 
 @Parcel
 public class Group {
-	
-	long id;
-	String name;
-	String path;
-	long owner_id;
+	@SerializedName("id")
+	long mId;
+	@SerializedName("name")
+    String mName;
+    @SerializedName("description")
+    String mDescription;
+    @SerializedName("path")
+	String mPath;
+    @SerializedName("avatar_url")
+    String mAvatarUrl;
+    @SerializedName("web_url")
+    String mWebUrl;
 
 	public Group(){}
 	
 	public long getId() {
-		return id;
-	}
-	public void setId(long id) {
-		this.id = id;
+		return mId;
 	}
 	
 	public String getName() {
-		return name;
+		return mName;
 	}
-	public void setName(String name) {
-		this.name = name;
+
+    public String getDescription() {
+        return mDescription;
+    }
+
+    public String getPath() {
+		return mPath;
 	}
-	
-	public String getPath() {
-		return path;
-	}
-	public void setPath(String path) {
-		this.path = path;
-	}
-	
-	public long getOwnerId() {
-		return owner_id;
-	}
-	public void setOwnerId(long owner_id) {
-		this.owner_id = owner_id;
-	}
+
+    public String getAvatarUrl() {
+        return mAvatarUrl;
+    }
+
+    public String getWebUrl() {
+        return mWebUrl;
+    }
 }

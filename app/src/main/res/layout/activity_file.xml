@@ -25,6 +25,6 @@
         android:layout_height="match_parent"
         android:layout_marginTop="?attr/actionBarSize"/>
 
-    <include layout="@layout/progress"/>
+    <include layout="@layout/progress_fullscreen"/>
 
 </android.support.design.widget.CoordinatorLayout>

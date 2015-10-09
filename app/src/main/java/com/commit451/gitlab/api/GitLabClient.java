@@ -1,5 +1,6 @@
 package com.commit451.gitlab.api;
 
+import com.commit451.gitlab.BuildConfig;
 import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.tools.Prefs;
 import com.google.gson.Gson;
@@ -17,13 +18,16 @@ import java.util.Date;
 
 import retrofit.GsonConverterFactory;
 import retrofit.Retrofit;
+import retrofit.SimpleXmlConverterFactory;
 
 /**
+ * Pulls all the GitLab stuff from the API
  * Created by Jawn on 7/28/2015.
  */
 public class GitLabClient {
 
     private static GitLab gitLab;
+    private static GitLabRss sGitLabRss;
 
     public static GitLab instance() {
 
@@ -50,6 +54,22 @@ public class GitLabClient {
         }
 
         return gitLab;
+    }
+
+    public static GitLabRss rssInstance() {
+        if (sGitLabRss == null) {
+            OkHttpClient client = new OkHttpClient();
+            if (BuildConfig.DEBUG) {
+                client.networkInterceptors().add(new TimberRequestInterceptor());
+            }
+            Retrofit restAdapter = new Retrofit.Builder()
+                    .baseUrl(Prefs.getServerUrl(GitLabApp.instance()))
+                    .addConverterFactory(SimpleXmlConverterFactory.create())
+                    .client(client)
+                    .build();
+            sGitLabRss = restAdapter.create(GitLabRss.class);
+        }
+        return sGitLabRss;
     }
 
     public static void reset() {

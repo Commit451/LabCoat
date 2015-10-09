@@ -11,7 +11,7 @@
     android:background="?attr/selectableItemBackground">
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/user_image"
+        android:id="@+id/group_image"
         android:layout_width="@dimen/image_size"
         android:layout_height="@dimen/image_size"
         android:layout_marginRight="8dp"
@@ -27,21 +27,13 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/user_name"
+            android:id="@+id/group_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/text_size_small"
             android:maxLines="2"
             android:ellipsize="end"
-            tools:text="John"/>
-
-        <TextView
-            android:id="@+id/user_username"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/text_size_tiny"
-            android:textColor="@color/white_60"
-            tools:text="Jawnnypoo"/>
+            tools:text="Commit 451"/>
 
     </LinearLayout>
 
