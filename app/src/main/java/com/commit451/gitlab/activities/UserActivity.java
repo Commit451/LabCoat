@@ -85,7 +85,7 @@ public class UserActivity extends BaseActivity {
         public void onResponse(Response<UserFeed> response, Retrofit retrofit) {
             mProgress.setVisibility(View.GONE);
             if (!response.isSuccess()) {
-                Timber.e("Feed response was not a success: " + response.code());
+                Timber.e("Feed response was not a success: %d", response.code());
                 return;
             }
             if (response.body().getEntries() == null || response.body().getEntries().isEmpty()) {
