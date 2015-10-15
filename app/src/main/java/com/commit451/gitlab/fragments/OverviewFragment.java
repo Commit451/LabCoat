@@ -3,6 +3,7 @@ package com.commit451.gitlab.fragments;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.Base64;
 import android.view.LayoutInflater;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 
 import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
+import com.commit451.gitlab.activities.ProjectActivity;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.events.ProjectReloadEvent;
 import com.commit451.gitlab.model.FileResponse;
@@ -135,6 +137,15 @@ public class OverviewFragment extends BaseFragment {
             }
         });
         mOverview.setMovementMethod(LinkMovementMethod.getInstance());
+        if (getActivity() instanceof ProjectActivity) {
+            mProject = ((ProjectActivity) getActivity()).getProject();
+            mBranchName = ((ProjectActivity) getActivity()).getBranchName();
+            if (!TextUtils.isEmpty(mBranchName) && mProject != null) {
+                loadData();
+            }
+        } else {
+            throw new IllegalStateException("Incorrect parent activity");
+        }
     }
 
     @Override
