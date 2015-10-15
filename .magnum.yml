@@ -1,0 +1,10 @@
+before_script:
+  - wget http://dl.google.com/android/android-sdk_r24.4-macosx.zip
+  - tar xvzf android-sdk_r24.4-macosx.zip
+  - cd android-sdk-macosx/
+  - ./tools/android update sdk --no-ui tools,platform-tools,build-tools-23.0.1,android-23,extra-android-m2repository
+  - chmod +x scripts/prepare-build.sh
+  - ./prepare-build.sh
+
+script:
+  - ./gradlew build -x fabricGenerateResourcesRelease
