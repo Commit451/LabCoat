@@ -97,6 +97,12 @@ public class GroupsActivity extends BaseActivity {
                 load();
             }
         });
+        mMessageText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                load();
+            }
+        });
         mGroupRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mGroupAdapter = new GroupAdapter(mGroupAdapterListener);
         mGroupRecyclerView.setAdapter(mGroupAdapter);

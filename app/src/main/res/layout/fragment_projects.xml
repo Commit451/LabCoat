@@ -16,7 +16,6 @@
             android:layout_height="match_parent"
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
-            android:clipToPadding="false"
             />
 
     </com.commit451.gitlab.views.GitLabSwipeRefreshLayout>

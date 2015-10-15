@@ -87,6 +87,7 @@ public class ProjectsFragment extends BaseFragment {
             if (getView() == null) {
                 return;
             }
+            mMessageText.setVisibility(View.VISIBLE);
             mMessageText.setText(R.string.connection_error);
         }
     };
@@ -121,6 +122,12 @@ public class ProjectsFragment extends BaseFragment {
                 loadData();
             }
         });
+        mMessageText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadData();
+            }
+        });
         mProjectsAdapter = new ProjectsAdapter(getActivity(), mProjectsListener);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setAdapter(mProjectsAdapter);
@@ -132,16 +139,18 @@ public class ProjectsFragment extends BaseFragment {
         super.loadData();
         mMessageText.setVisibility(View.GONE);
         mRecyclerView.setVisibility(View.VISIBLE);
-        mSwipeRefreshLayout.setRefreshing(true);
         switch (mMode) {
             case MODE_ALL:
+                showLoading();
                 GitLabClient.instance().getAllProjects().enqueue(mProjectsCallback);
                 break;
             case MODE_MINE:
+                showLoading();
                 GitLabClient.instance().getMyProjects().enqueue(mProjectsCallback);
                 break;
             case MODE_SEARCH:
                 if (mQuery != null) {
+                    showLoading();
                     GitLabClient.instance().searchAllProjects(mQuery).enqueue(mProjectsCallback);
                 }
                 break;
@@ -149,6 +158,15 @@ public class ProjectsFragment extends BaseFragment {
                 throw new IllegalStateException("this mode is not defined");
 
         }
+    }
+
+    private void showLoading() {
+        mSwipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                mSwipeRefreshLayout.setRefreshing(true);
+            }
+        });
     }
 
     public void searchQuery(String query) {
