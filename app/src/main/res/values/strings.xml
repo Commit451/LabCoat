@@ -91,9 +91,8 @@
     <string name="required_field">Required Field</string>
     <!-- General -->
     <string name="projects">Projects</string>
-    <string name="no_projects">No projects</string>
+    <string name="no_projects">No projects.</string>
     <string name="selected_content_description">Selected</string>
-    <string name="progress_dialog">Please wait</string>
     <string name="cancel_button">Cancel</string>
     <string name="save_button">Save</string>
     <string name="add_button">Add</string>
@@ -155,4 +154,7 @@
 
     <!-- Merge Requests -->
     <string name="no_merge_requests">No merge requests</string>
+
+    <!-- Groups -->
+    <string name="no_groups">No groups.</string>
 </resources>

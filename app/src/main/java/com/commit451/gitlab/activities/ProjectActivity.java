@@ -80,6 +80,7 @@ public class ProjectActivity extends BaseActivity {
 			progress.setVisibility(View.GONE);
 
 
+			branchSpinner.setVisibility(View.VISIBLE);
 			// Set up the dropdown list navigation in the action bar.
 			branchSpinner.setAdapter(new ArrayAdapter<>(ProjectActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, response.body()));
 			for (int i=0; i<response.body().size(); i++) {

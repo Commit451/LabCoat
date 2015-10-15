@@ -121,7 +121,7 @@ public class ProjectsFragment extends BaseFragment {
                 loadData();
             }
         });
-        mProjectsAdapter = new ProjectsAdapter(mProjectsListener);
+        mProjectsAdapter = new ProjectsAdapter(getActivity(), mProjectsListener);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setAdapter(mProjectsAdapter);
         loadData();

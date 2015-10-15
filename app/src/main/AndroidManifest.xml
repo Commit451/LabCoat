@@ -49,6 +49,7 @@
         <activity android:name=".activities.AddUserActivity"/>
         <activity android:name=".activities.UserActivity"/>
         <activity android:name=".activities.SearchActivity"/>
+        <activity android:name=".activities.GroupActivity"/>
 
         <meta-data
             android:name="io.fabric.ApiKey"

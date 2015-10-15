@@ -1,14 +1,17 @@
 package com.commit451.gitlab.tools;
 
 import android.app.Activity;
+import android.content.Context;
 
 import com.commit451.gitlab.activities.AboutActivity;
+import com.commit451.gitlab.activities.GroupActivity;
 import com.commit451.gitlab.activities.GroupsActivity;
 import com.commit451.gitlab.activities.LoginActivity;
 import com.commit451.gitlab.activities.ProjectActivity;
 import com.commit451.gitlab.activities.ProjectsActivity;
 import com.commit451.gitlab.activities.SearchActivity;
 import com.commit451.gitlab.activities.UserActivity;
+import com.commit451.gitlab.model.Group;
 import com.commit451.gitlab.model.Project;
 import com.commit451.gitlab.model.User;
 
@@ -34,8 +37,8 @@ public class NavigationManager {
         activity.startActivity(GroupsActivity.newInstance(activity));
     }
 
-    public static void navigateToLogin(Activity activity) {
-        activity.startActivity(LoginActivity.newInstance(activity));
+    public static void navigateToLogin(Context context) {
+        context.startActivity(LoginActivity.newInstance(context));
     }
 
     public static void navigateToSearch(Activity activity) {
@@ -44,5 +47,9 @@ public class NavigationManager {
 
     public static void navigateToUser(Activity activity, User user) {
         activity.startActivity(UserActivity.newInstance(activity, user));
+    }
+
+    public static void navigateToGroup(Activity activity, Group group) {
+        activity.startActivity(GroupActivity.newInstance(activity, group));
     }
 }

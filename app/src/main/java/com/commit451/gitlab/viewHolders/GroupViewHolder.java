@@ -1,6 +1,7 @@
 package com.commit451.gitlab.viewHolders;
 
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,7 @@ public class GroupViewHolder extends RecyclerView.ViewHolder{
 
     @Bind(R.id.group_image) public ImageView image;
     @Bind(R.id.group_name) public TextView name;
+    @Bind(R.id.group_description) public TextView description;
 
 
     public GroupViewHolder(View view) {
@@ -40,5 +42,11 @@ public class GroupViewHolder extends RecyclerView.ViewHolder{
                 .load(group.getAvatarUrl())
                 .into(image);
         name.setText(group.getName());
+        if (TextUtils.isEmpty(group.getDescription())) {
+            description.setVisibility(View.VISIBLE);
+            description.setText(group.getDescription());
+        } else {
+            description.setVisibility(View.GONE);
+        }
     }
 }

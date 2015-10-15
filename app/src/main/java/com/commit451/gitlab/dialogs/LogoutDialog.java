@@ -1,6 +1,5 @@
 package com.commit451.gitlab.dialogs;
 
-import android.app.Activity;
 import android.content.Context;
 import android.support.v7.app.AppCompatDialog;
 
@@ -23,7 +22,7 @@ public class LogoutDialog extends AppCompatDialog {
     void onLogoutClick() {
         Prefs.setLoggedIn(getContext(), false);
         Prefs.setPrivateToken(getContext(), null);
-        NavigationManager.navigateToLogin((Activity) getContext());
+        NavigationManager.navigateToLogin(getContext());
         GitLabApp.bus().post(new LogoutEvent());
     }
 

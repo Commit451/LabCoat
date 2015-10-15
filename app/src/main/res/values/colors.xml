@@ -8,6 +8,12 @@
     <color name="orange">#FB6C17</color>
     <color name="yellow">#FAA11A</color>
 
+    <integer-array name="cool_colors">
+        <item>@color/red</item>
+        <item>@color/orange</item>
+        <item>@color/yellow</item>
+    </integer-array>
+
     <color name="grey">#373D47</color>
     <color name="grey_60">#99373D47</color>
     <color name="grey_dark">#1E242E</color>

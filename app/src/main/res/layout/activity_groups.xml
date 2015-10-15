@@ -26,22 +26,38 @@
 
         </android.support.design.widget.AppBarLayout>
 
-        <com.commit451.gitlab.views.GitLabSwipeRefreshLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/swipe_layout"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+            android:layout_height="match_parent">
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/list"
+            <com.commit451.gitlab.views.GitLabSwipeRefreshLayout
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/swipe_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
+                    android:clipToPadding="false"
+                    />
+
+            </com.commit451.gitlab.views.GitLabSwipeRefreshLayout>
+
+            <TextView
+                android:id="@+id/message_text"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"
-                android:clipToPadding="false"
-                />
+                android:layout_margin="16dp"
+                android:text="@string/no_users_found"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:visibility="gone"/>
 
-        </com.commit451.gitlab.views.GitLabSwipeRefreshLayout>
+        </FrameLayout>
 
     </LinearLayout>
 

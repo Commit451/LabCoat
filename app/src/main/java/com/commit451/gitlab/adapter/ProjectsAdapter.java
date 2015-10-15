@@ -1,5 +1,6 @@
 package com.commit451.gitlab.adapter;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,14 +24,16 @@ public class ProjectsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     private Listener mListener;
     private List<Project> mValues;
+    private int[] mColors;
 
     public Project getValueAt(int position) {
         return mValues.get(position);
     }
 
-    public ProjectsAdapter(Listener listener) {
+    public ProjectsAdapter(Context context, Listener listener) {
         mListener = listener;
         mValues = new ArrayList<>();
+        mColors = context.getResources().getIntArray(R.array.cool_colors);
     }
 
     public void clearData() {
@@ -65,7 +68,7 @@ public class ProjectsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof ProjectViewHolder) {
             Project project = getValueAt(position);
-            ((ProjectViewHolder) holder).bind(project);
+            ((ProjectViewHolder) holder).bind(project, mColors[position % mColors.length]);
             holder.itemView.setTag(R.id.list_position, position);
         }
     }

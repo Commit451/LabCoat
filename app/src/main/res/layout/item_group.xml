@@ -24,7 +24,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_gravity="center_vertical">
 
         <TextView
             android:id="@+id/group_name"
@@ -34,6 +35,15 @@
             android:maxLines="2"
             android:ellipsize="end"
             tools:text="Commit 451"/>
+
+        <TextView
+            android:id="@+id/group_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_small"
+            android:maxLines="2"
+            android:ellipsize="end"
+            tools:text="We are cool I think"/>
 
     </LinearLayout>
 

@@ -61,6 +61,8 @@ public class GitLabNavigationView extends NavigationView {
 
                     } else {
                         NavigationManager.navigateToProjects((Activity) getContext());
+                        ((Activity) getContext()).finish();
+                        ((Activity)getContext()).overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
                     }
                     GitLabApp.bus().post(new CloseDrawerEvent());
                     return true;
@@ -69,6 +71,8 @@ public class GitLabNavigationView extends NavigationView {
 
                     } else {
                         NavigationManager.navigateToGroups((Activity) getContext());
+                        ((Activity) getContext()).finish();
+                        ((Activity)getContext()).overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
                     }
                     GitLabApp.bus().post(new CloseDrawerEvent());
                     return true;

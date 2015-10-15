@@ -79,9 +79,16 @@ public class UsersFragment extends BaseFragment {
             if (getView() == null) {
                 return;
             }
-            mMessageText.setVisibility(View.GONE);
-            mUsersList.setVisibility(View.VISIBLE);
-            mUsersAdapter.setData(response.body());
+            if (response.body().size() == 0) {
+                mMessageText.setText(R.string.no_users_found);
+                mMessageText.setVisibility(View.VISIBLE);
+                mUsersList.setVisibility(View.GONE);
+            } else {
+                mMessageText.setVisibility(View.GONE);
+                mUsersList.setVisibility(View.VISIBLE);
+                mUsersAdapter.setData(response.body());
+            }
+
         }
 
         @Override

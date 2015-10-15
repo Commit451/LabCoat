@@ -25,7 +25,8 @@
                 android:hint="@string/action_search"
                 android:layout_marginRight="32dp"
                 android:inputType="text"
-                android:imeOptions="actionSearch"/>
+                android:imeOptions="actionSearch"
+                android:background="@null"/>
 
         </android.support.v7.widget.Toolbar>
 
