@@ -118,7 +118,7 @@ public class CommitsFragment extends BaseFragment implements SwipeRefreshLayout.
 			if (!response.isSuccess()) {
 				return;
 			}
-			if (swipeLayout == null) {
+			if (getView() == null) {
 				return;
 			}
 			swipeLayout.setRefreshing(false);

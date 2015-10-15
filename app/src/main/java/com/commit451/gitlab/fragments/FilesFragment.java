@@ -106,11 +106,11 @@ public class FilesFragment extends BaseFragment {
 	protected void loadData() {
         Timber.d("loadData");
 		swipeLayout.post(new Runnable() {
-			@Override
-			public void run() {
-				swipeLayout.setRefreshing(true);
-			}
-		});
+            @Override
+            public void run() {
+                swipeLayout.setRefreshing(true);
+            }
+        });
 
         String currentPath = "";
         for(String p : mPath) {
@@ -142,9 +142,10 @@ public class FilesFragment extends BaseFragment {
 				}
 				return;
 			}
-			if(swipeLayout != null && swipeLayout.isRefreshing()) {
-				swipeLayout.setRefreshing(false);
-			}
+            if (getView() == null) {
+                return;
+            }
+            swipeLayout.setRefreshing(false);
 			if (response.body() != null && !response.body().isEmpty()) {
 				list.setVisibility(View.VISIBLE);
 				list.setAdapter(new FilesAdapter(response.body()));

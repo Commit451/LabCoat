@@ -109,9 +109,10 @@ public class IssuesFragment extends BaseFragment implements SwipeRefreshLayout.O
 			if (!response.isSuccess()) {
 				return;
 			}
-			if(swipeLayout != null && swipeLayout.isRefreshing()) {
-				swipeLayout.setRefreshing(false);
-			}
+			if (getView() == null) {
+                return;
+            }
+            swipeLayout.setRefreshing(false);
 			issuesAdapter.setIssues(response.body());
 
 			addIssueButton.setEnabled(true);

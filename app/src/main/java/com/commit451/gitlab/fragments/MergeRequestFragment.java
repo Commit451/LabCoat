@@ -64,14 +64,15 @@ public class MergeRequestFragment extends BaseFragment {
             if (!response.isSuccess()) {
                 return;
             }
-            if (getView() != null) {
-                mSwipeRefreshLayout.setRefreshing(false);
-                if (response.body().isEmpty()) {
-                    mErrorText.setVisibility(View.VISIBLE);
-                    mErrorText.setText(R.string.no_merge_requests);
-                } else {
-                    mMergeRequestAdapter.setData(response.body());
-                }
+            if (getView() == null) {
+                return;
+            }
+            mSwipeRefreshLayout.setRefreshing(false);
+            if (response.body().isEmpty()) {
+                mErrorText.setVisibility(View.VISIBLE);
+                mErrorText.setText(R.string.no_merge_requests);
+            } else {
+                mMergeRequestAdapter.setData(response.body());
             }
         }
 
