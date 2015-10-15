@@ -98,7 +98,12 @@ public class MembersFragment extends BaseFragment implements SwipeRefreshLayout.
 	}
 	
 	public void loadData() {
-        swipeLayout.setRefreshing(true);
+		swipeLayout.post(new Runnable() {
+			@Override
+			public void run() {
+				swipeLayout.setRefreshing(true);
+			}
+		});
         GitLabClient.instance().getGroupMembers(mProject.getNamespace().getId()).enqueue(usersCallback);
 	}
 	

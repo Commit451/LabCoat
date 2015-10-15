@@ -93,10 +93,12 @@ public class IssuesFragment extends BaseFragment implements SwipeRefreshLayout.O
 	}
 	
 	public void loadData() {
-		if(swipeLayout != null && !swipeLayout.isRefreshing()) {
-			swipeLayout.setRefreshing(true);
-		}
-
+		swipeLayout.post(new Runnable() {
+			@Override
+			public void run() {
+				swipeLayout.setRefreshing(true);
+			}
+		});
 		GitLabClient.instance().getIssues(mProject.getId()).enqueue(issuesCallback);
 	}
 	

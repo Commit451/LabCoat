@@ -105,7 +105,12 @@ public class FilesFragment extends BaseFragment {
 	@Override
 	protected void loadData() {
         Timber.d("loadData");
-        swipeLayout.setRefreshing(true);
+		swipeLayout.post(new Runnable() {
+			@Override
+			public void run() {
+				swipeLayout.setRefreshing(true);
+			}
+		});
 
         String currentPath = "";
         for(String p : mPath) {

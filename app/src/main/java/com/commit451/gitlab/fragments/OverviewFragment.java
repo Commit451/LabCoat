@@ -148,7 +148,12 @@ public class OverviewFragment extends BaseFragment {
     protected void loadData() {
         super.loadData();
         mErrorText.setVisibility(View.GONE);
-        mSwipeRefreshLayout.setRefreshing(true);
+        mSwipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                mSwipeRefreshLayout.setRefreshing(true);
+            }
+        });
         GitLabClient.instance().getTree(mProject.getId(), mBranchName, null).enqueue(mFilesCallback);
     }
 

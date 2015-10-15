@@ -30,6 +30,7 @@ import retrofit.Response;
 import retrofit.Retrofit;
 
 /**
+ * Merge all the requests!
  * Created by Jawn on 9/20/2015.
  */
 public class MergeRequestFragment extends BaseFragment {
@@ -124,7 +125,12 @@ public class MergeRequestFragment extends BaseFragment {
     @Override
     protected void loadData() {
         super.loadData();
-        mSwipeRefreshLayout.setRefreshing(true);
+        mSwipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                mSwipeRefreshLayout.setRefreshing(true);
+            }
+        });
         GitLabClient.instance().getMergeRequests(mProject.getId()).enqueue(mCallback);
     }
 

@@ -97,7 +97,12 @@ public class CommitsFragment extends BaseFragment implements SwipeRefreshLayout.
 
     @Override
 	protected void loadData() {
-		swipeLayout.setRefreshing(true);
+		swipeLayout.post(new Runnable() {
+			@Override
+			public void run() {
+				swipeLayout.setRefreshing(true);
+			}
+		});
         GitLabClient.instance().getCommits(mProject.getId(), mBranchName).enqueue(commitsCallback);
 	}
 
