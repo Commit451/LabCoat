@@ -17,16 +17,32 @@
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary">
 
-            <EditText
-                android:id="@+id/search"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginRight="16dp">
+
+            <EditText
+                android:id="@+id/search"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:layout_centerHorizontal="true"
                 android:hint="@string/action_search"
                 android:layout_marginRight="32dp"
                 android:inputType="text"
                 android:imeOptions="actionSearch"
                 android:background="@null"/>
+
+            <ImageView
+                android:id="@+id/clear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_close_24dp"
+                android:contentDescription="@null"
+                android:visibility="gone"/>
+            </LinearLayout>
 
         </android.support.v7.widget.Toolbar>
 

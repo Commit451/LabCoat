@@ -79,8 +79,9 @@ public class ProjectActivity extends BaseActivity {
 			}
 			progress.setVisibility(View.GONE);
 
-
 			branchSpinner.setVisibility(View.VISIBLE);
+			branchSpinner.setAlpha(0.0f);
+			branchSpinner.animate().alpha(1.0f);
 			// Set up the dropdown list navigation in the action bar.
 			branchSpinner.setAdapter(new ArrayAdapter<>(ProjectActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, response.body()));
 			for (int i=0; i<response.body().size(); i++) {
@@ -120,7 +121,7 @@ public class ProjectActivity extends BaseActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.activity_project);
 		ButterKnife.bind(this);
         mProject = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_PROJECT));
 

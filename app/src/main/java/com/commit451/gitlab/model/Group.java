@@ -4,6 +4,8 @@ import com.google.gson.annotations.SerializedName;
 
 import org.parceler.Parcel;
 
+import java.util.List;
+
 @Parcel
 public class Group {
 	@SerializedName("id")
@@ -18,6 +20,8 @@ public class Group {
     String mAvatarUrl;
     @SerializedName("web_url")
     String mWebUrl;
+    @SerializedName("projects")
+    List<Project> mProjects;
 
 	public Group(){}
 	
@@ -43,5 +47,9 @@ public class Group {
 
     public String getWebUrl() {
         return mWebUrl;
+    }
+
+    public List<Project> getProjects() {
+        return mProjects;
     }
 }
