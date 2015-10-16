@@ -10,8 +10,8 @@ android {
         applicationId "com.commit451.gitlab"
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 210
-        versionName "2.1.0"
+        versionCode 211
+        versionName "2.1.1"
     }
     buildTypes {
         release {
@@ -34,11 +34,11 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:23.1.0'
-    compile 'com.android.support:design:23.1.0'
-    compile 'com.android.support:recyclerview-v7:23.1.0'
-    compile 'com.android.support:cardview-v7:23.1.0'
-    compile 'com.android.support:palette-v7:23.1.0'
+    compile 'com.android.support:appcompat-v7:23.0.1'
+    compile 'com.android.support:design:23.0.1'
+    compile 'com.android.support:recyclerview-v7:23.0.1'
+    compile 'com.android.support:cardview-v7:23.0.1'
+    compile 'com.android.support:palette-v7:23.0.1'
     compile 'com.google.code.gson:gson:2.3.1'
     compile 'net.danlew:android.joda:2.8.2'
     compile 'com.squareup.picasso:picasso:2.5.2'
