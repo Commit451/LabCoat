@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.util.Base64;
 import android.view.MenuItem;
 import android.view.View;
@@ -71,7 +72,7 @@ public class FileActivity extends BaseActivity {
 			} catch (UnsupportedEncodingException e) {
 				Timber.e(e.toString());
 			}
-			String temp = "<!DOCTYPE html><html><head><link href=\"github.css\" rel=\"stylesheet\" /></head><body><pre><code>" + text + "</code></pre><script src=\"highlight.pack.js\"></script><script>hljs.initHighlightingOnLoad();</script></body></html>";
+			String temp = "<!DOCTYPE html><html><head><link href=\"github.css\" rel=\"stylesheet\" /></head><body><pre><code>" + Html.escapeHtml(text) + "</code></pre><script src=\"highlight.pack.js\"></script><script>hljs.initHighlightingOnLoad();</script></body></html>";
 			fileBlobView.loadDataWithBaseURL("file:///android_asset/", temp, "text/html", "utf8", null);
 			toolbar.setTitle(mFileName);
 			toolbar.inflateMenu(R.menu.file);
