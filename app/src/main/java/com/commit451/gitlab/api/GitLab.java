@@ -29,7 +29,7 @@ import retrofit.http.Path;
 import retrofit.http.Query;
 
 public interface GitLab {
-    String API_VERSION = "/api/v3";
+    String API_VERSION = "api/v3";
     /* --- LOGIN --- */
 
     @FormUrlEncoded
