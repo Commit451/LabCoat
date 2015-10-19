@@ -138,7 +138,14 @@ public class UsersFragment extends BaseFragment {
     protected void loadData() {
         super.loadData();
         mMessageText.setVisibility(View.GONE);
-        mSwipeRefreshLayout.setRefreshing(true);
+        mSwipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                if (mSwipeRefreshLayout != null) {
+                    mSwipeRefreshLayout.setRefreshing(true);
+                }
+            }
+        });
         GitLabClient.instance().searchUsers(mQuery).enqueue(mSearchCallback);
     }
 

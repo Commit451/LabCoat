@@ -162,7 +162,9 @@ public class OverviewFragment extends BaseFragment {
         mSwipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
-                mSwipeRefreshLayout.setRefreshing(true);
+                if (mSwipeRefreshLayout != null) {
+                    mSwipeRefreshLayout.setRefreshing(true);
+                }
             }
         });
         GitLabClient.instance().getTree(mProject.getId(), mBranchName, null).enqueue(mFilesCallback);

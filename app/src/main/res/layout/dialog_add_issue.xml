@@ -2,13 +2,13 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_margin="8dp">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_margin="16dp">
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/titleInputLayout"
@@ -45,14 +45,7 @@
 
         </android.support.design.widget.TextInputLayout>
 
-        <View
-            android:id="@+id/lsep"
-            android:layout_width="match_parent"
-            android:layout_height="1dip"
-            android:background="?android:attr/dividerHorizontal" />
-
         <LinearLayout
-            android:id="@+id/lin"
             style="?android:attr/buttonBarStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

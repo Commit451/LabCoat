@@ -38,7 +38,7 @@ public class CommitsFragment extends BaseFragment implements SwipeRefreshLayout.
 
 	@Bind(R.id.list) RecyclerView listView;
 	CommitsAdapter adapter;
-    @Bind(R.id.swipe_layout) SwipeRefreshLayout swipeLayout;
+    @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
     @Bind(R.id.message_text) View messageView;
 
     EventReceiver mEventReceiver;
@@ -72,7 +72,7 @@ public class CommitsFragment extends BaseFragment implements SwipeRefreshLayout.
         GitLabApp.bus().register(mEventReceiver);
 		listView.setLayoutManager(new LinearLayoutManager(getActivity()));
 		listView.setAdapter(adapter);
-		swipeLayout.setOnRefreshListener(this);
+		mSwipeRefreshLayout.setOnRefreshListener(this);
         if (getActivity() instanceof ProjectActivity) {
             mBranchName = ((ProjectActivity) getActivity()).getBranchName();
             if (!TextUtils.isEmpty(mBranchName)) {
@@ -97,10 +97,12 @@ public class CommitsFragment extends BaseFragment implements SwipeRefreshLayout.
 
     @Override
 	protected void loadData() {
-		swipeLayout.post(new Runnable() {
+		mSwipeRefreshLayout.post(new Runnable() {
 			@Override
 			public void run() {
-				swipeLayout.setRefreshing(true);
+				if (mSwipeRefreshLayout != null) {
+					mSwipeRefreshLayout.setRefreshing(true);
+				}
 			}
 		});
         GitLabClient.instance().getCommits(mProject.getId(), mBranchName).enqueue(commitsCallback);
@@ -121,7 +123,7 @@ public class CommitsFragment extends BaseFragment implements SwipeRefreshLayout.
 			if (getView() == null) {
 				return;
 			}
-			swipeLayout.setRefreshing(false);
+			mSwipeRefreshLayout.setRefreshing(false);
 
 			if(response.body().size() > 0) {
 				messageView.setVisibility(View.GONE);
@@ -137,8 +139,8 @@ public class CommitsFragment extends BaseFragment implements SwipeRefreshLayout.
 		public void onFailure(Throwable t) {
 			Timber.e(t.toString());
 
-			if(swipeLayout != null && swipeLayout.isRefreshing()) {
-				swipeLayout.setRefreshing(false);
+			if(mSwipeRefreshLayout != null && mSwipeRefreshLayout.isRefreshing()) {
+				mSwipeRefreshLayout.setRefreshing(false);
 			}
 			messageView.setVisibility(View.VISIBLE);
 

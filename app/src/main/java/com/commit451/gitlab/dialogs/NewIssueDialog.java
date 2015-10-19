@@ -10,8 +10,10 @@ import android.widget.Toast;
 
 import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
+import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.events.IssueCreatedEvent;
 import com.commit451.gitlab.model.Issue;
+import com.commit451.gitlab.model.Project;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -33,10 +35,13 @@ public class NewIssueDialog extends AppCompatDialog {
     @Bind(R.id.description_input) EditText descriptionInput;
     @Bind(R.id.progress) View progress;
 
-    public NewIssueDialog(Context context) {
+    private Project mProject;
+
+    public NewIssueDialog(Context context, Project project) {
         super(context);
         setContentView(R.layout.dialog_add_issue);
         ButterKnife.bind(this);
+        mProject = project;
     }
 
     @OnClick(R.id.save_button)
@@ -45,8 +50,7 @@ public class NewIssueDialog extends AppCompatDialog {
             progress.setVisibility(View.VISIBLE);
             progress.setAlpha(0.0f);
             progress.animate().alpha(1.0f);
-            //TODO fix this
-//            GitLabClient.instance().postIssue(GitLabApp.instance().getSelectedProject().getId(), titleInput.getText().toString().trim(), descriptionInput.getText().toString().trim()).enqueue(issueCallback);
+            GitLabClient.instance().postIssue(mProject.getId(), titleInput.getText().toString().trim(), descriptionInput.getText().toString().trim()).enqueue(issueCallback);
         }
         else {
             titleInputLayout.setError(getContext().getString(R.string.required_field));

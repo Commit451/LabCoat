@@ -7,6 +7,11 @@
         <item name="colorPrimaryDark">@color/purple_dark</item>
         <item name="android:navigationBarColor">?attr/colorPrimaryDark</item>
         <item name="colorAccent">@color/yellow</item>
+        <item name="dialogTheme">@style/AppDialogTheme</item>
+    </style>
+
+    <style name="AppDialogTheme" parent="Theme.AppCompat.Dialog">
+        <item name="colorAccent">@color/yellow</item>
     </style>
 
     <style name="Card">

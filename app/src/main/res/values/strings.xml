@@ -89,6 +89,7 @@
     <string name="error_creating_account">Error creating account</string>
 
     <string name="required_field">Required Field</string>
+    <string name="wait_for_project_to_load">Wait for the project to load!</string>
     <!-- General -->
     <string name="projects">Projects</string>
     <string name="no_projects">No projects.</string>

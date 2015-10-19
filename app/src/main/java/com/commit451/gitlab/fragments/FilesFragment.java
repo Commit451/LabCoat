@@ -51,7 +51,7 @@ public class FilesFragment extends BaseFragment {
 	}
 
 	@Bind(R.id.error_text) TextView errorText;
-    @Bind(R.id.swipe_layout) SwipeRefreshLayout swipeLayout;
+    @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
 	@Bind(R.id.list) RecyclerView list;
 
 	EventReceiver eventReceiver;
@@ -72,7 +72,7 @@ public class FilesFragment extends BaseFragment {
 
 		list.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+		mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 loadData();
@@ -105,12 +105,14 @@ public class FilesFragment extends BaseFragment {
 	@Override
 	protected void loadData() {
         Timber.d("loadData");
-		swipeLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                swipeLayout.setRefreshing(true);
-            }
-        });
+		mSwipeRefreshLayout.post(new Runnable() {
+			@Override
+			public void run() {
+				if (mSwipeRefreshLayout != null) {
+					mSwipeRefreshLayout.setRefreshing(true);
+				}
+			}
+		});
 
         String currentPath = "";
         for(String p : mPath) {
@@ -145,7 +147,7 @@ public class FilesFragment extends BaseFragment {
             if (getView() == null) {
                 return;
             }
-            swipeLayout.setRefreshing(false);
+            mSwipeRefreshLayout.setRefreshing(false);
 			if (response.body() != null && !response.body().isEmpty()) {
 				list.setVisibility(View.VISIBLE);
 				list.setAdapter(new FilesAdapter(response.body()));
@@ -157,8 +159,8 @@ public class FilesFragment extends BaseFragment {
 
 		@Override
 		public void onFailure(Throwable t) {
-			if(swipeLayout != null && swipeLayout.isRefreshing()) {
-				swipeLayout.setRefreshing(false);
+			if(mSwipeRefreshLayout != null && mSwipeRefreshLayout.isRefreshing()) {
+				mSwipeRefreshLayout.setRefreshing(false);
 			}
 			Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.connection_error_files), Snackbar.LENGTH_SHORT)
 					.show();
