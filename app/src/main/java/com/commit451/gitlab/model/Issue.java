@@ -1,22 +1,55 @@
 package com.commit451.gitlab.model;
 
+import android.support.annotation.StringDef;
+
+import com.google.gson.annotations.SerializedName;
+
 import org.parceler.Parcel;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.Date;
 @Parcel
 public class Issue {
-	
+
+	@StringDef({STATE_REOPEN, STATE_CLOSE})
+	@Retention(RetentionPolicy.SOURCE)
+	public @interface State {}
+	public static final String STATE_REOPENED = "reopened";
+    public static final String STATE_CLOSED = "closed";
+    public static final String STATE_ACTIVE = "active";
+    public static final String STATE_OPENED = "opened";
+
+    @StringDef({STATE_REOPEN, STATE_CLOSE})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface EditState {}
+    public static final String STATE_REOPEN = "reopen";
+    public static final String STATE_CLOSE = "close";
+
+
+    @SerializedName("id")
 	long id;
+    @SerializedName("iid")
 	long iid;
+    @SerializedName("project_id")
 	long project_id;
+    @SerializedName("title")
 	String title;
+    @SerializedName("description")
 	String description;
+    @SerializedName("labels")
 	String[] labels;
+    @SerializedName("milestone")
 	Milestone milestone;
+    @SerializedName("assignee")
 	User assignee;
+    @SerializedName("author")
 	User author;
+    @SerializedName("state")
 	String state;
+    @SerializedName("updated_at")
 	Date updated_at;
+    @SerializedName("created_at")
 	Date created_at;
 
 	public Issue(){}
@@ -56,9 +89,10 @@ public class Issue {
 	public User getAuthor() {
 		return author;
 	}
-	
+
+    @State
 	public String getState() {
-		return state;
+        return state;
 	}
 	
 	public Date getUpdatedAt() {

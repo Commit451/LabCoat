@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -23,6 +24,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary" />
+
+            <TextView
+                android:id="@+id/issue_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:layout_marginRight="56dp"
+                tools:text="This is an issue"/>
 
         </android.support.design.widget.AppBarLayout>
 
@@ -53,23 +62,34 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:layout_marginLeft="8dp"
             android:layout_gravity="center_vertical"
             android:hint="@string/new_note_hint"
-            android:inputType="text|textCapSentences|textAutoComplete" />
+            android:inputType="textCapSentences|textAutoCorrect|textMultiLine"
+            android:imeOptions="actionNone" />
 
-        <ImageButton
+        <ImageView
             android:id="@+id/new_note_button"
-            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:state_enabled="false"
-            android:focusable="true"
-            android:contentDescription="@string/add_note_content_description"
-            android:src="@drawable/ic_send_24dp" />
+            android:layout_height="match_parent"
+            android:paddingRight="16dp"
+            android:paddingLeft="16dp"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_send_24dp"
+            android:background="?attr/selectableItemBackgroundBorderless"/>
 
     </LinearLayout>
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_edit_issue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:src="@drawable/ic_edit_24dp"
+        app:fabSize="mini"
+        app:layout_anchor="@id/appbar"
+        app:layout_anchorGravity="bottom|right|end"/>
+
     <include layout="@layout/progress_fullscreen"/>
 
-</FrameLayout>
+</android.support.design.widget.CoordinatorLayout>

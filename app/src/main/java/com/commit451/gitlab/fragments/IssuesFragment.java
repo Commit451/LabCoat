@@ -16,6 +16,7 @@ import com.commit451.gitlab.activities.ProjectActivity;
 import com.commit451.gitlab.adapter.IssuesAdapter;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.dialogs.NewIssueDialog;
+import com.commit451.gitlab.events.IssueChangedEvent;
 import com.commit451.gitlab.events.IssueCreatedEvent;
 import com.commit451.gitlab.events.ProjectReloadEvent;
 import com.commit451.gitlab.model.Issue;
@@ -108,10 +109,10 @@ public class IssuesFragment extends BaseFragment implements SwipeRefreshLayout.O
 
 		@Override
 		public void onResponse(Response<List<Issue>> response, Retrofit retrofit) {
-			if (!response.isSuccess()) {
-				return;
-			}
 			if (getView() == null) {
+                return;
+            }
+            if (!response.isSuccess()) {
                 return;
             }
             mSwipeRefreshLayout.setRefreshing(false);
@@ -123,6 +124,9 @@ public class IssuesFragment extends BaseFragment implements SwipeRefreshLayout.O
 		@Override
 		public void onFailure(Throwable t) {
 			Timber.e(t.toString());
+            if (getView() == null) {
+                return;
+            }
 
 			if(mSwipeRefreshLayout != null && mSwipeRefreshLayout.isRefreshing()) {
 				mSwipeRefreshLayout.setRefreshing(false);
@@ -154,10 +158,16 @@ public class IssuesFragment extends BaseFragment implements SwipeRefreshLayout.O
             mProject = event.project;
             loadData();
         }
+
 		@Subscribe
 		public void onIssueAdded(IssueCreatedEvent event) {
 			issuesAdapter.addIssue(event.issue);
             listView.smoothScrollToPosition(0);
+		}
+
+		@Subscribe
+		public void onIssueChanged(IssueChangedEvent event) {
+			issuesAdapter.updateIssue(event.issue);
 		}
 	}
 }

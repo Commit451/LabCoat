@@ -71,7 +71,10 @@ public class ProjectsFragment extends BaseFragment {
             }
             mSwipeRefreshLayout.setRefreshing(false);
             if (!response.isSuccess()) {
+                mRecyclerView.setVisibility(View.GONE);
+                mMessageText.setVisibility(View.VISIBLE);
                 mMessageText.setText(R.string.connection_error);
+                return;
             }
             if (response.body().isEmpty()) {
                 mMessageText.setText(R.string.no_projects);

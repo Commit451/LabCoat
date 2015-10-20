@@ -2,78 +2,85 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:minWidth="256dp">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_margin="16dp">
-
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/titleInputLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <EditText
-                android:id="@+id/title_input"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:ems="10"
-                android:hint="@string/title_hint"
-                android:inputType="text|textCapWords">
-
-                <requestFocus />
-            </EditText>
-
-        </android.support.design.widget.TextInputLayout>
-
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/descriptionInputLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <EditText
-                android:id="@+id/description_input"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:ems="10"
-                android:hint="@string/description_hint"
-                android:inputType="text|textCapSentences" />
-
-        </android.support.design.widget.TextInputLayout>
+        android:layout_height="wrap_content">
 
         <LinearLayout
-            style="?android:attr/buttonBarStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_margin="16dp"
+            android:orientation="vertical">
 
-            <Button
-                android:id="@+id/cancel_button"
-                style="?android:attr/buttonBarButtonStyle"
-                android:layout_width="0dip"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:focusable="true"
-                android:text="@string/cancel_button" />
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/titleInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-            <Button
-                android:id="@+id/save_button"
-                style="?android:attr/buttonBarButtonStyle"
-                android:layout_width="0dip"
+                <EditText
+                    android:id="@+id/title_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/title_hint"
+                    android:singleLine="false"
+                    android:inputType="textCapSentences|textAutoCorrect|textMultiLine"
+                    android:imeOptions="actionNone">
+
+                    <requestFocus />
+                </EditText>
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/descriptionInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/description_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/description_hint"
+                    android:singleLine="false"
+                    android:inputType="textCapSentences|textAutoCorrect|textMultiLine"
+                    android:imeOptions="actionNone" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:focusable="true"
-                android:text="@string/save_button" />
+                android:layout_gravity="right"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/cancel_button"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:focusable="true"
+                    android:text="@string/cancel_button"
+                    android:textColor="?attr/colorAccent" />
+
+                <Button
+                    android:id="@+id/save_button"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:focusable="true"
+                    android:text="@string/save_button"
+                    android:textColor="?attr/colorAccent" />
+
+            </LinearLayout>
 
         </LinearLayout>
+    </ScrollView>
 
-
-    </LinearLayout>
-
-    <include layout="@layout/progress_fullscreen"/>
+    <include layout="@layout/progress_fullscreen" />
 
 </FrameLayout>

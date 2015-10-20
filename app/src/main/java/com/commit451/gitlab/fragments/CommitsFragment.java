@@ -74,8 +74,9 @@ public class CommitsFragment extends BaseFragment implements SwipeRefreshLayout.
 		listView.setAdapter(adapter);
 		mSwipeRefreshLayout.setOnRefreshListener(this);
         if (getActivity() instanceof ProjectActivity) {
+			mProject = ((ProjectActivity) getActivity()).getProject();
             mBranchName = ((ProjectActivity) getActivity()).getBranchName();
-            if (!TextUtils.isEmpty(mBranchName)) {
+            if (!TextUtils.isEmpty(mBranchName) && mProject != null) {
                 loadData();
             }
         } else {
@@ -117,12 +118,12 @@ public class CommitsFragment extends BaseFragment implements SwipeRefreshLayout.
 
 		@Override
 		public void onResponse(Response<List<DiffLine>> response, Retrofit retrofit) {
-			if (!response.isSuccess()) {
-				return;
-			}
 			if (getView() == null) {
 				return;
 			}
+            if (!response.isSuccess()) {
+                return;
+            }
 			mSwipeRefreshLayout.setRefreshing(false);
 
 			if(response.body().size() > 0) {
@@ -137,6 +138,9 @@ public class CommitsFragment extends BaseFragment implements SwipeRefreshLayout.
 
 		@Override
 		public void onFailure(Throwable t) {
+            if (getView() == null) {
+                return;
+            }
 			Timber.e(t.toString());
 
 			if(mSwipeRefreshLayout != null && mSwipeRefreshLayout.isRefreshing()) {

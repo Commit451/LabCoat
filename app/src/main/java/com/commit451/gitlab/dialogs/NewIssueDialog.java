@@ -11,6 +11,7 @@ import android.widget.Toast;
 import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.events.IssueChangedEvent;
 import com.commit451.gitlab.events.IssueCreatedEvent;
 import com.commit451.gitlab.model.Issue;
 import com.commit451.gitlab.model.Project;
@@ -29,13 +30,14 @@ import timber.log.Timber;
  */
 public class NewIssueDialog extends AppCompatDialog {
 
-    @Bind(R.id.titleInputLayout) TextInputLayout titleInputLayout;
-    @Bind(R.id.title_input) EditText titleInput;
-    @Bind(R.id.descriptionInputLayout) TextInputLayout descriptionInputLayout;
-    @Bind(R.id.description_input) EditText descriptionInput;
-    @Bind(R.id.progress) View progress;
+    @Bind(R.id.titleInputLayout) TextInputLayout mTitleInputLayout;
+    @Bind(R.id.title_input) EditText mTitleInput;
+    @Bind(R.id.descriptionInputLayout) TextInputLayout mDescriptionInputLayout;
+    @Bind(R.id.description_input) EditText mDescriptionInput;
+    @Bind(R.id.progress) View mProgress;
 
     private Project mProject;
+    private Issue mIssue;
 
     public NewIssueDialog(Context context, Project project) {
         super(context);
@@ -44,16 +46,32 @@ public class NewIssueDialog extends AppCompatDialog {
         mProject = project;
     }
 
+    public NewIssueDialog(Context context, Project project, Issue issue) {
+        super(context);
+        setContentView(R.layout.dialog_add_issue);
+        ButterKnife.bind(this);
+        mProject = project;
+        mIssue = issue;
+        bindIssue();
+    }
+
     @OnClick(R.id.save_button)
     public void onSaveClick() {
-        if(!TextUtils.isEmpty(titleInput.getText())) {
-            progress.setVisibility(View.VISIBLE);
-            progress.setAlpha(0.0f);
-            progress.animate().alpha(1.0f);
-            GitLabClient.instance().postIssue(mProject.getId(), titleInput.getText().toString().trim(), descriptionInput.getText().toString().trim()).enqueue(issueCallback);
+        if(!TextUtils.isEmpty(mTitleInput.getText())) {
+            mTitleInputLayout.setError(null);
+            mProgress.setVisibility(View.VISIBLE);
+            mProgress.setAlpha(0.0f);
+            mProgress.animate().alpha(1.0f);
+            if (mIssue == null) {
+                GitLabClient.instance().postIssue(mProject.getId(), mTitleInput.getText().toString().trim(), mDescriptionInput.getText().toString().trim())
+                        .enqueue(mIssueCallback);
+            } else {
+                GitLabClient.instance().updateIssue(mProject.getId(), mIssue.getId(), mTitleInput.getText().toString(), mDescriptionInput.getText().toString())
+                        .enqueue(mIssueCallback);
+            }
         }
         else {
-            titleInputLayout.setError(getContext().getString(R.string.required_field));
+            mTitleInputLayout.setError(getContext().getString(R.string.required_field));
         }
     }
 
@@ -62,26 +80,36 @@ public class NewIssueDialog extends AppCompatDialog {
         this.dismiss();
     }
 
-    private Callback<Issue> issueCallback = new Callback<Issue>() {
+    private Callback<Issue> mIssueCallback = new Callback<Issue>() {
 
         @Override
         public void onResponse(Response<Issue> response, Retrofit retrofit) {
             if (!response.isSuccess()) {
                 return;
             }
-            //TODO update the parent list when a new issue is created
-            GitLabApp.bus().post(new IssueCreatedEvent(response.body()));
-            //TODO fix this
-//            getContext().startActivity(IssueActivity.newInstance(getContext(), response.body()));
+            if (mIssue == null) {
+                GitLabApp.bus().post(new IssueCreatedEvent(response.body()));
+            } else {
+                GitLabApp.bus().post(new IssueChangedEvent(response.body()));
+            }
             dismiss();
         }
 
         @Override
         public void onFailure(Throwable t) {
             Timber.e(t.toString());
-            progress.setVisibility(View.GONE);
+            mProgress.setVisibility(View.GONE);
             Toast.makeText(getContext(), getContext().getString(R.string.connection_error), Toast.LENGTH_SHORT)
                     .show();
         }
     };
+
+    private void bindIssue() {
+        if (!TextUtils.isEmpty(mIssue.getTitle())) {
+            mTitleInput.setText(mIssue.getTitle());
+        }
+        if (!TextUtils.isEmpty(mIssue.getDescription())) {
+            mDescriptionInput.setText(mIssue.getDescription());
+        }
+    }
 }

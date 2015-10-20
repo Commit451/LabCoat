@@ -88,7 +88,6 @@ public class NotesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     public void addNote(Note note) {
-        //TODO declare position that changed
         mNotes.add(0, note);
         notifyItemInserted(0);
     }
@@ -107,5 +106,10 @@ public class NotesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             mMilestones.addAll(milestones);
         }
         notifyDataSetChanged();
+    }
+
+    public void updateIssue(Issue issue) {
+        mIssue = issue;
+        notifyItemChanged(0);
     }
 }
