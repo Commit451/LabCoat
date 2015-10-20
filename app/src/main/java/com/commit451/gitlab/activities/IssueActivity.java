@@ -15,14 +15,17 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.NotesAdapter;
 import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.dialogs.NewIssueDialog;
+import com.commit451.gitlab.events.IssueChangedEvent;
 import com.commit451.gitlab.model.Issue;
 import com.commit451.gitlab.model.Note;
 import com.commit451.gitlab.model.Project;
-import com.commit451.gitlab.model.User;
 import com.commit451.gitlab.tools.IntentUtil;
+import com.squareup.otto.Subscribe;
 
 import org.parceler.Parcels;
 
@@ -36,6 +39,9 @@ import retrofit.Response;
 import retrofit.Retrofit;
 import timber.log.Timber;
 
+/**
+ * Shows off an issue like a bar of gold
+ */
 public class IssueActivity extends BaseActivity {
 
 	private static final String EXTRA_PROJECT = "extra_project";
@@ -48,15 +54,30 @@ public class IssueActivity extends BaseActivity {
 		return intent;
 	}
 
-	@Bind(R.id.toolbar) Toolbar toolbar;
-	@Bind(R.id.swipe_layout) SwipeRefreshLayout swipeRefreshLayout;
-	@Bind(R.id.list) RecyclerView listView;
-	@Bind(R.id.new_note_edit) EditText newNoteEdit;
-	@Bind(R.id.progress) View progress;
+	@Bind(R.id.toolbar) Toolbar mToolbar;
+    @Bind(R.id.issue_title) TextView mIssueTitle;
+	@Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
+	@Bind(R.id.list) RecyclerView mListView;
+	@Bind(R.id.new_note_edit) EditText mNewNoteEdit;
+	@Bind(R.id.progress) View mProgress;
 
-	private NotesAdapter notesAdapter;
+    @OnClick(R.id.new_note_button)
+    public void onNewNoteClick() {
+        postNote();
+    }
+
+    @OnClick(R.id.fab_edit_issue)
+    public void onEditIssueClick() {
+        new NewIssueDialog(this, mProject, mIssue).show();
+    }
+
+    MenuItem mOpenCloseMenuItem;
+
+	NotesAdapter mNotesAdapter;
 	Project mProject;
     Issue mIssue;
+
+    EventReceiver mEventReceiver;
 
     private final Toolbar.OnMenuItemClickListener mOnMenuItemClickListener = new Toolbar.OnMenuItemClickListener() {
         @Override
@@ -65,8 +86,75 @@ public class IssueActivity extends BaseActivity {
                 case R.id.action_share:
                     IntentUtil.share(getWindow().getDecorView(), mIssue.getUrl(mProject));
                     return true;
+                case R.id.action_close:
+                    closeIssue();
+                    return true;
             }
             return false;
+        }
+    };
+
+    private Callback<List<Note>> notesCallback = new Callback<List<Note>>() {
+
+        @Override
+        public void onResponse(Response<List<Note>> response, Retrofit retrofit) {
+            if (!response.isSuccess()) {
+                return;
+            }
+            mSwipeRefreshLayout.setRefreshing(false);
+            mNotesAdapter.addNotes(response.body());
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+            Timber.e(t.toString());
+            mSwipeRefreshLayout.setRefreshing(false);
+            Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
+                    .show();
+        }
+    };
+
+    private final Callback<Issue> mOpenCloseCallback = new Callback<Issue>() {
+        @Override
+        public void onResponse(Response<Issue> response, Retrofit retrofit) {
+            mProgress.setVisibility(View.GONE);
+            if (!response.isSuccess()) {
+                Snackbar.make(getWindow().getDecorView(), getString(R.string.error_changing_issue), Snackbar.LENGTH_SHORT)
+                        .show();
+                return;
+            }
+            mIssue = response.body();
+            GitLabApp.bus().post(new IssueChangedEvent(mIssue));
+            setOpenCloseMenuStatus();
+            loadNotes();
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+            Timber.e(t.toString());
+            mProgress.setVisibility(View.GONE);
+            Snackbar.make(getWindow().getDecorView(), getString(R.string.error_changing_issue), Snackbar.LENGTH_SHORT)
+                    .show();
+        }
+    };
+
+    private Callback<Note> noteCallback = new Callback<Note>() {
+
+        @Override
+        public void onResponse(Response<Note> response, Retrofit retrofit) {
+            if (!response.isSuccess()) {
+                return;
+            }
+            mProgress.setVisibility(View.GONE);
+            mNotesAdapter.addNote(response.body());
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+            Timber.e(t.toString());
+            mProgress.setVisibility(View.GONE);
+            Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
+                    .show();
         }
     };
 	
@@ -75,31 +163,29 @@ public class IssueActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_issue);
 		ButterKnife.bind(this);
+        mEventReceiver = new EventReceiver();
+        GitLabApp.bus().register(mEventReceiver);
 
 		mProject = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_PROJECT));
 		mIssue = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_SELECTED_ISSUE));
 
-        long tempId = mIssue.getIid();
-        if(tempId < 1) {
-            tempId = mIssue.getId();
-        }
+        mToolbar.setNavigationIcon(R.drawable.ic_back_24dp);
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+		mToolbar.setSubtitle(mProject.getNameWithNamespace());
+		mToolbar.inflateMenu(R.menu.issue);
+        mOpenCloseMenuItem = mToolbar.getMenu().findItem(R.id.action_close);
+        mToolbar.setOnMenuItemClickListener(mOnMenuItemClickListener);
 
-        toolbar.setNavigationIcon(R.drawable.ic_back_24dp);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				onBackPressed();
-			}
-		});
-        toolbar.setTitle("Issue #" + tempId);
-		toolbar.inflateMenu(R.menu.issue);
-        toolbar.setOnMenuItemClickListener(mOnMenuItemClickListener);
+        mNotesAdapter = new NotesAdapter(mIssue);
+        mListView.setLayoutManager(new LinearLayoutManager(this));
+        mListView.setAdapter(mNotesAdapter);
 
-        notesAdapter = new NotesAdapter(mIssue);
-        listView.setLayoutManager(new LinearLayoutManager(this));
-        listView.setAdapter(notesAdapter);
-
-		newNoteEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+		mNewNoteEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 postNote();
@@ -107,100 +193,83 @@ public class IssueActivity extends BaseActivity {
             }
         });
 
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                load();
+                loadNotes();
             }
         });
-        load();
+        bindIssue();
+        loadNotes();
     }
 
-    private void load() {
-		swipeRefreshLayout.setRefreshing(true);
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        GitLabApp.bus().unregister(mEventReceiver);
+    }
+
+    private void bindIssue() {
+        mToolbar.setTitle(getString(R.string.issue_number) + mIssue.getId());
+        setOpenCloseMenuStatus();
+        mIssueTitle.setText(mIssue.getTitle());
+        mNotesAdapter.updateIssue(mIssue);
+    }
+
+    private void loadNotes() {
+        mSwipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                if (mSwipeRefreshLayout != null) {
+                    mSwipeRefreshLayout.setRefreshing(true);
+                }
+            }
+        });
+		mSwipeRefreshLayout.setRefreshing(true);
         GitLabClient.instance().getIssueNotes(mProject.getId(), mIssue.getId()).enqueue(notesCallback);
 	}
 
 	private void postNote() {
-		String body = newNoteEdit.getText().toString();
+		String body = mNewNoteEdit.getText().toString();
 
 		if(body.length() < 1) {
 			return;
 		}
 
-		progress.setVisibility(View.VISIBLE);
-		progress.setAlpha(0.0f);
-		progress.animate().alpha(1.0f);
+		mProgress.setVisibility(View.VISIBLE);
+		mProgress.setAlpha(0.0f);
+		mProgress.animate().alpha(1.0f);
 		// Clear text & collapse keyboard
 		InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-		imm.hideSoftInputFromWindow(newNoteEdit.getWindowToken(), 0);
-		newNoteEdit.setText("");
+		imm.hideSoftInputFromWindow(mNewNoteEdit.getWindowToken(), 0);
+		mNewNoteEdit.setText("");
 
 		GitLabClient.instance().postIssueNote(mProject.getId(), mIssue.getId(), body).enqueue(noteCallback);
 	}
-	
-	private Callback<List<Note>> notesCallback = new Callback<List<Note>>() {
 
-		@Override
-		public void onResponse(Response<List<Note>> response, Retrofit retrofit) {
-			if (!response.isSuccess()) {
-				return;
-			}
-			swipeRefreshLayout.setRefreshing(false);
-			notesAdapter.addNotes(response.body());
-		}
+    private void closeIssue() {
+        mProgress.setVisibility(View.VISIBLE);
+        if (mIssue.getState().equals(Issue.STATE_CLOSED)) {
+            GitLabClient.instance().setIssueStatus(mProject.getId(), mIssue.getId(), Issue.STATE_REOPEN)
+                .enqueue(mOpenCloseCallback);
+        } else {
+            GitLabClient.instance().setIssueStatus(mProject.getId(), mIssue.getId(), Issue.STATE_CLOSE)
+                    .enqueue(mOpenCloseCallback);
+        }
+    }
 
-		@Override
-		public void onFailure(Throwable t) {
-			Timber.e(t.toString());
-			swipeRefreshLayout.setRefreshing(false);
-			Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
-					.show();
-		}
-	};
-	
-	@OnClick(R.id.new_note_button)
-	public void onNewNoteClick() {
-		postNote();
-	}
-	
-	private Callback<Note> noteCallback = new Callback<Note>() {
+    private void setOpenCloseMenuStatus() {
+        mOpenCloseMenuItem.setTitle(mIssue.getState().equals(Issue.STATE_CLOSED) ? R.string.reopen : R.string.close);
+    }
 
-		@Override
-		public void onResponse(Response<Note> response, Retrofit retrofit) {
-			if (!response.isSuccess()) {
-				return;
-			}
-			progress.setVisibility(View.GONE);
-			notesAdapter.addNote(response.body());
-		}
+    private class EventReceiver {
 
-		@Override
-		public void onFailure(Throwable t) {
-			Timber.e(t.toString());
-			progress.setVisibility(View.GONE);
-			Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
-					.show();
-		}
-	};
-	
-	private Callback<List<User>> usersCallback = new Callback<List<User>>() {
-
-		@Override
-		public void onResponse(Response<List<User>> response, Retrofit retrofit) {
-			if (!response.isSuccess()) {
-				return;
-			}
-			swipeRefreshLayout.setRefreshing(false);
-			notesAdapter.addUsers(response.body());
-		}
-
-		@Override
-		public void onFailure(Throwable t) {
-			Timber.e(t.toString());
-			swipeRefreshLayout.setRefreshing(false);
-			Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
-					.show();
-		}
-	};
+        @Subscribe
+        public void onIssueChanged(IssueChangedEvent event) {
+            if (mIssue.getId() == event.issue.getId()) {
+                mIssue = event.issue;
+                bindIssue();
+            }
+        }
+    }
 }

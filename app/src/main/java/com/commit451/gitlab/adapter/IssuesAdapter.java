@@ -70,4 +70,19 @@ public class IssuesAdapter extends RecyclerView.Adapter<IssueViewHolder> {
         mValues.add(0, issue);
         notifyItemInserted(0);
     }
+
+    public void updateIssue(Issue issue) {
+        int indexToDelete = -1;
+        for (int i=0; i<mValues.size(); i++) {
+            if (mValues.get(i).getId() == issue.getId()) {
+                indexToDelete = i;
+                break;
+            }
+        }
+        if (indexToDelete != -1) {
+            mValues.remove(indexToDelete);
+            mValues.add(indexToDelete, issue);
+        }
+        notifyItemChanged(indexToDelete);
+    }
 }

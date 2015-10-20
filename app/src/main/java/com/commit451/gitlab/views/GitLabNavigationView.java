@@ -12,6 +12,7 @@ import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -124,8 +125,8 @@ public class GitLabNavigationView extends NavigationView {
     private void init() {
         setNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         inflateMenu(R.menu.navigation);
-        inflateHeaderView(R.layout.nav_drawer);
-        ButterKnife.bind(this);
+        View header = inflateHeaderView(R.layout.nav_drawer);
+        ButterKnife.bind(this, header);
         mInsetForeground = new ColorDrawable(Color.parseColor("#44000000"));
         setSelectedNavigationItem();
         loadCurrentUser();

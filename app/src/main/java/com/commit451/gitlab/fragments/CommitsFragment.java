@@ -38,7 +38,7 @@ public class CommitsFragment extends BaseFragment implements SwipeRefreshLayout.
 
 	@Bind(R.id.list) RecyclerView listView;
 	CommitsAdapter adapter;
-    @Bind(R.id.swipe_layout) SwipeRefreshLayout swipeLayout;
+    @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
     @Bind(R.id.message_text) View messageView;
 
     EventReceiver mEventReceiver;
@@ -72,10 +72,11 @@ public class CommitsFragment extends BaseFragment implements SwipeRefreshLayout.
         GitLabApp.bus().register(mEventReceiver);
 		listView.setLayoutManager(new LinearLayoutManager(getActivity()));
 		listView.setAdapter(adapter);
-		swipeLayout.setOnRefreshListener(this);
+		mSwipeRefreshLayout.setOnRefreshListener(this);
         if (getActivity() instanceof ProjectActivity) {
+			mProject = ((ProjectActivity) getActivity()).getProject();
             mBranchName = ((ProjectActivity) getActivity()).getBranchName();
-            if (!TextUtils.isEmpty(mBranchName)) {
+            if (!TextUtils.isEmpty(mBranchName) && mProject != null) {
                 loadData();
             }
         } else {
@@ -97,10 +98,12 @@ public class CommitsFragment extends BaseFragment implements SwipeRefreshLayout.
 
     @Override
 	protected void loadData() {
-		swipeLayout.post(new Runnable() {
+		mSwipeRefreshLayout.post(new Runnable() {
 			@Override
 			public void run() {
-				swipeLayout.setRefreshing(true);
+				if (mSwipeRefreshLayout != null) {
+					mSwipeRefreshLayout.setRefreshing(true);
+				}
 			}
 		});
         GitLabClient.instance().getCommits(mProject.getId(), mBranchName).enqueue(commitsCallback);
@@ -115,13 +118,13 @@ public class CommitsFragment extends BaseFragment implements SwipeRefreshLayout.
 
 		@Override
 		public void onResponse(Response<List<DiffLine>> response, Retrofit retrofit) {
-			if (!response.isSuccess()) {
-				return;
-			}
 			if (getView() == null) {
 				return;
 			}
-			swipeLayout.setRefreshing(false);
+            if (!response.isSuccess()) {
+                return;
+            }
+			mSwipeRefreshLayout.setRefreshing(false);
 
 			if(response.body().size() > 0) {
 				messageView.setVisibility(View.GONE);
@@ -135,10 +138,13 @@ public class CommitsFragment extends BaseFragment implements SwipeRefreshLayout.
 
 		@Override
 		public void onFailure(Throwable t) {
+            if (getView() == null) {
+                return;
+            }
 			Timber.e(t.toString());
 
-			if(swipeLayout != null && swipeLayout.isRefreshing()) {
-				swipeLayout.setRefreshing(false);
+			if(mSwipeRefreshLayout != null && mSwipeRefreshLayout.isRefreshing()) {
+				mSwipeRefreshLayout.setRefreshing(false);
 			}
 			messageView.setVisibility(View.VISIBLE);
 

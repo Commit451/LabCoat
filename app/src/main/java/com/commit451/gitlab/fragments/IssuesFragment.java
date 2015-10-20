@@ -16,6 +16,7 @@ import com.commit451.gitlab.activities.ProjectActivity;
 import com.commit451.gitlab.adapter.IssuesAdapter;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.dialogs.NewIssueDialog;
+import com.commit451.gitlab.events.IssueChangedEvent;
 import com.commit451.gitlab.events.IssueCreatedEvent;
 import com.commit451.gitlab.events.ProjectReloadEvent;
 import com.commit451.gitlab.model.Issue;
@@ -40,7 +41,7 @@ public class IssuesFragment extends BaseFragment implements SwipeRefreshLayout.O
 
 	@Bind(R.id.add_issue_button) View addIssueButton;
 	@Bind(R.id.list) RecyclerView listView;
-    @Bind(R.id.swipe_layout) SwipeRefreshLayout swipeLayout;
+    @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
 
 	IssuesAdapter issuesAdapter;
 	EventReceiver eventReceiver;
@@ -63,7 +64,7 @@ public class IssuesFragment extends BaseFragment implements SwipeRefreshLayout.O
 		listView.setLayoutManager(new LinearLayoutManager(getActivity()));
 		issuesAdapter = new IssuesAdapter(mIssuesAdapterListener);
 		listView.setAdapter(issuesAdapter);
-        swipeLayout.setOnRefreshListener(this);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
 
 		eventReceiver = new EventReceiver();
 		GitLabApp.bus().register(eventReceiver);
@@ -93,10 +94,12 @@ public class IssuesFragment extends BaseFragment implements SwipeRefreshLayout.O
 	}
 	
 	public void loadData() {
-		swipeLayout.post(new Runnable() {
+		mSwipeRefreshLayout.post(new Runnable() {
 			@Override
 			public void run() {
-				swipeLayout.setRefreshing(true);
+				if (mSwipeRefreshLayout != null) {
+					mSwipeRefreshLayout.setRefreshing(true);
+				}
 			}
 		});
 		GitLabClient.instance().getIssues(mProject.getId()).enqueue(issuesCallback);
@@ -106,13 +109,13 @@ public class IssuesFragment extends BaseFragment implements SwipeRefreshLayout.O
 
 		@Override
 		public void onResponse(Response<List<Issue>> response, Retrofit retrofit) {
-			if (!response.isSuccess()) {
-				return;
-			}
 			if (getView() == null) {
                 return;
             }
-            swipeLayout.setRefreshing(false);
+            if (!response.isSuccess()) {
+                return;
+            }
+            mSwipeRefreshLayout.setRefreshing(false);
 			issuesAdapter.setIssues(response.body());
 
 			addIssueButton.setEnabled(true);
@@ -121,9 +124,13 @@ public class IssuesFragment extends BaseFragment implements SwipeRefreshLayout.O
 		@Override
 		public void onFailure(Throwable t) {
 			Timber.e(t.toString());
+            if (getView() == null) {
+                return;
+            }
 
-			if(swipeLayout != null && swipeLayout.isRefreshing())
-				swipeLayout.setRefreshing(false);
+			if(mSwipeRefreshLayout != null && mSwipeRefreshLayout.isRefreshing()) {
+				mSwipeRefreshLayout.setRefreshing(false);
+			}
 			Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.connection_error_issues), Snackbar.LENGTH_SHORT)
 					.show();
 			listView.setAdapter(null);
@@ -136,7 +143,12 @@ public class IssuesFragment extends BaseFragment implements SwipeRefreshLayout.O
 
 	@OnClick(R.id.add_issue_button)
 	public void onAddIssueClick() {
-		new NewIssueDialog(getActivity()).show();
+        if (mProject != null) {
+            new NewIssueDialog(getActivity(), mProject).show();
+        } else {
+            Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.wait_for_project_to_load), Snackbar.LENGTH_SHORT)
+                    .show();
+        }
 	}
 
 	private class EventReceiver {
@@ -146,9 +158,16 @@ public class IssuesFragment extends BaseFragment implements SwipeRefreshLayout.O
             mProject = event.project;
             loadData();
         }
+
 		@Subscribe
 		public void onIssueAdded(IssueCreatedEvent event) {
 			issuesAdapter.addIssue(event.issue);
+            listView.smoothScrollToPosition(0);
+		}
+
+		@Subscribe
+		public void onIssueChanged(IssueChangedEvent event) {
+			issuesAdapter.updateIssue(event.issue);
 		}
 	}
 }

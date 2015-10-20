@@ -29,7 +29,7 @@ import retrofit.http.Path;
 import retrofit.http.Query;
 
 public interface GitLab {
-    String API_VERSION = "/api/v3";
+    String API_VERSION = "api/v3";
     /* --- LOGIN --- */
 
     @FormUrlEncoded
@@ -101,18 +101,6 @@ public interface GitLab {
                           @Field("title") String title,
                           @Field("description") String description);
 
-    @PUT(API_VERSION + "/projects/{id}/issues/{issue_id}")
-    Call<Issue> editIssue(@Path("id") long projectId,
-                          @Path("issue_id") long issueId,
-                          @Query("state_event") String stateEvent,
-                          @Query("assignee_id") long assigneeId,
-                          @Query("milestone_id") long milestoneId);
-
-    @PUT(API_VERSION + "/projects/{id}/issues/{issue_id}")
-    Call<Issue> editIssue(@Path("id") long projectId,
-                          @Path("issue_id") long issueId,
-                          @Query("state_event") String stateEvent);
-
     @GET(API_VERSION + "/projects/{id}/issues/{issue_id}/notes?per_page=100")
     Call<List<Note>> getIssueNotes(@Path("id") long projectId,
                                    @Path("issue_id") long issueId);
@@ -122,6 +110,17 @@ public interface GitLab {
     Call<Note> postIssueNote(@Path("id") long projectId,
                              @Path("issue_id") long issueId,
                              @Field("body") String body);
+
+    @PUT(API_VERSION + "/projects/{id}/issues/{issue_id}")
+    Call<Issue> setIssueStatus(@Path("id") long projectId,
+                               @Path("issue_id") long issueId,
+                               @Query("state_event") @Issue.EditState String status);
+
+    @PUT(API_VERSION + "/projects/{id}/issues/{issue_id}")
+    Call<Issue> updateIssue(@Path("id") long projectId,
+                            @Path("issue_id") long issueId,
+                            @Query("title") String title,
+                            @Query("description") String description);
 	
 	/* --- FILES --- */
 

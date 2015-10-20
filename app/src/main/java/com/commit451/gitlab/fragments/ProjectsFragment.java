@@ -66,9 +66,15 @@ public class ProjectsFragment extends BaseFragment {
     private final Callback<List<Project>> mProjectsCallback = new Callback<List<Project>>() {
         @Override
         public void onResponse(Response<List<Project>> response, Retrofit retrofit) {
+            if (getView() == null) {
+                return;
+            }
             mSwipeRefreshLayout.setRefreshing(false);
             if (!response.isSuccess()) {
+                mRecyclerView.setVisibility(View.GONE);
+                mMessageText.setVisibility(View.VISIBLE);
                 mMessageText.setText(R.string.connection_error);
+                return;
             }
             if (response.body().isEmpty()) {
                 mMessageText.setText(R.string.no_projects);
@@ -87,6 +93,7 @@ public class ProjectsFragment extends BaseFragment {
             if (getView() == null) {
                 return;
             }
+            mSwipeRefreshLayout.setRefreshing(false);
             mMessageText.setVisibility(View.VISIBLE);
             mMessageText.setText(R.string.connection_error);
         }
@@ -164,7 +171,9 @@ public class ProjectsFragment extends BaseFragment {
         mSwipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
-                mSwipeRefreshLayout.setRefreshing(true);
+                if (mSwipeRefreshLayout != null) {
+                    mSwipeRefreshLayout.setRefreshing(true);
+                }
             }
         });
     }

@@ -9,6 +9,7 @@ import android.view.View;
 import com.commit451.gitlab.R;
 
 /**
+ * All the things to do with intents
  * Created by Jawn on 8/25/2015.
  */
 public class IntentUtil {
@@ -28,11 +29,10 @@ public class IntentUtil {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
         shareIntent.putExtra(Intent.EXTRA_TEXT, url);
-        root.getContext().startActivity(Intent.createChooser(shareIntent, root.getContext().getString(R.string.action_share)));
         try {
             root.getContext().startActivity(shareIntent);
         } catch (ActivityNotFoundException e) {
-            Snackbar.make(root, R.string.error_no_browser, Snackbar.LENGTH_SHORT)
+            Snackbar.make(root, R.string.error_could_not_share, Snackbar.LENGTH_SHORT)
                     .show();
         }
     }
