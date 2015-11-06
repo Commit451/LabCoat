@@ -14,6 +14,7 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.ProjectsAdapter;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.Project;
+import com.commit451.gitlab.tools.LinkHeaderResolver;
 import com.commit451.gitlab.tools.NavigationManager;
 
 import java.util.List;
@@ -57,15 +58,32 @@ public class ProjectsFragment extends BaseFragment {
 
     @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
     @Bind(R.id.list) RecyclerView mRecyclerView;
+    LinearLayoutManager mLayoutManager;
     ProjectsAdapter mProjectsAdapter;
     @Bind(R.id.message_text) TextView mMessageText;
 
     private int mMode;
     private String mQuery;
+    private String mNextPageUrl;
+    private boolean mLoading = false;
+
+    private final RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+            int visibleItemCount = mLayoutManager.getChildCount();
+            int totalItemCount = mLayoutManager.getItemCount();
+            int firstVisibleItem = mLayoutManager.findFirstVisibleItemPosition();
+            if (firstVisibleItem + visibleItemCount >= totalItemCount && !mLoading && mNextPageUrl != null) {
+                loadMore();
+            }
+        }
+    };
 
     private final Callback<List<Project>> mProjectsCallback = new Callback<List<Project>>() {
         @Override
         public void onResponse(Response<List<Project>> response, Retrofit retrofit) {
+            mLoading = false;
             if (getView() == null) {
                 return;
             }
@@ -76,6 +94,8 @@ public class ProjectsFragment extends BaseFragment {
                 mMessageText.setText(R.string.connection_error);
                 return;
             }
+            mNextPageUrl = LinkHeaderResolver.getNextPageUrl(response.headers());
+            Timber.d("Next page url " + mNextPageUrl);
             if (response.body().isEmpty()) {
                 mMessageText.setText(R.string.no_projects);
                 mRecyclerView.setVisibility(View.GONE);
@@ -83,7 +103,7 @@ public class ProjectsFragment extends BaseFragment {
             } else {
                 mMessageText.setVisibility(View.GONE);
                 mRecyclerView.setVisibility(View.VISIBLE);
-                mProjectsAdapter.setData(response.body());
+                mProjectsAdapter.addData(response.body());
             }
         }
 
@@ -136,8 +156,10 @@ public class ProjectsFragment extends BaseFragment {
             }
         });
         mProjectsAdapter = new ProjectsAdapter(getActivity(), mProjectsListener);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mLayoutManager = new LinearLayoutManager(getActivity());
+        mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mProjectsAdapter);
+        mRecyclerView.addOnScrollListener(mOnScrollListener);
         loadData();
     }
 
@@ -146,6 +168,7 @@ public class ProjectsFragment extends BaseFragment {
         super.loadData();
         mMessageText.setVisibility(View.GONE);
         mRecyclerView.setVisibility(View.VISIBLE);
+        mProjectsAdapter.clearData();
         switch (mMode) {
             case MODE_ALL:
                 showLoading();
@@ -167,7 +190,14 @@ public class ProjectsFragment extends BaseFragment {
         }
     }
 
+    private void loadMore() {
+        mLoading = true;
+        Timber.d("loadMore called for " + mNextPageUrl);
+        GitLabClient.instance().getProjectsNextPage(mNextPageUrl).enqueue(mProjectsCallback);
+    }
+
     private void showLoading() {
+        mLoading = true;
         mSwipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {

@@ -2,7 +2,6 @@ package com.commit451.gitlab;
 
 import android.app.Application;
 
-import com.commit451.gitlab.tools.Repository;
 import com.crashlytics.android.Crashlytics;
 import com.squareup.otto.Bus;
 
@@ -39,7 +38,6 @@ public class GitLabApp extends Application {
         } else {
             Fabric.with(this, new Crashlytics());
         }
-        Repository.init();
         JodaTimeAndroid.init(this);
     }
 }

@@ -27,6 +27,7 @@ import retrofit.http.POST;
 import retrofit.http.PUT;
 import retrofit.http.Path;
 import retrofit.http.Query;
+import retrofit.http.Url;
 
 public interface GitLab {
     String API_VERSION = "api/v3";
@@ -50,15 +51,17 @@ public interface GitLab {
     @GET(API_VERSION + "/users?per_page=100")
     Call<List<User>> getUsers();
 
-    @GET(API_VERSION + "/projects?per_page=100")
+    @GET(API_VERSION + "/projects")
     Call<List<Project>> getAllProjects();
 
-    @GET(API_VERSION + "/projects/owned?per_page=100")
+    @GET(API_VERSION + "/projects/owned")
     Call<List<Project>> getMyProjects();
 
-    @GET(API_VERSION + "/projects?per_page=100")
+    @GET(API_VERSION + "/projects")
     Call<List<Project>> searchAllProjects(@Query("search") String query);
-	
+
+    @GET
+    Call<List<Project>> getProjectsNextPage(@Url String url);
 	/* --- PROJECTS --- */
 
     @GET(API_VERSION + "/projects/{id}/repository/branches?per_page=100&order_by=last_activity_at")

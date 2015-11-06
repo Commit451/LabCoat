@@ -49,6 +49,11 @@ public class ProjectsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         notifyDataSetChanged();
     }
 
+    public void addData(Collection<Project> projects) {
+        mValues.addAll(projects);
+        notifyDataSetChanged();
+    }
+
     private final View.OnClickListener onProjectClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
