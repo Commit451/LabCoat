@@ -24,7 +24,7 @@ import com.commit451.gitlab.model.Session;
 import com.commit451.gitlab.model.User;
 import com.commit451.gitlab.tools.KeyboardUtil;
 import com.commit451.gitlab.tools.NavigationManager;
-import com.commit451.gitlab.tools.Prefs;
+import com.commit451.gitlab.data.Prefs;
 import com.commit451.gitlab.views.EmailAutoCompleteTextView;
 
 import javax.net.ssl.SSLHandshakeException;
@@ -135,18 +135,16 @@ public class LoginActivity extends BaseActivity {
 		GitLabClient.reset();
 		
 		String url = urlInput.getText().toString();
-		
-		if(url.length() == 0) {
-			Toast.makeText(this, getString(R.string.login_error), Toast.LENGTH_SHORT)
-					.show();
-			return;
-		}
-        else if(url.startsWith("http://") && url.endsWith(".git"))
+
+        if(url.startsWith("http://") && url.endsWith(".git")) {
             urlInput.setText(url.substring(0, nthOccurrence(url, '/', 2)));
-        else if(url.startsWith("git@") && url.endsWith(".git"))
+        }
+        else if(url.startsWith("git@") && url.endsWith(".git")) {
             urlInput.setText("http://" + url.substring(4, url.indexOf(':')));
-        else if(!url.startsWith("http://") && !url.startsWith("https://"))
+        }
+        else if(!url.startsWith("http://") && !url.startsWith("https://")) {
             urlInput.setText("http://" + urlInput.getText().toString());
+        }
 
 		if(isNormalLogin) {
 			connect(true);

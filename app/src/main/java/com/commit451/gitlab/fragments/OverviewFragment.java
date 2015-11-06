@@ -61,11 +61,11 @@ public class OverviewFragment extends BaseFragment {
     private Callback<List<TreeItem>> mFilesCallback = new Callback<List<TreeItem>>() {
         @Override
         public void onResponse(Response<List<TreeItem>> response, Retrofit retrofit) {
-            if (!response.isSuccess()) {
-                mErrorText.setText(R.string.connection_error);
+            if (getView() == null) {
                 return;
             }
-            if (getView() == null) {
+            if (!response.isSuccess()) {
+                mErrorText.setText(R.string.connection_error);
                 return;
             }
             mSwipeRefreshLayout.setRefreshing(false);

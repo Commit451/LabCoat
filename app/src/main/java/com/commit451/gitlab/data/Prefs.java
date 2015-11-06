@@ -1,4 +1,4 @@
-package com.commit451.gitlab.tools;
+package com.commit451.gitlab.data;
 
 import android.content.Context;
 import android.content.SharedPreferences;

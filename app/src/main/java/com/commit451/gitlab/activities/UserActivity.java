@@ -25,7 +25,7 @@ import com.commit451.gitlab.model.rss.UserFeed;
 import com.commit451.gitlab.tools.ColorUtil;
 import com.commit451.gitlab.tools.ImageUtil;
 import com.commit451.gitlab.tools.IntentUtil;
-import com.commit451.gitlab.tools.Prefs;
+import com.commit451.gitlab.data.Prefs;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
