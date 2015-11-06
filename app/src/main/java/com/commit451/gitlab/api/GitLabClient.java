@@ -2,7 +2,7 @@ package com.commit451.gitlab.api;
 
 import com.commit451.gitlab.BuildConfig;
 import com.commit451.gitlab.GitLabApp;
-import com.commit451.gitlab.tools.Prefs;
+import com.commit451.gitlab.data.Prefs;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
