@@ -164,4 +164,7 @@
 
     <!-- Groups -->
     <string name="no_groups">No groups.</string>
+
+    <!-- Settings -->
+    <string name="trust_all_hosts">Trust all hosts</string>
 </resources>
