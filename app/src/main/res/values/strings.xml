@@ -129,6 +129,7 @@
     <string name="close">Close</string>
     <string name="created_issue">created issue</string>
     <string name="error_changing_issue">There was an error changing the issue</string>
+    <string name="no_issues">No issues. Good job?</string>
 
     <!-- User -->
     <string name="remove_user_dialog_title">Remove user?</string>

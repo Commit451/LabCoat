@@ -29,4 +29,14 @@
         android:layout_margin="@dimen/padding_normal"
         android:src="@drawable/ic_add_24dp" />
 
+    <TextView
+        android:id="@+id/message_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="@string/no_issues"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:visibility="gone"/>
+
 </FrameLayout>

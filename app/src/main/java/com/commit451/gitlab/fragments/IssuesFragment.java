@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
@@ -42,6 +43,7 @@ public class IssuesFragment extends BaseFragment implements SwipeRefreshLayout.O
 	@Bind(R.id.add_issue_button) View addIssueButton;
 	@Bind(R.id.list) RecyclerView listView;
     @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
+    @Bind(R.id.message_text) TextView mMessageTextView;
 
 	IssuesAdapter issuesAdapter;
 	EventReceiver eventReceiver;
@@ -94,6 +96,7 @@ public class IssuesFragment extends BaseFragment implements SwipeRefreshLayout.O
 	}
 	
 	public void loadData() {
+        mMessageTextView.setVisibility(View.GONE);
 		mSwipeRefreshLayout.post(new Runnable() {
 			@Override
 			public void run() {
@@ -116,9 +119,11 @@ public class IssuesFragment extends BaseFragment implements SwipeRefreshLayout.O
                 return;
             }
             mSwipeRefreshLayout.setRefreshing(false);
-			issuesAdapter.setIssues(response.body());
+			if (response.body().isEmpty()) {
+                mMessageTextView.setVisibility(View.VISIBLE);
+            }
 
-			addIssueButton.setEnabled(true);
+            issuesAdapter.setIssues(response.body());
 		}
 
 		@Override

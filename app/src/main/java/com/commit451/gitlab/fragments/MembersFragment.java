@@ -147,7 +147,7 @@ public class MembersFragment extends BaseFragment implements SwipeRefreshLayout.
 	
 	@OnClick(R.id.add_user_button)
 	public void onAddUserClick() {
-		startActivity(AddUserActivity.newInstance(getActivity()));
+		startActivity(AddUserActivity.newInstance(getActivity(), mProject.getNamespace().getId()));
 	}
 
 	private class EventReceiver {

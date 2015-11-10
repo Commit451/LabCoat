@@ -59,6 +59,7 @@ dependencies {
     apt "org.parceler:parceler:1.0.3"
     compile 'com.jawnnypoo:physicslayout:1.0.0'
     compile 'com.commit451:bypasses:1.0.1'
+    compile 'com.commit451:easel:0.0.3'
     compile 'com.github.ivbaranov:MaterialLetterIcon:0.2.1'
     compile('com.crashlytics.sdk.android:crashlytics:2.5.2@aar') {
         transitive = true;
