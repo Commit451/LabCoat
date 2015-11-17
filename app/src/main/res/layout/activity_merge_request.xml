@@ -46,7 +46,7 @@
         </com.commit451.gitlab.views.GitLabSwipeRefreshLayout>
 
     </LinearLayout>
-    
+
     <LinearLayout
         android:id="@+id/rel1"
         android:layout_width="match_parent"

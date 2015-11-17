@@ -3,21 +3,20 @@ package com.commit451.gitlab.adapter;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
-import com.commit451.gitlab.model.Issue;
-import com.commit451.gitlab.model.Milestone;
+import com.commit451.gitlab.model.MergeRequest;
 import com.commit451.gitlab.model.Note;
-import com.commit451.gitlab.model.User;
 import com.commit451.gitlab.viewHolders.IssueHeaderViewHolder;
+import com.commit451.gitlab.viewHolders.MergeRequestHeaderViewHolder;
 import com.commit451.gitlab.viewHolders.NoteViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Nice notes
- * Created by Jawn on 8/6/2015.
+ * Shows the comments and details of a merge request
+ * Created by John on 11/16/15.
  */
-public class NotesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class MergeRequestDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_COMMENT = 1;
@@ -25,15 +24,11 @@ public class NotesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private static final int HEADER_COUNT = 1;
 
     private ArrayList<Note> mNotes;
-    private ArrayList<User> mUsers;
-    private ArrayList<Milestone> mMilestones;
-    private Issue mIssue;
+    private MergeRequest mMergeRequest;
 
-    public NotesAdapter(Issue issue) {
-        mIssue = issue;
+    public MergeRequestDetailAdapter(MergeRequest mergeRequest) {
+        mMergeRequest = mergeRequest;
         mNotes = new ArrayList<>();
-        mUsers = new ArrayList<>();
-        mMilestones = new ArrayList<>();
     }
 
     @Override
@@ -49,8 +44,8 @@ public class NotesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
-        if (holder instanceof IssueHeaderViewHolder) {
-            ((IssueHeaderViewHolder) holder).bind(mIssue);
+        if (holder instanceof MergeRequestHeaderViewHolder) {
+            ((MergeRequestHeaderViewHolder) holder).bind(mMergeRequest);
         } else if (holder instanceof NoteViewHolder) {
             Note note = getNoteAt(position);
             ((NoteViewHolder) holder).bind(note);
@@ -87,29 +82,8 @@ public class NotesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         notifyDataSetChanged();
     }
 
-    public void addNote(Note note) {
-        mNotes.add(0, note);
-        notifyItemInserted(0);
-    }
-
-    public void addUsers(List<User> users) {
-        if (!users.isEmpty()) {
-            users.clear();
-            mUsers.addAll(users);
-        }
-        notifyDataSetChanged();
-    }
-
-    public void addMilestones(List<Milestone> milestones) {
-        if (!milestones.isEmpty()) {
-            milestones.clear();
-            mMilestones.addAll(milestones);
-        }
-        notifyDataSetChanged();
-    }
-
-    public void updateIssue(Issue issue) {
-        mIssue = issue;
+    public void updateIssue(MergeRequest mergeRequest) {
+        mMergeRequest = mergeRequest;
         notifyItemChanged(0);
     }
 }

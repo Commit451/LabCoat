@@ -11,7 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.model.Issue;
+import com.commit451.gitlab.model.MergeRequest;
 import com.commit451.gitlab.tools.ImageUtil;
 import com.squareup.picasso.Picasso;
 
@@ -20,9 +20,10 @@ import butterknife.ButterKnife;
 import in.uncod.android.bypass.Bypass;
 
 /**
- * Created by Jawn on 8/6/2015.
+ * Adapter for merge request detail
+ * Created by John on 11/16/15.
  */
-public class IssueHeaderViewHolder extends RecyclerView.ViewHolder {
+public class MergeRequestHeaderViewHolder extends RecyclerView.ViewHolder {
 
     public static IssueHeaderViewHolder newInstance(ViewGroup parent) {
         View view = LayoutInflater.from(parent.getContext())
@@ -30,36 +31,38 @@ public class IssueHeaderViewHolder extends RecyclerView.ViewHolder {
         return new IssueHeaderViewHolder(view);
     }
 
-    @Bind(R.id.description) TextView description;
-    @Bind(R.id.author_image) ImageView authorImage;
+    @Bind(R.id.description)
+    TextView description;
+    @Bind(R.id.author_image)
+    ImageView authorImage;
     @Bind(R.id.author) TextView author;
     Bypass mBypass;
 
-    public IssueHeaderViewHolder(View view) {
+    public MergeRequestHeaderViewHolder(View view) {
         super(view);
         ButterKnife.bind(this, view);
         mBypass = new Bypass(view.getContext());
     }
 
-    public void bind(Issue issue) {
-        if (TextUtils.isEmpty(issue.getDescription())) {
+    public void bind(MergeRequest mergeRequest) {
+        if (TextUtils.isEmpty(mergeRequest.getDescription())) {
             description.setVisibility(View.GONE);
         } else {
             description.setVisibility(View.VISIBLE);
-            description.setText(mBypass.markdownToSpannable(issue.getDescription()));
+            description.setText(mBypass.markdownToSpannable(mergeRequest.getDescription()));
             description.setMovementMethod(LinkMovementMethod.getInstance());
         }
 
-        if (issue.getAuthor() != null) {
+        if (mergeRequest.getAuthor() != null) {
             Picasso.with(itemView.getContext())
-                    .load(ImageUtil.getGravatarUrl(issue.getAuthor(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size)))
+                    .load(ImageUtil.getGravatarUrl(mergeRequest.getAuthor(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size)))
                     .into(authorImage);
-            author.setText(issue.getAuthor().getName() + " "
+            author.setText(mergeRequest.getAuthor().getName() + " "
                     + itemView.getResources().getString(R.string.created_issue) + " "
-                    + DateUtils.getRelativeTimeSpanString(issue.getCreatedAt().getTime()));
+                    + DateUtils.getRelativeTimeSpanString(mergeRequest.getCreatedAt().getTime()));
         }
-        if (issue.getCreatedAt() != null) {
-            DateUtils.getRelativeTimeSpanString(issue.getCreatedAt().getTime());
+        if (mergeRequest.getCreatedAt() != null) {
+            DateUtils.getRelativeTimeSpanString(mergeRequest.getCreatedAt().getTime());
         }
     }
 }
