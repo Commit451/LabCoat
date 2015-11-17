@@ -149,19 +149,21 @@ public class GroupActivity extends BaseActivity {
     private void bindPalette(Palette palette) {
         int animationTime = 1000;
         int vibrantColor = palette.getVibrantColor(ThemeUtils.getThemeAttrColor(this, R.attr.colorPrimary));
+        int darkerColor = Easel.getDarkerColor(vibrantColor);
 
         if (Build.VERSION.SDK_INT >= 21) {
-            int darkerColor = Easel.getDarkerColor(vibrantColor);
             Easel.getNavigationBarColorAnimator(getWindow(), darkerColor)
-                    .setDuration(animationTime)
-                    .start();
-            Easel.getStatusBarColorAnimator(getWindow(), darkerColor)
                     .setDuration(animationTime)
                     .start();
         }
 
         ObjectAnimator.ofObject(mCollapsingToolbarLayout, "contentScrimColor", new ArgbEvaluator(),
                 ((ColorDrawable) mCollapsingToolbarLayout.getContentScrim()).getColor(), vibrantColor)
+                .setDuration(animationTime)
+                .start();
+
+        ObjectAnimator.ofObject(mCollapsingToolbarLayout, "statusBarScrimColor", new ArgbEvaluator(),
+                ((ColorDrawable) mCollapsingToolbarLayout.getStatusBarScrim()).getColor(), darkerColor)
                 .setDuration(animationTime)
                 .start();
 

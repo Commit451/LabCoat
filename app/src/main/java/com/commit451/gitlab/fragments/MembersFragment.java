@@ -21,6 +21,7 @@ import com.commit451.gitlab.events.UserAddedEvent;
 import com.commit451.gitlab.model.Project;
 import com.commit451.gitlab.model.User;
 import com.commit451.gitlab.tools.NavigationManager;
+import com.commit451.gitlab.viewHolders.MemberViewHolder;
 import com.squareup.otto.Subscribe;
 
 import java.util.List;
@@ -97,8 +98,8 @@ public class MembersFragment extends BaseFragment implements SwipeRefreshLayout.
 
         mAdapter = new MemberAdapter(new MemberAdapter.Listener() {
             @Override
-            public void onUserClicked(User user) {
-                NavigationManager.navigateToUser(getActivity(), user);
+            public void onUserClicked(User user, MemberViewHolder memberViewHolder) {
+                NavigationManager.navigateToUser(getActivity(), memberViewHolder.image, user);
             }
         });
 		mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));

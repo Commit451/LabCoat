@@ -17,6 +17,7 @@ import com.commit451.gitlab.adapter.UsersAdapter;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.User;
 import com.commit451.gitlab.tools.NavigationManager;
+import com.commit451.gitlab.viewHolders.UserViewHolder;
 
 import java.util.List;
 
@@ -28,6 +29,7 @@ import retrofit.Retrofit;
 import timber.log.Timber;
 
 /**
+ * All the users!
  * Created by John on 9/28/15.
  */
 public class UsersFragment extends BaseFragment {
@@ -63,8 +65,8 @@ public class UsersFragment extends BaseFragment {
 
     private final UsersAdapter.Listener mUsersAdapterListener = new UsersAdapter.Listener() {
         @Override
-        public void onUserClicked(User user) {
-            NavigationManager.navigateToUser(getActivity(), user);
+        public void onUserClicked(User user, UserViewHolder userViewHolder) {
+            NavigationManager.navigateToUser(getActivity(), userViewHolder.image, user);
         }
     };
 
@@ -72,11 +74,11 @@ public class UsersFragment extends BaseFragment {
 
         @Override
         public void onResponse(Response<List<User>> response, Retrofit retrofit) {
-            mSwipeRefreshLayout.setRefreshing(false);
-            if (!response.isSuccess()) {
+            if (getView() == null) {
                 return;
             }
-            if (getView() == null) {
+            mSwipeRefreshLayout.setRefreshing(false);
+            if (!response.isSuccess()) {
                 return;
             }
             if (response.body().size() == 0) {

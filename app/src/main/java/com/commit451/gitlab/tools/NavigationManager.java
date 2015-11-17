@@ -50,8 +50,15 @@ public class NavigationManager {
         activity.startActivity(SearchActivity.newInstance(activity));
     }
 
-    public static void navigateToUser(Activity activity, User user) {
-        activity.startActivity(UserActivity.newInstance(activity, user));
+    public static void navigateToUser(Activity activity, ImageView profileImage, User user) {
+        Intent intent = UserActivity.newInstance(activity, user);
+        if (Build.VERSION.SDK_INT >= 21) {
+            ActivityOptionsCompat options = ActivityOptionsCompat.
+                    makeSceneTransitionAnimation(activity, profileImage, activity.getString(R.string.transition_user));
+            activity.startActivity(intent, options.toBundle());
+        } else {
+            activity.startActivity(intent);
+        }
     }
 
     public static void navigateToGroup(Activity activity, ImageView profileImage, Group group) {

@@ -17,6 +17,7 @@
         android:layout_marginRight="8dp"
         android:layout_gravity="center_vertical"
         android:contentDescription="@null"
+        android:transitionName="@string/transition_user"
         tools:src="@drawable/ic_doc"
         />
 

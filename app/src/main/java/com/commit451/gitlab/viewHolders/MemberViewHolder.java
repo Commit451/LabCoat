@@ -27,10 +27,10 @@ public class MemberViewHolder extends RecyclerView.ViewHolder {
         return new MemberViewHolder(view);
     }
 
-    @Bind(R.id.user_name) TextView name;
-    @Bind(R.id.user_username) TextView username;
-    @Bind(R.id.user_role) TextView role;
-    @Bind(R.id.user_image) ImageView image;
+    @Bind(R.id.user_name) public TextView name;
+    @Bind(R.id.user_username) public TextView username;
+    @Bind(R.id.user_role) public TextView role;
+    @Bind(R.id.user_image) public ImageView image;
 
     public MemberViewHolder(View view) {
         super(view);

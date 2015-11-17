@@ -23,6 +23,7 @@ import com.commit451.gitlab.dialogs.UserRoleDialog;
 import com.commit451.gitlab.events.UserAddedEvent;
 import com.commit451.gitlab.model.User;
 import com.commit451.gitlab.tools.KeyboardUtil;
+import com.commit451.gitlab.viewHolders.MemberViewHolder;
 
 import java.util.List;
 
@@ -95,7 +96,7 @@ public class AddUserActivity extends BaseActivity {
 
     private final MemberAdapter.Listener mUserClickListener = new MemberAdapter.Listener() {
         @Override
-        public void onUserClicked(User user) {
+        public void onUserClicked(User user, MemberViewHolder memberViewHolder) {
             mSelectedUser = user;
             mUserRoleDialog.show();
         }

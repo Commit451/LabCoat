@@ -28,9 +28,11 @@
 
         <activity android:name=".activities.LoginActivity" />
 
-        <activity android:name=".activities.ProjectsActivity" />
+        <activity android:name=".activities.ProjectsActivity"
+            android:theme="@style/Activity.Projects"/>
 
-        <activity android:name=".activities.GroupsActivity"/>
+        <activity android:name=".activities.GroupsActivity"
+            android:theme="@style/Activity.Groups"/>
 
         <activity
             android:name=".activities.FileActivity"
@@ -47,9 +49,11 @@
 
         <activity android:name=".activities.AboutActivity"/>
         <activity android:name=".activities.AddUserActivity"/>
-        <activity android:name=".activities.UserActivity"/>
+        <activity android:name=".activities.UserActivity"
+            android:theme="@style/Activity.User"/>
         <activity android:name=".activities.SearchActivity"/>
-        <activity android:name=".activities.GroupActivity"/>
+        <activity android:name=".activities.GroupActivity"
+            android:theme="@style/Activity.Group"/>
         <activity android:name=".activities.MergeRequestActivity"/>
 
         <meta-data

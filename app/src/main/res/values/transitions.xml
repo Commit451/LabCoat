@@ -2,4 +2,6 @@
 <resources>
     <!-- Transitioning from a group list item to a group detail -->
     <string name="transition_group">group</string>
+    <!-- Transition from user in a list to user detail-->
+    <string name="transition_user">user</string>
 </resources>

@@ -27,9 +27,9 @@ public class UserViewHolder extends RecyclerView.ViewHolder {
         return new UserViewHolder(view);
     }
 
-    @Bind(R.id.user_name) TextView name;
-    @Bind(R.id.user_username) TextView username;
-    @Bind(R.id.user_image) ImageView image;
+    @Bind(R.id.user_name) public TextView name;
+    @Bind(R.id.user_username) public TextView username;
+    @Bind(R.id.user_image) public ImageView image;
 
     public UserViewHolder(View view) {
         super(view);
