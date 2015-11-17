@@ -61,6 +61,7 @@ dependencies {
     compile 'com.commit451:bypasses:1.0.1'
     compile 'com.commit451:easel:0.0.3'
     compile 'com.github.ivbaranov:MaterialLetterIcon:0.2.1'
+    compile 'com.github.johnkil.android-robototextview:robototextview:2.4.3'
     compile('com.crashlytics.sdk.android:crashlytics:2.5.2@aar') {
         transitive = true;
     }

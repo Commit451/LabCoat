@@ -26,7 +26,7 @@ public class IssueHeaderViewHolder extends RecyclerView.ViewHolder {
 
     public static IssueHeaderViewHolder create(ViewGroup parent) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_header_issue, parent, false);
+                .inflate(R.layout.header_issue, parent, false);
         return new IssueHeaderViewHolder(view);
     }
 

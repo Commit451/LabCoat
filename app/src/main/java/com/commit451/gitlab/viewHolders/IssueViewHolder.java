@@ -1,6 +1,7 @@
 package com.commit451.gitlab.viewHolders;
 
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +31,6 @@ public class IssueViewHolder extends RecyclerView.ViewHolder {
     @Bind(R.id.issue_image) ImageView image;
     @Bind(R.id.issue_message) TextView message;
     @Bind(R.id.issue_creator) TextView creator;
-    @Bind(R.id.issue_state) TextView stateView;
 
     public IssueViewHolder(View view) {
         super(view);
@@ -45,9 +45,6 @@ public class IssueViewHolder extends RecyclerView.ViewHolder {
 
         message.setText("#" + tempId + ": " + issue.getTitle());
 
-        String state = issue.getState();
-        stateView.setText(state);
-
         int size = itemView.getResources().getDimensionPixelSize(R.dimen.image_size);
 
         //TODO why is this hard coded? Urg
@@ -57,16 +54,19 @@ public class IssueViewHolder extends RecyclerView.ViewHolder {
         if(issue.getAssignee() != null) {
             assigneeName = issue.getAssignee().getName();
 
-            if(issue.getAssignee().getEmail() != null)
+            if(issue.getAssignee().getEmail() != null) {
                 assigneeAvatarUrl = Gravatar.init()
                         .with(issue.getAssignee().getEmail())
                         .size(itemView.getResources().getDimensionPixelSize(R.dimen.image_size))
                         .build();
-            else if(issue.getAssignee().getAvatarUrl() != null)
+            }
+            else if(issue.getAssignee().getAvatarUrl() != null) {
                 assigneeAvatarUrl = issue.getAssignee().getAvatarUrl() + "&s=" + size;
+            }
         }
 
-        creator.setText(assigneeName);
+        CharSequence time = DateUtils.getRelativeTimeSpanString(issue.getCreatedAt().getTime());
+        creator.setText(String.format(itemView.getContext().getString(R.string.created_time), time, issue.getAuthor().getUsername()));
         Picasso.with(itemView.getContext()).load(assigneeAvatarUrl).into(image);
     }
 }

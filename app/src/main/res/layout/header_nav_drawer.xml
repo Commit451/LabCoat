@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -18,9 +20,10 @@
             android:scaleType="fitXY"
             android:src="@drawable/header" />
 
-        <RelativeLayout
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/profile_image"
@@ -28,7 +31,8 @@
                 android:layout_height="@dimen/larger_image_size"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
-                android:layout_marginTop="16dp" />
+                android:layout_marginTop="16dp"
+                android:fitsSystemWindows="true"/>
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -36,7 +40,7 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 android:layout_marginBottom="16dp"
-                android:layout_alignParentBottom="true"
+                android:layout_gravity="bottom"
                 >
 
                 <LinearLayout
@@ -45,22 +49,25 @@
                     android:orientation="vertical">
 
 
-                    <TextView
+                    <com.devspark.robototextview.widget.RobotoTextView
                         android:id="@+id/profile_user"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="?android:attr/textColorPrimaryInverse"
                         android:singleLine="true"
                         android:ellipsize="end"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        app:typeface="roboto_medium"
                         tools:text="Jawnnypew" />
 
                     <TextView
                         android:id="@+id/profile_email"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="?android:attr/textColorSecondaryInverse"
                         android:singleLine="true"
                         android:ellipsize="end"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
                         tools:text="poop123@aol.com" />
                 </LinearLayout>
 
@@ -73,7 +80,7 @@
                     android:tint="@color/window_background_color"/>
 
             </FrameLayout>
-        </RelativeLayout>
+        </FrameLayout>
 
     </FrameLayout>
 
@@ -81,7 +88,6 @@
         android:id="@+id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-
         android:paddingTop="8dp"
         android:paddingBottom="8dp"
         android:clipToPadding="false"

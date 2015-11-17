@@ -210,7 +210,7 @@ public class IssueActivity extends BaseActivity {
     }
 
     private void bindIssue() {
-        mToolbar.setTitle(getString(R.string.issue_number) + mIssue.getId());
+        mToolbar.setTitle(getString(R.string.issue_number) + mIssue.getIid());
         setOpenCloseMenuStatus();
         mIssueTitle.setText(mIssue.getTitle());
         mNotesAdapter.updateIssue(mIssue);

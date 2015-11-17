@@ -2,7 +2,12 @@ package com.commit451.gitlab.tools;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.widget.ImageView;
 
+import com.commit451.gitlab.R;
 import com.commit451.gitlab.activities.AboutActivity;
 import com.commit451.gitlab.activities.GroupActivity;
 import com.commit451.gitlab.activities.GroupsActivity;
@@ -49,7 +54,14 @@ public class NavigationManager {
         activity.startActivity(UserActivity.newInstance(activity, user));
     }
 
-    public static void navigateToGroup(Activity activity, Group group) {
-        activity.startActivity(GroupActivity.newInstance(activity, group));
+    public static void navigateToGroup(Activity activity, ImageView profileImage, Group group) {
+        Intent intent = GroupActivity.newInstance(activity, group);
+        if (Build.VERSION.SDK_INT >= 21) {
+            ActivityOptionsCompat options = ActivityOptionsCompat.
+                    makeSceneTransitionAnimation(activity, profileImage, activity.getString(R.string.transition_group));
+            activity.startActivity(intent, options.toBundle());
+        } else {
+            activity.startActivity(intent);
+        }
     }
 }

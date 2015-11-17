@@ -129,7 +129,7 @@ public class GroupActivity extends BaseActivity {
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                onBackPressed();
             }
         });
         Picasso.with(this)
@@ -139,6 +139,11 @@ public class GroupActivity extends BaseActivity {
         mProjectsAdapter = new ProjectsAdapter(this, mProjectsAdapterListener);
         mProjectsRecyclerView.setAdapter(mProjectsAdapter);
         load();
+    }
+
+    @Override
+    public void onBackPressed() {
+        supportFinishAfterTransition();
     }
 
     private void bindPalette(Palette palette) {

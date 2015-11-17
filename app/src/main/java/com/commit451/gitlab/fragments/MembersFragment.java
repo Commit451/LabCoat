@@ -20,6 +20,7 @@ import com.commit451.gitlab.events.ProjectReloadEvent;
 import com.commit451.gitlab.events.UserAddedEvent;
 import com.commit451.gitlab.model.Project;
 import com.commit451.gitlab.model.User;
+import com.commit451.gitlab.tools.NavigationManager;
 import com.squareup.otto.Subscribe;
 
 import java.util.List;
@@ -44,14 +45,48 @@ public class MembersFragment extends BaseFragment implements SwipeRefreshLayout.
         return fragment;
     }
 
-    @Bind(R.id.add_user_button) View addUserButton;
-	@Bind(R.id.list) RecyclerView listView;
+    @Bind(R.id.add_user_button) View mAddUserButton;
+	@Bind(R.id.list) RecyclerView mRecyclerView;
     MemberAdapter mAdapter;
-	@Bind(R.id.error_text) TextView errorText;
-    @Bind(R.id.swipe_layout) SwipeRefreshLayout swipeLayout;
+	@Bind(R.id.error_text) TextView mErrorText;
+    @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
 
     Project mProject;
-	EventReceiver eventReceiver;
+	EventReceiver mEventReceiver;
+
+	private final Callback<List<User>> usersCallback = new Callback<List<User>>() {
+
+		@Override
+		public void onResponse(Response<List<User>> response, Retrofit retrofit) {
+			if (!response.isSuccess()) {
+				return;
+			}
+			if (getView() == null) {
+				return;
+			}
+			mSwipeRefreshLayout.setRefreshing(false);
+			mErrorText.setVisibility(View.GONE);
+			mRecyclerView.setVisibility(View.VISIBLE);
+			mAddUserButton.setVisibility(View.VISIBLE);
+
+			mAdapter.setData(response.body());
+
+			mAddUserButton.setEnabled(true);
+		}
+
+		@Override
+		public void onFailure(Throwable t) {
+			if (getView() == null) {
+				return;
+			}
+			mSwipeRefreshLayout.setRefreshing(false);
+			mErrorText.setVisibility(View.VISIBLE);
+			mAddUserButton.setVisibility(View.GONE);
+			Timber.e(t.toString());
+			Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.connection_error_users), Snackbar.LENGTH_SHORT)
+					.show();
+		}
+	};
 
 	public MembersFragment() {}
 	
@@ -63,15 +98,15 @@ public class MembersFragment extends BaseFragment implements SwipeRefreshLayout.
         mAdapter = new MemberAdapter(new MemberAdapter.Listener() {
             @Override
             public void onUserClicked(User user) {
-                //TODO go to profile or allow kicking from group or something
+                NavigationManager.navigateToUser(getActivity(), user);
             }
         });
-		listView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        listView.setAdapter(mAdapter);
-        swipeLayout.setOnRefreshListener(this);
+		mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setAdapter(mAdapter);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
 
-		eventReceiver = new EventReceiver();
-		GitLabApp.bus().register(eventReceiver);
+		mEventReceiver = new EventReceiver();
+		GitLabApp.bus().register(mEventReceiver);
 
 		if (getActivity() instanceof ProjectActivity) {
 			mProject = ((ProjectActivity) getActivity()).getProject();
@@ -89,7 +124,7 @@ public class MembersFragment extends BaseFragment implements SwipeRefreshLayout.
 	public void onDestroyView() {
 		super.onDestroyView();
 		ButterKnife.unbind(this);
-		GitLabApp.bus().unregister(eventReceiver);
+		GitLabApp.bus().unregister(mEventReceiver);
 	}
 	
 	@Override
@@ -98,48 +133,14 @@ public class MembersFragment extends BaseFragment implements SwipeRefreshLayout.
 	}
 	
 	public void loadData() {
-		swipeLayout.post(new Runnable() {
-			@Override
-			public void run() {
-				swipeLayout.setRefreshing(true);
-			}
-		});
+		mSwipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                mSwipeRefreshLayout.setRefreshing(true);
+            }
+        });
         GitLabClient.instance().getGroupMembers(mProject.getNamespace().getId()).enqueue(usersCallback);
 	}
-	
-	public Callback<List<User>> usersCallback = new Callback<List<User>>() {
-
-		@Override
-		public void onResponse(Response<List<User>> response, Retrofit retrofit) {
-			if (!response.isSuccess()) {
-				return;
-			}
-			if (getView() == null) {
-				return;
-			}
-			swipeLayout.setRefreshing(false);
-			errorText.setVisibility(View.GONE);
-			listView.setVisibility(View.VISIBLE);
-			addUserButton.setVisibility(View.VISIBLE);
-
-            mAdapter.setData(response.body());
-
-			addUserButton.setEnabled(true);
-		}
-
-		@Override
-		public void onFailure(Throwable t) {
-			if (getView() == null) {
-				return;
-			}
-			swipeLayout.setRefreshing(false);
-			errorText.setVisibility(View.VISIBLE);
-			addUserButton.setVisibility(View.GONE);
-			Timber.e(t.toString());
-			Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.connection_error_users), Snackbar.LENGTH_SHORT)
-					.show();
-		}
-	};
 	
 	public boolean onBackPressed() {
 		return false;

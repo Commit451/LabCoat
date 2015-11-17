@@ -18,7 +18,7 @@ import java.util.Collection;
 public class GroupAdapter extends RecyclerView.Adapter<GroupViewHolder> {
 
     public interface Listener {
-        void onGroupClicked(Group group);
+        void onGroupClicked(Group group, GroupViewHolder groupViewHolder);
     }
     private Listener mListener;
 
@@ -33,7 +33,8 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupViewHolder> {
         @Override
         public void onClick(View v) {
             int position = (int) v.getTag(R.id.list_position);
-            mListener.onGroupClicked(getEntry(position));
+            GroupViewHolder holder = (GroupViewHolder) v.getTag(R.id.list_view_holder);
+            mListener.onGroupClicked(getEntry(position), holder);
         }
     };
 
@@ -55,6 +56,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupViewHolder> {
     @Override
     public void onBindViewHolder(final GroupViewHolder holder, int position) {
         holder.itemView.setTag(R.id.list_position, position);
+        holder.itemView.setTag(R.id.list_view_holder, holder);
         holder.bind(getEntry(position));
     }
 

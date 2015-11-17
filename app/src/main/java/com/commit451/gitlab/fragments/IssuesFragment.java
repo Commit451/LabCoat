@@ -8,6 +8,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.commit451.gitlab.GitLabApp;
@@ -27,6 +30,7 @@ import com.squareup.otto.Subscribe;
 import java.util.List;
 
 import butterknife.Bind;
+import butterknife.BindString;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import retrofit.Callback;
@@ -34,20 +38,24 @@ import retrofit.Response;
 import retrofit.Retrofit;
 import timber.log.Timber;
 
-public class IssuesFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
+public class IssuesFragment extends BaseFragment {
 
 	public static IssuesFragment newInstance() {
 		return new IssuesFragment();
 	}
 
-	@Bind(R.id.add_issue_button) View addIssueButton;
-	@Bind(R.id.list) RecyclerView listView;
+	@Bind(R.id.issue_spinner) Spinner mSpinner;
+	@Bind(R.id.add_issue_button) View mAddIssueButton;
+	@Bind(R.id.list) RecyclerView mIssueRecyclerView;
     @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
     @Bind(R.id.message_text) TextView mMessageTextView;
 
-	IssuesAdapter issuesAdapter;
-	EventReceiver eventReceiver;
+	IssuesAdapter mIssuesAdapter;
+	EventReceiver mEventReceiver;
     Project mProject;
+    @BindString(R.string.issue_opened)
+    String mState;
+    String[] mStates;
 
 	private final IssuesAdapter.Listener mIssuesAdapterListener = new IssuesAdapter.Listener() {
 		@Override
@@ -56,44 +64,68 @@ public class IssuesFragment extends BaseFragment implements SwipeRefreshLayout.O
 		}
 	};
 
+    private final SwipeRefreshLayout.OnRefreshListener mOnRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {
+        @Override
+        public void onRefresh() {
+            loadData();
+        }
+    };
+
+    private final AdapterView.OnItemSelectedListener mSpinnerItemSelectedListener = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            mState = mStates[position];
+            loadData();
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) { }
+    };
+
 	public IssuesFragment() {}
-	
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.fragment_issues, container, false);
-		ButterKnife.bind(this, view);
 
-		listView.setLayoutManager(new LinearLayoutManager(getActivity()));
-		issuesAdapter = new IssuesAdapter(mIssuesAdapterListener);
-		listView.setAdapter(issuesAdapter);
-        mSwipeRefreshLayout.setOnRefreshListener(this);
-
-		eventReceiver = new EventReceiver();
-		GitLabApp.bus().register(eventReceiver);
-
-		if (getActivity() instanceof ProjectActivity) {
-			mProject = ((ProjectActivity) getActivity()).getProject();
-			if (mProject != null) {
-				loadData();
-			}
-		} else {
-			throw new IllegalStateException("Incorrect parent activity");
-		}
-		
-		return view;
-	}
-	
-	@Override
-	public void onDestroyView() {
-		super.onDestroyView();
-        ButterKnife.unbind(this);
-		GitLabApp.bus().unregister(eventReceiver);
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mStates = getResources().getStringArray(R.array.issue_state_values);
     }
 
     @Override
-	public void onRefresh() {
-		loadData();
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		return inflater.inflate(R.layout.fragment_issues, container, false);
 	}
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        ButterKnife.bind(this, view);
+
+        mIssueRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mIssuesAdapter = new IssuesAdapter(mIssuesAdapterListener);
+        mIssueRecyclerView.setAdapter(mIssuesAdapter);
+        mSwipeRefreshLayout.setOnRefreshListener(mOnRefreshListener);
+        mSpinner.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, getResources().getStringArray(R.array.issue_state_names)));
+        mSpinner.setOnItemSelectedListener(mSpinnerItemSelectedListener);
+
+        mEventReceiver = new EventReceiver();
+        GitLabApp.bus().register(mEventReceiver);
+
+        if (getActivity() instanceof ProjectActivity) {
+            mProject = ((ProjectActivity) getActivity()).getProject();
+            if (mProject != null) {
+                loadData();
+            }
+        } else {
+            throw new IllegalStateException("Incorrect parent activity");
+        }
+    }
+
+    @Override
+	public void onDestroyView() {
+		super.onDestroyView();
+        ButterKnife.unbind(this);
+		GitLabApp.bus().unregister(mEventReceiver);
+    }
 	
 	public void loadData() {
         mMessageTextView.setVisibility(View.GONE);
@@ -105,10 +137,10 @@ public class IssuesFragment extends BaseFragment implements SwipeRefreshLayout.O
 				}
 			}
 		});
-		GitLabClient.instance().getIssues(mProject.getId()).enqueue(issuesCallback);
+		GitLabClient.instance().getIssues(mProject.getId(), mState).enqueue(mIssuesCallback);
 	}
 	
-	private Callback<List<Issue>> issuesCallback = new Callback<List<Issue>>() {
+	private Callback<List<Issue>> mIssuesCallback = new Callback<List<Issue>>() {
 
 		@Override
 		public void onResponse(Response<List<Issue>> response, Retrofit retrofit) {
@@ -123,7 +155,7 @@ public class IssuesFragment extends BaseFragment implements SwipeRefreshLayout.O
                 mMessageTextView.setVisibility(View.VISIBLE);
             }
 
-            issuesAdapter.setIssues(response.body());
+            mIssuesAdapter.setIssues(response.body());
 		}
 
 		@Override
@@ -138,7 +170,7 @@ public class IssuesFragment extends BaseFragment implements SwipeRefreshLayout.O
 			}
 			Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.connection_error_issues), Snackbar.LENGTH_SHORT)
 					.show();
-			listView.setAdapter(null);
+			mIssueRecyclerView.setAdapter(null);
 		}
 	};
 	
@@ -166,13 +198,13 @@ public class IssuesFragment extends BaseFragment implements SwipeRefreshLayout.O
 
 		@Subscribe
 		public void onIssueAdded(IssueCreatedEvent event) {
-			issuesAdapter.addIssue(event.issue);
-            listView.smoothScrollToPosition(0);
+			mIssuesAdapter.addIssue(event.issue);
+            mIssueRecyclerView.smoothScrollToPosition(0);
 		}
 
 		@Subscribe
 		public void onIssueChanged(IssueChangedEvent event) {
-			issuesAdapter.updateIssue(event.issue);
+			mIssuesAdapter.updateIssue(event.issue);
 		}
 	}
 }

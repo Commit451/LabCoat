@@ -130,6 +130,17 @@
     <string name="created_issue">created issue</string>
     <string name="error_changing_issue">There was an error changing the issue</string>
     <string name="no_issues">No issues. Good job?</string>
+    <string name="issue_opened">Opened</string>
+    <string name="issue_closed">Closed</string>
+    <string-array name="issue_state_names">
+        <item>@string/issue_opened</item>
+        <item>@string/issue_closed</item>
+    </string-array>
+    <string-array name="issue_state_values">
+        <item>opened</item>
+        <item>closed</item>
+    </string-array>
+    <string name="created_time">Created %1$s by %2$s</string>
 
     <!-- User -->
     <string name="remove_user_dialog_title">Remove user?</string>
@@ -149,6 +160,14 @@
         <item>Owner</item>
     </string-array>
 
+    <string-array name="role_values" translatable="false">
+        <item>10</item>
+        <item>20</item>
+        <item>30</item>
+        <item>40</item>
+        <item>50</item>
+    </string-array>
+
     <!-- About -->
     <string name="about">About</string>
     <string name="contributors">Contributors</string>
@@ -161,6 +180,20 @@
 
     <!-- Merge Requests -->
     <string name="no_merge_requests">No merge requests</string>
+    <string name="merge_request_state_value_default">opened</string>
+    <string-array name="merge_request_state_names">
+        <item>Open</item>
+        <item>Merged</item>
+        <item>Closed</item>
+        <item>All</item>
+    </string-array>
+
+    <string-array name="merge_request_state_values">
+        <item>@string/merge_request_state_value_default</item>
+        <item>merged</item>
+        <item>closed</item>
+        <item>all</item>
+    </string-array>
 
     <!-- Groups -->
     <string name="no_groups">No groups.</string>

@@ -9,6 +9,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.commit451.gitlab.GitLabApp;
@@ -24,6 +27,7 @@ import com.squareup.otto.Subscribe;
 import java.util.List;
 
 import butterknife.Bind;
+import butterknife.BindString;
 import butterknife.ButterKnife;
 import retrofit.Callback;
 import retrofit.Response;
@@ -45,17 +49,33 @@ public class MergeRequestFragment extends BaseFragment {
     }
 
     @Bind(R.id.error_text) TextView mErrorText;
+    @Bind(R.id.state_spinner) Spinner mSpinner;
     @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
     @Bind(R.id.list) RecyclerView mRecyclerView;
+
     EventReceiver mEventReceiver;
     MergeRequestAdapter mMergeRequestAdapter;
     Project mProject;
+    @BindString(R.string.merge_request_state_value_default)
+    String mState;
+    String[] mStates;
 
     private final SwipeRefreshLayout.OnRefreshListener mOnRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {
         @Override
         public void onRefresh() {
             loadData();
         }
+    };
+
+    private final AdapterView.OnItemSelectedListener mSpinnerItemSelectedListener = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            mState = mStates[position];
+            loadData();
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) { }
     };
 
     private final Callback<List<MergeRequest>> mCallback = new Callback<List<MergeRequest>>() {
@@ -71,9 +91,8 @@ public class MergeRequestFragment extends BaseFragment {
             if (response.body().isEmpty()) {
                 mErrorText.setVisibility(View.VISIBLE);
                 mErrorText.setText(R.string.no_merge_requests);
-            } else {
-                mMergeRequestAdapter.setData(response.body());
             }
+            mMergeRequestAdapter.setData(response.body());
         }
 
         @Override
@@ -89,6 +108,7 @@ public class MergeRequestFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mEventReceiver = new EventReceiver();
+        mStates = getContext().getResources().getStringArray(R.array.merge_request_state_values);
     }
 
     @Nullable
@@ -106,6 +126,9 @@ public class MergeRequestFragment extends BaseFragment {
         mMergeRequestAdapter = new MergeRequestAdapter();
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setAdapter(mMergeRequestAdapter);
+        mSpinner.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, getResources().getStringArray(R.array.merge_request_state_names)));
+        mSpinner.setOnItemSelectedListener(mSpinnerItemSelectedListener);
+
         if (getActivity() instanceof ProjectActivity) {
             mProject = ((ProjectActivity) getActivity()).getProject();
             if (mProject != null) {
@@ -126,6 +149,7 @@ public class MergeRequestFragment extends BaseFragment {
     @Override
     protected void loadData() {
         super.loadData();
+        mErrorText.setVisibility(View.GONE);
         mSwipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
@@ -134,7 +158,7 @@ public class MergeRequestFragment extends BaseFragment {
                 }
             }
         });
-        GitLabClient.instance().getMergeRequests(mProject.getId()).enqueue(mCallback);
+        GitLabClient.instance().getMergeRequests(mProject.getId(), mState).enqueue(mCallback);
     }
 
     public boolean onBackPressed() {

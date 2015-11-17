@@ -47,18 +47,7 @@
             android:layout_below="@+id/issue_message"
             android:textSize="@dimen/text_size_tiny"
             android:textColor="?android:attr/textColorSecondary"
-            tools:text="Jawnnypoo"/>
-
-        <TextView
-            android:id="@+id/issue_state"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/issue_message"
-            android:layout_alignParentRight="true"
-
-            android:textSize="@dimen/text_size_tiny"
-            android:textColor="?android:attr/textColorSecondary"
-            tools:text="Closed"/>
+            tools:text="Created 45 days ago by Jawnnypoo"/>
 
     </RelativeLayout>
 

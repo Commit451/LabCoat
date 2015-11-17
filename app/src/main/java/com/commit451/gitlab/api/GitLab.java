@@ -76,8 +76,9 @@ public interface GitLab {
     @GET(API_VERSION + "/projects/{id}/repository/contributors")
     Call<List<Contributor>> getContributors(@Path("id") long projectId);
 
-    @GET(API_VERSION + "/projects/{id}/merge_requests")
-    Call<List<MergeRequest>> getMergeRequests(@Path("id") long projectId);
+    @GET(API_VERSION + "/projects/{id}/merge_requests?state=opened")
+    Call<List<MergeRequest>> getMergeRequests(@Path("id") long projectId,
+                                              @Query("state") String state);
 	
 	/* --- COMMITS --- */
 
@@ -96,7 +97,8 @@ public interface GitLab {
 	/* --- ISSUE --- */
 
     @GET(API_VERSION + "/projects/{id}/issues?per_page=100")
-    Call<List<Issue>> getIssues(@Path("id") long projectId);
+    Call<List<Issue>> getIssues(@Path("id") long projectId,
+                                @Query("state") String state);
 
     @FormUrlEncoded
     @POST(API_VERSION + "/projects/{id}/issues")
