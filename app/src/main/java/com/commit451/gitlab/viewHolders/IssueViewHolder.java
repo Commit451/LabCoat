@@ -1,7 +1,6 @@
 package com.commit451.gitlab.viewHolders;
 
 import android.support.v7.widget.RecyclerView;
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +9,7 @@ import android.widget.TextView;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.Issue;
+import com.commit451.gitlab.tools.DateUtils;
 import com.squareup.picasso.Picasso;
 
 import butterknife.Bind;
@@ -65,7 +65,7 @@ public class IssueViewHolder extends RecyclerView.ViewHolder {
             }
         }
 
-        CharSequence time = DateUtils.getRelativeTimeSpanString(issue.getCreatedAt().getTime());
+        CharSequence time = DateUtils.getRelativeTimeSpanString(itemView.getContext(), issue.getCreatedAt());
         creator.setText(String.format(itemView.getContext().getString(R.string.created_time), time, issue.getAuthor().getUsername()));
         Picasso.with(itemView.getContext()).load(assigneeAvatarUrl).into(image);
     }

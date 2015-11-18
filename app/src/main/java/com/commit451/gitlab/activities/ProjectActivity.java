@@ -22,7 +22,7 @@ import com.commit451.gitlab.events.ProjectReloadEvent;
 import com.commit451.gitlab.fragments.CommitsFragment;
 import com.commit451.gitlab.fragments.FilesFragment;
 import com.commit451.gitlab.fragments.IssuesFragment;
-import com.commit451.gitlab.fragments.MergeRequestFragment;
+import com.commit451.gitlab.fragments.MergeRequestsFragment;
 import com.commit451.gitlab.fragments.MembersFragment;
 import com.commit451.gitlab.fragments.OverviewFragment;
 import com.commit451.gitlab.model.Branch;
@@ -50,13 +50,13 @@ public class ProjectActivity extends BaseActivity {
 		return intent;
 	}
 
-	@Bind(R.id.toolbar) Toolbar toolbar;
-	@Bind(R.id.tabs) TabLayout tabs;
-	@Bind(R.id.branch_spinner) Spinner branchSpinner;
-    @Bind(R.id.progress) View progress;
-	@Bind(R.id.pager) ViewPager viewPager;
+	@Bind(R.id.toolbar) Toolbar mToolbar;
+	@Bind(R.id.tabs) TabLayout mTabLayout;
+	@Bind(R.id.branch_spinner) Spinner mBranchSpinner;
+    @Bind(R.id.progress) View mProgress;
+	@Bind(R.id.pager) ViewPager mViewPager;
 
-	private final AdapterView.OnItemSelectedListener spinnerItemSelectedListener = new AdapterView.OnItemSelectedListener() {
+	private final AdapterView.OnItemSelectedListener mSpinnerItemSelectedListener = new AdapterView.OnItemSelectedListener() {
 		@Override
 		public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 			mBranchName = ((TextView)view).getText().toString();
@@ -77,20 +77,24 @@ public class ProjectActivity extends BaseActivity {
 			if (!response.isSuccess()) {
 				return;
 			}
-			progress.setVisibility(View.GONE);
+			mProgress.setVisibility(View.GONE);
 
-			branchSpinner.setVisibility(View.VISIBLE);
-			branchSpinner.setAlpha(0.0f);
-			branchSpinner.animate().alpha(1.0f);
-			// Set up the dropdown list navigation in the action bar.
-			branchSpinner.setAdapter(new ArrayAdapter<>(ProjectActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, response.body()));
+			if(response.body().isEmpty()) {
+				mBranchSpinner.setVisibility(View.GONE);
+			} else {
+				mBranchSpinner.setVisibility(View.VISIBLE);
+				mBranchSpinner.setAlpha(0.0f);
+				mBranchSpinner.animate().alpha(1.0f);
+				// Set up the dropdown list navigation in the action bar.
+				mBranchSpinner.setAdapter(new ArrayAdapter<>(ProjectActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, response.body()));
+			}
 			for (int i=0; i<response.body().size(); i++) {
 				if (response.body().get(i).getName().equals(mProject.getDefaultBranch())) {
-					branchSpinner.setSelection(i);
+					mBranchSpinner.setSelection(i);
 				}
 			}
 
-			branchSpinner.setOnItemSelectedListener(spinnerItemSelectedListener);
+			mBranchSpinner.setOnItemSelectedListener(mSpinnerItemSelectedListener);
 
 			if(response.body().isEmpty()) {
 				broadcastLoad();
@@ -99,7 +103,7 @@ public class ProjectActivity extends BaseActivity {
 
 		@Override
 		public void onFailure(Throwable t) {
-			progress.setVisibility(View.GONE);
+			mProgress.setVisibility(View.GONE);
 			Timber.e(t.toString());
 			Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
 					.show();
@@ -125,20 +129,20 @@ public class ProjectActivity extends BaseActivity {
 		ButterKnife.bind(this);
         mProject = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_PROJECT));
 
-		toolbar.setNavigationIcon(R.drawable.ic_back_24dp);
-		toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				onBackPressed();
-			}
-		});
-		toolbar.inflateMenu(R.menu.menu_repository);
-		toolbar.setOnMenuItemClickListener(mOnMenuItemClickListener);
+		mToolbar.setNavigationIcon(R.drawable.ic_back_24dp);
+		mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+		mToolbar.inflateMenu(R.menu.menu_repository);
+		mToolbar.setOnMenuItemClickListener(mOnMenuItemClickListener);
 
 		SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
 
-		viewPager.setAdapter(sectionsPagerAdapter);
-		tabs.setupWithViewPager(viewPager);
+		mViewPager.setAdapter(sectionsPagerAdapter);
+		mTabLayout.setupWithViewPager(mViewPager);
         loadBranches();
 	}
 
@@ -154,7 +158,7 @@ public class ProjectActivity extends BaseActivity {
 	public void onBackPressed() {
 		boolean handled = false;
 		
-		switch(viewPager.getCurrentItem()) {
+		switch(mViewPager.getCurrentItem()) {
 			case 0:
 				OverviewFragment overviewFragment = (OverviewFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.pager + ":0");
 				handled = overviewFragment.onBackPressed();
@@ -172,8 +176,8 @@ public class ProjectActivity extends BaseActivity {
 				handled = filesFragment.onBackPressed();
 				break;
 			case 4:
-				MergeRequestFragment mergeRequestFragment = (MergeRequestFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.pager + ":4");
-				handled = mergeRequestFragment.onBackPressed();
+				MergeRequestsFragment mergeRequestsFragment = (MergeRequestsFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.pager + ":4");
+				handled = mergeRequestsFragment.onBackPressed();
 				break;
             case 5:
                 MembersFragment membersFragment = (MembersFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.pager + ":5");

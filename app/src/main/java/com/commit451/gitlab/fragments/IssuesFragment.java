@@ -15,7 +15,6 @@ import android.widget.TextView;
 
 import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.activities.IssueActivity;
 import com.commit451.gitlab.activities.ProjectActivity;
 import com.commit451.gitlab.adapter.IssuesAdapter;
 import com.commit451.gitlab.api.GitLabClient;
@@ -25,6 +24,7 @@ import com.commit451.gitlab.events.IssueCreatedEvent;
 import com.commit451.gitlab.events.ProjectReloadEvent;
 import com.commit451.gitlab.model.Issue;
 import com.commit451.gitlab.model.Project;
+import com.commit451.gitlab.tools.NavigationManager;
 import com.squareup.otto.Subscribe;
 
 import java.util.List;
@@ -60,7 +60,7 @@ public class IssuesFragment extends BaseFragment {
 	private final IssuesAdapter.Listener mIssuesAdapterListener = new IssuesAdapter.Listener() {
 		@Override
 		public void onIssueClicked(Issue issue) {
-			getActivity().startActivity(IssueActivity.newInstance(getActivity(), mProject, issue));
+            NavigationManager.navigateToIssue(getActivity(), mProject, issue);
 		}
 	};
 

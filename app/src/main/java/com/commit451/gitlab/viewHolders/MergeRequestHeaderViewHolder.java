@@ -2,7 +2,6 @@ package com.commit451.gitlab.viewHolders;
 
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +11,7 @@ import android.widget.TextView;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.MergeRequest;
+import com.commit451.gitlab.tools.DateUtils;
 import com.commit451.gitlab.tools.ImageUtil;
 import com.squareup.picasso.Picasso;
 
@@ -25,10 +25,10 @@ import in.uncod.android.bypass.Bypass;
  */
 public class MergeRequestHeaderViewHolder extends RecyclerView.ViewHolder {
 
-    public static IssueHeaderViewHolder newInstance(ViewGroup parent) {
+    public static MergeRequestHeaderViewHolder newInstance(ViewGroup parent) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.header_issue, parent, false);
-        return new IssueHeaderViewHolder(view);
+                .inflate(R.layout.header_merge_request, parent, false);
+        return new MergeRequestHeaderViewHolder(view);
     }
 
     @Bind(R.id.description)
@@ -59,10 +59,10 @@ public class MergeRequestHeaderViewHolder extends RecyclerView.ViewHolder {
                     .into(authorImage);
             author.setText(mergeRequest.getAuthor().getName() + " "
                     + itemView.getResources().getString(R.string.created_issue) + " "
-                    + DateUtils.getRelativeTimeSpanString(mergeRequest.getCreatedAt().getTime()));
+                    + DateUtils.getRelativeTimeSpanString(itemView.getContext(), mergeRequest.getCreatedAt()));
         }
         if (mergeRequest.getCreatedAt() != null) {
-            DateUtils.getRelativeTimeSpanString(mergeRequest.getCreatedAt().getTime());
+            DateUtils.getRelativeTimeSpanString(itemView.getContext(), mergeRequest.getCreatedAt());
         }
     }
 }

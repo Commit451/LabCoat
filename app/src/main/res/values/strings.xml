@@ -62,6 +62,7 @@
     <string name="normal_link"><u>Login using username or email</u></string>
     <string name="certificate_title">Certificate not trusted</string>
     <string name="certificate_message">The certificate the server used was not issued by a trusted authority.\n\nThis could mean a hacker is trying to intercept your communications.\n\nTo use a self-signed certificate, please follow this <a href="https://support.google.com/nexus/answer/2844832?hl=en">guide</a>.</string>
+    <string name="not_a_valid_url">Not a valid URL</string>
 
     <!-- Error messages -->
     <string name="connection_error">Connection failed</string>
@@ -70,7 +71,8 @@
     <string name="connection_error_files">Failed to load files</string>
     <string name="connection_error_users">Failed to load users</string>
 
-    <string name="login_error">Login failed Please double-check your login information.</string>
+    <string name="login_unauthorized">Incorrect credentials. Try again</string>
+    <string name="login_error">Login failed. Please check your login information</string>
     <string name="login_input_error">Please enter a valid url.</string>
 
     <string name="file_load_error">Failed to load file</string>
@@ -103,6 +105,7 @@
     <string name="filter_projects">Filter projects</string>
     <string name="logout_title">Are you sure you want to log out?</string>
     <string name="failed_to_load">Failed to load</string>
+    <string name="just_now">Just now</string>
 
     <!-- Overview -->
     <string name="no_readme_found">No README found for project</string>
@@ -180,6 +183,7 @@
 
     <!-- Merge Requests -->
     <string name="no_merge_requests">No merge requests</string>
+    <string name="merge_request_number">Merge Request #</string>
     <string name="merge_request_state_value_default">opened</string>
     <string-array name="merge_request_state_names">
         <item>Open</item>

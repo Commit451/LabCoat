@@ -4,10 +4,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
 import com.commit451.gitlab.model.MergeRequest;
-import com.commit451.gitlab.model.Note;
-import com.commit451.gitlab.viewHolders.IssueHeaderViewHolder;
+import com.commit451.gitlab.model.MergeRequestComment;
+import com.commit451.gitlab.viewHolders.MergeRequestCommentViewHolder;
 import com.commit451.gitlab.viewHolders.MergeRequestHeaderViewHolder;
-import com.commit451.gitlab.viewHolders.NoteViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +22,7 @@ public class MergeRequestDetailAdapter extends RecyclerView.Adapter<RecyclerView
 
     private static final int HEADER_COUNT = 1;
 
-    private ArrayList<Note> mNotes;
+    private ArrayList<MergeRequestComment> mNotes;
     private MergeRequest mMergeRequest;
 
     public MergeRequestDetailAdapter(MergeRequest mergeRequest) {
@@ -34,9 +33,9 @@ public class MergeRequestDetailAdapter extends RecyclerView.Adapter<RecyclerView
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == TYPE_HEADER) {
-            return IssueHeaderViewHolder.newInstance(parent);
+            return MergeRequestHeaderViewHolder.newInstance(parent);
         } else if (viewType == TYPE_COMMENT) {
-            RecyclerView.ViewHolder holder = NoteViewHolder.newInstance(parent);
+            RecyclerView.ViewHolder holder = MergeRequestCommentViewHolder.newInstance(parent);
             return holder;
         }
         throw new IllegalArgumentException("No view type matches");
@@ -46,9 +45,9 @@ public class MergeRequestDetailAdapter extends RecyclerView.Adapter<RecyclerView
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof MergeRequestHeaderViewHolder) {
             ((MergeRequestHeaderViewHolder) holder).bind(mMergeRequest);
-        } else if (holder instanceof NoteViewHolder) {
-            Note note = getNoteAt(position);
-            ((NoteViewHolder) holder).bind(note);
+        } else if (holder instanceof MergeRequestCommentViewHolder) {
+            MergeRequestComment note = getNoteAt(position);
+            ((MergeRequestCommentViewHolder) holder).bind(note);
         }
     }
 
@@ -70,11 +69,16 @@ public class MergeRequestDetailAdapter extends RecyclerView.Adapter<RecyclerView
         return position == 0;
     }
 
-    public Note getNoteAt(int position) {
+    public MergeRequestComment getNoteAt(int position) {
         return mNotes.get(position-1);
     }
 
-    public void addNotes(List<Note> notes) {
+    public void addNote(MergeRequestComment note) {
+        mNotes.add(note);
+        notifyItemInserted(mNotes.size() + HEADER_COUNT);
+    }
+
+    public void addNotes(List<MergeRequestComment> notes) {
         if (!notes.isEmpty()) {
             mNotes.clear();
             mNotes.addAll(notes);
@@ -82,7 +86,7 @@ public class MergeRequestDetailAdapter extends RecyclerView.Adapter<RecyclerView
         notifyDataSetChanged();
     }
 
-    public void updateIssue(MergeRequest mergeRequest) {
+    public void updateMergeRequest(MergeRequest mergeRequest) {
         mMergeRequest = mergeRequest;
         notifyItemChanged(0);
     }

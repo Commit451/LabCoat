@@ -11,12 +11,16 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.activities.AboutActivity;
 import com.commit451.gitlab.activities.GroupActivity;
 import com.commit451.gitlab.activities.GroupsActivity;
+import com.commit451.gitlab.activities.IssueActivity;
 import com.commit451.gitlab.activities.LoginActivity;
+import com.commit451.gitlab.activities.MergeRequestActivity;
 import com.commit451.gitlab.activities.ProjectActivity;
 import com.commit451.gitlab.activities.ProjectsActivity;
 import com.commit451.gitlab.activities.SearchActivity;
 import com.commit451.gitlab.activities.UserActivity;
 import com.commit451.gitlab.model.Group;
+import com.commit451.gitlab.model.Issue;
+import com.commit451.gitlab.model.MergeRequest;
 import com.commit451.gitlab.model.Project;
 import com.commit451.gitlab.model.User;
 
@@ -70,5 +74,14 @@ public class NavigationManager {
         } else {
             activity.startActivity(intent);
         }
+    }
+
+    public static void navigateToIssue(Activity activity, Project project, Issue issue) {
+        activity.startActivity(IssueActivity.newInstance(activity, project, issue));
+    }
+
+    public static void navigateToMergeRequest(Activity activity, Project project, MergeRequest mergeRequest) {
+        Intent intent = MergeRequestActivity.newInstance(activity, project, mergeRequest);
+        activity.startActivity(intent);
     }
 }

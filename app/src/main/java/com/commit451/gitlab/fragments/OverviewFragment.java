@@ -65,10 +65,10 @@ public class OverviewFragment extends BaseFragment {
                 return;
             }
             if (!response.isSuccess()) {
-                mErrorText.setText(R.string.connection_error);
+                mSwipeRefreshLayout.setRefreshing(false);
+                showError(getString(R.string.no_readme_found));
                 return;
             }
-            mSwipeRefreshLayout.setRefreshing(false);
             for (TreeItem treeItem : response.body()) {
                 if (treeItem.getName().equalsIgnoreCase("README.md")) {
                     GitLabClient.instance().getFile(mProject.getId(), treeItem.getName(), mBranchName).enqueue(mFileCallback);
@@ -81,6 +81,7 @@ public class OverviewFragment extends BaseFragment {
         @Override
         public void onFailure(Throwable t) {
             if (getView() != null) {
+                mSwipeRefreshLayout.setRefreshing(false);
                 showError(getString(R.string.failed_to_load));
             }
         }
@@ -89,10 +90,12 @@ public class OverviewFragment extends BaseFragment {
     private Callback<FileResponse> mFileCallback = new Callback<FileResponse>() {
         @Override
         public void onResponse(Response<FileResponse> response, Retrofit retrofit) {
-            if (!response.isSuccess()) {
+            if (getView() == null) {
                 return;
             }
-            if (getView() == null) {
+            mSwipeRefreshLayout.setRefreshing(false);
+            if (!response.isSuccess()) {
+                showError(getString(R.string.no_readme_found));
                 return;
             }
             try {
@@ -108,6 +111,10 @@ public class OverviewFragment extends BaseFragment {
 
         @Override
         public void onFailure(Throwable t) {
+            if (getView() == null) {
+                return;
+            }
+            mSwipeRefreshLayout.setRefreshing(false);
             showError(getString(R.string.failed_to_load));
         }
     };
@@ -171,9 +178,11 @@ public class OverviewFragment extends BaseFragment {
     }
 
     private void showError(String error) {
-        mErrorText.setVisibility(View.VISIBLE);
-        mOverview.setVisibility(View.GONE);
-        mErrorText.setText(error);
+        if (getView() != null) {
+            mErrorText.setVisibility(View.VISIBLE);
+            mOverview.setVisibility(View.GONE);
+            mErrorText.setText(error);
+        }
     }
 
     public boolean onBackPressed() {

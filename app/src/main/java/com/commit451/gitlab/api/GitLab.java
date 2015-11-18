@@ -9,6 +9,7 @@ import com.commit451.gitlab.model.FileResponse;
 import com.commit451.gitlab.model.Group;
 import com.commit451.gitlab.model.Issue;
 import com.commit451.gitlab.model.MergeRequest;
+import com.commit451.gitlab.model.MergeRequestComment;
 import com.commit451.gitlab.model.Milestone;
 import com.commit451.gitlab.model.Note;
 import com.commit451.gitlab.model.Project;
@@ -51,13 +52,13 @@ public interface GitLab {
     @GET(API_VERSION + "/users?per_page=100")
     Call<List<User>> getUsers();
 
-    @GET(API_VERSION + "/projects")
+    @GET(API_VERSION + "/projects?order_by=last_activity_at")
     Call<List<Project>> getAllProjects();
 
-    @GET(API_VERSION + "/projects/owned")
+    @GET(API_VERSION + "/projects/owned?order_by=last_activity_at")
     Call<List<Project>> getMyProjects();
 
-    @GET(API_VERSION + "/projects")
+    @GET(API_VERSION + "/projects?order_by=last_activity_at")
     Call<List<Project>> searchAllProjects(@Query("search") String query);
 
     @GET
@@ -79,6 +80,16 @@ public interface GitLab {
     @GET(API_VERSION + "/projects/{id}/merge_requests?state=opened")
     Call<List<MergeRequest>> getMergeRequests(@Path("id") long projectId,
                                               @Query("state") String state);
+
+    @GET(API_VERSION + "/projects/{id}/merge_request/{mergeRequestId}/comments")
+    Call<List<MergeRequestComment>> getMergeRequestNotes(@Path("id") long projectId,
+                                                  @Path("mergeRequestId") long mergeRequestId);
+
+    @FormUrlEncoded
+    @POST(API_VERSION + "/projects/{id}/merge_request/{merge_request_id}/comments")
+    Call<MergeRequestComment> postMergeRequestComment(@Path("id") long projectId,
+                             @Path("merge_request_id") long mergeRequestId,
+                             @Field("note") String body);
 	
 	/* --- COMMITS --- */
 
@@ -106,7 +117,7 @@ public interface GitLab {
                           @Field("title") String title,
                           @Field("description") String description);
 
-    @GET(API_VERSION + "/projects/{id}/issues/{issue_id}/notes?per_page=100")
+    @GET(API_VERSION + "/projects/{id}/issues/{issue_id}/notes?order_by=last_activity_at")
     Call<List<Note>> getIssueNotes(@Path("id") long projectId,
                                    @Path("issue_id") long issueId);
 

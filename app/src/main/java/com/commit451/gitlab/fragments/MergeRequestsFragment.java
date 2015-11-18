@@ -22,6 +22,7 @@ import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.events.ProjectReloadEvent;
 import com.commit451.gitlab.model.MergeRequest;
 import com.commit451.gitlab.model.Project;
+import com.commit451.gitlab.tools.NavigationManager;
 import com.squareup.otto.Subscribe;
 
 import java.util.List;
@@ -37,13 +38,11 @@ import retrofit.Retrofit;
  * Merge all the requests!
  * Created by Jawn on 9/20/2015.
  */
-public class MergeRequestFragment extends BaseFragment {
+public class MergeRequestsFragment extends BaseFragment {
 
-    public static MergeRequestFragment newInstance() {
-
+    public static MergeRequestsFragment newInstance() {
         Bundle args = new Bundle();
-
-        MergeRequestFragment fragment = new MergeRequestFragment();
+        MergeRequestsFragment fragment = new MergeRequestsFragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -76,6 +75,13 @@ public class MergeRequestFragment extends BaseFragment {
 
         @Override
         public void onNothingSelected(AdapterView<?> parent) { }
+    };
+
+    private final MergeRequestAdapter.Listener mMergeRequestAdapterListener = new MergeRequestAdapter.Listener() {
+        @Override
+        public void onMergeRequestClicked(MergeRequest mergeRequest) {
+            NavigationManager.navigateToMergeRequest(getActivity(), mProject, mergeRequest);
+        }
     };
 
     private final Callback<List<MergeRequest>> mCallback = new Callback<List<MergeRequest>>() {
@@ -123,7 +129,7 @@ public class MergeRequestFragment extends BaseFragment {
         ButterKnife.bind(this, view);
         GitLabApp.bus().register(mEventReceiver);
         mSwipeRefreshLayout.setOnRefreshListener(mOnRefreshListener);
-        mMergeRequestAdapter = new MergeRequestAdapter();
+        mMergeRequestAdapter = new MergeRequestAdapter(mMergeRequestAdapterListener);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setAdapter(mMergeRequestAdapter);
         mSpinner.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, getResources().getStringArray(R.array.merge_request_state_names)));

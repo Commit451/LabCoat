@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -116,7 +117,7 @@
 
     </LinearLayout>
 
-    <TextView
+    <com.devspark.robototextview.widget.RobotoTextView
         android:id="@+id/login_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -126,6 +127,7 @@
         android:textColor="?attr/colorAccent"
         android:text="@string/login_button"
         android:textAllCaps="true"
+        app:typeface="roboto_medium"
         android:background="?attr/selectableItemBackground"/>
 
     <include layout="@layout/progress_fullscreen"/>

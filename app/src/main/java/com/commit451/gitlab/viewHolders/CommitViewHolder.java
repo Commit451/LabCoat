@@ -1,7 +1,6 @@
 package com.commit451.gitlab.viewHolders;
 
 import android.support.v7.widget.RecyclerView;
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +9,7 @@ import android.widget.TextView;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.DiffLine;
+import com.commit451.gitlab.tools.DateUtils;
 import com.squareup.picasso.Picasso;
 
 import butterknife.Bind;
@@ -50,6 +50,6 @@ public class CommitViewHolder extends RecyclerView.ViewHolder {
 
         message.setText(commit.getTitle());
         author.setText(commit.getAuthorName());
-        time.setText(DateUtils.getRelativeTimeSpanString(commit.getCreatedAt().getTime()));
+        time.setText(DateUtils.getRelativeTimeSpanString(itemView.getContext(), commit.getCreatedAt()));
     }
 }

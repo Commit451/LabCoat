@@ -12,7 +12,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.graphics.Palette;
-import android.support.v7.internal.widget.ThemeUtils;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -24,12 +23,12 @@ import com.commit451.easel.Easel;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.FeedAdapter;
 import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.data.Prefs;
 import com.commit451.gitlab.model.User;
 import com.commit451.gitlab.model.rss.Entry;
 import com.commit451.gitlab.model.rss.UserFeed;
 import com.commit451.gitlab.tools.ImageUtil;
 import com.commit451.gitlab.tools.IntentUtil;
-import com.commit451.gitlab.data.Prefs;
 import com.pnikosis.materialishprogress.ProgressWheel;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -148,7 +147,7 @@ public class UserActivity extends BaseActivity {
 
     private void bindPalette(Palette palette) {
         int animationTime = 1000;
-        int vibrantColor = palette.getVibrantColor(ThemeUtils.getThemeAttrColor(this, R.attr.colorPrimary));
+        int vibrantColor = palette.getVibrantColor(Easel.getThemeAttrColor(this, R.attr.colorPrimary));
         int darkerColor = Easel.getDarkerColor(vibrantColor);
 
         if (Build.VERSION.SDK_INT >= 21) {

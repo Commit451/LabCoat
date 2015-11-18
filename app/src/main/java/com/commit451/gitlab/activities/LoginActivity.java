@@ -10,13 +10,14 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.ContextCompat;
 import android.text.method.LinkMovementMethod;
+import android.util.Patterns;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
@@ -26,6 +27,8 @@ import com.commit451.gitlab.tools.KeyboardUtil;
 import com.commit451.gitlab.tools.NavigationManager;
 import com.commit451.gitlab.data.Prefs;
 import com.commit451.gitlab.views.EmailAutoCompleteTextView;
+
+import java.util.regex.Pattern;
 
 import javax.net.ssl.SSLHandshakeException;
 
@@ -60,6 +63,7 @@ public class LoginActivity extends BaseActivity {
 	@Bind(R.id.progress) View mProgress;
 	
 	private boolean mIsNormalLogin = true;
+    private Pattern mUrlPattern = Patterns.WEB_URL;
 
 	private final TextView.OnEditorActionListener onEditorActionListener = new TextView.OnEditorActionListener() {
 		@Override
@@ -90,8 +94,16 @@ public class LoginActivity extends BaseActivity {
         if (hasEmptyFields(mUrlHint)) {
             return;
         }
-        if (mIsNormalLogin && hasEmptyFields(mUrlHint, mUserHint, mPasswordHint)) {
-            return;
+        if (mIsNormalLogin) {
+            if (hasEmptyFields(mUrlHint, mUserHint, mPasswordHint)) {
+                return;
+            }
+            if (!mUrlPattern.matcher(mUrlInput.getText()).matches()) {
+                mUrlHint.setError(getString(R.string.not_a_valid_url));
+                return;
+            } else {
+                mUrlHint.setError(null);
+            }
         }
         if (!mIsNormalLogin && hasEmptyFields(mTokenHint)) {
             return;
@@ -117,6 +129,50 @@ public class LoginActivity extends BaseActivity {
             connect(false);
         }
     }
+
+    private Callback<Session> mSessionCallback = new Callback<Session>() {
+
+        @Override
+        public void onResponse(Response<Session> response, Retrofit retrofit) {
+            mProgress.setVisibility(View.GONE);
+            if (!response.isSuccess()) {
+                handleConnectionResponse(response.code());
+                return;
+            }
+
+            Prefs.setLoggedIn(LoginActivity.this, true);
+            Prefs.setPrivateToken(LoginActivity.this, response.body().getPrivateToken());
+
+            Intent i = new Intent(LoginActivity.this, GitlabActivity.class);
+            startActivity(i);
+            finish();
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+            handleConnectionError(t);
+        }
+    };
+
+    private Callback<User> mTestUserCallback = new Callback<User>() {
+        @Override
+        public void onResponse(Response<User> response, Retrofit retrofit) {
+            mProgress.setVisibility(View.GONE);
+            if (!response.isSuccess()) {
+                handleConnectionResponse(response.code());
+                return;
+            }
+            Prefs.setLoggedIn(LoginActivity.this, true);
+            NavigationManager.navigateToProjects(LoginActivity.this);
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+            Timber.e(t.toString());
+            Snackbar.make(mRoot, getString(R.string.login_error), Snackbar.LENGTH_LONG)
+                    .show();
+        }
+    };
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -187,63 +243,19 @@ public class LoginActivity extends BaseActivity {
 	
 	private void connectByAuth() {
 		if(mUserInput.getText().toString().contains("@")) {
-            GitLabClient.instance().getSessionByEmail(mUserInput.getText().toString(), mPasswordInput.getText().toString()).enqueue(sessionCallback);
+            GitLabClient.instance().getSessionByEmail(mUserInput.getText().toString(), mPasswordInput.getText().toString()).enqueue(mSessionCallback);
         }
 		else {
-            GitLabClient.instance().getSessionByUsername(mUserInput.getText().toString(), mPasswordInput.getText().toString()).enqueue(sessionCallback);
+            GitLabClient.instance().getSessionByUsername(mUserInput.getText().toString(), mPasswordInput.getText().toString()).enqueue(mSessionCallback);
         }
 	}
-	
-	private Callback<Session> sessionCallback = new Callback<Session>() {
-
-		@Override
-		public void onResponse(Response<Session> response, Retrofit retrofit) {
-			if (!response.isSuccess()) {
-                Timber.d("onResponse failed");
-				return;
-			}
-			mProgress.setVisibility(View.GONE);
-
-			Prefs.setLoggedIn(LoginActivity.this, true);
-			Prefs.setPrivateToken(LoginActivity.this, response.body().getPrivateToken());
-
-			Intent i = new Intent(LoginActivity.this, GitlabActivity.class);
-			startActivity(i);
-			finish();
-		}
-
-		@Override
-		public void onFailure(Throwable t) {
-			handleConnectionError(t, true);
-		}
-	};
 	
 	private void connectByToken() {
 		Prefs.setPrivateToken(this, mTokenInput.getText().toString());
 		GitLabClient.instance().getUser().enqueue(mTestUserCallback);
 	}
 
-    private Callback<User> mTestUserCallback = new Callback<User>() {
-        @Override
-        public void onResponse(Response<User> response, Retrofit retrofit) {
-            if (!response.isSuccess()) {
-                return;
-            }
-            mProgress.setVisibility(View.GONE);
-            Prefs.setLoggedIn(LoginActivity.this, true);
-            NavigationManager.navigateToProjects(LoginActivity.this);
-        }
-
-        @Override
-        public void onFailure(Throwable t) {
-            Timber.e(t.toString());
-            Toast.makeText(LoginActivity.this, R.string.error_creating_account, Toast.LENGTH_SHORT)
-                    .show();
-
-        }
-    };
-
-    private void handleConnectionError(Throwable e, boolean auth) {
+    private void handleConnectionError(Throwable e) {
         Timber.e(e.toString());
 
         mProgress.setVisibility(View.GONE);
@@ -262,8 +274,20 @@ public class LoginActivity extends BaseActivity {
 
             ((TextView)d.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
         } else {
-			Toast.makeText(this, getString(R.string.login_error), Toast.LENGTH_SHORT)
-					.show();
+            Snackbar.make(mRoot, getString(R.string.login_error), Snackbar.LENGTH_LONG)
+                    .show();
 		}
+    }
+
+    private void handleConnectionResponse(int responseCode) {
+        switch (responseCode) {
+            case 401:
+                Snackbar.make(mRoot, getString(R.string.login_unauthorized), Snackbar.LENGTH_LONG)
+                        .show();
+                return;
+            default:
+                Snackbar.make(mRoot, getString(R.string.login_error), Snackbar.LENGTH_LONG)
+                        .show();
+        }
     }
 }

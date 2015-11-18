@@ -24,11 +24,10 @@
                 android:background="?attr/colorPrimary" />
 
             <TextView
-                android:id="@+id/issue_title"
+                android:id="@+id/merge_request_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="16dp"
-                android:layout_marginRight="56dp"
                 tools:text="This is an issue"/>
 
         </android.support.design.widget.AppBarLayout>
@@ -77,16 +76,6 @@
             android:background="?attr/selectableItemBackgroundBorderless"/>
 
     </LinearLayout>
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_edit_issue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:src="@drawable/ic_edit_24dp"
-        app:fabSize="mini"
-        app:layout_anchor="@id/appbar"
-        app:layout_anchorGravity="bottom|right|end"/>
 
     <include layout="@layout/progress_fullscreen"/>
 
