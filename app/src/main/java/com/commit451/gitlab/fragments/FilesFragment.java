@@ -59,6 +59,53 @@ public class FilesFragment extends BaseFragment {
     String mBranchName;
     ArrayList<String> mPath;
 
+	private Callback<List<TreeItem>> mFilesCallback = new Callback<List<TreeItem>>() {
+
+		@Override
+		public void onResponse(Response<List<TreeItem>> response, Retrofit retrofit) {
+			if (!response.isSuccess()) {
+				if(response.code() == 404) {
+					errorText.setVisibility(View.VISIBLE);
+					list.setVisibility(View.GONE);
+				}
+				else {
+					if(mPath.size() > 0) {
+						mPath.remove(mPath.size() - 1);
+					}
+					list.setAdapter(null);
+
+					if(response.code() != 500) {
+						Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.connection_error_files), Snackbar.LENGTH_SHORT)
+								.show();
+					}
+				}
+				return;
+			}
+			if (getView() == null) {
+				return;
+			}
+			mSwipeRefreshLayout.setRefreshing(false);
+			if (response.body() != null && !response.body().isEmpty()) {
+				list.setVisibility(View.VISIBLE);
+				list.setAdapter(new FilesAdapter(response.body()));
+				errorText.setVisibility(View.GONE);
+			} else {
+				errorText.setVisibility(View.VISIBLE);
+			}
+		}
+
+		@Override
+		public void onFailure(Throwable t) {
+			if(mSwipeRefreshLayout != null && mSwipeRefreshLayout.isRefreshing()) {
+				mSwipeRefreshLayout.setRefreshing(false);
+			}
+			Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.connection_error_files), Snackbar.LENGTH_SHORT)
+					.show();
+			Timber.e(t.toString());
+
+		}
+	};
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,55 +166,8 @@ public class FilesFragment extends BaseFragment {
             currentPath += p;
         }
 
-        GitLabClient.instance().getTree(mProject.getId(), mBranchName, currentPath).enqueue(filesCallback);
+        GitLabClient.instance().getTree(mProject.getId(), mBranchName, currentPath).enqueue(mFilesCallback);
     }
-	
-	private Callback<List<TreeItem>> filesCallback = new Callback<List<TreeItem>>() {
-
-		@Override
-		public void onResponse(Response<List<TreeItem>> response, Retrofit retrofit) {
-			if (!response.isSuccess()) {
-				if(response.code() == 404) {
-					errorText.setVisibility(View.VISIBLE);
-					list.setVisibility(View.GONE);
-				}
-				else {
-					if(mPath.size() > 0) {
-                        mPath.remove(mPath.size() - 1);
-					}
-					list.setAdapter(null);
-
-					if(response.code() != 500) {
-						Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.connection_error_files), Snackbar.LENGTH_SHORT)
-								.show();
-					}
-				}
-				return;
-			}
-            if (getView() == null) {
-                return;
-            }
-            mSwipeRefreshLayout.setRefreshing(false);
-			if (response.body() != null && !response.body().isEmpty()) {
-				list.setVisibility(View.VISIBLE);
-				list.setAdapter(new FilesAdapter(response.body()));
-				errorText.setVisibility(View.GONE);
-			} else {
-				errorText.setVisibility(View.VISIBLE);
-			}
-		}
-
-		@Override
-		public void onFailure(Throwable t) {
-			if(mSwipeRefreshLayout != null && mSwipeRefreshLayout.isRefreshing()) {
-				mSwipeRefreshLayout.setRefreshing(false);
-			}
-			Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.connection_error_files), Snackbar.LENGTH_SHORT)
-					.show();
-			Timber.e(t.toString());
-
-		}
-	};
 	
 	public boolean onBackPressed() {
 		if(mPath.size() > 0) {

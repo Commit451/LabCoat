@@ -17,7 +17,7 @@ import java.util.List;
  * Nice notes
  * Created by Jawn on 8/6/2015.
  */
-public class NotesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class IssueDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_COMMENT = 1;
@@ -29,7 +29,7 @@ public class NotesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private ArrayList<Milestone> mMilestones;
     private Issue mIssue;
 
-    public NotesAdapter(Issue issue) {
+    public IssueDetailsAdapter(Issue issue) {
         mIssue = issue;
         mNotes = new ArrayList<>();
         mUsers = new ArrayList<>();
@@ -39,7 +39,7 @@ public class NotesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == TYPE_HEADER) {
-            return IssueHeaderViewHolder.create(parent);
+            return IssueHeaderViewHolder.newInstance(parent);
         } else if (viewType == TYPE_COMMENT) {
             RecyclerView.ViewHolder holder = NoteViewHolder.newInstance(parent);
             return holder;
@@ -88,8 +88,8 @@ public class NotesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     public void addNote(Note note) {
-        mNotes.add(0, note);
-        notifyItemInserted(0);
+        mNotes.add(note);
+        notifyItemInserted(mNotes.size() + HEADER_COUNT);
     }
 
     public void addUsers(List<User> users) {

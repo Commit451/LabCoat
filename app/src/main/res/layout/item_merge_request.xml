@@ -49,17 +49,6 @@
             android:textColor="?android:attr/textColorSecondary"
             tools:text="Jawnnypoo"/>
 
-        <TextView
-            android:id="@+id/request_state"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/request_title"
-            android:layout_alignParentRight="true"
-
-            android:textSize="@dimen/text_size_tiny"
-            android:textColor="?android:attr/textColorSecondary"
-            tools:text="Max 25, 2019"/>
-
     </RelativeLayout>
 
 </RelativeLayout>

@@ -17,6 +17,7 @@ import com.commit451.gitlab.adapter.GroupAdapter;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.Group;
 import com.commit451.gitlab.tools.NavigationManager;
+import com.commit451.gitlab.viewHolders.GroupViewHolder;
 
 import java.util.List;
 
@@ -73,8 +74,8 @@ public class GroupsActivity extends BaseActivity {
 
     private final GroupAdapter.Listener mGroupAdapterListener = new GroupAdapter.Listener() {
         @Override
-        public void onGroupClicked(Group group) {
-            NavigationManager.navigateToGroup(GroupsActivity.this, group);
+        public void onGroupClicked(Group group, GroupViewHolder groupViewHolder) {
+            NavigationManager.navigateToGroup(GroupsActivity.this, groupViewHolder.image, group);
         }
     };
 

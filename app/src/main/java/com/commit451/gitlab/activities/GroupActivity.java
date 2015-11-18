@@ -1,14 +1,17 @@
 package com.commit451.gitlab.activities;
 
+import android.animation.ArgbEvaluator;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.graphics.Palette;
-import android.support.v7.internal.widget.ThemeUtils;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -16,13 +19,14 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.commit451.easel.Easel;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.ProjectsAdapter;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.Group;
 import com.commit451.gitlab.model.Project;
-import com.commit451.gitlab.tools.ColorUtil;
 import com.commit451.gitlab.tools.NavigationManager;
+import com.pnikosis.materialishprogress.ProgressWheel;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -30,6 +34,7 @@ import org.parceler.Parcels;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
@@ -53,8 +58,12 @@ public class GroupActivity extends BaseActivity {
     @Bind(R.id.backdrop) ImageView mBackdrop;
     @Bind(R.id.list) RecyclerView mProjectsRecyclerView;
     ProjectsAdapter mProjectsAdapter;
-    @Bind(R.id.progress) View mProgress;
+    @Bind(R.id.progress) ProgressWheel mProgress;
     @Bind(R.id.message) TextView mMessageView;
+    @OnClick(R.id.fab_add_user)
+    public void onClickAddUser() {
+        startActivity(AddUserActivity.newInstance(this, mGroup.getId()));
+    }
 
     private final Target mImageLoadTarget = new Target() {
         @Override
@@ -119,7 +128,7 @@ public class GroupActivity extends BaseActivity {
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                onBackPressed();
             }
         });
         Picasso.with(this)
@@ -131,13 +140,41 @@ public class GroupActivity extends BaseActivity {
         load();
     }
 
-    private void bindPalette(Palette palette) {
-        int vibrantColor = palette.getVibrantColor(ThemeUtils.getThemeAttrColor(this, R.attr.colorPrimary));
+    @Override
+    public void onBackPressed() {
+        supportFinishAfterTransition();
+    }
 
-        ColorUtil.animateStatusBarAndNavBarColors(getWindow(), ColorUtil.getDarkerColor(vibrantColor));
-        //TODO animate this too
-        mCollapsingToolbarLayout.setContentScrimColor(vibrantColor);
-        mToolbar.setTitleTextColor(palette.getDarkMutedColor(Color.BLACK));
+    private void bindPalette(Palette palette) {
+        int animationTime = 1000;
+        int vibrantColor = palette.getVibrantColor(Easel.getThemeAttrColor(this, R.attr.colorPrimary));
+        int darkerColor = Easel.getDarkerColor(vibrantColor);
+
+        if (Build.VERSION.SDK_INT >= 21) {
+            Easel.getNavigationBarColorAnimator(getWindow(), darkerColor)
+                    .setDuration(animationTime)
+                    .start();
+        }
+
+        ObjectAnimator.ofObject(mCollapsingToolbarLayout, "contentScrimColor", new ArgbEvaluator(),
+                ((ColorDrawable) mCollapsingToolbarLayout.getContentScrim()).getColor(), vibrantColor)
+                .setDuration(animationTime)
+                .start();
+
+        ObjectAnimator.ofObject(mCollapsingToolbarLayout, "statusBarScrimColor", new ArgbEvaluator(),
+                ((ColorDrawable) mCollapsingToolbarLayout.getStatusBarScrim()).getColor(), darkerColor)
+                .setDuration(animationTime)
+                .start();
+
+        ObjectAnimator.ofObject(mToolbar, "titleTextColor", new ArgbEvaluator(),
+                Color.WHITE, palette.getDarkMutedColor(Color.BLACK))
+                .setDuration(animationTime)
+                .start();
+
+        ObjectAnimator.ofObject(mProgress, "barColor", new ArgbEvaluator(),
+                mProgress.getBarColor(), vibrantColor)
+                .setDuration(animationTime)
+                .start();
     }
 
     private void load() {

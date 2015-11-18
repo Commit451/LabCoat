@@ -11,13 +11,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.adapter.NotesAdapter;
+import com.commit451.gitlab.adapter.IssueDetailsAdapter;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.dialogs.NewIssueDialog;
 import com.commit451.gitlab.events.IssueChangedEvent;
@@ -25,10 +24,12 @@ import com.commit451.gitlab.model.Issue;
 import com.commit451.gitlab.model.Note;
 import com.commit451.gitlab.model.Project;
 import com.commit451.gitlab.tools.IntentUtil;
+import com.commit451.gitlab.tools.KeyboardUtil;
 import com.squareup.otto.Subscribe;
 
 import org.parceler.Parcels;
 
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.Bind;
@@ -73,7 +74,7 @@ public class IssueActivity extends BaseActivity {
 
     MenuItem mOpenCloseMenuItem;
 
-	NotesAdapter mNotesAdapter;
+	IssueDetailsAdapter mIssueDetailsAdapter;
 	Project mProject;
     Issue mIssue;
 
@@ -94,7 +95,7 @@ public class IssueActivity extends BaseActivity {
         }
     };
 
-    private Callback<List<Note>> notesCallback = new Callback<List<Note>>() {
+    private Callback<List<Note>> mNotesCallback = new Callback<List<Note>>() {
 
         @Override
         public void onResponse(Response<List<Note>> response, Retrofit retrofit) {
@@ -102,7 +103,9 @@ public class IssueActivity extends BaseActivity {
                 return;
             }
             mSwipeRefreshLayout.setRefreshing(false);
-            mNotesAdapter.addNotes(response.body());
+            //Annoying that this is not API controlled...
+            Collections.reverse(response.body());
+            mIssueDetailsAdapter.addNotes(response.body());
         }
 
         @Override
@@ -138,7 +141,7 @@ public class IssueActivity extends BaseActivity {
         }
     };
 
-    private Callback<Note> noteCallback = new Callback<Note>() {
+    private Callback<Note> mPostNoteCallback = new Callback<Note>() {
 
         @Override
         public void onResponse(Response<Note> response, Retrofit retrofit) {
@@ -146,7 +149,8 @@ public class IssueActivity extends BaseActivity {
                 return;
             }
             mProgress.setVisibility(View.GONE);
-            mNotesAdapter.addNote(response.body());
+            mIssueDetailsAdapter.addNote(response.body());
+            mListView.smoothScrollToPosition(mIssueDetailsAdapter.getItemCount());
         }
 
         @Override
@@ -181,9 +185,9 @@ public class IssueActivity extends BaseActivity {
         mOpenCloseMenuItem = mToolbar.getMenu().findItem(R.id.action_close);
         mToolbar.setOnMenuItemClickListener(mOnMenuItemClickListener);
 
-        mNotesAdapter = new NotesAdapter(mIssue);
+        mIssueDetailsAdapter = new IssueDetailsAdapter(mIssue);
         mListView.setLayoutManager(new LinearLayoutManager(this));
-        mListView.setAdapter(mNotesAdapter);
+        mListView.setAdapter(mIssueDetailsAdapter);
 
 		mNewNoteEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -210,10 +214,10 @@ public class IssueActivity extends BaseActivity {
     }
 
     private void bindIssue() {
-        mToolbar.setTitle(getString(R.string.issue_number) + mIssue.getId());
+        mToolbar.setTitle(getString(R.string.issue_number) + mIssue.getIid());
         setOpenCloseMenuStatus();
         mIssueTitle.setText(mIssue.getTitle());
-        mNotesAdapter.updateIssue(mIssue);
+        mIssueDetailsAdapter.updateIssue(mIssue);
     }
 
     private void loadNotes() {
@@ -226,7 +230,7 @@ public class IssueActivity extends BaseActivity {
             }
         });
 		mSwipeRefreshLayout.setRefreshing(true);
-        GitLabClient.instance().getIssueNotes(mProject.getId(), mIssue.getId()).enqueue(notesCallback);
+        GitLabClient.instance().getIssueNotes(mProject.getId(), mIssue.getId()).enqueue(mNotesCallback);
 	}
 
 	private void postNote() {
@@ -240,11 +244,10 @@ public class IssueActivity extends BaseActivity {
 		mProgress.setAlpha(0.0f);
 		mProgress.animate().alpha(1.0f);
 		// Clear text & collapse keyboard
-		InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-		imm.hideSoftInputFromWindow(mNewNoteEdit.getWindowToken(), 0);
+        KeyboardUtil.hideKeyboard(this);
 		mNewNoteEdit.setText("");
 
-		GitLabClient.instance().postIssueNote(mProject.getId(), mIssue.getId(), body).enqueue(noteCallback);
+		GitLabClient.instance().postIssueNote(mProject.getId(), mIssue.getId(), body).enqueue(mPostNoteCallback);
 	}
 
     private void closeIssue() {

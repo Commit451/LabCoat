@@ -4,6 +4,8 @@ import com.google.gson.annotations.SerializedName;
 
 import org.parceler.Parcel;
 
+import java.util.Date;
+
 /**
  * Merge that request!
  * Created by Jawn on 9/20/2015.
@@ -34,6 +36,10 @@ public class MergeRequest {
     User mAssignee;
     @SerializedName("description")
     String mDescription;
+    @SerializedName("updated_at")
+    Date mUpdatedAt;
+    @SerializedName("created_at")
+    Date mCreatedAt;
     @SerializedName("work_in_progress")
     boolean mWorkInProgress;
 
@@ -89,5 +95,13 @@ public class MergeRequest {
 
     public boolean isWorkInProgress() {
         return mWorkInProgress;
+    }
+
+    public Date getCreatedAt() {
+        return mCreatedAt;
+    }
+
+    public Date getUpdatedAt() {
+        return mUpdatedAt;
     }
 }

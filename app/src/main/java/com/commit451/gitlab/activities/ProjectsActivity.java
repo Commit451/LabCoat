@@ -2,8 +2,6 @@ package com.commit451.gitlab.activities;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -13,8 +11,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 
 import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
@@ -43,7 +39,7 @@ public class ProjectsActivity extends BaseActivity {
     @Bind(R.id.navigation_view) NavigationView mNavigationView;
     @Bind(R.id.drawer_layout) DrawerLayout mDrawerLayout;
 
-    EventReceiver eventReceiver;
+    EventReceiver mEventReceiver;
 
     private final Toolbar.OnMenuItemClickListener mOnMenuItemClickListener = new Toolbar.OnMenuItemClickListener() {
         @Override
@@ -62,15 +58,8 @@ public class ProjectsActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_projects);
         ButterKnife.bind(this);
-        eventReceiver = new EventReceiver();
-        GitLabApp.bus().register(eventReceiver);
-
-        // Setup window flags if Lollipop
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = getWindow();
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(Color.TRANSPARENT);
-        }
+        mEventReceiver = new EventReceiver();
+        GitLabApp.bus().register(mEventReceiver);
 
         mToolbar.setTitle(R.string.projects);
         mToolbar.setNavigationIcon(R.drawable.ic_menu_24dp);
@@ -89,7 +78,7 @@ public class ProjectsActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        GitLabApp.bus().unregister(eventReceiver);
+        GitLabApp.bus().unregister(mEventReceiver);
     }
 
     private class EventReceiver {

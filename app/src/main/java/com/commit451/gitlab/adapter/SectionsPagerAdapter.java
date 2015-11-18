@@ -10,7 +10,7 @@ import com.commit451.gitlab.fragments.CommitsFragment;
 import com.commit451.gitlab.fragments.FilesFragment;
 import com.commit451.gitlab.fragments.IssuesFragment;
 import com.commit451.gitlab.fragments.MembersFragment;
-import com.commit451.gitlab.fragments.MergeRequestFragment;
+import com.commit451.gitlab.fragments.MergeRequestsFragment;
 import com.commit451.gitlab.fragments.OverviewFragment;
 
 /**
@@ -41,7 +41,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
             case 3:
                 return FilesFragment.newInstance();
             case 4:
-                return MergeRequestFragment.newInstance();
+                return MergeRequestsFragment.newInstance();
             case 5:
                 return MembersFragment.newInstance();
         }

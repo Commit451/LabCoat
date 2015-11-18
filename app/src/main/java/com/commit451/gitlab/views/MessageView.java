@@ -37,8 +37,11 @@ public class MessageView extends LinearLayout {
 		innerView.setOrientation(LinearLayout.VERTICAL);
 
 		ArrayList<DiffLine.Line> lines = (ArrayList<DiffLine.Line>) diffLine.getLines();
-		for(DiffLine.Line line : lines)
-			innerView.addView(generateRow(line));
+		if (lines != null) {
+			for (DiffLine.Line line : lines) {
+				innerView.addView(generateRow(line));
+			}
+		}
 	}
 
 	private LinearLayout generateRow(DiffLine.Line line) {

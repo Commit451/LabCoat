@@ -30,7 +30,6 @@ public class MergeRequestViewHolder extends RecyclerView.ViewHolder {
     @Bind(R.id.request_image) ImageView image;
     @Bind(R.id.request_title) TextView title;
     @Bind(R.id.request_author) TextView author;
-    @Bind(R.id.request_state) TextView state;
 
     public MergeRequestViewHolder(View view) {
         super(view);
@@ -50,11 +49,6 @@ public class MergeRequestViewHolder extends RecyclerView.ViewHolder {
             title.setText(item.getTitle());
         } else {
             title.setText("");
-        }
-        if (item.getState() != null) {
-            state.setText(item.getState());
-        } else {
-            state.setText("");
         }
     }
 }

@@ -2,18 +2,10 @@ package com.commit451.gitlab.views;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Rect;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.support.design.widget.NavigationView;
-import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
-import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -48,10 +40,6 @@ public class GitLabNavigationView extends NavigationView {
     @Bind(R.id.profile_user) TextView userName;
     @Bind(R.id.profile_email) TextView userEmail;
     @Bind(R.id.drawer_header) FrameLayout header;
-
-    private Drawable mInsetForeground;
-    private Rect mInsets;
-    private Rect mTempRect = new Rect();
 
     private final OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new OnNavigationItemSelectedListener() {
         @Override
@@ -125,9 +113,8 @@ public class GitLabNavigationView extends NavigationView {
     private void init() {
         setNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         inflateMenu(R.menu.navigation);
-        View header = inflateHeaderView(R.layout.nav_drawer);
+        View header = inflateHeaderView(R.layout.header_nav_drawer);
         ButterKnife.bind(this, header);
-        mInsetForeground = new ColorDrawable(Color.parseColor("#44000000"));
         setSelectedNavigationItem();
         loadCurrentUser();
     }
@@ -158,78 +145,12 @@ public class GitLabNavigationView extends NavigationView {
         if (user.getUsername() != null) {
             userName.setText(user.getUsername());
         }
+        if (user.getEmail() != null) {
+            userEmail.setText(user.getEmail());
+        }
         String url = ImageUtil.getGravatarUrl(user, getResources().getDimensionPixelSize(R.dimen.larger_image_size));
         Picasso.with(getContext())
                 .load(url)
                 .into(profileImage);
     }
-
-    @Override
-    protected boolean fitSystemWindows(Rect insets) {
-        mInsets = new Rect(insets);
-        setWillNotDraw(mInsetForeground == null);
-        ViewCompat.postInvalidateOnAnimation(this);
-
-        int headerHeight = getResources().getDimensionPixelSize(R.dimen.navigation_drawer_header_height);
-        ViewGroup.LayoutParams lp2 = header.getLayoutParams();
-        lp2.height = headerHeight + insets.top;
-        header.setLayoutParams(lp2);
-
-        MarginLayoutParams params = (MarginLayoutParams) profileImage.getLayoutParams();
-        params.topMargin = (int) (insets.top + TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, getResources().getDisplayMetrics()));
-        profileImage.setLayoutParams(params);
-
-        return true; // consume insets
-    }
-
-    @Override
-    public void draw(Canvas canvas) {
-        super.draw(canvas);
-
-        int width = getWidth();
-        int height = getHeight();
-        if (mInsets != null && mInsetForeground != null) {
-            int sc = canvas.save();
-            canvas.translate(getScrollX(), getScrollY());
-
-            // Top
-            mTempRect.set(0, 0, width, mInsets.top);
-            mInsetForeground.setBounds(mTempRect);
-            mInsetForeground.draw(canvas);
-
-            // Bottom
-            mTempRect.set(0, height - mInsets.bottom, width, height);
-            mInsetForeground.setBounds(mTempRect);
-            mInsetForeground.draw(canvas);
-
-            // Left
-            mTempRect.set(0, mInsets.top, mInsets.left, height - mInsets.bottom);
-            mInsetForeground.setBounds(mTempRect);
-            mInsetForeground.draw(canvas);
-
-            // Right
-            mTempRect.set(width - mInsets.right, mInsets.top, width, height - mInsets.bottom);
-            mInsetForeground.setBounds(mTempRect);
-            mInsetForeground.draw(canvas);
-
-            canvas.restoreToCount(sc);
-        }
-    }
-
-    @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
-        if (mInsetForeground != null) {
-            mInsetForeground.setCallback(this);
-        }
-    }
-
-    @Override
-    protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-        if (mInsetForeground != null) {
-            mInsetForeground.setCallback(null);
-        }
-    }
-
 }

@@ -30,7 +30,8 @@
                 android:scaleType="centerCrop"
                 android:fitsSystemWindows="true"
                 app:layout_collapseMode="parallax"
-                android:contentDescription="@null"/>
+                android:contentDescription="@null"
+                android:transitionName="@string/transition_user"/>
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"

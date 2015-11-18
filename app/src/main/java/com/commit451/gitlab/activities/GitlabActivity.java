@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 
 import com.commit451.gitlab.tools.NavigationManager;
-import com.commit451.gitlab.tools.Prefs;
+import com.commit451.gitlab.data.Prefs;
 
 /**
  * This activity acts as switching platform for the application directing the user to the appropriate

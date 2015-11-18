@@ -18,7 +18,7 @@ import java.util.Collection;
 public class UsersAdapter extends RecyclerView.Adapter<UserViewHolder>  {
 
     public interface Listener {
-        void onUserClicked(User user);
+        void onUserClicked(User user, UserViewHolder userViewHolder);
     }
     private Listener mListener;
     private ArrayList<User> mData;
@@ -27,7 +27,8 @@ public class UsersAdapter extends RecyclerView.Adapter<UserViewHolder>  {
         @Override
         public void onClick(View v) {
             int position = (int) v.getTag(R.id.list_position);
-            mListener.onUserClicked(getUser(position));
+            UserViewHolder holder = (UserViewHolder) v.getTag(R.id.list_view_holder);
+            mListener.onUserClicked(getUser(position), holder);
         }
     };
 
@@ -47,6 +48,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UserViewHolder>  {
     public void onBindViewHolder(UserViewHolder userViewHolder, int position) {
         userViewHolder.bind(mData.get(position));
         userViewHolder.itemView.setTag(R.id.list_position, position);
+        userViewHolder.itemView.setTag(R.id.list_view_holder, userViewHolder);
     }
 
     @Override

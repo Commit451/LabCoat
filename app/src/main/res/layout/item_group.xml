@@ -18,6 +18,7 @@
         android:layout_gravity="center_vertical"
         android:contentDescription="@null"
         tools:src="@drawable/ic_folder_24dp"
+        android:transitionName="@string/transition_group"
         />
 
     <LinearLayout

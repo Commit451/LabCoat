@@ -1,14 +1,20 @@
 package com.commit451.gitlab.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import org.parceler.Parcel;
 
 import java.util.Date;
 @Parcel
 public class Note {
-	
+
+	@SerializedName("id")
 	long id;
+	@SerializedName("body")
 	String body;
+    @SerializedName("author")
 	User author;
+    @SerializedName("created_at")
 	Date created_at;
 
 	public Note(){}

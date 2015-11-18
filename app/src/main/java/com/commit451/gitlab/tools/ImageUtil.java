@@ -7,6 +7,7 @@ import com.commit451.gitlab.model.User;
 import fr.tkeunebr.gravatar.Gravatar;
 
 /**
+ * Utility for doing various image related things
  * Created by Jawn on 9/20/2015.
  */
 public class ImageUtil {

@@ -1,13 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+
     <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
-        <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/purple</item>
         <item name="colorPrimaryDark">@color/purple_dark</item>
         <item name="android:navigationBarColor" tools:ignore="NewApi">?attr/colorPrimaryDark</item>
         <item name="colorAccent">@color/yellow</item>
+        <item name="android:windowContentTransitions" tools:ignore="NewApi">true</item>
         <item name="dialogTheme">@style/AppDialogTheme</item>
+    </style>
+
+    <style name="Activity" parent="AppTheme"/>
+
+    <style name="Activity.Projects">
+        <item name="android:colorPrimaryDark">?attr/colorPrimary</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowTranslucentStatus" tools:ignore="NewApi">true</item>
+    </style>
+
+    <style name="Activity.Groups">
+        <item name="android:colorPrimaryDark">?attr/colorPrimary</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowTranslucentStatus" tools:ignore="NewApi">true</item>
+    </style>
+
+    <style name="Activity.User">
+        <item name="android:colorPrimaryDark">@android:color/transparent</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowTranslucentStatus" tools:ignore="NewApi">true</item>
+    </style>
+
+    <style name="Activity.Group">
+        <item name="android:colorPrimaryDark">@android:color/transparent</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowTranslucentStatus" tools:ignore="NewApi">true</item>
     </style>
 
     <style name="AppDialogTheme" parent="Theme.AppCompat.Dialog">

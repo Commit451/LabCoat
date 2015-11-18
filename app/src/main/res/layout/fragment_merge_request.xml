@@ -2,33 +2,48 @@
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent">
 
-    <com.commit451.gitlab.views.GitLabSwipeRefreshLayout
-        android:id="@+id/swipe_layout"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/list"
+        <Spinner
+            android:id="@+id/state_spinner"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"/>
 
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:clipToPadding="false"
-            />
 
-    </com.commit451.gitlab.views.GitLabSwipeRefreshLayout>
+        <com.commit451.gitlab.views.GitLabSwipeRefreshLayout
+            android:id="@+id/swipe_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+
+                android:clipToPadding="false"
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp"
+                />
+
+        </com.commit451.gitlab.views.GitLabSwipeRefreshLayout>
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/error_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:text="@string/no_files_found"
-        android:gravity="center"
         android:layout_gravity="center"
+        android:layout_margin="10dp"
+        android:gravity="center"
+        android:text="@string/no_files_found"
         android:visibility="gone"/>
 
 </FrameLayout>

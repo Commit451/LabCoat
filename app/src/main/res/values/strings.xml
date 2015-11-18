@@ -62,6 +62,7 @@
     <string name="normal_link"><u>Login using username or email</u></string>
     <string name="certificate_title">Certificate not trusted</string>
     <string name="certificate_message">The certificate the server used was not issued by a trusted authority.\n\nThis could mean a hacker is trying to intercept your communications.\n\nTo use a self-signed certificate, please follow this <a href="https://support.google.com/nexus/answer/2844832?hl=en">guide</a>.</string>
+    <string name="not_a_valid_url">Not a valid URL</string>
 
     <!-- Error messages -->
     <string name="connection_error">Connection failed</string>
@@ -70,7 +71,8 @@
     <string name="connection_error_files">Failed to load files</string>
     <string name="connection_error_users">Failed to load users</string>
 
-    <string name="login_error">Login failed Please double-check your login information.</string>
+    <string name="login_unauthorized">Incorrect credentials. Try again</string>
+    <string name="login_error">Login failed. Please check your login information</string>
     <string name="login_input_error">Please enter a valid url.</string>
 
     <string name="file_load_error">Failed to load file</string>
@@ -103,6 +105,7 @@
     <string name="filter_projects">Filter projects</string>
     <string name="logout_title">Are you sure you want to log out?</string>
     <string name="failed_to_load">Failed to load</string>
+    <string name="just_now">Just now</string>
 
     <!-- Overview -->
     <string name="no_readme_found">No README found for project</string>
@@ -129,6 +132,18 @@
     <string name="close">Close</string>
     <string name="created_issue">created issue</string>
     <string name="error_changing_issue">There was an error changing the issue</string>
+    <string name="no_issues">No issues. Good job?</string>
+    <string name="issue_opened">Opened</string>
+    <string name="issue_closed">Closed</string>
+    <string-array name="issue_state_names">
+        <item>@string/issue_opened</item>
+        <item>@string/issue_closed</item>
+    </string-array>
+    <string-array name="issue_state_values">
+        <item>opened</item>
+        <item>closed</item>
+    </string-array>
+    <string name="created_time">Created %1$s by %2$s</string>
 
     <!-- User -->
     <string name="remove_user_dialog_title">Remove user?</string>
@@ -148,6 +163,14 @@
         <item>Owner</item>
     </string-array>
 
+    <string-array name="role_values" translatable="false">
+        <item>10</item>
+        <item>20</item>
+        <item>30</item>
+        <item>40</item>
+        <item>50</item>
+    </string-array>
+
     <!-- About -->
     <string name="about">About</string>
     <string name="contributors">Contributors</string>
@@ -160,7 +183,25 @@
 
     <!-- Merge Requests -->
     <string name="no_merge_requests">No merge requests</string>
+    <string name="merge_request_number">Merge Request #</string>
+    <string name="merge_request_state_value_default">opened</string>
+    <string-array name="merge_request_state_names">
+        <item>Open</item>
+        <item>Merged</item>
+        <item>Closed</item>
+        <item>All</item>
+    </string-array>
+
+    <string-array name="merge_request_state_values">
+        <item>@string/merge_request_state_value_default</item>
+        <item>merged</item>
+        <item>closed</item>
+        <item>all</item>
+    </string-array>
 
     <!-- Groups -->
     <string name="no_groups">No groups.</string>
+
+    <!-- Settings -->
+    <string name="trust_all_hosts">Trust all hosts</string>
 </resources>

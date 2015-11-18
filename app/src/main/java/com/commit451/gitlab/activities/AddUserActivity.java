@@ -23,6 +23,7 @@ import com.commit451.gitlab.dialogs.UserRoleDialog;
 import com.commit451.gitlab.events.UserAddedEvent;
 import com.commit451.gitlab.model.User;
 import com.commit451.gitlab.tools.KeyboardUtil;
+import com.commit451.gitlab.viewHolders.MemberViewHolder;
 
 import java.util.List;
 
@@ -39,8 +40,11 @@ import timber.log.Timber;
  */
 public class AddUserActivity extends BaseActivity {
 
-    public static Intent newInstance(Context context) {
+    private static final String KEY_GROUP = "key_group";
+
+    public static Intent newInstance(Context context, long groupId) {
         Intent intent = new Intent(context, AddUserActivity.class);
+        intent.putExtra(KEY_GROUP, groupId);
         return intent;
     }
 
@@ -51,6 +55,8 @@ public class AddUserActivity extends BaseActivity {
     MemberAdapter mAdapter;
     UserRoleDialog mUserRoleDialog;
     User mSelectedUser;
+    long mGroupId;
+
     private final View.OnClickListener mOnBackPressed = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -90,7 +96,7 @@ public class AddUserActivity extends BaseActivity {
 
     private final MemberAdapter.Listener mUserClickListener = new MemberAdapter.Listener() {
         @Override
-        public void onUserClicked(User user) {
+        public void onUserClicked(User user, MemberViewHolder memberViewHolder) {
             mSelectedUser = user;
             mUserRoleDialog.show();
         }
@@ -100,10 +106,10 @@ public class AddUserActivity extends BaseActivity {
         @Override
         public void onAccessLevelClicked(String accessLevel) {
             //TODO fix this cause yeah...
-//            GitLabClient.instance().addGroupMember(
-//                    GitLabApp.instance().getSelectedProject().getGroup().getId(),
-//                    mSelectedUser.getId(),
-//                    accessLevel).enqueue(mAddGroupMemeberCallback);
+            GitLabClient.instance().addGroupMember(
+                    mGroupId,
+                    mSelectedUser.getId(),
+                    accessLevel).enqueue(mAddGroupMemeberCallback);
         }
     };
 
@@ -134,6 +140,7 @@ public class AddUserActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_user);
         ButterKnife.bind(this);
+        mGroupId = getIntent().getLongExtra(KEY_GROUP, -1);
         mUserRoleDialog = new UserRoleDialog(this, mUserRoleDialogListener);
         mToolbar.setNavigationIcon(R.drawable.ic_back_24dp);
         mToolbar.setNavigationOnClickListener(mOnBackPressed);

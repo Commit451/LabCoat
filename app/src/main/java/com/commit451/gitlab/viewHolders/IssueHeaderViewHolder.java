@@ -2,7 +2,6 @@ package com.commit451.gitlab.viewHolders;
 
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +11,7 @@ import android.widget.TextView;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.Issue;
+import com.commit451.gitlab.tools.DateUtils;
 import com.commit451.gitlab.tools.ImageUtil;
 import com.squareup.picasso.Picasso;
 
@@ -24,9 +24,9 @@ import in.uncod.android.bypass.Bypass;
  */
 public class IssueHeaderViewHolder extends RecyclerView.ViewHolder {
 
-    public static IssueHeaderViewHolder create(ViewGroup parent) {
+    public static IssueHeaderViewHolder newInstance(ViewGroup parent) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_header_issue, parent, false);
+                .inflate(R.layout.header_issue, parent, false);
         return new IssueHeaderViewHolder(view);
     }
 
@@ -56,10 +56,10 @@ public class IssueHeaderViewHolder extends RecyclerView.ViewHolder {
                     .into(authorImage);
             author.setText(issue.getAuthor().getName() + " "
                     + itemView.getResources().getString(R.string.created_issue) + " "
-                    + DateUtils.getRelativeTimeSpanString(issue.getCreatedAt().getTime()));
+                    + DateUtils.getRelativeTimeSpanString(itemView.getContext(), issue.getCreatedAt()));
         }
         if (issue.getCreatedAt() != null) {
-            DateUtils.getRelativeTimeSpanString(issue.getCreatedAt().getTime());
+            DateUtils.getRelativeTimeSpanString(itemView.getContext(), issue.getCreatedAt());
         }
     }
 }

@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
+ * Issues adapter
  * Created by Jawn on 7/28/2015.
  */
 public class IssuesAdapter extends RecyclerView.Adapter<IssueViewHolder> {

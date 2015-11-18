@@ -1,7 +1,7 @@
 package com.commit451.gitlab.api;
 
 import com.commit451.gitlab.GitLabApp;
-import com.commit451.gitlab.tools.Prefs;
+import com.commit451.gitlab.data.Prefs;
 import com.squareup.okhttp.Interceptor;
 import com.squareup.okhttp.Response;
 
