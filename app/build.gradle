@@ -10,8 +10,8 @@ android {
         applicationId "com.commit451.gitlab"
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 212
-        versionName "2.1.2"
+        versionCode 213
+        versionName "2.1.3"
     }
     buildTypes {
         release {
