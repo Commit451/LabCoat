@@ -1,5 +1,9 @@
 package com.commit451.gitlab.fragments;
 
+import android.app.ActivityOptions;
+import android.content.Intent;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -18,7 +22,7 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.activities.ProjectActivity;
 import com.commit451.gitlab.adapter.IssuesAdapter;
 import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.dialogs.NewIssueDialog;
+import com.commit451.gitlab.dialogs.PopupActivity;
 import com.commit451.gitlab.events.IssueChangedEvent;
 import com.commit451.gitlab.events.IssueCreatedEvent;
 import com.commit451.gitlab.events.ProjectReloadEvent;
@@ -179,12 +183,20 @@ public class IssuesFragment extends BaseFragment {
 	}
 
 	@OnClick(R.id.add_issue_button)
-	public void onAddIssueClick() {
-        if (mProject != null) {
-            new NewIssueDialog(getActivity(), mProject).show();
+	public void onAddIssueClick(View fab) {
+//        if (mProject != null) {
+//            new NewIssueDialog(getActivity(), mProject).show();
+//        } else {
+//            Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.wait_for_project_to_load), Snackbar.LENGTH_SHORT)
+//                    .show();
+//        }
+        Intent intent = PopupActivity.getStartIntent(getActivity(), Color.CYAN);
+        if (Build.VERSION.SDK_INT >= 21) {
+            ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation
+                    (getActivity(), fab, getString(R.string.transition_morph));
+            getActivity().startActivity(intent, options.toBundle());
         } else {
-            Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.wait_for_project_to_load), Snackbar.LENGTH_SHORT)
-                    .show();
+            getActivity().startActivity(intent);
         }
 	}
 

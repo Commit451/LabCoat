@@ -21,4 +21,6 @@
 
     <color name="purple">#554488</color>
     <color name="purple_dark">#3C2B6F</color>
+
+    <color name="super_light_grey">#FAFAFA</color>
 </resources>

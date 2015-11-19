@@ -4,4 +4,6 @@
     <string name="transition_group">group</string>
     <!-- Transition from user in a list to user detail-->
     <string name="transition_user">user</string>
+
+    <string name="transition_morph">morph</string>
 </resources>
