@@ -36,6 +36,12 @@
         <item name="android:windowTranslucentStatus" tools:ignore="NewApi">true</item>
     </style>
 
+    <style name="Activity.Translucent">
+        <item name="android:windowBackground">@color/scrim</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowAnimationStyle">@null</item>
+    </style>
+
     <style name="AppDialogTheme" parent="Theme.AppCompat.Dialog">
         <item name="colorAccent">@color/yellow</item>
         <item name="windowNoTitle">true</item>

@@ -19,10 +19,10 @@ package com.commit451.gitlab.transitions;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.ColorInt;
-import android.support.v4.content.ContextCompat;
 import android.transition.ChangeBounds;
 import android.transition.TransitionValues;
 import android.util.AttributeSet;
@@ -30,11 +30,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 
-import com.commit451.gitlab.R;
-
 /**
  * A transition that morphs a circle into a rectangle, changing it's background color.
  */
+@TargetApi(21)
 public class MorphFabToDialog extends ChangeBounds {
 
     private static final String PROPERTY_COLOR = "property_color";
@@ -46,11 +45,14 @@ public class MorphFabToDialog extends ChangeBounds {
     private
     @ColorInt
     int startColor = Color.TRANSPARENT;
+    @ColorInt
+    int endColor = Color.WHITE;
     private int endCornerRadius;
 
-    public MorphFabToDialog(@ColorInt int startColor, int endCornerRadius) {
+    public MorphFabToDialog(@ColorInt int startColor, @ColorInt int endColor, int endCornerRadius) {
         super();
         setStartColor(startColor);
+        setEndColor(endColor);
         setEndCornerRadius(endCornerRadius);
     }
 
@@ -60,6 +62,10 @@ public class MorphFabToDialog extends ChangeBounds {
 
     public void setStartColor(@ColorInt int startColor) {
         this.startColor = startColor;
+    }
+
+    public void setEndColor(@ColorInt int endColor) {
+        this.endColor = endColor;
     }
 
     public void setEndCornerRadius(int endCornerRadius) {
@@ -89,8 +95,7 @@ public class MorphFabToDialog extends ChangeBounds {
         if (view.getWidth() <= 0 || view.getHeight() <= 0) {
             return;
         }
-        transitionValues.values.put(PROPERTY_COLOR,
-                ContextCompat.getColor(view.getContext(), R.color.super_light_grey));
+        transitionValues.values.put(PROPERTY_COLOR, endColor);
         transitionValues.values.put(PROPERTY_CORNER_RADIUS, endCornerRadius);
     }
 

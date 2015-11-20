@@ -6,7 +6,6 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.ColorInt;
-import android.support.v4.content.ContextCompat;
 import android.transition.ChangeBounds;
 import android.transition.TransitionValues;
 import android.util.AttributeSet;
@@ -21,17 +20,22 @@ import com.commit451.gitlab.R;
  */
 public class MorphDialogToFab extends ChangeBounds {
 
-    private static final String PROPERTY_COLOR = "plaid:rectMorph:color";
+    private static final String PROPERTY_START_COLOR = "plaid:rectMorph:startcolor";
+    private static final String PROPERTY_END_COLOR = "plaid:rectMorph:endcolor";
     private static final String PROPERTY_CORNER_RADIUS = "plaid:rectMorph:cornerRadius";
     private static final String[] TRANSITION_PROPERTIES = {
-            PROPERTY_COLOR,
+            PROPERTY_START_COLOR,
             PROPERTY_CORNER_RADIUS
     };
     private @ColorInt
     int endColor = Color.TRANSPARENT;
 
-    public MorphDialogToFab(@ColorInt int endColor) {
+    private @ColorInt
+    int startColor = Color.TRANSPARENT;
+
+    public MorphDialogToFab(@ColorInt int startColor, @ColorInt int endColor) {
         super();
+        setStartColor(startColor);
         setEndColor(endColor);
     }
 
@@ -41,6 +45,10 @@ public class MorphDialogToFab extends ChangeBounds {
 
     public void setEndColor(@ColorInt int endColor) {
         this.endColor = endColor;
+    }
+
+    public void setStartColor(@ColorInt int startColor) {
+        this.startColor = startColor;
     }
 
     @Override
@@ -55,8 +63,8 @@ public class MorphDialogToFab extends ChangeBounds {
         if (view.getWidth() <= 0 || view.getHeight() <= 0) {
             return;
         }
-        transitionValues.values.put(PROPERTY_COLOR,
-                ContextCompat.getColor(view.getContext(), R.color.super_light_grey));
+        transitionValues.values.put(PROPERTY_START_COLOR, startColor);
+        transitionValues.values.put(PROPERTY_END_COLOR, endColor);
         transitionValues.values.put(PROPERTY_CORNER_RADIUS, view.getResources()
                 .getDimensionPixelSize(R.dimen.dialog_corners));
     }
@@ -68,7 +76,8 @@ public class MorphDialogToFab extends ChangeBounds {
         if (view.getWidth() <= 0 || view.getHeight() <= 0) {
             return;
         }
-        transitionValues.values.put(PROPERTY_COLOR, endColor);
+        transitionValues.values.put(PROPERTY_START_COLOR, startColor);
+        transitionValues.values.put(PROPERTY_END_COLOR, endColor);
         transitionValues.values.put(PROPERTY_CORNER_RADIUS, view.getHeight() / 2);
     }
 
@@ -81,9 +90,9 @@ public class MorphDialogToFab extends ChangeBounds {
             return null;
         }
 
-        Integer startColor = (Integer) startValues.values.get(PROPERTY_COLOR);
+        Integer startColor = (Integer) startValues.values.get(PROPERTY_START_COLOR);
         Integer startCornerRadius = (Integer) startValues.values.get(PROPERTY_CORNER_RADIUS);
-        Integer endColor = (Integer) endValues.values.get(PROPERTY_COLOR);
+        Integer endColor = (Integer) endValues.values.get(PROPERTY_END_COLOR);
         Integer endCornerRadius = (Integer) endValues.values.get(PROPERTY_CORNER_RADIUS);
 
         if (startColor == null || startCornerRadius == null || endColor == null ||

@@ -2,10 +2,10 @@ package com.commit451.gitlab.fragments;
 
 import android.app.ActivityOptions;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,6 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.commit451.easel.Easel;
 import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activities.ProjectActivity;
@@ -190,13 +191,16 @@ public class IssuesFragment extends BaseFragment {
 //            Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.wait_for_project_to_load), Snackbar.LENGTH_SHORT)
 //                    .show();
 //        }
-        Intent intent = PopupActivity.getStartIntent(getActivity(), Color.CYAN);
+        Intent intent = PopupActivity.getStartIntent(getActivity(),
+                Easel.getThemeAttrColor(getActivity(), R.attr.colorAccent),
+                ContextCompat.getColor(getActivity(), R.color.grey));
         if (Build.VERSION.SDK_INT >= 21) {
             ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation
                     (getActivity(), fab, getString(R.string.transition_morph));
             getActivity().startActivity(intent, options.toBundle());
         } else {
             getActivity().startActivity(intent);
+            getActivity().overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
         }
 	}
 

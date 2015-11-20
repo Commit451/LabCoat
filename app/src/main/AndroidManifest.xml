@@ -55,7 +55,7 @@
         <activity android:name=".activities.GroupActivity"
             android:theme="@style/Activity.Group"/>
         <activity android:name=".activities.MergeRequestActivity"/>
-        <activity android:name=".dialogs.PopupActivity"/>
+        <activity android:name=".dialogs.PopupActivity" android:theme="@style/Activity.Translucent"/>
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="${fabric_key}" />
