@@ -4,8 +4,6 @@ import com.commit451.gitlab.R;
 
 import org.parceler.Parcel;
 
-import java.util.ArrayList;
-
 @Parcel
 public class TreeItem {
 
@@ -48,11 +46,8 @@ public class TreeItem {
         return R.drawable.ic_file_24dp;
     }
 
-    public String getUrl(Project project, String branchName, ArrayList<String> currentPath) {
-        String path = "/";
-        for (String pathPart : currentPath) {
-            path = path + pathPart;
-        }
+    public String getUrl(Project project, String branchName, String currentPath) {
+        String path = "/" + currentPath;
         return project.getWebUrl() + "/tree/" + branchName + path + name;
     }
 }

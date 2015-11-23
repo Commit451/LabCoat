@@ -1,7 +1,6 @@
 package com.commit451.gitlab.viewHolders;
 
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,14 +22,12 @@ public class GroupViewHolder extends RecyclerView.ViewHolder{
 
     public static GroupViewHolder newInstance(ViewGroup parent) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_group, parent, false);
+                .inflate(R.layout.item_user, parent, false);
         return new GroupViewHolder(view);
     }
 
-    @Bind(R.id.group_image) public ImageView image;
-    @Bind(R.id.group_name) public TextView name;
-    @Bind(R.id.group_description) public TextView description;
-
+    @Bind(R.id.image) public ImageView image;
+    @Bind(R.id.name) public TextView name;
 
     public GroupViewHolder(View view) {
         super(view);
@@ -38,15 +35,9 @@ public class GroupViewHolder extends RecyclerView.ViewHolder{
     }
 
     public void bind(Group group) {
+        name.setText(group.getName());
         Picasso.with(itemView.getContext())
                 .load(group.getAvatarUrl())
                 .into(image);
-        name.setText(group.getName());
-        if (TextUtils.isEmpty(group.getDescription())) {
-            description.setVisibility(View.VISIBLE);
-            description.setText(group.getDescription());
-        } else {
-            description.setVisibility(View.GONE);
-        }
     }
 }

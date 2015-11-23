@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -104,14 +104,21 @@ public class GroupsActivity extends BaseActivity {
                 load();
             }
         });
-        mGroupRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mGroupRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         mGroupAdapter = new GroupAdapter(mGroupAdapterListener);
         mGroupRecyclerView.setAdapter(mGroupAdapter);
         load();
     }
 
     private void load() {
-        mSwipeRefreshLayout.setRefreshing(true);
+        mSwipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                if (mSwipeRefreshLayout != null) {
+                    mSwipeRefreshLayout.setRefreshing(true);
+                }
+            }
+        });
         GitLabClient.instance().getGroups().enqueue(mGroupsCallback);
     }
 }
