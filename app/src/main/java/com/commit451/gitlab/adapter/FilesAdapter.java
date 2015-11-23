@@ -93,6 +93,11 @@ public class FilesAdapter extends RecyclerView.Adapter<FileViewHolder> {
         notifyDataSetChanged();
     }
 
+    public void clear() {
+        mValues.clear();
+        notifyDataSetChanged();
+    }
+
     public TreeItem getValueAt(int position) {
         return mValues.get(position);
     }

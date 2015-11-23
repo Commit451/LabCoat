@@ -112,29 +112,29 @@ public class FilesFragment extends BaseFragment {
             mSwipeRefreshLayout.setRefreshing(false);
 			if (!response.isSuccess()) {
                 mBreadcrumbAdapter.clear();
+                mFilesAdapter.clear();
                 mErrorText.setVisibility(View.VISIBLE);
-                mFilesList.setVisibility(View.GONE);
 				return;
 			}
-			if (response.body() != null && !response.body().isEmpty()) {
-				mFilesList.setVisibility(View.VISIBLE);
-                mFilesAdapter.setData(response.body());
-                mFilesAdapter.setData(response.body());
-				mErrorText.setVisibility(View.GONE);
+			if (response.body().isEmpty()) {
+                mFilesAdapter.clear();
+                mErrorText.setVisibility(View.VISIBLE);
 			} else {
-				mErrorText.setVisibility(View.VISIBLE);
+                mFilesList.setVisibility(View.VISIBLE);
+                mFilesAdapter.setData(response.body());
+                mErrorText.setVisibility(View.GONE);
 			}
 		}
 
 		@Override
 		public void onFailure(Throwable t) {
-			if(mSwipeRefreshLayout != null && mSwipeRefreshLayout.isRefreshing()) {
-				mSwipeRefreshLayout.setRefreshing(false);
-			}
+            Timber.e(t.toString());
+            if (getView() == null) {
+                return;
+            }
+            mSwipeRefreshLayout.setRefreshing(false);
 			Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.connection_error_files), Snackbar.LENGTH_SHORT)
 					.show();
-			Timber.e(t.toString());
-
 		}
 	};
 
