@@ -67,13 +67,32 @@ public class FileActivity extends BaseActivity {
 			// Receiving side
 			mFileName = response.body().getFileName();
 			mBlob = Base64.decode(response.body().getContent(), Base64.DEFAULT);
-			try {
-				text = new String(mBlob, "UTF-8");
-			} catch (UnsupportedEncodingException e) {
-				Timber.e(e.toString());
+
+			String content;
+
+			String mimeType = null;
+			String ext = fileExt(mFileName);
+			if (ext != null) {
+				mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext.substring(1));
 			}
-			String temp = "<!DOCTYPE html><html><head><link href=\"github.css\" rel=\"stylesheet\" /></head><body><pre><code>" + Html.escapeHtml(text) + "</code></pre><script src=\"highlight.pack.js\"></script><script>hljs.initHighlightingOnLoad();</script></body></html>";
-			fileBlobView.loadDataWithBaseURL("file:///android_asset/", temp, "text/html", "utf8", null);
+
+			if (mimeType != null && mimeType.startsWith("image/")) {
+				String imageURL = "data:" + mimeType + ";base64," + response.body().getContent();
+
+				content = "<!DOCTYPE html><html><head><link href=\"github.css\" rel=\"stylesheet\" /></head><body><img style=\"width: 100%;\" src=\"" + imageURL + "\"></body></html>";
+			}
+			else {
+				try {
+					text = new String(mBlob, "UTF-8");
+				}
+				catch (UnsupportedEncodingException e) {
+					Timber.e(e.toString());
+				}
+
+				content = "<!DOCTYPE html><html><head><link href=\"github.css\" rel=\"stylesheet\" /></head><body><pre><code>" + Html.escapeHtml(text) + "</code></pre><script src=\"highlight.pack.js\"></script><script>hljs.initHighlightingOnLoad();</script></body></html>";
+			}
+
+			fileBlobView.loadDataWithBaseURL("file:///android_asset/", content, "text/html", "utf8", null);
 			toolbar.setTitle(mFileName);
 			toolbar.inflateMenu(R.menu.file);
 		}
