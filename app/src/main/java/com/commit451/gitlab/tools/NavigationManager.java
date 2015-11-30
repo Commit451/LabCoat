@@ -9,6 +9,7 @@ import android.widget.ImageView;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activities.AboutActivity;
+import com.commit451.gitlab.activities.AddUserActivity;
 import com.commit451.gitlab.activities.FileActivity;
 import com.commit451.gitlab.activities.GroupActivity;
 import com.commit451.gitlab.activities.GroupsActivity;
@@ -88,5 +89,9 @@ public class NavigationManager {
 
     public static void navigateToFile(Activity activity, long projectId, String path, String branchName) {
         activity.startActivity(FileActivity.newIntent(activity, projectId, path, branchName));
+    }
+
+    public static void navigateToAddUser(Activity activity, long projectId) {
+        activity.startActivity(AddUserActivity.newInstance(activity, projectId));
     }
 }

@@ -21,9 +21,12 @@ import com.commit451.gitlab.adapter.MemberAdapter;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.dialogs.UserRoleDialog;
 import com.commit451.gitlab.events.UserAddedEvent;
+import com.commit451.gitlab.model.Group;
 import com.commit451.gitlab.model.User;
 import com.commit451.gitlab.tools.KeyboardUtil;
 import com.commit451.gitlab.viewHolders.MemberViewHolder;
+
+import org.parceler.Parcels;
 
 import java.util.List;
 
@@ -35,16 +38,23 @@ import retrofit.Retrofit;
 import timber.log.Timber;
 
 /**
- * Add a new user to the repo
+ * Add a new user to the repo or to the group, depending on the mode
  * Created by Jawn on 9/15/2015.
  */
 public class AddUserActivity extends BaseActivity {
 
-    private static final String KEY_GROUP = "key_group";
+    private static final String KEY_PROJECT_ID = "project_id";
+    private static final String KEY_GROUP = "group";
 
-    public static Intent newInstance(Context context, long groupId) {
+    public static Intent newInstance(Context context, long projectId) {
         Intent intent = new Intent(context, AddUserActivity.class);
-        intent.putExtra(KEY_GROUP, groupId);
+        intent.putExtra(KEY_PROJECT_ID, projectId);
+        return intent;
+    }
+
+    public static Intent newIntent(Context context, Group group) {
+        Intent intent = new Intent(context, AddUserActivity.class);
+        intent.putExtra(KEY_GROUP, Parcels.wrap(group));
         return intent;
     }
 
@@ -55,7 +65,8 @@ public class AddUserActivity extends BaseActivity {
     MemberAdapter mAdapter;
     UserRoleDialog mUserRoleDialog;
     User mSelectedUser;
-    long mGroupId;
+    long mProjectId;
+    Group mGroup;
 
     private final View.OnClickListener mOnBackPressed = new View.OnClickListener() {
         @Override
@@ -105,11 +116,16 @@ public class AddUserActivity extends BaseActivity {
     private final UserRoleDialog.Listener mUserRoleDialogListener = new UserRoleDialog.Listener() {
         @Override
         public void onAccessLevelClicked(String accessLevel) {
-            //TODO fix this cause yeah...
-            GitLabClient.instance().addGroupMember(
-                    mGroupId,
-                    mSelectedUser.getId(),
-                    accessLevel).enqueue(mAddGroupMemeberCallback);
+            if (mGroup == null) {
+                GitLabClient.instance().addProjectTeamMember(
+                        mProjectId,
+                        mSelectedUser.getId(),
+                        accessLevel).enqueue(mAddGroupMemeberCallback);
+            } else {
+                GitLabClient.instance().addGroupMember(mGroup.getId(),
+                        mSelectedUser.getId(),
+                        accessLevel).enqueue(mAddGroupMemeberCallback);
+            }
         }
     };
 
@@ -140,7 +156,8 @@ public class AddUserActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_user);
         ButterKnife.bind(this);
-        mGroupId = getIntent().getLongExtra(KEY_GROUP, -1);
+        mProjectId = getIntent().getLongExtra(KEY_PROJECT_ID, -1);
+        mGroup = Parcels.unwrap(getIntent().getParcelableExtra(KEY_GROUP));
         mUserRoleDialog = new UserRoleDialog(this, mUserRoleDialogListener);
         mToolbar.setNavigationIcon(R.drawable.ic_back_24dp);
         mToolbar.setNavigationOnClickListener(mOnBackPressed);

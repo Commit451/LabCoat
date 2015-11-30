@@ -75,6 +75,7 @@ public class OverviewFragment extends BaseFragment {
                     return;
                 }
             }
+            mSwipeRefreshLayout.setRefreshing(false);
             showError(getString(R.string.no_readme_found));
         }
 

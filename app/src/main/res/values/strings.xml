@@ -106,6 +106,7 @@
     <string name="logout_title">Are you sure you want to log out?</string>
     <string name="failed_to_load">Failed to load</string>
     <string name="just_now">Just now</string>
+    <string name="no_project_members">No project members.</string>
 
     <!-- Overview -->
     <string name="no_readme_found">No README found for project</string>
