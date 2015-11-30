@@ -1,11 +1,11 @@
 # GitLab for Android
-[![Google Play](https://developer.android.com/images/brand/en_generic_rgb_wo_45.png)](https://play.google.com/store/apps/details?id=com.commit451.gitlab)
+[![Google Play](https://gitlab.com/Commit451/GitLabAndroid/raw/master/art/google-play-badge.png)](https://play.google.com/store/apps/details?id=com.commit451.gitlab)
 
 [![Build Status](https://travis-ci.org/Commit451/GitLabAndroid.svg?branch=master)](https://travis-ci.org/Commit451/GitLabAndroid)
 
 This is the source code for the unofficial GitLab Android app.
 
-![Image](https://gitlab.com/Commit451/GitLabAndroid/raw/master/ic_launcher-web.png)
+![Image](https://gitlab.com/Commit451/GitLabAndroid/raw/master/art/screenshot-1.png)
 
 Please see the [issues](https://gitlab.com/Commit451/GitLabAndroid/issues) section to
 report any bugs or feature requests and to see the list of known issues.
