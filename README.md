@@ -1,7 +1,7 @@
 # GitLab for Android
 [![Google Play](https://gitlab.com/Commit451/GitLabAndroid/raw/master/art/google-play-badge.png)](https://play.google.com/store/apps/details?id=com.commit451.gitlab)
 
-[![Build Status](https://travis-ci.org/Commit451/GitLabAndroid.svg?branch=master)](https://travis-ci.org/Commit451/GitLabAndroid)
+[![build status](https://gitlab.com/ci/projects/7701/status.png?ref=master)](https://gitlab.com/ci/projects/7701?ref=master)
 
 This is the source code for the unofficial GitLab Android app.
 
