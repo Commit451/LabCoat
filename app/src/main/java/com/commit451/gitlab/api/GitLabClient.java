@@ -3,6 +3,7 @@ package com.commit451.gitlab.api;
 import com.commit451.gitlab.BuildConfig;
 import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.data.Prefs;
+import com.commit451.gitlab.ssl.CustomTrustManager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
@@ -19,6 +20,10 @@ import java.util.Date;
 import retrofit.GsonConverterFactory;
 import retrofit.Retrofit;
 import retrofit.SimpleXmlConverterFactory;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
 
 /**
  * Pulls all the GitLab stuff from the API
@@ -42,6 +47,7 @@ public class GitLabClient {
             });
             Gson gson = gsonBuilder.create();
             OkHttpClient client = new OkHttpClient();
+            client.setSslSocketFactory(createSSLSocketFactory());
             client.interceptors().add(new ApiKeyRequestInterceptor());
             client.interceptors().add(new TimberRequestInterceptor());
 
@@ -59,6 +65,7 @@ public class GitLabClient {
     public static GitLabRss rssInstance() {
         if (sGitLabRss == null) {
             OkHttpClient client = new OkHttpClient();
+            client.setSslSocketFactory(createSSLSocketFactory());
             if (BuildConfig.DEBUG) {
                 client.networkInterceptors().add(new TimberRequestInterceptor());
             }
@@ -74,5 +81,15 @@ public class GitLabClient {
 
     public static void reset() {
         gitLab = null;
+    }
+
+    private static SSLSocketFactory createSSLSocketFactory() {
+        try {
+            SSLContext sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(null, new TrustManager[]{new CustomTrustManager()}, null);
+            return sslContext.getSocketFactory();
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
     }
 }

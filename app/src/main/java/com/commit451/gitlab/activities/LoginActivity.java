@@ -23,11 +23,18 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.Session;
 import com.commit451.gitlab.model.User;
+import com.commit451.gitlab.ssl.CustomTrustManager;
+import com.commit451.gitlab.ssl.X509CertificateException;
+import com.commit451.gitlab.ssl.X509Util;
 import com.commit451.gitlab.tools.KeyboardUtil;
 import com.commit451.gitlab.tools.NavigationManager;
 import com.commit451.gitlab.data.Prefs;
 import com.commit451.gitlab.views.EmailAutoCompleteTextView;
 
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.X509Certificate;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import javax.net.ssl.SSLHandshakeException;
@@ -190,6 +197,7 @@ public class LoginActivity extends BaseActivity {
             }
         });
 
+        CustomTrustManager.setTrustedCertificates(Prefs.getTrustedCertificates(this));
 	}
 
     @TargetApi(23)
@@ -260,11 +268,36 @@ public class LoginActivity extends BaseActivity {
 
         mProgress.setVisibility(View.GONE);
 
-        if(e instanceof SSLHandshakeException) {
+        if(e instanceof SSLHandshakeException && e.getCause() instanceof X509CertificateException) {
+            String fingerprint = null;
+            try {
+                fingerprint = X509Util.getFingerPrint(((X509CertificateException) e.getCause()).getChain()[0]);
+            } catch (CertificateEncodingException ex) {
+                Timber.e(e.toString());
+            }
+            final String finalFingerprint = fingerprint;
+
             Dialog d = new AlertDialog.Builder(this)
                     .setTitle(R.string.certificate_title)
-                    .setMessage(R.string.certificate_message)
-                    .setNeutralButton(R.string.ok_button, new DialogInterface.OnClickListener() {
+                    .setMessage(String.format(getResources().getString(R.string.certificate_message), finalFingerprint))
+                    .setPositiveButton(R.string.ok_button, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if (finalFingerprint != null) {
+                                Set<String> trustedCertificates = new HashSet<>(Prefs.getTrustedCertificates(LoginActivity.this));
+                                trustedCertificates.add(finalFingerprint);
+                                Prefs.setTrustedCertificates(LoginActivity.this, trustedCertificates);
+                                CustomTrustManager.setTrustedCertificates(trustedCertificates);
+                            }
+
+                            dialog.dismiss();
+
+                            if (finalFingerprint != null) {
+                                onLoginClick();
+                            }
+                        }
+                    })
+                    .setNegativeButton(R.string.cancel_button, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
