@@ -21,22 +21,18 @@ import retrofit.GsonConverterFactory;
 import retrofit.Retrofit;
 import retrofit.SimpleXmlConverterFactory;
 
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManager;
-
 /**
  * Pulls all the GitLab stuff from the API
  * Created by Jawn on 7/28/2015.
  */
 public class GitLabClient {
 
-    private static GitLab gitLab;
+    private static GitLab sGitLab;
     private static GitLabRss sGitLabRss;
+    private static CustomTrustManager sCustomTrustManager = new CustomTrustManager();
 
     public static GitLab instance() {
-
-        if(gitLab == null) {
+        if (sGitLab == null) {
             // Configure Gson to handle dates correctly
             GsonBuilder gsonBuilder = new GsonBuilder();
             gsonBuilder.registerTypeAdapter(Date.class, new JsonDeserializer<Date>() {
@@ -46,8 +42,9 @@ public class GitLabClient {
                 }
             });
             Gson gson = gsonBuilder.create();
+
             OkHttpClient client = new OkHttpClient();
-            client.setSslSocketFactory(createSSLSocketFactory());
+            client.setSslSocketFactory(sCustomTrustManager.getSSLSocketFactory());
             client.interceptors().add(new ApiKeyRequestInterceptor());
             client.interceptors().add(new TimberRequestInterceptor());
 
@@ -56,19 +53,20 @@ public class GitLabClient {
                     .client(client)
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();
-            gitLab = restAdapter.create(GitLab.class);
+            sGitLab = restAdapter.create(GitLab.class);
         }
 
-        return gitLab;
+        return sGitLab;
     }
 
     public static GitLabRss rssInstance() {
         if (sGitLabRss == null) {
             OkHttpClient client = new OkHttpClient();
-            client.setSslSocketFactory(createSSLSocketFactory());
+            client.setSslSocketFactory(sCustomTrustManager.getSSLSocketFactory());
             if (BuildConfig.DEBUG) {
                 client.networkInterceptors().add(new TimberRequestInterceptor());
             }
+
             Retrofit restAdapter = new Retrofit.Builder()
                     .baseUrl(Prefs.getServerUrl(GitLabApp.instance()))
                     .addConverterFactory(SimpleXmlConverterFactory.create())
@@ -80,16 +78,10 @@ public class GitLabClient {
     }
 
     public static void reset() {
-        gitLab = null;
+        sGitLab = null;
     }
 
-    private static SSLSocketFactory createSSLSocketFactory() {
-        try {
-            SSLContext sslContext = SSLContext.getInstance("TLS");
-            sslContext.init(null, new TrustManager[]{new CustomTrustManager()}, null);
-            return sslContext.getSocketFactory();
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
-        }
+    public static void setTrustedCertificate(String trustedCertificate) {
+        sCustomTrustManager.setTrustedCertificate(trustedCertificate);
     }
 }
