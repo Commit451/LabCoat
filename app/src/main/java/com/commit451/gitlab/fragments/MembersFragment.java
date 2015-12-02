@@ -59,15 +59,19 @@ public class MembersFragment extends BaseFragment implements SwipeRefreshLayout.
 
 		@Override
 		public void onResponse(Response<List<User>> response, Retrofit retrofit) {
-			if (!response.isSuccess()) {
-				return;
-			}
 			if (getView() == null) {
 				return;
 			}
+            if (!response.isSuccess()) {
+                return;
+            }
 			mSwipeRefreshLayout.setRefreshing(false);
-			mErrorText.setVisibility(View.GONE);
-			mRecyclerView.setVisibility(View.VISIBLE);
+            if (response.body().isEmpty()) {
+                mErrorText.setText(R.string.no_project_members);
+                mErrorText.setVisibility(View.VISIBLE);
+            } else {
+                mErrorText.setVisibility(View.GONE);
+            }
 			mAddUserButton.setVisibility(View.VISIBLE);
 
 			mAdapter.setData(response.body());
@@ -81,6 +85,7 @@ public class MembersFragment extends BaseFragment implements SwipeRefreshLayout.
 				return;
 			}
 			mSwipeRefreshLayout.setRefreshing(false);
+            mErrorText.setText(R.string.connection_error);
 			mErrorText.setVisibility(View.VISIBLE);
 			mAddUserButton.setVisibility(View.GONE);
 			Timber.e(t.toString());
@@ -140,7 +145,7 @@ public class MembersFragment extends BaseFragment implements SwipeRefreshLayout.
                 mSwipeRefreshLayout.setRefreshing(true);
             }
         });
-        GitLabClient.instance().getGroupMembers(mProject.getNamespace().getId()).enqueue(usersCallback);
+        GitLabClient.instance().getProjectTeamMembers(mProject.getId()).enqueue(usersCallback);
 	}
 	
 	public boolean onBackPressed() {
@@ -149,7 +154,7 @@ public class MembersFragment extends BaseFragment implements SwipeRefreshLayout.
 	
 	@OnClick(R.id.add_user_button)
 	public void onAddUserClick() {
-		startActivity(AddUserActivity.newInstance(getActivity(), mProject.getNamespace().getId()));
+		NavigationManager.navigateToAddUser(getActivity(), mProject.getId());
 	}
 
 	private class EventReceiver {

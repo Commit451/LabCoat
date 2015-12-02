@@ -14,6 +14,7 @@ import com.squareup.picasso.Picasso;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 
 /**
  * Shows a single user
@@ -27,9 +28,8 @@ public class UserViewHolder extends RecyclerView.ViewHolder {
         return new UserViewHolder(view);
     }
 
-    @Bind(R.id.user_name) public TextView name;
-    @Bind(R.id.user_username) public TextView username;
-    @Bind(R.id.user_image) public ImageView image;
+    @Bind(R.id.name) public TextView username;
+    @Bind(R.id.image) public ImageView image;
 
     public UserViewHolder(View view) {
         super(view);
@@ -37,14 +37,8 @@ public class UserViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(User user) {
-        name.setText(user.getName());
-        if(user.getUsername() != null) {
-            username.setText(user.getUsername());
-        }
-
-        int size = itemView.getResources().getDimensionPixelSize(R.dimen.image_size);
-        String url = ImageUtil.getGravatarUrl(user, size);
-
+        username.setText(user.getUsername());
+        String url = ImageUtil.getGravatarUrl(user, itemView.getResources().getDimensionPixelSize(R.dimen.user_list_image_size));
         Picasso.with(itemView.getContext())
                 .load(url)
                 .into(image);

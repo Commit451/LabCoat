@@ -63,6 +63,7 @@ public interface GitLab {
 
     @GET
     Call<List<Project>> getProjectsNextPage(@Url String url);
+
 	/* --- PROJECTS --- */
 
     @GET(API_VERSION + "/projects/{id}/repository/branches?per_page=100&order_by=last_activity_at")
@@ -90,6 +91,15 @@ public interface GitLab {
     Call<MergeRequestComment> postMergeRequestComment(@Path("id") long projectId,
                              @Path("merge_request_id") long mergeRequestId,
                              @Field("note") String body);
+
+    @GET(API_VERSION + "/projects/{id}/members")
+    Call<List<User>> getProjectTeamMembers(@Path("id") long projectId);
+
+    @FormUrlEncoded
+    @POST(API_VERSION + "/projects/{id}/members")
+    Call<User> addProjectTeamMember(@Path("id") long projectId,
+                                    @Field("user_id") long userId,
+                                    @Field("access_level") String accessLevel);
 	
 	/* --- COMMITS --- */
 
@@ -160,6 +170,8 @@ public interface GitLab {
     @GET(API_VERSION + "/user")
     Call<User> getUser();
 
+    /* --- GROUPS --- */
+
     @GET(API_VERSION + "/groups/{id}/members?per_page=100")
     Call<List<User>> getGroupMembers(@Path("id") long groupId);
 
@@ -170,7 +182,7 @@ public interface GitLab {
                               @Field("access_level") String accessLevel);
 
     @DELETE(API_VERSION + "/groups/{id}/members/{user_id}")
-    Call<DeleteResponse> removeGroupMember(@Path("id") long groupId,
+    Call<DeleteResponse> removeProjectTeamMember(@Path("id") long projectId,
                                            @Path("user_id") long userId);
 
     @GET(API_VERSION + "/groups/{id}")

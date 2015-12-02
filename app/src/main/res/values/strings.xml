@@ -61,7 +61,7 @@
     <string name="token_link"><u>Login using private token</u></string>
     <string name="normal_link"><u>Login using username or email</u></string>
     <string name="certificate_title">Certificate not trusted</string>
-    <string name="certificate_message">The certificate the server used was not issued by a trusted authority.\n\nThis could mean a hacker is trying to intercept your communications.\n\nTo use a self-signed certificate, please follow this <a href="https://support.google.com/nexus/answer/2844832?hl=en">guide</a>.</string>
+    <string name="certificate_message">The certificate the server used was not issued by a trusted authority.\n\nThis could mean a hacker is trying to intercept your communications.\n\nIf you trust the certificate, press OK to continue.\n\nFingerprint (SHA-1):\n%1$s</string>
     <string name="not_a_valid_url">Not a valid URL</string>
 
     <!-- Error messages -->
@@ -106,6 +106,7 @@
     <string name="logout_title">Are you sure you want to log out?</string>
     <string name="failed_to_load">Failed to load</string>
     <string name="just_now">Just now</string>
+    <string name="no_project_members">No project members.</string>
 
     <!-- Overview -->
     <string name="no_readme_found">No README found for project</string>

@@ -1,11 +1,11 @@
 # GitLab for Android
-[![Google Play](http://developer.android.com/images/brand/en_generic_rgb_wo_45.png)](https://play.google.com/store/apps/details?id=com.commit451.gitlab)
+[![Google Play](https://gitlab.com/Commit451/GitLabAndroid/raw/master/art/google-play-badge.png)](https://play.google.com/store/apps/details?id=com.commit451.gitlab)
 
-[![Build Status](https://travis-ci.org/Commit451/GitLabAndroid.svg?branch=master)](https://travis-ci.org/Commit451/GitLabAndroid)
+[![build status](https://gitlab.com/ci/projects/7701/status.png?ref=master)](https://gitlab.com/ci/projects/7701?ref=master)
 
 This is the source code for the unofficial GitLab Android app.
 
-![Image](https://raw.githubusercontent.com/Commit451/GitLabAndroid/master/ic_launcher-web.png)
+![Image](https://gitlab.com/Commit451/GitLabAndroid/raw/master/art/screenshot-1.png)
 
 Please see the [issues](https://gitlab.com/Commit451/GitLabAndroid/issues) section to
 report any bugs or feature requests and to see the list of known issues.
@@ -34,7 +34,7 @@ The following 3rd party libraries are the reason this app works. Rapid developme
 - CircleImageView (https://github.com/hdodenhof/CircleImageView)
 
 ## Contributing
-Please fork this repository and contribute back! All Merge Requests should be made agains the `develop` branch, as it is the active branch for develop. Please make your best effort to break up commits as much as possible to improve the reviewing process.
+Please fork this repository and contribute back! All Merge Requests should be made against the `develop` branch, as it is the active branch for development. Please make your best effort to break up commits as much as possible to improve the reviewing process.
 
 License
 --------

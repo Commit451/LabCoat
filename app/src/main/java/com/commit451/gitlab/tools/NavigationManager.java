@@ -9,6 +9,8 @@ import android.widget.ImageView;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activities.AboutActivity;
+import com.commit451.gitlab.activities.AddUserActivity;
+import com.commit451.gitlab.activities.FileActivity;
 import com.commit451.gitlab.activities.GroupActivity;
 import com.commit451.gitlab.activities.GroupsActivity;
 import com.commit451.gitlab.activities.IssueActivity;
@@ -69,7 +71,7 @@ public class NavigationManager {
         Intent intent = GroupActivity.newInstance(activity, group);
         if (Build.VERSION.SDK_INT >= 21) {
             ActivityOptionsCompat options = ActivityOptionsCompat.
-                    makeSceneTransitionAnimation(activity, profileImage, activity.getString(R.string.transition_group));
+                    makeSceneTransitionAnimation(activity, profileImage, activity.getString(R.string.transition_user));
             activity.startActivity(intent, options.toBundle());
         } else {
             activity.startActivity(intent);
@@ -83,5 +85,13 @@ public class NavigationManager {
     public static void navigateToMergeRequest(Activity activity, Project project, MergeRequest mergeRequest) {
         Intent intent = MergeRequestActivity.newInstance(activity, project, mergeRequest);
         activity.startActivity(intent);
+    }
+
+    public static void navigateToFile(Activity activity, long projectId, String path, String branchName) {
+        activity.startActivity(FileActivity.newIntent(activity, projectId, path, branchName));
+    }
+
+    public static void navigateToAddUser(Activity activity, long projectId) {
+        activity.startActivity(AddUserActivity.newInstance(activity, projectId));
     }
 }

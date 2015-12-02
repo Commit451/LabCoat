@@ -27,7 +27,7 @@ import retrofit.Retrofit;
 import timber.log.Timber;
 
 /**
- * Shows a list of projects
+ * Shows a mFilesList of projects
  * Created by Jawn on 9/21/2015.
  */
 public class ProjectsFragment extends BaseFragment {

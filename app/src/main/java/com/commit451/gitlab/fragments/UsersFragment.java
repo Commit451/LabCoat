@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -122,7 +122,7 @@ public class UsersFragment extends BaseFragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
         mUsersAdapter = new UsersAdapter(mUsersAdapterListener);
-        mUsersList.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mUsersList.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         mUsersList.setAdapter(mUsersAdapter);
         mSwipeRefreshLayout.setOnRefreshListener(mOnRefreshListener);
         if (!TextUtils.isEmpty(mQuery)) {

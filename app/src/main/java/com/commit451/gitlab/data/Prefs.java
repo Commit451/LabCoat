@@ -4,6 +4,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import java.util.Collections;
+import java.util.Set;
+
 /**
  * Shared prefs things
  * Created by Jawn on 7/28/2015.
@@ -13,6 +16,7 @@ public class Prefs {
     private static final String LOGGED_IN = "logged_in";
     private static final String SERVER_URL = "server_url";
     private static final String PRIVATE_TOKEN = "private_token";
+    private static final String TRUSTED_CERTIFICATES = "trusted_certificates";
 
     private static SharedPreferences getSharedPrefs(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context);
@@ -46,5 +50,15 @@ public class Prefs {
 
     public static String getPrivateToken(Context context) {
         return getSharedPrefs(context).getString(PRIVATE_TOKEN, null);
+    }
+
+    public static void setTrustedCertificates(Context context, Set<String> certificates) {
+        SharedPreferences.Editor editor = getSharedPrefs(context).edit();
+        editor.putStringSet(TRUSTED_CERTIFICATES, certificates);
+        editor.commit();
+    }
+
+    public static Set<String> getTrustedCertificates(Context context) {
+        return getSharedPrefs(context).getStringSet(TRUSTED_CERTIFICATES, Collections.<String>emptySet());
     }
 }

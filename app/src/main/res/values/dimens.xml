@@ -19,6 +19,7 @@
     <dimen name="circle_size">56dp</dimen>
     <dimen name="navigation_drawer_header_height">148dp</dimen>
 
+    <dimen name="user_list_image_size">180dp</dimen>
     <dimen name="user_header_image_size">300dp</dimen>
 
     <dimen name="dialog_corners">2dp</dimen>
