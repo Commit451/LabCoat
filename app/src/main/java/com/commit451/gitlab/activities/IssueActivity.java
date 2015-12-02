@@ -18,13 +18,13 @@ import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.IssueDetailsAdapter;
 import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.dialogs.NewIssueDialog;
 import com.commit451.gitlab.events.IssueChangedEvent;
 import com.commit451.gitlab.model.Issue;
 import com.commit451.gitlab.model.Note;
 import com.commit451.gitlab.model.Project;
 import com.commit451.gitlab.tools.IntentUtil;
 import com.commit451.gitlab.tools.KeyboardUtil;
+import com.commit451.gitlab.tools.NavigationManager;
 import com.squareup.otto.Subscribe;
 
 import org.parceler.Parcels;
@@ -69,7 +69,7 @@ public class IssueActivity extends BaseActivity {
 
     @OnClick(R.id.fab_edit_issue)
     public void onEditIssueClick() {
-        new NewIssueDialog(this, mProject, mIssue).show();
+        NavigationManager.navigateToEditIssue(IssueActivity.this, mProject, mIssue);
     }
 
     MenuItem mOpenCloseMenuItem;

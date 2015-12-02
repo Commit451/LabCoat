@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:onClick="dismiss">
+    android:layout_height="match_parent">
 
     <android.support.v7.widget.CardView
         style="@style/Card"
@@ -16,11 +16,12 @@
         android:layout_marginRight="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
+        android:foreground="@null"
+        android:clickable="true"
         android:transitionName="@string/transition_morph">
 
-
-
             <LinearLayout
+                android:id="@+id/input_root"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
@@ -91,7 +92,7 @@
 
             </LinearLayout>
 
-        <include layout="@layout/progress_fullscreen" />
+        <include layout="@layout/progress" />
 
     </android.support.v7.widget.CardView>
 

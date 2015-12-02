@@ -1,10 +1,12 @@
 package com.commit451.gitlab.tools;
 
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.commit451.gitlab.R;
@@ -20,6 +22,7 @@ import com.commit451.gitlab.activities.ProjectActivity;
 import com.commit451.gitlab.activities.ProjectsActivity;
 import com.commit451.gitlab.activities.SearchActivity;
 import com.commit451.gitlab.activities.UserActivity;
+import com.commit451.gitlab.dialogs.NewIssuePopupDialog;
 import com.commit451.gitlab.model.Group;
 import com.commit451.gitlab.model.Issue;
 import com.commit451.gitlab.model.MergeRequest;
@@ -93,5 +96,25 @@ public class NavigationManager {
 
     public static void navigateToAddUser(Activity activity, long projectId) {
         activity.startActivity(AddUserActivity.newInstance(activity, projectId));
+    }
+
+    public static void navigateToEditIssue(Activity activity, Project project, Issue issue) {
+        navigateToAddIssue(activity, null, project, issue);
+    }
+
+    public static void navigateToAddIssue(Activity activity, View fab, Project project) {
+        navigateToAddIssue(activity, fab, project, null);
+    }
+
+    private static void navigateToAddIssue(Activity activity, View fab, Project project, Issue issue) {
+        Intent intent = NewIssuePopupDialog.newIntent(activity, project, issue);
+        if (Build.VERSION.SDK_INT >= 21 && fab != null) {
+            ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation
+                    (activity, fab, activity.getString(R.string.transition_morph));
+            activity.startActivity(intent, options.toBundle());
+        } else {
+            activity.startActivity(intent);
+            activity.overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
+        }
     }
 }

@@ -107,6 +107,7 @@
     <string name="failed_to_load">Failed to load</string>
     <string name="just_now">Just now</string>
     <string name="no_project_members">No project members.</string>
+    <string name="failed_to_create_issue">Failed to create or modify issue</string>
 
     <!-- Overview -->
     <string name="no_readme_found">No README found for project</string>
