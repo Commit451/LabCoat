@@ -32,18 +32,18 @@ import timber.log.Timber;
 
 public class CommitsFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
 
-	public static CommitsFragment newInstance() {
-		return new CommitsFragment();
-	}
+    public static CommitsFragment newInstance() {
+        return new CommitsFragment();
+    }
 
-	@Bind(R.id.list) RecyclerView listView;
-	CommitsAdapter adapter;
+    @Bind(R.id.list) RecyclerView listView;
+    CommitsAdapter adapter;
     @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
     @Bind(R.id.message_text) View messageView;
 
     EventReceiver mEventReceiver;
-	Project mProject;
-	String mBranchName;
+    Project mProject;
+    String mBranchName;
 
     private final CommitsAdapter.Listener mCommitsAdapterListener = new CommitsAdapter.Listener() {
         @Override
@@ -52,29 +52,29 @@ public class CommitsFragment extends BaseFragment implements SwipeRefreshLayout.
         }
     };
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		adapter = new CommitsAdapter(mCommitsAdapterListener);
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        adapter = new CommitsAdapter(mCommitsAdapterListener);
         mEventReceiver = new EventReceiver();
-	}
+    }
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.fragment_commits, container, false);
-	}
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_commits, container, false);
+    }
 
-	@Override
-	public void onViewCreated(View view, Bundle savedInstanceState) {
-		super.onViewCreated(view, savedInstanceState);
-		ButterKnife.bind(this, view);
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        ButterKnife.bind(this, view);
 
         GitLabApp.bus().register(mEventReceiver);
-		listView.setLayoutManager(new LinearLayoutManager(getActivity()));
-		listView.setAdapter(adapter);
-		mSwipeRefreshLayout.setOnRefreshListener(this);
+        listView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        listView.setAdapter(adapter);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
         if (getActivity() instanceof ProjectActivity) {
-			mProject = ((ProjectActivity) getActivity()).getProject();
+            mProject = ((ProjectActivity) getActivity()).getProject();
             mBranchName = ((ProjectActivity) getActivity()).getBranchName();
             if (!TextUtils.isEmpty(mBranchName) && mProject != null) {
                 loadData();
@@ -82,77 +82,77 @@ public class CommitsFragment extends BaseFragment implements SwipeRefreshLayout.
         } else {
             throw new IllegalStateException("Incorrect parent activity");
         }
-	}
-
-	@Override
-	public void onDestroyView() {
-		super.onDestroyView();
-        GitLabApp.bus().unregister(mEventReceiver);
-        ButterKnife.unbind(this);
-	}
-	
-	@Override
-	public void onRefresh() {
-		loadData();
-	}
+    }
 
     @Override
-	protected void loadData() {
-		mSwipeRefreshLayout.post(new Runnable() {
-			@Override
-			public void run() {
-				if (mSwipeRefreshLayout != null) {
-					mSwipeRefreshLayout.setRefreshing(true);
-				}
-			}
-		});
-        GitLabClient.instance().getCommits(mProject.getId(), mBranchName).enqueue(commitsCallback);
-	}
+    public void onDestroyView() {
+        super.onDestroyView();
+        GitLabApp.bus().unregister(mEventReceiver);
+        ButterKnife.unbind(this);
+    }
 
-	public boolean onBackPressed() {
-		return false;
-	}
-	
-	private Callback<List<DiffLine>> commitsCallback = new Callback<List<DiffLine>>() {
+    @Override
+    public void onRefresh() {
+        loadData();
+    }
 
-
-		@Override
-		public void onResponse(Response<List<DiffLine>> response, Retrofit retrofit) {
-			if (getView() == null) {
-				return;
-			}
-            if (!response.isSuccess()) {
-                return;
+    @Override
+    protected void loadData() {
+        mSwipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                if (mSwipeRefreshLayout != null) {
+                    mSwipeRefreshLayout.setRefreshing(true);
+                }
             }
-			mSwipeRefreshLayout.setRefreshing(false);
+        });
+        GitLabClient.instance().getCommits(mProject.getId(), mBranchName).enqueue(commitsCallback);
+    }
 
-			if(response.body().size() > 0) {
-				messageView.setVisibility(View.GONE);
-			}
-			else {
-				Timber.d("No commits have been made");
-				messageView.setVisibility(View.VISIBLE);
-			}
-			adapter.setData(response.body());
-		}
+    public boolean onBackPressed() {
+        return false;
+    }
 
-		@Override
-		public void onFailure(Throwable t) {
+    private Callback<List<DiffLine>> commitsCallback = new Callback<List<DiffLine>>() {
+
+
+        @Override
+        public void onResponse(Response<List<DiffLine>> response, Retrofit retrofit) {
             if (getView() == null) {
                 return;
             }
-			Timber.e(t.toString());
+            if (!response.isSuccess()) {
+                return;
+            }
+            mSwipeRefreshLayout.setRefreshing(false);
 
-			if(mSwipeRefreshLayout != null && mSwipeRefreshLayout.isRefreshing()) {
-				mSwipeRefreshLayout.setRefreshing(false);
-			}
-			messageView.setVisibility(View.VISIBLE);
+            if(response.body().size() > 0) {
+                messageView.setVisibility(View.GONE);
+            }
+            else {
+                Timber.d("No commits have been made");
+                messageView.setVisibility(View.VISIBLE);
+            }
+            adapter.setData(response.body());
+        }
 
-			Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.connection_error_commits), Snackbar.LENGTH_SHORT)
-					.show();
-			adapter.setData(null);
-		}
-	};
+        @Override
+        public void onFailure(Throwable t) {
+            if (getView() == null) {
+                return;
+            }
+            Timber.e(t.toString());
+
+            if(mSwipeRefreshLayout != null && mSwipeRefreshLayout.isRefreshing()) {
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+            messageView.setVisibility(View.VISIBLE);
+
+            Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.connection_error_commits), Snackbar.LENGTH_SHORT)
+                    .show();
+            adapter.setData(null);
+        }
+    };
 
     private class EventReceiver {
 

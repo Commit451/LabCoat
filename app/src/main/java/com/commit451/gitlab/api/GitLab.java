@@ -43,8 +43,8 @@ public interface GitLab {
     @POST(API_VERSION + "/session")
     Call<Session> getSessionByEmail(@Field("email") String email,
                                     @Field("password") String password);
-	
-	/* --- MAIN --- */
+
+    /* --- MAIN --- */
 
     @GET(API_VERSION + "/groups?per_page=100")
     Call<List<Group>> getGroups();
@@ -64,7 +64,7 @@ public interface GitLab {
     @GET
     Call<List<Project>> getProjectsNextPage(@Url String url);
 
-	/* --- PROJECTS --- */
+    /* --- PROJECTS --- */
 
     @GET(API_VERSION + "/projects/{id}/repository/branches?per_page=100&order_by=last_activity_at")
     Call<List<Branch>> getBranches(@Path("id") long projectId);
@@ -100,8 +100,8 @@ public interface GitLab {
     Call<User> addProjectTeamMember(@Path("id") long projectId,
                                     @Field("user_id") long userId,
                                     @Field("access_level") String accessLevel);
-	
-	/* --- COMMITS --- */
+
+    /* --- COMMITS --- */
 
     @GET(API_VERSION + "/projects/{id}/repository/commits?per_page=100")
     Call<List<DiffLine>> getCommits(@Path("id") long projectId,
@@ -115,7 +115,7 @@ public interface GitLab {
     Call<List<Diff>> getCommitDiff(@Path("id") long projectId,
                                    @Path("sha") String commitSHA);
 
-	/* --- ISSUE --- */
+    /* --- ISSUE --- */
 
     @GET(API_VERSION + "/projects/{id}/issues?per_page=100")
     Call<List<Issue>> getIssues(@Path("id") long projectId,
@@ -147,8 +147,8 @@ public interface GitLab {
                             @Path("issue_id") long issueId,
                             @Query("title") String title,
                             @Query("description") String description);
-	
-	/* --- FILES --- */
+
+    /* --- FILES --- */
 
     @GET(API_VERSION + "/projects/{id}/repository/tree?per_page=100")
     Call<List<TreeItem>> getTree(@Path("id") long projectId,
@@ -159,7 +159,7 @@ public interface GitLab {
     Call<FileResponse> getFile(@Path("id") long projectId,
                                @Query("file_path") String path,
                                @Query("ref") String ref);
-	/* --- USER --- */
+    /* --- USER --- */
 
     @GET(API_VERSION + "/users/{id}")
     Call<User> getUser(@Path("id") long userId);

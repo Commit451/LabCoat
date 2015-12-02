@@ -45,22 +45,22 @@ import timber.log.Timber;
  */
 public class IssueActivity extends BaseActivity {
 
-	private static final String EXTRA_PROJECT = "extra_project";
-	private static final String EXTRA_SELECTED_ISSUE = "extra_selected_issue";
+    private static final String EXTRA_PROJECT = "extra_project";
+    private static final String EXTRA_SELECTED_ISSUE = "extra_selected_issue";
 
-	public static Intent newInstance(Context context, Project project, Issue issue) {
-		Intent intent = new Intent(context, IssueActivity.class);
-		intent.putExtra(EXTRA_PROJECT, Parcels.wrap(project));
-		intent.putExtra(EXTRA_SELECTED_ISSUE, Parcels.wrap(issue));
-		return intent;
-	}
+    public static Intent newInstance(Context context, Project project, Issue issue) {
+        Intent intent = new Intent(context, IssueActivity.class);
+        intent.putExtra(EXTRA_PROJECT, Parcels.wrap(project));
+        intent.putExtra(EXTRA_SELECTED_ISSUE, Parcels.wrap(issue));
+        return intent;
+    }
 
-	@Bind(R.id.toolbar) Toolbar mToolbar;
+    @Bind(R.id.toolbar) Toolbar mToolbar;
     @Bind(R.id.issue_title) TextView mIssueTitle;
-	@Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
-	@Bind(R.id.list) RecyclerView mListView;
-	@Bind(R.id.new_note_edit) EditText mNewNoteEdit;
-	@Bind(R.id.progress) View mProgress;
+    @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
+    @Bind(R.id.list) RecyclerView mListView;
+    @Bind(R.id.new_note_edit) EditText mNewNoteEdit;
+    @Bind(R.id.progress) View mProgress;
 
     @OnClick(R.id.new_note_button)
     public void onNewNoteClick() {
@@ -74,8 +74,8 @@ public class IssueActivity extends BaseActivity {
 
     MenuItem mOpenCloseMenuItem;
 
-	IssueDetailsAdapter mIssueDetailsAdapter;
-	Project mProject;
+    IssueDetailsAdapter mIssueDetailsAdapter;
+    Project mProject;
     Issue mIssue;
 
     EventReceiver mEventReceiver;
@@ -161,17 +161,17 @@ public class IssueActivity extends BaseActivity {
                     .show();
         }
     };
-	
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_issue);
-		ButterKnife.bind(this);
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_issue);
+        ButterKnife.bind(this);
         mEventReceiver = new EventReceiver();
         GitLabApp.bus().register(mEventReceiver);
 
-		mProject = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_PROJECT));
-		mIssue = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_SELECTED_ISSUE));
+        mProject = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_PROJECT));
+        mIssue = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_SELECTED_ISSUE));
 
         mToolbar.setNavigationIcon(R.drawable.ic_back_24dp);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -180,8 +180,8 @@ public class IssueActivity extends BaseActivity {
                 onBackPressed();
             }
         });
-		mToolbar.setSubtitle(mProject.getNameWithNamespace());
-		mToolbar.inflateMenu(R.menu.issue);
+        mToolbar.setSubtitle(mProject.getNameWithNamespace());
+        mToolbar.inflateMenu(R.menu.issue);
         mOpenCloseMenuItem = mToolbar.getMenu().findItem(R.id.action_close);
         mToolbar.setOnMenuItemClickListener(mOnMenuItemClickListener);
 
@@ -189,7 +189,7 @@ public class IssueActivity extends BaseActivity {
         mListView.setLayoutManager(new LinearLayoutManager(this));
         mListView.setAdapter(mIssueDetailsAdapter);
 
-		mNewNoteEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        mNewNoteEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 postNote();
@@ -229,26 +229,26 @@ public class IssueActivity extends BaseActivity {
                 }
             }
         });
-		mSwipeRefreshLayout.setRefreshing(true);
+        mSwipeRefreshLayout.setRefreshing(true);
         GitLabClient.instance().getIssueNotes(mProject.getId(), mIssue.getId()).enqueue(mNotesCallback);
-	}
+    }
 
-	private void postNote() {
-		String body = mNewNoteEdit.getText().toString();
+    private void postNote() {
+        String body = mNewNoteEdit.getText().toString();
 
-		if(body.length() < 1) {
-			return;
-		}
+        if(body.length() < 1) {
+            return;
+        }
 
-		mProgress.setVisibility(View.VISIBLE);
-		mProgress.setAlpha(0.0f);
-		mProgress.animate().alpha(1.0f);
-		// Clear text & collapse keyboard
+        mProgress.setVisibility(View.VISIBLE);
+        mProgress.setAlpha(0.0f);
+        mProgress.animate().alpha(1.0f);
+        // Clear text & collapse keyboard
         KeyboardUtil.hideKeyboard(this);
-		mNewNoteEdit.setText("");
+        mNewNoteEdit.setText("");
 
-		GitLabClient.instance().postIssueNote(mProject.getId(), mIssue.getId(), body).enqueue(mPostNoteCallback);
-	}
+        GitLabClient.instance().postIssueNote(mProject.getId(), mIssue.getId(), body).enqueue(mPostNoteCallback);
+    }
 
     private void closeIssue() {
         mProgress.setVisibility(View.VISIBLE);

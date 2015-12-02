@@ -7,32 +7,32 @@ import org.parceler.Parcel;
 @Parcel
 public class TreeItem {
 
-	public static final String TYPE_FOLDER = "tree";
-	public static final String TYPE_REPO = "submodule";
-	public static final String TYPE_FILE = "blob";
+    public static final String TYPE_FOLDER = "tree";
+    public static final String TYPE_REPO = "submodule";
+    public static final String TYPE_FILE = "blob";
 
-	String name;
-	String type;
-	long mode;
-	String id;
+    String name;
+    String type;
+    long mode;
+    String id;
 
-	public TreeItem(){}
-	
-	public String getName() {
-		return name;
-	}
-	
-	public String getType() {
-		return type;
-	}
-	
-	public long getMode() {
-		return mode;
-	}
-	
-	public String getId() {
-		return id;
-	}
+    public TreeItem(){}
+
+    public String getName() {
+        return name;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public long getMode() {
+        return mode;
+    }
+
+    public String getId() {
+        return id;
+    }
 
     public int getDrawableForType() {
         switch (type) {

@@ -13,12 +13,12 @@ import java.util.List;
 @Parcel
 public class Project {
 
-	@SerializedName("id")
-	long mId;
-	@SerializedName("description")
-	String mDescription;
-	@SerializedName("default_branch")
-	String mDefaultBranch;
+    @SerializedName("id")
+    long mId;
+    @SerializedName("description")
+    String mDescription;
+    @SerializedName("default_branch")
+    String mDefaultBranch;
     @SerializedName("public")
     Boolean mPublic;
     @SerializedName("visibility_level")
@@ -32,7 +32,7 @@ public class Project {
     @SerializedName("tag_list")
     List<String> mTagList;
     @SerializedName("owner")
-	User mOwner;
+    User mOwner;
     @SerializedName("name")
     String mName;
     @SerializedName("name_with_namespace")
@@ -66,7 +66,7 @@ public class Project {
     @SerializedName("forks_count")
     Integer mForksCount;
 
-	public Project(){}
+    public Project(){}
 
     public long getId() {
         return mId;

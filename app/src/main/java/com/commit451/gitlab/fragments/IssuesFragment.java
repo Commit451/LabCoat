@@ -39,29 +39,29 @@ import timber.log.Timber;
 
 public class IssuesFragment extends BaseFragment {
 
-	public static IssuesFragment newInstance() {
-		return new IssuesFragment();
-	}
+    public static IssuesFragment newInstance() {
+        return new IssuesFragment();
+    }
 
-	@Bind(R.id.issue_spinner) Spinner mSpinner;
-	@Bind(R.id.add_issue_button) View mAddIssueButton;
-	@Bind(R.id.list) RecyclerView mIssueRecyclerView;
+    @Bind(R.id.issue_spinner) Spinner mSpinner;
+    @Bind(R.id.add_issue_button) View mAddIssueButton;
+    @Bind(R.id.list) RecyclerView mIssueRecyclerView;
     @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
     @Bind(R.id.message_text) TextView mMessageTextView;
 
-	IssuesAdapter mIssuesAdapter;
-	EventReceiver mEventReceiver;
+    IssuesAdapter mIssuesAdapter;
+    EventReceiver mEventReceiver;
     Project mProject;
     @BindString(R.string.issue_opened)
     String mState;
     String[] mStates;
 
-	private final IssuesAdapter.Listener mIssuesAdapterListener = new IssuesAdapter.Listener() {
-		@Override
-		public void onIssueClicked(Issue issue) {
+    private final IssuesAdapter.Listener mIssuesAdapterListener = new IssuesAdapter.Listener() {
+        @Override
+        public void onIssueClicked(Issue issue) {
             NavigationManager.navigateToIssue(getActivity(), mProject, issue);
-		}
-	};
+        }
+    };
 
     private final SwipeRefreshLayout.OnRefreshListener mOnRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {
         @Override
@@ -81,7 +81,7 @@ public class IssuesFragment extends BaseFragment {
         public void onNothingSelected(AdapterView<?> parent) { }
     };
 
-	public IssuesFragment() {}
+    public IssuesFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -90,9 +90,9 @@ public class IssuesFragment extends BaseFragment {
     }
 
     @Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.fragment_issues, container, false);
-	}
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_issues, container, false);
+    }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -120,74 +120,74 @@ public class IssuesFragment extends BaseFragment {
     }
 
     @Override
-	public void onDestroyView() {
-		super.onDestroyView();
+    public void onDestroyView() {
+        super.onDestroyView();
         ButterKnife.unbind(this);
-		GitLabApp.bus().unregister(mEventReceiver);
+        GitLabApp.bus().unregister(mEventReceiver);
     }
-	
-	public void loadData() {
-        mMessageTextView.setVisibility(View.GONE);
-		mSwipeRefreshLayout.post(new Runnable() {
-			@Override
-			public void run() {
-				if (mSwipeRefreshLayout != null) {
-					mSwipeRefreshLayout.setRefreshing(true);
-				}
-			}
-		});
-		GitLabClient.instance().getIssues(mProject.getId(), mState).enqueue(mIssuesCallback);
-	}
-	
-	private Callback<List<Issue>> mIssuesCallback = new Callback<List<Issue>>() {
 
-		@Override
-		public void onResponse(Response<List<Issue>> response, Retrofit retrofit) {
-			if (getView() == null) {
+    public void loadData() {
+        mMessageTextView.setVisibility(View.GONE);
+        mSwipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                if (mSwipeRefreshLayout != null) {
+                    mSwipeRefreshLayout.setRefreshing(true);
+                }
+            }
+        });
+        GitLabClient.instance().getIssues(mProject.getId(), mState).enqueue(mIssuesCallback);
+    }
+
+    private Callback<List<Issue>> mIssuesCallback = new Callback<List<Issue>>() {
+
+        @Override
+        public void onResponse(Response<List<Issue>> response, Retrofit retrofit) {
+            if (getView() == null) {
                 return;
             }
             if (!response.isSuccess()) {
                 return;
             }
             mSwipeRefreshLayout.setRefreshing(false);
-			if (response.body().isEmpty()) {
+            if (response.body().isEmpty()) {
                 mMessageTextView.setVisibility(View.VISIBLE);
             }
 
             mIssuesAdapter.setIssues(response.body());
-		}
+        }
 
-		@Override
-		public void onFailure(Throwable t) {
-			Timber.e(t.toString());
+        @Override
+        public void onFailure(Throwable t) {
+            Timber.e(t.toString());
             if (getView() == null) {
                 return;
             }
 
-			if(mSwipeRefreshLayout != null && mSwipeRefreshLayout.isRefreshing()) {
-				mSwipeRefreshLayout.setRefreshing(false);
-			}
-			Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.connection_error_issues), Snackbar.LENGTH_SHORT)
-					.show();
-			mIssueRecyclerView.setAdapter(null);
-		}
-	};
-	
-	public boolean onBackPressed() {
-		return false;
-	}
+            if(mSwipeRefreshLayout != null && mSwipeRefreshLayout.isRefreshing()) {
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+            Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.connection_error_issues), Snackbar.LENGTH_SHORT)
+                    .show();
+            mIssueRecyclerView.setAdapter(null);
+        }
+    };
 
-	@OnClick(R.id.add_issue_button)
-	public void onAddIssueClick(View fab) {
+    public boolean onBackPressed() {
+        return false;
+    }
+
+    @OnClick(R.id.add_issue_button)
+    public void onAddIssueClick(View fab) {
         if (mProject != null) {
             NavigationManager.navigateToAddIssue(getActivity(), fab, mProject);
         } else {
             Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.wait_for_project_to_load), Snackbar.LENGTH_SHORT)
                     .show();
         }
-	}
+    }
 
-	private class EventReceiver {
+    private class EventReceiver {
 
         @Subscribe
         public void onReloadData(ProjectReloadEvent event) {
@@ -195,15 +195,15 @@ public class IssuesFragment extends BaseFragment {
             loadData();
         }
 
-		@Subscribe
-		public void onIssueAdded(IssueCreatedEvent event) {
-			mIssuesAdapter.addIssue(event.issue);
+        @Subscribe
+        public void onIssueAdded(IssueCreatedEvent event) {
+            mIssuesAdapter.addIssue(event.issue);
             mIssueRecyclerView.smoothScrollToPosition(0);
-		}
+        }
 
-		@Subscribe
-		public void onIssueChanged(IssueChangedEvent event) {
-			mIssuesAdapter.updateIssue(event.issue);
-		}
-	}
+        @Subscribe
+        public void onIssueChanged(IssueChangedEvent event) {
+            mIssuesAdapter.updateIssue(event.issue);
+        }
+    }
 }

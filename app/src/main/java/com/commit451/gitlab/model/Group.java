@@ -8,14 +8,14 @@ import java.util.List;
 
 @Parcel
 public class Group {
-	@SerializedName("id")
-	long mId;
-	@SerializedName("name")
+    @SerializedName("id")
+    long mId;
+    @SerializedName("name")
     String mName;
     @SerializedName("description")
     String mDescription;
     @SerializedName("path")
-	String mPath;
+    String mPath;
     @SerializedName("avatar_url")
     String mAvatarUrl;
     @SerializedName("web_url")
@@ -23,23 +23,23 @@ public class Group {
     @SerializedName("projects")
     List<Project> mProjects;
 
-	public Group(){}
-	
-	public long getId() {
-		return mId;
-	}
-	
-	public String getName() {
-		return mName;
-	}
+    public Group(){}
+
+    public long getId() {
+        return mId;
+    }
+
+    public String getName() {
+        return mName;
+    }
 
     public String getDescription() {
         return mDescription;
     }
 
     public String getPath() {
-		return mPath;
-	}
+        return mPath;
+    }
 
     public String getAvatarUrl() {
         return mAvatarUrl;

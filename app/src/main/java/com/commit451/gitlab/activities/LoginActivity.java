@@ -49,36 +49,36 @@ import timber.log.Timber;
 
 public class LoginActivity extends BaseActivity {
 
-	private static final int PERMISSION_REQUEST_GET_ACCOUNTS = 1337;
+    private static final int PERMISSION_REQUEST_GET_ACCOUNTS = 1337;
 
-	public static Intent newInstance(Context context) {
-		Intent intent = new Intent(context, LoginActivity.class);
-		return intent;
-	}
+    public static Intent newInstance(Context context) {
+        Intent intent = new Intent(context, LoginActivity.class);
+        return intent;
+    }
 
     @Bind(R.id.root) View mRoot;
     @Bind(R.id.url_hint) TextInputLayout mUrlHint;
-	@Bind(R.id.url_input) TextView mUrlInput;
+    @Bind(R.id.url_input) TextView mUrlInput;
     @Bind(R.id.user_input_hint) TextInputLayout mUserHint;
-	@Bind(R.id.user_input) EmailAutoCompleteTextView mUserInput;
+    @Bind(R.id.user_input) EmailAutoCompleteTextView mUserInput;
     @Bind(R.id.password_hint) TextInputLayout mPasswordHint;
-	@Bind(R.id.password_input) TextView mPasswordInput;
+    @Bind(R.id.password_input) TextView mPasswordInput;
     @Bind(R.id.token_hint) TextInputLayout mTokenHint;
-	@Bind(R.id.token_input) TextView mTokenInput;
-	@Bind(R.id.normal_login) View mNormalLogin;
-	@Bind(R.id.token_login) View mTokenLogin;
-	@Bind(R.id.progress) View mProgress;
-	
-	private boolean mIsNormalLogin = true;
+    @Bind(R.id.token_input) TextView mTokenInput;
+    @Bind(R.id.normal_login) View mNormalLogin;
+    @Bind(R.id.token_login) View mTokenLogin;
+    @Bind(R.id.progress) View mProgress;
+
+    private boolean mIsNormalLogin = true;
     private Pattern mUrlPattern = Patterns.WEB_URL;
 
-	private final TextView.OnEditorActionListener onEditorActionListener = new TextView.OnEditorActionListener() {
-		@Override
-		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-			onLoginClick();
-			return true;
-		}
-	};
+    private final TextView.OnEditorActionListener onEditorActionListener = new TextView.OnEditorActionListener() {
+        @Override
+        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+            onLoginClick();
+            return true;
+        }
+    };
 
     @OnClick(R.id.show_normal_link)
     public void showNormalLogin(TextView loginTypeTextView) {
@@ -181,13 +181,13 @@ public class LoginActivity extends BaseActivity {
         }
     };
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_login);
-		ButterKnife.bind(this);
-		mPasswordInput.setOnEditorActionListener(onEditorActionListener);
-		mTokenInput.setOnEditorActionListener(onEditorActionListener);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_login);
+        ButterKnife.bind(this);
+        mPasswordInput.setOnEditorActionListener(onEditorActionListener);
+        mTokenInput.setOnEditorActionListener(onEditorActionListener);
         mUserInput.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -198,7 +198,7 @@ public class LoginActivity extends BaseActivity {
         });
 
         CustomTrustManager.setTrustedCertificates(Prefs.getTrustedCertificates(this));
-	}
+    }
 
     @TargetApi(23)
     private void checkAccountPermission() {
@@ -227,41 +227,41 @@ public class LoginActivity extends BaseActivity {
         return pos;
     }
 
-	@Override
-	public void onBackPressed() {
-		moveTaskToBack(true);
-	}
-	
-	private void connect(boolean byAuth) {
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
+    }
+
+    private void connect(boolean byAuth) {
         mProgress.setVisibility(View.VISIBLE);
         mProgress.setAlpha(0.0f);
         mProgress.animate().alpha(1.0f);
 
-		Prefs.setPrivateToken(this, "");
-		Prefs.setLoggedIn(this, false);
-		Prefs.setServerUrl(this, mUrlInput.getText().toString());
-		
-		if(byAuth) {
+        Prefs.setPrivateToken(this, "");
+        Prefs.setLoggedIn(this, false);
+        Prefs.setServerUrl(this, mUrlInput.getText().toString());
+
+        if(byAuth) {
             connectByAuth();
         }
-		else {
+        else {
             connectByToken();
         }
-	}
-	
-	private void connectByAuth() {
-		if(mUserInput.getText().toString().contains("@")) {
+    }
+
+    private void connectByAuth() {
+        if(mUserInput.getText().toString().contains("@")) {
             GitLabClient.instance().getSessionByEmail(mUserInput.getText().toString(), mPasswordInput.getText().toString()).enqueue(mSessionCallback);
         }
-		else {
+        else {
             GitLabClient.instance().getSessionByUsername(mUserInput.getText().toString(), mPasswordInput.getText().toString()).enqueue(mSessionCallback);
         }
-	}
-	
-	private void connectByToken() {
-		Prefs.setPrivateToken(this, mTokenInput.getText().toString());
-		GitLabClient.instance().getUser().enqueue(mTestUserCallback);
-	}
+    }
+
+    private void connectByToken() {
+        Prefs.setPrivateToken(this, mTokenInput.getText().toString());
+        GitLabClient.instance().getUser().enqueue(mTestUserCallback);
+    }
 
     private void handleConnectionError(Throwable e) {
         Timber.e(e.toString());
@@ -309,7 +309,7 @@ public class LoginActivity extends BaseActivity {
         } else {
             Snackbar.make(mRoot, getString(R.string.login_error), Snackbar.LENGTH_LONG)
                     .show();
-		}
+        }
     }
 
     private void handleConnectionResponse(int responseCode) {

@@ -12,10 +12,10 @@ import java.util.Date;
 @Parcel
 public class Issue {
 
-	@StringDef({STATE_REOPEN, STATE_CLOSE})
-	@Retention(RetentionPolicy.SOURCE)
-	public @interface State {}
-	public static final String STATE_REOPENED = "reopened";
+    @StringDef({STATE_REOPEN, STATE_CLOSE})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface State {}
+    public static final String STATE_REOPENED = "reopened";
     public static final String STATE_CLOSED = "closed";
     public static final String STATE_ACTIVE = "active";
     public static final String STATE_OPENED = "opened";
@@ -28,82 +28,82 @@ public class Issue {
 
 
     @SerializedName("id")
-	long id;
+    long id;
     @SerializedName("iid")
-	long iid;
+    long iid;
     @SerializedName("project_id")
-	long project_id;
+    long project_id;
     @SerializedName("title")
-	String title;
+    String title;
     @SerializedName("description")
-	String description;
+    String description;
     @SerializedName("labels")
-	String[] labels;
+    String[] labels;
     @SerializedName("milestone")
-	Milestone milestone;
+    Milestone milestone;
     @SerializedName("assignee")
-	User assignee;
+    User assignee;
     @SerializedName("author")
-	User author;
+    User author;
     @SerializedName("state")
-	String state;
+    String state;
     @SerializedName("updated_at")
-	Date updated_at;
+    Date updated_at;
     @SerializedName("created_at")
-	Date created_at;
+    Date created_at;
 
-	public Issue(){}
-	
-	public long getId() {
-		return id;
-	}
-	
-	public long getIid() {
-		return iid;
-	}
-	
-	public long getProjectId() {
-		return project_id;
-	}
-	
-	public String getTitle() {
-		return title;
-	}
-	
-	public String getDescription() {
-		return description;
-	}
-	
-	public String[] getLabels() {
-		return labels;
-	}
-	
-	public Milestone getMilestone() {
-		return milestone;
-	}
-	
-	public User getAssignee() {
-		return assignee;
-	}
-	
-	public User getAuthor() {
-		return author;
-	}
+    public Issue(){}
+
+    public long getId() {
+        return id;
+    }
+
+    public long getIid() {
+        return iid;
+    }
+
+    public long getProjectId() {
+        return project_id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String[] getLabels() {
+        return labels;
+    }
+
+    public Milestone getMilestone() {
+        return milestone;
+    }
+
+    public User getAssignee() {
+        return assignee;
+    }
+
+    public User getAuthor() {
+        return author;
+    }
 
     @State
-	public String getState() {
+    public String getState() {
         return state;
-	}
-	
-	public Date getUpdatedAt() {
-		return updated_at;
-	}
-	
-	public Date getCreatedAt() {
-		return created_at;
-	}
+    }
 
-	public String getUrl(Project project) {
-		return project.getWebUrl() + "/issues/" + getId();
-	}
+    public Date getUpdatedAt() {
+        return updated_at;
+    }
+
+    public Date getCreatedAt() {
+        return created_at;
+    }
+
+    public String getUrl(Project project) {
+        return project.getWebUrl() + "/issues/" + getId();
+    }
 }

@@ -7,22 +7,22 @@ import java.util.Date;
 public class Session {
 
     long id;
-	String username;
-	String email;
-	String name;
-	String private_token;
-	boolean blocked;
+    String username;
+    String email;
+    String name;
+    String private_token;
+    boolean blocked;
     Date created_at;
-	String bio;
-	String skype;
-	String linkedin;
-	String twitter;
-	boolean dark_scheme;
-	long theme_id;
-	boolean is_admin;
+    String bio;
+    String skype;
+    String linkedin;
+    String twitter;
+    boolean dark_scheme;
+    long theme_id;
+    boolean is_admin;
     boolean can_create_group;
-	boolean can_create_team;
-	boolean can_create_project;
+    boolean can_create_team;
+    boolean can_create_project;
 
     public Session(){}
 

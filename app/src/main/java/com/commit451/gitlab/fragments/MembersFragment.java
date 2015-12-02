@@ -47,58 +47,58 @@ public class MembersFragment extends BaseFragment implements SwipeRefreshLayout.
     }
 
     @Bind(R.id.add_user_button) View mAddUserButton;
-	@Bind(R.id.list) RecyclerView mRecyclerView;
+    @Bind(R.id.list) RecyclerView mRecyclerView;
     MemberAdapter mAdapter;
-	@Bind(R.id.error_text) TextView mErrorText;
+    @Bind(R.id.error_text) TextView mErrorText;
     @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
 
     Project mProject;
-	EventReceiver mEventReceiver;
+    EventReceiver mEventReceiver;
 
-	private final Callback<List<User>> usersCallback = new Callback<List<User>>() {
+    private final Callback<List<User>> usersCallback = new Callback<List<User>>() {
 
-		@Override
-		public void onResponse(Response<List<User>> response, Retrofit retrofit) {
-			if (getView() == null) {
-				return;
-			}
+        @Override
+        public void onResponse(Response<List<User>> response, Retrofit retrofit) {
+            if (getView() == null) {
+                return;
+            }
             if (!response.isSuccess()) {
                 return;
             }
-			mSwipeRefreshLayout.setRefreshing(false);
+            mSwipeRefreshLayout.setRefreshing(false);
             if (response.body().isEmpty()) {
                 mErrorText.setText(R.string.no_project_members);
                 mErrorText.setVisibility(View.VISIBLE);
             } else {
                 mErrorText.setVisibility(View.GONE);
             }
-			mAddUserButton.setVisibility(View.VISIBLE);
+            mAddUserButton.setVisibility(View.VISIBLE);
 
-			mAdapter.setData(response.body());
+            mAdapter.setData(response.body());
 
-			mAddUserButton.setEnabled(true);
-		}
+            mAddUserButton.setEnabled(true);
+        }
 
-		@Override
-		public void onFailure(Throwable t) {
-			if (getView() == null) {
-				return;
-			}
-			mSwipeRefreshLayout.setRefreshing(false);
+        @Override
+        public void onFailure(Throwable t) {
+            if (getView() == null) {
+                return;
+            }
+            mSwipeRefreshLayout.setRefreshing(false);
             mErrorText.setText(R.string.connection_error);
-			mErrorText.setVisibility(View.VISIBLE);
-			mAddUserButton.setVisibility(View.GONE);
-			Timber.e(t.toString());
-			Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.connection_error_users), Snackbar.LENGTH_SHORT)
-					.show();
-		}
-	};
+            mErrorText.setVisibility(View.VISIBLE);
+            mAddUserButton.setVisibility(View.GONE);
+            Timber.e(t.toString());
+            Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.connection_error_users), Snackbar.LENGTH_SHORT)
+                    .show();
+        }
+    };
 
-	public MembersFragment() {}
-	
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.fragment_members, container, false);
+    public MembersFragment() {}
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_members, container, false);
         ButterKnife.bind(this, view);
 
         mAdapter = new MemberAdapter(new MemberAdapter.Listener() {
@@ -107,69 +107,69 @@ public class MembersFragment extends BaseFragment implements SwipeRefreshLayout.
                 NavigationManager.navigateToUser(getActivity(), memberViewHolder.image, user);
             }
         });
-		mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setAdapter(mAdapter);
         mSwipeRefreshLayout.setOnRefreshListener(this);
 
-		mEventReceiver = new EventReceiver();
-		GitLabApp.bus().register(mEventReceiver);
+        mEventReceiver = new EventReceiver();
+        GitLabApp.bus().register(mEventReceiver);
 
-		if (getActivity() instanceof ProjectActivity) {
-			mProject = ((ProjectActivity) getActivity()).getProject();
-			if (mProject != null) {
-				loadData();
-			}
-		} else {
-			throw new IllegalStateException("Incorrect parent activity");
-		}
+        if (getActivity() instanceof ProjectActivity) {
+            mProject = ((ProjectActivity) getActivity()).getProject();
+            if (mProject != null) {
+                loadData();
+            }
+        } else {
+            throw new IllegalStateException("Incorrect parent activity");
+        }
 
-		return view;
-	}
-	
-	@Override
-	public void onDestroyView() {
-		super.onDestroyView();
-		ButterKnife.unbind(this);
-		GitLabApp.bus().unregister(mEventReceiver);
-	}
-	
-	@Override
-	public void onRefresh() {
-		loadData();
-	}
-	
-	public void loadData() {
-		mSwipeRefreshLayout.post(new Runnable() {
+        return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
+        GitLabApp.bus().unregister(mEventReceiver);
+    }
+
+    @Override
+    public void onRefresh() {
+        loadData();
+    }
+
+    public void loadData() {
+        mSwipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
                 mSwipeRefreshLayout.setRefreshing(true);
             }
         });
         GitLabClient.instance().getProjectTeamMembers(mProject.getId()).enqueue(usersCallback);
-	}
-	
-	public boolean onBackPressed() {
-		return false;
-	}
-	
-	@OnClick(R.id.add_user_button)
-	public void onAddUserClick() {
-		NavigationManager.navigateToAddUser(getActivity(), mProject.getId());
-	}
+    }
 
-	private class EventReceiver {
+    public boolean onBackPressed() {
+        return false;
+    }
 
-		@Subscribe
-		public void onProjectChanged(ProjectReloadEvent event) {
+    @OnClick(R.id.add_user_button)
+    public void onAddUserClick() {
+        NavigationManager.navigateToAddUser(getActivity(), mProject.getId());
+    }
+
+    private class EventReceiver {
+
+        @Subscribe
+        public void onProjectChanged(ProjectReloadEvent event) {
             mProject = event.project;
-			loadData();
-		}
+            loadData();
+        }
 
-		@Subscribe
-		public void onUserAdded(UserAddedEvent event) {
-			if (mAdapter != null) {
-				mAdapter.addUser(event.user);
-			}
-		}
-	}
+        @Subscribe
+        public void onUserAdded(UserAddedEvent event) {
+            if (mAdapter != null) {
+                mAdapter.addUser(event.user);
+            }
+        }
+    }
 }

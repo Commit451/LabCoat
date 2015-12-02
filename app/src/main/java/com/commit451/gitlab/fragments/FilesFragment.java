@@ -39,19 +39,19 @@ import timber.log.Timber;
 
 public class FilesFragment extends BaseFragment {
 
-	public static FilesFragment newInstance() {
-		Bundle args = new Bundle();
-		FilesFragment fragment = new FilesFragment();
-		fragment.setArguments(args);
-		return fragment;
-	}
+    public static FilesFragment newInstance() {
+        Bundle args = new Bundle();
+        FilesFragment fragment = new FilesFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
 
-	@Bind(R.id.error_text) TextView mErrorText;
+    @Bind(R.id.error_text) TextView mErrorText;
     @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
-	@Bind(R.id.list) RecyclerView mFilesList;
-	@Bind(R.id.breadcrumb) RecyclerView mBreadcrumbList;
+    @Bind(R.id.list) RecyclerView mFilesList;
+    @Bind(R.id.breadcrumb) RecyclerView mBreadcrumbList;
 
-	EventReceiver mEventReceiver;
+    EventReceiver mEventReceiver;
     Project mProject;
     String mBranchName;
     FilesAdapter mFilesAdapter;
@@ -102,46 +102,46 @@ public class FilesFragment extends BaseFragment {
         }
     };
 
-	private Callback<List<TreeItem>> mFilesCallback = new Callback<List<TreeItem>>() {
+    private Callback<List<TreeItem>> mFilesCallback = new Callback<List<TreeItem>>() {
 
-		@Override
-		public void onResponse(Response<List<TreeItem>> response, Retrofit retrofit) {
+        @Override
+        public void onResponse(Response<List<TreeItem>> response, Retrofit retrofit) {
             if (getView() == null) {
                 return;
             }
             mSwipeRefreshLayout.setRefreshing(false);
-			if (!response.isSuccess()) {
+            if (!response.isSuccess()) {
                 mBreadcrumbAdapter.clear();
                 mFilesAdapter.clear();
                 mErrorText.setVisibility(View.VISIBLE);
-				return;
-			}
-			if (response.body().isEmpty()) {
+                return;
+            }
+            if (response.body().isEmpty()) {
                 mFilesAdapter.clear();
                 mErrorText.setVisibility(View.VISIBLE);
-			} else {
+            } else {
                 mFilesList.setVisibility(View.VISIBLE);
                 mFilesAdapter.setData(response.body());
                 mErrorText.setVisibility(View.GONE);
-			}
-		}
+            }
+        }
 
-		@Override
-		public void onFailure(Throwable t) {
+        @Override
+        public void onFailure(Throwable t) {
             Timber.e(t.toString());
             if (getView() == null) {
                 return;
             }
             mSwipeRefreshLayout.setRefreshing(false);
-			Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.connection_error_files), Snackbar.LENGTH_SHORT)
-					.show();
-		}
-	};
+            Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.connection_error_files), Snackbar.LENGTH_SHORT)
+                    .show();
+        }
+    };
 
     @Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.fragment_files, container, false);
-	}
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_files, container, false);
+    }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -177,44 +177,44 @@ public class FilesFragment extends BaseFragment {
     }
 
     @Override
-	public void onDestroyView() {
-		super.onDestroyView();
+    public void onDestroyView() {
+        super.onDestroyView();
         GitLabApp.bus().unregister(mEventReceiver);
         ButterKnife.unbind(this);
-	}
+    }
 
-	@Override
-	protected void loadData() {
-		mSwipeRefreshLayout.post(new Runnable() {
-			@Override
-			public void run() {
-				if (mSwipeRefreshLayout != null) {
-					mSwipeRefreshLayout.setRefreshing(true);
-				}
-			}
-		});
+    @Override
+    protected void loadData() {
+        mSwipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                if (mSwipeRefreshLayout != null) {
+                    mSwipeRefreshLayout.setRefreshing(true);
+                }
+            }
+        });
 
         GitLabClient.instance().getTree(mProject.getId(), mBranchName, mBreadcrumbAdapter.getCurrentPath()).enqueue(mFilesCallback);
     }
-	
-	public boolean onBackPressed() {
-//		if(mPath.size() > 0) {
+
+    public boolean onBackPressed() {
+//        if(mPath.size() > 0) {
 //            mPath.remove(mPath.size() - 1);
 //            loadData();
-//			return true;
-//		}
+//            return true;
+//        }
 //
-		return false;
-	}
+        return false;
+    }
 
-	private class EventReceiver {
+    private class EventReceiver {
 
-		@Subscribe
-		public void onLoadReady(ProjectReloadEvent event) {
+        @Subscribe
+        public void onLoadReady(ProjectReloadEvent event) {
             mBreadcrumbAdapter.clear();
             mProject = event.project;
             mBranchName = event.branchName;
-			loadData();
-		}
-	}
+            loadData();
+        }
+    }
 }
