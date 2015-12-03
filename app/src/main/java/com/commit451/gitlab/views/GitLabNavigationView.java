@@ -91,7 +91,7 @@ public class GitLabNavigationView extends NavigationView {
 
         @Override
         public void onFailure(Throwable t) {
-            Timber.e(t.toString());
+            Timber.e(t, null);
         }
     };
 

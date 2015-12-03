@@ -95,11 +95,11 @@ public class UsersFragment extends BaseFragment {
 
         @Override
         public void onFailure(Throwable t) {
+            Timber.e(t, null);
             if (getView() == null) {
                 return;
             }
             mMessageText.setVisibility(View.VISIBLE);
-            Timber.e(t.toString());
             Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.connection_error_users), Snackbar.LENGTH_SHORT)
                     .show();
         }

@@ -128,7 +128,7 @@ public class FilesFragment extends BaseFragment {
 
         @Override
         public void onFailure(Throwable t) {
-            Timber.e(t.toString());
+            Timber.e(t, null);
             if (getView() == null) {
                 return;
             }

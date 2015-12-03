@@ -102,10 +102,10 @@ public class UserActivity extends BaseActivity {
 
         @Override
         public void onFailure(Throwable t) {
+            Timber.e(t, null);
             mProgress.setVisibility(View.GONE);
             mMessageView.setVisibility(View.VISIBLE);
             mMessageView.setText(R.string.connection_error);
-            Timber.e(t.toString());
         }
     };
 

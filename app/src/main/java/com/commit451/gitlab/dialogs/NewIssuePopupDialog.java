@@ -178,7 +178,7 @@ public class NewIssuePopupDialog extends BaseActivity {
 
         @Override
         public void onFailure(Throwable t) {
-            Timber.e(t.toString());
+            Timber.e(t, null);
             showLayout();
             Toast.makeText(NewIssuePopupDialog.this, getString(R.string.connection_error), Toast.LENGTH_SHORT)
                     .show();

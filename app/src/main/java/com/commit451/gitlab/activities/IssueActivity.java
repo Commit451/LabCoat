@@ -110,7 +110,7 @@ public class IssueActivity extends BaseActivity {
 
         @Override
         public void onFailure(Throwable t) {
-            Timber.e(t.toString());
+            Timber.e(t, null);
             mSwipeRefreshLayout.setRefreshing(false);
             Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
                     .show();
@@ -134,7 +134,7 @@ public class IssueActivity extends BaseActivity {
 
         @Override
         public void onFailure(Throwable t) {
-            Timber.e(t.toString());
+            Timber.e(t, null);
             mProgress.setVisibility(View.GONE);
             Snackbar.make(getWindow().getDecorView(), getString(R.string.error_changing_issue), Snackbar.LENGTH_SHORT)
                     .show();
@@ -155,7 +155,7 @@ public class IssueActivity extends BaseActivity {
 
         @Override
         public void onFailure(Throwable t) {
-            Timber.e(t.toString());
+            Timber.e(t, null);
             mProgress.setVisibility(View.GONE);
             Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
                     .show();

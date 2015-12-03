@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import in.uncod.android.bypass.Bypass;
+import timber.log.Timber;
 
 // credits: http://stackoverflow.com/a/25530488/504611
 public class PicassoImageGetter implements Bypass.ImageGetter {
@@ -66,7 +67,7 @@ public class PicassoImageGetter implements Bypass.ImageGetter {
 
                     textView.setText(textView.getText()); // invalidate() doesn't work correctly...
                 } catch (Exception e) {
-                    /* nom nom nom */
+                    Timber.e(e, null);
                 }
             }
 

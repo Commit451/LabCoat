@@ -103,8 +103,8 @@ public class ProjectActivity extends BaseActivity {
 
         @Override
         public void onFailure(Throwable t) {
+            Timber.e(t, null);
             mProgress.setVisibility(View.GONE);
-            Timber.e(t.toString());
             Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
                     .show();
         }

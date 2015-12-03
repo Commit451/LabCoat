@@ -95,7 +95,7 @@ public class DiffActivity extends BaseActivity {
 
         @Override
         public void onFailure(Throwable t) {
-            Timber.e(t.toString());
+            Timber.e(t, null);
             Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
                     .show();
         }
@@ -114,7 +114,7 @@ public class DiffActivity extends BaseActivity {
 
         @Override
         public void onFailure(Throwable t) {
-            Timber.e(t.toString());
+            Timber.e(t, null);
             Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
                     .show();
         }

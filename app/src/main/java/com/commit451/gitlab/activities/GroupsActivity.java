@@ -66,7 +66,7 @@ public class GroupsActivity extends BaseActivity {
 
         @Override
         public void onFailure(Throwable t) {
-            Timber.e(t.toString());
+            Timber.e(t, null);
             mMessageText.setVisibility(View.VISIBLE);
             mMessageText.setText(R.string.connection_error);
         }

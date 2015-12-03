@@ -1,5 +1,6 @@
 package com.commit451.gitlab.activities;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -21,7 +22,7 @@ import com.commit451.gitlab.model.FileResponse;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -63,7 +64,6 @@ public class FileActivity extends BaseActivity {
                 return;
             }
             progress.setVisibility(View.GONE);
-            String text = getString(R.string.file_load_error);
             // Receiving side
             mFileName = response.body().getFileName();
             mBlob = Base64.decode(response.body().getContent(), Base64.DEFAULT);
@@ -82,12 +82,7 @@ public class FileActivity extends BaseActivity {
                 content = "<!DOCTYPE html><html><head><link href=\"github.css\" rel=\"stylesheet\" /></head><body><img style=\"width: 100%;\" src=\"" + imageURL + "\"></body></html>";
             }
             else {
-                try {
-                    text = new String(mBlob, "UTF-8");
-                }
-                catch (UnsupportedEncodingException e) {
-                    Timber.e(e.toString());
-                }
+                String text = new String(mBlob, Charset.forName("UTF-8"));
 
                 content = "<!DOCTYPE html><html><head><link href=\"github.css\" rel=\"stylesheet\" /></head><body><pre><code>" + Html.escapeHtml(text) + "</code></pre><script src=\"highlight.pack.js\"></script><script>hljs.initHighlightingOnLoad();</script></body></html>";
             }
@@ -99,6 +94,7 @@ public class FileActivity extends BaseActivity {
 
         @Override
         public void onFailure(Throwable t) {
+            Timber.e(t, null);
             progress.setVisibility(View.GONE);
             Snackbar.make(getWindow().getDecorView(), R.string.file_load_error, Snackbar.LENGTH_SHORT)
                     .show();
@@ -166,6 +162,7 @@ public class FileActivity extends BaseActivity {
                 return newFile;
             }
             catch(IOException e) {
+                Timber.e(e, null);
                 Snackbar.make(getWindow().getDecorView(), getString(R.string.save_error), Snackbar.LENGTH_SHORT)
                         .show();
             }
@@ -203,7 +200,8 @@ public class FileActivity extends BaseActivity {
         try {
             startActivity(newIntent);
         }
-        catch(android.content.ActivityNotFoundException e) {
+        catch(ActivityNotFoundException e) {
+            Timber.e(e, null);
             Snackbar.make(getWindow().getDecorView(), getString(R.string.open_error), Snackbar.LENGTH_SHORT)
                     .show();
         }

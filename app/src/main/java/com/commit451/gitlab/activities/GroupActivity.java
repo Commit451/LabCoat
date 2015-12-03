@@ -38,6 +38,7 @@ import butterknife.OnClick;
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
+import timber.log.Timber;
 
 /**
  * See the things about the group
@@ -103,6 +104,7 @@ public class GroupActivity extends BaseActivity {
 
         @Override
         public void onFailure(Throwable t) {
+            Timber.e(t, null);
             mProgress.setVisibility(View.GONE);
             showMessage(R.string.connection_error);
         }

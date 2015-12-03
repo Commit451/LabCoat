@@ -89,9 +89,9 @@ public class AboutActivity extends BaseActivity {
 
         @Override
         public void onFailure(Throwable t) {
+            Timber.e(t, null);
             Snackbar.make(getWindow().getDecorView(), R.string.failed_to_load_contributors, Snackbar.LENGTH_SHORT)
                     .show();
-            Timber.e(t.toString());
         }
     };
 

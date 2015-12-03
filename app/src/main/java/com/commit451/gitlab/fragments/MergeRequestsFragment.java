@@ -33,6 +33,7 @@ import butterknife.ButterKnife;
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
+import timber.log.Timber;
 
 /**
  * Merge all the requests!
@@ -103,10 +104,13 @@ public class MergeRequestsFragment extends BaseFragment {
 
         @Override
         public void onFailure(Throwable t) {
-            if (getView() != null) {
-                mSwipeRefreshLayout.setRefreshing(false);
-                Snackbar.make(getView(), R.string.connection_error, Snackbar.LENGTH_SHORT).show();
+            Timber.e(t, null);
+            if (getView() == null) {
+                return;
             }
+
+            mSwipeRefreshLayout.setRefreshing(false);
+            Snackbar.make(getView(), R.string.connection_error, Snackbar.LENGTH_SHORT).show();
         }
     };
 

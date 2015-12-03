@@ -99,7 +99,7 @@ public class AddUserActivity extends BaseActivity {
 
         @Override
         public void onFailure(Throwable t) {
-            Timber.e(t.toString());
+            Timber.e(t, null);
             Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error_users), Snackbar.LENGTH_SHORT)
                     .show();
         }
@@ -147,7 +147,7 @@ public class AddUserActivity extends BaseActivity {
 
         @Override
         public void onFailure(Throwable t) {
-            Timber.e(t.toString());
+            Timber.e(t, null);
         }
     };
 

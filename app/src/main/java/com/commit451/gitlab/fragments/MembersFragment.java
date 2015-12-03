@@ -81,14 +81,15 @@ public class MembersFragment extends BaseFragment implements SwipeRefreshLayout.
 
         @Override
         public void onFailure(Throwable t) {
+            Timber.e(t, null);
             if (getView() == null) {
                 return;
             }
+
             mSwipeRefreshLayout.setRefreshing(false);
             mErrorText.setText(R.string.connection_error);
             mErrorText.setVisibility(View.VISIBLE);
             mAddUserButton.setVisibility(View.GONE);
-            Timber.e(t.toString());
             Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.connection_error_users), Snackbar.LENGTH_SHORT)
                     .show();
         }

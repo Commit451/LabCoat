@@ -3,6 +3,7 @@ package com.commit451.gitlab;
 import android.app.Application;
 
 import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.core.CrashlyticsCore;
 import com.squareup.otto.Bus;
 
 import net.danlew.android.joda.JodaTimeAndroid;
@@ -16,28 +17,33 @@ import timber.log.Timber;
  */
 public class GitLabApp extends Application {
 
-    private static Bus bus;
+    private static Bus sBus;
     public static Bus bus() {
-        if (bus == null) {
-            bus = new Bus();
+        if (sBus == null) {
+            sBus = new Bus();
         }
-        return bus;
+        return sBus;
     }
 
-    private static GitLabApp instance;
+    private static GitLabApp sInstance;
     public static GitLabApp instance() {
-        return instance;
+        return sInstance;
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
-        instance = this;
+        sInstance = this;
+
+        CrashlyticsCore core = new CrashlyticsCore.Builder()
+                .disabled(BuildConfig.DEBUG)
+                .build();
+        Fabric.with(this, new Crashlytics.Builder().core(core).build());
+
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
-        } else {
-            Fabric.with(this, new Crashlytics());
         }
+
         JodaTimeAndroid.init(this);
     }
 }

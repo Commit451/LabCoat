@@ -154,6 +154,7 @@ public class LoginActivity extends BaseActivity {
 
         @Override
         public void onFailure(Throwable t) {
+            Timber.e(t, null);
             handleConnectionError(t);
         }
     };
@@ -172,7 +173,7 @@ public class LoginActivity extends BaseActivity {
 
         @Override
         public void onFailure(Throwable t) {
-            Timber.e(t.toString());
+            Timber.e(t, null);
             Snackbar.make(mRoot, getString(R.string.login_error), Snackbar.LENGTH_LONG)
                     .show();
         }
@@ -258,17 +259,15 @@ public class LoginActivity extends BaseActivity {
         GitLabClient.instance().getUser().enqueue(mTestUserCallback);
     }
 
-    private void handleConnectionError(Throwable e) {
-        Timber.e(e.toString());
-
+    private void handleConnectionError(Throwable t) {
         mProgress.setVisibility(View.GONE);
 
-        if(e instanceof SSLHandshakeException && e.getCause() instanceof X509CertificateException) {
+        if(t instanceof SSLHandshakeException && t.getCause() instanceof X509CertificateException) {
             String fingerprint = null;
             try {
-                fingerprint = X509Util.getFingerPrint(((X509CertificateException) e.getCause()).getChain()[0]);
-            } catch (CertificateEncodingException ex) {
-                Timber.e(e.toString());
+                fingerprint = X509Util.getFingerPrint(((X509CertificateException) t.getCause()).getChain()[0]);
+            } catch (CertificateEncodingException e) {
+                Timber.e(e, null);
             }
             final String finalFingerprint = fingerprint;
 

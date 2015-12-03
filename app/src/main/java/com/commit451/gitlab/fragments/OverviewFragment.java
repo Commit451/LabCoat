@@ -23,7 +23,7 @@ import com.commit451.gitlab.tools.PicassoImageGetter;
 import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.List;
 
 import butterknife.Bind;
@@ -81,10 +81,13 @@ public class OverviewFragment extends BaseFragment {
 
         @Override
         public void onFailure(Throwable t) {
-            if (getView() != null) {
-                mSwipeRefreshLayout.setRefreshing(false);
-                showError(getString(R.string.failed_to_load));
+            Timber.e(t, null);
+            if (getView() == null) {
+                return;
             }
+
+            mSwipeRefreshLayout.setRefreshing(false);
+            showError(getString(R.string.failed_to_load));
         }
     };
 
@@ -99,19 +102,15 @@ public class OverviewFragment extends BaseFragment {
                 showError(getString(R.string.no_readme_found));
                 return;
             }
-            try {
-                String text = new String(Base64.decode(response.body().getContent(), Base64.DEFAULT), "UTF-8");
-                mOverview.setText(mBypass.markdownToSpannable(text,
-                        new PicassoImageGetter(mOverview, getResources(), Picasso.with(getActivity()))));
-            } catch (UnsupportedEncodingException e) {
-                Timber.e(e.toString());
-                showError(getString(R.string.failed_to_load));
-            }
 
+            String text = new String(Base64.decode(response.body().getContent(), Base64.DEFAULT), Charset.forName("UTF-8"));
+            mOverview.setText(mBypass.markdownToSpannable(text,
+                    new PicassoImageGetter(mOverview, getResources(), Picasso.with(getActivity()))));
         }
 
         @Override
         public void onFailure(Throwable t) {
+            Timber.e(t, null);
             if (getView() == null) {
                 return;
             }

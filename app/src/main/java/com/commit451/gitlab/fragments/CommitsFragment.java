@@ -138,10 +138,10 @@ public class CommitsFragment extends BaseFragment implements SwipeRefreshLayout.
 
         @Override
         public void onFailure(Throwable t) {
+            Timber.e(t, null);
             if (getView() == null) {
                 return;
             }
-            Timber.e(t.toString());
 
             if(mSwipeRefreshLayout != null && mSwipeRefreshLayout.isRefreshing()) {
                 mSwipeRefreshLayout.setRefreshing(false);
