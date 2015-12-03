@@ -52,7 +52,7 @@ public class IssueHeaderViewHolder extends RecyclerView.ViewHolder {
 
         if (issue.getAuthor() != null) {
             Picasso.with(itemView.getContext())
-                    .load(ImageUtil.getGravatarUrl(issue.getAuthor(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size)))
+                    .load(ImageUtil.getAvatarUrl(issue.getAuthor(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size)))
                     .into(authorImage);
             author.setText(issue.getAuthor().getName() + " "
                     + itemView.getResources().getString(R.string.created_issue) + " "

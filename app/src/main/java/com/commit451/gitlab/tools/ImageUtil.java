@@ -12,22 +12,28 @@ import fr.tkeunebr.gravatar.Gravatar;
  */
 public class ImageUtil {
 
-    public static String getGravatarUrl(User user, int size) {
+    public static String getAvatarUrl(User user, int size) {
         if (user == null) {
-            return getGravatarUrl("", size);
+            return getAvatarUrl("", size);
         }
-        if (user.getAvatarUrl() != null) {
-            return user.getAvatarUrl() + "&s=" + size;
-        }
-        return getGravatarUrl(user.getEmail(), size);
 
+        String avatarUrl = user.getAvatarUrl();
+        if (!TextUtils.isEmpty(avatarUrl)) {
+            if (avatarUrl.contains("?")) {
+                return avatarUrl + "&s=" + size;
+            } else {
+                return avatarUrl + "?s=" + size;
+            }
+        }
+
+        return getAvatarUrl(user.getEmail(), size);
     }
 
-    public static String getGravatarUrl(String email, int size) {
-        if(!TextUtils.isEmpty(email)) {
-            return Gravatar.init().with(email).size(size).build();
+    public static String getAvatarUrl(String email, int size) {
+        if (!TextUtils.isEmpty(email)) {
+            return Gravatar.init().with(email).size(size).defaultImage(Gravatar.DefaultImage.IDENTICON).build();
         }
 
-        return "http://www.gravatar.com/avatar/00000000000000000000000000000000?s=" + size;
+        return "http://www.gravatar.com/avatar/00000000000000000000000000000000?d=identicon&f=y&s=" + size;
     }
 }

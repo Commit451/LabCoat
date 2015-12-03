@@ -38,7 +38,7 @@ public class MergeRequestViewHolder extends RecyclerView.ViewHolder {
 
     public void bind(MergeRequest item) {
         Picasso.with(itemView.getContext())
-                .load(ImageUtil.getGravatarUrl(item.getAuthor(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size)))
+                .load(ImageUtil.getAvatarUrl(item.getAuthor(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size)))
                 .into(image);
         if (item.getAuthor() != null && item.getAuthor().getUsername() != null) {
             author.setText(item.getAuthor().getUsername());

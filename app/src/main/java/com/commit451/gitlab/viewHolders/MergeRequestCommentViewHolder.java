@@ -51,7 +51,7 @@ public class MergeRequestCommentViewHolder extends RecyclerView.ViewHolder{
         summary.setText(bypass.markdownToSpannable(temp));
         summary.setMovementMethod(LinkMovementMethod.getInstance());
 
-        String imageUrl = ImageUtil.getGravatarUrl(comment.getAuthor(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size));
+        String imageUrl = ImageUtil.getAvatarUrl(comment.getAuthor(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size));
         Picasso.with(itemView.getContext()).load(imageUrl).into(icon);
     }
 }

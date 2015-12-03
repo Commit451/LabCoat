@@ -56,7 +56,7 @@ public class NoteViewHolder extends RecyclerView.ViewHolder{
         summary.setText(bypass.markdownToSpannable(temp));
         summary.setMovementMethod(LinkMovementMethod.getInstance());
 
-        String imageUrl = ImageUtil.getGravatarUrl(note.getAuthor(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size));
+        String imageUrl = ImageUtil.getAvatarUrl(note.getAuthor(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size));
         Picasso.with(itemView.getContext()).load(imageUrl).into(icon);
     }
 }

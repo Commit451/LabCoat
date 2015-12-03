@@ -157,7 +157,8 @@ public class AboutActivity extends BaseActivity {
                 x = 0;
                 y = (y + imageSize) % physicsLayout.getHeight();
             }
-            String url = ImageUtil.getGravatarUrl(contributor.getEmail(), imageSize);
+
+            String url = ImageUtil.getAvatarUrl(contributor.getEmail(), imageSize);
             Picasso.with(this)
                     .load(url)
                     .into(imageView);

@@ -130,7 +130,7 @@ public class UserActivity extends BaseActivity {
             }
         });
         mToolbar.setTitle(mUser.getUsername());
-        String url = ImageUtil.getGravatarUrl(mUser, getResources().getDimensionPixelSize(R.dimen.user_header_image_size));
+        String url = ImageUtil.getAvatarUrl(mUser, getResources().getDimensionPixelSize(R.dimen.user_header_image_size));
         Picasso.with(this)
                 .load(url)
                 .into(mImageLoadTarget);

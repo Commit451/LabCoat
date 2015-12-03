@@ -148,7 +148,7 @@ public class GitLabNavigationView extends NavigationView {
         if (user.getEmail() != null) {
             userEmail.setText(user.getEmail());
         }
-        String url = ImageUtil.getGravatarUrl(user, getResources().getDimensionPixelSize(R.dimen.larger_image_size));
+        String url = ImageUtil.getAvatarUrl(user, getResources().getDimensionPixelSize(R.dimen.larger_image_size));
         Picasso.with(getContext())
                 .load(url)
                 .into(profileImage);

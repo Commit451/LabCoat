@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.User;
+import com.commit451.gitlab.tools.ImageUtil;
 import com.squareup.picasso.Picasso;
 
 import butterknife.Bind;
@@ -50,17 +51,7 @@ public class MemberViewHolder extends RecyclerView.ViewHolder {
             role.setVisibility(View.GONE);
         }
 
-        int size = itemView.getResources().getDimensionPixelSize(R.dimen.image_size);
-
-        String url = "http://www.gravatar.com/avatar/00000000000000000000000000000000?s=" + size;
-
-        if(user.getEmail() != null) {
-            url = Gravatar.init().with(user.getEmail()).size(size).build();
-        }
-        else if(user.getAvatarUrl() != null) {
-            url = user.getAvatarUrl() + "&s=" + size;
-        }
-
+        String url = ImageUtil.getAvatarUrl(user, itemView.getResources().getDimensionPixelSize(R.dimen.image_size));
         Picasso.with(itemView.getContext())
                 .load(url)
                 .into(image);
