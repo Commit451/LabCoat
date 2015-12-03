@@ -85,7 +85,7 @@ public class FilesFragment extends BaseFragment {
             ClipboardManager clipboard = (ClipboardManager)
                     getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
             // Creates a new text clip to put on the clipboard
-            ClipData clip = ClipData.newPlainText(treeItem.getName(), treeItem.getUrl(mProject, mBranchName, mBreadcrumbAdapter.getCurrentPath()));
+            ClipData clip = ClipData.newPlainText(treeItem.getName(), treeItem.getUrl(mProject, mBranchName, mBreadcrumbAdapter.getCurrentPath()).toString());
             clipboard.setPrimaryClip(clip);
             Toast.makeText(getActivity(), R.string.copied_to_clipboard, Toast.LENGTH_SHORT)
                     .show();

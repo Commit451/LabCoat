@@ -1,6 +1,7 @@
 package com.commit451.gitlab.viewHolders;
 
 import android.graphics.Color;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -42,7 +43,7 @@ public class ProjectViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(Project project, int color) {
-        if (TextUtils.isEmpty(project.getAvatarUrl())) {
+        if (project.getAvatarUrl() == null || project.getAvatarUrl().equals(Uri.EMPTY)) {
             image.setVisibility(View.GONE);
             icon.setVisibility(View.VISIBLE);
             icon.setLetter(project.getName().substring(0, 1));

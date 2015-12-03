@@ -4,6 +4,8 @@ import com.google.gson.annotations.SerializedName;
 
 import org.parceler.Parcel;
 
+import android.net.Uri;
+
 import java.util.Date;
 @Parcel
 public class User {
@@ -15,7 +17,7 @@ public class User {
     @SerializedName("email")
     String email;
     @SerializedName("avatar_url")
-    String avatar_url;
+    Uri avatar_url;
     @SerializedName("name")
     String name;
     @SerializedName("blocked")
@@ -37,7 +39,7 @@ public class User {
 
     public String getEmail() { return email; }
 
-    public String getAvatarUrl() {
+    public Uri getAvatarUrl() {
         return avatar_url;
     }
 

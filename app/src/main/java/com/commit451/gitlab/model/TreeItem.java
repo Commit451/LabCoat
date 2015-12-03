@@ -4,6 +4,8 @@ import com.commit451.gitlab.R;
 
 import org.parceler.Parcel;
 
+import android.net.Uri;
+
 @Parcel
 public class TreeItem {
 
@@ -46,8 +48,12 @@ public class TreeItem {
         return R.drawable.ic_file_24dp;
     }
 
-    public String getUrl(Project project, String branchName, String currentPath) {
-        String path = "/" + currentPath;
-        return project.getWebUrl() + "/tree/" + branchName + path + name;
+    public Uri getUrl(Project project, String branchName, String currentPath) {
+        return project.getWebUrl().buildUpon()
+                .appendPath("tree")
+                .appendPath(branchName)
+                .appendEncodedPath(currentPath)
+                .appendPath(name)
+                .build();
     }
 }

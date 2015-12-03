@@ -4,6 +4,8 @@ import com.google.gson.annotations.SerializedName;
 
 import org.parceler.Parcel;
 
+import android.net.Uri;
+
 import java.util.List;
 
 @Parcel
@@ -17,9 +19,9 @@ public class Group {
     @SerializedName("path")
     String mPath;
     @SerializedName("avatar_url")
-    String mAvatarUrl;
+    Uri mAvatarUrl;
     @SerializedName("web_url")
-    String mWebUrl;
+    Uri mWebUrl;
     @SerializedName("projects")
     List<Project> mProjects;
 
@@ -41,11 +43,11 @@ public class Group {
         return mPath;
     }
 
-    public String getAvatarUrl() {
+    public Uri getAvatarUrl() {
         return mAvatarUrl;
     }
 
-    public String getWebUrl() {
+    public Uri getWebUrl() {
         return mWebUrl;
     }
 

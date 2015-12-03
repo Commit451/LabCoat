@@ -1,5 +1,6 @@
 package com.commit451.gitlab.viewHolders;
 
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,7 +52,7 @@ public class MemberViewHolder extends RecyclerView.ViewHolder {
             role.setVisibility(View.GONE);
         }
 
-        String url = ImageUtil.getAvatarUrl(user, itemView.getResources().getDimensionPixelSize(R.dimen.image_size));
+        Uri url = ImageUtil.getAvatarUrl(user, itemView.getResources().getDimensionPixelSize(R.dimen.image_size));
         Picasso.with(itemView.getContext())
                 .load(url)
                 .into(image);

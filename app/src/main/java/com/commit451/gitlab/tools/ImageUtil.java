@@ -1,5 +1,6 @@
 package com.commit451.gitlab.tools;
 
+import android.net.Uri;
 import android.text.TextUtils;
 
 import com.commit451.gitlab.model.User;
@@ -11,29 +12,32 @@ import fr.tkeunebr.gravatar.Gravatar;
  * Created by Jawn on 9/20/2015.
  */
 public class ImageUtil {
+    private static Gravatar sGravatar;
 
-    public static String getAvatarUrl(User user, int size) {
+    public static Uri getAvatarUrl(User user, int size) {
         if (user == null) {
             return getAvatarUrl("", size);
         }
 
-        String avatarUrl = user.getAvatarUrl();
-        if (!TextUtils.isEmpty(avatarUrl)) {
-            if (avatarUrl.contains("?")) {
-                return avatarUrl + "&s=" + size;
-            } else {
-                return avatarUrl + "?s=" + size;
-            }
+        Uri avatarUrl = user.getAvatarUrl();
+        if (avatarUrl != null && !avatarUrl.equals(Uri.EMPTY)) {
+            return avatarUrl.buildUpon()
+                    .appendQueryParameter("s", Integer.toString(size))
+                    .build();
         }
 
         return getAvatarUrl(user.getEmail(), size);
     }
 
-    public static String getAvatarUrl(String email, int size) {
-        if (!TextUtils.isEmpty(email)) {
-            return Gravatar.init().with(email).size(size).defaultImage(Gravatar.DefaultImage.IDENTICON).build();
+    public static Uri getAvatarUrl(String email, int size) {
+        if (sGravatar == null) {
+            sGravatar = new Gravatar.Builder().ssl().build();
         }
 
-        return "http://www.gravatar.com/avatar/00000000000000000000000000000000?d=identicon&f=y&s=" + size;
+        if (!TextUtils.isEmpty(email)) {
+            return Uri.parse(sGravatar.with(email).size(size).defaultImage(Gravatar.DefaultImage.IDENTICON).build());
+        }
+
+        return Uri.parse("https://secure.gravatar.com/avatar/00000000000000000000000000000000?d=identicon&f=y&s=" + size);
     }
 }

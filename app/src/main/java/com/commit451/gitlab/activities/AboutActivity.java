@@ -7,6 +7,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
@@ -57,7 +58,7 @@ public class AboutActivity extends BaseActivity {
     @Bind(R.id.physics_layout) PhysicsFrameLayout physicsLayout;
     @OnClick(R.id.sauce)
     void onSauceClick() {
-        IntentUtil.openPage(root, getString(R.string.source_url));
+        IntentUtil.openPage(root, Uri.parse(getString(R.string.source_url)));
     }
 
     SensorManager sensorManager;
@@ -158,7 +159,7 @@ public class AboutActivity extends BaseActivity {
                 y = (y + imageSize) % physicsLayout.getHeight();
             }
 
-            String url = ImageUtil.getAvatarUrl(contributor.getEmail(), imageSize);
+            Uri url = ImageUtil.getAvatarUrl(contributor.getEmail(), imageSize);
             Picasso.with(this)
                     .load(url)
                     .into(imageView);

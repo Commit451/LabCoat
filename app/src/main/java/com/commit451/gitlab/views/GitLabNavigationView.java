@@ -2,6 +2,7 @@ package com.commit451.gitlab.views;
 
 import android.app.Activity;
 import android.content.Context;
+import android.net.Uri;
 import android.support.design.widget.NavigationView;
 import android.util.AttributeSet;
 import android.view.MenuItem;
@@ -148,7 +149,7 @@ public class GitLabNavigationView extends NavigationView {
         if (user.getEmail() != null) {
             userEmail.setText(user.getEmail());
         }
-        String url = ImageUtil.getAvatarUrl(user, getResources().getDimensionPixelSize(R.dimen.larger_image_size));
+        Uri url = ImageUtil.getAvatarUrl(user, getResources().getDimensionPixelSize(R.dimen.larger_image_size));
         Picasso.with(getContext())
                 .load(url)
                 .into(profileImage);

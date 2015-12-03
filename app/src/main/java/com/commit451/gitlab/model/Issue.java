@@ -1,5 +1,6 @@
 package com.commit451.gitlab.model;
 
+import android.net.Uri;
 import android.support.annotation.StringDef;
 
 import com.google.gson.annotations.SerializedName;
@@ -103,7 +104,10 @@ public class Issue {
         return created_at;
     }
 
-    public String getUrl(Project project) {
-        return project.getWebUrl() + "/issues/" + getId();
+    public Uri getUrl(Project project) {
+        return project.getWebUrl().buildUpon()
+                .appendPath("issues")
+                .appendPath(Long.toString(getId()))
+                .build();
     }
 }

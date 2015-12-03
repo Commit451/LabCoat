@@ -1,5 +1,6 @@
 package com.commit451.gitlab.viewHolders;
 
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,7 +38,7 @@ public class UserViewHolder extends RecyclerView.ViewHolder {
 
     public void bind(User user) {
         username.setText(user.getUsername());
-        String url = ImageUtil.getAvatarUrl(user, itemView.getResources().getDimensionPixelSize(R.dimen.user_list_image_size));
+        Uri url = ImageUtil.getAvatarUrl(user, itemView.getResources().getDimensionPixelSize(R.dimen.user_list_image_size));
         Picasso.with(itemView.getContext())
                 .load(url)
                 .into(image);

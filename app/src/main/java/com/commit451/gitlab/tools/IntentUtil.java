@@ -14,9 +14,9 @@ import com.commit451.gitlab.R;
  */
 public class IntentUtil {
 
-    public static void openPage(View root, String url) {
+    public static void openPage(View root, Uri url) {
         Intent i = new Intent(Intent.ACTION_VIEW);
-        i.setData(Uri.parse(url));
+        i.setData(url);
         try {
             root.getContext().startActivity(i);
         } catch (ActivityNotFoundException e) {
@@ -25,10 +25,10 @@ public class IntentUtil {
         }
     }
 
-    public static void share(View root, String url) {
+    public static void share(View root, Uri url) {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_TEXT, url);
+        shareIntent.putExtra(Intent.EXTRA_TEXT, url.toString());
         try {
             root.getContext().startActivity(shareIntent);
         } catch (ActivityNotFoundException e) {

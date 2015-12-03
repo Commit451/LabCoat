@@ -4,6 +4,8 @@ import com.google.gson.annotations.SerializedName;
 
 import org.parceler.Parcel;
 
+import android.net.Uri;
+
 import java.util.Date;
 import java.util.List;
 
@@ -28,7 +30,7 @@ public class Project {
     @SerializedName("http_url_to_repo")
     String mHttpUrlToRepo;
     @SerializedName("web_url")
-    String mWebUrl;
+    Uri mWebUrl;
     @SerializedName("tag_list")
     List<String> mTagList;
     @SerializedName("owner")
@@ -60,7 +62,7 @@ public class Project {
     @SerializedName("archived")
     Boolean mArchived;
     @SerializedName("avatar_url")
-    String mAvatarUrl;
+    Uri mAvatarUrl;
     @SerializedName("star_count")
     Integer mStarCount;
     @SerializedName("forks_count")
@@ -96,7 +98,7 @@ public class Project {
         return mHttpUrlToRepo;
     }
 
-    public String getWebUrl() {
+    public Uri getWebUrl() {
         return mWebUrl;
     }
 
@@ -160,7 +162,7 @@ public class Project {
         return mArchived;
     }
 
-    public String getAvatarUrl() {
+    public Uri getAvatarUrl() {
         return mAvatarUrl;
     }
 

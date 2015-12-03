@@ -13,6 +13,9 @@ import com.google.gson.JsonParseException;
 import com.squareup.okhttp.OkHttpClient;
 
 import org.joda.time.format.ISODateTimeFormat;
+import org.simpleframework.xml.core.Persister;
+
+import android.net.Uri;
 
 import java.lang.reflect.Type;
 import java.util.Date;
@@ -41,12 +44,15 @@ public class GitLabClient {
                     return ISODateTimeFormat.dateTimeParser().parseDateTime(json.getAsString()).toDate();
                 }
             });
+            gsonBuilder.registerTypeAdapter(Uri.class, UriConverter.getDeserializer());
             Gson gson = gsonBuilder.create();
 
             OkHttpClient client = new OkHttpClient();
             client.setSslSocketFactory(sCustomTrustManager.getSSLSocketFactory());
             client.interceptors().add(new ApiKeyRequestInterceptor());
-            client.interceptors().add(new TimberRequestInterceptor());
+            if (BuildConfig.DEBUG) {
+                client.networkInterceptors().add(new TimberRequestInterceptor());
+            }
 
             Retrofit restAdapter = new Retrofit.Builder()
                     .baseUrl(Prefs.getServerUrl(GitLabApp.instance()))
@@ -69,16 +75,18 @@ public class GitLabClient {
 
             Retrofit restAdapter = new Retrofit.Builder()
                     .baseUrl(Prefs.getServerUrl(GitLabApp.instance()))
-                    .addConverterFactory(SimpleXmlConverterFactory.create())
+                    .addConverterFactory(SimpleXmlConverterFactory.create(new Persister(UriConverter.getMatcher())))
                     .client(client)
                     .build();
             sGitLabRss = restAdapter.create(GitLabRss.class);
         }
+
         return sGitLabRss;
     }
 
     public static void reset() {
         sGitLab = null;
+        sGitLabRss = null;
     }
 
     public static void setTrustedCertificate(String trustedCertificate) {

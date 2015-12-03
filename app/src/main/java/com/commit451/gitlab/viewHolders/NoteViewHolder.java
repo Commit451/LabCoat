@@ -1,5 +1,6 @@
 package com.commit451.gitlab.viewHolders;
 
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
@@ -56,7 +57,7 @@ public class NoteViewHolder extends RecyclerView.ViewHolder{
         summary.setText(bypass.markdownToSpannable(temp));
         summary.setMovementMethod(LinkMovementMethod.getInstance());
 
-        String imageUrl = ImageUtil.getAvatarUrl(note.getAuthor(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size));
+        Uri imageUrl = ImageUtil.getAvatarUrl(note.getAuthor(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size));
         Picasso.with(itemView.getContext()).load(imageUrl).into(icon);
     }
 }

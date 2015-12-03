@@ -1,5 +1,6 @@
 package com.commit451.gitlab.viewHolders;
 
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,7 +50,7 @@ public class IssueViewHolder extends RecyclerView.ViewHolder {
         CharSequence time = DateUtils.getRelativeTimeSpanString(itemView.getContext(), issue.getCreatedAt());
         creator.setText(String.format(itemView.getContext().getString(R.string.created_time), time, issue.getAuthor().getUsername()));
 
-        String url = ImageUtil.getAvatarUrl(issue.getAssignee(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size));
+        Uri url = ImageUtil.getAvatarUrl(issue.getAssignee(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size));
         Picasso.with(itemView.getContext()).load(url).into(image);
     }
 }
