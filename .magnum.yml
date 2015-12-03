@@ -1,4 +1,5 @@
 before_script:
+  - export TERM=dumb
   - sudo apt-get -q -y update
   - sudo apt-get -q -y install wget tar openjdk-7-jdk lib32stdc++6 lib32z1
   - wget -q http://dl.google.com/android/android-sdk_r24.4.1-linux.tgz
@@ -9,4 +10,4 @@ before_script:
   - ./prepare-build.sh
 
 script:
-  - ./gradlew build -x fabricGenerateResourcesRelease
+  - ./gradlew build -x fabricGenerateResourcesRelease --stacktrace
