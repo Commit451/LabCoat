@@ -2,6 +2,7 @@ before_script:
   - export TERM=dumb
   - sudo apt-get -q -y update
   - sudo apt-get -q -y install wget tar openjdk-7-jdk lib32stdc++6 lib32z1
+  - java -Djava.awt.headless=true
   - wget -q http://dl.google.com/android/android-sdk_r24.4.1-linux.tgz
   - tar xzf android-sdk_r24.4.1-linux.tgz
   - echo y | android-sdk-linux/tools/android --silent update sdk --no-ui --all --filter tools,platform-tools,build-tools-23.0.2,android-23,extra-android-m2repository
