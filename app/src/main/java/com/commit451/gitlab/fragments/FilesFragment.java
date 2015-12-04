@@ -22,12 +22,14 @@ import com.commit451.gitlab.adapter.BreadcrumbAdapter;
 import com.commit451.gitlab.adapter.FilesAdapter;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.events.ProjectReloadEvent;
+import com.commit451.gitlab.model.Breadcrumb;
 import com.commit451.gitlab.model.Project;
 import com.commit451.gitlab.model.TreeItem;
 import com.commit451.gitlab.tools.IntentUtil;
 import com.commit451.gitlab.tools.NavigationManager;
 import com.squareup.otto.Subscribe;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -56,28 +58,19 @@ public class FilesFragment extends BaseFragment {
     String mBranchName;
     FilesAdapter mFilesAdapter;
     BreadcrumbAdapter mBreadcrumbAdapter;
-
-    private BreadcrumbAdapter.Listener mBreadcrumbAdapterListener = new BreadcrumbAdapter.Listener() {
-        @Override
-        public void onBreadcrumbClicked() {
-            loadData();
-        }
-    };
+    String mCurrentPath = "";
 
     private FilesAdapter.Listener mFilesAdapterListener = new FilesAdapter.Listener() {
 
         @Override
         public void onFolderClicked(TreeItem treeItem) {
-            mBreadcrumbAdapter.addBreadcrumb(treeItem.getName());
-            mBreadcrumbList.scrollToPosition(mBreadcrumbAdapter.getItemCount() - 1);
-            loadData();
+            loadData(mCurrentPath + treeItem.getName() + "/");
         }
 
         @Override
         public void onFileClicked(TreeItem treeItem) {
-            String pathExtra = mBreadcrumbAdapter.getCurrentPath();
-            pathExtra = pathExtra + treeItem.getName();
-            NavigationManager.navigateToFile(getActivity(), mProject.getId(), pathExtra, mBranchName);
+            String path = mCurrentPath + treeItem.getName();
+            NavigationManager.navigateToFile(getActivity(), mProject.getId(), path, mBranchName);
         }
 
         @Override
@@ -85,7 +78,7 @@ public class FilesFragment extends BaseFragment {
             ClipboardManager clipboard = (ClipboardManager)
                     getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
             // Creates a new text clip to put on the clipboard
-            ClipData clip = ClipData.newPlainText(treeItem.getName(), treeItem.getUrl(mProject, mBranchName, mBreadcrumbAdapter.getCurrentPath()).toString());
+            ClipData clip = ClipData.newPlainText(treeItem.getName(), treeItem.getUrl(mProject, mBranchName, mCurrentPath).toString());
             clipboard.setPrimaryClip(clip);
             Toast.makeText(getActivity(), R.string.copied_to_clipboard, Toast.LENGTH_SHORT)
                     .show();
@@ -93,16 +86,21 @@ public class FilesFragment extends BaseFragment {
 
         @Override
         public void onShareClicked(TreeItem treeItem){
-            IntentUtil.share(getView(), treeItem.getUrl(mProject, mBranchName, mBreadcrumbAdapter.getCurrentPath()));
+            IntentUtil.share(getView(), treeItem.getUrl(mProject, mBranchName, mCurrentPath));
         }
 
         @Override
         public void onOpenInBrowserClicked(TreeItem treeItem){
-            IntentUtil.openPage(getView(), treeItem.getUrl(mProject, mBranchName, mBreadcrumbAdapter.getCurrentPath()));
+            IntentUtil.openPage(getView(), treeItem.getUrl(mProject, mBranchName, mCurrentPath));
         }
     };
 
-    private Callback<List<TreeItem>> mFilesCallback = new Callback<List<TreeItem>>() {
+    private class FilesCallback implements Callback<List<TreeItem>> {
+        String newPath;
+
+        public FilesCallback(String newPath) {
+            this.newPath = newPath;
+        }
 
         @Override
         public void onResponse(Response<List<TreeItem>> response, Retrofit retrofit) {
@@ -111,7 +109,6 @@ public class FilesFragment extends BaseFragment {
             }
             mSwipeRefreshLayout.setRefreshing(false);
             if (!response.isSuccess()) {
-                mBreadcrumbAdapter.clear();
                 mFilesAdapter.clear();
                 mErrorText.setVisibility(View.VISIBLE);
                 return;
@@ -123,6 +120,9 @@ public class FilesFragment extends BaseFragment {
                 mFilesList.setVisibility(View.VISIBLE);
                 mFilesAdapter.setData(response.body());
                 mErrorText.setVisibility(View.GONE);
+
+                mCurrentPath = newPath;
+                updateBreadcrumbs();
             }
         }
 
@@ -136,7 +136,7 @@ public class FilesFragment extends BaseFragment {
             Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.connection_error_files), Snackbar.LENGTH_SHORT)
                     .show();
         }
-    };
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -151,7 +151,7 @@ public class FilesFragment extends BaseFragment {
         mFilesAdapter = new FilesAdapter(mFilesAdapterListener);
         mFilesList.setAdapter(mFilesAdapter);
         mFilesList.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mBreadcrumbAdapter = new BreadcrumbAdapter(mBreadcrumbAdapterListener);
+        mBreadcrumbAdapter = new BreadcrumbAdapter();
         mBreadcrumbList.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
         mBreadcrumbList.setAdapter(mBreadcrumbAdapter);
 
@@ -169,7 +169,7 @@ public class FilesFragment extends BaseFragment {
             mProject = ((ProjectActivity) getActivity()).getProject();
             mBranchName = ((ProjectActivity) getActivity()).getBranchName();
             if (!TextUtils.isEmpty(mBranchName) && mProject != null) {
-                loadData();
+                loadData("");
             }
         } else {
             throw new IllegalStateException("Incorrect parent activity");
@@ -185,6 +185,10 @@ public class FilesFragment extends BaseFragment {
 
     @Override
     protected void loadData() {
+        loadData(mCurrentPath);
+    }
+
+    public void loadData(String newPath) {
         mSwipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
@@ -194,27 +198,61 @@ public class FilesFragment extends BaseFragment {
             }
         });
 
-        GitLabClient.instance().getTree(mProject.getId(), mBranchName, mBreadcrumbAdapter.getCurrentPath()).enqueue(mFilesCallback);
+        GitLabClient.instance().getTree(mProject.getId(), mBranchName, newPath).enqueue(new FilesCallback(newPath));
     }
 
     public boolean onBackPressed() {
-//        if(mPath.size() > 0) {
-//            mPath.remove(mPath.size() - 1);
-//            loadData();
-//            return true;
-//        }
-//
+        if (mBreadcrumbAdapter.getItemCount() > 1) {
+            Breadcrumb breadcrumb = mBreadcrumbAdapter.getValueAt(mBreadcrumbAdapter.getItemCount() - 2);
+            if (breadcrumb != null && breadcrumb.getListener() != null) {
+                breadcrumb.getListener().onClick();
+                return true;
+            }
+        }
+
         return false;
+    }
+
+    private void updateBreadcrumbs() {
+        List<Breadcrumb> breadcrumbs = new ArrayList<>();
+        breadcrumbs.add(new Breadcrumb("ROOT", new Breadcrumb.Listener() {
+            @Override
+            public void onClick() {
+                loadData("");
+            }
+        }));
+
+        String newPath = "";
+
+        String[] segments = mCurrentPath.split("/");
+        for (String segment : segments) {
+            if (segment.isEmpty()) {
+                continue;
+            }
+
+            newPath += segment + "/";
+
+            final String finalPath = newPath;
+            breadcrumbs.add(new Breadcrumb(segment, new Breadcrumb.Listener() {
+                @Override
+                public void onClick() {
+                    loadData(finalPath);
+                }
+            }));
+        }
+
+        mBreadcrumbAdapter.setData(breadcrumbs);
+        mBreadcrumbList.scrollToPosition(mBreadcrumbAdapter.getItemCount() - 1);
     }
 
     private class EventReceiver {
 
         @Subscribe
         public void onLoadReady(ProjectReloadEvent event) {
-            mBreadcrumbAdapter.clear();
             mProject = event.project;
             mBranchName = event.branchName;
-            loadData();
+
+            loadData("");
         }
     }
 }
