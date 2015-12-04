@@ -27,6 +27,12 @@ public class PrivateTokenRequestInterceptor implements Interceptor {
     //TODO change this to where it does not read from prefs every time (inefficient)
     @Override
     public Response intercept(Chain chain) throws IOException {
+        HttpUrl url = chain.request().httpUrl();
+        HttpUrl serverUrl = HttpUrl.parse(Prefs.getServerUrl(GitLabApp.instance()));
+        if (!url.toString().startsWith(serverUrl.toString())) {
+            return chain.proceed(chain.request());
+        }
+
         String privateToken = Prefs.getPrivateToken(GitLabApp.instance());
         if (privateToken == null) {
             throw new IllegalStateException("The private token was null");
@@ -37,7 +43,7 @@ public class PrivateTokenRequestInterceptor implements Interceptor {
         if (mHeader) {
             builder.header(PRIVATE_TOKEN_HEADER_FIELD, privateToken);
         } else {
-            HttpUrl url = chain.request().httpUrl().newBuilder()
+            url = url.newBuilder()
                     .addQueryParameter(PRIVATE_TOKEN_GET_PARAMETER, privateToken)
                     .build();
 

@@ -9,8 +9,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.commit451.gitlab.R;
+import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.rss.Entry;
-import com.squareup.picasso.Picasso;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -37,7 +37,7 @@ public class FeedEntryViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(Entry entry) {
-        Picasso.with(itemView.getContext())
+        GitLabClient.getPicasso()
                 .load(entry.getThumbnail().getUrl())
                 .into(image);
 

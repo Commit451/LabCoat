@@ -11,9 +11,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.commit451.gitlab.R;
+import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.Project;
 import com.github.ivbaranov.mli.MaterialLetterIcon;
-import com.squareup.picasso.Picasso;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -52,7 +52,7 @@ public class ProjectViewHolder extends RecyclerView.ViewHolder {
         } else {
             image.setVisibility(View.VISIBLE);
             icon.setVisibility(View.GONE);
-            Picasso.with(itemView.getContext())
+            GitLabClient.getPicasso()
                     .load(project.getAvatarUrl())
                     .into(image);
         }

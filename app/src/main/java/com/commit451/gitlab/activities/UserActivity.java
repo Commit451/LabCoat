@@ -132,7 +132,7 @@ public class UserActivity extends BaseActivity {
         });
         mToolbar.setTitle(mUser.getUsername());
         Uri url = ImageUtil.getAvatarUrl(mUser, getResources().getDimensionPixelSize(R.dimen.user_header_image_size));
-        Picasso.with(this)
+        GitLabClient.getPicasso()
                 .load(url)
                 .into(mImageLoadTarget);
         mActivityRecyclerView.setLayoutManager(new LinearLayoutManager(this));

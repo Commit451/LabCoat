@@ -21,7 +21,6 @@ import com.commit451.gitlab.events.CloseDrawerEvent;
 import com.commit451.gitlab.model.User;
 import com.commit451.gitlab.tools.ImageUtil;
 import com.commit451.gitlab.tools.NavigationManager;
-import com.squareup.picasso.Picasso;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -150,7 +149,7 @@ public class GitLabNavigationView extends NavigationView {
             userEmail.setText(user.getEmail());
         }
         Uri url = ImageUtil.getAvatarUrl(user, getResources().getDimensionPixelSize(R.dimen.larger_image_size));
-        Picasso.with(getContext())
+        GitLabClient.getPicasso()
                 .load(url)
                 .into(profileImage);
     }

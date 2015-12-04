@@ -133,7 +133,7 @@ public class GroupActivity extends BaseActivity {
                 onBackPressed();
             }
         });
-        Picasso.with(this)
+        GitLabClient.getPicasso()
                 .load(mGroup.getAvatarUrl())
                 .into(mImageLoadTarget);
         mProjectsRecyclerView.setLayoutManager(new LinearLayoutManager(this));

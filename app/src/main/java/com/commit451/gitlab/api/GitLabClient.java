@@ -11,6 +11,8 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.squareup.okhttp.OkHttpClient;
+import com.squareup.picasso.OkHttpDownloader;
+import com.squareup.picasso.Picasso;
 
 import org.joda.time.format.ISODateTimeFormat;
 import org.simpleframework.xml.core.Persister;
@@ -32,6 +34,7 @@ public class GitLabClient {
 
     private static GitLab sGitLab;
     private static GitLabRss sGitLabRss;
+    private static Picasso sPicasso;
     private static CustomTrustManager sCustomTrustManager = new CustomTrustManager();
 
     public static GitLab instance() {
@@ -85,9 +88,27 @@ public class GitLabClient {
         return sGitLabRss;
     }
 
+    public static Picasso getPicasso() {
+        if (sPicasso == null) {
+            OkHttpClient client = new OkHttpClient();
+            client.setSslSocketFactory(sCustomTrustManager.getSSLSocketFactory());
+            client.interceptors().add(new PrivateTokenRequestInterceptor(false));
+            if (BuildConfig.DEBUG) {
+                client.networkInterceptors().add(new TimberRequestInterceptor());
+            }
+
+            sPicasso = new Picasso.Builder(GitLabApp.instance())
+                    .downloader(new OkHttpDownloader(client))
+                    .build();
+        }
+
+        return sPicasso;
+    }
+
     public static void reset() {
         sGitLab = null;
         sGitLabRss = null;
+        sPicasso = null;
     }
 
     public static void setTrustedCertificate(String trustedCertificate) {

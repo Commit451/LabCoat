@@ -9,14 +9,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.commit451.gitlab.R;
+import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.Issue;
 import com.commit451.gitlab.tools.DateUtils;
 import com.commit451.gitlab.tools.ImageUtil;
-import com.squareup.picasso.Picasso;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import fr.tkeunebr.gravatar.Gravatar;
 
 /**
  * issues, yay!
@@ -51,6 +50,8 @@ public class IssueViewHolder extends RecyclerView.ViewHolder {
         creator.setText(String.format(itemView.getContext().getString(R.string.created_time), time, issue.getAuthor().getUsername()));
 
         Uri url = ImageUtil.getAvatarUrl(issue.getAssignee(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size));
-        Picasso.with(itemView.getContext()).load(url).into(image);
+        GitLabClient.getPicasso()
+                .load(url)
+                .into(image);
     }
 }

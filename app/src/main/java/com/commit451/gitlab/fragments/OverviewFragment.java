@@ -21,7 +21,6 @@ import com.commit451.gitlab.model.Project;
 import com.commit451.gitlab.model.TreeItem;
 import com.commit451.gitlab.tools.PicassoImageGetter;
 import com.squareup.otto.Subscribe;
-import com.squareup.picasso.Picasso;
 
 import java.nio.charset.Charset;
 import java.util.List;
@@ -105,7 +104,7 @@ public class OverviewFragment extends BaseFragment {
 
             String text = new String(Base64.decode(response.body().getContent(), Base64.DEFAULT), Charset.forName("UTF-8"));
             mOverview.setText(mBypass.markdownToSpannable(text,
-                    new PicassoImageGetter(mOverview, getResources(), Picasso.with(getActivity()))));
+                    new PicassoImageGetter(mOverview, getResources(), GitLabClient.getPicasso())));
         }
 
         @Override

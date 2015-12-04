@@ -24,7 +24,6 @@ import com.commit451.gitlab.tools.WindowUtil;
 import com.jawnnypoo.physicslayout.Physics;
 import com.jawnnypoo.physicslayout.PhysicsConfig;
 import com.jawnnypoo.physicslayout.PhysicsFrameLayout;
-import com.squareup.picasso.Picasso;
 
 import org.jbox2d.common.Vec2;
 
@@ -160,7 +159,7 @@ public class AboutActivity extends BaseActivity {
             }
 
             Uri url = ImageUtil.getAvatarUrl(contributor.getEmail(), imageSize);
-            Picasso.with(this)
+            GitLabClient.getPicasso()
                     .load(url)
                     .into(imageView);
         }

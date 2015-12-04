@@ -10,9 +10,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.commit451.gitlab.R;
+import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.MergeRequestComment;
 import com.commit451.gitlab.tools.ImageUtil;
-import com.squareup.picasso.Picasso;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -53,6 +53,8 @@ public class MergeRequestCommentViewHolder extends RecyclerView.ViewHolder{
         summary.setMovementMethod(LinkMovementMethod.getInstance());
 
         Uri imageUrl = ImageUtil.getAvatarUrl(comment.getAuthor(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size));
-        Picasso.with(itemView.getContext()).load(imageUrl).into(icon);
+        GitLabClient.getPicasso()
+                .load(imageUrl)
+                .into(icon);
     }
 }

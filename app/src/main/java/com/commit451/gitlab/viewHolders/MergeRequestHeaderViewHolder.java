@@ -10,10 +10,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.commit451.gitlab.R;
+import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.MergeRequest;
 import com.commit451.gitlab.tools.DateUtils;
 import com.commit451.gitlab.tools.ImageUtil;
-import com.squareup.picasso.Picasso;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -54,7 +54,7 @@ public class MergeRequestHeaderViewHolder extends RecyclerView.ViewHolder {
         }
 
         if (mergeRequest.getAuthor() != null) {
-            Picasso.with(itemView.getContext())
+            GitLabClient.getPicasso()
                     .load(ImageUtil.getAvatarUrl(mergeRequest.getAuthor(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size)))
                     .into(authorImage);
             author.setText(mergeRequest.getAuthor().getName() + " "

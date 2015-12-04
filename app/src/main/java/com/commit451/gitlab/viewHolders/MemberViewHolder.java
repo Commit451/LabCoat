@@ -9,13 +9,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.commit451.gitlab.R;
+import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.User;
 import com.commit451.gitlab.tools.ImageUtil;
-import com.squareup.picasso.Picasso;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import fr.tkeunebr.gravatar.Gravatar;
 
 /**
  * Users, yay!
@@ -53,7 +52,7 @@ public class MemberViewHolder extends RecyclerView.ViewHolder {
         }
 
         Uri url = ImageUtil.getAvatarUrl(user, itemView.getResources().getDimensionPixelSize(R.dimen.image_size));
-        Picasso.with(itemView.getContext())
+        GitLabClient.getPicasso()
                 .load(url)
                 .into(image);
     }

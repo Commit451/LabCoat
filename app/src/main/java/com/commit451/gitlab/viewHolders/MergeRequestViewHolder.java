@@ -8,9 +8,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.commit451.gitlab.R;
+import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.MergeRequest;
 import com.commit451.gitlab.tools.ImageUtil;
-import com.squareup.picasso.Picasso;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -37,7 +37,7 @@ public class MergeRequestViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(MergeRequest item) {
-        Picasso.with(itemView.getContext())
+        GitLabClient.getPicasso()
                 .load(ImageUtil.getAvatarUrl(item.getAuthor(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size)))
                 .into(image);
         if (item.getAuthor() != null && item.getAuthor().getUsername() != null) {

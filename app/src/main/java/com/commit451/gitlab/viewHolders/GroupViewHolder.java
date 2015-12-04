@@ -8,8 +8,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.commit451.gitlab.R;
+import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.Group;
-import com.squareup.picasso.Picasso;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -36,7 +36,7 @@ public class GroupViewHolder extends RecyclerView.ViewHolder{
 
     public void bind(Group group) {
         name.setText(group.getName());
-        Picasso.with(itemView.getContext())
+        GitLabClient.getPicasso()
                 .load(group.getAvatarUrl())
                 .into(image);
     }
