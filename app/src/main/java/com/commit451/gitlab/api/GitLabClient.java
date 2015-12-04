@@ -49,7 +49,7 @@ public class GitLabClient {
 
             OkHttpClient client = new OkHttpClient();
             client.setSslSocketFactory(sCustomTrustManager.getSSLSocketFactory());
-            client.interceptors().add(new ApiKeyRequestInterceptor());
+            client.interceptors().add(new PrivateTokenRequestInterceptor(true));
             if (BuildConfig.DEBUG) {
                 client.networkInterceptors().add(new TimberRequestInterceptor());
             }
@@ -69,6 +69,7 @@ public class GitLabClient {
         if (sGitLabRss == null) {
             OkHttpClient client = new OkHttpClient();
             client.setSslSocketFactory(sCustomTrustManager.getSSLSocketFactory());
+            client.interceptors().add(new PrivateTokenRequestInterceptor(false));
             if (BuildConfig.DEBUG) {
                 client.networkInterceptors().add(new TimberRequestInterceptor());
             }
