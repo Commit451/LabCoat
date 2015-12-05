@@ -9,12 +9,8 @@ import android.net.Uri;
 import java.util.Date;
 import java.util.List;
 
-/**
- * A Project. You know, like this one.
- */
 @Parcel
 public class Project {
-
     @SerializedName("id")
     long mId;
     @SerializedName("description")
@@ -22,9 +18,9 @@ public class Project {
     @SerializedName("default_branch")
     String mDefaultBranch;
     @SerializedName("public")
-    Boolean mPublic;
+    boolean mPublic;
     @SerializedName("visibility_level")
-    Integer mVisibilityLevel;
+    int mVisibilityLevel;
     @SerializedName("ssh_url_to_repo")
     String mSshUrlToRepo;
     @SerializedName("http_url_to_repo")
@@ -44,31 +40,33 @@ public class Project {
     @SerializedName("path_with_namespace")
     String mPathWithNamespace;
     @SerializedName("issues_enabled")
-    Boolean mIssuesEnabled;
+    boolean mIssuesEnabled;
     @SerializedName("merge_requests_enabled")
-    Boolean mMergeRequestsEnabled;
+    boolean mMergeRequestsEnabled;
     @SerializedName("wiki_enabled")
-    Boolean mWikiEnabled;
+    boolean mWikiEnabled;
     @SerializedName("snippets_enabled")
-    Boolean mSnippetsEnabled;
+    boolean mSnippetsEnabled;
+    @SerializedName("build_enabled")
+    boolean mBuildEnabled;
     @SerializedName("created_at")
     Date mCreatedAt;
     @SerializedName("last_activity_at")
     Date mLastActivityAt;
     @SerializedName("creator_id")
-    Long mCreatorId;
+    long mCreatorId;
     @SerializedName("namespace")
     Namespace mNamespace;
     @SerializedName("archived")
-    Boolean mArchived;
+    boolean mArchived;
     @SerializedName("avatar_url")
     Uri mAvatarUrl;
     @SerializedName("star_count")
-    Integer mStarCount;
+    int mStarCount;
     @SerializedName("forks_count")
-    Integer mForksCount;
+    int mForksCount;
 
-    public Project(){}
+    public Project() {}
 
     public long getId() {
         return mId;
@@ -82,11 +80,11 @@ public class Project {
         return mDefaultBranch;
     }
 
-    public Boolean getPublic() {
+    public boolean isPublic() {
         return mPublic;
     }
 
-    public Integer getVisibilityLevel() {
+    public int getVisibilityLevel() {
         return mVisibilityLevel;
     }
 
@@ -126,20 +124,24 @@ public class Project {
         return mPathWithNamespace;
     }
 
-    public Boolean getIssuesEnabled() {
+    public boolean issuesEnabled() {
         return mIssuesEnabled;
     }
 
-    public Boolean getMergeRequestsEnabled() {
+    public boolean isMergeRequestsEnabled() {
         return mMergeRequestsEnabled;
     }
 
-    public Boolean getWikiEnabled() {
+    public boolean isWikiEnabled() {
         return mWikiEnabled;
     }
 
-    public Boolean getSnippetsEnabled() {
+    public boolean isSnippetsEnabled() {
         return mSnippetsEnabled;
+    }
+
+    public boolean isBuildEnabled() {
+        return mBuildEnabled;
     }
 
     public Date getCreatedAt() {
@@ -150,7 +152,7 @@ public class Project {
         return mLastActivityAt;
     }
 
-    public Long getCreatorId() {
+    public long getCreatorId() {
         return mCreatorId;
     }
 
@@ -158,7 +160,7 @@ public class Project {
         return mNamespace;
     }
 
-    public Boolean getArchived() {
+    public boolean isArchived() {
         return mArchived;
     }
 
@@ -166,11 +168,11 @@ public class Project {
         return mAvatarUrl;
     }
 
-    public Integer getStarCount() {
+    public int getStarCount() {
         return mStarCount;
     }
 
-    public Integer getForksCount() {
+    public int getForksCount() {
         return mForksCount;
     }
 }

@@ -1,64 +1,96 @@
 package com.commit451.gitlab.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import org.parceler.Parcel;
 
+import android.support.annotation.StringDef;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.Date;
+
 @Parcel
 public class Milestone {
+    public static final String STATE_OPENED = "opened";
+    public static final String STATE_REOPENED = "reopened";
+    public static final String STATE_CLOSED = "closed";
 
-    long id;
-    String title;
-    String description;
-    Date due_date;
-    boolean closed;
+    public static final String STATE_REOPEN = "reopen";
+    public static final String STATE_CLOSE = "close";
 
-    public Milestone(){}
+    @StringDef({STATE_OPENED, STATE_REOPENED, STATE_CLOSED})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface State {}
+
+    @StringDef({STATE_REOPEN, STATE_CLOSE})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface EditState {}
+
+    @SerializedName("id")
+    long mId;
+    @SerializedName("iid")
+    long mIid;
+    @SerializedName("project_id")
+    long mProjectId;
+    @SerializedName("title")
+    String mTitle;
+    @SerializedName("description")
+    String mDescription;
+    @SerializedName("due_date")
+    Date mDueDate;
+    @SerializedName("state")
+    String mState;
+    @SerializedName("updated_at")
+    Date mUpdatedAt;
+    @SerializedName("created_at")
+    Date mCreatedAt;
+
+    public Milestone() {}
 
     public long getId() {
-        return id;
+        return mId;
     }
-    public void setId(long id) {
-        this.id = id;
+
+    public long getIid() {
+        return mIid;
+    }
+
+    public long getProjectId() {
+        return mProjectId;
     }
 
     public String getTitle() {
-        return title;
-    }
-    public void setTitle(String title) {
-        this.title = title;
+        return mTitle;
     }
 
     public String getDescription() {
-        return description;
-    }
-    public void setDescription(String description) {
-        this.description = description;
+        return mDescription;
     }
 
     public Date getDueDate() {
-        return due_date;
-    }
-    public void setDueDate(Date due_date) {
-        this.due_date = due_date;
+        return mDueDate;
     }
 
-    public boolean isClosed() {
-        return closed;
+    @State
+    public String getState() {
+        return mState;
     }
-    public void setClosed(boolean closed) {
-        this.closed = closed;
+
+    public Date getUpdatedAt() {
+        return mUpdatedAt;
+    }
+
+    public Date getCreatedAt() {
+        return mCreatedAt;
     }
 
     public boolean equals(Object obj) {
-        if (obj == null)
+        if (!(obj instanceof Milestone)) {
             return false;
-        if (obj == this)
-            return true;
-        if (!(obj instanceof Milestone))
-            return false;
+        }
 
         Milestone rhs = (Milestone) obj;
-
-        return rhs.id == id;
+        return rhs.mId == mId;
     }
 }

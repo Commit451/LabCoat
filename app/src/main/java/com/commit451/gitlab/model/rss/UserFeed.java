@@ -7,28 +7,21 @@ import org.simpleframework.xml.Root;
 
 import java.util.List;
 
-/**
- * Feed for a user, pulled from RSS
- * Created by John on 10/8/15.
- */
-@Root(strict = false)
 @Parcel
+@Root(strict = false)
 public class UserFeed {
-
-    @Element(name = "title")
+    @Element(name = "title", required = true)
     String mTitle;
     @ElementList(name = "entry", required = false, inline = true)
-    List<Entry> mEntryList;
+    List<FeedEntry> mEntryList;
 
-    public UserFeed() {
-
-    }
+    public UserFeed() {}
 
     public String getTitle() {
         return mTitle;
     }
 
-    public List<Entry> getEntries() {
+    public List<FeedEntry> getEntries() {
         return mEntryList;
     }
 }

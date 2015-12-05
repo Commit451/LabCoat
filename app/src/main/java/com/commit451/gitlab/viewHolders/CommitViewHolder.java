@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.model.DiffLine;
+import com.commit451.gitlab.model.Commit;
 import com.commit451.gitlab.tools.DateUtils;
 import com.commit451.gitlab.tools.ImageUtil;
 
@@ -39,7 +39,7 @@ public class CommitViewHolder extends RecyclerView.ViewHolder {
         ButterKnife.bind(this, view);
     }
 
-    public void bind(DiffLine commit) {
+    public void bind(Commit commit) {
         Uri url = ImageUtil.getAvatarUrl(commit.getAuthorEmail(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size));
         GitLabClient.getPicasso()
                 .load(url)

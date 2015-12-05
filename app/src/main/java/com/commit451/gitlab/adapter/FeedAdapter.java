@@ -5,7 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.model.rss.Entry;
+import com.commit451.gitlab.model.rss.FeedEntry;
 import com.commit451.gitlab.viewHolders.FeedEntryViewHolder;
 
 import java.util.ArrayList;
@@ -18,11 +18,11 @@ import java.util.Collection;
 public class FeedAdapter extends RecyclerView.Adapter<FeedEntryViewHolder> {
 
     public interface Listener {
-        void onFeedEntryClicked(Entry entry);
+        void onFeedEntryClicked(FeedEntry entry);
     }
     private Listener mListener;
 
-    private ArrayList<Entry> mValues;
+    private ArrayList<FeedEntry> mValues;
 
     public FeedAdapter(Listener listener) {
         mListener = listener;
@@ -37,7 +37,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedEntryViewHolder> {
         }
     };
 
-    public void setEntries(Collection<Entry> entries) {
+    public void setEntries(Collection<FeedEntry> entries) {
         mValues.clear();
         if (entries != null) {
             mValues.addAll(entries);
@@ -63,7 +63,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedEntryViewHolder> {
         return mValues.size();
     }
 
-    private Entry getEntry(int position) {
+    private FeedEntry getEntry(int position) {
         return mValues.get(position);
     }
 }

@@ -13,6 +13,7 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.Diff;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class DiffView extends LinearLayout {
 
@@ -76,9 +77,10 @@ public class DiffView extends LinearLayout {
         scrollView.addView(lineView);
         addView(scrollView);
 
-        ArrayList<Diff.Line> lines = (ArrayList<Diff.Line>) diff.getLines();
-        for(Diff.Line line : lines)
+        List<Diff.Line> lines = diff.getLines();
+        for (Diff.Line line : lines) {
             lineView.addView(generateRow(line));
+        }
 
         setBackgroundResource(R.drawable.border);
         setPadding(1, 1, 1, 1);

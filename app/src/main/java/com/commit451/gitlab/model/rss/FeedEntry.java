@@ -1,35 +1,26 @@
 package com.commit451.gitlab.model.rss;
 
-import org.joda.time.format.ISODateTimeFormat;
 import org.parceler.Parcel;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
 
 import java.util.Date;
 
-/**
- * Entry within the RSS
- * Created by John on 10/8/15.
- */
-
-@Root(strict = false)
 @Parcel
-public class Entry {
-
+@Root(strict = false)
+public class FeedEntry {
     @Element(name = "link", required = true)
     Link mLink;
     @Element(name = "title", required = true)
     String mTitle;
     @Element(name = "summary", required = true)
     String mSummary;
-    @Element(name ="updated", required = true)
-    String mUpdated;
+    @Element(name = "updated", required = true)
+    Date mUpdated;
     @Element(name = "thumbnail", required = true)
     Thumbnail mThumbnail;
 
-    public Entry() {
-
-    }
+    public FeedEntry() {}
 
     public Link getLink() {
         return mLink;
@@ -44,7 +35,7 @@ public class Entry {
     }
 
     public Date getUpdated() {
-        return ISODateTimeFormat.dateTimeParser().parseDateTime(mUpdated).toDate();
+        return mUpdated;
     }
 
     public Thumbnail getThumbnail() {

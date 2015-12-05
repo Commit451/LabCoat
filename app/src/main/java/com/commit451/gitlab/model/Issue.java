@@ -1,107 +1,108 @@
 package com.commit451.gitlab.model;
 
-import android.net.Uri;
-import android.support.annotation.StringDef;
-
 import com.google.gson.annotations.SerializedName;
 
 import org.parceler.Parcel;
 
+import android.net.Uri;
+import android.support.annotation.StringDef;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.Date;
+import java.util.List;
+
 @Parcel
 public class Issue {
-
-    @StringDef({STATE_REOPEN, STATE_CLOSE})
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface State {}
+    public static final String STATE_OPENED = "opened";
     public static final String STATE_REOPENED = "reopened";
     public static final String STATE_CLOSED = "closed";
-    public static final String STATE_ACTIVE = "active";
-    public static final String STATE_OPENED = "opened";
+
+    public static final String STATE_REOPEN = "reopen";
+    public static final String STATE_CLOSE = "close";
+
+    @StringDef({STATE_OPENED, STATE_REOPENED, STATE_CLOSED})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface State {}
 
     @StringDef({STATE_REOPEN, STATE_CLOSE})
     @Retention(RetentionPolicy.SOURCE)
     public @interface EditState {}
-    public static final String STATE_REOPEN = "reopen";
-    public static final String STATE_CLOSE = "close";
-
 
     @SerializedName("id")
-    long id;
+    long mId;
     @SerializedName("iid")
-    long iid;
+    long mIid;
     @SerializedName("project_id")
-    long project_id;
+    long mProjectId;
     @SerializedName("title")
-    String title;
+    String mTitle;
     @SerializedName("description")
-    String description;
+    String mDescription;
     @SerializedName("labels")
-    String[] labels;
+    List<String> mLabels;
     @SerializedName("milestone")
-    Milestone milestone;
+    Milestone mMilestone;
     @SerializedName("assignee")
-    User assignee;
+    User mAssignee;
     @SerializedName("author")
-    User author;
+    User mAuthor;
     @SerializedName("state")
-    String state;
+    String mState;
     @SerializedName("updated_at")
-    Date updated_at;
+    Date mUpdatedAt;
     @SerializedName("created_at")
-    Date created_at;
+    Date mCreatedAt;
 
-    public Issue(){}
+    public Issue() {}
 
     public long getId() {
-        return id;
+        return mId;
     }
 
     public long getIid() {
-        return iid;
+        return mIid;
     }
 
     public long getProjectId() {
-        return project_id;
+        return mProjectId;
     }
 
     public String getTitle() {
-        return title;
+        return mTitle;
     }
 
     public String getDescription() {
-        return description;
+        return mDescription;
     }
 
-    public String[] getLabels() {
-        return labels;
+    public List<String> getLabels() {
+        return mLabels;
     }
 
     public Milestone getMilestone() {
-        return milestone;
+        return mMilestone;
     }
 
     public User getAssignee() {
-        return assignee;
+        return mAssignee;
     }
 
     public User getAuthor() {
-        return author;
+        return mAuthor;
     }
 
     @State
     public String getState() {
-        return state;
+        return mState;
     }
 
     public Date getUpdatedAt() {
-        return updated_at;
+        return mUpdatedAt;
     }
 
     public Date getCreatedAt() {
-        return created_at;
+        return mCreatedAt;
     }
 
     public Uri getUrl(Project project) {

@@ -5,84 +5,155 @@ import com.google.gson.annotations.SerializedName;
 import org.parceler.Parcel;
 
 import android.net.Uri;
+import android.support.annotation.StringDef;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.Date;
+
 @Parcel
 public class User {
+    public static final String STATE_ACTIVE = "active";
+    public static final String STATE_BLOCKED = "blocked";
+
+    @StringDef({STATE_ACTIVE, STATE_BLOCKED})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface State {}
 
     @SerializedName("id")
-    long id;
+    long mId;
     @SerializedName("username")
-    String username;
+    String mUsername;
     @SerializedName("email")
-    String email;
-    @SerializedName("avatar_url")
-    Uri avatar_url;
+    String mEmail;
     @SerializedName("name")
-    String name;
-    @SerializedName("blocked")
-    boolean blocked;
+    String mName;
+    @SerializedName("state")
+    String mState;
+    @SerializedName("avatar_url")
+    Uri mAvatarUrl;
+    @SerializedName("web_url")
+    Uri mWebUrl;
+    @SerializedName("bio")
+    String mBio;
+    @SerializedName("skype")
+    String mSkype;
+    @SerializedName("linkedin")
+    String mLinkedin;
+    @SerializedName("twitter")
+    String mTwitter;
+    @SerializedName("website_url")
+    Uri mWebsiteUrl;
+    @SerializedName("theme_id")
+    int mThemeId;
+    @SerializedName("color_scheme_id")
+    int mColorSchemeId;
+    @SerializedName("is_admin")
+    boolean mIsAdmin;
+    @SerializedName("can_create_group")
+    boolean mCanCreateGroup;
+    @SerializedName("can_create_project")
+    boolean mCanCreateProject;
+    @SerializedName("two_factor_enabled")
+    boolean mTwoFactorEnabled;
+    @SerializedName("projects_limit")
+    int mProjectsLimit;
     @SerializedName("created_at")
-    Date created_at;
-    @SerializedName("access_level")
-    int access_level = -1;
+    Date mCreatedAt;
 
-    public User(){}
+    public User() {}
 
     public long getId() {
-        return id;
+        return mId;
     }
 
     public String getUsername() {
-        return username;
+        return mUsername;
     }
 
-    public String getEmail() { return email; }
-
-    public Uri getAvatarUrl() {
-        return avatar_url;
+    public String getEmail() {
+        return mEmail;
     }
 
     public String getName() {
-        return name;
+        return mName;
     }
 
-    public boolean isBlocked() {
-        return blocked;
+    @State
+    public String getState() {
+        return mState;
     }
 
-    public int getAccessLevel() {
-        return access_level;
+    public Uri getAvatarUrl() {
+        return mAvatarUrl;
     }
 
-    public String getAccessLevel(String[] names) {
-        int temp = access_level / 10 - 1;
-
-        if(temp >= 0 && temp < names.length)
-            return names[temp];
-
-        return "";
+    public Uri getWebUrl() {
+        return mWebUrl;
     }
 
-    /**
-     * Manually creates the url to the person's recent activity feed
-     * @param baseUrl the base url of the server
-     * @return RSS feed url
-     */
-    public String getFeedUrl(String baseUrl) {
-        return baseUrl + "/u/" + username + ".atom";
+    public String getBio() {
+        return mBio;
+    }
+
+    public String getSkype() {
+        return mSkype;
+    }
+
+    public String getLinkedin() {
+        return mLinkedin;
+    }
+
+    public String getTwitter() {
+        return mTwitter;
+    }
+
+    public Uri getWebsiteUrl() {
+        return mWebsiteUrl;
+    }
+
+    public int getThemeId() {
+        return mThemeId;
+    }
+
+    public int getColorSchemeId() {
+        return mColorSchemeId;
+    }
+
+    public boolean isAdmin() {
+        return mIsAdmin;
+    }
+
+    public boolean canCreateGroup() {
+        return mCanCreateGroup;
+    }
+
+    public boolean canCreateProject() {
+        return mCanCreateProject;
+    }
+
+    public boolean isTwoFactorEnabled() {
+        return mTwoFactorEnabled;
+    }
+
+    public int getProjectsLimit() {
+        return mProjectsLimit;
+    }
+
+    public Date getCreatedAt() {
+        return mCreatedAt;
+    }
+
+    public String getFeedUrl() {
+        return mWebUrl.toString() + ".atom";
     }
 
     public boolean equals(Object obj) {
-        if (obj == null)
+        if (!(obj instanceof User)) {
             return false;
-        if (obj == this)
-            return true;
-        if (!(obj instanceof User))
-            return false;
+        }
 
         User rhs = (User) obj;
-
-        return rhs.id == id;
+        return rhs.mId == mId;
     }
 }

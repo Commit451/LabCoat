@@ -4,14 +4,23 @@ import com.google.gson.annotations.SerializedName;
 
 import org.parceler.Parcel;
 
-import java.util.Date;
+import android.support.annotation.StringDef;
 
-/**
- * Merge that request!
- * Created by Jawn on 9/20/2015.
- */
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.util.Date;
+import java.util.List;
+
 @Parcel
 public class MergeRequest {
+    public static final String STATE_OPENED = "opened";
+    public static final String STATE_MERGED = "merged";
+    public static final String STATE_CLOSED = "closed";
+
+    @StringDef({STATE_OPENED, STATE_MERGED, STATE_CLOSED})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface State {}
+
     @SerializedName("id")
     long mId;
     @SerializedName("iid")
@@ -40,8 +49,16 @@ public class MergeRequest {
     Date mUpdatedAt;
     @SerializedName("created_at")
     Date mCreatedAt;
+    @SerializedName("source_project_id")
+    long mSourceProjectId;
+    @SerializedName("target_project_id")
+    long mTargetProjectId;
+    @SerializedName("labels")
+    List<String> mLabels;
     @SerializedName("work_in_progress")
     boolean mWorkInProgress;
+    @SerializedName("milestone")
+    Milestone mMilestone;
 
     public MergeRequest() {}
 
@@ -69,6 +86,7 @@ public class MergeRequest {
         return mTitle;
     }
 
+    @State
     public String getState() {
         return mState;
     }
@@ -93,15 +111,31 @@ public class MergeRequest {
         return mDescription;
     }
 
-    public boolean isWorkInProgress() {
-        return mWorkInProgress;
+    public Date getUpdatedAt() {
+        return mUpdatedAt;
     }
 
     public Date getCreatedAt() {
         return mCreatedAt;
     }
 
-    public Date getUpdatedAt() {
-        return mUpdatedAt;
+    public long getSourceProjectId() {
+        return mSourceProjectId;
+    }
+
+    public long getTargetProjectId() {
+        return mTargetProjectId;
+    }
+
+    public List<String> getLabels() {
+        return mLabels;
+    }
+
+    public boolean isWorkInProgress() {
+        return mWorkInProgress;
+    }
+
+    public Milestone getMilestone() {
+        return mMilestone;
     }
 }

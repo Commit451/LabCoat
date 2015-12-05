@@ -1,51 +1,88 @@
 package com.commit451.gitlab.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import org.parceler.Parcel;
 
 import java.util.ArrayList;
 import java.util.List;
+
 @Parcel
 public class Diff {
+    @SerializedName("diff")
+    String mDiff;
+    @SerializedName("new_path")
+    String mNewPath;
+    @SerializedName("old_path")
+    String mOldPath;
+    @SerializedName("a_mode")
+    int mAMode;
+    @SerializedName("b_mode")
+    int mBMode;
+    @SerializedName("new_file")
+    boolean mNewFile;
+    @SerializedName("renamed_file")
+    boolean mRenamedFile;
+    @SerializedName("deleted_file")
+    boolean mDeletedFile;
 
-    String diff;
-    String new_path;
-    String old_path;
-    int a_mode;
-    int b_mode;
-    boolean new_file;
-    boolean renamed_file;
-    boolean deleted_file;
-
-    public Diff(){}
+    public Diff() {}
 
     public String getDiff() {
-        return diff;
+        return mDiff;
     }
 
-    public void setDiff(String diff) {
-        this.diff = diff;
+    public String getNewPath() {
+        return mNewPath;
+    }
+
+    public String getOldPath() {
+        return mOldPath;
+    }
+
+    public int getAMode() {
+        return mAMode;
+    }
+
+    public int getBMode() {
+        return mBMode;
+    }
+
+    public boolean isNewFile() {
+        return mNewFile;
+    }
+
+    public boolean isRenamedFile() {
+        return mRenamedFile;
+    }
+
+    public boolean isDeletedFile() {
+        return mDeletedFile;
     }
 
     public List<Line> getLines() {
-        ArrayList<Line> lines = new ArrayList<Line>();
+        List<Line> lines = new ArrayList<>();
 
         int curOldLine = 0;
         int curNewLine = 0;
 
-        String[] temp = diff.split("\\r?\\n");
-        for(String s : temp) {
-            if(s.startsWith("+++") || s.startsWith("---"))
+        String[] temp = mDiff.split("\\r?\\n");
+        for (String s : temp) {
+            if (s.startsWith("+++") || s.startsWith("---")) {
                 continue;
+            }
 
-            if(s.startsWith("@@")) {
+            if (s.startsWith("@@")) {
                 int index = s.indexOf(',');
-                if(index == -1 || index >= s.indexOf('+'))
+                if (index == -1 || index >= s.indexOf('+')) {
                     index = s.indexOf('-') + 2;
+                }
                 curOldLine = Integer.parseInt(s.substring(s.indexOf('-') + 1, index));
 
                 index = s.indexOf(',', s.indexOf('+'));
-                if(index == -1)
+                if (index == -1) {
                     index = s.indexOf('+') + 2;
+                }
                 curNewLine = Integer.parseInt(s.substring(s.indexOf('+') + 1, index));
 
                 Line line = new Line();
@@ -61,10 +98,11 @@ public class Diff {
             Line line = new Line();
             line.lineContent = s;
 
-            if(s.length() < 1)
+            if (s.length() < 1) {
                 s = " ";
+            }
 
-            switch(s.charAt(0)) {
+            switch (s.charAt(0)) {
                 case ' ':
                     line.lineType = LineType.NORMAL;
                     break;
@@ -79,11 +117,11 @@ public class Diff {
             line.oldLine = "";
             line.newLine = "";
 
-            if(line.lineType != LineType.ADDED) {
+            if (line.lineType != LineType.ADDED) {
                 line.oldLine = String.valueOf(curOldLine);
                 curOldLine++;
             }
-            if(line.lineType != LineType.REMOVED) {
+            if (line.lineType != LineType.REMOVED) {
                 line.newLine = String.valueOf(curNewLine);
                 curNewLine++;
             }
@@ -94,64 +132,7 @@ public class Diff {
         return lines;
     }
 
-    public String getNewPath() {
-        return new_path;
-    }
-
-    public void setNewPath(String new_path) {
-        this.new_path = new_path;
-    }
-
-    public String getOldPath() {
-        return old_path;
-    }
-
-    public void setOldPath(String old_path) {
-        this.old_path = old_path;
-    }
-
-    public int getAMode() {
-        return a_mode;
-    }
-
-    public void setAMode(int a_mode) {
-        this.a_mode = a_mode;
-    }
-
-    public int getBMode() {
-        return b_mode;
-    }
-
-    public void setBMode(int b_mode) {
-        this.b_mode = b_mode;
-    }
-
-    public boolean isNewFile() {
-        return new_file;
-    }
-
-    public void setNewFile(boolean new_file) {
-        this.new_file = new_file;
-    }
-
-    public boolean isRenamedFile() {
-        return renamed_file;
-    }
-
-    public void setRenamedFile(boolean renamed_file) {
-        this.renamed_file = renamed_file;
-    }
-
-    public boolean isDeletedFile() {
-        return deleted_file;
-    }
-
-    public void setDeletedFile(boolean deleted_file) {
-        this.deleted_file = deleted_file;
-    }
-
     public class Line {
-
         public String oldLine;
         public String newLine;
         public String lineContent;

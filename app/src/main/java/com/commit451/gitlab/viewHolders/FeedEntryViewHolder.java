@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.model.rss.Entry;
+import com.commit451.gitlab.model.rss.FeedEntry;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -36,7 +36,7 @@ public class FeedEntryViewHolder extends RecyclerView.ViewHolder {
         ButterKnife.bind(this, view);
     }
 
-    public void bind(Entry entry) {
+    public void bind(FeedEntry entry) {
         GitLabClient.getPicasso()
                 .load(entry.getThumbnail().getUrl())
                 .into(image);
