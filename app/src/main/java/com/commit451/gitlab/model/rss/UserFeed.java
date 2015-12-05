@@ -13,7 +13,7 @@ public class UserFeed {
     @Element(name = "title", required = true)
     String mTitle;
     @ElementList(name = "entry", required = false, inline = true)
-    List<FeedEntry> mEntryList;
+    List<Entry> mEntryList;
 
     public UserFeed() {}
 
@@ -21,7 +21,7 @@ public class UserFeed {
         return mTitle;
     }
 
-    public List<FeedEntry> getEntries() {
+    public List<Entry> getEntries() {
         return mEntryList;
     }
 }

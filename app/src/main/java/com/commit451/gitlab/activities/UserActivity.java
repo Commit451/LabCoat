@@ -24,9 +24,8 @@ import com.commit451.easel.Easel;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.FeedAdapter;
 import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.data.Prefs;
 import com.commit451.gitlab.model.User;
-import com.commit451.gitlab.model.rss.FeedEntry;
+import com.commit451.gitlab.model.rss.Entry;
 import com.commit451.gitlab.model.rss.UserFeed;
 import com.commit451.gitlab.tools.ImageUtil;
 import com.commit451.gitlab.tools.IntentUtil;
@@ -112,7 +111,7 @@ public class UserActivity extends BaseActivity {
 
     private final FeedAdapter.Listener mFeedAdapterListener = new FeedAdapter.Listener() {
         @Override
-        public void onFeedEntryClicked(FeedEntry entry) {
+        public void onFeedEntryClicked(Entry entry) {
             IntentUtil.openPage(getWindow().getDecorView(), entry.getLink().getHref());
         }
     };

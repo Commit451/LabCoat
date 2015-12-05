@@ -8,7 +8,7 @@ import java.util.Date;
 
 @Parcel
 @Root(strict = false)
-public class FeedEntry {
+public class Entry {
     @Element(name = "link", required = true)
     Link mLink;
     @Element(name = "title", required = true)
@@ -20,7 +20,7 @@ public class FeedEntry {
     @Element(name = "thumbnail", required = true)
     Thumbnail mThumbnail;
 
-    public FeedEntry() {}
+    public Entry() {}
 
     public Link getLink() {
         return mLink;
