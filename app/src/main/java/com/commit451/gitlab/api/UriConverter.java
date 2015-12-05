@@ -1,17 +1,14 @@
 package com.commit451.gitlab.api;
 
+import android.net.Uri;
+
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 
-import com.commit451.gitlab.GitLabApp;
-import com.commit451.gitlab.data.Prefs;
-
 import org.simpleframework.xml.transform.Matcher;
 import org.simpleframework.xml.transform.Transform;
-
-import android.net.Uri;
 
 import java.lang.reflect.Type;
 
@@ -77,7 +74,11 @@ public class UriConverter {
             return uri;
         }
 
-        Uri.Builder builder = Uri.parse(Prefs.getServerUrl(GitLabApp.instance()))
+        if (GitLabClient.getAccount() == null) {
+            return uri;
+        }
+
+        Uri.Builder builder = Uri.parse(GitLabClient.getAccount().getServerUrl())
                 .buildUpon()
                 .encodedQuery(uri.getEncodedQuery())
                 .encodedFragment(uri.getEncodedFragment());

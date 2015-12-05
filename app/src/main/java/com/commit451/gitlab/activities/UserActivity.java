@@ -24,7 +24,6 @@ import com.commit451.easel.Easel;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.FeedAdapter;
 import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.data.Prefs;
 import com.commit451.gitlab.model.User;
 import com.commit451.gitlab.model.rss.Entry;
 import com.commit451.gitlab.model.rss.UserFeed;
@@ -182,6 +181,6 @@ public class UserActivity extends BaseActivity {
     private void load() {
         mMessageView.setVisibility(View.GONE);
         mProgress.setVisibility(View.VISIBLE);
-        GitLabClient.rssInstance().getUserFeed(mUser.getFeedUrl(Prefs.getServerUrl(this))).enqueue(mUserFeedCallback);
+        GitLabClient.rssInstance().getUserFeed(mUser.getFeedUrl(GitLabClient.getAccount().getServerUrl())).enqueue(mUserFeedCallback);
     }
 }

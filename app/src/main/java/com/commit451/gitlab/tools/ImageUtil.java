@@ -19,12 +19,12 @@ public class ImageUtil {
             return getAvatarUrl("", size);
         }
 
-        Uri avatarUrl = user.getAvatarUrl();
-        if (avatarUrl != null && !avatarUrl.equals(Uri.EMPTY)) {
-            return avatarUrl.buildUpon()
-                    .appendQueryParameter("s", Integer.toString(size))
-                    .build();
-        }
+//        String avatarUrl = user.getAvatarUrl();
+//        if (avatarUrl != null && !avatarUrl.equals(Uri.EMPTY)) {
+//            return avatarUrl.buildUpon()
+//                    .appendQueryParameter("s", Integer.toString(size))
+//                    .build();
+//        }
 
         return getAvatarUrl(user.getEmail(), size);
     }

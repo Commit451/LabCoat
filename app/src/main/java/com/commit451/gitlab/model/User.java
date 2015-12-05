@@ -3,10 +3,6 @@ package com.commit451.gitlab.model;
 import com.google.gson.annotations.SerializedName;
 
 import org.parceler.Parcel;
-
-import android.net.Uri;
-
-import java.util.Date;
 @Parcel
 public class User {
 
@@ -17,13 +13,14 @@ public class User {
     @SerializedName("email")
     String email;
     @SerializedName("avatar_url")
-    Uri avatar_url;
+    String avatar_url;
     @SerializedName("name")
     String name;
     @SerializedName("blocked")
     boolean blocked;
-    @SerializedName("created_at")
-    Date created_at;
+    //TODO add this back in when we can figure out Gson serialization
+//    @SerializedName("created_at")
+//    Date created_at;
     @SerializedName("access_level")
     int access_level = -1;
 
@@ -39,7 +36,7 @@ public class User {
 
     public String getEmail() { return email; }
 
-    public Uri getAvatarUrl() {
+    public String getAvatarUrl() {
         return avatar_url;
     }
 

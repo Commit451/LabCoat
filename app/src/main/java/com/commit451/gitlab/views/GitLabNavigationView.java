@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.support.design.widget.NavigationView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,12 +17,18 @@ import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activities.GroupsActivity;
 import com.commit451.gitlab.activities.ProjectsActivity;
+import com.commit451.gitlab.adapter.UsersAdapter;
 import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.dialogs.LogoutDialog;
+import com.commit451.gitlab.data.Prefs;
 import com.commit451.gitlab.events.CloseDrawerEvent;
+import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.model.User;
 import com.commit451.gitlab.tools.ImageUtil;
 import com.commit451.gitlab.tools.NavigationManager;
+import com.commit451.gitlab.viewHolders.UserViewHolder;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -40,6 +48,8 @@ public class GitLabNavigationView extends NavigationView {
     @Bind(R.id.profile_user) TextView userName;
     @Bind(R.id.profile_email) TextView userEmail;
     @Bind(R.id.drawer_header) FrameLayout header;
+    @Bind(R.id.account_list) RecyclerView mAccountList;
+    UsersAdapter mAccountAdapter;
 
     private final OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new OnNavigationItemSelectedListener() {
         @Override
@@ -76,7 +86,7 @@ public class GitLabNavigationView extends NavigationView {
 
     @OnClick(R.id.drawer_header)
     void onHeaderClick() {
-        new LogoutDialog(getContext()).show();
+        mAccountList.setVisibility(View.VISIBLE);
     }
 
     private final Callback<User> userCallback = new Callback<User>() {
@@ -115,7 +125,16 @@ public class GitLabNavigationView extends NavigationView {
         inflateMenu(R.menu.navigation);
         View header = inflateHeaderView(R.layout.header_nav_drawer);
         ButterKnife.bind(this, header);
+        mAccountList.setLayoutManager(new LinearLayoutManager(getContext()));
+        mAccountAdapter = new UsersAdapter(new UsersAdapter.Listener() {
+            @Override
+            public void onUserClicked(User user, UserViewHolder userViewHolder) {
+
+            }
+        });
+        mAccountList.setAdapter(mAccountAdapter);
         setSelectedNavigationItem();
+        setAccounts();
         loadCurrentUser();
     }
 
@@ -132,6 +151,16 @@ public class GitLabNavigationView extends NavigationView {
             }
         }
         throw new IllegalStateException("You need to set a selected nav item for this activity");
+    }
+
+    private void setAccounts() {
+        List<Account> accounts = Prefs.getAccounts(getContext());
+        ArrayList<User> users = new ArrayList<>();
+        for (Account account : accounts) {
+            users.add(account.getUser());
+        }
+        //TODO make this actually an account adapter
+        mAccountAdapter.setData(users);
     }
 
     private void loadCurrentUser() {

@@ -21,13 +21,14 @@ import android.widget.TextView;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.data.Prefs;
+import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.model.Session;
 import com.commit451.gitlab.model.User;
 import com.commit451.gitlab.ssl.X509CertificateException;
 import com.commit451.gitlab.ssl.X509Util;
 import com.commit451.gitlab.tools.KeyboardUtil;
 import com.commit451.gitlab.tools.NavigationManager;
-import com.commit451.gitlab.data.Prefs;
 import com.commit451.gitlab.views.EmailAutoCompleteTextView;
 
 import java.security.cert.CertificateEncodingException;
@@ -46,6 +47,7 @@ import timber.log.Timber;
 public class LoginActivity extends BaseActivity {
 
     private static final int PERMISSION_REQUEST_GET_ACCOUNTS = 1337;
+    private static Pattern mUrlPattern = Patterns.WEB_URL;
 
     public static Intent newInstance(Context context) {
         Intent intent = new Intent(context, LoginActivity.class);
@@ -66,7 +68,8 @@ public class LoginActivity extends BaseActivity {
     @Bind(R.id.progress) View mProgress;
 
     private boolean mIsNormalLogin = true;
-    private Pattern mUrlPattern = Patterns.WEB_URL;
+    private String mTrustedCertificate;
+    private Account mAccount;
 
     private final TextView.OnEditorActionListener onEditorActionListener = new TextView.OnEditorActionListener() {
         @Override
@@ -111,20 +114,14 @@ public class LoginActivity extends BaseActivity {
         if (!mIsNormalLogin && hasEmptyFields(mTokenHint)) {
             return;
         }
-        GitLabClient.reset();
-        GitLabClient.setTrustedCertificate(Prefs.getTrustedCertificate(this));
-
         String url = mUrlInput.getText().toString();
+        mAccount = new Account();
+        mAccount.setServerUrl(url);
+        if (mTrustedCertificate != null) {
+            mAccount.setTrustedCertificate(mTrustedCertificate);
+        }
 
-        if(url.startsWith("http://") && url.endsWith(".git")) {
-            mUrlInput.setText(url.substring(0, nthOccurrence(url, '/', 2)));
-        }
-        else if(url.startsWith("git@") && url.endsWith(".git")) {
-            mUrlInput.setText("http://" + url.substring(4, url.indexOf(':')));
-        }
-        else if(!url.startsWith("http://") && !url.startsWith("https://")) {
-            mUrlInput.setText("http://" + mUrlInput.getText().toString());
-        }
+        GitLabClient.setAccount(mAccount);
 
         if(mIsNormalLogin) {
             connect(true);
@@ -138,18 +135,13 @@ public class LoginActivity extends BaseActivity {
 
         @Override
         public void onResponse(Response<Session> response, Retrofit retrofit) {
-            mProgress.setVisibility(View.GONE);
             if (!response.isSuccess()) {
                 handleConnectionResponse(response.code());
                 return;
             }
-
-            Prefs.setLoggedIn(LoginActivity.this, true);
-            Prefs.setPrivateToken(LoginActivity.this, response.body().getPrivateToken());
-
-            Intent i = new Intent(LoginActivity.this, GitlabActivity.class);
-            startActivity(i);
-            finish();
+            mAccount.setPrivateToken(response.body().getPrivateToken());
+            GitLabClient.setAccount(mAccount);
+            loadUser();
         }
 
         @Override
@@ -167,8 +159,11 @@ public class LoginActivity extends BaseActivity {
                 handleConnectionResponse(response.code());
                 return;
             }
-            Prefs.setLoggedIn(LoginActivity.this, true);
+            mAccount.setUser(response.body());
+            Prefs.addAccount(LoginActivity.this, mAccount);
+            GitLabClient.setAccount(mAccount);
             NavigationManager.navigateToProjects(LoginActivity.this);
+            finish();
         }
 
         @Override
@@ -216,13 +211,6 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
-    public static int nthOccurrence(String str, char c, int n) {
-        int pos = str.indexOf(c, 0);
-        while (n-- > 0 && pos != -1)
-            pos = str.indexOf(c, pos + 1);
-        return pos;
-    }
-
     @Override
     public void onBackPressed() {
         moveTaskToBack(true);
@@ -232,10 +220,6 @@ public class LoginActivity extends BaseActivity {
         mProgress.setVisibility(View.VISIBLE);
         mProgress.setAlpha(0.0f);
         mProgress.animate().alpha(1.0f);
-
-        Prefs.setPrivateToken(this, "");
-        Prefs.setLoggedIn(this, false);
-        Prefs.setServerUrl(this, mUrlInput.getText().toString());
 
         if(byAuth) {
             connectByAuth();
@@ -255,7 +239,12 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void connectByToken() {
-        Prefs.setPrivateToken(this, mTokenInput.getText().toString());
+        mAccount.setPrivateToken(mTokenInput.getText().toString());
+        GitLabClient.setAccount(mAccount);
+        loadUser();
+    }
+
+    private void loadUser() {
         GitLabClient.instance().getUser().enqueue(mTestUserCallback);
     }
 
@@ -278,7 +267,7 @@ public class LoginActivity extends BaseActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             if (finalFingerprint != null) {
-                                Prefs.setTrustedCertificate(LoginActivity.this, finalFingerprint);
+                                mTrustedCertificate = finalFingerprint;
                                 onLoginClick();
                             }
 
@@ -301,6 +290,7 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void handleConnectionResponse(int responseCode) {
+        mProgress.setVisibility(View.GONE);
         switch (responseCode) {
             case 401:
                 Snackbar.make(mRoot, getString(R.string.login_unauthorized), Snackbar.LENGTH_LONG)

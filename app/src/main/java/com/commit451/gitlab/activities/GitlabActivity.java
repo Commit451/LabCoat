@@ -3,8 +3,12 @@ package com.commit451.gitlab.activities;
 import android.app.Activity;
 import android.os.Bundle;
 
-import com.commit451.gitlab.tools.NavigationManager;
+import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.data.Prefs;
+import com.commit451.gitlab.model.Account;
+import com.commit451.gitlab.tools.NavigationManager;
+
+import java.util.List;
 
 /**
  * This activity acts as switching platform for the application directing the user to the appropriate
@@ -18,9 +22,11 @@ public class GitlabActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if(!Prefs.isLoggedIn(this)) {
+        List<Account> accounts = Prefs.getAccounts(this);
+        if(accounts.isEmpty()) {
             NavigationManager.navigateToLogin(this);
         } else {
+            GitLabClient.setAccount(accounts.get(0));
             NavigationManager.navigateToProjects(this);
         }
 
