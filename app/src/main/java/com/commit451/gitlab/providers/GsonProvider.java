@@ -22,9 +22,12 @@ import java.util.Date;
  * Get a properly configured Gson object
  * Created by Jawn on 12/4/2015.
  */
-public class GsonProvider {
+public final class GsonProvider {
 
     private static Gson sGson;
+
+    private GsonProvider() {}
+
     public static Gson getInstance() {
         if (sGson == null) {
             sGson = createInstance();

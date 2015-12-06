@@ -20,40 +20,32 @@ public class PrivateTokenRequestInterceptor implements Interceptor {
     private static final String PRIVATE_TOKEN_GET_PARAMETER = "private_token";
 
     private Account mAccount;
-    private boolean mHeader;
 
-    public PrivateTokenRequestInterceptor(Account account, boolean header) {
+    public PrivateTokenRequestInterceptor(Account account) {
         mAccount = account;
-        mHeader = header;
     }
 
     @Override
     public Response intercept(Chain chain) throws IOException {
-        HttpUrl url = chain.request().httpUrl();
-        HttpUrl serverUrl = HttpUrl.parse(mAccount.getServerUrl());
-        if (!url.toString().startsWith(serverUrl.toString())) {
-            return chain.proceed(chain.request());
-        }
+        Request request = chain.request();
 
-        String privateToken = mAccount.getPrivateToken();
-        if (privateToken == null) {
-            Timber.e("The private token was null");
-        }
-
-        Request.Builder builder = chain.request().newBuilder();
-
-        if (privateToken != null) {
-            if (mHeader) {
-                builder.header(PRIVATE_TOKEN_HEADER_FIELD, privateToken);
+        HttpUrl url = request.httpUrl();
+        if (url.toString().startsWith(mAccount.getServerUrl().toString())) {
+            String privateToken = mAccount.getPrivateToken();
+            if (privateToken == null) {
+                Timber.e("The private token was null");
             } else {
                 url = url.newBuilder()
                         .addQueryParameter(PRIVATE_TOKEN_GET_PARAMETER, privateToken)
                         .build();
 
-                builder.url(url);
+                request = request.newBuilder()
+                        .header(PRIVATE_TOKEN_HEADER_FIELD, privateToken)
+                        .url(url)
+                        .build();
             }
         }
 
-        return chain.proceed(builder.build());
+        return chain.proceed(request);
     }
 }

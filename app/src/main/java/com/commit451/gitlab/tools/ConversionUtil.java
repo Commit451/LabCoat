@@ -51,7 +51,7 @@ public final class ConversionUtil {
             return uri;
         }
 
-        Uri.Builder builder = Uri.parse(account.getServerUrl())
+        Uri.Builder builder = account.getServerUrl()
                 .buildUpon()
                 .encodedQuery(uri.getEncodedQuery())
                 .encodedFragment(uri.getEncodedFragment());

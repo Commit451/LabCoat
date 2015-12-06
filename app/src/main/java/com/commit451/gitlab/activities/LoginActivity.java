@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -116,10 +117,8 @@ public class LoginActivity extends BaseActivity {
         }
         String url = mUrlInput.getText().toString();
         mAccount = new Account();
-        mAccount.setServerUrl(url);
-        if (mTrustedCertificate != null) {
-            mAccount.setTrustedCertificate(mTrustedCertificate);
-        }
+        mAccount.setServerUrl(Uri.parse(url));
+        mAccount.setTrustedCertificate(mTrustedCertificate);
 
         GitLabClient.setAccount(mAccount);
 
@@ -135,6 +134,7 @@ public class LoginActivity extends BaseActivity {
 
         @Override
         public void onResponse(Response<Session> response, Retrofit retrofit) {
+            mTrustedCertificate = null;
             if (!response.isSuccess()) {
                 handleConnectionResponse(response.code());
                 return;
@@ -146,6 +146,7 @@ public class LoginActivity extends BaseActivity {
 
         @Override
         public void onFailure(Throwable t) {
+            mTrustedCertificate = null;
             Timber.e(t, null);
             handleConnectionError(t);
         }

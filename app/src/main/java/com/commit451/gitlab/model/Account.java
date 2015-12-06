@@ -4,6 +4,8 @@ import com.google.gson.annotations.SerializedName;
 
 import org.parceler.Parcel;
 
+import android.net.Uri;
+
 /**
  * The information associated with a signed in account
  * Created by Jawn on 12/4/2015.
@@ -12,7 +14,7 @@ import org.parceler.Parcel;
 public class Account {
 
     @SerializedName("server_url")
-    String mServerUrl;
+    Uri mServerUrl;
     @SerializedName("private_token")
     String mPrivateToken;
     @SerializedName("trusted_certificate")
@@ -24,11 +26,11 @@ public class Account {
 
     }
 
-    public String getServerUrl() {
+    public Uri getServerUrl() {
         return mServerUrl;
     }
 
-    public void setServerUrl(String url) {
+    public void setServerUrl(Uri url) {
         mServerUrl = url;
     }
 

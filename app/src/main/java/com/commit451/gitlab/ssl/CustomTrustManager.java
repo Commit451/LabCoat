@@ -44,6 +44,10 @@ public class CustomTrustManager implements X509TrustManager {
     public CustomTrustManager() {}
 
     public void setTrustedCertificate(String trustedCertificate) {
+        if ((mTrustedCertificate == null && trustedCertificate == null) || (mTrustedCertificate != null && mTrustedCertificate.equals(trustedCertificate))) {
+            return;
+        }
+
         mTrustedCertificate = trustedCertificate;
         mSSLSocketFactory = null;
     }

@@ -16,7 +16,7 @@ import retrofit.SimpleXmlConverterFactory;
  * Pulls all the GitLab stuff from the API
  * Created by Jawn on 7/28/2015.
  */
-public class GitLabClient {
+public final class GitLabClient {
 
     private static Account sAccount;
 
@@ -24,9 +24,13 @@ public class GitLabClient {
     private static GitLabRss sGitLabRss;
     private static Picasso sPicasso;
 
+    private GitLabClient() {}
+
     public static void setAccount(Account account) {
         sAccount = account;
-        reset();
+        sGitLab = null;
+        sGitLabRss = null;
+        sPicasso = null;
     }
 
     public static Account getAccount() {
@@ -37,8 +41,8 @@ public class GitLabClient {
         if (sGitLab == null) {
             checkAccountSet();
             Retrofit restAdapter = new Retrofit.Builder()
-                    .baseUrl(sAccount.getServerUrl())
-                    .client(OkHttpClientProvider.createInstance(sAccount))
+                    .baseUrl(sAccount.getServerUrl().toString())
+                    .client(OkHttpClientProvider.getInstance(sAccount))
                     .addConverterFactory(GsonConverterFactory.create(GsonProvider.getInstance()))
                     .build();
             sGitLab = restAdapter.create(GitLab.class);
@@ -51,7 +55,8 @@ public class GitLabClient {
         if (sGitLabRss == null) {
             checkAccountSet();
             Retrofit restAdapter = new Retrofit.Builder()
-                    .baseUrl(sAccount.getServerUrl())
+                    .baseUrl(sAccount.getServerUrl().toString())
+                    .client(OkHttpClientProvider.getInstance(sAccount))
                     .addConverterFactory(SimpleXmlConverterFactory.create(SimpleXmlProvider.getPersister()))
                     .build();
             sGitLabRss = restAdapter.create(GitLabRss.class);
@@ -64,7 +69,7 @@ public class GitLabClient {
         if (sPicasso == null) {
             checkAccountSet();
             sPicasso = new Picasso.Builder(GitLabApp.instance())
-                    .downloader(new OkHttpDownloader(OkHttpClientProvider.createPicassoInstance(sAccount)))
+                    .downloader(new OkHttpDownloader(OkHttpClientProvider.getInstance(sAccount)))
                     .build();
         }
 
@@ -75,11 +80,5 @@ public class GitLabClient {
         if (sAccount == null) {
             throw new IllegalStateException("You cannot do any network calls before the account is set!");
         }
-    }
-
-    public static void reset() {
-        sGitLab = null;
-        sGitLabRss = null;
-        sPicasso = null;
     }
 }

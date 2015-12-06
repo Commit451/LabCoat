@@ -38,7 +38,7 @@ public class AccountViewHolder extends RecyclerView.ViewHolder{
     }
 
     public void bind(Account account) {
-        server.setText(account.getServerUrl());
+        server.setText(account.getServerUrl().toString());
         username.setText(account.getUser().getUsername());
         Uri url = ImageUtil.getAvatarUrl(account.getUser(), itemView.getResources().getDimensionPixelSize(R.dimen.user_list_image_size));
         GitLabClient.getPicasso()
