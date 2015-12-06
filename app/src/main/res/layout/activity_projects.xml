@@ -50,7 +50,6 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:clickable="true"
-        android:background="@color/window_background_color"
         android:fitsSystemWindows="true"
         />
 

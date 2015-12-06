@@ -66,7 +66,7 @@ public class GitLabClient {
         if (sPicasso == null) {
             checkAccountSet();
             sPicasso = new Picasso.Builder(GitLabApp.instance())
-                    .downloader(new OkHttpDownloader(OkHttpClientProvider.createInstance(sAccount)))
+                    .downloader(new OkHttpDownloader(OkHttpClientProvider.createPicassoInstance(sAccount)))
                     .build();
         }
 

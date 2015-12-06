@@ -26,16 +26,23 @@ public class OkHttpClientProvider {
     }
 
     public static OkHttpClient createInstance(Account account) {
+        return createInstance(account, true);
+    }
+
+    public static OkHttpClient createPicassoInstance(Account account) {
+        return createInstance(account, false);
+    }
+
+    private static OkHttpClient createInstance(Account account, boolean header) {
         OkHttpClient client = new OkHttpClient();
         if (!TextUtils.isEmpty(account.getTrustedCertificate())) {
             sCustomTrustManager.setTrustedCertificate(account.getTrustedCertificate());
             client.setSslSocketFactory(sCustomTrustManager.getSSLSocketFactory());
         }
-        client.interceptors().add(new PrivateTokenRequestInterceptor(account, true));
+        client.interceptors().add(new PrivateTokenRequestInterceptor(account, header));
         if (BuildConfig.DEBUG) {
             client.networkInterceptors().add(new TimberRequestInterceptor());
         }
         return client;
     }
-
 }
