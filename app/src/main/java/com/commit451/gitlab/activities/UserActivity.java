@@ -181,6 +181,6 @@ public class UserActivity extends BaseActivity {
     private void load() {
         mMessageView.setVisibility(View.GONE);
         mProgress.setVisibility(View.VISIBLE);
-        GitLabClient.rssInstance().getUserFeed(mUser.getFeedUrl(GitLabClient.getAccount().getServerUrl())).enqueue(mUserFeedCallback);
+        GitLabClient.rssInstance().getUserFeed(mUser.getFeedUrl()).enqueue(mUserFeedCallback);
     }
 }

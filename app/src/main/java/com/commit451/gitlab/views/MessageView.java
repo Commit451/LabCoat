@@ -5,9 +5,10 @@ import android.util.AttributeSet;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.commit451.gitlab.model.DiffLine;
+import com.commit451.gitlab.model.Commit;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MessageView extends LinearLayout {
 
@@ -25,7 +26,7 @@ public class MessageView extends LinearLayout {
         super(context, attrs);
     }
 
-    public MessageView(Context context, DiffLine diffLine) {
+    public MessageView(Context context, Commit commit) {
         this(context);
 
         scrollView = new WrappedHorizontalScrollView(getContext());
@@ -36,15 +37,15 @@ public class MessageView extends LinearLayout {
 
         innerView.setOrientation(LinearLayout.VERTICAL);
 
-        ArrayList<DiffLine.Line> lines = (ArrayList<DiffLine.Line>) diffLine.getLines();
+        List<Commit.Line> lines = commit.getLines();
         if (lines != null) {
-            for (DiffLine.Line line : lines) {
+            for (Commit.Line line : lines) {
                 innerView.addView(generateRow(line));
             }
         }
     }
 
-    private LinearLayout generateRow(DiffLine.Line line) {
+    private LinearLayout generateRow(Commit.Line line) {
         if(line == null)
             return null;
 

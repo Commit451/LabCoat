@@ -1,10 +1,9 @@
 package com.commit451.gitlab.api;
 
 import com.commit451.gitlab.model.Branch;
+import com.commit451.gitlab.model.Commit;
 import com.commit451.gitlab.model.Contributor;
-import com.commit451.gitlab.model.DeleteResponse;
 import com.commit451.gitlab.model.Diff;
-import com.commit451.gitlab.model.DiffLine;
 import com.commit451.gitlab.model.FileResponse;
 import com.commit451.gitlab.model.Group;
 import com.commit451.gitlab.model.Issue;
@@ -104,12 +103,12 @@ public interface GitLab {
     /* --- COMMITS --- */
 
     @GET(API_VERSION + "/projects/{id}/repository/commits?per_page=100")
-    Call<List<DiffLine>> getCommits(@Path("id") long projectId,
-                                    @Query("ref_name") String branchName);
+    Call<List<Commit>> getCommits(@Path("id") long projectId,
+                                  @Query("ref_name") String branchName);
 
     @GET(API_VERSION + "/projects/{id}/repository/commits/{sha}")
-    Call<DiffLine> getCommit(@Path("id") long projectId,
-                             @Path("sha") String commitSHA);
+    Call<Commit> getCommit(@Path("id") long projectId,
+                           @Path("sha") String commitSHA);
 
     @GET(API_VERSION + "/projects/{id}/repository/commits/{sha}/diff")
     Call<List<Diff>> getCommitDiff(@Path("id") long projectId,
@@ -182,7 +181,7 @@ public interface GitLab {
                               @Field("access_level") String accessLevel);
 
     @DELETE(API_VERSION + "/groups/{id}/members/{user_id}")
-    Call<DeleteResponse> removeProjectTeamMember(@Path("id") long projectId,
+    Call<Void> removeProjectTeamMember(@Path("id") long projectId,
                                            @Path("user_id") long userId);
 
     @GET(API_VERSION + "/groups/{id}")

@@ -25,7 +25,7 @@ public class Group {
     @SerializedName("projects")
     List<Project> mProjects;
 
-    public Group(){}
+    public Group() {}
 
     public long getId() {
         return mId;

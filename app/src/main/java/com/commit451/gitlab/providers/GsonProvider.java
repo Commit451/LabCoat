@@ -2,15 +2,18 @@ package com.commit451.gitlab.providers;
 
 import android.net.Uri;
 
-import com.commit451.gitlab.api.UriConverter;
+import com.commit451.gitlab.tools.ConversionUtil;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonParseException;
-
-import org.joda.time.format.ISODateTimeFormat;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
 import java.lang.reflect.Type;
 import java.util.Date;
@@ -29,16 +32,54 @@ public class GsonProvider {
         return sGson;
     }
 
-    public static Gson createInstance() {
-        // Configure Gson to handle dates correctly
+    private static Gson createInstance() {
         GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(Date.class, new JsonDeserializer<Date>() {
-            @Override
-            public Date deserialize(JsonElement json, Type type, JsonDeserializationContext context) throws JsonParseException {
-                return ISODateTimeFormat.dateTimeParser().parseDateTime(json.getAsString()).toDate();
-            }
-        });
-        gsonBuilder.registerTypeAdapter(Uri.class, UriConverter.getDeserializer());
+        gsonBuilder.registerTypeAdapter(Date.class, new DateSerializer());
+        gsonBuilder.registerTypeAdapter(Uri.class, new UriSerializer());
         return gsonBuilder.create();
+    }
+
+    private static class DateSerializer implements JsonSerializer<Date>, JsonDeserializer<Date> {
+        @Override
+        public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            String dateString = null;
+            if (!json.isJsonNull()) {
+                dateString = json.getAsString();
+            }
+
+            return ConversionUtil.toDate(dateString);
+        }
+
+        @Override
+        public JsonElement serialize(Date src, Type typeOfSrc, JsonSerializationContext context) {
+            String dateString = ConversionUtil.fromDate(src);
+            if (dateString == null) {
+                return JsonNull.INSTANCE;
+            }
+
+            return new JsonPrimitive(dateString);
+        }
+    }
+
+    private static class UriSerializer implements JsonSerializer<Uri>, JsonDeserializer<Uri> {
+        @Override
+        public Uri deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            String uriString = null;
+            if (!json.isJsonNull()) {
+                uriString = json.getAsString();
+            }
+
+            return ConversionUtil.toUri(uriString);
+        }
+
+        @Override
+        public JsonElement serialize(Uri src, Type typeOfSrc, JsonSerializationContext context) {
+            String uriString = ConversionUtil.fromUri(src);
+            if (uriString == null) {
+                return JsonNull.INSTANCE;
+            }
+
+            return new JsonPrimitive(uriString);
+        }
     }
 }

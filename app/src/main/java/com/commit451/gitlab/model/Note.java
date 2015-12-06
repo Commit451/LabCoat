@@ -5,45 +5,51 @@ import com.google.gson.annotations.SerializedName;
 import org.parceler.Parcel;
 
 import java.util.Date;
+
 @Parcel
 public class Note {
-
     @SerializedName("id")
-    long id;
+    long mId;
     @SerializedName("body")
-    String body;
+    String mBody;
     @SerializedName("author")
-    User author;
+    User mAuthor;
     @SerializedName("created_at")
-    Date created_at;
+    Date mCreatedAt;
+    @SerializedName("system")
+    boolean mSystem;
+    @SerializedName("upvote")
+    boolean mUpvote;
+    @SerializedName("downvote")
+    boolean mDownvote;
 
-    public Note(){}
+    public Note() {}
 
     public long getId() {
-        return id;
-    }
-    public void setId(long id) {
-        this.id = id;
+        return mId;
     }
 
     public String getBody() {
-        return body;
-    }
-    public void setBody(String body) {
-        this.body = body;
+        return mBody;
     }
 
     public User getAuthor() {
-        return author;
-    }
-    public void setAuthor(User author) {
-        this.author = author;
+        return mAuthor;
     }
 
     public Date getCreatedAt() {
-        return created_at;
+        return mCreatedAt;
     }
-    public void setCreatedAt(Date created_at) {
-        this.created_at = created_at;
+
+    public boolean isSystemNote() {
+        return mSystem;
+    }
+
+    public boolean isUpvoted() {
+        return mUpvote;
+    }
+
+    public boolean isDownvoted() {
+        return mDownvote;
     }
 }

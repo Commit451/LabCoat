@@ -6,19 +6,13 @@ import org.simpleframework.xml.Root;
 
 import android.net.Uri;
 
-/**
- * Link!
- * Created by John on 10/8/15.
- */
 @Parcel
 @Root(strict = false)
 public class Link {
-
-    @Attribute(name = "href")
+    @Attribute(name = "href", required = true)
     Uri mHref;
 
-    public Link() {
-    }
+    public Link() {}
 
     public Uri getHref() {
         return mHref;

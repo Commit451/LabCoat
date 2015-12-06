@@ -5,7 +5,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.model.Breadcrumb;
 import com.commit451.gitlab.viewHolders.BreadcrumbViewHolder;
 
 import java.util.ArrayList;
@@ -76,5 +75,27 @@ public class BreadcrumbAdapter extends RecyclerView.Adapter<BreadcrumbViewHolder
         }
 
         return mValues.get(position);
+    }
+
+    public static class Breadcrumb {
+        private final String mTitle;
+        private final Listener mListener;
+
+        public Breadcrumb(String title, Listener listener) {
+            mTitle = title;
+            mListener = listener;
+        }
+
+        public String getTitle() {
+            return mTitle;
+        }
+
+        public Listener getListener() {
+            return mListener;
+        }
+    }
+
+    public interface Listener {
+        void onClick();
     }
 }

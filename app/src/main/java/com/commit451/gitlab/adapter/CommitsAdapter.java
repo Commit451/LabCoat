@@ -5,7 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.model.DiffLine;
+import com.commit451.gitlab.model.Commit;
 import com.commit451.gitlab.viewHolders.CommitViewHolder;
 
 import java.util.ArrayList;
@@ -17,12 +17,12 @@ import java.util.Collection;
 public class CommitsAdapter extends RecyclerView.Adapter<CommitViewHolder> {
 
     public interface Listener {
-        void onCommitClicked(DiffLine diffLine);
+        void onCommitClicked(Commit commit);
     }
     private Listener mListener;
-    private ArrayList<DiffLine> mValues;
+    private ArrayList<Commit> mValues;
 
-    public DiffLine getValueAt(int position) {
+    public Commit getValueAt(int position) {
         return mValues.get(position);
     }
 
@@ -31,7 +31,7 @@ public class CommitsAdapter extends RecyclerView.Adapter<CommitViewHolder> {
         mValues = new ArrayList<>();
     }
 
-    public void setData(Collection<DiffLine> commits) {
+    public void setData(Collection<Commit> commits) {
         mValues.clear();
         if (commits != null) {
             mValues.addAll(commits);
@@ -57,7 +57,7 @@ public class CommitsAdapter extends RecyclerView.Adapter<CommitViewHolder> {
 
     @Override
     public void onBindViewHolder(final CommitViewHolder holder, int position) {
-        DiffLine commit = getValueAt(position);
+        Commit commit = getValueAt(position);
         holder.bind(commit);
         holder.itemView.setTag(R.id.list_position, position);
     }

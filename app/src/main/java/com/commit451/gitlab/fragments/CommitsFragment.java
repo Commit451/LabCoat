@@ -17,7 +17,7 @@ import com.commit451.gitlab.activities.ProjectActivity;
 import com.commit451.gitlab.adapter.CommitsAdapter;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.events.ProjectReloadEvent;
-import com.commit451.gitlab.model.DiffLine;
+import com.commit451.gitlab.model.Commit;
 import com.commit451.gitlab.model.Project;
 import com.squareup.otto.Subscribe;
 
@@ -47,8 +47,8 @@ public class CommitsFragment extends BaseFragment implements SwipeRefreshLayout.
 
     private final CommitsAdapter.Listener mCommitsAdapterListener = new CommitsAdapter.Listener() {
         @Override
-        public void onCommitClicked(DiffLine diffLine) {
-            getActivity().startActivity(DiffActivity.newInstance(getActivity(), mProject, diffLine));
+        public void onCommitClicked(Commit commit) {
+            getActivity().startActivity(DiffActivity.newInstance(getActivity(), mProject, commit));
         }
     };
 
@@ -113,11 +113,11 @@ public class CommitsFragment extends BaseFragment implements SwipeRefreshLayout.
         return false;
     }
 
-    private Callback<List<DiffLine>> commitsCallback = new Callback<List<DiffLine>>() {
+    private Callback<List<Commit>> commitsCallback = new Callback<List<Commit>>() {
 
 
         @Override
-        public void onResponse(Response<List<DiffLine>> response, Retrofit retrofit) {
+        public void onResponse(Response<List<Commit>> response, Retrofit retrofit) {
             if (getView() == null) {
                 return;
             }

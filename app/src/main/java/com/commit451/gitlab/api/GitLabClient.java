@@ -4,10 +4,9 @@ import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.providers.GsonProvider;
 import com.commit451.gitlab.providers.OkHttpClientProvider;
+import com.commit451.gitlab.providers.SimpleXmlProvider;
 import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
-
-import org.simpleframework.xml.core.Persister;
 
 import retrofit.GsonConverterFactory;
 import retrofit.Retrofit;
@@ -40,7 +39,7 @@ public class GitLabClient {
             Retrofit restAdapter = new Retrofit.Builder()
                     .baseUrl(sAccount.getServerUrl())
                     .client(OkHttpClientProvider.createInstance(sAccount))
-                    .addConverterFactory(GsonConverterFactory.create(GsonProvider.createInstance()))
+                    .addConverterFactory(GsonConverterFactory.create(GsonProvider.getInstance()))
                     .build();
             sGitLab = restAdapter.create(GitLab.class);
         }
@@ -53,8 +52,7 @@ public class GitLabClient {
             checkAccountSet();
             Retrofit restAdapter = new Retrofit.Builder()
                     .baseUrl(sAccount.getServerUrl())
-                    .addConverterFactory(SimpleXmlConverterFactory.create(new Persister(UriConverter.getMatcher())))
-                    .client(OkHttpClientProvider.createInstance(sAccount))
+                    .addConverterFactory(SimpleXmlConverterFactory.create(SimpleXmlProvider.getPersister()))
                     .build();
             sGitLabRss = restAdapter.create(GitLabRss.class);
         }

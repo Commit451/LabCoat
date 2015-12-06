@@ -6,10 +6,6 @@ import org.parceler.Parcel;
 
 import java.util.Date;
 
-/**
- * Namespace, which is like an organization (I think)
- * Created by Jawn on 9/22/2015.
- */
 @Parcel
 public class Namespace {
     @SerializedName("created_at")
@@ -17,17 +13,21 @@ public class Namespace {
     @SerializedName("description")
     String mDescription;
     @SerializedName("id")
-    Long mId;
+    long mId;
     @SerializedName("name")
     String mName;
     @SerializedName("owner_id")
-    Long mOwnerId;
+    long mOwnerId;
     @SerializedName("updated_at")
     Date mUpdatedAt;
     @SerializedName("avatar")
     Avatar mAvatar;
     @SerializedName("membership_lock")
-    Boolean mMembershipLock;
+    boolean mMembershipLock;
+    @SerializedName("share_with_group_lock")
+    boolean mShareWithGroupLock;
+    @SerializedName("public")
+    boolean mPublic;
 
     public Namespace() {}
 
@@ -39,7 +39,7 @@ public class Namespace {
         return mDescription;
     }
 
-    public Long getId() {
+    public long getId() {
         return mId;
     }
 
@@ -47,7 +47,7 @@ public class Namespace {
         return mName;
     }
 
-    public Long getOwnerId() {
+    public long getOwnerId() {
         return mOwnerId;
     }
 
@@ -59,7 +59,15 @@ public class Namespace {
         return mAvatar;
     }
 
-    public Boolean getMembershipLock() {
+    public boolean getMembershipLock() {
         return mMembershipLock;
+    }
+
+    public boolean getShareWithGroupLock() {
+        return mShareWithGroupLock;
+    }
+
+    public boolean isPublic() {
+        return mPublic;
     }
 }

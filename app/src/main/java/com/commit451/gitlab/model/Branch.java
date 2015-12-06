@@ -1,29 +1,28 @@
 package com.commit451.gitlab.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import org.parceler.Parcel;
 
 @Parcel
 public class Branch {
-    String name;
-    boolean protected_;
+    @SerializedName("name")
+    String mName;
+    @SerializedName("protected")
+    boolean mProtected;
 
-    public Branch(){}
+    public Branch() {}
 
     public String getName() {
-        return name;
-    }
-    public void setName(String name) {
-        this.name = name;
+        return mName;
     }
 
     public boolean isProtected() {
-        return protected_;
-    }
-    public void setProtected(boolean protected_) {
-        this.protected_ = protected_;
+        return mProtected;
     }
 
+    @Override
     public String toString() {
-        return name;
+        return mName;
     }
 }

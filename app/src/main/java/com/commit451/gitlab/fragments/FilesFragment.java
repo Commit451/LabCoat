@@ -22,7 +22,6 @@ import com.commit451.gitlab.adapter.BreadcrumbAdapter;
 import com.commit451.gitlab.adapter.FilesAdapter;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.events.ProjectReloadEvent;
-import com.commit451.gitlab.model.Breadcrumb;
 import com.commit451.gitlab.model.Project;
 import com.commit451.gitlab.model.TreeItem;
 import com.commit451.gitlab.tools.IntentUtil;
@@ -203,7 +202,7 @@ public class FilesFragment extends BaseFragment {
 
     public boolean onBackPressed() {
         if (mBreadcrumbAdapter.getItemCount() > 1) {
-            Breadcrumb breadcrumb = mBreadcrumbAdapter.getValueAt(mBreadcrumbAdapter.getItemCount() - 2);
+            BreadcrumbAdapter.Breadcrumb breadcrumb = mBreadcrumbAdapter.getValueAt(mBreadcrumbAdapter.getItemCount() - 2);
             if (breadcrumb != null && breadcrumb.getListener() != null) {
                 breadcrumb.getListener().onClick();
                 return true;
@@ -214,8 +213,8 @@ public class FilesFragment extends BaseFragment {
     }
 
     private void updateBreadcrumbs() {
-        List<Breadcrumb> breadcrumbs = new ArrayList<>();
-        breadcrumbs.add(new Breadcrumb("ROOT", new Breadcrumb.Listener() {
+        List<BreadcrumbAdapter.Breadcrumb> breadcrumbs = new ArrayList<>();
+        breadcrumbs.add(new BreadcrumbAdapter.Breadcrumb("ROOT", new BreadcrumbAdapter.Listener() {
             @Override
             public void onClick() {
                 loadData("");
@@ -233,7 +232,7 @@ public class FilesFragment extends BaseFragment {
             newPath += segment + "/";
 
             final String finalPath = newPath;
-            breadcrumbs.add(new Breadcrumb(segment, new Breadcrumb.Listener() {
+            breadcrumbs.add(new BreadcrumbAdapter.Breadcrumb(segment, new BreadcrumbAdapter.Listener() {
                 @Override
                 public void onClick() {
                     loadData(finalPath);

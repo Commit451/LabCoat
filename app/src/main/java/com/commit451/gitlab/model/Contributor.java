@@ -4,10 +4,6 @@ import com.google.gson.annotations.SerializedName;
 
 import org.parceler.Parcel;
 
-/**
- * Contributor to a repo
- * Created by Jawn on 9/20/2015.
- */
 @Parcel
 public class Contributor {
     @SerializedName("name")
@@ -15,11 +11,11 @@ public class Contributor {
     @SerializedName("email")
     String mEmail;
     @SerializedName("commits")
-    Integer mCommits;
+    int mCommits;
     @SerializedName("additions")
-    Integer mAdditions;
+    int mAdditions;
     @SerializedName("deletions")
-    String mDeletions;
+    int mDeletions;
 
     public Contributor() {}
 
@@ -31,15 +27,15 @@ public class Contributor {
         return mEmail;
     }
 
-    public Integer getCommits() {
+    public int getCommits() {
         return mCommits;
     }
 
-    public Integer getAdditions() {
+    public int getAdditions() {
         return mAdditions;
     }
 
-    public String getDeletions() {
+    public int getDeletions() {
         return mDeletions;
     }
 }

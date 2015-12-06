@@ -1,43 +1,57 @@
 package com.commit451.gitlab.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import com.commit451.gitlab.R;
 
 import org.parceler.Parcel;
 
 import android.net.Uri;
+import android.support.annotation.StringDef;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 @Parcel
 public class TreeItem {
-
     public static final String TYPE_FOLDER = "tree";
     public static final String TYPE_REPO = "submodule";
     public static final String TYPE_FILE = "blob";
 
-    String name;
-    String type;
-    long mode;
-    String id;
+    @StringDef({TYPE_FOLDER, TYPE_REPO, TYPE_FILE})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface Type {}
 
-    public TreeItem(){}
+    @SerializedName("name")
+    String mName;
+    @SerializedName("type")
+    String mType;
+    @SerializedName("mode")
+    long mMode;
+    @SerializedName("id")
+    String mId;
+
+    public TreeItem() {}
 
     public String getName() {
-        return name;
+        return mName;
     }
 
+    @Type
     public String getType() {
-        return type;
+        return mType;
     }
 
     public long getMode() {
-        return mode;
+        return mMode;
     }
 
     public String getId() {
-        return id;
+        return mId;
     }
 
     public int getDrawableForType() {
-        switch (type) {
+        switch (mType) {
             case TYPE_FILE:
                 return R.drawable.ic_file_24dp;
             case TYPE_FOLDER:
@@ -53,7 +67,7 @@ public class TreeItem {
                 .appendPath("tree")
                 .appendPath(branchName)
                 .appendEncodedPath(currentPath)
-                .appendPath(name)
+                .appendPath(mName)
                 .build();
     }
 }

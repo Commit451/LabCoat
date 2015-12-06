@@ -64,15 +64,7 @@ public class ProjectViewHolder extends RecyclerView.ViewHolder {
             description.setVisibility(View.GONE);
             description.setText("");
         }
-        if (project.getStarCount() == null) {
-            stars.setText("0");
-        } else {
-            stars.setText(project.getStarCount() + "");
-        }
-        if (project.getForksCount() == null) {
-            forks.setText("0");
-        } else {
-            forks.setText(project.getForksCount() + "");
-        }
+        stars.setText(project.getStarCount() + "");
+        forks.setText(project.getForksCount() + "");
     }
 }

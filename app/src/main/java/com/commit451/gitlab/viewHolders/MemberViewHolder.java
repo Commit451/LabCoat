@@ -30,7 +30,6 @@ public class MemberViewHolder extends RecyclerView.ViewHolder {
 
     @Bind(R.id.user_name) public TextView name;
     @Bind(R.id.user_username) public TextView username;
-    @Bind(R.id.user_role) public TextView role;
     @Bind(R.id.user_image) public ImageView image;
 
     public MemberViewHolder(View view) {
@@ -42,13 +41,6 @@ public class MemberViewHolder extends RecyclerView.ViewHolder {
         name.setText(user.getName());
         if(user.getUsername() != null) {
             username.setText(user.getUsername());
-        }
-
-        if (user.getAccessLevel() != -1) {
-            role.setVisibility(View.VISIBLE);
-            role.setText(user.getAccessLevel(itemView.getResources().getStringArray(R.array.role_names)));
-        } else {
-            role.setVisibility(View.GONE);
         }
 
         Uri url = ImageUtil.getAvatarUrl(user, itemView.getResources().getDimensionPixelSize(R.dimen.image_size));
