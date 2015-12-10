@@ -197,6 +197,7 @@ public class IssuesFragment extends BaseFragment {
 
         @Subscribe
         public void onIssueAdded(IssueCreatedEvent event) {
+            mMessageTextView.setVisibility(View.GONE);
             mIssuesAdapter.addIssue(event.issue);
             mIssueRecyclerView.smoothScrollToPosition(0);
         }
