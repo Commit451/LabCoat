@@ -1,8 +1,10 @@
 package com.commit451.gitlab.adapter;
 
 import android.support.v7.widget.RecyclerView;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.Account;
@@ -25,6 +27,7 @@ public class AccountsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public interface Listener {
         void onAccountClicked(Account account);
         void onAddAccountClicked();
+        void onAccountLogoutClicked(Account account);
     }
 
     private Listener mListener;
@@ -76,8 +79,23 @@ public class AccountsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof AccountViewHolder) {
-            ((AccountViewHolder) holder).bind(getItemAtPosition(position));
+            final Account account = getItemAtPosition(position);
+            ((AccountViewHolder) holder).bind(account);
             holder.itemView.setTag(R.id.list_position, position);
+            ((AccountViewHolder) holder).popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    switch (item.getItemId()) {
+                        case R.id.action_sign_out:
+                            int itemPosition = mAccounts.indexOf(account);
+                            mAccounts.remove(account);
+                            notifyItemRemoved(itemPosition);
+                            mListener.onAccountLogoutClicked(account);
+                            return true;
+                    }
+                    return false;
+                }
+            });
         } else if (holder instanceof AccountFooterViewHolder) {
             //Nah
         } else {
@@ -97,5 +115,9 @@ public class AccountsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     private Account getItemAtPosition(int position) {
         return mAccounts.get(position);
+    }
+
+    public int getAccountsCount() {
+        return mAccounts.size();
     }
 }

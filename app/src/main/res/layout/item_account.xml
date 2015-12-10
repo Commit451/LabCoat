@@ -46,4 +46,14 @@
 
     </LinearLayout>
 
+    <ImageView
+        android:id="@+id/account_more"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_overflow_24dp"
+        android:padding="8dp"
+        android:layout_gravity="center_vertical"
+        android:contentDescription="@null"/>
+
 </LinearLayout>

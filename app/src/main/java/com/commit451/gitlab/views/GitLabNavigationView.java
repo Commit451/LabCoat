@@ -97,6 +97,16 @@ public class GitLabNavigationView extends NavigationView {
         public void onAddAccountClicked() {
             NavigationManager.navigateToLogin(getContext());
         }
+
+        @Override
+        public void onAccountLogoutClicked(Account account) {
+            Prefs.removeAccount(getContext(), account);
+            //TODO if current account is removed, choose the other one to sign in to.
+            if (mAccountAdapter.getAccountsCount() == 0) {
+                NavigationManager.navigateToLogin(getContext());
+                ((Activity) getContext()).finish();
+            }
+        }
     };
 
     @OnClick(R.id.drawer_header)

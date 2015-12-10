@@ -1,11 +1,11 @@
 package com.commit451.gitlab.model;
 
+import android.net.Uri;
+import android.support.annotation.StringDef;
+
 import com.google.gson.annotations.SerializedName;
 
 import org.parceler.Parcel;
-
-import android.net.Uri;
-import android.support.annotation.StringDef;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -148,12 +148,19 @@ public class User {
         return mWebUrl.toString() + ".atom";
     }
 
-    public boolean equals(Object obj) {
-        if (!(obj instanceof User)) {
-            return false;
-        }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
-        User rhs = (User) obj;
-        return rhs.mId == mId;
+        User user = (User) o;
+
+        return mId == user.mId;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) (mId ^ (mId >>> 32));
     }
 }
