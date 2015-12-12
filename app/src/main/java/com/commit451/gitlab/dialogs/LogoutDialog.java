@@ -7,7 +7,6 @@ import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.events.LogoutEvent;
 import com.commit451.gitlab.tools.NavigationManager;
-import com.commit451.gitlab.data.Prefs;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -20,8 +19,7 @@ public class LogoutDialog extends AppCompatDialog {
 
     @OnClick(R.id.logout_button)
     void onLogoutClick() {
-        Prefs.setLoggedIn(getContext(), false);
-        Prefs.setPrivateToken(getContext(), null);
+        //TODO figure out what to do when logging out
         NavigationManager.navigateToLogin(getContext());
         GitLabApp.bus().post(new LogoutEvent());
     }

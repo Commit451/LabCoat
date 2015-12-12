@@ -1,6 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/list_item"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="8dp"
+    android:minHeight="?android:attr/listPreferredItemHeight"
+    android:background="?attr/selectableItemBackground">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/account_image"
+        android:layout_width="@dimen/image_size"
+        android:layout_height="@dimen/image_size"
+        android:layout_marginRight="8dp"
+        android:layout_gravity="center_vertical"
+        android:contentDescription="@null"
+        android:transitionName="@string/transition_user"
+        tools:src="@drawable/ic_about_24dp"
+        />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/account_username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_small"
+            android:maxLines="2"
+            android:ellipsize="end"
+            tools:text="Jawnnypoo"/>
+
+        <TextView
+            android:id="@+id/account_server"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_tiny"
+            android:textColor="@color/white_60"
+            tools:text="https://gitlab.com"/>
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/account_more"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_overflow_24dp"
+        android:padding="8dp"
+        android:layout_gravity="center_vertical"
+        android:contentDescription="@null"/>
 
 </LinearLayout>

@@ -3,6 +3,14 @@ package com.commit451.gitlab.data;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
+
+import com.commit451.gitlab.model.Account;
+import com.commit451.gitlab.providers.GsonProvider;
+import com.google.gson.reflect.TypeToken;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Shared prefs things
@@ -10,52 +18,37 @@ import android.preference.PreferenceManager;
  */
 public class Prefs {
 
-    private static final String LOGGED_IN = "logged_in";
-    private static final String SERVER_URL = "server_url";
-    private static final String PRIVATE_TOKEN = "private_token";
-    private static final String TRUSTED_CERTIFICATE = "trusted_certificate";
+    private static final String ACCOUNTS = "accounts";
 
     private static SharedPreferences getSharedPrefs(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context);
     }
 
-    public static boolean isLoggedIn(Context context) {
-        return getSharedPrefs(context).getBoolean(LOGGED_IN, false);
+    public static List<Account> getAccounts(Context context) {
+        String accountsJson = getSharedPrefs(context).getString(ACCOUNTS, null);
+        if (!TextUtils.isEmpty(accountsJson)) {
+            return GsonProvider.getInstance().fromJson(accountsJson, new TypeToken<List<Account>>(){}.getType());
+        } else {
+            return new ArrayList<>();
+        }
     }
 
-    public static void setLoggedIn(Context context, boolean loggedIn) {
-        SharedPreferences.Editor editor = getSharedPrefs(context).edit();
-        editor.putBoolean(LOGGED_IN, loggedIn);
-        editor.commit();
+    public static void addAccount(Context context, Account account) {
+        List<Account> accounts = getAccounts(context);
+        accounts.add(account);
+        setAccounts(context, accounts);
     }
 
-    public static void setServerUrl(Context context, String serverUrl) {
-        SharedPreferences.Editor editor = getSharedPrefs(context).edit();
-        editor.putString(SERVER_URL, serverUrl);
-        editor.commit();
+    public static void removeAccount(Context context, Account account) {
+        List<Account> accounts = getAccounts(context);
+        accounts.remove(account);
+        setAccounts(context, accounts);
     }
 
-    public static String getServerUrl(Context context) {
-        return getSharedPrefs(context).getString(SERVER_URL, "");
-    }
-
-    public static void setPrivateToken(Context context, String privateToken) {
-        SharedPreferences.Editor editor = getSharedPrefs(context).edit();
-        editor.putString(PRIVATE_TOKEN, privateToken);
-        editor.commit();
-    }
-
-    public static String getPrivateToken(Context context) {
-        return getSharedPrefs(context).getString(PRIVATE_TOKEN, null);
-    }
-
-    public static void setTrustedCertificate(Context context, String trustedCertificate) {
-        SharedPreferences.Editor editor = getSharedPrefs(context).edit();
-        editor.putString(TRUSTED_CERTIFICATE, trustedCertificate);
-        editor.commit();
-    }
-
-    public static String getTrustedCertificate(Context context) {
-        return getSharedPrefs(context).getString(TRUSTED_CERTIFICATE, null);
+    private static void setAccounts(Context context, List<Account> accounts) {
+        getSharedPrefs(context)
+                .edit()
+                .putString(ACCOUNTS, GsonProvider.getInstance().toJson(accounts))
+                .commit();
     }
 }

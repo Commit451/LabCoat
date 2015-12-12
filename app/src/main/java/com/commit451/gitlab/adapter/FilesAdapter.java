@@ -35,10 +35,10 @@ public class FilesAdapter extends RecyclerView.Adapter<FileViewHolder> {
             int position = (int) v.getTag(R.id.list_position);
             TreeItem treeItem = getValueAt(position);
 
-            if(treeItem.getType().equals("tree")) {
+            if(treeItem.getType().equals(TreeItem.TYPE_FOLDER)) {
                 mListener.onFolderClicked(treeItem);
             }
-            else if(treeItem.getType().equals("blob")) {
+            else if(treeItem.getType().equals(TreeItem.TYPE_FILE)) {
                 mListener.onFileClicked(treeItem);
             }
         }
