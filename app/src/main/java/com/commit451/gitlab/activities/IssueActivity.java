@@ -18,6 +18,7 @@ import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.IssueDetailsAdapter;
 import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.dialogs.AssigneeDialog;
 import com.commit451.gitlab.events.IssueChangedEvent;
 import com.commit451.gitlab.model.Issue;
 import com.commit451.gitlab.model.Note;
@@ -89,6 +90,9 @@ public class IssueActivity extends BaseActivity {
                     return true;
                 case R.id.action_close:
                     closeIssue();
+                    return true;
+                case R.id.action_assign:
+                    new AssigneeDialog(IssueActivity.this, mIssue.getAssignee(), mProject).show();
                     return true;
             }
             return false;

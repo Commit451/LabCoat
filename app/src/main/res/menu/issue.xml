@@ -13,4 +13,10 @@
         android:title="@string/action_share"
         android:icon="@drawable/ic_share_24dp"/>
 
+    <item
+        android:id="@+id/action_assign"
+        app:showAsAction="ifRoom"
+        android:title="@string/action_assign"
+        android:icon="@drawable/ic_assign_24dp"/>
+
 </menu>

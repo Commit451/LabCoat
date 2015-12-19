@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.activities.AddUserActivity;
 import com.commit451.gitlab.activities.ProjectActivity;
 import com.commit451.gitlab.adapter.MemberAdapter;
 import com.commit451.gitlab.api.GitLabClient;
@@ -62,10 +61,12 @@ public class MembersFragment extends BaseFragment implements SwipeRefreshLayout.
             if (getView() == null) {
                 return;
             }
+            mSwipeRefreshLayout.setRefreshing(false);
             if (!response.isSuccess()) {
+                mErrorText.setText(R.string.connection_error);
+                mErrorText.setVisibility(View.VISIBLE);
                 return;
             }
-            mSwipeRefreshLayout.setRefreshing(false);
             if (response.body().isEmpty()) {
                 mErrorText.setText(R.string.no_project_members);
                 mErrorText.setVisibility(View.VISIBLE);
