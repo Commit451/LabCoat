@@ -106,7 +106,6 @@
     <string name="logout_title">Are you sure you want to log out?</string>
     <string name="failed_to_load">Failed to load</string>
     <string name="just_now">Just now</string>
-    <string name="no_project_members">No project members.</string>
     <string name="failed_to_create_issue">Failed to create or modify issue</string>
 
     <!-- Overview -->
@@ -201,6 +200,11 @@
         <item>closed</item>
         <item>all</item>
     </string-array>
+
+    <!-- Members -->
+    <string name="no_project_members">No project members.</string>
+    <string name="project_members">Project Members</string>
+    <string name="group_members">%1$s Members</string>
 
     <!-- Groups -->
     <string name="no_groups">No groups.</string>

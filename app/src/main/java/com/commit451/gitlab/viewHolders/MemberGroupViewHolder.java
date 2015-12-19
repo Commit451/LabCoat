@@ -20,19 +20,19 @@ import butterknife.ButterKnife;
  * Users, yay!
  * Created by Jawn on 6/11/2015.
  */
-public class MemberViewHolder extends RecyclerView.ViewHolder {
+public class MemberGroupViewHolder extends RecyclerView.ViewHolder {
 
-    public static MemberViewHolder create(ViewGroup parent) {
+    public static MemberGroupViewHolder newInstance(ViewGroup parent) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_member, parent, false);
-        return new MemberViewHolder(view);
+                .inflate(R.layout.item_member_group, parent, false);
+        return new MemberGroupViewHolder(view);
     }
 
     @Bind(R.id.user_name) public TextView name;
     @Bind(R.id.user_username) public TextView username;
     @Bind(R.id.user_image) public ImageView image;
 
-    public MemberViewHolder(View view) {
+    public MemberGroupViewHolder(View view) {
         super(view);
         ButterKnife.bind(this, view);
     }

@@ -20,7 +20,8 @@ import com.commit451.gitlab.events.UserAddedEvent;
 import com.commit451.gitlab.model.Project;
 import com.commit451.gitlab.model.User;
 import com.commit451.gitlab.tools.NavigationManager;
-import com.commit451.gitlab.viewHolders.MemberViewHolder;
+import com.commit451.gitlab.viewHolders.MemberGroupViewHolder;
+import com.commit451.gitlab.viewHolders.MemberProjectViewHolder;
 import com.squareup.otto.Subscribe;
 
 import java.util.List;
@@ -54,7 +55,7 @@ public class MembersFragment extends BaseFragment implements SwipeRefreshLayout.
     Project mProject;
     EventReceiver mEventReceiver;
 
-    private final Callback<List<User>> usersCallback = new Callback<List<User>>() {
+    private final Callback<List<User>> mProjectMemebersCallback = new Callback<List<User>>() {
 
         @Override
         public void onResponse(Response<List<User>> response, Retrofit retrofit) {
@@ -75,9 +76,49 @@ public class MembersFragment extends BaseFragment implements SwipeRefreshLayout.
             }
             mAddUserButton.setVisibility(View.VISIBLE);
 
-            mAdapter.setData(response.body());
+            mAdapter.setProjectMembers(response.body());
 
             mAddUserButton.setEnabled(true);
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+            Timber.e(t, null);
+            if (getView() == null) {
+                return;
+            }
+
+            mSwipeRefreshLayout.setRefreshing(false);
+            mErrorText.setText(R.string.connection_error);
+            mErrorText.setVisibility(View.VISIBLE);
+            mAddUserButton.setVisibility(View.GONE);
+            Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.connection_error_users), Snackbar.LENGTH_SHORT)
+                    .show();
+        }
+    };
+
+    private final Callback<List<User>> mGroupMembersCallback = new Callback<List<User>>() {
+
+        @Override
+        public void onResponse(Response<List<User>> response, Retrofit retrofit) {
+            if (getView() == null) {
+                return;
+            }
+            mSwipeRefreshLayout.setRefreshing(false);
+            if (!response.isSuccess()) {
+                mErrorText.setText(R.string.connection_error);
+                mErrorText.setVisibility(View.VISIBLE);
+                return;
+            }
+            if (response.body().isEmpty()) {
+                mErrorText.setText(R.string.no_project_members);
+                mErrorText.setVisibility(View.VISIBLE);
+            } else {
+                mErrorText.setVisibility(View.GONE);
+            }
+            mAddUserButton.setVisibility(View.VISIBLE);
+
+            mAdapter.setGroupMembers(response.body());
         }
 
         @Override
@@ -105,8 +146,13 @@ public class MembersFragment extends BaseFragment implements SwipeRefreshLayout.
 
         mAdapter = new MemberAdapter(new MemberAdapter.Listener() {
             @Override
-            public void onUserClicked(User user, MemberViewHolder memberViewHolder) {
-                NavigationManager.navigateToUser(getActivity(), memberViewHolder.image, user);
+            public void onProjectMemberClicked(User user, MemberProjectViewHolder memberGroupViewHolder) {
+
+            }
+
+            @Override
+            public void onGroupMemberClicked(User user, MemberGroupViewHolder memberGroupViewHolder) {
+
             }
         });
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -118,6 +164,7 @@ public class MembersFragment extends BaseFragment implements SwipeRefreshLayout.
 
         if (getActivity() instanceof ProjectActivity) {
             mProject = ((ProjectActivity) getActivity()).getProject();
+            mAdapter.setProject(mProject);
             if (mProject != null) {
                 loadData();
             }
@@ -147,7 +194,10 @@ public class MembersFragment extends BaseFragment implements SwipeRefreshLayout.
                 mSwipeRefreshLayout.setRefreshing(true);
             }
         });
-        GitLabClient.instance().getProjectTeamMembers(mProject.getId()).enqueue(usersCallback);
+        GitLabClient.instance().getProjectTeamMembers(mProject.getId()).enqueue(mProjectMemebersCallback);
+        if (mProject.getNamespace() != null) {
+            GitLabClient.instance().getGroupMembers(mProject.getNamespace().getId()).enqueue(mGroupMembersCallback);
+        }
     }
 
     public boolean onBackPressed() {
@@ -164,6 +214,7 @@ public class MembersFragment extends BaseFragment implements SwipeRefreshLayout.
         @Subscribe
         public void onProjectChanged(ProjectReloadEvent event) {
             mProject = event.project;
+            mAdapter.setProject(mProject);
             loadData();
         }
 

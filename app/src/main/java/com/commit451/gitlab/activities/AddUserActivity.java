@@ -24,7 +24,8 @@ import com.commit451.gitlab.events.UserAddedEvent;
 import com.commit451.gitlab.model.Group;
 import com.commit451.gitlab.model.User;
 import com.commit451.gitlab.tools.KeyboardUtil;
-import com.commit451.gitlab.viewHolders.MemberViewHolder;
+import com.commit451.gitlab.viewHolders.MemberGroupViewHolder;
+import com.commit451.gitlab.viewHolders.MemberProjectViewHolder;
 
 import org.parceler.Parcels;
 
@@ -62,6 +63,7 @@ public class AddUserActivity extends BaseActivity {
     @Bind(R.id.userSearch) EditText mUserSearch;
     @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
     @Bind(R.id.list) RecyclerView mRecyclerView;
+    //TODO use different adapter
     MemberAdapter mAdapter;
     UserRoleDialog mUserRoleDialog;
     User mSelectedUser;
@@ -94,7 +96,7 @@ public class AddUserActivity extends BaseActivity {
             if (!response.isSuccess()) {
                 return;
             }
-            mAdapter.setData(response.body());
+            mAdapter.setProjectMembers(response.body());
         }
 
         @Override
@@ -107,9 +109,13 @@ public class AddUserActivity extends BaseActivity {
 
     private final MemberAdapter.Listener mUserClickListener = new MemberAdapter.Listener() {
         @Override
-        public void onUserClicked(User user, MemberViewHolder memberViewHolder) {
-            mSelectedUser = user;
-            mUserRoleDialog.show();
+        public void onProjectMemberClicked(User user, MemberProjectViewHolder memberGroupViewHolder) {
+
+        }
+
+        @Override
+        public void onGroupMemberClicked(User user, MemberGroupViewHolder memberGroupViewHolder) {
+
         }
     };
 
