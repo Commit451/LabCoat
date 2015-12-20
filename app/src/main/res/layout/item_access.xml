@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/list_item"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:minHeight="?android:attr/listPreferredItemHeight"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/access"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        tools:text="Jawnnypoo" />
+
+</FrameLayout>

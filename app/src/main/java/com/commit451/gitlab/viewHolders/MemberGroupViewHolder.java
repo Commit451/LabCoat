@@ -28,9 +28,8 @@ public class MemberGroupViewHolder extends RecyclerView.ViewHolder {
         return new MemberGroupViewHolder(view);
     }
 
-    @Bind(R.id.user_name) public TextView name;
-    @Bind(R.id.user_username) public TextView username;
-    @Bind(R.id.user_image) public ImageView image;
+    @Bind(R.id.name) public TextView username;
+    @Bind(R.id.image) public ImageView image;
 
     public MemberGroupViewHolder(View view) {
         super(view);
@@ -38,12 +37,9 @@ public class MemberGroupViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(User user) {
-        name.setText(user.getName());
-        if(user.getUsername() != null) {
-            username.setText(user.getUsername());
-        }
+        username.setText(user.getUsername());
 
-        Uri url = ImageUtil.getAvatarUrl(user, itemView.getResources().getDimensionPixelSize(R.dimen.image_size));
+        Uri url = ImageUtil.getAvatarUrl(user, itemView.getResources().getDimensionPixelSize(R.dimen.user_header_image_size));
         GitLabClient.getPicasso()
                 .load(url)
                 .into(image);

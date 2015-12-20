@@ -157,7 +157,12 @@
     <string name="user_added_successfully">User added successfully</string>
     <string name="no_activity">No Activity</string>
 
-    <string-array name="role_names">
+
+    <!-- Access -->
+    <string name="action_apply">Apply</string>
+    <string name="please_select_access_level">Please select an access level</string>
+    <string name="failed_to_apply_access_level">Failed to apply access level</string>
+    <string-array name="project_role_names">
         <item>Guest</item>
         <item>Reporter</item>
         <item>Developer</item>
@@ -165,7 +170,23 @@
         <item>Owner</item>
     </string-array>
 
-    <string-array name="role_values" translatable="false">
+    <string-array name="project_role_values" translatable="false">
+        <item>10</item>
+        <item>20</item>
+        <item>30</item>
+        <item>40</item>
+        <item>50</item>
+    </string-array>
+
+    <string-array name="group_role_names">
+        <item>Guest</item>
+        <item>Reporter</item>
+        <item>Developer</item>
+        <item>Master</item>
+        <item>Owner</item>
+    </string-array>
+
+    <string-array name="group_role_values" translatable="false">
         <item>10</item>
         <item>20</item>
         <item>30</item>
@@ -205,6 +226,8 @@
     <string name="no_project_members">No project members.</string>
     <string name="project_members">Project Members</string>
     <string name="group_members">%1$s Members</string>
+    <string name="change_access">Change Access</string>
+    <string name="remove">Remove</string>
 
     <!-- Groups -->
     <string name="no_groups">No groups.</string>

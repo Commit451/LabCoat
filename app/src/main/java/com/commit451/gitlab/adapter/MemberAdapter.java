@@ -1,8 +1,11 @@
 package com.commit451.gitlab.adapter;
 
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.Project;
@@ -31,6 +34,8 @@ public class MemberAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public interface Listener {
         void onProjectMemberClicked(User user, MemberProjectViewHolder memberGroupViewHolder);
         void onGroupMemberClicked(User user, MemberGroupViewHolder memberGroupViewHolder);
+        void onRemoveMember(User user);
+        void onChangeAccess(User user);
     }
 
     private Listener mListener;
@@ -54,6 +59,18 @@ public class MemberAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             int position = (int) v.getTag(R.id.list_position);
             MemberGroupViewHolder memberGroupViewHolder = (MemberGroupViewHolder) v.getTag(R.id.list_view_holder);
             mListener.onGroupMemberClicked(getGroupMember(position), memberGroupViewHolder);
+        }
+    };
+
+    private final GridLayoutManager.SpanSizeLookup mSpanSizeLookup = new GridLayoutManager.SpanSizeLookup() {
+        @Override
+        public int getSpanSize(int position) {
+            int viewType = getItemViewType(position);
+            if (viewType == TYPE_GROUP_HEADER || viewType == TYPE_PROJECT_HEADER) {
+                return 2;
+            } else {
+                return 1;
+            }
         }
     };
 
@@ -120,10 +137,24 @@ public class MemberAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 holder.itemView.setVisibility(View.VISIBLE);
             }
         } else if (holder instanceof MemberProjectViewHolder) {
-            User user = getProjectMember(position);
+            final User user = getProjectMember(position);
             ((MemberProjectViewHolder) holder).bind(user);
             holder.itemView.setTag(R.id.list_position, position);
             holder.itemView.setTag(R.id.list_view_holder, holder);
+            ((MemberProjectViewHolder) holder).popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    switch (item.getItemId()) {
+                        case R.id.action_change_access:
+                            mListener.onChangeAccess(user);
+                            return true;
+                        case R.id.action_remove:
+                            mListener.onRemoveMember(user);
+                            return true;
+                    }
+                    return false;
+                }
+            });
         } else if (holder instanceof MemberGroupHeaderViewHolder) {
             if (mGroupMembers.isEmpty()) {
                 holder.itemView.setVisibility(View.GONE);
@@ -157,6 +188,10 @@ public class MemberAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         } else {
             throw new IllegalStateException("No type for position " + position);
         }
+    }
+
+    public GridLayoutManager.SpanSizeLookup getSpanSizeLookup() {
+        return mSpanSizeLookup;
     }
 
     public void addUser(User user) {

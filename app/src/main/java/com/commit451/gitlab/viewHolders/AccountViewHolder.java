@@ -46,7 +46,7 @@ public class AccountViewHolder extends RecyclerView.ViewHolder{
         super(view);
         ButterKnife.bind(this, view);
         popupMenu = new PopupMenu(itemView.getContext(), more);
-        popupMenu.getMenuInflater().inflate(R.menu.menu_account, popupMenu.getMenu());
+        popupMenu.getMenuInflater().inflate(R.menu.item_menu_account, popupMenu.getMenu());
         more.setOnClickListener(mOnMoreClickListener);
     }
 

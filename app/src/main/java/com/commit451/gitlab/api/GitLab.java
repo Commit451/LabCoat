@@ -71,9 +71,6 @@ public interface GitLab {
     @GET(API_VERSION + "/projects/{id}/milestones?per_page=100")
     Call<List<Milestone>> getMilestones(@Path("id") long projectId);
 
-    @GET(API_VERSION + "/projects/{id}/members?per_page=100")
-    Call<List<User>> getUsersFallback(@Path("id") long projectId);
-
     @GET(API_VERSION + "/projects/{id}/repository/contributors")
     Call<List<Contributor>> getContributors(@Path("id") long projectId);
 
@@ -98,6 +95,12 @@ public interface GitLab {
     @POST(API_VERSION + "/projects/{id}/members")
     Call<User> addProjectTeamMember(@Path("id") long projectId,
                                     @Field("user_id") long userId,
+                                    @Field("access_level") String accessLevel);
+
+    @FormUrlEncoded
+    @PUT(API_VERSION + "/projects/{id}/members/{user_id}")
+    Call<User> editProjectTeamMember(@Path("id") long projectId,
+                                    @Path("user_id") long userId,
                                     @Field("access_level") String accessLevel);
 
     /* --- COMMITS --- */
@@ -169,7 +172,8 @@ public interface GitLab {
     @GET(API_VERSION + "/user")
     Call<User> getUser();
 
-    /* --- GROUPS --- */
+    // Groups
+    // https://github.com/gitlabhq/gitlabhq/blob/master/doc/api/groups.md
 
     @GET(API_VERSION + "/groups/{id}/members?per_page=100")
     Call<List<User>> getGroupMembers(@Path("id") long groupId);
@@ -178,6 +182,12 @@ public interface GitLab {
     @POST(API_VERSION + "/groups/{id}/members")
     Call<User> addGroupMember(@Path("id") long groupId,
                               @Field("user_id") long userId,
+                              @Field("access_level") String accessLevel);
+
+    @FormUrlEncoded
+    @PUT(API_VERSION + "/groups/{id}/members/{user_id}")
+    Call<User> editGroupMember(@Path("id") long groupId,
+                              @Path("user_id") long userId,
                               @Field("access_level") String accessLevel);
 
     @DELETE(API_VERSION + "/groups/{id}/members/{user_id}")

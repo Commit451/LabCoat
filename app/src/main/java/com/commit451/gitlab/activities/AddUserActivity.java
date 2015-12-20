@@ -19,13 +19,11 @@ import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.MemberAdapter;
 import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.dialogs.UserRoleDialog;
+import com.commit451.gitlab.dialogs.AccessDialog;
 import com.commit451.gitlab.events.UserAddedEvent;
 import com.commit451.gitlab.model.Group;
 import com.commit451.gitlab.model.User;
 import com.commit451.gitlab.tools.KeyboardUtil;
-import com.commit451.gitlab.viewHolders.MemberGroupViewHolder;
-import com.commit451.gitlab.viewHolders.MemberProjectViewHolder;
 
 import org.parceler.Parcels;
 
@@ -65,7 +63,7 @@ public class AddUserActivity extends BaseActivity {
     @Bind(R.id.list) RecyclerView mRecyclerView;
     //TODO use different adapter
     MemberAdapter mAdapter;
-    UserRoleDialog mUserRoleDialog;
+    AccessDialog mAccessDialog;
     User mSelectedUser;
     long mProjectId;
     Group mGroup;
@@ -107,33 +105,33 @@ public class AddUserActivity extends BaseActivity {
         }
     };
 
-    private final MemberAdapter.Listener mUserClickListener = new MemberAdapter.Listener() {
-        @Override
-        public void onProjectMemberClicked(User user, MemberProjectViewHolder memberGroupViewHolder) {
-
-        }
-
-        @Override
-        public void onGroupMemberClicked(User user, MemberGroupViewHolder memberGroupViewHolder) {
-
-        }
-    };
-
-    private final UserRoleDialog.Listener mUserRoleDialogListener = new UserRoleDialog.Listener() {
-        @Override
-        public void onAccessLevelClicked(String accessLevel) {
-            if (mGroup == null) {
-                GitLabClient.instance().addProjectTeamMember(
-                        mProjectId,
-                        mSelectedUser.getId(),
-                        accessLevel).enqueue(mAddGroupMemeberCallback);
-            } else {
-                GitLabClient.instance().addGroupMember(mGroup.getId(),
-                        mSelectedUser.getId(),
-                        accessLevel).enqueue(mAddGroupMemeberCallback);
-            }
-        }
-    };
+//    private final MemberAdapter.Listener mUserClickListener = new MemberAdapter.Listener() {
+//        @Override
+//        public void onProjectMemberClicked(User user, MemberProjectViewHolder memberGroupViewHolder) {
+//
+//        }
+//
+//        @Override
+//        public void onGroupMemberClicked(User user, MemberGroupViewHolder memberGroupViewHolder) {
+//
+//        }
+//    };
+//
+//    private final AccessDialog.Listener mUserRoleDialogListener = new AccessDialog.Listener() {
+//        @Override
+//        public void onAccessLevelClicked(String accessLevel) {
+//            if (mGroup == null) {
+//                GitLabClient.instance().addProjectTeamMember(
+//                        mProjectId,
+//                        mSelectedUser.getId(),
+//                        accessLevel).enqueue(mAddGroupMemeberCallback);
+//            } else {
+//                GitLabClient.instance().addGroupMember(mGroup.getId(),
+//                        mSelectedUser.getId(),
+//                        accessLevel).enqueue(mAddGroupMemeberCallback);
+//            }
+//        }
+//    };
 
     private final Callback<User> mAddGroupMemeberCallback = new Callback<User>() {
         @Override
@@ -146,7 +144,7 @@ public class AddUserActivity extends BaseActivity {
                 return;
             }
             Toast.makeText(AddUserActivity.this, R.string.user_added_successfully, Toast.LENGTH_SHORT).show();
-            mUserRoleDialog.dismiss();
+            mAccessDialog.dismiss();
             finish();
             GitLabApp.bus().post(new UserAddedEvent(response.body()));
         }
@@ -164,12 +162,12 @@ public class AddUserActivity extends BaseActivity {
         ButterKnife.bind(this);
         mProjectId = getIntent().getLongExtra(KEY_PROJECT_ID, -1);
         mGroup = Parcels.unwrap(getIntent().getParcelableExtra(KEY_GROUP));
-        mUserRoleDialog = new UserRoleDialog(this, mUserRoleDialogListener);
+        //mAccessDialog = new AccessDialog(this, mUserRoleDialogListener);
         mToolbar.setNavigationIcon(R.drawable.ic_back_24dp);
         mToolbar.setNavigationOnClickListener(mOnBackPressed);
         mUserSearch.setOnEditorActionListener(mSearchEditorActionListener);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mAdapter = new MemberAdapter(mUserClickListener);
+        //mAdapter = new MemberAdapter(mUserClickListener);
         mRecyclerView.setAdapter(mAdapter);
     }
 }

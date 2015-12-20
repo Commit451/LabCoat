@@ -20,6 +20,38 @@ public class User {
     @Retention(RetentionPolicy.SOURCE)
     public @interface State {}
 
+    public static String getAccessLevelCode(String accessLevelTitle) {
+        switch (accessLevelTitle.toLowerCase()) {
+            case "guest":
+                return "10";
+            case "reporter":
+                return "20";
+            case "developer":
+                return "30";
+            case "master":
+                return "40";
+            case "owner":
+                return "50";
+        }
+        throw new IllegalStateException("No known code for this access level");
+    }
+
+    public static String getAccessLevelDisplay(String accessLevelCode) {
+        switch (accessLevelCode) {
+            case "10":
+                return "Guest";
+            case "20":
+                return "Reporter";
+            case "30":
+                return "Developer";
+            case "40":
+                return "Master";
+            case "50":
+                return "Owner";
+        }
+        return "Unknown";
+    }
+
     @SerializedName("id")
     long mId;
     @SerializedName("username")
@@ -60,6 +92,8 @@ public class User {
     int mProjectsLimit;
     @SerializedName("created_at")
     Date mCreatedAt;
+    @SerializedName("access_level")
+    String mAccessLevel;
 
     public User() {}
 
@@ -142,6 +176,14 @@ public class User {
 
     public Date getCreatedAt() {
         return mCreatedAt;
+    }
+
+    public String getAccessLevelCode() {
+        return mAccessLevel;
+    }
+
+    public String getAccessLevelTitle() {
+        return getAccessLevelDisplay(mAccessLevel);
     }
 
     public String getFeedUrl() {

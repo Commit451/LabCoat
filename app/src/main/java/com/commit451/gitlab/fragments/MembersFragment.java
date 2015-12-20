@@ -3,7 +3,7 @@ package com.commit451.gitlab.fragments;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +15,7 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.activities.ProjectActivity;
 import com.commit451.gitlab.adapter.MemberAdapter;
 import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.dialogs.AccessDialog;
 import com.commit451.gitlab.events.ProjectReloadEvent;
 import com.commit451.gitlab.events.UserAddedEvent;
 import com.commit451.gitlab.model.Project;
@@ -35,7 +36,6 @@ import retrofit.Retrofit;
 import timber.log.Timber;
 
 public class MembersFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
-
 
     public static MembersFragment newInstance() {
 
@@ -154,8 +154,20 @@ public class MembersFragment extends BaseFragment implements SwipeRefreshLayout.
             public void onGroupMemberClicked(User user, MemberGroupViewHolder memberGroupViewHolder) {
 
             }
+
+            @Override
+            public void onChangeAccess(User user) {
+                new AccessDialog(getActivity(), user, mProject.getId()).show();
+            }
+
+            @Override
+            public void onRemoveMember(User user) {
+
+            }
         });
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 2);
+        layoutManager.setSpanSizeLookup(mAdapter.getSpanSizeLookup());
+        mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setAdapter(mAdapter);
         mSwipeRefreshLayout.setOnRefreshListener(this);
 

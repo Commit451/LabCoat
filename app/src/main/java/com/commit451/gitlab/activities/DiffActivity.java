@@ -62,7 +62,7 @@ public class DiffActivity extends BaseActivity {
             }
         });
         toolbar.setTitle(mCommit.getShortId());
-        toolbar.inflateMenu(R.menu.diff);
+        toolbar.inflateMenu(R.menu.menu_diff);
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
