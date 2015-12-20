@@ -6,7 +6,7 @@ import android.view.ViewGroup;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.User;
-import com.commit451.gitlab.viewHolders.UserViewHolder;
+import com.commit451.gitlab.viewHolder.UserViewHolder;
 
 import java.util.ArrayList;
 import java.util.Collection;

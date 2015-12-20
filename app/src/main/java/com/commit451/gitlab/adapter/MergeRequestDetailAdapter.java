@@ -5,8 +5,8 @@ import android.view.ViewGroup;
 
 import com.commit451.gitlab.model.MergeRequest;
 import com.commit451.gitlab.model.MergeRequestComment;
-import com.commit451.gitlab.viewHolders.MergeRequestCommentViewHolder;
-import com.commit451.gitlab.viewHolders.MergeRequestHeaderViewHolder;
+import com.commit451.gitlab.viewHolder.MergeRequestCommentViewHolder;
+import com.commit451.gitlab.viewHolder.MergeRequestHeaderViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;

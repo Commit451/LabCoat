@@ -6,7 +6,7 @@ import android.view.ViewGroup;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.Issue;
-import com.commit451.gitlab.viewHolders.IssueViewHolder;
+import com.commit451.gitlab.viewHolder.IssueViewHolder;
 
 import java.util.ArrayList;
 import java.util.Collection;

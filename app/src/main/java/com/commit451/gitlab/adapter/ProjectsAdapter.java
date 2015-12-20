@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.Project;
-import com.commit451.gitlab.viewHolders.ProjectViewHolder;
+import com.commit451.gitlab.viewHolder.ProjectViewHolder;
 
 import java.util.ArrayList;
 import java.util.Collection;

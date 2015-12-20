@@ -8,7 +8,7 @@ import android.widget.PopupMenu;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.User;
-import com.commit451.gitlab.viewHolders.MemberProjectViewHolder;
+import com.commit451.gitlab.viewHolder.MemberProjectViewHolder;
 
 import java.util.ArrayList;
 import java.util.Collection;

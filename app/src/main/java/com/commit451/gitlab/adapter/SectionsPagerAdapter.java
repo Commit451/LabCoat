@@ -6,15 +6,15 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.fragments.CommitsFragment;
-import com.commit451.gitlab.fragments.FilesFragment;
-import com.commit451.gitlab.fragments.IssuesFragment;
-import com.commit451.gitlab.fragments.MembersFragment;
-import com.commit451.gitlab.fragments.MergeRequestsFragment;
-import com.commit451.gitlab.fragments.OverviewFragment;
+import com.commit451.gitlab.fragment.CommitsFragment;
+import com.commit451.gitlab.fragment.FilesFragment;
+import com.commit451.gitlab.fragment.IssuesFragment;
+import com.commit451.gitlab.fragment.MembersFragment;
+import com.commit451.gitlab.fragment.MergeRequestsFragment;
+import com.commit451.gitlab.fragment.OverviewFragment;
 
 /**
- * Controls the sections that should be shown in a {@link com.commit451.gitlab.activities.ProjectActivity}
+ * Controls the sections that should be shown in a {@link com.commit451.gitlab.activity.ProjectActivity}
  * Created by Jawn on 9/20/2015.
  */
 public class SectionsPagerAdapter extends FragmentPagerAdapter {

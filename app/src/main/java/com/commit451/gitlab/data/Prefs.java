@@ -6,7 +6,7 @@ import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
 import com.commit451.gitlab.model.Account;
-import com.commit451.gitlab.providers.GsonProvider;
+import com.commit451.gitlab.provider.GsonProvider;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;

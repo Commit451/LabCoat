@@ -8,7 +8,7 @@ import android.widget.PopupMenu;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.TreeItem;
-import com.commit451.gitlab.viewHolders.FileViewHolder;
+import com.commit451.gitlab.viewHolder.FileViewHolder;
 
 import java.util.ArrayList;
 import java.util.Collection;

@@ -53,7 +53,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <com.commit451.gitlab.views.EmailAutoCompleteTextView
+            <com.commit451.gitlab.view.EmailAutoCompleteTextView
                 android:id="@+id/user_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

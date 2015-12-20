@@ -8,8 +8,8 @@ import android.widget.PopupMenu;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.Account;
-import com.commit451.gitlab.viewHolders.AccountFooterViewHolder;
-import com.commit451.gitlab.viewHolders.AccountViewHolder;
+import com.commit451.gitlab.viewHolder.AccountFooterViewHolder;
+import com.commit451.gitlab.viewHolder.AccountViewHolder;
 
 import java.util.ArrayList;
 import java.util.Collection;

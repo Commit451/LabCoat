@@ -16,7 +16,7 @@
         android:theme="@style/AppTheme" >
 
         <activity
-            android:name=".activities.GitlabActivity"
+            android:name=".activity.GitlabActivity"
             android:theme="@android:style/Theme.NoDisplay"
             android:noHistory="true" >
             <intent-filter>
@@ -25,35 +25,35 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".activities.ProjectActivity" />
+        <activity android:name=".activity.ProjectActivity" />
 
-        <activity android:name=".activities.LoginActivity" />
+        <activity android:name=".activity.LoginActivity" />
 
-        <activity android:name=".activities.ProjectsActivity"
+        <activity android:name=".activity.ProjectsActivity"
             android:theme="@style/Activity.Projects"/>
 
-        <activity android:name=".activities.GroupsActivity"
+        <activity android:name=".activity.GroupsActivity"
             android:theme="@style/Activity.Groups"/>
 
         <activity
-            android:name=".activities.FileActivity">
+            android:name=".activity.FileActivity">
         </activity>
         <activity
-            android:name=".activities.IssueActivity" >
+            android:name=".activity.IssueActivity" >
         </activity>
         <activity
-            android:name=".activities.DiffActivity" >
+            android:name=".activity.DiffActivity" >
         </activity>
 
-        <activity android:name=".activities.AboutActivity"/>
-        <activity android:name=".activities.AddUserActivity"/>
-        <activity android:name=".activities.UserActivity"
+        <activity android:name=".activity.AboutActivity"/>
+        <activity android:name=".activity.AddUserActivity"/>
+        <activity android:name=".activity.UserActivity"
             android:theme="@style/Activity.User"/>
-        <activity android:name=".activities.SearchActivity"/>
-        <activity android:name=".activities.GroupActivity"
+        <activity android:name=".activity.SearchActivity"/>
+        <activity android:name=".activity.GroupActivity"
             android:theme="@style/Activity.Group"/>
-        <activity android:name=".activities.MergeRequestActivity"/>
-        <activity android:name=".dialogs.NewIssuePopupDialog" android:theme="@style/Activity.Translucent"/>
+        <activity android:name=".activity.MergeRequestActivity"/>
+        <activity android:name=".dialog.NewIssuePopupDialog" android:theme="@style/Activity.Translucent"/>
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="${fabric_key}" />

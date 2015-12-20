@@ -5,7 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.viewHolders.BreadcrumbViewHolder;
+import com.commit451.gitlab.viewHolder.BreadcrumbViewHolder;
 
 import java.util.ArrayList;
 import java.util.Collection;

@@ -2,9 +2,9 @@ package com.commit451.gitlab.api;
 
 import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.model.Account;
-import com.commit451.gitlab.providers.GsonProvider;
-import com.commit451.gitlab.providers.OkHttpClientProvider;
-import com.commit451.gitlab.providers.SimpleXmlProvider;
+import com.commit451.gitlab.provider.GsonProvider;
+import com.commit451.gitlab.provider.OkHttpClientProvider;
+import com.commit451.gitlab.provider.SimpleXmlProvider;
 import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
 

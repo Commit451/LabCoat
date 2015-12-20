@@ -10,10 +10,10 @@ import android.widget.PopupMenu;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.Project;
 import com.commit451.gitlab.model.User;
-import com.commit451.gitlab.viewHolders.MemberGroupHeaderViewHolder;
-import com.commit451.gitlab.viewHolders.MemberGroupViewHolder;
-import com.commit451.gitlab.viewHolders.MemberProjectHeaderViewHolder;
-import com.commit451.gitlab.viewHolders.MemberProjectViewHolder;
+import com.commit451.gitlab.viewHolder.MemberGroupHeaderViewHolder;
+import com.commit451.gitlab.viewHolder.MemberGroupViewHolder;
+import com.commit451.gitlab.viewHolder.MemberProjectHeaderViewHolder;
+import com.commit451.gitlab.viewHolder.MemberProjectViewHolder;
 
 import java.util.ArrayList;
 import java.util.Collection;

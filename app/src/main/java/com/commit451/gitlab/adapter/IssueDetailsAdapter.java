@@ -7,8 +7,8 @@ import com.commit451.gitlab.model.Issue;
 import com.commit451.gitlab.model.Milestone;
 import com.commit451.gitlab.model.Note;
 import com.commit451.gitlab.model.User;
-import com.commit451.gitlab.viewHolders.IssueHeaderViewHolder;
-import com.commit451.gitlab.viewHolders.NoteViewHolder;
+import com.commit451.gitlab.viewHolder.IssueHeaderViewHolder;
+import com.commit451.gitlab.viewHolder.NoteViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;

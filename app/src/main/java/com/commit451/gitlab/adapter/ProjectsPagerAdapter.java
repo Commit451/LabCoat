@@ -6,7 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.fragments.ProjectsFragment;
+import com.commit451.gitlab.fragment.ProjectsFragment;
 
 /**
  * Projects Pager Adapter

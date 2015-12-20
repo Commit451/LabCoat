@@ -44,7 +44,7 @@
 
     </LinearLayout>
 
-    <com.commit451.gitlab.views.GitLabNavigationView
+    <com.commit451.gitlab.view.GitLabNavigationView
         android:id="@+id/navigation_view"
         android:layout_width="304dp"
         android:layout_height="match_parent"

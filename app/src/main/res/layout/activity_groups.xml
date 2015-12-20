@@ -30,7 +30,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <com.commit451.gitlab.views.GitLabSwipeRefreshLayout
+            <com.commit451.gitlab.view.GitLabSwipeRefreshLayout
                 android:id="@+id/swipe_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" >
@@ -41,7 +41,7 @@
                     android:layout_height="match_parent"
                     />
 
-            </com.commit451.gitlab.views.GitLabSwipeRefreshLayout>
+            </com.commit451.gitlab.view.GitLabSwipeRefreshLayout>
 
             <TextView
                 android:id="@+id/message_text"
@@ -57,7 +57,7 @@
 
     </LinearLayout>
 
-    <com.commit451.gitlab.views.GitLabNavigationView
+    <com.commit451.gitlab.view.GitLabNavigationView
         android:id="@+id/navigation_view"
         android:layout_width="304dp"
         android:layout_height="match_parent"

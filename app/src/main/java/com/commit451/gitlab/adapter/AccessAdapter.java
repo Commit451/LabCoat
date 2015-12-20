@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 
 import com.commit451.easel.Easel;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.viewHolders.AccessViewHolder;
+import com.commit451.gitlab.viewHolder.AccessViewHolder;
 
 /**
  * Adapter to show the access levels
