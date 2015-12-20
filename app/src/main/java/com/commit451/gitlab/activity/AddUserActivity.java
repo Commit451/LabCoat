@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -17,13 +17,14 @@ import android.widget.Toast;
 
 import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.adapter.MemberAdapter;
+import com.commit451.gitlab.adapter.UsersAdapter;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.dialog.AccessDialog;
 import com.commit451.gitlab.event.UserAddedEvent;
 import com.commit451.gitlab.model.Group;
 import com.commit451.gitlab.model.User;
 import com.commit451.gitlab.util.KeyboardUtil;
+import com.commit451.gitlab.viewHolder.UserViewHolder;
 
 import org.parceler.Parcels;
 
@@ -61,8 +62,7 @@ public class AddUserActivity extends BaseActivity {
     @Bind(R.id.userSearch) EditText mUserSearch;
     @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
     @Bind(R.id.list) RecyclerView mRecyclerView;
-    //TODO use different adapter
-    MemberAdapter mAdapter;
+    UsersAdapter mAdapter;
     AccessDialog mAccessDialog;
     User mSelectedUser;
     long mProjectId;
@@ -94,7 +94,7 @@ public class AddUserActivity extends BaseActivity {
             if (!response.isSuccess()) {
                 return;
             }
-            mAdapter.setProjectMembers(response.body());
+            mAdapter.setData(response.body());
         }
 
         @Override
@@ -105,33 +105,30 @@ public class AddUserActivity extends BaseActivity {
         }
     };
 
-//    private final MemberAdapter.Listener mUserClickListener = new MemberAdapter.Listener() {
-//        @Override
-//        public void onProjectMemberClicked(User user, MemberProjectViewHolder memberGroupViewHolder) {
-//
-//        }
-//
-//        @Override
-//        public void onGroupMemberClicked(User user, MemberGroupViewHolder memberGroupViewHolder) {
-//
-//        }
-//    };
-//
-//    private final AccessDialog.Listener mUserRoleDialogListener = new AccessDialog.Listener() {
-//        @Override
-//        public void onAccessLevelClicked(String accessLevel) {
-//            if (mGroup == null) {
-//                GitLabClient.instance().addProjectTeamMember(
-//                        mProjectId,
-//                        mSelectedUser.getId(),
-//                        accessLevel).enqueue(mAddGroupMemeberCallback);
-//            } else {
-//                GitLabClient.instance().addGroupMember(mGroup.getId(),
-//                        mSelectedUser.getId(),
-//                        accessLevel).enqueue(mAddGroupMemeberCallback);
-//            }
-//        }
-//    };
+    private final UsersAdapter.Listener mUserClickListener = new UsersAdapter.Listener() {
+        @Override
+        public void onUserClicked(User user, UserViewHolder userViewHolder) {
+            mSelectedUser = user;
+            mAccessDialog.show();
+        }
+    };
+
+    private final AccessDialog.OnAccessAppliedListener mOnAccessAppliedListener = new AccessDialog.OnAccessAppliedListener() {
+
+        @Override
+        public void onAccessApplied(String accessLevel) {
+            if (mGroup == null) {
+                GitLabClient.instance().addProjectTeamMember(
+                        mProjectId,
+                        mSelectedUser.getId(),
+                        accessLevel).enqueue(mAddGroupMemeberCallback);
+            } else {
+                GitLabClient.instance().addGroupMember(mGroup.getId(),
+                        mSelectedUser.getId(),
+                        accessLevel).enqueue(mAddGroupMemeberCallback);
+            }
+        }
+    };
 
     private final Callback<User> mAddGroupMemeberCallback = new Callback<User>() {
         @Override
@@ -162,12 +159,12 @@ public class AddUserActivity extends BaseActivity {
         ButterKnife.bind(this);
         mProjectId = getIntent().getLongExtra(KEY_PROJECT_ID, -1);
         mGroup = Parcels.unwrap(getIntent().getParcelableExtra(KEY_GROUP));
-        //mAccessDialog = new AccessDialog(this, mUserRoleDialogListener);
+        mAccessDialog = new AccessDialog(this, mOnAccessAppliedListener);
         mToolbar.setNavigationIcon(R.drawable.ic_back_24dp);
         mToolbar.setNavigationOnClickListener(mOnBackPressed);
         mUserSearch.setOnEditorActionListener(mSearchEditorActionListener);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        //mAdapter = new MemberAdapter(mUserClickListener);
+        mRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+        mAdapter = new UsersAdapter(mUserClickListener);
         mRecyclerView.setAdapter(mAdapter);
     }
 }

@@ -88,7 +88,7 @@ public class GroupMembersAdapter extends RecyclerView.Adapter<MemberProjectViewH
     }
 
     public void addUser(User user) {
-        mData.add(user);
+        mData.add(0, user);
         notifyItemInserted(0);
     }
 
