@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
+ * Shows a list of projects
  * Created by Jawn on 7/28/2015.
  */
 public class ProjectsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {

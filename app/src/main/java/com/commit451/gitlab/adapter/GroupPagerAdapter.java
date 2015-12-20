@@ -6,7 +6,9 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import com.commit451.gitlab.R;
+import com.commit451.gitlab.fragments.GroupMembersFragment;
 import com.commit451.gitlab.fragments.ProjectsFragment;
+import com.commit451.gitlab.model.Group;
 
 /**
  * Group pager adapter
@@ -16,10 +18,12 @@ public class GroupPagerAdapter extends FragmentPagerAdapter {
     private static final int SECTION_COUNT = 2;
 
     private String[] mTitles;
+    private Group mGroup;
 
-    public GroupPagerAdapter(Context context, FragmentManager fm) {
+    public GroupPagerAdapter(Context context, FragmentManager fm, Group group) {
         super(fm);
-        mTitles = context.getResources().getStringArray(R.array.projects_tabs);
+        mTitles = context.getResources().getStringArray(R.array.group_tabs);
+        mGroup = group;
     }
 
     @Override
@@ -29,7 +33,7 @@ public class GroupPagerAdapter extends FragmentPagerAdapter {
             case 0:
                 return ProjectsFragment.newInstance(ProjectsFragment.MODE_ALL);
             case 1:
-                return ProjectsFragment.newInstance(ProjectsFragment.MODE_MINE);
+                return GroupMembersFragment.newInstance(mGroup);
         }
 
         throw new IllegalStateException("Position exceeded on view pager");

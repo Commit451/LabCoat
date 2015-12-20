@@ -191,8 +191,8 @@ public interface GitLab {
                               @Field("access_level") String accessLevel);
 
     @DELETE(API_VERSION + "/groups/{id}/members/{user_id}")
-    Call<Void> removeProjectTeamMember(@Path("id") long projectId,
-                                           @Path("user_id") long userId);
+    Call<Void> removeGroupMember(@Path("id") long groupId,
+                                 @Path("user_id") long userId);
 
     @GET(API_VERSION + "/groups/{id}")
     Call<Group> getGroupDetails(@Path("id") long id);

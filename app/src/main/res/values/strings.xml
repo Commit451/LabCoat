@@ -231,6 +231,13 @@
 
     <!-- Groups -->
     <string name="no_groups">No groups.</string>
+    <string name="title_group_projects">Projects</string>
+    <string name="title_group_members">Members</string>
+    <string-array name="group_tabs">
+        <item>@string/title_group_projects</item>
+        <item>@string/title_group_members</item>
+    </string-array>
+    <string name="failed_to_remove_member">Failed to remove member</string>
 
     <!-- Settings -->
     <string name="trust_all_hosts">Trust all hosts</string>

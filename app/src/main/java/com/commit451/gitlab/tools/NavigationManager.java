@@ -94,8 +94,12 @@ public class NavigationManager {
         activity.startActivity(FileActivity.newIntent(activity, projectId, path, branchName));
     }
 
-    public static void navigateToAddUser(Activity activity, long projectId) {
+    public static void navigateToAddProjectMember(Activity activity, long projectId) {
         activity.startActivity(AddUserActivity.newInstance(activity, projectId));
+    }
+
+    public static void navigateToAddGroupMember(Activity activity, Group group) {
+        activity.startActivity(AddUserActivity.newIntent(activity, group));
     }
 
     public static void navigateToEditIssue(Activity activity, Project project, Issue issue) {

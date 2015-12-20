@@ -88,7 +88,7 @@ public class GroupActivity extends BaseActivity {
                 .load(mGroup.getAvatarUrl())
                 .into(mImageLoadTarget);
 
-        mViewPager.setAdapter(new GroupPagerAdapter(this, getSupportFragmentManager()));
+        mViewPager.setAdapter(new GroupPagerAdapter(this, getSupportFragmentManager(), mGroup));
         mTabLayout.setupWithViewPager(mViewPager);
     }
 
