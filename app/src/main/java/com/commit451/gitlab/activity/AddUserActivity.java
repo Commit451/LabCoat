@@ -8,7 +8,9 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
@@ -32,6 +34,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
@@ -59,9 +62,22 @@ public class AddUserActivity extends BaseActivity {
     }
 
     @Bind(R.id.toolbar) Toolbar mToolbar;
-    @Bind(R.id.userSearch) EditText mUserSearch;
+    @Bind(R.id.search) EditText mUserSearch;
     @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
     @Bind(R.id.list) RecyclerView mRecyclerView;
+    @Bind(R.id.clear) View mClearView;
+
+    @OnClick(R.id.clear)
+    void onClearClick() {
+        mClearView.animate().alpha(0.0f).withEndAction(new Runnable() {
+            @Override
+            public void run() {
+                mClearView.setVisibility(View.GONE);
+                mUserSearch.getText().clear();
+            }
+        });
+    }
+
     UsersAdapter mAdapter;
     AccessDialog mAccessDialog;
     User mSelectedUser;
@@ -85,6 +101,29 @@ public class AddUserActivity extends BaseActivity {
             }
             return true;
         }
+    };
+
+    private final TextWatcher mTextWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            if (TextUtils.isEmpty(s)) {
+                mClearView.animate().alpha(0.0f).withEndAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        mClearView.setVisibility(View.GONE);
+                    }
+                });
+            } else {
+                mClearView.setVisibility(View.VISIBLE);
+                mClearView.animate().alpha(1.0f);
+            }
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {}
     };
 
     private final Callback<List<User>> mUserCallback = new Callback<List<User>>() {
@@ -163,6 +202,7 @@ public class AddUserActivity extends BaseActivity {
         mToolbar.setNavigationIcon(R.drawable.ic_back_24dp);
         mToolbar.setNavigationOnClickListener(mOnBackPressed);
         mUserSearch.setOnEditorActionListener(mSearchEditorActionListener);
+        mUserSearch.addTextChangedListener(mTextWatcher);
         mRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         mAdapter = new UsersAdapter(mUserClickListener);
         mRecyclerView.setAdapter(mAdapter);

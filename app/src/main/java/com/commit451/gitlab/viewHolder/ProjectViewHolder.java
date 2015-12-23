@@ -36,6 +36,7 @@ public class ProjectViewHolder extends RecyclerView.ViewHolder {
     @Bind(R.id.project_description) TextView description;
     @Bind(R.id.project_stars) TextView stars;
     @Bind(R.id.project_forks) TextView forks;
+    @Bind(R.id.project_visibility) ImageView visibility;
 
     public ProjectViewHolder(View view) {
         super(view);
@@ -66,5 +67,10 @@ public class ProjectViewHolder extends RecyclerView.ViewHolder {
         }
         stars.setText(project.getStarCount() + "");
         forks.setText(project.getForksCount() + "");
+        if (project.isPublic()) {
+            visibility.setImageResource(R.drawable.ic_public_24dp);
+        } else {
+            visibility.setImageResource(R.drawable.ic_private_24dp);
+        }
     }
 }

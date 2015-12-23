@@ -1,119 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView
+    style="@style/Card"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/Card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginBottom="4dp"
     android:layout_marginLeft="@dimen/activity_horizontal_margin"
     android:layout_marginRight="@dimen/activity_horizontal_margin"
-    android:layout_marginTop="4dp"
-    android:layout_marginBottom="4dp">
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="8dp"
-    android:minHeight="?android:attr/listPreferredItemHeight"
-    android:orientation="horizontal">
+    android:layout_marginTop="4dp">
 
     <ImageView
-        android:id="@+id/project_image"
-        android:layout_width="@dimen/image_size"
-        android:layout_height="@dimen/image_size"
-        android:layout_gravity="center_vertical"
-        tools:src="@mipmap/ic_launcher"
-        android:contentDescription="@null"/>
-
-    <com.github.ivbaranov.mli.MaterialLetterIcon
-        android:id="@+id/project_letter"
-        android:layout_width="@dimen/image_size"
-        android:layout_height="@dimen/image_size"
-        android:layout_gravity="center_vertical"/>
+        android:id="@+id/project_visibility"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_margin="4dp"
+        android:layout_gravity="right"
+        android:contentDescription="@null"
+        tools:src="@drawable/ic_public_24dp"/>
 
     <LinearLayout
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:layout_gravity="center_vertical"
-        android:layout_marginLeft="16dp">
+        android:minHeight="?android:attr/listPreferredItemHeight"
+        android:orientation="horizontal"
+        android:padding="8dp">
 
-        <TextView
-            android:id="@+id/project_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:gravity="center_vertical"
+        <ImageView
+            android:id="@+id/project_image"
+            android:layout_width="@dimen/image_size"
+            android:layout_height="@dimen/image_size"
             android:layout_gravity="center_vertical"
-            android:fontFamily="sans-serif-medium"
-            tools:text="Project"
-            />
+            android:contentDescription="@null"
+            tools:src="@mipmap/ic_launcher"/>
 
-        <TextView
-            android:id="@+id/project_description"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:gravity="center_vertical"
-            android:layout_gravity="center_vertical"
-            android:fontFamily="sans-serif-medium"
-            tools:text="Project"
-            />
+        <com.github.ivbaranov.mli.MaterialLetterIcon
+            android:id="@+id/project_letter"
+            android:layout_width="@dimen/image_size"
+            android:layout_height="@dimen/image_size"
+            android:layout_gravity="center_vertical"/>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="16dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/project_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center_vertical"
+                android:textSize="18sp"
+                tools:text="Project"
+                />
+
+            <TextView
+                android:id="@+id/project_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center_vertical"
+                android:textSize="14sp"
+                tools:text="Project"
+                />
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/project_stars"
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginRight="4dp"/>
+                    android:orientation="horizontal">
 
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_star_24dp"
-                    android:contentDescription="@null"/>
+                    <TextView
+                        android:id="@+id/project_stars"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginRight="4dp"/>
 
-            </LinearLayout>
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_star_24dp"/>
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginLeft="8dp"
-                android:orientation="horizontal">
+                </LinearLayout>
 
-                <TextView
-                    android:id="@+id/project_forks"
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginRight="4dp"/>
+                    android:layout_marginLeft="8dp"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
 
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_fork_24dp"
-                    android:contentDescription="@null"/>
+                    <TextView
+                        android:id="@+id/project_forks"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginRight="4dp"/>
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_fork_24dp"/>
+
+                </LinearLayout>
 
             </LinearLayout>
 
         </LinearLayout>
 
     </LinearLayout>
-
-
-
-
-
-</LinearLayout>
 </android.support.v7.widget.CardView>
