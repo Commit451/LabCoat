@@ -10,12 +10,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.ProjectsAdapter;
 import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.event.ReloadDataEvent;
 import com.commit451.gitlab.model.Project;
 import com.commit451.gitlab.util.LinkHeaderResolver;
 import com.commit451.gitlab.util.NavigationManager;
+import com.squareup.otto.Subscribe;
 
 import java.util.List;
 
@@ -61,6 +64,8 @@ public class ProjectsFragment extends BaseFragment {
     LinearLayoutManager mLayoutManager;
     ProjectsAdapter mProjectsAdapter;
     @Bind(R.id.message_text) TextView mMessageText;
+
+    EventReceiver mEventReceiver;
 
     private int mMode;
     private String mQuery;
@@ -143,6 +148,10 @@ public class ProjectsFragment extends BaseFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
+
+        mEventReceiver = new EventReceiver();
+        GitLabApp.bus().register(mEventReceiver);
+
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -220,5 +229,14 @@ public class ProjectsFragment extends BaseFragment {
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
+        GitLabApp.bus().unregister(mEventReceiver);
+    }
+
+    private class EventReceiver {
+
+        @Subscribe
+        public void onReloadDataEvent(ReloadDataEvent event) {
+            loadData();
+        }
     }
 }

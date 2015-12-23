@@ -20,9 +20,11 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
 
+import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.data.Prefs;
+import com.commit451.gitlab.event.LoginEvent;
 import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.model.Session;
 import com.commit451.gitlab.model.User;
@@ -165,6 +167,7 @@ public class LoginActivity extends BaseActivity {
             mAccount.setLastUsed(new Date());
             Prefs.addAccount(LoginActivity.this, mAccount);
             GitLabClient.setAccount(mAccount);
+            GitLabApp.bus().post(new LoginEvent(mAccount));
             NavigationManager.navigateToProjects(LoginActivity.this);
             finish();
         }

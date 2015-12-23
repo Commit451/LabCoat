@@ -30,10 +30,12 @@
         <activity android:name=".activity.LoginActivity" />
 
         <activity android:name=".activity.ProjectsActivity"
-            android:theme="@style/Activity.Projects"/>
+            android:theme="@style/Activity.Projects"
+            android:launchMode="singleTask"/>
 
         <activity android:name=".activity.GroupsActivity"
-            android:theme="@style/Activity.Groups"/>
+            android:theme="@style/Activity.Groups"
+            android:launchMode="singleTask"/>
 
         <activity
             android:name=".activity.FileActivity">

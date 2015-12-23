@@ -1,12 +1,15 @@
 package com.commit451.gitlab.adapter;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.PopupMenu;
 
+import com.commit451.easel.Easel;
 import com.commit451.gitlab.R;
+import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.viewHolder.AccountFooterViewHolder;
 import com.commit451.gitlab.viewHolder.AccountViewHolder;
@@ -32,6 +35,7 @@ public class AccountsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     private Listener mListener;
     private ArrayList<Account> mAccounts;
+    private int mColorControlHighlight;
 
     private View.OnClickListener mOnItemClickListener = new View.OnClickListener() {
         @Override
@@ -48,9 +52,10 @@ public class AccountsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     };
 
-    public AccountsAdapter(Listener listener) {
+    public AccountsAdapter(Context context, Listener listener) {
         mListener = listener;
         mAccounts = new ArrayList<>();
+        mColorControlHighlight = Easel.getThemeAttrColor(context, R.attr.colorControlHighlight);
     }
 
     public void setAccounts(Collection<Account> accounts) {
@@ -59,6 +64,11 @@ public class AccountsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             mAccounts.addAll(accounts);
         }
         notifyDataSetChanged();
+    }
+
+    public void addAccount(Account account) {
+        mAccounts.add(0, account);
+        notifyItemInserted(0);
     }
 
     @Override
@@ -80,7 +90,7 @@ public class AccountsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof AccountViewHolder) {
             final Account account = getItemAtPosition(position);
-            ((AccountViewHolder) holder).bind(account);
+            ((AccountViewHolder) holder).bind(account, account.equals(GitLabClient.getAccount()), mColorControlHighlight);
             holder.itemView.setTag(R.id.list_position, position);
             ((AccountViewHolder) holder).popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                 @Override

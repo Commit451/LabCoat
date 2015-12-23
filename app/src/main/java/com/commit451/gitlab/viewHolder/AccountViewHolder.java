@@ -50,9 +50,14 @@ public class AccountViewHolder extends RecyclerView.ViewHolder{
         more.setOnClickListener(mOnMoreClickListener);
     }
 
-    public void bind(Account account) {
+    public void bind(Account account, boolean isActive, int colorSelected) {
         server.setText(account.getServerUrl().toString());
         username.setText(account.getUser().getUsername());
+        if(isActive) {
+            itemView.setBackgroundColor(colorSelected);
+        } else {
+            itemView.setBackground(null);
+        }
         Uri url = ImageUtil.getAvatarUrl(account.getUser(), itemView.getResources().getDimensionPixelSize(R.dimen.user_list_image_size));
         GitLabClient.getPicasso()
                 .load(url)

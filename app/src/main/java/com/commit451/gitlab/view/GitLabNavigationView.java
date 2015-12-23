@@ -22,11 +22,13 @@ import com.commit451.gitlab.adapter.AccountsAdapter;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.data.Prefs;
 import com.commit451.gitlab.event.CloseDrawerEvent;
+import com.commit451.gitlab.event.LoginEvent;
 import com.commit451.gitlab.event.ReloadDataEvent;
 import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.model.User;
 import com.commit451.gitlab.util.ImageUtil;
 import com.commit451.gitlab.util.NavigationManager;
+import com.squareup.otto.Subscribe;
 
 import java.util.Collections;
 import java.util.Date;
@@ -53,6 +55,7 @@ public class GitLabNavigationView extends NavigationView {
 
     RecyclerView mAccountList;
     AccountsAdapter mAccountAdapter;
+    EventReceiver mEventReceiver;
 
     private final OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new OnNavigationItemSelectedListener() {
         @Override
@@ -96,6 +99,7 @@ public class GitLabNavigationView extends NavigationView {
         @Override
         public void onAddAccountClicked() {
             NavigationManager.navigateToLogin((Activity) getContext());
+            GitLabApp.bus().post(new CloseDrawerEvent());
         }
 
         @Override
@@ -151,6 +155,9 @@ public class GitLabNavigationView extends NavigationView {
     }
 
     private void init() {
+        mEventReceiver = new EventReceiver();
+        GitLabApp.bus().register(mEventReceiver);
+
         setNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         inflateMenu(R.menu.navigation);
         setBackgroundColor(ContextCompat.getColor(getContext(), R.color.window_background_color));
@@ -164,11 +171,17 @@ public class GitLabNavigationView extends NavigationView {
         params.setMargins(0, getResources().getDimensionPixelSize(R.dimen.navigation_drawer_header_height), 0, 0);
         mAccountList.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.window_background_color));
         mAccountList.setVisibility(View.GONE);
-        mAccountAdapter = new AccountsAdapter(mAccountsAdapterListener);
+        mAccountAdapter = new AccountsAdapter(getContext(), mAccountsAdapterListener);
         mAccountList.setAdapter(mAccountAdapter);
         setSelectedNavigationItem();
         setAccounts();
         loadCurrentUser();
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        GitLabApp.bus().unregister(mEventReceiver);
+        super.onDetachedFromWindow();
     }
 
     private void setSelectedNavigationItem() {
@@ -241,5 +254,16 @@ public class GitLabNavigationView extends NavigationView {
         toggleAccounts();
         GitLabApp.bus().post(new ReloadDataEvent());
         GitLabApp.bus().post(new CloseDrawerEvent());
+        mAccountAdapter.notifyDataSetChanged();
+    }
+
+    private class EventReceiver {
+
+        @Subscribe
+        public void onUserLoggedIn(LoginEvent event) {
+            if (mAccountAdapter != null) {
+                mAccountAdapter.addAccount(event.account);
+            }
+        }
     }
 }
