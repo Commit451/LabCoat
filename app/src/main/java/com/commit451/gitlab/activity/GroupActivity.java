@@ -11,6 +11,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.graphics.Palette;
@@ -30,6 +31,10 @@ import org.parceler.Parcels;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import retrofit.Callback;
+import retrofit.Response;
+import retrofit.Retrofit;
+import timber.log.Timber;
 
 /**
  * See the things about the group
@@ -38,6 +43,7 @@ import butterknife.ButterKnife;
 public class GroupActivity extends BaseActivity {
 
     private static final String KEY_GROUP = "key_group";
+    private static final String KEY_GROUP_ID = "key_group_id";
 
     public static Intent newInstance(Context context, Group group) {
         Intent intent = new Intent(context, GroupActivity.class);
@@ -45,6 +51,13 @@ public class GroupActivity extends BaseActivity {
         return intent;
     }
 
+    public static Intent newInstance(Context context, long groupId) {
+        Intent intent = new Intent(context, GroupActivity.class);
+        intent.putExtra(KEY_GROUP_ID, groupId);
+        return intent;
+    }
+
+    @Bind(R.id.root) View mRoot;
     @Bind(R.id.toolbar) Toolbar mToolbar;
     @Bind(R.id.collapsing_toolbar) CollapsingToolbarLayout mCollapsingToolbarLayout;
     @Bind(R.id.viewpager) ViewPager mViewPager;
@@ -69,14 +82,29 @@ public class GroupActivity extends BaseActivity {
         public void onPrepareLoad(Drawable placeHolderDrawable) {}
     };
 
-    Group mGroup;
+    private final Callback<Group> mGroupCallback = new Callback<Group>() {
+        @Override
+        public void onResponse(Response<Group> response, Retrofit retrofit) {
+            if (!response.isSuccess()) {
+                showError();
+                return;
+            }
+            bind(response.body());
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+            Timber.e(null, t);
+            showError();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group);
         ButterKnife.bind(this);
-        mGroup = Parcels.unwrap(getIntent().getParcelableExtra(KEY_GROUP));
+
         mToolbar.setNavigationIcon(R.drawable.ic_back_24dp);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,17 +112,28 @@ public class GroupActivity extends BaseActivity {
                 onBackPressed();
             }
         });
-        GitLabClient.getPicasso()
-                .load(mGroup.getAvatarUrl())
-                .into(mImageLoadTarget);
 
-        mViewPager.setAdapter(new GroupPagerAdapter(this, getSupportFragmentManager(), mGroup));
-        mTabLayout.setupWithViewPager(mViewPager);
+        if (getIntent().hasExtra(KEY_GROUP)) {
+            Group group = Parcels.unwrap(getIntent().getParcelableExtra(KEY_GROUP));
+            bind(group);
+        } else {
+            long groupId = getIntent().getLongExtra(KEY_GROUP_ID, -1);
+            GitLabClient.instance().getGroupDetails(groupId).enqueue(mGroupCallback);
+        }
     }
 
     @Override
     public void onBackPressed() {
         supportFinishAfterTransition();
+    }
+
+    private void bind(Group group) {
+        GitLabClient.getPicasso()
+                .load(group.getAvatarUrl())
+                .into(mImageLoadTarget);
+
+        mViewPager.setAdapter(new GroupPagerAdapter(this, getSupportFragmentManager(), group));
+        mTabLayout.setupWithViewPager(mViewPager);
     }
 
     private void bindPalette(Palette palette) {
@@ -122,5 +161,10 @@ public class GroupActivity extends BaseActivity {
                 Color.WHITE, palette.getDarkMutedColor(Color.BLACK))
                 .setDuration(animationTime)
                 .start();
+    }
+
+    private void showError() {
+        Snackbar.make(mRoot, R.string.connection_error, Snackbar.LENGTH_SHORT)
+                .show();
     }
 }

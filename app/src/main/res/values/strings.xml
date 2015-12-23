@@ -225,7 +225,7 @@
     <!-- Members -->
     <string name="no_project_members">No project members.</string>
     <string name="project_members">Project Members</string>
-    <string name="group_members">%1$s Members</string>
+    <string name="group_members">See %1$s Members</string>
     <string name="change_access">Change Access</string>
     <string name="remove">Remove</string>
 

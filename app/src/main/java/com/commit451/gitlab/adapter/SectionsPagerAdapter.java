@@ -9,7 +9,7 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.fragment.CommitsFragment;
 import com.commit451.gitlab.fragment.FilesFragment;
 import com.commit451.gitlab.fragment.IssuesFragment;
-import com.commit451.gitlab.fragment.MembersFragment;
+import com.commit451.gitlab.fragment.ProjectMembersFragment;
 import com.commit451.gitlab.fragment.MergeRequestsFragment;
 import com.commit451.gitlab.fragment.OverviewFragment;
 
@@ -43,7 +43,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
             case 4:
                 return MergeRequestsFragment.newInstance();
             case 5:
-                return MembersFragment.newInstance();
+                return ProjectMembersFragment.newInstance();
         }
 
         throw new IllegalStateException("Position exceeded on view pager");

@@ -81,6 +81,10 @@ public class NavigationManager {
         }
     }
 
+    public static void navigateToGroup(Activity activity, long groupId) {
+        activity.startActivity(GroupActivity.newInstance(activity, groupId));
+    }
+
     public static void navigateToIssue(Activity activity, Project project, Issue issue) {
         activity.startActivity(IssueActivity.newInstance(activity, project, issue));
     }

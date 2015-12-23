@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.commit451.gitlab.R;
@@ -17,27 +18,41 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 /**
- * Users, yay!
- * Created by Jawn on 6/11/2015.
+ * Shows a project member
+ * Created by Jawn on 12/19/2015.
  */
-public class MemberGroupViewHolder extends RecyclerView.ViewHolder {
+public class ProjectMemberViewHolder extends RecyclerView.ViewHolder{
 
-    public static MemberGroupViewHolder newInstance(ViewGroup parent) {
+    public static ProjectMemberViewHolder newInstance(ViewGroup parent) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_member_group, parent, false);
-        return new MemberGroupViewHolder(view);
+                .inflate(R.layout.item_member_project, parent, false);
+        return new ProjectMemberViewHolder(view);
     }
 
+    @Bind(R.id.overflow) public View overflow;
     @Bind(R.id.name) public TextView username;
+    @Bind(R.id.access) public TextView access;
     @Bind(R.id.image) public ImageView image;
+    public PopupMenu popupMenu;
 
-    public MemberGroupViewHolder(View view) {
+    private final View.OnClickListener mOnMoreClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            popupMenu.show();
+        }
+    };
+
+    public ProjectMemberViewHolder(View view) {
         super(view);
         ButterKnife.bind(this, view);
+        popupMenu = new PopupMenu(itemView.getContext(), overflow);
+        popupMenu.getMenuInflater().inflate(R.menu.item_menu_project_member, popupMenu.getMenu());
+        overflow.setOnClickListener(mOnMoreClickListener);
     }
 
     public void bind(User user) {
         username.setText(user.getUsername());
+        access.setText(user.getAccessLevelTitle());
 
         Uri url = ImageUtil.getAvatarUrl(user, itemView.getResources().getDimensionPixelSize(R.dimen.user_header_image_size));
         GitLabClient.getPicasso()

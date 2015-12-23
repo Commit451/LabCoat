@@ -21,8 +21,7 @@ import com.commit451.gitlab.event.UserAddedEvent;
 import com.commit451.gitlab.model.Project;
 import com.commit451.gitlab.model.User;
 import com.commit451.gitlab.util.NavigationManager;
-import com.commit451.gitlab.viewHolder.MemberGroupViewHolder;
-import com.commit451.gitlab.viewHolder.MemberProjectViewHolder;
+import com.commit451.gitlab.viewHolder.ProjectMemberViewHolder;
 import com.squareup.otto.Subscribe;
 
 import java.util.List;
@@ -35,13 +34,13 @@ import retrofit.Response;
 import retrofit.Retrofit;
 import timber.log.Timber;
 
-public class MembersFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
+public class ProjectMembersFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
 
-    public static MembersFragment newInstance() {
+    public static ProjectMembersFragment newInstance() {
 
         Bundle args = new Bundle();
 
-        MembersFragment fragment = new MembersFragment();
+        ProjectMembersFragment fragment = new ProjectMembersFragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -97,47 +96,7 @@ public class MembersFragment extends BaseFragment implements SwipeRefreshLayout.
         }
     };
 
-    private final Callback<List<User>> mGroupMembersCallback = new Callback<List<User>>() {
-
-        @Override
-        public void onResponse(Response<List<User>> response, Retrofit retrofit) {
-            if (getView() == null) {
-                return;
-            }
-            mSwipeRefreshLayout.setRefreshing(false);
-            if (!response.isSuccess()) {
-                mErrorText.setText(R.string.connection_error);
-                mErrorText.setVisibility(View.VISIBLE);
-                return;
-            }
-            if (response.body().isEmpty()) {
-                mErrorText.setText(R.string.no_project_members);
-                mErrorText.setVisibility(View.VISIBLE);
-            } else {
-                mErrorText.setVisibility(View.GONE);
-            }
-            mAddUserButton.setVisibility(View.VISIBLE);
-
-            mAdapter.setGroupMembers(response.body());
-        }
-
-        @Override
-        public void onFailure(Throwable t) {
-            Timber.e(t, null);
-            if (getView() == null) {
-                return;
-            }
-
-            mSwipeRefreshLayout.setRefreshing(false);
-            mErrorText.setText(R.string.connection_error);
-            mErrorText.setVisibility(View.VISIBLE);
-            mAddUserButton.setVisibility(View.GONE);
-            Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.connection_error_users), Snackbar.LENGTH_SHORT)
-                    .show();
-        }
-    };
-
-    public MembersFragment() {}
+    public ProjectMembersFragment() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -146,13 +105,13 @@ public class MembersFragment extends BaseFragment implements SwipeRefreshLayout.
 
         mAdapter = new MemberAdapter(new MemberAdapter.Listener() {
             @Override
-            public void onProjectMemberClicked(User user, MemberProjectViewHolder memberGroupViewHolder) {
+            public void onProjectMemberClicked(User user, ProjectMemberViewHolder memberGroupViewHolder) {
 
             }
 
             @Override
-            public void onGroupMemberClicked(User user, MemberGroupViewHolder memberGroupViewHolder) {
-
+            public void onSeeGroupClicked() {
+                NavigationManager.navigateToGroup(getActivity(), mProject.getNamespace().getId());
             }
 
             @Override
@@ -176,8 +135,8 @@ public class MembersFragment extends BaseFragment implements SwipeRefreshLayout.
 
         if (getActivity() instanceof ProjectActivity) {
             mProject = ((ProjectActivity) getActivity()).getProject();
-            mAdapter.setProject(mProject);
             if (mProject != null) {
+                setNamespace();
                 loadData();
             }
         } else {
@@ -207,9 +166,6 @@ public class MembersFragment extends BaseFragment implements SwipeRefreshLayout.
             }
         });
         GitLabClient.instance().getProjectTeamMembers(mProject.getId()).enqueue(mProjectMemebersCallback);
-        if (mProject.getNamespace() != null) {
-            GitLabClient.instance().getGroupMembers(mProject.getNamespace().getId()).enqueue(mGroupMembersCallback);
-        }
     }
 
     public boolean onBackPressed() {
@@ -221,12 +177,21 @@ public class MembersFragment extends BaseFragment implements SwipeRefreshLayout.
         NavigationManager.navigateToAddProjectMember(getActivity(), mProject.getId());
     }
 
+    private void setNamespace() {
+        //If there is an owner, then there is no group
+        if (mProject.getOwner() != null) {
+            mAdapter.setNamespace(null);
+        } else {
+            mAdapter.setNamespace(mProject.getNamespace());
+        }
+    }
+
     private class EventReceiver {
 
         @Subscribe
         public void onProjectChanged(ProjectReloadEvent event) {
             mProject = event.project;
-            mAdapter.setProject(mProject);
+            setNamespace();
             loadData();
         }
 

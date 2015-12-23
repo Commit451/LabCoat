@@ -19,7 +19,7 @@ import com.commit451.gitlab.event.UserAddedEvent;
 import com.commit451.gitlab.model.Group;
 import com.commit451.gitlab.model.User;
 import com.commit451.gitlab.util.NavigationManager;
-import com.commit451.gitlab.viewHolder.MemberProjectViewHolder;
+import com.commit451.gitlab.viewHolder.ProjectMemberViewHolder;
 import com.squareup.otto.Subscribe;
 
 import org.parceler.Parcels;
@@ -145,7 +145,7 @@ public class GroupMembersFragment extends BaseFragment {
 
     private final GroupMembersAdapter.Listener mListener = new GroupMembersAdapter.Listener() {
         @Override
-        public void onUserClicked(User user, MemberProjectViewHolder holder) {
+        public void onUserClicked(User user, ProjectMemberViewHolder holder) {
             NavigationManager.navigateToUser(getActivity(), holder.image, user);
         }
 

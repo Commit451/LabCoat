@@ -23,7 +23,7 @@ import com.commit451.gitlab.fragment.CommitsFragment;
 import com.commit451.gitlab.fragment.FilesFragment;
 import com.commit451.gitlab.fragment.IssuesFragment;
 import com.commit451.gitlab.fragment.MergeRequestsFragment;
-import com.commit451.gitlab.fragment.MembersFragment;
+import com.commit451.gitlab.fragment.ProjectMembersFragment;
 import com.commit451.gitlab.fragment.OverviewFragment;
 import com.commit451.gitlab.model.Branch;
 import com.commit451.gitlab.model.Project;
@@ -180,8 +180,8 @@ public class ProjectActivity extends BaseActivity {
                 handled = mergeRequestsFragment.onBackPressed();
                 break;
             case 5:
-                MembersFragment membersFragment = (MembersFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.pager + ":5");
-                handled = membersFragment.onBackPressed();
+                ProjectMembersFragment projectMembersFragment = (ProjectMembersFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.pager + ":5");
+                handled = projectMembersFragment.onBackPressed();
                 break;
         }
 
