@@ -2,7 +2,6 @@ package com.commit451.gitlab.util;
 
 import android.app.Activity;
 import android.app.ActivityOptions;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -51,8 +50,8 @@ public class NavigationManager {
         activity.startActivity(GroupsActivity.newInstance(activity));
     }
 
-    public static void navigateToLogin(Context context) {
-        context.startActivity(LoginActivity.newInstance(context));
+    public static void navigateToLogin(Activity activity) {
+        activity.startActivity(LoginActivity.newInstance(activity));
     }
 
     public static void navigateToSearch(Activity activity) {

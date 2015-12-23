@@ -28,6 +28,10 @@ import com.commit451.gitlab.model.User;
 import com.commit451.gitlab.util.ImageUtil;
 import com.commit451.gitlab.util.NavigationManager;
 
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -86,25 +90,26 @@ public class GitLabNavigationView extends NavigationView {
     private final AccountsAdapter.Listener mAccountsAdapterListener = new AccountsAdapter.Listener() {
         @Override
         public void onAccountClicked(Account account) {
-            GitLabClient.setAccount(account);
-            bindUser(account.getUser());
-            toggleAccounts();
-            GitLabApp.bus().post(new ReloadDataEvent());
-            GitLabApp.bus().post(new CloseDrawerEvent());
+            switchToAccount(account);
         }
 
         @Override
         public void onAddAccountClicked() {
-            NavigationManager.navigateToLogin(getContext());
+            NavigationManager.navigateToLogin((Activity) getContext());
         }
 
         @Override
         public void onAccountLogoutClicked(Account account) {
             Prefs.removeAccount(getContext(), account);
-            //TODO if current account is removed, choose the other one to sign in to.
-            if (mAccountAdapter.getAccountsCount() == 0) {
-                NavigationManager.navigateToLogin(getContext());
+            List<Account> accounts = Account.getAccounts(getContext());
+
+            if (accounts.isEmpty()) {
+                NavigationManager.navigateToLogin((Activity) getContext());
                 ((Activity) getContext()).finish();
+            } else {
+                if (account.equals(GitLabClient.getAccount())) {
+                    switchToAccount(accounts.get(0));
+                }
             }
         }
     };
@@ -182,7 +187,10 @@ public class GitLabNavigationView extends NavigationView {
     }
 
     private void setAccounts() {
-        mAccountAdapter.setAccounts(Prefs.getAccounts(getContext()));
+        List<Account> accounts = Prefs.getAccounts(getContext());
+        Collections.sort(accounts);
+        Collections.reverse(accounts);
+        mAccountAdapter.setAccounts(accounts);
     }
 
     private void loadCurrentUser() {
@@ -222,5 +230,16 @@ public class GitLabNavigationView extends NavigationView {
             });
             mArrow.animate().rotation(0.0f);
         }
+    }
+
+    private void switchToAccount(Account account) {
+        account.setLastUsed(new Date());
+        GitLabClient.setAccount(account);
+        Prefs.removeAccount(getContext(), account);
+        Prefs.addAccount(getContext(), account);
+        bindUser(account.getUser());
+        toggleAccounts();
+        GitLabApp.bus().post(new ReloadDataEvent());
+        GitLabApp.bus().post(new CloseDrawerEvent());
     }
 }

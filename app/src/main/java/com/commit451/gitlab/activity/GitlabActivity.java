@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.os.Bundle;
 
 import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.data.Prefs;
 import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.util.NavigationManager;
 
@@ -22,7 +21,7 @@ public class GitlabActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        List<Account> accounts = Prefs.getAccounts(this);
+        List<Account> accounts = Account.getAccounts(this);
         if(accounts.isEmpty()) {
             NavigationManager.navigateToLogin(this);
         } else {

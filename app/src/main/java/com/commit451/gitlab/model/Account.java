@@ -1,17 +1,31 @@
 package com.commit451.gitlab.model;
 
+import android.content.Context;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 
+import com.commit451.gitlab.data.Prefs;
 import com.google.gson.annotations.SerializedName;
 
 import org.parceler.Parcel;
+
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 /**
  * The information associated with a signed in account
  * Created by Jawn on 12/4/2015.
  */
 @Parcel
-public class Account {
+public class Account implements Comparable<Account>{
+
+    public static List<Account> getAccounts(Context context) {
+        List<Account> accounts = Prefs.getAccounts(context);
+        Collections.sort(accounts);
+        Collections.reverse(accounts);
+        return accounts;
+    }
 
     @SerializedName("server_url")
     Uri mServerUrl;
@@ -21,6 +35,8 @@ public class Account {
     String mTrustedCertificate;
     @SerializedName("user")
     User mUser;
+    @SerializedName("last_used")
+    Date mLastUsed;
 
     public Account() {
 
@@ -56,6 +72,19 @@ public class Account {
 
     public void setUser(User user) {
         mUser = user;
+    }
+
+    public Date getLastUsed() {
+        return mLastUsed;
+    }
+
+    public void setLastUsed(Date lastUsed) {
+        mLastUsed = lastUsed;
+    }
+
+    @Override
+    public int compareTo(@NonNull Account another) {
+        return mLastUsed.compareTo(another.getLastUsed());
     }
 
     @Override

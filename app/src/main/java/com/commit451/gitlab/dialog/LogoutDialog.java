@@ -1,5 +1,6 @@
 package com.commit451.gitlab.dialog;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.v7.app.AppCompatDialog;
 
@@ -20,7 +21,7 @@ public class LogoutDialog extends AppCompatDialog {
     @OnClick(R.id.logout_button)
     void onLogoutClick() {
         //TODO figure out what to do when logging out
-        NavigationManager.navigateToLogin(getContext());
+        NavigationManager.navigateToLogin((Activity) getContext());
         GitLabApp.bus().post(new LogoutEvent());
     }
 

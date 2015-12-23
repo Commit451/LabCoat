@@ -33,6 +33,7 @@ import com.commit451.gitlab.util.NavigationManager;
 import com.commit451.gitlab.view.EmailAutoCompleteTextView;
 
 import java.security.cert.CertificateEncodingException;
+import java.util.Date;
 import java.util.regex.Pattern;
 
 import javax.net.ssl.SSLHandshakeException;
@@ -161,6 +162,7 @@ public class LoginActivity extends BaseActivity {
                 return;
             }
             mAccount.setUser(response.body());
+            mAccount.setLastUsed(new Date());
             Prefs.addAccount(LoginActivity.this, mAccount);
             GitLabClient.setAccount(mAccount);
             NavigationManager.navigateToProjects(LoginActivity.this);
@@ -210,11 +212,6 @@ public class LoginActivity extends BaseActivity {
                 }
             }
         }
-    }
-
-    @Override
-    public void onBackPressed() {
-        moveTaskToBack(true);
     }
 
     private void connect(boolean byAuth) {
