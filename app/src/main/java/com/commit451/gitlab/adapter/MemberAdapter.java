@@ -158,14 +158,9 @@ public class MemberAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         notifyItemInserted(0);
     }
 
-    public void removeUser(long userId) {
-        for(User u : mProjectMembers) {
-            if(u.getId() == userId) {
-                int index = mProjectMembers.indexOf(u);
-                mProjectMembers.remove(u);
-                notifyItemRemoved(index);
-                break;
-            }
-        }
+    public void removeUser(User user) {
+        int position = mProjectMembers.indexOf(user);
+        mProjectMembers.remove(user);
+        notifyItemRemoved(position);
     }
 }

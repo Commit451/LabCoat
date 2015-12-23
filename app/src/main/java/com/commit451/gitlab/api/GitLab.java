@@ -103,6 +103,10 @@ public interface GitLab {
                                     @Path("user_id") long userId,
                                     @Field("access_level") String accessLevel);
 
+    @DELETE(API_VERSION + "/projects/{id}/members/{user_id}")
+    Call<Void> removeProjectTeamMember(@Path("id") long projectId,
+                                     @Path("user_id") long userId);
+
     /* --- COMMITS --- */
 
     @GET(API_VERSION + "/projects/{id}/repository/commits?per_page=100")

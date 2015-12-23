@@ -45,13 +45,18 @@ public class ProjectMembersFragment extends BaseFragment implements SwipeRefresh
         return fragment;
     }
 
-    @Bind(R.id.add_user_button) View mAddUserButton;
+    @Bind(R.id.root) View mRoot;
     @Bind(R.id.list) RecyclerView mRecyclerView;
     MemberAdapter mAdapter;
     @Bind(R.id.error_text) TextView mErrorText;
     @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
+    @OnClick(R.id.add_user_button)
+    public void onAddUserClick() {
+        NavigationManager.navigateToAddProjectMember(getActivity(), mProject.getId());
+    }
 
     Project mProject;
+    User mUser;
     EventReceiver mEventReceiver;
 
     private final Callback<List<User>> mProjectMemebersCallback = new Callback<List<User>>() {
@@ -73,11 +78,7 @@ public class ProjectMembersFragment extends BaseFragment implements SwipeRefresh
             } else {
                 mErrorText.setVisibility(View.GONE);
             }
-            mAddUserButton.setVisibility(View.VISIBLE);
-
             mAdapter.setProjectMembers(response.body());
-
-            mAddUserButton.setEnabled(true);
         }
 
         @Override
@@ -90,9 +91,62 @@ public class ProjectMembersFragment extends BaseFragment implements SwipeRefresh
             mSwipeRefreshLayout.setRefreshing(false);
             mErrorText.setText(R.string.connection_error);
             mErrorText.setVisibility(View.VISIBLE);
-            mAddUserButton.setVisibility(View.GONE);
             Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.connection_error_users), Snackbar.LENGTH_SHORT)
                     .show();
+        }
+    };
+
+    private final Callback<Void> mRemoveUserCallback = new Callback<Void>() {
+        @Override
+        public void onResponse(Response<Void> response, Retrofit retrofit) {
+            if (getView() == null) {
+                return;
+            }
+            if (!response.isSuccess()) {
+                Snackbar.make(mRoot, R.string.failed_to_remove_member, Snackbar.LENGTH_SHORT)
+                        .show();
+                return;
+            }
+            mAdapter.removeUser(mUser);
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+            Timber.e(null, t);
+            Snackbar.make(mRoot, R.string.connection_error, Snackbar.LENGTH_SHORT)
+                    .show();
+        }
+    };
+
+    private final AccessDialog.OnAccessChangedListener mOnAccessChangedListener = new AccessDialog.OnAccessChangedListener() {
+        @Override
+        public void onAccessChanged(User user, String accessLevel) {
+            loadData();
+        }
+    };
+
+    private final MemberAdapter.Listener mMemberAdapterListener = new MemberAdapter.Listener() {
+        @Override
+        public void onProjectMemberClicked(User user, ProjectMemberViewHolder memberGroupViewHolder) {
+            NavigationManager.navigateToUser(getActivity(), memberGroupViewHolder.image, user);
+        }
+
+        @Override
+        public void onRemoveMember(User user) {
+            mUser = user;
+            GitLabClient.instance().removeProjectTeamMember(mProject.getId(), user.getId()).enqueue(mRemoveUserCallback);
+        }
+
+        @Override
+        public void onChangeAccess(User user) {
+            AccessDialog accessDialog = new AccessDialog(getActivity(), user, mProject.getId());
+            accessDialog.setOnAccessChangedListener(mOnAccessChangedListener);
+            accessDialog.show();
+        }
+
+        @Override
+        public void onSeeGroupClicked() {
+            NavigationManager.navigateToGroup(getActivity(), mProject.getNamespace().getId());
         }
     };
 
@@ -103,27 +157,7 @@ public class ProjectMembersFragment extends BaseFragment implements SwipeRefresh
         View view = inflater.inflate(R.layout.fragment_members, container, false);
         ButterKnife.bind(this, view);
 
-        mAdapter = new MemberAdapter(new MemberAdapter.Listener() {
-            @Override
-            public void onProjectMemberClicked(User user, ProjectMemberViewHolder memberGroupViewHolder) {
-
-            }
-
-            @Override
-            public void onSeeGroupClicked() {
-                NavigationManager.navigateToGroup(getActivity(), mProject.getNamespace().getId());
-            }
-
-            @Override
-            public void onChangeAccess(User user) {
-                new AccessDialog(getActivity(), user, mProject.getId()).show();
-            }
-
-            @Override
-            public void onRemoveMember(User user) {
-
-            }
-        });
+        mAdapter = new MemberAdapter(mMemberAdapterListener);
         GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 2);
         layoutManager.setSpanSizeLookup(mAdapter.getSpanSizeLookup());
         mRecyclerView.setLayoutManager(layoutManager);
@@ -172,11 +206,6 @@ public class ProjectMembersFragment extends BaseFragment implements SwipeRefresh
         return false;
     }
 
-    @OnClick(R.id.add_user_button)
-    public void onAddUserClick() {
-        NavigationManager.navigateToAddProjectMember(getActivity(), mProject.getId());
-    }
-
     private void setNamespace() {
         //If there is an owner, then there is no group
         if (mProject.getOwner() != null) {
@@ -199,6 +228,7 @@ public class ProjectMembersFragment extends BaseFragment implements SwipeRefresh
         public void onUserAdded(UserAddedEvent event) {
             if (mAdapter != null) {
                 mAdapter.addUser(event.user);
+                mErrorText.setVisibility(View.GONE);
             }
         }
     }
