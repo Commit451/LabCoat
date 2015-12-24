@@ -184,10 +184,6 @@ public class OverviewFragment extends BaseFragment {
         }
     }
 
-    public boolean onBackPressed() {
-        return false;
-    }
-
     private class EventReceiver {
 
         @Subscribe

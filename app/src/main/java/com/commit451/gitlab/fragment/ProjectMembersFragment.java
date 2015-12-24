@@ -202,10 +202,6 @@ public class ProjectMembersFragment extends BaseFragment implements SwipeRefresh
         GitLabClient.instance().getProjectTeamMembers(mProject.getId()).enqueue(mProjectMemebersCallback);
     }
 
-    public boolean onBackPressed() {
-        return false;
-    }
-
     private void setNamespace() {
         //If there is an owner, then there is no group
         if (mProject.getOwner() != null) {

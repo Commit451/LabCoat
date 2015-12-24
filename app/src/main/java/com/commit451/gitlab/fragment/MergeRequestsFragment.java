@@ -171,10 +171,6 @@ public class MergeRequestsFragment extends BaseFragment {
         GitLabClient.instance().getMergeRequests(mProject.getId(), mState).enqueue(mCallback);
     }
 
-    public boolean onBackPressed() {
-        return false;
-    }
-
     private class EventReceiver {
 
         @Subscribe

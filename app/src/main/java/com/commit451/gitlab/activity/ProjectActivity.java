@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -19,6 +20,7 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.SectionsPagerAdapter;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.ProjectReloadEvent;
+import com.commit451.gitlab.fragment.BaseFragment;
 import com.commit451.gitlab.fragment.CommitsFragment;
 import com.commit451.gitlab.fragment.FilesFragment;
 import com.commit451.gitlab.fragment.IssuesFragment;
@@ -156,38 +158,14 @@ public class ProjectActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        boolean handled = false;
-
-        switch(mViewPager.getCurrentItem()) {
-            case 0:
-                OverviewFragment overviewFragment = (OverviewFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.pager + ":0");
-                handled = overviewFragment.onBackPressed();
-                break;
-            case 1:
-                CommitsFragment commitsFragment = (CommitsFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.pager + ":1");
-                handled = commitsFragment.onBackPressed();
-                break;
-            case 2:
-                IssuesFragment issuesFragment = (IssuesFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.pager + ":2");
-                handled = issuesFragment.onBackPressed();
-                break;
-            case 3:
-                FilesFragment filesFragment = (FilesFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.pager + ":3");
-                handled = filesFragment.onBackPressed();
-                break;
-            case 4:
-                MergeRequestsFragment mergeRequestsFragment = (MergeRequestsFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.pager + ":4");
-                handled = mergeRequestsFragment.onBackPressed();
-                break;
-            case 5:
-                ProjectMembersFragment projectMembersFragment = (ProjectMembersFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.pager + ":5");
-                handled = projectMembersFragment.onBackPressed();
-                break;
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.pager + ":" + mViewPager.getCurrentItem());
+        if (fragment instanceof BaseFragment) {
+            if (((BaseFragment) fragment).onBackPressed()) {
+                return;
+            }
         }
 
-        if(!handled) {
-            super.onBackPressed();
-        }
+        super.onBackPressed();
     }
 
     public String getBranchName() {

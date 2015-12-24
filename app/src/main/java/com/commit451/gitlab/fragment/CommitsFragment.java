@@ -109,10 +109,6 @@ public class CommitsFragment extends BaseFragment implements SwipeRefreshLayout.
         GitLabClient.instance().getCommits(mProject.getId(), mBranchName).enqueue(commitsCallback);
     }
 
-    public boolean onBackPressed() {
-        return false;
-    }
-
     private Callback<List<Commit>> commitsCallback = new Callback<List<Commit>>() {
 
 

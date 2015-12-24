@@ -173,10 +173,6 @@ public class IssuesFragment extends BaseFragment {
         }
     };
 
-    public boolean onBackPressed() {
-        return false;
-    }
-
     @OnClick(R.id.add_issue_button)
     public void onAddIssueClick(View fab) {
         if (mProject != null) {

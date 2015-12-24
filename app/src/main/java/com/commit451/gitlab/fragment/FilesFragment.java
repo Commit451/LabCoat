@@ -200,6 +200,7 @@ public class FilesFragment extends BaseFragment {
         GitLabClient.instance().getTree(mProject.getId(), mBranchName, newPath).enqueue(new FilesCallback(newPath));
     }
 
+    @Override
     public boolean onBackPressed() {
         if (mBreadcrumbAdapter.getItemCount() > 1) {
             BreadcrumbAdapter.Breadcrumb breadcrumb = mBreadcrumbAdapter.getValueAt(mBreadcrumbAdapter.getItemCount() - 2);

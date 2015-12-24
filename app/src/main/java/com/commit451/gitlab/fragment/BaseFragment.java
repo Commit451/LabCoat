@@ -37,6 +37,10 @@ public class BaseFragment extends Fragment{
         //Override this
     }
 
+    public boolean onBackPressed() {
+        return false;
+    }
+
     private class EventReceiver {
 
         @Subscribe

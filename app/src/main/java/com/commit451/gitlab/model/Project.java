@@ -124,7 +124,7 @@ public class Project {
         return mPathWithNamespace;
     }
 
-    public boolean issuesEnabled() {
+    public boolean isIssuesEnabled() {
         return mIssuesEnabled;
     }
 
