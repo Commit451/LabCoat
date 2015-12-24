@@ -25,9 +25,9 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     private static final int SECTION_COUNT = 6;
     private static final int OVERVIEW_POS = 0;
-    private static final int COMMITS_POS = 1;
-    private static final int ISSUES_POS = 2;
-    private static final int FILES_POS = 3;
+    private static final int FILES_POS = 1;
+    private static final int COMMITS_POS = 2;
+    private static final int ISSUES_POS = 3;
     private static final int MERGE_REQUESTS_POS = 4;
     private static final int PROJECT_MEMBERS_POS = 5;
 
@@ -67,12 +67,12 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
         switch(position) {
             case OVERVIEW_POS:
                 return OverviewFragment.newInstance();
+            case FILES_POS:
+                return FilesFragment.newInstance();
             case COMMITS_POS:
                 return CommitsFragment.newInstance();
             case ISSUES_POS:
                 return IssuesFragment.newInstance();
-            case FILES_POS:
-                return FilesFragment.newInstance();
             case MERGE_REQUESTS_POS:
                 return MergeRequestsFragment.newInstance();
             case PROJECT_MEMBERS_POS:

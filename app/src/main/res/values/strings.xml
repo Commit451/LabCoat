@@ -28,9 +28,9 @@
 
     <string-array name="main_tabs">
         <item>@string/title_overview</item>
+        <item>@string/title_files</item>
         <item>@string/title_commits</item>
         <item>@string/title_issues</item>
-        <item>@string/title_files</item>
         <item>@string/title_merge_requests</item>
         <item>@string/title_members</item>
     </string-array>
