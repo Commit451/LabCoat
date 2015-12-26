@@ -2,6 +2,8 @@ package com.commit451.gitlab.model.api;
 
 import com.google.gson.annotations.SerializedName;
 
+import com.commit451.gitlab.util.ObjectHelper;
+
 import org.parceler.Parcel;
 
 @Parcel
@@ -37,5 +39,20 @@ public class Contributor {
 
     public int getDeletions() {
         return mDeletions;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Contributor)) {
+            return false;
+        }
+
+        Contributor contributor = (Contributor) o;
+        return ObjectHelper.equals(mName, contributor.mName) && ObjectHelper.equals(mEmail, contributor.mEmail);
+    }
+
+    @Override
+    public int hashCode() {
+        return ObjectHelper.hash(mName, mEmail);
     }
 }

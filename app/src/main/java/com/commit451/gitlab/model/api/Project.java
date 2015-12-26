@@ -191,4 +191,20 @@ public class Project {
     public Uri getFeedUrl() {
         return Uri.parse(mWebUrl.toString() + ".atom");
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Project)) {
+            return false;
+        }
+
+        Project project = (Project) o;
+        return mId == project.mId;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) (mId ^ (mId >>> 32));
+    }
 }

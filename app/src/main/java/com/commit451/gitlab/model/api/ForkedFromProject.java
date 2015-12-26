@@ -38,4 +38,19 @@ public class ForkedFromProject {
     public String getPathWithNamespace() {
         return mPathWithNamespace;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof ForkedFromProject)) {
+            return false;
+        }
+
+        ForkedFromProject that = (ForkedFromProject) o;
+        return mId == that.mId;
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) (mId ^ (mId >>> 32));
+    }
 }

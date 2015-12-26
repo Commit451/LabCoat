@@ -67,6 +67,21 @@ public class ProjectNamespace {
         return mPublic;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof ProjectNamespace)) {
+            return false;
+        }
+
+        ProjectNamespace that = (ProjectNamespace) o;
+        return mId == that.mId;
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) (mId ^ (mId >>> 32));
+    }
+
     @Parcel
     public static class Avatar {
         @SerializedName("url")

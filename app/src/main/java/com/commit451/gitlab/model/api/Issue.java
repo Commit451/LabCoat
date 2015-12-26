@@ -103,6 +103,21 @@ public class Issue {
                 .build();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Issue)) {
+            return false;
+        }
+
+        Issue issue = (Issue) o;
+        return mId == issue.mId;
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) (mId ^ (mId >>> 32));
+    }
+
     public enum State {
         @SerializedName("opened")
         OPENED,

@@ -65,6 +65,21 @@ public class Note {
         return mDownvote;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Note)) {
+            return false;
+        }
+
+        Note note = (Note) o;
+        return mId == note.mId;
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) (mId ^ (mId >>> 32));
+    }
+
     public enum Type {
         @SerializedName("Issue")
         ISSUE,

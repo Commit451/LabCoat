@@ -76,6 +76,21 @@ public class Milestone {
         return mDueDate;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Milestone)) {
+            return false;
+        }
+
+        Milestone milestone = (Milestone) o;
+        return mId == milestone.mId;
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) (mId ^ (mId >>> 32));
+    }
+
     public enum State {
         @SerializedName("opened")
         OPENED,

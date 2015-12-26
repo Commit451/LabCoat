@@ -50,4 +50,19 @@ public class Group {
     public Uri getFeedUrl() {
         return Uri.parse(mWebUrl.toString() + ".atom");
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Group)) {
+            return false;
+        }
+
+        Group group = (Group) o;
+        return mId == group.mId;
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) (mId ^ (mId >>> 32));
+    }
 }

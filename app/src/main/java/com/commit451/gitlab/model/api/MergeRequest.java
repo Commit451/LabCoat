@@ -132,6 +132,21 @@ public class MergeRequest {
         return mMergeWhenBuildSucceeds;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof MergeRequest)) {
+            return false;
+        }
+
+        MergeRequest mergeRequest = (MergeRequest) o;
+        return mId == mergeRequest.mId;
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) (mId ^ (mId >>> 32));
+    }
+
     public enum State {
         @SerializedName("opened")
         OPENED,
