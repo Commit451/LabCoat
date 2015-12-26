@@ -12,24 +12,18 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.graphics.Palette;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.commit451.easel.Easel;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.adapter.FeedAdapter;
 import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.fragment.FeedFragment;
 import com.commit451.gitlab.model.api.UserBasic;
-import com.commit451.gitlab.model.rss.Entry;
-import com.commit451.gitlab.model.rss.UserFeed;
 import com.commit451.gitlab.util.ImageUtil;
-import com.commit451.gitlab.util.IntentUtil;
-import com.pnikosis.materialishprogress.ProgressWheel;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -37,10 +31,6 @@ import org.parceler.Parcels;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
-import timber.log.Timber;
 
 /**
  * User activity, which shows the user!
@@ -59,10 +49,6 @@ public class UserActivity extends BaseActivity {
     @Bind(R.id.toolbar) Toolbar mToolbar;
     @Bind(R.id.collapsing_toolbar) CollapsingToolbarLayout mCollapsingToolbarLayout;
     @Bind(R.id.backdrop) ImageView mBackdrop;
-    @Bind(R.id.list) RecyclerView mActivityRecyclerView;
-    FeedAdapter mFeedAdapter;
-    @Bind(R.id.progress) ProgressWheel mProgress;
-    @Bind(R.id.message) TextView mMessageView;
 
     UserBasic mUser;
 
@@ -84,38 +70,6 @@ public class UserActivity extends BaseActivity {
         public void onPrepareLoad(Drawable placeHolderDrawable) {}
     };
 
-    private final Callback<UserFeed> mUserFeedCallback = new Callback<UserFeed>() {
-        @Override
-        public void onResponse(Response<UserFeed> response, Retrofit retrofit) {
-            mProgress.setVisibility(View.GONE);
-            if (!response.isSuccess()) {
-                Timber.e("Feed response was not a success: %d", response.code());
-                return;
-            }
-            if (response.body().getEntries() == null || response.body().getEntries().isEmpty()) {
-                mMessageView.setVisibility(View.VISIBLE);
-                mMessageView.setText(R.string.no_activity);
-            } else {
-                mFeedAdapter.setEntries(response.body().getEntries());
-            }
-        }
-
-        @Override
-        public void onFailure(Throwable t) {
-            Timber.e(t, null);
-            mProgress.setVisibility(View.GONE);
-            mMessageView.setVisibility(View.VISIBLE);
-            mMessageView.setText(R.string.connection_error);
-        }
-    };
-
-    private final FeedAdapter.Listener mFeedAdapterListener = new FeedAdapter.Listener() {
-        @Override
-        public void onFeedEntryClicked(Entry entry) {
-            IntentUtil.openPage(getWindow().getDecorView(), entry.getLink().getHref());
-        }
-    };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -134,10 +88,11 @@ public class UserActivity extends BaseActivity {
         GitLabClient.getPicasso()
                 .load(url)
                 .into(mImageLoadTarget);
-        mActivityRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mFeedAdapter = new FeedAdapter(mFeedAdapterListener);
-        mActivityRecyclerView.setAdapter(mFeedAdapter);
-        load();
+
+        if (savedInstanceState == null) {
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.add(R.id.user_feed, FeedFragment.newInstance(mUser.getFeedUrl().toString())).commit();
+        }
     }
 
     @Override
@@ -171,16 +126,5 @@ public class UserActivity extends BaseActivity {
                 Color.WHITE, palette.getDarkMutedColor(Color.BLACK))
                 .setDuration(animationTime)
                 .start();
-
-        ObjectAnimator.ofObject(mProgress, "barColor", new ArgbEvaluator(),
-                mProgress.getBarColor(), vibrantColor)
-                .setDuration(animationTime)
-                .start();
-    }
-
-    private void load() {
-        mMessageView.setVisibility(View.GONE);
-        mProgress.setVisibility(View.VISIBLE);
-        GitLabClient.rssInstance().getUserFeed(mUser.getFeedUrl().toString()).enqueue(mUserFeedCallback);
     }
 }

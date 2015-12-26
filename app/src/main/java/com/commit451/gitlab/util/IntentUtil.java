@@ -15,6 +15,10 @@ import com.commit451.gitlab.R;
 public class IntentUtil {
 
     public static void openPage(View root, Uri url) {
+        if (url == null || url.equals(Uri.EMPTY)) {
+            return;
+        }
+
         Intent i = new Intent(Intent.ACTION_VIEW);
         i.setData(url);
         try {

@@ -9,13 +9,13 @@ import java.util.List;
 
 @Parcel
 @Root(strict = false)
-public class UserFeed {
+public class Feed {
     @Element(name = "title", required = true)
     String mTitle;
     @ElementList(name = "entry", required = false, inline = true)
     List<Entry> mEntryList;
 
-    public UserFeed() {}
+    public Feed() {}
 
     public String getTitle() {
         return mTitle;

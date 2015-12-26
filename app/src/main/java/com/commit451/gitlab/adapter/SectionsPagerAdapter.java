@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.fragment.CommitsFragment;
+import com.commit451.gitlab.fragment.FeedFragment;
 import com.commit451.gitlab.fragment.FilesFragment;
 import com.commit451.gitlab.fragment.IssuesFragment;
 import com.commit451.gitlab.fragment.ProjectMembersFragment;
@@ -23,20 +24,23 @@ import java.util.Set;
  */
 public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-    private static final int SECTION_COUNT = 6;
+    private static final int SECTION_COUNT = 7;
     private static final int OVERVIEW_POS = 0;
-    private static final int FILES_POS = 1;
-    private static final int COMMITS_POS = 2;
-    private static final int ISSUES_POS = 3;
-    private static final int MERGE_REQUESTS_POS = 4;
-    private static final int PROJECT_MEMBERS_POS = 5;
+    private static final int ACTIVITY_POS = 1;
+    private static final int FILES_POS = 2;
+    private static final int COMMITS_POS = 3;
+    private static final int ISSUES_POS = 4;
+    private static final int MERGE_REQUESTS_POS = 5;
+    private static final int PROJECT_MEMBERS_POS = 6;
 
+    private final Project mProject;
     private final String[] mTitles;
     private final Set<Integer> mDisabledSections = new HashSet<>();
 
     public SectionsPagerAdapter(ProjectActivity context, FragmentManager fm) {
         super(fm);
 
+        mProject = context.getProject();
         mTitles = context.getResources().getStringArray(R.array.main_tabs);
 
         Project project = context.getProject();
@@ -64,9 +68,11 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         position = getCorrectPosition(position);
 
-        switch(position) {
+        switch (position) {
             case OVERVIEW_POS:
                 return OverviewFragment.newInstance();
+            case ACTIVITY_POS:
+                return FeedFragment.newInstance(mProject.getFeedUrl().toString());
             case FILES_POS:
                 return FilesFragment.newInstance();
             case COMMITS_POS:
