@@ -2,7 +2,7 @@ package com.commit451.gitlab.model.api;
 
 import com.google.gson.annotations.SerializedName;
 
-import com.commit451.gitlab.util.ObjectHelper;
+import com.commit451.gitlab.util.ObjectUtil;
 
 import org.parceler.Parcel;
 
@@ -82,12 +82,12 @@ public class RepositoryCommit {
         }
 
         RepositoryCommit commit = (RepositoryCommit) o;
-        return ObjectHelper.equals(mId, commit.mId);
+        return ObjectUtil.equals(mId, commit.mId);
     }
 
     @Override
     public int hashCode() {
-        return ObjectHelper.hash(mId);
+        return ObjectUtil.hash(mId);
     }
 
     public class Line {

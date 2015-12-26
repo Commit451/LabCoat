@@ -2,7 +2,7 @@ package com.commit451.gitlab.model.api;
 
 import com.google.gson.annotations.SerializedName;
 
-import com.commit451.gitlab.util.ObjectHelper;
+import com.commit451.gitlab.util.ObjectUtil;
 
 import org.parceler.Parcel;
 
@@ -48,11 +48,11 @@ public class Contributor {
         }
 
         Contributor contributor = (Contributor) o;
-        return ObjectHelper.equals(mName, contributor.mName) && ObjectHelper.equals(mEmail, contributor.mEmail);
+        return ObjectUtil.equals(mName, contributor.mName) && ObjectUtil.equals(mEmail, contributor.mEmail);
     }
 
     @Override
     public int hashCode() {
-        return ObjectHelper.hash(mName, mEmail);
+        return ObjectUtil.hash(mName, mEmail);
     }
 }

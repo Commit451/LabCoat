@@ -2,7 +2,7 @@ package com.commit451.gitlab.model.api;
 
 import com.google.gson.annotations.SerializedName;
 
-import com.commit451.gitlab.util.ObjectHelper;
+import com.commit451.gitlab.util.ObjectUtil;
 
 import org.parceler.Parcel;
 
@@ -30,12 +30,12 @@ public class Branch {
         }
 
         Branch branch = (Branch) o;
-        return ObjectHelper.equals(mName, branch.mName);
+        return ObjectUtil.equals(mName, branch.mName);
     }
 
     @Override
     public int hashCode() {
-        return ObjectHelper.hash(mName);
+        return ObjectUtil.hash(mName);
     }
 
     @Override
