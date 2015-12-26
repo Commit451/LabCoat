@@ -10,7 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.model.Diff;
+import com.commit451.gitlab.model.api.Diff;
 
 import java.util.List;
 

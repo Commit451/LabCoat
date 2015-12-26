@@ -9,7 +9,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.model.TreeItem;
+import com.commit451.gitlab.model.api.RepositoryTreeObject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -46,7 +46,7 @@ public class FileViewHolder extends RecyclerView.ViewHolder {
         more.setOnClickListener(mOnMoreClickListener);
     }
 
-    public void bind(TreeItem treeItem) {
+    public void bind(RepositoryTreeObject treeItem) {
         title.setText(treeItem.getName());
         image.setImageResource(treeItem.getDrawableForType());
     }

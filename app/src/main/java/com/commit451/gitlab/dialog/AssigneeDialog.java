@@ -9,8 +9,9 @@ import android.view.View;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.AssigneeAdapter;
 import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.model.Project;
-import com.commit451.gitlab.model.User;
+import com.commit451.gitlab.model.api.Member;
+import com.commit451.gitlab.model.api.Project;
+import com.commit451.gitlab.model.api.UserBasic;
 
 import java.util.List;
 
@@ -45,12 +46,12 @@ public class AssigneeDialog extends AppCompatDialog {
         mContentRoot.animate().alpha(0.0f);
     }
 
-    User mAssignee;
+    UserBasic mAssignee;
 
-    private final Callback<List<User>> mUsersCallback = new Callback<List<User>>() {
+    private final Callback<List<Member>> mUsersCallback = new Callback<List<Member>>() {
 
         @Override
-        public void onResponse(Response<List<User>> response, Retrofit retrofit) {
+        public void onResponse(Response<List<Member>> response, Retrofit retrofit) {
             if (!response.isSuccess()) {
                 return;
             }
@@ -64,7 +65,7 @@ public class AssigneeDialog extends AppCompatDialog {
         }
     };
 
-    public AssigneeDialog(Context context, User assignee, Project project) {
+    public AssigneeDialog(Context context, UserBasic assignee, Project project) {
         super(context);
         setContentView(R.layout.dialog_assignee);
         ButterKnife.bind(this);

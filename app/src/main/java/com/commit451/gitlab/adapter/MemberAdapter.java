@@ -8,8 +8,8 @@ import android.view.ViewGroup;
 import android.widget.PopupMenu;
 
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.model.Namespace;
-import com.commit451.gitlab.model.User;
+import com.commit451.gitlab.model.api.Member;
+import com.commit451.gitlab.model.api.ProjectNamespace;
 import com.commit451.gitlab.viewHolder.ProjectMemberFooterViewHolder;
 import com.commit451.gitlab.viewHolder.ProjectMemberViewHolder;
 
@@ -28,16 +28,16 @@ public class MemberAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private static final int FOOTER_COUNT = 1;
 
     public interface Listener {
-        void onProjectMemberClicked(User user, ProjectMemberViewHolder memberGroupViewHolder);
-        void onRemoveMember(User user);
-        void onChangeAccess(User user);
+        void onProjectMemberClicked(Member member, ProjectMemberViewHolder memberGroupViewHolder);
+        void onRemoveMember(Member member);
+        void onChangeAccess(Member member);
         void onSeeGroupClicked();
     }
 
     private Listener mListener;
 
-    private ArrayList<User> mProjectMembers;
-    private Namespace mNamespace;
+    private ArrayList<Member> mProjectMembers;
+    private ProjectNamespace mNamespace;
 
     private final View.OnClickListener mProjectMemberClickListener = new View.OnClickListener() {
         @Override
@@ -67,7 +67,7 @@ public class MemberAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         }
     };
 
-    public User getProjectMember(int position) {
+    public Member getProjectMember(int position) {
         return mProjectMembers.get(position);
     }
 
@@ -76,7 +76,7 @@ public class MemberAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         mProjectMembers = new ArrayList<>();
     }
 
-    public void setProjectMembers(Collection<User> data) {
+    public void setProjectMembers(Collection<Member> data) {
         mProjectMembers.clear();
         if (data != null) {
             mProjectMembers.addAll(data);
@@ -84,7 +84,7 @@ public class MemberAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         notifyDataSetChanged();
     }
 
-    public void setNamespace(Namespace namespace) {
+    public void setNamespace(ProjectNamespace namespace) {
         mNamespace = namespace;
         notifyDataSetChanged();
     }
@@ -114,8 +114,8 @@ public class MemberAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 ((ProjectMemberFooterViewHolder) holder).bind(mNamespace);
             }
         } else if (holder instanceof ProjectMemberViewHolder) {
-            final User user = getProjectMember(position);
-            ((ProjectMemberViewHolder) holder).bind(user);
+            final Member member = getProjectMember(position);
+            ((ProjectMemberViewHolder) holder).bind(member);
             holder.itemView.setTag(R.id.list_position, position);
             holder.itemView.setTag(R.id.list_view_holder, holder);
             ((ProjectMemberViewHolder) holder).popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -123,10 +123,10 @@ public class MemberAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 public boolean onMenuItemClick(MenuItem item) {
                     switch (item.getItemId()) {
                         case R.id.action_change_access:
-                            mListener.onChangeAccess(user);
+                            mListener.onChangeAccess(member);
                             return true;
                         case R.id.action_remove:
-                            mListener.onRemoveMember(user);
+                            mListener.onRemoveMember(member);
                             return true;
                     }
                     return false;
@@ -153,14 +153,14 @@ public class MemberAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         return mSpanSizeLookup;
     }
 
-    public void addUser(User user) {
-        mProjectMembers.add(0, user);
+    public void addMember(Member member) {
+        mProjectMembers.add(0, member);
         notifyItemInserted(0);
     }
 
-    public void removeUser(User user) {
-        int position = mProjectMembers.indexOf(user);
-        mProjectMembers.remove(user);
+    public void removeMember(Member member) {
+        int position = mProjectMembers.indexOf(member);
+        mProjectMembers.remove(member);
         notifyItemRemoved(position);
     }
 }

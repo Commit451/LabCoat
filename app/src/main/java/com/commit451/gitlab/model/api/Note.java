@@ -1,4 +1,4 @@
-package com.commit451.gitlab.model;
+package com.commit451.gitlab.model.api;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -13,11 +13,15 @@ public class Note {
     @SerializedName("body")
     String mBody;
     @SerializedName("author")
-    User mAuthor;
+    UserBasic mAuthor;
     @SerializedName("created_at")
     Date mCreatedAt;
     @SerializedName("system")
     boolean mSystem;
+    @SerializedName("noteable_id")
+    long mNoteableId;
+    @SerializedName("noteable_type")
+    Type mNoteableType;
     @SerializedName("upvote")
     boolean mUpvote;
     @SerializedName("downvote")
@@ -33,7 +37,7 @@ public class Note {
         return mBody;
     }
 
-    public User getAuthor() {
+    public UserBasic getAuthor() {
         return mAuthor;
     }
 
@@ -41,15 +45,30 @@ public class Note {
         return mCreatedAt;
     }
 
-    public boolean isSystemNote() {
+    public boolean isSystem() {
         return mSystem;
     }
 
-    public boolean isUpvoted() {
+    public long getNoteableId() {
+        return mNoteableId;
+    }
+
+    public Type getNoteableType() {
+        return mNoteableType;
+    }
+
+    public boolean isUpvote() {
         return mUpvote;
     }
 
-    public boolean isDownvoted() {
+    public boolean isDownvote() {
         return mDownvote;
+    }
+
+    public enum Type {
+        @SerializedName("Issue")
+        ISSUE,
+        @SerializedName("MergeRequest")
+        MERGE_REQUEST
     }
 }

@@ -15,9 +15,9 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.GroupMembersAdapter;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.dialog.AccessDialog;
-import com.commit451.gitlab.event.UserAddedEvent;
-import com.commit451.gitlab.model.Group;
-import com.commit451.gitlab.model.User;
+import com.commit451.gitlab.event.MemberAddedEvent;
+import com.commit451.gitlab.model.api.Group;
+import com.commit451.gitlab.model.api.Member;
 import com.commit451.gitlab.util.NavigationManager;
 import com.commit451.gitlab.viewHolder.ProjectMemberViewHolder;
 import com.squareup.otto.Subscribe;
@@ -35,7 +35,7 @@ import retrofit.Retrofit;
 import timber.log.Timber;
 
 /**
- * Fragment to show the members of a {@link com.commit451.gitlab.model.Group}
+ * Fragment to show the members of a {@link Group}
  */
 public class GroupMembersFragment extends BaseFragment {
 
@@ -65,12 +65,12 @@ public class GroupMembersFragment extends BaseFragment {
 
     Group mGroup;
     EventReceiver mEventReceiver;
-    User mUser;
+    Member mMember;
 
-    private final Callback<List<User>> mGroupMembersCallback = new Callback<List<User>>() {
+    private final Callback<List<Member>> mGroupMembersCallback = new Callback<List<Member>>() {
 
         @Override
-        public void onResponse(Response<List<User>> response, Retrofit retrofit) {
+        public void onResponse(Response<List<Member>> response, Retrofit retrofit) {
             if (getView() == null) {
                 return;
             }
@@ -118,7 +118,7 @@ public class GroupMembersFragment extends BaseFragment {
                         .show();
                 return;
             }
-            mAdapter.removeUser(mUser);
+            mAdapter.removeMember(mMember);
         }
 
         @Override
@@ -138,26 +138,26 @@ public class GroupMembersFragment extends BaseFragment {
 
     private AccessDialog.OnAccessChangedListener mOnAccessChangedListener = new AccessDialog.OnAccessChangedListener() {
         @Override
-        public void onAccessChanged(User user, String accessLevel) {
+        public void onAccessChanged(Member member, String accessLevel) {
             loadData();
         }
     };
 
     private final GroupMembersAdapter.Listener mListener = new GroupMembersAdapter.Listener() {
         @Override
-        public void onUserClicked(User user, ProjectMemberViewHolder holder) {
-            NavigationManager.navigateToUser(getActivity(), holder.image, user);
+        public void onUserClicked(Member member, ProjectMemberViewHolder holder) {
+            NavigationManager.navigateToUser(getActivity(), holder.image, member);
         }
 
         @Override
-        public void onUserRemoveClicked(User user) {
-            mUser = user;
-            GitLabClient.instance().removeGroupMember(mGroup.getId(), user.getId()).enqueue(mRemoveUserCallback);
+        public void onUserRemoveClicked(Member member) {
+            mMember = member;
+            GitLabClient.instance().removeGroupMember(mGroup.getId(), member.getId()).enqueue(mRemoveUserCallback);
         }
 
         @Override
-        public void onUserChangeAccessClicked(User user) {
-            AccessDialog accessDialog = new AccessDialog(getActivity(), user, mGroup);
+        public void onUserChangeAccessClicked(Member member) {
+            AccessDialog accessDialog = new AccessDialog(getActivity(), member, mGroup);
             accessDialog.setOnAccessChangedListener(mOnAccessChangedListener);
             accessDialog.show();
         }
@@ -208,9 +208,9 @@ public class GroupMembersFragment extends BaseFragment {
     private class EventReceiver {
 
         @Subscribe
-        public void onUserAdded(UserAddedEvent event) {
+        public void onUserAdded(MemberAddedEvent event) {
             if (mAdapter != null) {
-                mAdapter.addUser(event.user);
+                mAdapter.addMember(event.member);
             }
         }
     }

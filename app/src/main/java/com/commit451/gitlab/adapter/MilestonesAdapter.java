@@ -8,7 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.model.Milestone;
+import com.commit451.gitlab.model.api.Milestone;
 
 import java.text.DateFormat;
 import java.util.ArrayList;

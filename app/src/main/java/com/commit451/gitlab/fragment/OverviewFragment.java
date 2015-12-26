@@ -16,9 +16,9 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.ProjectReloadEvent;
-import com.commit451.gitlab.model.FileResponse;
-import com.commit451.gitlab.model.Project;
-import com.commit451.gitlab.model.TreeItem;
+import com.commit451.gitlab.model.api.RepositoryTreeObject;
+import com.commit451.gitlab.model.api.RepositoryFile;
+import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.util.PicassoImageGetter;
 import com.squareup.otto.Subscribe;
 
@@ -57,9 +57,9 @@ public class OverviewFragment extends BaseFragment {
     String mBranchName;
     Bypass mBypass;
 
-    private Callback<List<TreeItem>> mFilesCallback = new Callback<List<TreeItem>>() {
+    private Callback<List<RepositoryTreeObject>> mFilesCallback = new Callback<List<RepositoryTreeObject>>() {
         @Override
-        public void onResponse(Response<List<TreeItem>> response, Retrofit retrofit) {
+        public void onResponse(Response<List<RepositoryTreeObject>> response, Retrofit retrofit) {
             if (getView() == null) {
                 return;
             }
@@ -68,7 +68,7 @@ public class OverviewFragment extends BaseFragment {
                 showError(getString(R.string.no_readme_found));
                 return;
             }
-            for (TreeItem treeItem : response.body()) {
+            for (RepositoryTreeObject treeItem : response.body()) {
                 if (treeItem.getName().equalsIgnoreCase("README.md")) {
                     GitLabClient.instance().getFile(mProject.getId(), treeItem.getName(), mBranchName).enqueue(mFileCallback);
                     return;
@@ -90,9 +90,9 @@ public class OverviewFragment extends BaseFragment {
         }
     };
 
-    private Callback<FileResponse> mFileCallback = new Callback<FileResponse>() {
+    private Callback<RepositoryFile> mFileCallback = new Callback<RepositoryFile>() {
         @Override
-        public void onResponse(Response<FileResponse> response, Retrofit retrofit) {
+        public void onResponse(Response<RepositoryFile> response, Retrofit retrofit) {
             if (getView() == null) {
                 return;
             }

@@ -1,4 +1,4 @@
-package com.commit451.gitlab.model;
+package com.commit451.gitlab.model.api;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -7,58 +7,46 @@ import com.commit451.gitlab.R;
 import org.parceler.Parcel;
 
 import android.net.Uri;
-import android.support.annotation.StringDef;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 
 @Parcel
-public class TreeItem {
-    public static final String TYPE_FOLDER = "tree";
-    public static final String TYPE_REPO = "submodule";
-    public static final String TYPE_FILE = "blob";
-
-    @StringDef({TYPE_FOLDER, TYPE_REPO, TYPE_FILE})
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface Type {}
-
+public class RepositoryTreeObject {
+    @SerializedName("id")
+    String mId;
     @SerializedName("name")
     String mName;
     @SerializedName("type")
-    String mType;
+    Type mType;
     @SerializedName("mode")
-    long mMode;
-    @SerializedName("id")
-    String mId;
+    String mMode;
 
-    public TreeItem() {}
-
-    public String getName() {
-        return mName;
-    }
-
-    @Type
-    public String getType() {
-        return mType;
-    }
-
-    public long getMode() {
-        return mMode;
-    }
+    public RepositoryTreeObject() {}
 
     public String getId() {
         return mId;
     }
 
+    public String getName() {
+        return mName;
+    }
+
+    public Type getType() {
+        return mType;
+    }
+
+    public String getMode() {
+        return mMode;
+    }
+
     public int getDrawableForType() {
         switch (mType) {
-            case TYPE_FILE:
+            case FILE:
                 return R.drawable.ic_file_24dp;
-            case TYPE_FOLDER:
+            case FOLDER:
                 return R.drawable.ic_folder_24dp;
-            case TYPE_REPO:
+            case REPO:
                 return R.drawable.ic_repo_24dp;
         }
+
         return R.drawable.ic_file_24dp;
     }
 
@@ -69,5 +57,14 @@ public class TreeItem {
                 .appendEncodedPath(currentPath)
                 .appendPath(mName)
                 .build();
+    }
+
+    public enum Type {
+        @SerializedName("tree")
+        FOLDER,
+        @SerializedName("submodule")
+        REPO,
+        @SerializedName("blob")
+        FILE
     }
 }

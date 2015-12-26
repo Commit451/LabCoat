@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.model.User;
+import com.commit451.gitlab.model.api.UserBasic;
 import com.commit451.gitlab.util.ImageUtil;
 
 import butterknife.Bind;
@@ -36,7 +36,7 @@ public class UserViewHolder extends RecyclerView.ViewHolder {
         ButterKnife.bind(this, view);
     }
 
-    public void bind(User user) {
+    public void bind(UserBasic user) {
         username.setText(user.getUsername());
         Uri url = ImageUtil.getAvatarUrl(user, itemView.getResources().getDimensionPixelSize(R.dimen.user_list_image_size));
         GitLabClient.getPicasso()

@@ -1,4 +1,4 @@
-package com.commit451.gitlab.model;
+package com.commit451.gitlab.model.api;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -17,8 +17,12 @@ public class Project {
     String mDescription;
     @SerializedName("default_branch")
     String mDefaultBranch;
+    @SerializedName("tag_list")
+    List<String> mTagList;
     @SerializedName("public")
     boolean mPublic;
+    @SerializedName("archived")
+    boolean mArchived;
     @SerializedName("visibility_level")
     int mVisibilityLevel;
     @SerializedName("ssh_url_to_repo")
@@ -27,10 +31,8 @@ public class Project {
     String mHttpUrlToRepo;
     @SerializedName("web_url")
     Uri mWebUrl;
-    @SerializedName("tag_list")
-    List<String> mTagList;
     @SerializedName("owner")
-    User mOwner;
+    UserBasic mOwner;
     @SerializedName("name")
     String mName;
     @SerializedName("name_with_namespace")
@@ -45,10 +47,10 @@ public class Project {
     boolean mMergeRequestsEnabled;
     @SerializedName("wiki_enabled")
     boolean mWikiEnabled;
-    @SerializedName("snippets_enabled")
-    boolean mSnippetsEnabled;
     @SerializedName("build_enabled")
     boolean mBuildEnabled;
+    @SerializedName("snippets_enabled")
+    boolean mSnippetsEnabled;
     @SerializedName("created_at")
     Date mCreatedAt;
     @SerializedName("last_activity_at")
@@ -56,15 +58,17 @@ public class Project {
     @SerializedName("creator_id")
     long mCreatorId;
     @SerializedName("namespace")
-    Namespace mNamespace;
-    @SerializedName("archived")
-    boolean mArchived;
+    ProjectNamespace mNamespace;
+    @SerializedName("forked_from_project")
+    ForkedFromProject mForkedFromProject;
     @SerializedName("avatar_url")
     Uri mAvatarUrl;
     @SerializedName("star_count")
     int mStarCount;
     @SerializedName("forks_count")
     int mForksCount;
+    @SerializedName("open_issues_count")
+    int mOpenIssuesCount;
 
     public Project() {}
 
@@ -80,8 +84,16 @@ public class Project {
         return mDefaultBranch;
     }
 
+    public List<String> getTagList() {
+        return mTagList;
+    }
+
     public boolean isPublic() {
         return mPublic;
+    }
+
+    public boolean isArchived() {
+        return mArchived;
     }
 
     public int getVisibilityLevel() {
@@ -100,11 +112,7 @@ public class Project {
         return mWebUrl;
     }
 
-    public List<String> getTagList() {
-        return mTagList;
-    }
-
-    public User getOwner() {
+    public UserBasic getOwner() {
         return mOwner;
     }
 
@@ -136,12 +144,12 @@ public class Project {
         return mWikiEnabled;
     }
 
-    public boolean isSnippetsEnabled() {
-        return mSnippetsEnabled;
-    }
-
     public boolean isBuildEnabled() {
         return mBuildEnabled;
+    }
+
+    public boolean isSnippetsEnabled() {
+        return mSnippetsEnabled;
     }
 
     public Date getCreatedAt() {
@@ -156,12 +164,12 @@ public class Project {
         return mCreatorId;
     }
 
-    public Namespace getNamespace() {
+    public ProjectNamespace getNamespace() {
         return mNamespace;
     }
 
-    public boolean isArchived() {
-        return mArchived;
+    public ForkedFromProject getForkedFromProject() {
+        return mForkedFromProject;
     }
 
     public Uri getAvatarUrl() {
@@ -174,5 +182,13 @@ public class Project {
 
     public int getForksCount() {
         return mForksCount;
+    }
+
+    public int getOpenIssuesCount() {
+        return mOpenIssuesCount;
+    }
+
+    public Uri getFeedUrl() {
+        return Uri.parse(mWebUrl.toString() + ".atom");
     }
 }

@@ -15,7 +15,7 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.ProjectsAdapter;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.ReloadDataEvent;
-import com.commit451.gitlab.model.Project;
+import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.util.LinkHeaderResolver;
 import com.commit451.gitlab.util.NavigationManager;
 import com.squareup.otto.Subscribe;

@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.model.MergeRequestComment;
+import com.commit451.gitlab.model.api.Note;
 import com.commit451.gitlab.util.ImageUtil;
 
 import butterknife.Bind;
@@ -39,14 +39,14 @@ public class MergeRequestCommentViewHolder extends RecyclerView.ViewHolder{
         ButterKnife.bind(this, view);
     }
 
-    public void bind(MergeRequestComment comment) {
+    public void bind(Note comment) {
         if(comment.getAuthor() != null) {
             title.setText(comment.getAuthor().getUsername());
         }
 
         String temp = "";
-        if(comment.getComment() != null) {
-            temp = comment.getComment();
+        if(comment.getBody() != null) {
+            temp = comment.getBody();
         }
         Bypass bypass = new Bypass(itemView.getContext());
         summary.setText(bypass.markdownToSpannable(temp));

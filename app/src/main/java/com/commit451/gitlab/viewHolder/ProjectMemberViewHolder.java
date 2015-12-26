@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.model.User;
+import com.commit451.gitlab.model.api.Member;
 import com.commit451.gitlab.util.ImageUtil;
 
 import butterknife.Bind;
@@ -50,11 +50,11 @@ public class ProjectMemberViewHolder extends RecyclerView.ViewHolder{
         overflow.setOnClickListener(mOnMoreClickListener);
     }
 
-    public void bind(User user) {
-        username.setText(user.getUsername());
-        access.setText(user.getAccessLevelTitle());
+    public void bind(Member member) {
+        username.setText(member.getUsername());
+        access.setText(Member.getAccessLevel(member.getAccessLevel()));
 
-        Uri url = ImageUtil.getAvatarUrl(user, itemView.getResources().getDimensionPixelSize(R.dimen.user_header_image_size));
+        Uri url = ImageUtil.getAvatarUrl(member, itemView.getResources().getDimensionPixelSize(R.dimen.user_header_image_size));
         GitLabClient.getPicasso()
                 .load(url)
                 .into(image);

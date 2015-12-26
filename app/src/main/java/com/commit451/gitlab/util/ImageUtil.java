@@ -3,7 +3,8 @@ package com.commit451.gitlab.util;
 import android.net.Uri;
 import android.text.TextUtils;
 
-import com.commit451.gitlab.model.User;
+import com.commit451.gitlab.model.api.UserBasic;
+import com.commit451.gitlab.model.api.UserFull;
 
 import fr.tkeunebr.gravatar.Gravatar;
 
@@ -14,19 +15,21 @@ import fr.tkeunebr.gravatar.Gravatar;
 public class ImageUtil {
     private static Gravatar sGravatar;
 
-    public static Uri getAvatarUrl(User user, int size) {
-        if (user == null) {
-            return getAvatarUrl("", size);
+    public static Uri getAvatarUrl(UserBasic user, int size) {
+        if (user != null) {
+            Uri avatarUrl = user.getAvatarUrl();
+            if (avatarUrl != null && !avatarUrl.equals(Uri.EMPTY)) {
+                return avatarUrl.buildUpon()
+                        .appendQueryParameter("s", Integer.toString(size))
+                        .build();
+            }
+
+            if (user instanceof UserFull) {
+                return getAvatarUrl(((UserFull) user).getEmail(), size);
+            }
         }
 
-        Uri avatarUrl = user.getAvatarUrl();
-        if (avatarUrl != null && !avatarUrl.equals(Uri.EMPTY)) {
-            return avatarUrl.buildUpon()
-                    .appendQueryParameter("s", Integer.toString(size))
-                    .build();
-        }
-
-        return getAvatarUrl(user.getEmail(), size);
+        return getAvatarUrl("", size);
     }
 
     public static Uri getAvatarUrl(String email, int size) {

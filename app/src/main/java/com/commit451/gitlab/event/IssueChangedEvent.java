@@ -1,6 +1,6 @@
 package com.commit451.gitlab.event;
 
-import com.commit451.gitlab.model.Issue;
+import com.commit451.gitlab.model.api.Issue;
 
 /**
  * Event indicating that an issue has changed

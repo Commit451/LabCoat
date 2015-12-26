@@ -20,8 +20,8 @@ import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.adapter.MergeRequestAdapter;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.ProjectReloadEvent;
-import com.commit451.gitlab.model.MergeRequest;
-import com.commit451.gitlab.model.Project;
+import com.commit451.gitlab.model.api.MergeRequest;
+import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.util.NavigationManager;
 import com.squareup.otto.Subscribe;
 

@@ -11,9 +11,9 @@ import android.widget.LinearLayout;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.model.Commit;
-import com.commit451.gitlab.model.Diff;
-import com.commit451.gitlab.model.Project;
+import com.commit451.gitlab.model.api.RepositoryCommit;
+import com.commit451.gitlab.model.api.Diff;
+import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.view.DiffView;
 import com.commit451.gitlab.view.MessageView;
 
@@ -33,7 +33,7 @@ public class DiffActivity extends BaseActivity {
     private static final String EXTRA_PROJECT = "extra_project";
     private static final String EXTRA_COMMIT = "extra_commit";
 
-    public static Intent newInstance(Context context, Project project, Commit commit) {
+    public static Intent newInstance(Context context, Project project, RepositoryCommit commit) {
         Intent intent = new Intent(context, DiffActivity.class);
         intent.putExtra(EXTRA_PROJECT, Parcels.wrap(project));
         intent.putExtra(EXTRA_COMMIT, Parcels.wrap(commit));
@@ -45,7 +45,7 @@ public class DiffActivity extends BaseActivity {
     @Bind(R.id.diff_container) LinearLayout diffContainer;
 
     Project mProject;
-    Commit mCommit;
+    RepositoryCommit mCommit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,10 +84,10 @@ public class DiffActivity extends BaseActivity {
         GitLabClient.instance().getCommitDiff(mProject.getId(), mCommit.getId()).enqueue(diffCallback);
     }
 
-    private Callback<Commit> commitCallback = new Callback<Commit>() {
+    private Callback<RepositoryCommit> commitCallback = new Callback<RepositoryCommit>() {
 
         @Override
-        public void onResponse(Response<Commit> response, Retrofit retrofit) {
+        public void onResponse(Response<RepositoryCommit> response, Retrofit retrofit) {
             if (response.isSuccess()) {
                 messageContainer.addView(new MessageView(DiffActivity.this, response.body()));
             }

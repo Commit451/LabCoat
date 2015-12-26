@@ -1,4 +1,4 @@
-package com.commit451.gitlab.model;
+package com.commit451.gitlab.model.api;
 
 import com.google.gson.annotations.SerializedName;
 

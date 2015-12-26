@@ -17,9 +17,9 @@ import com.commit451.gitlab.adapter.MemberAdapter;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.dialog.AccessDialog;
 import com.commit451.gitlab.event.ProjectReloadEvent;
-import com.commit451.gitlab.event.UserAddedEvent;
-import com.commit451.gitlab.model.Project;
-import com.commit451.gitlab.model.User;
+import com.commit451.gitlab.event.MemberAddedEvent;
+import com.commit451.gitlab.model.api.Member;
+import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.util.NavigationManager;
 import com.commit451.gitlab.viewHolder.ProjectMemberViewHolder;
 import com.squareup.otto.Subscribe;
@@ -56,13 +56,13 @@ public class ProjectMembersFragment extends BaseFragment implements SwipeRefresh
     }
 
     Project mProject;
-    User mUser;
+    Member mMember;
     EventReceiver mEventReceiver;
 
-    private final Callback<List<User>> mProjectMemebersCallback = new Callback<List<User>>() {
+    private final Callback<List<Member>> mProjectMemebersCallback = new Callback<List<Member>>() {
 
         @Override
-        public void onResponse(Response<List<User>> response, Retrofit retrofit) {
+        public void onResponse(Response<List<Member>> response, Retrofit retrofit) {
             if (getView() == null) {
                 return;
             }
@@ -107,7 +107,7 @@ public class ProjectMembersFragment extends BaseFragment implements SwipeRefresh
                         .show();
                 return;
             }
-            mAdapter.removeUser(mUser);
+            mAdapter.removeMember(mMember);
         }
 
         @Override
@@ -120,26 +120,26 @@ public class ProjectMembersFragment extends BaseFragment implements SwipeRefresh
 
     private final AccessDialog.OnAccessChangedListener mOnAccessChangedListener = new AccessDialog.OnAccessChangedListener() {
         @Override
-        public void onAccessChanged(User user, String accessLevel) {
+        public void onAccessChanged(Member member, String accessLevel) {
             loadData();
         }
     };
 
     private final MemberAdapter.Listener mMemberAdapterListener = new MemberAdapter.Listener() {
         @Override
-        public void onProjectMemberClicked(User user, ProjectMemberViewHolder memberGroupViewHolder) {
-            NavigationManager.navigateToUser(getActivity(), memberGroupViewHolder.image, user);
+        public void onProjectMemberClicked(Member member, ProjectMemberViewHolder memberGroupViewHolder) {
+            NavigationManager.navigateToUser(getActivity(), memberGroupViewHolder.image, member);
         }
 
         @Override
-        public void onRemoveMember(User user) {
-            mUser = user;
-            GitLabClient.instance().removeProjectTeamMember(mProject.getId(), user.getId()).enqueue(mRemoveUserCallback);
+        public void onRemoveMember(Member member) {
+            mMember = member;
+            GitLabClient.instance().removeProjectTeamMember(mProject.getId(), member.getId()).enqueue(mRemoveUserCallback);
         }
 
         @Override
-        public void onChangeAccess(User user) {
-            AccessDialog accessDialog = new AccessDialog(getActivity(), user, mProject.getId());
+        public void onChangeAccess(Member member) {
+            AccessDialog accessDialog = new AccessDialog(getActivity(), member, mProject.getId());
             accessDialog.setOnAccessChangedListener(mOnAccessChangedListener);
             accessDialog.show();
         }
@@ -221,9 +221,9 @@ public class ProjectMembersFragment extends BaseFragment implements SwipeRefresh
         }
 
         @Subscribe
-        public void onUserAdded(UserAddedEvent event) {
+        public void onUserAdded(MemberAddedEvent event) {
             if (mAdapter != null) {
-                mAdapter.addUser(event.user);
+                mAdapter.addMember(event.member);
                 mErrorText.setVisibility(View.GONE);
             }
         }

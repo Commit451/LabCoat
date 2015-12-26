@@ -25,7 +25,7 @@ import com.commit451.gitlab.event.CloseDrawerEvent;
 import com.commit451.gitlab.event.LoginEvent;
 import com.commit451.gitlab.event.ReloadDataEvent;
 import com.commit451.gitlab.model.Account;
-import com.commit451.gitlab.model.User;
+import com.commit451.gitlab.model.api.UserFull;
 import com.commit451.gitlab.util.ImageUtil;
 import com.commit451.gitlab.util.NavigationManager;
 import com.squareup.otto.Subscribe;
@@ -123,10 +123,10 @@ public class GitLabNavigationView extends NavigationView {
         toggleAccounts();
     }
 
-    private final Callback<User> userCallback = new Callback<User>() {
+    private final Callback<UserFull> userCallback = new Callback<UserFull>() {
 
         @Override
-        public void onResponse(Response<User> response, Retrofit retrofit) {
+        public void onResponse(Response<UserFull> response, Retrofit retrofit) {
             if (!response.isSuccess()) {
                 return;
             }
@@ -210,7 +210,7 @@ public class GitLabNavigationView extends NavigationView {
         GitLabClient.instance().getUser().enqueue(userCallback);
     }
 
-    private void bindUser(User user) {
+    private void bindUser(UserFull user) {
         if (getContext() == null) {
             return;
         }

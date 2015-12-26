@@ -24,7 +24,7 @@ import com.commit451.easel.Easel;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.FeedAdapter;
 import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.model.User;
+import com.commit451.gitlab.model.api.UserBasic;
 import com.commit451.gitlab.model.rss.Entry;
 import com.commit451.gitlab.model.rss.UserFeed;
 import com.commit451.gitlab.util.ImageUtil;
@@ -50,7 +50,7 @@ public class UserActivity extends BaseActivity {
 
     private static final String KEY_USER = "user";
 
-    public static Intent newInstance(Context context, User user) {
+    public static Intent newInstance(Context context, UserBasic user) {
         Intent intent = new Intent(context, UserActivity.class);
         intent.putExtra(KEY_USER, Parcels.wrap(user));
         return intent;
@@ -64,7 +64,7 @@ public class UserActivity extends BaseActivity {
     @Bind(R.id.progress) ProgressWheel mProgress;
     @Bind(R.id.message) TextView mMessageView;
 
-    User mUser;
+    UserBasic mUser;
 
     private final Target mImageLoadTarget = new Target() {
         @Override
@@ -181,6 +181,6 @@ public class UserActivity extends BaseActivity {
     private void load() {
         mMessageView.setVisibility(View.GONE);
         mProgress.setVisibility(View.VISIBLE);
-        GitLabClient.rssInstance().getUserFeed(mUser.getFeedUrl()).enqueue(mUserFeedCallback);
+        GitLabClient.rssInstance().getUserFeed(mUser.getFeedUrl().toString()).enqueue(mUserFeedCallback);
     }
 }

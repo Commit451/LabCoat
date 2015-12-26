@@ -1,4 +1,4 @@
-package com.commit451.gitlab.model;
+package com.commit451.gitlab.model.api;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -12,16 +12,8 @@ import java.util.Date;
 
 @Parcel
 public class Milestone {
-    public static final String STATE_OPENED = "opened";
-    public static final String STATE_REOPENED = "reopened";
-    public static final String STATE_CLOSED = "closed";
-
     public static final String STATE_REOPEN = "reopen";
     public static final String STATE_CLOSE = "close";
-
-    @StringDef({STATE_OPENED, STATE_REOPENED, STATE_CLOSED})
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface State {}
 
     @StringDef({STATE_REOPEN, STATE_CLOSE})
     @Retention(RetentionPolicy.SOURCE)
@@ -37,14 +29,14 @@ public class Milestone {
     String mTitle;
     @SerializedName("description")
     String mDescription;
-    @SerializedName("due_date")
-    Date mDueDate;
     @SerializedName("state")
-    String mState;
-    @SerializedName("updated_at")
-    Date mUpdatedAt;
+    State mState;
     @SerializedName("created_at")
     Date mCreatedAt;
+    @SerializedName("updated_at")
+    Date mUpdatedAt;
+    @SerializedName("due_date")
+    Date mDueDate;
 
     public Milestone() {}
 
@@ -68,29 +60,28 @@ public class Milestone {
         return mDescription;
     }
 
-    public Date getDueDate() {
-        return mDueDate;
-    }
-
-    @State
-    public String getState() {
+    public State getState() {
         return mState;
-    }
-
-    public Date getUpdatedAt() {
-        return mUpdatedAt;
     }
 
     public Date getCreatedAt() {
         return mCreatedAt;
     }
 
-    public boolean equals(Object obj) {
-        if (!(obj instanceof Milestone)) {
-            return false;
-        }
+    public Date getUpdatedAt() {
+        return mUpdatedAt;
+    }
 
-        Milestone rhs = (Milestone) obj;
-        return rhs.mId == mId;
+    public Date getDueDate() {
+        return mDueDate;
+    }
+
+    public enum State {
+        @SerializedName("opened")
+        OPENED,
+        @SerializedName("reopened")
+        REOPENED,
+        @SerializedName("closed")
+        CLOSED
     }
 }

@@ -1,13 +1,15 @@
 package com.commit451.gitlab.model;
 
+import com.google.gson.annotations.SerializedName;
+
+import com.commit451.gitlab.data.Prefs;
+import com.commit451.gitlab.model.api.UserFull;
+
+import org.parceler.Parcel;
+
 import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
-
-import com.commit451.gitlab.data.Prefs;
-import com.google.gson.annotations.SerializedName;
-
-import org.parceler.Parcel;
 
 import java.util.Collections;
 import java.util.Date;
@@ -34,7 +36,7 @@ public class Account implements Comparable<Account>{
     @SerializedName("trusted_certificate")
     String mTrustedCertificate;
     @SerializedName("user")
-    User mUser;
+    UserFull mUser;
     @SerializedName("last_used")
     Date mLastUsed;
 
@@ -66,11 +68,11 @@ public class Account implements Comparable<Account>{
         mPrivateToken = privateToken;
     }
 
-    public User getUser() {
+    public UserFull getUser() {
         return mUser;
     }
 
-    public void setUser(User user) {
+    public void setUser(UserFull user) {
         mUser = user;
     }
 

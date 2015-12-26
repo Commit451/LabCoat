@@ -8,7 +8,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.fragment.GroupMembersFragment;
 import com.commit451.gitlab.fragment.ProjectsFragment;
-import com.commit451.gitlab.model.Group;
+import com.commit451.gitlab.model.api.Group;
 
 /**
  * Group pager adapter

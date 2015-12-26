@@ -15,7 +15,7 @@ import android.widget.TextView;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.UsersAdapter;
 import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.model.User;
+import com.commit451.gitlab.model.api.UserBasic;
 import com.commit451.gitlab.util.NavigationManager;
 import com.commit451.gitlab.viewHolder.UserViewHolder;
 
@@ -65,15 +65,15 @@ public class UsersFragment extends BaseFragment {
 
     private final UsersAdapter.Listener mUsersAdapterListener = new UsersAdapter.Listener() {
         @Override
-        public void onUserClicked(User user, UserViewHolder userViewHolder) {
+        public void onUserClicked(UserBasic user, UserViewHolder userViewHolder) {
             NavigationManager.navigateToUser(getActivity(), userViewHolder.image, user);
         }
     };
 
-    public Callback<List<User>> mSearchCallback = new Callback<List<User>>() {
+    public Callback<List<UserBasic>> mSearchCallback = new Callback<List<UserBasic>>() {
 
         @Override
-        public void onResponse(Response<List<User>> response, Retrofit retrofit) {
+        public void onResponse(Response<List<UserBasic>> response, Retrofit retrofit) {
             if (getView() == null) {
                 return;
             }

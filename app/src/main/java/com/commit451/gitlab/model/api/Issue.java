@@ -1,4 +1,4 @@
-package com.commit451.gitlab.model;
+package com.commit451.gitlab.model.api;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -14,16 +14,8 @@ import java.util.List;
 
 @Parcel
 public class Issue {
-    public static final String STATE_OPENED = "opened";
-    public static final String STATE_REOPENED = "reopened";
-    public static final String STATE_CLOSED = "closed";
-
     public static final String STATE_REOPEN = "reopen";
     public static final String STATE_CLOSE = "close";
-
-    @StringDef({STATE_OPENED, STATE_REOPENED, STATE_CLOSED})
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface State {}
 
     @StringDef({STATE_REOPEN, STATE_CLOSE})
     @Retention(RetentionPolicy.SOURCE)
@@ -39,20 +31,20 @@ public class Issue {
     String mTitle;
     @SerializedName("description")
     String mDescription;
+    @SerializedName("state")
+    State mState;
+    @SerializedName("created_at")
+    Date mCreatedAt;
+    @SerializedName("updated_at")
+    Date mUpdatedAt;
     @SerializedName("labels")
     List<String> mLabels;
     @SerializedName("milestone")
     Milestone mMilestone;
     @SerializedName("assignee")
-    User mAssignee;
+    UserBasic mAssignee;
     @SerializedName("author")
-    User mAuthor;
-    @SerializedName("state")
-    String mState;
-    @SerializedName("updated_at")
-    Date mUpdatedAt;
-    @SerializedName("created_at")
-    Date mCreatedAt;
+    UserBasic mAuthor;
 
     public Issue() {}
 
@@ -76,6 +68,18 @@ public class Issue {
         return mDescription;
     }
 
+    public State getState() {
+        return mState;
+    }
+
+    public Date getCreatedAt() {
+        return mCreatedAt;
+    }
+
+    public Date getUpdatedAt() {
+        return mUpdatedAt;
+    }
+
     public List<String> getLabels() {
         return mLabels;
     }
@@ -84,25 +88,12 @@ public class Issue {
         return mMilestone;
     }
 
-    public User getAssignee() {
+    public UserBasic getAssignee() {
         return mAssignee;
     }
 
-    public User getAuthor() {
+    public UserBasic getAuthor() {
         return mAuthor;
-    }
-
-    @State
-    public String getState() {
-        return mState;
-    }
-
-    public Date getUpdatedAt() {
-        return mUpdatedAt;
-    }
-
-    public Date getCreatedAt() {
-        return mCreatedAt;
     }
 
     public Uri getUrl(Project project) {
@@ -110,5 +101,14 @@ public class Issue {
                 .appendPath("issues")
                 .appendPath(Long.toString(getId()))
                 .build();
+    }
+
+    public enum State {
+        @SerializedName("opened")
+        OPENED,
+        @SerializedName("reopened")
+        REOPENED,
+        @SerializedName("closed")
+        CLOSED
     }
 }

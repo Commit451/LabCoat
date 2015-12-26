@@ -3,8 +3,8 @@ package com.commit451.gitlab.adapter;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
-import com.commit451.gitlab.model.MergeRequest;
-import com.commit451.gitlab.model.MergeRequestComment;
+import com.commit451.gitlab.model.api.MergeRequest;
+import com.commit451.gitlab.model.api.Note;
 import com.commit451.gitlab.viewHolder.MergeRequestCommentViewHolder;
 import com.commit451.gitlab.viewHolder.MergeRequestHeaderViewHolder;
 
@@ -22,7 +22,7 @@ public class MergeRequestDetailAdapter extends RecyclerView.Adapter<RecyclerView
 
     private static final int HEADER_COUNT = 1;
 
-    private ArrayList<MergeRequestComment> mNotes;
+    private ArrayList<Note> mNotes;
     private MergeRequest mMergeRequest;
 
     public MergeRequestDetailAdapter(MergeRequest mergeRequest) {
@@ -46,7 +46,7 @@ public class MergeRequestDetailAdapter extends RecyclerView.Adapter<RecyclerView
         if (holder instanceof MergeRequestHeaderViewHolder) {
             ((MergeRequestHeaderViewHolder) holder).bind(mMergeRequest);
         } else if (holder instanceof MergeRequestCommentViewHolder) {
-            MergeRequestComment note = getNoteAt(position);
+            Note note = getNoteAt(position);
             ((MergeRequestCommentViewHolder) holder).bind(note);
         }
     }
@@ -69,16 +69,16 @@ public class MergeRequestDetailAdapter extends RecyclerView.Adapter<RecyclerView
         return position == 0;
     }
 
-    public MergeRequestComment getNoteAt(int position) {
+    public Note getNoteAt(int position) {
         return mNotes.get(position-1);
     }
 
-    public void addNote(MergeRequestComment note) {
+    public void addNote(Note note) {
         mNotes.add(note);
         notifyItemInserted(mNotes.size() + HEADER_COUNT);
     }
 
-    public void addNotes(List<MergeRequestComment> notes) {
+    public void addNotes(List<Note> notes) {
         if (!notes.isEmpty()) {
             mNotes.clear();
             mNotes.addAll(notes);

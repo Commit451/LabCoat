@@ -3,10 +3,10 @@ package com.commit451.gitlab.adapter;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
-import com.commit451.gitlab.model.Issue;
-import com.commit451.gitlab.model.Milestone;
-import com.commit451.gitlab.model.Note;
-import com.commit451.gitlab.model.User;
+import com.commit451.gitlab.model.api.Issue;
+import com.commit451.gitlab.model.api.Milestone;
+import com.commit451.gitlab.model.api.Note;
+import com.commit451.gitlab.model.api.UserBasic;
 import com.commit451.gitlab.viewHolder.IssueHeaderViewHolder;
 import com.commit451.gitlab.viewHolder.NoteViewHolder;
 
@@ -25,7 +25,7 @@ public class IssueDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private static final int HEADER_COUNT = 1;
 
     private ArrayList<Note> mNotes;
-    private ArrayList<User> mUsers;
+    private ArrayList<UserBasic> mUsers;
     private ArrayList<Milestone> mMilestones;
     private Issue mIssue;
 
@@ -92,7 +92,7 @@ public class IssueDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         notifyItemInserted(mNotes.size() + HEADER_COUNT);
     }
 
-    public void addUsers(List<User> users) {
+    public void addUsers(List<UserBasic> users) {
         if (!users.isEmpty()) {
             users.clear();
             mUsers.addAll(users);

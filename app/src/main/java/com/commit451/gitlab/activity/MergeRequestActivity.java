@@ -16,9 +16,9 @@ import android.widget.TextView;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.MergeRequestDetailAdapter;
 import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.model.MergeRequest;
-import com.commit451.gitlab.model.MergeRequestComment;
-import com.commit451.gitlab.model.Project;
+import com.commit451.gitlab.model.api.MergeRequest;
+import com.commit451.gitlab.model.api.Note;
+import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.util.KeyboardUtil;
 
 import org.parceler.Parcels;
@@ -64,10 +64,10 @@ public class MergeRequestActivity extends BaseActivity {
     Project mProject;
     MergeRequest mMergeRequest;
 
-    private Callback<List<MergeRequestComment>> mNotesCallback = new Callback<List<MergeRequestComment>>() {
+    private Callback<List<Note>> mNotesCallback = new Callback<List<Note>>() {
 
         @Override
-        public void onResponse(Response<List<MergeRequestComment>> response, Retrofit retrofit) {
+        public void onResponse(Response<List<Note>> response, Retrofit retrofit) {
             mSwipeRefreshLayout.setRefreshing(false);
             if (!response.isSuccess()) {
                 Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
@@ -86,10 +86,10 @@ public class MergeRequestActivity extends BaseActivity {
         }
     };
 
-    private Callback<MergeRequestComment> mPostNoteCallback = new Callback<MergeRequestComment>() {
+    private Callback<Note> mPostNoteCallback = new Callback<Note>() {
 
         @Override
-        public void onResponse(Response<MergeRequestComment> response, Retrofit retrofit) {
+        public void onResponse(Response<Note> response, Retrofit retrofit) {
             mProgress.setVisibility(View.GONE);
             if (!response.isSuccess()) {
                 Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)

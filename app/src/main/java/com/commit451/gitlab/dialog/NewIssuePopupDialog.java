@@ -26,8 +26,8 @@ import com.commit451.gitlab.activity.BaseActivity;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.IssueChangedEvent;
 import com.commit451.gitlab.event.IssueCreatedEvent;
-import com.commit451.gitlab.model.Issue;
-import com.commit451.gitlab.model.Project;
+import com.commit451.gitlab.model.api.Issue;
+import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.transition.MorphDialogToFab;
 import com.commit451.gitlab.transition.MorphFabToDialog;
 

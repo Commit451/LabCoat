@@ -17,7 +17,7 @@ import android.webkit.WebView;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.model.FileResponse;
+import com.commit451.gitlab.model.api.RepositoryFile;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -56,10 +56,10 @@ public class FileActivity extends BaseActivity {
     String mFileName;
     byte[] mBlob;
 
-    private final Callback<FileResponse> mFileResponseCallback = new Callback<FileResponse>() {
+    private final Callback<RepositoryFile> mFileResponseCallback = new Callback<RepositoryFile>() {
 
         @Override
-        public void onResponse(Response<FileResponse> response, Retrofit retrofit) {
+        public void onResponse(Response<RepositoryFile> response, Retrofit retrofit) {
             if (!response.isSuccess()) {
                 return;
             }

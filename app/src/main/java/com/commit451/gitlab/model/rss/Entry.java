@@ -13,12 +13,12 @@ public class Entry {
     Link mLink;
     @Element(name = "title", required = true)
     String mTitle;
-    @Element(name = "summary", required = true)
-    String mSummary;
     @Element(name = "updated", required = true)
     Date mUpdated;
     @Element(name = "thumbnail", required = true)
     Thumbnail mThumbnail;
+    @Element(name = "summary", required = true)
+    String mSummary;
 
     public Entry() {}
 
@@ -30,15 +30,15 @@ public class Entry {
         return mTitle;
     }
 
-    public String getSummary() {
-        return mSummary;
-    }
-
     public Date getUpdated() {
         return mUpdated;
     }
 
     public Thumbnail getThumbnail() {
         return mThumbnail;
+    }
+
+    public String getSummary() {
+        return mSummary;
     }
 }

@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.model.Contributor;
+import com.commit451.gitlab.model.api.Contributor;
 import com.commit451.gitlab.util.ImageUtil;
 import com.commit451.gitlab.util.IntentUtil;
 import com.commit451.gitlab.util.WindowUtil;

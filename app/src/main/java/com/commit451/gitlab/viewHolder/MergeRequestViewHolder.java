@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.model.MergeRequest;
+import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.util.ImageUtil;
 
 import butterknife.Bind;

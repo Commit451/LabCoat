@@ -22,11 +22,11 @@ import com.commit451.gitlab.activity.ProjectsActivity;
 import com.commit451.gitlab.activity.SearchActivity;
 import com.commit451.gitlab.activity.UserActivity;
 import com.commit451.gitlab.dialog.NewIssuePopupDialog;
-import com.commit451.gitlab.model.Group;
-import com.commit451.gitlab.model.Issue;
-import com.commit451.gitlab.model.MergeRequest;
-import com.commit451.gitlab.model.Project;
-import com.commit451.gitlab.model.User;
+import com.commit451.gitlab.model.api.Group;
+import com.commit451.gitlab.model.api.Issue;
+import com.commit451.gitlab.model.api.MergeRequest;
+import com.commit451.gitlab.model.api.Project;
+import com.commit451.gitlab.model.api.UserBasic;
 
 /**
  * Manages navigation so that we can override things as needed
@@ -58,7 +58,7 @@ public class NavigationManager {
         activity.startActivity(SearchActivity.newInstance(activity));
     }
 
-    public static void navigateToUser(Activity activity, ImageView profileImage, User user) {
+    public static void navigateToUser(Activity activity, ImageView profileImage, UserBasic user) {
         Intent intent = UserActivity.newInstance(activity, user);
         if (Build.VERSION.SDK_INT >= 21) {
             ActivityOptionsCompat options = ActivityOptionsCompat.

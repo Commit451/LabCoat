@@ -1,11 +1,11 @@
-package com.commit451.gitlab.model;
+package com.commit451.gitlab.model.api;
 
 import com.google.gson.annotations.SerializedName;
 
 import org.parceler.Parcel;
 
 @Parcel
-public class FileResponse {
+public class RepositoryFile {
     @SerializedName("file_name")
     String mFileName;
     @SerializedName("file_path")
@@ -22,8 +22,10 @@ public class FileResponse {
     String mBlobId;
     @SerializedName("commit_id")
     String mCommitId;
+    @SerializedName("last_commit_id")
+    String mLastCommitId;
 
-    public FileResponse() {}
+    public RepositoryFile() {}
 
     public String getFileName() {
         return mFileName;
@@ -55,5 +57,9 @@ public class FileResponse {
 
     public String getCommitId() {
         return mCommitId;
+    }
+
+    public String getLastCommitId() {
+        return mLastCommitId;
     }
 }

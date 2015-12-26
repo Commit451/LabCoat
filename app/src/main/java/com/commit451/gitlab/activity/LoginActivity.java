@@ -26,8 +26,8 @@ import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.data.Prefs;
 import com.commit451.gitlab.event.LoginEvent;
 import com.commit451.gitlab.model.Account;
-import com.commit451.gitlab.model.Session;
-import com.commit451.gitlab.model.User;
+import com.commit451.gitlab.model.api.UserFull;
+import com.commit451.gitlab.model.api.UserLogin;
 import com.commit451.gitlab.ssl.X509CertificateException;
 import com.commit451.gitlab.ssl.X509Util;
 import com.commit451.gitlab.util.KeyboardUtil;
@@ -133,10 +133,10 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
-    private Callback<Session> mSessionCallback = new Callback<Session>() {
+    private Callback<UserLogin> mLoginCallback = new Callback<UserLogin>() {
 
         @Override
-        public void onResponse(Response<Session> response, Retrofit retrofit) {
+        public void onResponse(Response<UserLogin> response, Retrofit retrofit) {
             mTrustedCertificate = null;
             if (!response.isSuccess()) {
                 handleConnectionResponse(response.code());
@@ -155,9 +155,9 @@ public class LoginActivity extends BaseActivity {
         }
     };
 
-    private Callback<User> mTestUserCallback = new Callback<User>() {
+    private Callback<UserFull> mTestUserCallback = new Callback<UserFull>() {
         @Override
-        public void onResponse(Response<User> response, Retrofit retrofit) {
+        public void onResponse(Response<UserFull> response, Retrofit retrofit) {
             mProgress.setVisibility(View.GONE);
             if (!response.isSuccess()) {
                 handleConnectionResponse(response.code());
@@ -232,10 +232,10 @@ public class LoginActivity extends BaseActivity {
 
     private void connectByAuth() {
         if(mUserInput.getText().toString().contains("@")) {
-            GitLabClient.instance().getSessionByEmail(mUserInput.getText().toString(), mPasswordInput.getText().toString()).enqueue(mSessionCallback);
+            GitLabClient.instance().getSessionByEmail(mUserInput.getText().toString(), mPasswordInput.getText().toString()).enqueue(mLoginCallback);
         }
         else {
-            GitLabClient.instance().getSessionByUsername(mUserInput.getText().toString(), mPasswordInput.getText().toString()).enqueue(mSessionCallback);
+            GitLabClient.instance().getSessionByUsername(mUserInput.getText().toString(), mPasswordInput.getText().toString()).enqueue(mLoginCallback);
         }
     }
 

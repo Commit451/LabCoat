@@ -1,4 +1,4 @@
-package com.commit451.gitlab.model;
+package com.commit451.gitlab.model.api;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -9,16 +9,16 @@ import java.util.List;
 
 @Parcel
 public class Diff {
-    @SerializedName("diff")
-    String mDiff;
-    @SerializedName("new_path")
-    String mNewPath;
     @SerializedName("old_path")
     String mOldPath;
+    @SerializedName("new_path")
+    String mNewPath;
     @SerializedName("a_mode")
     int mAMode;
     @SerializedName("b_mode")
     int mBMode;
+    @SerializedName("diff")
+    String mDiff;
     @SerializedName("new_file")
     boolean mNewFile;
     @SerializedName("renamed_file")
@@ -28,16 +28,12 @@ public class Diff {
 
     public Diff() {}
 
-    public String getDiff() {
-        return mDiff;
+    public String getOldPath() {
+        return mOldPath;
     }
 
     public String getNewPath() {
         return mNewPath;
-    }
-
-    public String getOldPath() {
-        return mOldPath;
     }
 
     public int getAMode() {
@@ -46,6 +42,10 @@ public class Diff {
 
     public int getBMode() {
         return mBMode;
+    }
+
+    public String getDiff() {
+        return mDiff;
     }
 
     public boolean isNewFile() {

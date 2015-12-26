@@ -23,7 +23,7 @@ import com.commit451.easel.Easel;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.GroupPagerAdapter;
 import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.model.Group;
+import com.commit451.gitlab.model.api.Group;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 

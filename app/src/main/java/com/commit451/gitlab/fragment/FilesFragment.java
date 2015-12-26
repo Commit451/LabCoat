@@ -22,8 +22,8 @@ import com.commit451.gitlab.adapter.BreadcrumbAdapter;
 import com.commit451.gitlab.adapter.FilesAdapter;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.ProjectReloadEvent;
-import com.commit451.gitlab.model.Project;
-import com.commit451.gitlab.model.TreeItem;
+import com.commit451.gitlab.model.api.RepositoryTreeObject;
+import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.util.IntentUtil;
 import com.commit451.gitlab.util.NavigationManager;
 import com.squareup.otto.Subscribe;
@@ -62,18 +62,18 @@ public class FilesFragment extends BaseFragment {
     private FilesAdapter.Listener mFilesAdapterListener = new FilesAdapter.Listener() {
 
         @Override
-        public void onFolderClicked(TreeItem treeItem) {
+        public void onFolderClicked(RepositoryTreeObject treeItem) {
             loadData(mCurrentPath + treeItem.getName() + "/");
         }
 
         @Override
-        public void onFileClicked(TreeItem treeItem) {
+        public void onFileClicked(RepositoryTreeObject treeItem) {
             String path = mCurrentPath + treeItem.getName();
             NavigationManager.navigateToFile(getActivity(), mProject.getId(), path, mBranchName);
         }
 
         @Override
-        public void onCopyClicked(TreeItem treeItem) {
+        public void onCopyClicked(RepositoryTreeObject treeItem) {
             ClipboardManager clipboard = (ClipboardManager)
                     getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
             // Creates a new text clip to put on the clipboard
@@ -84,17 +84,17 @@ public class FilesFragment extends BaseFragment {
         }
 
         @Override
-        public void onShareClicked(TreeItem treeItem){
+        public void onShareClicked(RepositoryTreeObject treeItem){
             IntentUtil.share(getView(), treeItem.getUrl(mProject, mBranchName, mCurrentPath));
         }
 
         @Override
-        public void onOpenInBrowserClicked(TreeItem treeItem){
+        public void onOpenInBrowserClicked(RepositoryTreeObject treeItem){
             IntentUtil.openPage(getView(), treeItem.getUrl(mProject, mBranchName, mCurrentPath));
         }
     };
 
-    private class FilesCallback implements Callback<List<TreeItem>> {
+    private class FilesCallback implements Callback<List<RepositoryTreeObject>> {
         String newPath;
 
         public FilesCallback(String newPath) {
@@ -102,7 +102,7 @@ public class FilesFragment extends BaseFragment {
         }
 
         @Override
-        public void onResponse(Response<List<TreeItem>> response, Retrofit retrofit) {
+        public void onResponse(Response<List<RepositoryTreeObject>> response, Retrofit retrofit) {
             if (getView() == null) {
                 return;
             }

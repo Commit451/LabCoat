@@ -1,20 +1,21 @@
 package com.commit451.gitlab.api;
 
-import com.commit451.gitlab.model.Branch;
-import com.commit451.gitlab.model.Commit;
-import com.commit451.gitlab.model.Contributor;
-import com.commit451.gitlab.model.Diff;
-import com.commit451.gitlab.model.FileResponse;
-import com.commit451.gitlab.model.Group;
-import com.commit451.gitlab.model.Issue;
-import com.commit451.gitlab.model.MergeRequest;
-import com.commit451.gitlab.model.MergeRequestComment;
-import com.commit451.gitlab.model.Milestone;
-import com.commit451.gitlab.model.Note;
-import com.commit451.gitlab.model.Project;
-import com.commit451.gitlab.model.Session;
-import com.commit451.gitlab.model.TreeItem;
-import com.commit451.gitlab.model.User;
+import com.commit451.gitlab.model.api.Branch;
+import com.commit451.gitlab.model.api.Contributor;
+import com.commit451.gitlab.model.api.Diff;
+import com.commit451.gitlab.model.api.Group;
+import com.commit451.gitlab.model.api.Issue;
+import com.commit451.gitlab.model.api.Member;
+import com.commit451.gitlab.model.api.MergeRequest;
+import com.commit451.gitlab.model.api.Milestone;
+import com.commit451.gitlab.model.api.Note;
+import com.commit451.gitlab.model.api.Project;
+import com.commit451.gitlab.model.api.RepositoryCommit;
+import com.commit451.gitlab.model.api.RepositoryFile;
+import com.commit451.gitlab.model.api.RepositoryTreeObject;
+import com.commit451.gitlab.model.api.UserBasic;
+import com.commit451.gitlab.model.api.UserFull;
+import com.commit451.gitlab.model.api.UserLogin;
 
 import java.util.List;
 
@@ -35,13 +36,13 @@ public interface GitLab {
 
     @FormUrlEncoded
     @POST(API_VERSION + "/session")
-    Call<Session> getSessionByUsername(@Field("login") String login,
-                                       @Field("password") String password);
+    Call<UserLogin> getSessionByUsername(@Field("login") String login,
+                                         @Field("password") String password);
 
     @FormUrlEncoded
     @POST(API_VERSION + "/session")
-    Call<Session> getSessionByEmail(@Field("email") String email,
-                                    @Field("password") String password);
+    Call<UserLogin> getSessionByEmail(@Field("email") String email,
+                                      @Field("password") String password);
 
     /* --- MAIN --- */
 
@@ -49,7 +50,7 @@ public interface GitLab {
     Call<List<Group>> getGroups();
 
     @GET(API_VERSION + "/users?per_page=100")
-    Call<List<User>> getUsers();
+    Call<List<UserBasic>> getUsers();
 
     @GET(API_VERSION + "/projects?order_by=last_activity_at")
     Call<List<Project>> getAllProjects();
@@ -78,44 +79,44 @@ public interface GitLab {
     Call<List<MergeRequest>> getMergeRequests(@Path("id") long projectId,
                                               @Query("state") String state);
 
-    @GET(API_VERSION + "/projects/{id}/merge_request/{mergeRequestId}/comments")
-    Call<List<MergeRequestComment>> getMergeRequestNotes(@Path("id") long projectId,
-                                                  @Path("mergeRequestId") long mergeRequestId);
+    @GET(API_VERSION + "/projects/{id}/merge_requests/{merge_request_id}/notes")
+    Call<List<Note>> getMergeRequestNotes(@Path("id") long projectId,
+                                          @Path("merge_request_id") long mergeRequestId);
 
     @FormUrlEncoded
-    @POST(API_VERSION + "/projects/{id}/merge_request/{merge_request_id}/comments")
-    Call<MergeRequestComment> postMergeRequestComment(@Path("id") long projectId,
-                             @Path("merge_request_id") long mergeRequestId,
-                             @Field("note") String body);
+    @POST(API_VERSION + "/projects/{id}/merge_requests/{merge_request_id}/notes")
+    Call<Note> postMergeRequestComment(@Path("id") long projectId,
+                                       @Path("merge_request_id") long mergeRequestId,
+                                       @Field("note") String body);
 
     @GET(API_VERSION + "/projects/{id}/members")
-    Call<List<User>> getProjectTeamMembers(@Path("id") long projectId);
+    Call<List<Member>> getProjectTeamMembers(@Path("id") long projectId);
 
     @FormUrlEncoded
     @POST(API_VERSION + "/projects/{id}/members")
-    Call<User> addProjectTeamMember(@Path("id") long projectId,
-                                    @Field("user_id") long userId,
-                                    @Field("access_level") String accessLevel);
+    Call<Member> addProjectTeamMember(@Path("id") long projectId,
+                                      @Field("user_id") long userId,
+                                      @Field("access_level") int accessLevel);
 
     @FormUrlEncoded
     @PUT(API_VERSION + "/projects/{id}/members/{user_id}")
-    Call<User> editProjectTeamMember(@Path("id") long projectId,
-                                    @Path("user_id") long userId,
-                                    @Field("access_level") String accessLevel);
+    Call<Member> editProjectTeamMember(@Path("id") long projectId,
+                                       @Path("user_id") long userId,
+                                       @Field("access_level") int accessLevel);
 
     @DELETE(API_VERSION + "/projects/{id}/members/{user_id}")
     Call<Void> removeProjectTeamMember(@Path("id") long projectId,
-                                     @Path("user_id") long userId);
+                                       @Path("user_id") long userId);
 
     /* --- COMMITS --- */
 
     @GET(API_VERSION + "/projects/{id}/repository/commits?per_page=100")
-    Call<List<Commit>> getCommits(@Path("id") long projectId,
-                                  @Query("ref_name") String branchName);
+    Call<List<RepositoryCommit>> getCommits(@Path("id") long projectId,
+                                            @Query("ref_name") String branchName);
 
     @GET(API_VERSION + "/projects/{id}/repository/commits/{sha}")
-    Call<Commit> getCommit(@Path("id") long projectId,
-                           @Path("sha") String commitSHA);
+    Call<RepositoryCommit> getCommit(@Path("id") long projectId,
+                                     @Path("sha") String commitSHA);
 
     @GET(API_VERSION + "/projects/{id}/repository/commits/{sha}/diff")
     Call<List<Diff>> getCommitDiff(@Path("id") long projectId,
@@ -157,42 +158,42 @@ public interface GitLab {
     /* --- FILES --- */
 
     @GET(API_VERSION + "/projects/{id}/repository/tree?per_page=100")
-    Call<List<TreeItem>> getTree(@Path("id") long projectId,
-                                 @Query("ref_name") String branchName,
-                                 @Query("path") String path);
+    Call<List<RepositoryTreeObject>> getTree(@Path("id") long projectId,
+                                             @Query("ref_name") String branchName,
+                                             @Query("path") String path);
 
     @GET(API_VERSION + "/projects/{id}/repository/files")
-    Call<FileResponse> getFile(@Path("id") long projectId,
-                               @Query("file_path") String path,
-                               @Query("ref") String ref);
+    Call<RepositoryFile> getFile(@Path("id") long projectId,
+                                 @Query("file_path") String path,
+                                 @Query("ref") String ref);
     /* --- USER --- */
 
     @GET(API_VERSION + "/users/{id}")
-    Call<User> getUser(@Path("id") long userId);
+    Call<UserBasic> getUser(@Path("id") long userId);
 
     /**
      * Get currently authenticated user
      */
     @GET(API_VERSION + "/user")
-    Call<User> getUser();
+    Call<UserFull> getUser();
 
     // Groups
     // https://github.com/gitlabhq/gitlabhq/blob/master/doc/api/groups.md
 
     @GET(API_VERSION + "/groups/{id}/members?per_page=100")
-    Call<List<User>> getGroupMembers(@Path("id") long groupId);
+    Call<List<Member>> getGroupMembers(@Path("id") long groupId);
 
     @FormUrlEncoded
     @POST(API_VERSION + "/groups/{id}/members")
-    Call<User> addGroupMember(@Path("id") long groupId,
-                              @Field("user_id") long userId,
-                              @Field("access_level") String accessLevel);
+    Call<Member> addGroupMember(@Path("id") long groupId,
+                                @Field("user_id") long userId,
+                                @Field("access_level") int accessLevel);
 
     @FormUrlEncoded
     @PUT(API_VERSION + "/groups/{id}/members/{user_id}")
-    Call<User> editGroupMember(@Path("id") long groupId,
-                              @Path("user_id") long userId,
-                              @Field("access_level") String accessLevel);
+    Call<Member> editGroupMember(@Path("id") long groupId,
+                                 @Path("user_id") long userId,
+                                 @Field("access_level") int accessLevel);
 
     @DELETE(API_VERSION + "/groups/{id}/members/{user_id}")
     Call<Void> removeGroupMember(@Path("id") long groupId,
@@ -202,5 +203,5 @@ public interface GitLab {
     Call<Group> getGroupDetails(@Path("id") long id);
 
     @GET(API_VERSION + "/users")
-    Call<List<User>> searchUsers(@Query("search") String query);
+    Call<List<UserBasic>> searchUsers(@Query("search") String query);
 }

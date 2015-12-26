@@ -15,7 +15,7 @@ import android.widget.TextView;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.GroupAdapter;
 import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.model.Group;
+import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.util.NavigationManager;
 import com.commit451.gitlab.viewHolder.GroupViewHolder;
 

@@ -21,14 +21,8 @@ import com.commit451.gitlab.adapter.SectionsPagerAdapter;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.fragment.BaseFragment;
-import com.commit451.gitlab.fragment.CommitsFragment;
-import com.commit451.gitlab.fragment.FilesFragment;
-import com.commit451.gitlab.fragment.IssuesFragment;
-import com.commit451.gitlab.fragment.MergeRequestsFragment;
-import com.commit451.gitlab.fragment.ProjectMembersFragment;
-import com.commit451.gitlab.fragment.OverviewFragment;
-import com.commit451.gitlab.model.Branch;
-import com.commit451.gitlab.model.Project;
+import com.commit451.gitlab.model.api.Branch;
+import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.util.IntentUtil;
 
 import org.parceler.Parcels;

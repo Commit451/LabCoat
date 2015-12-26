@@ -17,8 +17,8 @@ import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.adapter.CommitsAdapter;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.ProjectReloadEvent;
-import com.commit451.gitlab.model.Commit;
-import com.commit451.gitlab.model.Project;
+import com.commit451.gitlab.model.api.RepositoryCommit;
+import com.commit451.gitlab.model.api.Project;
 import com.squareup.otto.Subscribe;
 
 import java.util.List;
@@ -47,7 +47,7 @@ public class CommitsFragment extends BaseFragment implements SwipeRefreshLayout.
 
     private final CommitsAdapter.Listener mCommitsAdapterListener = new CommitsAdapter.Listener() {
         @Override
-        public void onCommitClicked(Commit commit) {
+        public void onCommitClicked(RepositoryCommit commit) {
             getActivity().startActivity(DiffActivity.newInstance(getActivity(), mProject, commit));
         }
     };
@@ -109,11 +109,11 @@ public class CommitsFragment extends BaseFragment implements SwipeRefreshLayout.
         GitLabClient.instance().getCommits(mProject.getId(), mBranchName).enqueue(commitsCallback);
     }
 
-    private Callback<List<Commit>> commitsCallback = new Callback<List<Commit>>() {
+    private Callback<List<RepositoryCommit>> commitsCallback = new Callback<List<RepositoryCommit>>() {
 
 
         @Override
-        public void onResponse(Response<List<Commit>> response, Retrofit retrofit) {
+        public void onResponse(Response<List<RepositoryCommit>> response, Retrofit retrofit) {
             if (getView() == null) {
                 return;
             }

@@ -5,7 +5,7 @@ import android.util.AttributeSet;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.commit451.gitlab.model.Commit;
+import com.commit451.gitlab.model.api.RepositoryCommit;
 
 import java.util.List;
 
@@ -25,7 +25,7 @@ public class MessageView extends LinearLayout {
         super(context, attrs);
     }
 
-    public MessageView(Context context, Commit commit) {
+    public MessageView(Context context, RepositoryCommit commit) {
         this(context);
 
         scrollView = new WrappedHorizontalScrollView(getContext());
@@ -36,15 +36,15 @@ public class MessageView extends LinearLayout {
 
         innerView.setOrientation(LinearLayout.VERTICAL);
 
-        List<Commit.Line> lines = commit.getLines();
+        List<RepositoryCommit.Line> lines = commit.getLines();
         if (lines != null) {
-            for (Commit.Line line : lines) {
+            for (RepositoryCommit.Line line : lines) {
                 innerView.addView(generateRow(line));
             }
         }
     }
 
-    private LinearLayout generateRow(Commit.Line line) {
+    private LinearLayout generateRow(RepositoryCommit.Line line) {
         if(line == null)
             return null;
 

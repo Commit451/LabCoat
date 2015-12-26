@@ -10,8 +10,8 @@ import android.widget.Toast;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.AccessAdapter;
 import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.model.Group;
-import com.commit451.gitlab.model.User;
+import com.commit451.gitlab.model.api.Group;
+import com.commit451.gitlab.model.api.Member;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -39,7 +39,7 @@ public class AccessDialog extends AppCompatDialog {
             Toast.makeText(getContext(), R.string.please_select_access_level, Toast.LENGTH_LONG)
                     .show();
         } else {
-            changeAccess(User.getAccessLevelCode(accessLevel));
+            changeAccess(Member.getAccessLevel(accessLevel));
         }
     }
 
@@ -55,17 +55,17 @@ public class AccessDialog extends AppCompatDialog {
     String[] mRoleValues;
     long mProjectId = -1;
     Group mGroup;
-    User mUser;
+    Member mMember;
 
-    private final Callback<User> mEditUserCallback = new Callback<User>() {
+    private final Callback<Member> mEditUserCallback = new Callback<Member>() {
         @Override
-        public void onResponse(Response<User> response, Retrofit retrofit) {
+        public void onResponse(Response<Member> response, Retrofit retrofit) {
             if (!response.isSuccess()) {
                 onError();
                 return;
             }
             if (mAccessChangedListener != null) {
-                mAccessChangedListener.onAccessChanged(mUser, mAdapter.getSelectedValue());
+                mAccessChangedListener.onAccessChanged(mMember, mAdapter.getSelectedValue());
             }
             dismiss();
         }
@@ -82,19 +82,19 @@ public class AccessDialog extends AppCompatDialog {
         mAccessAppliedListener = accessAppliedListener;
     }
 
-    public AccessDialog(Context context, User user, Group group) {
-        this(context, user, group, -1);
+    public AccessDialog(Context context, Member member, Group group) {
+        this(context, member, group, -1);
     }
 
-    public AccessDialog(Context context, User user, long projectId) {
-        this(context, user, null, projectId);
+    public AccessDialog(Context context, Member member, long projectId) {
+        this(context, member, null, projectId);
     }
 
-    private AccessDialog(Context context, User user, Group group, long projectId) {
+    private AccessDialog(Context context, Member member, Group group, long projectId) {
         super(context);
         setContentView(R.layout.dialog_access);
         ButterKnife.bind(this);
-        mUser = user;
+        mMember = member;
         if (group == null) {
             mRoleValues = getContext().getResources().getStringArray(R.array.project_role_values);
             mRoleNames = getContext().getResources().getStringArray(R.array.project_role_names);
@@ -105,21 +105,21 @@ public class AccessDialog extends AppCompatDialog {
         mGroup = group;
         mProjectId = projectId;
         mAdapter = new AccessAdapter(getContext(), mRoleNames);
-        if (mUser != null) {
-            mAdapter.setSelectedAccess(mUser.getAccessLevelTitle());
+        if (mMember != null) {
+            mAdapter.setSelectedAccess(Member.getAccessLevel(mMember.getAccessLevel()));
         }
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(mAdapter);
     }
 
-    private void changeAccess(String accessLevel) {
+    private void changeAccess(int accessLevel) {
 
         if (mGroup != null) {
             showLoading();
-            GitLabClient.instance().editGroupMember(mGroup.getId(), mUser.getId(), accessLevel).enqueue(mEditUserCallback);
+            GitLabClient.instance().editGroupMember(mGroup.getId(), mMember.getId(), accessLevel).enqueue(mEditUserCallback);
         } else if (mProjectId != -1) {
             showLoading();
-            GitLabClient.instance().editProjectTeamMember(mProjectId, mUser.getId(), accessLevel).enqueue(mEditUserCallback);
+            GitLabClient.instance().editProjectTeamMember(mProjectId, mMember.getId(), accessLevel).enqueue(mEditUserCallback);
         } else if (mAccessAppliedListener != null) {
             mAccessAppliedListener.onAccessApplied(accessLevel);
         } else {
@@ -142,10 +142,10 @@ public class AccessDialog extends AppCompatDialog {
     }
 
     public interface OnAccessChangedListener {
-        void onAccessChanged(User user, String accessLevel);
+        void onAccessChanged(Member member, String accessLevel);
     }
 
     public interface OnAccessAppliedListener {
-        void onAccessApplied(String accessLevel);
+        void onAccessApplied(int accessLevel);
     }
 }

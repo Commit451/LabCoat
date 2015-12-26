@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.PopupMenu;
 
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.model.User;
+import com.commit451.gitlab.model.api.Member;
 import com.commit451.gitlab.viewHolder.ProjectMemberViewHolder;
 
 import java.util.ArrayList;
@@ -20,19 +20,19 @@ import java.util.Collection;
 public class GroupMembersAdapter extends RecyclerView.Adapter<ProjectMemberViewHolder>  {
 
     public interface Listener {
-        void onUserClicked(User user, ProjectMemberViewHolder userViewHolder);
-        void onUserRemoveClicked(User user);
-        void onUserChangeAccessClicked(User user);
+        void onUserClicked(Member member, ProjectMemberViewHolder userViewHolder);
+        void onUserRemoveClicked(Member member);
+        void onUserChangeAccessClicked(Member member);
     }
     private Listener mListener;
-    private ArrayList<User> mData;
+    private ArrayList<Member> mData;
 
     private final View.OnClickListener mItemClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             int position = (int) v.getTag(R.id.list_position);
             ProjectMemberViewHolder holder = (ProjectMemberViewHolder) v.getTag(R.id.list_view_holder);
-            mListener.onUserClicked(getUser(position), holder);
+            mListener.onUserClicked(getMember(position), holder);
         }
     };
 
@@ -50,17 +50,17 @@ public class GroupMembersAdapter extends RecyclerView.Adapter<ProjectMemberViewH
 
     @Override
     public void onBindViewHolder(ProjectMemberViewHolder holder, int position) {
-        final User user = mData.get(position);
-        holder.bind(user);
+        final Member member = mData.get(position);
+        holder.bind(member);
         holder.popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.action_change_access:
-                        mListener.onUserChangeAccessClicked(user);
+                        mListener.onUserChangeAccessClicked(member);
                         return true;
                     case R.id.action_remove:
-                        mListener.onUserRemoveClicked(user);
+                        mListener.onUserRemoveClicked(member);
                         return true;
                 }
                 return false;
@@ -75,11 +75,11 @@ public class GroupMembersAdapter extends RecyclerView.Adapter<ProjectMemberViewH
         return mData.size();
     }
 
-    private User getUser(int position) {
+    private Member getMember(int position) {
         return mData.get(position);
     }
 
-    public void setData(Collection<User> users) {
+    public void setData(Collection<Member> users) {
         mData.clear();
         if (users != null) {
             mData.addAll(users);
@@ -87,13 +87,13 @@ public class GroupMembersAdapter extends RecyclerView.Adapter<ProjectMemberViewH
         notifyDataSetChanged();
     }
 
-    public void addUser(User user) {
-        mData.add(0, user);
+    public void addMember(Member member) {
+        mData.add(0, member);
         notifyItemInserted(0);
     }
 
-    public void removeUser(User user) {
-        int index = mData.indexOf(user);
+    public void removeMember(Member member) {
+        int index = mData.indexOf(member);
         mData.remove(index);
         notifyItemRemoved(index);
     }

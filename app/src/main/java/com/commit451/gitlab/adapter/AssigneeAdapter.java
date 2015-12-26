@@ -7,7 +7,8 @@ import android.view.ViewGroup;
 
 import com.commit451.easel.Easel;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.model.User;
+import com.commit451.gitlab.model.api.Member;
+import com.commit451.gitlab.model.api.UserBasic;
 import com.commit451.gitlab.viewHolder.AssigneeViewHolder;
 
 import java.util.ArrayList;
@@ -22,8 +23,8 @@ public class AssigneeAdapter extends RecyclerView.Adapter<AssigneeViewHolder> {
     private static final int HEADER_COUNT = 1;
 
     private int mColorControlHighlight;
-    private ArrayList<User> mUsers;
-    private User mSelectedAssignee;
+    private ArrayList<Member> mUsers;
+    private UserBasic mSelectedAssignee;
 
     private View.OnClickListener mOnItemClickListener = new View.OnClickListener() {
         @Override
@@ -38,13 +39,13 @@ public class AssigneeAdapter extends RecyclerView.Adapter<AssigneeViewHolder> {
         }
     };
 
-    public AssigneeAdapter(Context context, User currentAssignee) {
+    public AssigneeAdapter(Context context, UserBasic currentAssignee) {
         mUsers = new ArrayList<>();
         mSelectedAssignee = currentAssignee;
         mColorControlHighlight = Easel.getThemeAttrColor(context, R.attr.colorControlHighlight);
     }
 
-    public void setUsers(Collection<User> users) {
+    public void setUsers(Collection<Member> users) {
         mUsers.clear();
         if (users != null) {
             mUsers.addAll(users);
@@ -64,7 +65,7 @@ public class AssigneeAdapter extends RecyclerView.Adapter<AssigneeViewHolder> {
         if (position == 0) {
             holder.bind(null, mColorControlHighlight, mSelectedAssignee == null);
         } else {
-            User user = getUser(position);
+            UserBasic user = getUser(position);
             holder.bind(user, mColorControlHighlight, mSelectedAssignee == null ? false : mSelectedAssignee.equals(user));
         }
         holder.itemView.setTag(R.id.list_position, position);
@@ -75,7 +76,7 @@ public class AssigneeAdapter extends RecyclerView.Adapter<AssigneeViewHolder> {
         return mUsers.size() + HEADER_COUNT;
     }
 
-    private User getUser(int position) {
+    private Member getUser(int position) {
         return mUsers.get(position - HEADER_COUNT);
     }
 }

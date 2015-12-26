@@ -1,4 +1,4 @@
-package com.commit451.gitlab.model;
+package com.commit451.gitlab.model.api;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -6,24 +6,20 @@ import org.parceler.Parcel;
 
 import android.net.Uri;
 
-import java.util.List;
-
 @Parcel
 public class Group {
     @SerializedName("id")
     long mId;
     @SerializedName("name")
     String mName;
-    @SerializedName("description")
-    String mDescription;
     @SerializedName("path")
     String mPath;
+    @SerializedName("description")
+    String mDescription;
     @SerializedName("avatar_url")
     Uri mAvatarUrl;
     @SerializedName("web_url")
     Uri mWebUrl;
-    @SerializedName("projects")
-    List<Project> mProjects;
 
     public Group() {}
 
@@ -35,12 +31,12 @@ public class Group {
         return mName;
     }
 
-    public String getDescription() {
-        return mDescription;
-    }
-
     public String getPath() {
         return mPath;
+    }
+
+    public String getDescription() {
+        return mDescription;
     }
 
     public Uri getAvatarUrl() {
@@ -51,7 +47,7 @@ public class Group {
         return mWebUrl;
     }
 
-    public List<Project> getProjects() {
-        return mProjects;
+    public Uri getFeedUrl() {
+        return Uri.parse(mWebUrl.toString() + ".atom");
     }
 }

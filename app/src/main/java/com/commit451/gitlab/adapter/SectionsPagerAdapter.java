@@ -12,7 +12,7 @@ import com.commit451.gitlab.fragment.IssuesFragment;
 import com.commit451.gitlab.fragment.ProjectMembersFragment;
 import com.commit451.gitlab.fragment.MergeRequestsFragment;
 import com.commit451.gitlab.fragment.OverviewFragment;
-import com.commit451.gitlab.model.Project;
+import com.commit451.gitlab.model.api.Project;
 
 import java.util.HashSet;
 import java.util.Set;

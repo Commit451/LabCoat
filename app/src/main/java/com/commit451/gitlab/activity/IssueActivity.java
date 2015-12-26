@@ -20,9 +20,9 @@ import com.commit451.gitlab.adapter.IssueDetailsAdapter;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.dialog.AssigneeDialog;
 import com.commit451.gitlab.event.IssueChangedEvent;
-import com.commit451.gitlab.model.Issue;
-import com.commit451.gitlab.model.Note;
-import com.commit451.gitlab.model.Project;
+import com.commit451.gitlab.model.api.Issue;
+import com.commit451.gitlab.model.api.Note;
+import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.util.IntentUtil;
 import com.commit451.gitlab.util.KeyboardUtil;
 import com.commit451.gitlab.util.NavigationManager;
@@ -256,7 +256,7 @@ public class IssueActivity extends BaseActivity {
 
     private void closeIssue() {
         mProgress.setVisibility(View.VISIBLE);
-        if (mIssue.getState().equals(Issue.STATE_CLOSED)) {
+        if (mIssue.getState() == Issue.State.CLOSED) {
             GitLabClient.instance().setIssueStatus(mProject.getId(), mIssue.getId(), Issue.STATE_REOPEN)
                 .enqueue(mOpenCloseCallback);
         } else {
@@ -266,7 +266,7 @@ public class IssueActivity extends BaseActivity {
     }
 
     private void setOpenCloseMenuStatus() {
-        mOpenCloseMenuItem.setTitle(mIssue.getState().equals(Issue.STATE_CLOSED) ? R.string.reopen : R.string.close);
+        mOpenCloseMenuItem.setTitle(mIssue.getState() == Issue.State.CLOSED ? R.string.reopen : R.string.close);
     }
 
     private class EventReceiver {

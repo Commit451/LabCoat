@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.model.Group;
+import com.commit451.gitlab.model.api.Group;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;

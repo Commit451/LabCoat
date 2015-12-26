@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.model.User;
+import com.commit451.gitlab.model.api.UserBasic;
 import com.commit451.gitlab.util.ImageUtil;
 
 import butterknife.Bind;
@@ -39,7 +39,7 @@ public class AssigneeViewHolder extends RecyclerView.ViewHolder {
         ButterKnife.bind(this, view);
     }
 
-    public void bind(@Nullable User user, int colorSelected, boolean isSelected) {
+    public void bind(@Nullable UserBasic user, int colorSelected, boolean isSelected) {
         if (user == null) {
             username.setText(R.string.no_assignee);
             image.setImageResource(R.drawable.ic_assign_24dp);

@@ -22,9 +22,10 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.UsersAdapter;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.dialog.AccessDialog;
-import com.commit451.gitlab.event.UserAddedEvent;
-import com.commit451.gitlab.model.Group;
-import com.commit451.gitlab.model.User;
+import com.commit451.gitlab.event.MemberAddedEvent;
+import com.commit451.gitlab.model.api.Group;
+import com.commit451.gitlab.model.api.Member;
+import com.commit451.gitlab.model.api.UserBasic;
 import com.commit451.gitlab.util.KeyboardUtil;
 import com.commit451.gitlab.viewHolder.UserViewHolder;
 
@@ -80,7 +81,7 @@ public class AddUserActivity extends BaseActivity {
 
     UsersAdapter mAdapter;
     AccessDialog mAccessDialog;
-    User mSelectedUser;
+    UserBasic mSelectedUser;
     long mProjectId;
     Group mGroup;
 
@@ -126,9 +127,9 @@ public class AddUserActivity extends BaseActivity {
         public void afterTextChanged(Editable s) {}
     };
 
-    private final Callback<List<User>> mUserCallback = new Callback<List<User>>() {
+    private final Callback<List<UserBasic>> mUserCallback = new Callback<List<UserBasic>>() {
         @Override
-        public void onResponse(Response<List<User>> response, Retrofit retrofit) {
+        public void onResponse(Response<List<UserBasic>> response, Retrofit retrofit) {
             mSwipeRefreshLayout.setRefreshing(false);
             if (!response.isSuccess()) {
                 return;
@@ -146,7 +147,7 @@ public class AddUserActivity extends BaseActivity {
 
     private final UsersAdapter.Listener mUserClickListener = new UsersAdapter.Listener() {
         @Override
-        public void onUserClicked(User user, UserViewHolder userViewHolder) {
+        public void onUserClicked(UserBasic user, UserViewHolder userViewHolder) {
             mSelectedUser = user;
             mAccessDialog.show();
         }
@@ -155,7 +156,7 @@ public class AddUserActivity extends BaseActivity {
     private final AccessDialog.OnAccessAppliedListener mOnAccessAppliedListener = new AccessDialog.OnAccessAppliedListener() {
 
         @Override
-        public void onAccessApplied(String accessLevel) {
+        public void onAccessApplied(int accessLevel) {
             if (mGroup == null) {
                 GitLabClient.instance().addProjectTeamMember(
                         mProjectId,
@@ -169,9 +170,9 @@ public class AddUserActivity extends BaseActivity {
         }
     };
 
-    private final Callback<User> mAddGroupMemeberCallback = new Callback<User>() {
+    private final Callback<Member> mAddGroupMemeberCallback = new Callback<Member>() {
         @Override
-        public void onResponse(Response<User> response, Retrofit retrofit) {
+        public void onResponse(Response<Member> response, Retrofit retrofit) {
             if (!response.isSuccess()) {
                 //Conflict
                 if (response.code() == 409) {
@@ -182,7 +183,7 @@ public class AddUserActivity extends BaseActivity {
             Toast.makeText(AddUserActivity.this, R.string.user_added_successfully, Toast.LENGTH_SHORT).show();
             mAccessDialog.dismiss();
             finish();
-            GitLabApp.bus().post(new UserAddedEvent(response.body()));
+            GitLabApp.bus().post(new MemberAddedEvent(response.body()));
         }
 
         @Override

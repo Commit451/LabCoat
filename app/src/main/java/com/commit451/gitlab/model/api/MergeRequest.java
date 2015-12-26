@@ -1,54 +1,42 @@
-package com.commit451.gitlab.model;
+package com.commit451.gitlab.model.api;
 
 import com.google.gson.annotations.SerializedName;
 
 import org.parceler.Parcel;
 
-import android.support.annotation.StringDef;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.util.Date;
 import java.util.List;
 
 @Parcel
 public class MergeRequest {
-    public static final String STATE_OPENED = "opened";
-    public static final String STATE_MERGED = "merged";
-    public static final String STATE_CLOSED = "closed";
-
-    @StringDef({STATE_OPENED, STATE_MERGED, STATE_CLOSED})
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface State {}
-
     @SerializedName("id")
     long mId;
     @SerializedName("iid")
     long mIid;
-    @SerializedName("target_branch")
-    String mTargetBranch;
-    @SerializedName("source_branch")
-    String mSourceBranch;
     @SerializedName("project_id")
     long mProjectId;
     @SerializedName("title")
     String mTitle;
+    @SerializedName("description")
+    String mDescription;
     @SerializedName("state")
-    String mState;
+    State mState;
+    @SerializedName("updated_at")
+    Date mUpdatedAt;
+    @SerializedName("created_at")
+    Date mCreatedAt;
+    @SerializedName("target_branch")
+    String mTargetBranch;
+    @SerializedName("source_branch")
+    String mSourceBranch;
     @SerializedName("upvotes")
     long mUpvotes;
     @SerializedName("downvotes")
     long mDownvotes;
     @SerializedName("author")
-    User mAuthor;
+    UserBasic mAuthor;
     @SerializedName("assignee")
-    User mAssignee;
-    @SerializedName("description")
-    String mDescription;
-    @SerializedName("updated_at")
-    Date mUpdatedAt;
-    @SerializedName("created_at")
-    Date mCreatedAt;
+    UserBasic mAssignee;
     @SerializedName("source_project_id")
     long mSourceProjectId;
     @SerializedName("target_project_id")
@@ -59,6 +47,8 @@ public class MergeRequest {
     boolean mWorkInProgress;
     @SerializedName("milestone")
     Milestone mMilestone;
+    @SerializedName("merge_when_build_succeeds")
+    boolean mMergeWhenBuildSucceeds;
 
     public MergeRequest() {}
 
@@ -70,14 +60,6 @@ public class MergeRequest {
         return mIid;
     }
 
-    public String getTargetBranch() {
-        return mTargetBranch;
-    }
-
-    public String getSourceBranch() {
-        return mSourceBranch;
-    }
-
     public long getProjectId() {
         return mProjectId;
     }
@@ -86,9 +68,28 @@ public class MergeRequest {
         return mTitle;
     }
 
-    @State
-    public String getState() {
+    public String getDescription() {
+        return mDescription;
+    }
+
+    public State getState() {
         return mState;
+    }
+
+    public Date getUpdatedAt() {
+        return mUpdatedAt;
+    }
+
+    public Date getCreatedAt() {
+        return mCreatedAt;
+    }
+
+    public String getTargetBranch() {
+        return mTargetBranch;
+    }
+
+    public String getSourceBranch() {
+        return mSourceBranch;
     }
 
     public long getUpvotes() {
@@ -99,24 +100,12 @@ public class MergeRequest {
         return mDownvotes;
     }
 
-    public User getAuthor() {
+    public UserBasic getAuthor() {
         return mAuthor;
     }
 
-    public User getAssignee() {
+    public UserBasic getAssignee() {
         return mAssignee;
-    }
-
-    public String getDescription() {
-        return mDescription;
-    }
-
-    public Date getUpdatedAt() {
-        return mUpdatedAt;
-    }
-
-    public Date getCreatedAt() {
-        return mCreatedAt;
     }
 
     public long getSourceProjectId() {
@@ -137,5 +126,18 @@ public class MergeRequest {
 
     public Milestone getMilestone() {
         return mMilestone;
+    }
+
+    public boolean isMergeWhenBuildSucceedsEnabled() {
+        return mMergeWhenBuildSucceeds;
+    }
+
+    public enum State {
+        @SerializedName("opened")
+        OPENED,
+        @SerializedName("merged")
+        MERGED,
+        @SerializedName("closed")
+        CLOSED
     }
 }

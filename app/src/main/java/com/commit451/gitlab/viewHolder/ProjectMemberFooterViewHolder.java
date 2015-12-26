@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.model.Namespace;
+import com.commit451.gitlab.model.api.ProjectNamespace;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -33,7 +33,7 @@ public class ProjectMemberFooterViewHolder extends RecyclerView.ViewHolder{
         ButterKnife.bind(this, view);
     }
 
-    public void bind(Namespace namespace) {
+    public void bind(ProjectNamespace namespace) {
         button.setText(String.format(itemView.getResources().getString(R.string.group_members), namespace.getName()));
     }
 }

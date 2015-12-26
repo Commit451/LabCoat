@@ -1,4 +1,4 @@
-package com.commit451.gitlab.model;
+package com.commit451.gitlab.model.api;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.List;
 
 @Parcel
-public class Commit {
+public class RepositoryCommit {
     @SerializedName("id")
     String mId;
     @SerializedName("short_id")
@@ -25,7 +25,7 @@ public class Commit {
     @SerializedName("message")
     String mMessage;
 
-    public Commit() {}
+    public RepositoryCommit() {}
 
     public String getId() {
         return mId;

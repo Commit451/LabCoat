@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.model.Project;
+import com.commit451.gitlab.model.api.Project;
 import com.github.ivbaranov.mli.MaterialLetterIcon;
 
 import butterknife.Bind;
