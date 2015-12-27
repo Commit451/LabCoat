@@ -84,7 +84,7 @@ public class AboutActivity extends BaseActivity {
             if (!response.isSuccess()) {
                 return;
             }
-            addContributors(response.body());
+            addContributors(Contributor.groupContributors(response.body()));
         }
 
         @Override
