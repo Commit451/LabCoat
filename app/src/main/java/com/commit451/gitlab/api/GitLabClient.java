@@ -37,47 +37,59 @@ public final class GitLabClient {
         return sAccount;
     }
 
+    public static GitLab instance(Account account) {
+        checkAccountSet(account);
+        Retrofit restAdapter = new Retrofit.Builder()
+                .baseUrl(account.getServerUrl().toString())
+                .client(OkHttpClientProvider.getInstance(account))
+                .addConverterFactory(GsonConverterFactory.create(GsonProvider.createInstance(account)))
+                .build();
+        return restAdapter.create(GitLab.class);
+    }
+
     public static GitLab instance() {
         if (sGitLab == null) {
-            checkAccountSet();
-            Retrofit restAdapter = new Retrofit.Builder()
-                    .baseUrl(sAccount.getServerUrl().toString())
-                    .client(OkHttpClientProvider.getInstance(sAccount))
-                    .addConverterFactory(GsonConverterFactory.create(GsonProvider.getInstance()))
-                    .build();
-            sGitLab = restAdapter.create(GitLab.class);
+            sGitLab = instance(sAccount);
         }
 
         return sGitLab;
     }
 
+    public static GitLabRss rssInstance(Account account) {
+        checkAccountSet(account);
+        Retrofit restAdapter = new Retrofit.Builder()
+                .baseUrl(account.getServerUrl().toString())
+                .client(OkHttpClientProvider.getInstance(account))
+                .addConverterFactory(SimpleXmlConverterFactory.create(SimpleXmlProvider.createPersister(account)))
+                .build();
+        return restAdapter.create(GitLabRss.class);
+    }
+
     public static GitLabRss rssInstance() {
         if (sGitLabRss == null) {
-            checkAccountSet();
-            Retrofit restAdapter = new Retrofit.Builder()
-                    .baseUrl(sAccount.getServerUrl().toString())
-                    .client(OkHttpClientProvider.getInstance(sAccount))
-                    .addConverterFactory(SimpleXmlConverterFactory.create(SimpleXmlProvider.getPersister()))
-                    .build();
-            sGitLabRss = restAdapter.create(GitLabRss.class);
+            sGitLabRss = rssInstance(sAccount);
         }
 
         return sGitLabRss;
     }
 
+    public static Picasso getPicasso(Account account) {
+        checkAccountSet(account);
+        return new Picasso.Builder(GitLabApp.instance())
+                .downloader(new OkHttpDownloader(OkHttpClientProvider.getInstance(account)))
+                .build();
+    }
+
     public static Picasso getPicasso() {
         if (sPicasso == null) {
-            checkAccountSet();
-            sPicasso = new Picasso.Builder(GitLabApp.instance())
-                    .downloader(new OkHttpDownloader(OkHttpClientProvider.getInstance(sAccount)))
-                    .build();
+            sPicasso = getPicasso(sAccount);
         }
 
         return sPicasso;
     }
 
-    private static void checkAccountSet() {
-        if (sAccount == null) {
+    private static void checkAccountSet(Account account) {
+        if (account == null) {
             throw new IllegalStateException("You cannot do any network calls before the account is set!");
         }
     }

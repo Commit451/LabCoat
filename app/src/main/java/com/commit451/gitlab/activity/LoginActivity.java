@@ -123,8 +123,6 @@ public class LoginActivity extends BaseActivity {
         mAccount.setServerUrl(Uri.parse(url));
         mAccount.setTrustedCertificate(mTrustedCertificate);
 
-        GitLabClient.setAccount(mAccount);
-
         if(mIsNormalLogin) {
             connect(true);
         }
@@ -143,7 +141,6 @@ public class LoginActivity extends BaseActivity {
                 return;
             }
             mAccount.setPrivateToken(response.body().getPrivateToken());
-            GitLabClient.setAccount(mAccount);
             loadUser();
         }
 
@@ -232,21 +229,20 @@ public class LoginActivity extends BaseActivity {
 
     private void connectByAuth() {
         if(mUserInput.getText().toString().contains("@")) {
-            GitLabClient.instance().loginWithEmail(mUserInput.getText().toString(), mPasswordInput.getText().toString()).enqueue(mLoginCallback);
+            GitLabClient.instance(mAccount).loginWithEmail(mUserInput.getText().toString(), mPasswordInput.getText().toString()).enqueue(mLoginCallback);
         }
         else {
-            GitLabClient.instance().loginWithUsername(mUserInput.getText().toString(), mPasswordInput.getText().toString()).enqueue(mLoginCallback);
+            GitLabClient.instance(mAccount).loginWithUsername(mUserInput.getText().toString(), mPasswordInput.getText().toString()).enqueue(mLoginCallback);
         }
     }
 
     private void connectByToken() {
         mAccount.setPrivateToken(mTokenInput.getText().toString());
-        GitLabClient.setAccount(mAccount);
         loadUser();
     }
 
     private void loadUser() {
-        GitLabClient.instance().getThisUser().enqueue(mTestUserCallback);
+        GitLabClient.instance(mAccount).getThisUser().enqueue(mTestUserCallback);
     }
 
     private void handleConnectionError(Throwable t) {

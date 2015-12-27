@@ -2,6 +2,7 @@ package com.commit451.gitlab.provider;
 
 import android.net.Uri;
 
+import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.util.ConversionUtil;
 
 import com.google.gson.Gson;
@@ -30,19 +31,25 @@ public final class GsonProvider {
 
     public static Gson getInstance() {
         if (sGson == null) {
-            sGson = createInstance();
+            sGson = createInstance(null);
         }
         return sGson;
     }
 
-    private static Gson createInstance() {
+    public static Gson createInstance(Account account) {
         GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(Date.class, new DateSerializer());
-        gsonBuilder.registerTypeAdapter(Uri.class, new UriSerializer());
+        gsonBuilder.registerTypeAdapter(Date.class, new DateSerializer(account));
+        gsonBuilder.registerTypeAdapter(Uri.class, new UriSerializer(account));
         return gsonBuilder.create();
     }
 
     private static class DateSerializer implements JsonSerializer<Date>, JsonDeserializer<Date> {
+        private final Account mAccount;
+
+        public DateSerializer(Account account) {
+            mAccount = account;
+        }
+
         @Override
         public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             String dateString = null;
@@ -65,6 +72,12 @@ public final class GsonProvider {
     }
 
     private static class UriSerializer implements JsonSerializer<Uri>, JsonDeserializer<Uri> {
+        private final Account mAccount;
+
+        public UriSerializer(Account account) {
+            mAccount = account;
+        }
+
         @Override
         public Uri deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             String uriString = null;
@@ -72,7 +85,7 @@ public final class GsonProvider {
                 uriString = json.getAsString();
             }
 
-            return ConversionUtil.toUri(uriString);
+            return ConversionUtil.toUri(mAccount, uriString);
         }
 
         @Override

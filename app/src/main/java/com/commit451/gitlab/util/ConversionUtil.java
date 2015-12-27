@@ -1,6 +1,5 @@
 package com.commit451.gitlab.util;
 
-import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.Account;
 
 import org.joda.time.DateTime;
@@ -33,7 +32,7 @@ public final class ConversionUtil {
         return uri.toString();
     }
 
-    public static Uri toUri(String uriString) {
+    public static Uri toUri(Account account, String uriString) {
         if (uriString == null) {
             return null;
         }
@@ -46,7 +45,6 @@ public final class ConversionUtil {
             return uri;
         }
 
-        Account account = GitLabClient.getAccount();
         if (account == null) {
             return uri;
         }

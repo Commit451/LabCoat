@@ -1,5 +1,6 @@
 package com.commit451.gitlab.provider;
 
+import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.util.ConversionUtil;
 
 import org.simpleframework.xml.core.Persister;
@@ -17,19 +18,19 @@ public final class SimpleXmlProvider {
 
     public static Persister getPersister() {
         if (sPersister == null) {
-            sPersister = createPersister();
+            sPersister = createPersister(null);
         }
         return sPersister;
     }
 
-    private static Persister createPersister() {
+    public static Persister createPersister(final Account account) {
         return new Persister(new Matcher() {
             @Override
             public Transform match(Class type) throws Exception {
                 if (Date.class.isAssignableFrom(type)) {
-                    return new DateTransform();
+                    return new DateTransform(account);
                 } else if (Uri.class.isAssignableFrom(type)) {
-                    return new UriTransform();
+                    return new UriTransform(account);
                 }
 
                 return null;
@@ -38,6 +39,12 @@ public final class SimpleXmlProvider {
     }
 
     private static class DateTransform implements Transform<Date> {
+        private final Account mAccount;
+
+        public DateTransform(Account account) {
+            mAccount = account;
+        }
+
         @Override
         public Date read(String value) throws Exception {
             return ConversionUtil.toDate(value);
@@ -50,9 +57,15 @@ public final class SimpleXmlProvider {
     }
 
     private static class UriTransform implements Transform<Uri> {
+        private final Account mAccount;
+
+        public UriTransform(Account account) {
+            mAccount = account;
+        }
+
         @Override
         public Uri read(String value) throws Exception {
-            return ConversionUtil.toUri(value);
+            return ConversionUtil.toUri(mAccount, value);
         }
 
         @Override
