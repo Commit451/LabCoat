@@ -177,6 +177,6 @@ public class MergeRequestActivity extends BaseActivity {
         KeyboardUtil.hideKeyboard(this);
         mNewNoteEdit.setText("");
 
-        GitLabClient.instance().postMergeRequestComment(mProject.getId(), mMergeRequest.getId(), body).enqueue(mPostNoteCallback);
+        GitLabClient.instance().addMergeRequestNote(mProject.getId(), mMergeRequest.getId(), body).enqueue(mPostNoteCallback);
     }
 }

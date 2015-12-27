@@ -80,7 +80,7 @@ public class NewIssuePopupDialog extends BaseActivity {
             mTitleInputLayout.setError(null);
             showLoading();
             if (mIssue == null) {
-                GitLabClient.instance().postIssue(mProject.getId(), mTitleInput.getText().toString().trim(), mDescriptionInput.getText().toString().trim())
+                GitLabClient.instance().createIssue(mProject.getId(), mTitleInput.getText().toString().trim(), mDescriptionInput.getText().toString().trim())
                         .enqueue(mIssueCallback);
             } else {
                 GitLabClient.instance().updateIssue(mProject.getId(), mIssue.getId(), mTitleInput.getText().toString(), mDescriptionInput.getText().toString())

@@ -134,7 +134,7 @@ public class ProjectMembersFragment extends BaseFragment implements SwipeRefresh
         @Override
         public void onRemoveMember(Member member) {
             mMember = member;
-            GitLabClient.instance().removeProjectTeamMember(mProject.getId(), member.getId()).enqueue(mRemoveUserCallback);
+            GitLabClient.instance().removeProjectMember(mProject.getId(), member.getId()).enqueue(mRemoveUserCallback);
         }
 
         @Override
@@ -199,7 +199,7 @@ public class ProjectMembersFragment extends BaseFragment implements SwipeRefresh
                 mSwipeRefreshLayout.setRefreshing(true);
             }
         });
-        GitLabClient.instance().getProjectTeamMembers(mProject.getId()).enqueue(mProjectMemebersCallback);
+        GitLabClient.instance().getProjectMembers(mProject.getId()).enqueue(mProjectMemebersCallback);
     }
 
     private void setNamespace() {

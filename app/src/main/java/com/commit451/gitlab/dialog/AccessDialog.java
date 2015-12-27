@@ -119,7 +119,7 @@ public class AccessDialog extends AppCompatDialog {
             GitLabClient.instance().editGroupMember(mGroup.getId(), mMember.getId(), accessLevel).enqueue(mEditUserCallback);
         } else if (mProjectId != -1) {
             showLoading();
-            GitLabClient.instance().editProjectTeamMember(mProjectId, mMember.getId(), accessLevel).enqueue(mEditUserCallback);
+            GitLabClient.instance().editProjectMember(mProjectId, mMember.getId(), accessLevel).enqueue(mEditUserCallback);
         } else if (mAccessAppliedListener != null) {
             mAccessAppliedListener.onAccessApplied(accessLevel);
         } else {

@@ -158,7 +158,7 @@ public class AddUserActivity extends BaseActivity {
         @Override
         public void onAccessApplied(int accessLevel) {
             if (mGroup == null) {
-                GitLabClient.instance().addProjectTeamMember(
+                GitLabClient.instance().addProjectMember(
                         mProjectId,
                         mSelectedUser.getId(),
                         accessLevel).enqueue(mAddGroupMemeberCallback);

@@ -76,6 +76,6 @@ public class AssigneeDialog extends AppCompatDialog {
         mAssigneeAdapter = new AssigneeAdapter(context, assignee);
         mRecyclerView.setAdapter(mAssigneeAdapter);
 
-        GitLabClient.instance().getProjectTeamMembers(project.getId()).enqueue(mUsersCallback);
+        GitLabClient.instance().getProjectMembers(project.getId()).enqueue(mUsersCallback);
     }
 }

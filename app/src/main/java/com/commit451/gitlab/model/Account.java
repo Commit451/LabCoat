@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 import com.commit451.gitlab.data.Prefs;
 import com.commit451.gitlab.model.api.UserFull;
+import com.commit451.gitlab.util.ObjectUtil;
 
 import org.parceler.Parcel;
 
@@ -11,19 +12,16 @@ import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-/**
- * The information associated with a signed in account
- * Created by Jawn on 12/4/2015.
- */
 @Parcel
 public class Account implements Comparable<Account>{
 
     public static List<Account> getAccounts(Context context) {
-        List<Account> accounts = Prefs.getAccounts(context);
+        List<Account> accounts = new ArrayList<>(Prefs.getAccounts(context));
         Collections.sort(accounts);
         Collections.reverse(accounts);
         return accounts;
@@ -40,9 +38,7 @@ public class Account implements Comparable<Account>{
     @SerializedName("last_used")
     Date mLastUsed;
 
-    public Account() {
-
-    }
+    public Account() {}
 
     public Uri getServerUrl() {
         return mServerUrl;
@@ -52,20 +48,20 @@ public class Account implements Comparable<Account>{
         mServerUrl = url;
     }
 
-    public String getTrustedCertificate() {
-        return mTrustedCertificate;
-    }
-
-    public void setTrustedCertificate(String trustedCertificate) {
-        mTrustedCertificate = trustedCertificate;
-    }
-
     public String getPrivateToken() {
         return mPrivateToken;
     }
 
     public void setPrivateToken(String privateToken) {
         mPrivateToken = privateToken;
+    }
+
+    public String getTrustedCertificate() {
+        return mTrustedCertificate;
+    }
+
+    public void setTrustedCertificate(String trustedCertificate) {
+        mTrustedCertificate = trustedCertificate;
     }
 
     public UserFull getUser() {
@@ -91,27 +87,19 @@ public class Account implements Comparable<Account>{
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Account)) {
+            return false;
+        }
 
         Account account = (Account) o;
-
-        if (mServerUrl != null ? !mServerUrl.equals(account.mServerUrl) : account.mServerUrl != null)
-            return false;
-        if (mPrivateToken != null ? !mPrivateToken.equals(account.mPrivateToken) : account.mPrivateToken != null)
-            return false;
-        if (mTrustedCertificate != null ? !mTrustedCertificate.equals(account.mTrustedCertificate) : account.mTrustedCertificate != null)
-            return false;
-        return !(mUser != null ? !mUser.equals(account.mUser) : account.mUser != null);
-
+        return ObjectUtil.equals(mServerUrl, account.mServerUrl)
+                && ObjectUtil.equals(mPrivateToken, account.mPrivateToken)
+                && ObjectUtil.equals(mTrustedCertificate, account.mTrustedCertificate)
+                && ObjectUtil.equals(mUser, account.mUser);
     }
 
     @Override
     public int hashCode() {
-        int result = mServerUrl != null ? mServerUrl.hashCode() : 0;
-        result = 31 * result + (mPrivateToken != null ? mPrivateToken.hashCode() : 0);
-        result = 31 * result + (mTrustedCertificate != null ? mTrustedCertificate.hashCode() : 0);
-        result = 31 * result + (mUser != null ? mUser.hashCode() : 0);
-        return result;
+        return ObjectUtil.hash(mServerUrl, mPrivateToken, mTrustedCertificate, mUser);
     }
 }

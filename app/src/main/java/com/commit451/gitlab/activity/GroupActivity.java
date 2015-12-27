@@ -24,6 +24,7 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.GroupPagerAdapter;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Group;
+import com.commit451.gitlab.model.api.GroupDetail;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -82,9 +83,9 @@ public class GroupActivity extends BaseActivity {
         public void onPrepareLoad(Drawable placeHolderDrawable) {}
     };
 
-    private final Callback<Group> mGroupCallback = new Callback<Group>() {
+    private final Callback<GroupDetail> mGroupCallback = new Callback<GroupDetail>() {
         @Override
-        public void onResponse(Response<Group> response, Retrofit retrofit) {
+        public void onResponse(Response<GroupDetail> response, Retrofit retrofit) {
             if (!response.isSuccess()) {
                 showError();
                 return;
@@ -118,7 +119,7 @@ public class GroupActivity extends BaseActivity {
             bind(group);
         } else {
             long groupId = getIntent().getLongExtra(KEY_GROUP_ID, -1);
-            GitLabClient.instance().getGroupDetails(groupId).enqueue(mGroupCallback);
+            GitLabClient.instance().getGroup(groupId).enqueue(mGroupCallback);
         }
     }
 

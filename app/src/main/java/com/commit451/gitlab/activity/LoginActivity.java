@@ -232,10 +232,10 @@ public class LoginActivity extends BaseActivity {
 
     private void connectByAuth() {
         if(mUserInput.getText().toString().contains("@")) {
-            GitLabClient.instance().getSessionByEmail(mUserInput.getText().toString(), mPasswordInput.getText().toString()).enqueue(mLoginCallback);
+            GitLabClient.instance().loginWithEmail(mUserInput.getText().toString(), mPasswordInput.getText().toString()).enqueue(mLoginCallback);
         }
         else {
-            GitLabClient.instance().getSessionByUsername(mUserInput.getText().toString(), mPasswordInput.getText().toString()).enqueue(mLoginCallback);
+            GitLabClient.instance().loginWithUsername(mUserInput.getText().toString(), mPasswordInput.getText().toString()).enqueue(mLoginCallback);
         }
     }
 
@@ -246,7 +246,7 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void loadUser() {
-        GitLabClient.instance().getUser().enqueue(mTestUserCallback);
+        GitLabClient.instance().getThisUser().enqueue(mTestUserCallback);
     }
 
     private void handleConnectionError(Throwable t) {

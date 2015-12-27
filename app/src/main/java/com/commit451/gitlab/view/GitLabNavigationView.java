@@ -207,7 +207,7 @@ public class GitLabNavigationView extends NavigationView {
     }
 
     private void loadCurrentUser() {
-        GitLabClient.instance().getUser().enqueue(userCallback);
+        GitLabClient.instance().getThisUser().enqueue(userCallback);
     }
 
     private void bindUser(UserFull user) {

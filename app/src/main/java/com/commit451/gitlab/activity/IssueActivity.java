@@ -251,16 +251,16 @@ public class IssueActivity extends BaseActivity {
         KeyboardUtil.hideKeyboard(this);
         mNewNoteEdit.setText("");
 
-        GitLabClient.instance().postIssueNote(mProject.getId(), mIssue.getId(), body).enqueue(mPostNoteCallback);
+        GitLabClient.instance().addIssueNote(mProject.getId(), mIssue.getId(), body).enqueue(mPostNoteCallback);
     }
 
     private void closeIssue() {
         mProgress.setVisibility(View.VISIBLE);
         if (mIssue.getState() == Issue.State.CLOSED) {
-            GitLabClient.instance().setIssueStatus(mProject.getId(), mIssue.getId(), Issue.STATE_REOPEN)
+            GitLabClient.instance().updateIssueStatus(mProject.getId(), mIssue.getId(), Issue.STATE_REOPEN)
                 .enqueue(mOpenCloseCallback);
         } else {
-            GitLabClient.instance().setIssueStatus(mProject.getId(), mIssue.getId(), Issue.STATE_CLOSE)
+            GitLabClient.instance().updateIssueStatus(mProject.getId(), mIssue.getId(), Issue.STATE_CLOSE)
                     .enqueue(mOpenCloseCallback);
         }
     }

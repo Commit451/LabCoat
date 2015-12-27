@@ -1,5 +1,6 @@
 package com.commit451.gitlab.fragment;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -16,8 +17,8 @@ import com.commit451.gitlab.adapter.ProjectsAdapter;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.ReloadDataEvent;
 import com.commit451.gitlab.model.api.Project;
-import com.commit451.gitlab.util.LinkHeaderResolver;
 import com.commit451.gitlab.util.NavigationManager;
+import com.commit451.gitlab.util.PaginationUtil;
 import com.squareup.otto.Subscribe;
 
 import java.util.List;
@@ -69,7 +70,7 @@ public class ProjectsFragment extends BaseFragment {
 
     private int mMode;
     private String mQuery;
-    private String mNextPageUrl;
+    private Uri mNextPageUrl;
     private boolean mLoading = false;
 
     private final RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
@@ -99,7 +100,7 @@ public class ProjectsFragment extends BaseFragment {
                 mMessageText.setText(R.string.connection_error);
                 return;
             }
-            mNextPageUrl = LinkHeaderResolver.getNextPageUrl(response.headers());
+            mNextPageUrl = PaginationUtil.parse(response).getNext();
             Timber.d("Next page url " + mNextPageUrl);
             if (response.body().isEmpty()) {
                 mMessageText.setText(R.string.no_projects);
@@ -202,7 +203,7 @@ public class ProjectsFragment extends BaseFragment {
     private void loadMore() {
         mLoading = true;
         Timber.d("loadMore called for " + mNextPageUrl);
-        GitLabClient.instance().getProjectsNextPage(mNextPageUrl).enqueue(mProjectsCallback);
+        GitLabClient.instance().getProjects(mNextPageUrl).enqueue(mProjectsCallback);
     }
 
     private void showLoading() {
