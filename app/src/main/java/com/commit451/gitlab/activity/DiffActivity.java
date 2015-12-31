@@ -40,30 +40,75 @@ public class DiffActivity extends BaseActivity {
         return intent;
     }
 
-    @Bind(R.id.toolbar) Toolbar toolbar;
-    @Bind(R.id.message_container) LinearLayout messageContainer;
-    @Bind(R.id.diff_container) LinearLayout diffContainer;
+    @Bind(R.id.toolbar) Toolbar mToolbar;
+    @Bind(R.id.message_container) LinearLayout mMessageContainer;
+    @Bind(R.id.diff_container) LinearLayout mDiffContainer;
 
-    Project mProject;
-    RepositoryCommit mCommit;
+    private Project mProject;
+    private RepositoryCommit mCommit;
+    private boolean textWrapped = true;
+
+    private Callback<RepositoryCommit> mCommitCallback = new Callback<RepositoryCommit>() {
+        @Override
+        public void onResponse(Response<RepositoryCommit> response, Retrofit retrofit) {
+            if (response.isSuccess()) {
+                mMessageContainer.removeAllViews();
+
+                MessageView messageView = new MessageView(DiffActivity.this, response.body());
+                messageView.setWrapped(textWrapped);
+                mMessageContainer.addView(messageView);
+            }
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+            Timber.e(t, null);
+            Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
+                    .show();
+        }
+    };
+
+    private Callback<List<Diff>> mDiffCallback = new Callback<List<Diff>>() {
+        @Override
+        public void onResponse(Response<List<Diff>> response, Retrofit retrofit) {
+            if (response.isSuccess()) {
+                mDiffContainer.removeAllViews();
+
+                for (Diff diff : response.body()) {
+                    DiffView diffView = new DiffView(DiffActivity.this, diff);
+                    diffView.setWrapped(textWrapped);
+                    mDiffContainer.addView(diffView);
+                }
+            }
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+            Timber.e(t, null);
+            Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
+                    .show();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_diff);
         ButterKnife.bind(this);
+
         mProject = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_PROJECT));
         mCommit = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_COMMIT));
-        toolbar.setNavigationIcon(R.drawable.ic_back_24dp);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+
+        mToolbar.setNavigationIcon(R.drawable.ic_back_24dp);
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
             }
         });
-        toolbar.setTitle(mCommit.getShortId());
-        toolbar.inflateMenu(R.menu.menu_diff);
-        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+        mToolbar.setTitle(mCommit.getShortId());
+        mToolbar.inflateMenu(R.menu.menu_diff);
+        mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
@@ -71,8 +116,9 @@ public class DiffActivity extends BaseActivity {
                         finish();
                         return true;
                     case R.id.text_wrap_checkbox:
-                        item.setChecked(!item.isChecked());
-                        setTextWrap(item.isChecked());
+                        textWrapped = !item.isChecked();
+                        item.setChecked(textWrapped);
+                        updateTextWrap(textWrapped);
                         return true;
                 }
                 return false;
@@ -80,51 +126,17 @@ public class DiffActivity extends BaseActivity {
         });
 
         //TODO make this use RecyclerViews, cause this is insane
-        GitLabClient.instance().getCommit(mProject.getId(), mCommit.getId()).enqueue(commitCallback);
-        GitLabClient.instance().getCommitDiff(mProject.getId(), mCommit.getId()).enqueue(diffCallback);
+        GitLabClient.instance().getCommit(mProject.getId(), mCommit.getId()).enqueue(mCommitCallback);
+        GitLabClient.instance().getCommitDiff(mProject.getId(), mCommit.getId()).enqueue(mDiffCallback);
     }
 
-    private Callback<RepositoryCommit> commitCallback = new Callback<RepositoryCommit>() {
-
-        @Override
-        public void onResponse(Response<RepositoryCommit> response, Retrofit retrofit) {
-            if (response.isSuccess()) {
-                messageContainer.addView(new MessageView(DiffActivity.this, response.body()));
-            }
+    private void updateTextWrap(boolean checked) {
+        for (int i = 0; i < mMessageContainer.getChildCount(); i++) {
+            ((MessageView) mMessageContainer.getChildAt(i)).setWrapped(checked);
         }
 
-        @Override
-        public void onFailure(Throwable t) {
-            Timber.e(t, null);
-            Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
-                    .show();
-        }
-    };
-
-    private Callback<List<Diff>> diffCallback = new Callback<List<Diff>>() {
-
-        @Override
-        public void onResponse(Response<List<Diff>> response, Retrofit retrofit) {
-            if (response.isSuccess()) {
-                for(Diff diff : response.body()) {
-                    diffContainer.addView(new DiffView(DiffActivity.this, diff));
-                }
-            }
-        }
-
-        @Override
-        public void onFailure(Throwable t) {
-            Timber.e(t, null);
-            Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
-                    .show();
-        }
-    };
-
-    private void setTextWrap(boolean checked) {
-        ((MessageView) messageContainer.getChildAt(0)).setWrapped(checked);
-
-        for(int i = 0; i < diffContainer.getChildCount(); ++i) {
-            ((DiffView) diffContainer.getChildAt(i)).setWrapped(checked);
+        for (int i = 0; i < mDiffContainer.getChildCount(); i++) {
+            ((DiffView) mDiffContainer.getChildAt(i)).setWrapped(checked);
         }
     }
 }
