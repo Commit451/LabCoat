@@ -99,7 +99,7 @@ public class IssuesFragment extends BaseFragment {
             mSwipeRefreshLayout.setRefreshing(false);
 
             mMessageView.setVisibility(View.VISIBLE);
-            mMessageView.setText(R.string.connection_error_issues);
+            mMessageView.setText(R.string.connection_error);
             mAddIssueButton.setVisibility(View.GONE);
             mIssuesAdapter.setIssues(null);
         }

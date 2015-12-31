@@ -72,6 +72,10 @@
     <string name="connection_error_issues">Failed to load issues</string>
     <string name="connection_error_files">Failed to load files</string>
     <string name="connection_error_users">Failed to load users</string>
+    <string name="connection_error_feed">Failed to load feed</string>
+    <string name="connection_error_merge_requests">Failed to load merge requests</string>
+    <string name="connection_error_readme">Failed to load readme</string>
+    <string name="connection_error_projects">Failed to projects</string>
 
     <string name="login_unauthorized">Incorrect credentials. Try again</string>
     <string name="login_error">Login failed. Please check your login information</string>

@@ -102,7 +102,7 @@ public class UsersFragment extends BaseFragment {
 
             mSwipeRefreshLayout.setRefreshing(false);
 
-            mMessageView.setText(R.string.connection_error_users);
+            mMessageView.setText(R.string.connection_error);
             mMessageView.setVisibility(View.VISIBLE);
             mUsersAdapter.setData(null);
         }

@@ -80,7 +80,7 @@ public class MergeRequestsFragment extends BaseFragment {
             if (!response.isSuccess()) {
                 Timber.e("Merge requests response was not a success: %d", response.code());
                 mMessageView.setVisibility(View.VISIBLE);
-                mMessageView.setText(R.string.connection_error);
+                mMessageView.setText(R.string.connection_error_merge_requests);
                 mMergeRequestAdapter.setData(null);
                 return;
             }

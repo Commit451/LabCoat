@@ -95,7 +95,7 @@ public class ProjectsFragment extends BaseFragment {
             if (!response.isSuccess()) {
                 Timber.e("Projects response was not a success: %d", response.code());
                 mMessageView.setVisibility(View.VISIBLE);
-                mMessageView.setText(R.string.connection_error);
+                mMessageView.setText(R.string.connection_error_projects);
                 mProjectsAdapter.setData(null);
                 mNextPageUrl = null;
                 return;

@@ -59,7 +59,7 @@ public class OverviewFragment extends BaseFragment {
                 Timber.e("Files response was not a success: %d", response.code());
                 mSwipeRefreshLayout.setRefreshing(false);
                 mMessageView.setVisibility(View.VISIBLE);
-                mMessageView.setText(R.string.connection_error);
+                mMessageView.setText(R.string.connection_error_readme);
                 mOverviewVew.setVisibility(View.GONE);
                 return;
             }
@@ -105,7 +105,7 @@ public class OverviewFragment extends BaseFragment {
             if (!response.isSuccess()) {
                 Timber.e("File response was not a success: %d", response.code());
                 mMessageView.setVisibility(View.VISIBLE);
-                mMessageView.setText(R.string.connection_error);
+                mMessageView.setText(R.string.connection_error_readme);
                 mOverviewVew.setVisibility(View.GONE);
                 return;
             }

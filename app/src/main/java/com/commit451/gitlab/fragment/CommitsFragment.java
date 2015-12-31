@@ -84,7 +84,7 @@ public class CommitsFragment extends BaseFragment {
             mSwipeRefreshLayout.setRefreshing(false);
 
             mMessageView.setVisibility(View.VISIBLE);
-            mMessageView.setText(R.string.connection_error_commits);
+            mMessageView.setText(R.string.connection_error);
             mCommitsAdapter.setData(null);
         }
     };

@@ -100,7 +100,7 @@ public class GroupMembersFragment extends BaseFragment {
             mSwipeRefreshLayout.setRefreshing(false);
 
             mMessageView.setVisibility(View.VISIBLE);
-            mMessageView.setText(R.string.connection_error_users);
+            mMessageView.setText(R.string.connection_error);
             mAddUserButton.setVisibility(View.GONE);
             mGroupMembersAdapter.setData(null);
         }

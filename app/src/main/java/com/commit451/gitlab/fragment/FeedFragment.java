@@ -57,7 +57,7 @@ public class FeedFragment extends BaseFragment {
             if (!response.isSuccess()) {
                 Timber.e("Feed response was not a success: %d", response.code());
                 mMessageView.setVisibility(View.VISIBLE);
-                mMessageView.setText(R.string.connection_error);
+                mMessageView.setText(R.string.connection_error_feed);
                 mFeedAdapter.setEntries(null);
                 return;
             }

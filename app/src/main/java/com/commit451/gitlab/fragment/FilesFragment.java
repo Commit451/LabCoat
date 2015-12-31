@@ -105,7 +105,7 @@ public class FilesFragment extends BaseFragment {
             mSwipeRefreshLayout.setRefreshing(false);
 
             mMessageView.setVisibility(View.VISIBLE);
-            mMessageView.setText(R.string.connection_error_files);
+            mMessageView.setText(R.string.connection_error);
             mFilesAdapter.setData(null);
 
             mCurrentPath = mNewPath;
