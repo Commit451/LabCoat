@@ -1,6 +1,10 @@
 package com.commit451.gitlab.viewHolder;
 
-import android.net.Uri;
+import com.commit451.gitlab.R;
+import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.model.api.Member;
+import com.commit451.gitlab.util.ImageUtil;
+
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,11 +12,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-
-import com.commit451.gitlab.R;
-import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.model.api.Member;
-import com.commit451.gitlab.util.ImageUtil;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -29,34 +28,34 @@ public class ProjectMemberViewHolder extends RecyclerView.ViewHolder{
         return new ProjectMemberViewHolder(view);
     }
 
-    @Bind(R.id.overflow) public View overflow;
-    @Bind(R.id.name) public TextView username;
-    @Bind(R.id.access) public TextView access;
-    @Bind(R.id.image) public ImageView image;
-    public PopupMenu popupMenu;
+    @Bind(R.id.overflow) View mOverflowView;
+    @Bind(R.id.name) TextView mUsernameView;
+    @Bind(R.id.access) TextView mAccessView;
+    @Bind(R.id.image) public ImageView mImageView;
 
-    private final View.OnClickListener mOnMoreClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            popupMenu.show();
-        }
-    };
+    public final PopupMenu mPopupMenu;
 
     public ProjectMemberViewHolder(View view) {
         super(view);
         ButterKnife.bind(this, view);
-        popupMenu = new PopupMenu(itemView.getContext(), overflow);
-        popupMenu.getMenuInflater().inflate(R.menu.item_menu_project_member, popupMenu.getMenu());
-        overflow.setOnClickListener(mOnMoreClickListener);
+
+        mPopupMenu = new PopupMenu(itemView.getContext(), mOverflowView);
+        mPopupMenu.getMenuInflater().inflate(R.menu.item_menu_project_member, mPopupMenu.getMenu());
+
+        mOverflowView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPopupMenu.show();
+            }
+        });
     }
 
     public void bind(Member member) {
-        username.setText(member.getUsername());
-        access.setText(Member.getAccessLevel(member.getAccessLevel()));
+        mUsernameView.setText(member.getUsername());
+        mAccessView.setText(Member.getAccessLevel(member.getAccessLevel()));
 
-        Uri url = ImageUtil.getAvatarUrl(member, itemView.getResources().getDimensionPixelSize(R.dimen.user_header_image_size));
         GitLabClient.getPicasso()
-                .load(url)
-                .into(image);
+                .load(ImageUtil.getAvatarUrl(member, itemView.getResources().getDimensionPixelSize(R.dimen.user_header_image_size)))
+                .into(mImageView);
     }
 }

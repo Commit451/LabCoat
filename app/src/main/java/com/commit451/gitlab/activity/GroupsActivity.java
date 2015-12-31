@@ -75,7 +75,7 @@ public class GroupsActivity extends BaseActivity {
     private final GroupAdapter.Listener mGroupAdapterListener = new GroupAdapter.Listener() {
         @Override
         public void onGroupClicked(Group group, GroupViewHolder groupViewHolder) {
-            NavigationManager.navigateToGroup(GroupsActivity.this, groupViewHolder.image, group);
+            NavigationManager.navigateToGroup(GroupsActivity.this, groupViewHolder.mImageView, group);
         }
     };
 

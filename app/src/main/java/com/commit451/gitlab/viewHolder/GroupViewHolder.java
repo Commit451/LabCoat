@@ -1,15 +1,16 @@
 package com.commit451.gitlab.viewHolder;
 
+import com.commit451.gitlab.R;
+import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.model.api.Group;
+
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.commit451.gitlab.R;
-import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.model.api.Group;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -26,8 +27,8 @@ public class GroupViewHolder extends RecyclerView.ViewHolder{
         return new GroupViewHolder(view);
     }
 
-    @Bind(R.id.image) public ImageView image;
-    @Bind(R.id.name) public TextView name;
+    @Bind(R.id.image) public ImageView mImageView;
+    @Bind(R.id.name) public TextView mNameView;
 
     public GroupViewHolder(View view) {
         super(view);
@@ -35,9 +36,12 @@ public class GroupViewHolder extends RecyclerView.ViewHolder{
     }
 
     public void bind(Group group) {
-        name.setText(group.getName());
-        GitLabClient.getPicasso()
-                .load(group.getAvatarUrl())
-                .into(image);
+        mNameView.setText(group.getName());
+
+        if (group.getAvatarUrl() != null && !group.getAvatarUrl().equals(Uri.EMPTY)) {
+            GitLabClient.getPicasso()
+                    .load(group.getAvatarUrl())
+                    .into(mImageView);
+        }
     }
 }

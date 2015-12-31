@@ -1,5 +1,7 @@
 package com.commit451.gitlab.viewHolder;
 
+import com.commit451.gitlab.R;
+
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -7,8 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-
-import com.commit451.gitlab.R;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -25,7 +25,7 @@ public class AccessViewHolder extends RecyclerView.ViewHolder {
         return new AccessViewHolder(view);
     }
 
-    @Bind(R.id.access) TextView title;
+    @Bind(R.id.access) TextView mTitleView;
 
     public AccessViewHolder(View view) {
         super(view);
@@ -33,11 +33,7 @@ public class AccessViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(String access, int colorSelected, boolean isSelected) {
-        title.setText(access);
-        if (isSelected) {
-            ((FrameLayout)itemView).setForeground(new ColorDrawable(colorSelected));
-        } else {
-            ((FrameLayout)itemView).setForeground(null);
-        }
+        mTitleView.setText(access);
+        ((FrameLayout) itemView).setForeground(isSelected ? new ColorDrawable(colorSelected) : null);
     }
 }

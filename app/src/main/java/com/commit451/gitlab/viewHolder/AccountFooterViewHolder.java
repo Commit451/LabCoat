@@ -1,11 +1,11 @@
 package com.commit451.gitlab.viewHolder;
 
+import com.commit451.gitlab.R;
+
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.commit451.gitlab.R;
 
 import butterknife.ButterKnife;
 

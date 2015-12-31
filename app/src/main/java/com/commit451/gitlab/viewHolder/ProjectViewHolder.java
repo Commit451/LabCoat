@@ -1,5 +1,10 @@
 package com.commit451.gitlab.viewHolder;
 
+import com.commit451.gitlab.R;
+import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.model.api.Project;
+import com.github.ivbaranov.mli.MaterialLetterIcon;
+
 import android.graphics.Color;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
@@ -9,11 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.commit451.gitlab.R;
-import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.model.api.Project;
-import com.github.ivbaranov.mli.MaterialLetterIcon;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -30,13 +30,13 @@ public class ProjectViewHolder extends RecyclerView.ViewHolder {
         return new ProjectViewHolder(view);
     }
 
-    @Bind(R.id.project_image) ImageView image;
-    @Bind(R.id.project_letter) MaterialLetterIcon icon;
-    @Bind(R.id.project_title) TextView title;
-    @Bind(R.id.project_description) TextView description;
-    @Bind(R.id.project_stars) TextView stars;
-    @Bind(R.id.project_forks) TextView forks;
-    @Bind(R.id.project_visibility) ImageView visibility;
+    @Bind(R.id.project_image) ImageView mImageView;
+    @Bind(R.id.project_letter) MaterialLetterIcon mLetterView;
+    @Bind(R.id.project_title) TextView mTitleView;
+    @Bind(R.id.project_description) TextView mDescriptionView;
+    @Bind(R.id.project_stars) TextView mStarsView;
+    @Bind(R.id.project_forks) TextView mForksView;
+    @Bind(R.id.project_visibility) ImageView mVisibilityView;
 
     public ProjectViewHolder(View view) {
         super(view);
@@ -44,33 +44,38 @@ public class ProjectViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(Project project, int color) {
-        if (project.getAvatarUrl() == null || project.getAvatarUrl().equals(Uri.EMPTY)) {
-            image.setVisibility(View.GONE);
-            icon.setVisibility(View.VISIBLE);
-            icon.setLetter(project.getName().substring(0, 1));
-            icon.setLetterColor(Color.WHITE);
-            icon.setShapeColor(color);
-        } else {
-            image.setVisibility(View.VISIBLE);
-            icon.setVisibility(View.GONE);
+        if (project.getAvatarUrl() != null && !project.getAvatarUrl().equals(Uri.EMPTY)) {
+            mLetterView.setVisibility(View.GONE);
+
+            mImageView.setVisibility(View.VISIBLE);
             GitLabClient.getPicasso()
                     .load(project.getAvatarUrl())
-                    .into(image);
+                    .into(mImageView);
+        } else {
+            mImageView.setVisibility(View.GONE);
+
+            mLetterView.setVisibility(View.VISIBLE);
+            mLetterView.setLetter(project.getName().substring(0, 1));
+            mLetterView.setLetterColor(Color.WHITE);
+            mLetterView.setShapeColor(color);
         }
-        title.setText(project.getNameWithNamespace());
+
+        mTitleView.setText(project.getNameWithNamespace());
         if (!TextUtils.isEmpty(project.getDescription())) {
-            description.setVisibility(View.VISIBLE);
-            description.setText(project.getDescription());
+            mDescriptionView.setVisibility(View.VISIBLE);
+            mDescriptionView.setText(project.getDescription());
         } else {
-            description.setVisibility(View.GONE);
-            description.setText("");
+            mDescriptionView.setVisibility(View.GONE);
+            mDescriptionView.setText("");
         }
-        stars.setText(project.getStarCount() + "");
-        forks.setText(project.getForksCount() + "");
+
+        mStarsView.setText(project.getStarCount() + "");
+        mForksView.setText(project.getForksCount() + "");
+
         if (project.isPublic()) {
-            visibility.setImageResource(R.drawable.ic_public_24dp);
+            mVisibilityView.setImageResource(R.drawable.ic_public_24dp);
         } else {
-            visibility.setImageResource(R.drawable.ic_private_24dp);
+            mVisibilityView.setImageResource(R.drawable.ic_private_24dp);
         }
     }
 }

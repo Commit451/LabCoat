@@ -1,18 +1,17 @@
 package com.commit451.gitlab.viewHolder;
 
-import android.net.Uri;
+import com.commit451.gitlab.R;
+import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.model.api.RepositoryCommit;
+import com.commit451.gitlab.util.DateUtils;
+import com.commit451.gitlab.util.ImageUtil;
+
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.commit451.gitlab.R;
-import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.model.api.RepositoryCommit;
-import com.commit451.gitlab.util.DateUtils;
-import com.commit451.gitlab.util.ImageUtil;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -29,10 +28,10 @@ public class CommitViewHolder extends RecyclerView.ViewHolder {
         return new CommitViewHolder(view);
     }
 
-    @Bind(R.id.commit_image) ImageView image;
-    @Bind(R.id.commit_message) TextView message;
-    @Bind(R.id.commit_author) TextView author;
-    @Bind(R.id.commit_time) TextView time;
+    @Bind(R.id.commit_image) ImageView mImageView;
+    @Bind(R.id.commit_message) TextView mMessageView;
+    @Bind(R.id.commit_author) TextView mAuthorView;
+    @Bind(R.id.commit_time) TextView mTimeView;
 
     public CommitViewHolder(View view) {
         super(view);
@@ -40,13 +39,12 @@ public class CommitViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(RepositoryCommit commit) {
-        Uri url = ImageUtil.getAvatarUrl(commit.getAuthorEmail(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size));
         GitLabClient.getPicasso()
-                .load(url)
-                .into(image);
+                .load(ImageUtil.getAvatarUrl(commit.getAuthorEmail(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size)))
+                .into(mImageView);
 
-        message.setText(commit.getTitle());
-        author.setText(commit.getAuthorName());
-        time.setText(DateUtils.getRelativeTimeSpanString(itemView.getContext(), commit.getCreatedAt()));
+        mMessageView.setText(commit.getTitle());
+        mAuthorView.setText(commit.getAuthorName());
+        mTimeView.setText(DateUtils.getRelativeTimeSpanString(itemView.getContext(), commit.getCreatedAt()));
     }
 }

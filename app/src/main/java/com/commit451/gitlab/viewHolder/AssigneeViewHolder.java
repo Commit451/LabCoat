@@ -1,7 +1,11 @@
 package com.commit451.gitlab.viewHolder;
 
+import com.commit451.gitlab.R;
+import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.model.api.UserBasic;
+import com.commit451.gitlab.util.ImageUtil;
+
 import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,11 +14,6 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.commit451.gitlab.R;
-import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.model.api.UserBasic;
-import com.commit451.gitlab.util.ImageUtil;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -31,8 +30,8 @@ public class AssigneeViewHolder extends RecyclerView.ViewHolder {
         return new AssigneeViewHolder(view);
     }
 
-    @Bind(R.id.user_image) ImageView image;
-    @Bind(R.id.user_username) TextView username;
+    @Bind(R.id.user_image) ImageView mImageView;
+    @Bind(R.id.user_username) TextView mUsernameView;
 
     public AssigneeViewHolder(View view) {
         super(view);
@@ -41,19 +40,15 @@ public class AssigneeViewHolder extends RecyclerView.ViewHolder {
 
     public void bind(@Nullable UserBasic user, int colorSelected, boolean isSelected) {
         if (user == null) {
-            username.setText(R.string.no_assignee);
-            image.setImageResource(R.drawable.ic_assign_24dp);
+            mUsernameView.setText(R.string.no_assignee);
+            mImageView.setImageResource(R.drawable.ic_assign_24dp);
         } else {
-            username.setText(user.getUsername());
-            Uri url = ImageUtil.getAvatarUrl(user, itemView.getResources().getDimensionPixelSize(R.dimen.user_list_image_size));
+            mUsernameView.setText(user.getUsername());
             GitLabClient.getPicasso()
-                    .load(url)
-                    .into(image);
+                    .load(ImageUtil.getAvatarUrl(user, itemView.getResources().getDimensionPixelSize(R.dimen.user_list_image_size)))
+                    .into(mImageView);
         }
-        if (isSelected) {
-            ((FrameLayout)itemView).setForeground(new ColorDrawable(colorSelected));
-        } else {
-            ((FrameLayout)itemView).setForeground(null);
-        }
+
+        ((FrameLayout) itemView).setForeground(isSelected ? new ColorDrawable(colorSelected) : null);
     }
 }

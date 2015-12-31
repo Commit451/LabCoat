@@ -1,5 +1,11 @@
 package com.commit451.gitlab.viewHolder;
 
+import com.commit451.gitlab.R;
+import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.model.api.MergeRequest;
+import com.commit451.gitlab.util.DateUtils;
+import com.commit451.gitlab.util.ImageUtil;
+
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
@@ -9,20 +15,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.commit451.gitlab.R;
-import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.model.api.MergeRequest;
-import com.commit451.gitlab.util.DateUtils;
-import com.commit451.gitlab.util.ImageUtil;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import in.uncod.android.bypass.Bypass;
 
-/**
- * Adapter for merge request detail
- * Created by John on 11/16/15.
- */
 public class MergeRequestHeaderViewHolder extends RecyclerView.ViewHolder {
 
     public static MergeRequestHeaderViewHolder newInstance(ViewGroup parent) {
@@ -31,12 +27,11 @@ public class MergeRequestHeaderViewHolder extends RecyclerView.ViewHolder {
         return new MergeRequestHeaderViewHolder(view);
     }
 
-    @Bind(R.id.description)
-    TextView description;
-    @Bind(R.id.author_image)
-    ImageView authorImage;
-    @Bind(R.id.author) TextView author;
-    Bypass mBypass;
+    @Bind(R.id.description) TextView mDescriptionView;
+    @Bind(R.id.author_image) ImageView mAuthorImageView;
+    @Bind(R.id.author) TextView mAuthorView;
+
+    private final Bypass mBypass;
 
     public MergeRequestHeaderViewHolder(View view) {
         super(view);
@@ -46,23 +41,25 @@ public class MergeRequestHeaderViewHolder extends RecyclerView.ViewHolder {
 
     public void bind(MergeRequest mergeRequest) {
         if (TextUtils.isEmpty(mergeRequest.getDescription())) {
-            description.setVisibility(View.GONE);
+            mDescriptionView.setVisibility(View.GONE);
         } else {
-            description.setVisibility(View.VISIBLE);
-            description.setText(mBypass.markdownToSpannable(mergeRequest.getDescription()));
-            description.setMovementMethod(LinkMovementMethod.getInstance());
+            mDescriptionView.setVisibility(View.VISIBLE);
+            mDescriptionView.setText(mBypass.markdownToSpannable(mergeRequest.getDescription()));
+            mDescriptionView.setMovementMethod(LinkMovementMethod.getInstance());
         }
 
+        GitLabClient.getPicasso()
+                .load(ImageUtil.getAvatarUrl(mergeRequest.getAuthor(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size)))
+                .into(mAuthorImageView);
+
+        String author = "";
         if (mergeRequest.getAuthor() != null) {
-            GitLabClient.getPicasso()
-                    .load(ImageUtil.getAvatarUrl(mergeRequest.getAuthor(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size)))
-                    .into(authorImage);
-            author.setText(mergeRequest.getAuthor().getName() + " "
-                    + itemView.getResources().getString(R.string.created_issue) + " "
-                    + DateUtils.getRelativeTimeSpanString(itemView.getContext(), mergeRequest.getCreatedAt()));
+            author += mergeRequest.getAuthor().getName() + " ";
         }
+        author += itemView.getResources().getString(R.string.created_issue);
         if (mergeRequest.getCreatedAt() != null) {
-            DateUtils.getRelativeTimeSpanString(itemView.getContext(), mergeRequest.getCreatedAt());
+            author += " " + DateUtils.getRelativeTimeSpanString(itemView.getContext(), mergeRequest.getCreatedAt());
         }
+        mAuthorView.setText(author);
     }
 }

@@ -1,6 +1,11 @@
 package com.commit451.gitlab.viewHolder;
 
-import android.net.Uri;
+import com.commit451.gitlab.R;
+import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.model.api.Note;
+import com.commit451.gitlab.util.DateUtils;
+import com.commit451.gitlab.util.ImageUtil;
+
 import android.support.v7.widget.RecyclerView;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
@@ -8,12 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.commit451.gitlab.R;
-import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.model.api.Note;
-import com.commit451.gitlab.util.DateUtils;
-import com.commit451.gitlab.util.ImageUtil;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -23,7 +22,7 @@ import in.uncod.android.bypass.Bypass;
  * Notes, aka comments
  * Created by Jawn on 8/6/2015.
  */
-public class NoteViewHolder extends RecyclerView.ViewHolder{
+public class NoteViewHolder extends RecyclerView.ViewHolder {
 
     public static NoteViewHolder newInstance(ViewGroup parent) {
         View view = LayoutInflater.from(parent.getContext())
@@ -31,35 +30,38 @@ public class NoteViewHolder extends RecyclerView.ViewHolder{
         return new NoteViewHolder(view);
     }
 
-    @Bind(R.id.title) TextView title;
-    @Bind(R.id.summary) TextView summary;
-    @Bind(R.id.custom) TextView custom;
-    @Bind(R.id.icon) ImageView icon;
+    @Bind(R.id.title) TextView mTitleView;
+    @Bind(R.id.summary) TextView mSummaryView;
+    @Bind(R.id.creation_date) TextView mCreationDateView;
+    @Bind(R.id.icon) ImageView mIconView;
+
+    private final Bypass mBypass;
 
     public NoteViewHolder(View view) {
         super(view);
         ButterKnife.bind(this, view);
+        mBypass = new Bypass(view.getContext());
     }
 
     public void bind(Note note) {
-        if(note.getCreatedAt() != null) {
-            custom.setText(DateUtils.getRelativeTimeSpanString(itemView.getContext(), note.getCreatedAt()));
-        }
-        if(note.getAuthor() != null) {
-            title.setText(note.getAuthor().getUsername());
+        if (note.getCreatedAt() != null) {
+            mCreationDateView.setText(DateUtils.getRelativeTimeSpanString(itemView.getContext(), note.getCreatedAt()));
         }
 
-        String temp = "";
-        if(note.getBody() != null) {
-            temp = note.getBody();
+        if (note.getAuthor() != null) {
+            mTitleView.setText(note.getAuthor().getUsername());
         }
-        Bypass bypass = new Bypass(itemView.getContext());
-        summary.setText(bypass.markdownToSpannable(temp));
-        summary.setMovementMethod(LinkMovementMethod.getInstance());
 
-        Uri imageUrl = ImageUtil.getAvatarUrl(note.getAuthor(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size));
+        String summary = "";
+        if (note.getBody() != null) {
+            summary = note.getBody();
+        }
+
+        mSummaryView.setText(mBypass.markdownToSpannable(summary));
+        mSummaryView.setMovementMethod(LinkMovementMethod.getInstance());
+
         GitLabClient.getPicasso()
-                .load(imageUrl)
-                .into(icon);
+                .load(ImageUtil.getAvatarUrl(note.getAuthor(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size)))
+                .into(mIconView);
     }
 }

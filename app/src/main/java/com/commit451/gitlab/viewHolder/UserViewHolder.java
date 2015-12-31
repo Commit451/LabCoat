@@ -1,17 +1,16 @@
 package com.commit451.gitlab.viewHolder;
 
-import android.net.Uri;
+import com.commit451.gitlab.R;
+import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.model.api.UserBasic;
+import com.commit451.gitlab.util.ImageUtil;
+
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.commit451.gitlab.R;
-import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.model.api.UserBasic;
-import com.commit451.gitlab.util.ImageUtil;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -28,8 +27,8 @@ public class UserViewHolder extends RecyclerView.ViewHolder {
         return new UserViewHolder(view);
     }
 
-    @Bind(R.id.name) public TextView username;
-    @Bind(R.id.image) public ImageView image;
+    @Bind(R.id.name) public TextView mUsernameView;
+    @Bind(R.id.image) public ImageView mImageView;
 
     public UserViewHolder(View view) {
         super(view);
@@ -37,10 +36,9 @@ public class UserViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(UserBasic user) {
-        username.setText(user.getUsername());
-        Uri url = ImageUtil.getAvatarUrl(user, itemView.getResources().getDimensionPixelSize(R.dimen.user_list_image_size));
+        mUsernameView.setText(user.getUsername());
         GitLabClient.getPicasso()
-                .load(url)
-                .into(image);
+                .load(ImageUtil.getAvatarUrl(user, itemView.getResources().getDimensionPixelSize(R.dimen.user_list_image_size)))
+                .into(mImageView);
     }
 }

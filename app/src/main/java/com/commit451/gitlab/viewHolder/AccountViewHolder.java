@@ -1,6 +1,10 @@
 package com.commit451.gitlab.viewHolder;
 
-import android.net.Uri;
+import com.commit451.gitlab.R;
+import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.model.Account;
+import com.commit451.gitlab.util.ImageUtil;
+
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,11 +12,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-
-import com.commit451.gitlab.R;
-import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.model.Account;
-import com.commit451.gitlab.util.ImageUtil;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -29,38 +28,40 @@ public class AccountViewHolder extends RecyclerView.ViewHolder{
         return new AccountViewHolder(view);
     }
 
-    @Bind(R.id.account_image) ImageView image;
-    @Bind(R.id.account_username) TextView username;
-    @Bind(R.id.account_server) TextView server;
-    @Bind(R.id.account_more) View more;
-    public PopupMenu popupMenu;
+    @Bind(R.id.account_image) ImageView mImageView;
+    @Bind(R.id.account_username) TextView mUsernameView;
+    @Bind(R.id.account_server) TextView mServerView;
+    @Bind(R.id.account_more) View mMoreView;
 
-    private final View.OnClickListener mOnMoreClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            popupMenu.show();
-        }
-    };
+    public final PopupMenu mPopupMenu;
 
     public AccountViewHolder(View view) {
         super(view);
         ButterKnife.bind(this, view);
-        popupMenu = new PopupMenu(itemView.getContext(), more);
-        popupMenu.getMenuInflater().inflate(R.menu.item_menu_account, popupMenu.getMenu());
-        more.setOnClickListener(mOnMoreClickListener);
+
+        mPopupMenu = new PopupMenu(itemView.getContext(), mMoreView);
+        mPopupMenu.getMenuInflater().inflate(R.menu.item_menu_account, mPopupMenu.getMenu());
+
+        mMoreView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPopupMenu.show();
+            }
+        });
     }
 
     public void bind(Account account, boolean isActive, int colorSelected) {
-        server.setText(account.getServerUrl().toString());
-        username.setText(account.getUser().getUsername());
-        if(isActive) {
+        mServerView.setText(account.getServerUrl().toString());
+        mUsernameView.setText(account.getUser().getUsername());
+
+        if (isActive) {
             itemView.setBackgroundColor(colorSelected);
         } else {
             itemView.setBackground(null);
         }
-        Uri url = ImageUtil.getAvatarUrl(account.getUser(), itemView.getResources().getDimensionPixelSize(R.dimen.user_list_image_size));
+
         GitLabClient.getPicasso()
-                .load(url)
-                .into(image);
+                .load(ImageUtil.getAvatarUrl(account.getUser(), itemView.getResources().getDimensionPixelSize(R.dimen.user_list_image_size)))
+                .into(mImageView);
     }
 }

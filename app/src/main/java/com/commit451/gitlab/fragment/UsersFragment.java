@@ -60,7 +60,7 @@ public class UsersFragment extends BaseFragment {
     private final UsersAdapter.Listener mUsersAdapterListener = new UsersAdapter.Listener() {
         @Override
         public void onUserClicked(UserBasic user, UserViewHolder userViewHolder) {
-            NavigationManager.navigateToUser(getActivity(), userViewHolder.image, user);
+            NavigationManager.navigateToUser(getActivity(), userViewHolder.mImageView, user);
         }
     };
 

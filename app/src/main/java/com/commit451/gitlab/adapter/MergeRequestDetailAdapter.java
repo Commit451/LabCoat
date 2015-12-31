@@ -5,8 +5,8 @@ import android.view.ViewGroup;
 
 import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.model.api.Note;
-import com.commit451.gitlab.viewHolder.MergeRequestCommentViewHolder;
 import com.commit451.gitlab.viewHolder.MergeRequestHeaderViewHolder;
+import com.commit451.gitlab.viewHolder.NoteViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +35,7 @@ public class MergeRequestDetailAdapter extends RecyclerView.Adapter<RecyclerView
         if (viewType == TYPE_HEADER) {
             return MergeRequestHeaderViewHolder.newInstance(parent);
         } else if (viewType == TYPE_COMMENT) {
-            RecyclerView.ViewHolder holder = MergeRequestCommentViewHolder.newInstance(parent);
+            RecyclerView.ViewHolder holder = NoteViewHolder.newInstance(parent);
             return holder;
         }
         throw new IllegalArgumentException("No view type matches");
@@ -45,9 +45,9 @@ public class MergeRequestDetailAdapter extends RecyclerView.Adapter<RecyclerView
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof MergeRequestHeaderViewHolder) {
             ((MergeRequestHeaderViewHolder) holder).bind(mMergeRequest);
-        } else if (holder instanceof MergeRequestCommentViewHolder) {
+        } else if (holder instanceof NoteViewHolder) {
             Note note = getNoteAt(position);
-            ((MergeRequestCommentViewHolder) holder).bind(note);
+            ((NoteViewHolder) holder).bind(note);
         }
     }
 

@@ -148,7 +148,7 @@ public class GroupMembersFragment extends BaseFragment {
     private final GroupMembersAdapter.Listener mListener = new GroupMembersAdapter.Listener() {
         @Override
         public void onUserClicked(Member member, ProjectMemberViewHolder holder) {
-            NavigationManager.navigateToUser(getActivity(), holder.image, member);
+            NavigationManager.navigateToUser(getActivity(), holder.mImageView, member);
         }
 
         @Override

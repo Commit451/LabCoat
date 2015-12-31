@@ -23,7 +23,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.List;
@@ -139,7 +138,7 @@ public class ProjectMembersFragment extends BaseFragment {
     private final MemberAdapter.Listener mMemberAdapterListener = new MemberAdapter.Listener() {
         @Override
         public void onProjectMemberClicked(Member member, ProjectMemberViewHolder memberGroupViewHolder) {
-            NavigationManager.navigateToUser(getActivity(), memberGroupViewHolder.image, member);
+            NavigationManager.navigateToUser(getActivity(), memberGroupViewHolder.mImageView, member);
         }
 
         @Override

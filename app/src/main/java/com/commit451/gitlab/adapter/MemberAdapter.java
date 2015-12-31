@@ -118,7 +118,7 @@ public class MemberAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             ((ProjectMemberViewHolder) holder).bind(member);
             holder.itemView.setTag(R.id.list_position, position);
             holder.itemView.setTag(R.id.list_view_holder, holder);
-            ((ProjectMemberViewHolder) holder).popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            ((ProjectMemberViewHolder) holder).mPopupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
                     switch (item.getItemId()) {

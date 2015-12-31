@@ -92,7 +92,7 @@ public class AccountsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             final Account account = getItemAtPosition(position);
             ((AccountViewHolder) holder).bind(account, account.equals(GitLabClient.getAccount()), mColorControlHighlight);
             holder.itemView.setTag(R.id.list_position, position);
-            ((AccountViewHolder) holder).popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            ((AccountViewHolder) holder).mPopupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
                     switch (item.getItemId()) {

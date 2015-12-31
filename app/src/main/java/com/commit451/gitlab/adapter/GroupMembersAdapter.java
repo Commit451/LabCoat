@@ -52,7 +52,7 @@ public class GroupMembersAdapter extends RecyclerView.Adapter<ProjectMemberViewH
     public void onBindViewHolder(ProjectMemberViewHolder holder, int position) {
         final Member member = mData.get(position);
         holder.bind(member);
-        holder.popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+        holder.mPopupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
