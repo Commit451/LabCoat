@@ -232,6 +232,7 @@ public class GroupMembersFragment extends BaseFragment {
         public void onMemberAdded(MemberAddedEvent event) {
             if (mGroupMembersAdapter != null) {
                 mGroupMembersAdapter.addMember(event.mMember);
+                mMessageView.setVisibility(View.GONE);
             }
         }
     }
