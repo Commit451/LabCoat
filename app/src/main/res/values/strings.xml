@@ -138,6 +138,7 @@
     <string name="no_issues">No issues. Good job?</string>
     <string name="issue_opened">Opened</string>
     <string name="issue_closed">Closed</string>
+    <string name="issue_state_value_default">opened</string>
     <string-array name="issue_state_names">
         <item>@string/issue_opened</item>
         <item>@string/issue_closed</item>
@@ -220,7 +221,7 @@
     </string-array>
 
     <string-array name="merge_request_state_values">
-        <item>@string/merge_request_state_value_default</item>
+        <item>opened</item>
         <item>merged</item>
         <item>closed</item>
         <item>all</item>

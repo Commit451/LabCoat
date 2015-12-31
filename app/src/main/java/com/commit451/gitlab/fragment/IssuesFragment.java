@@ -53,7 +53,7 @@ public class IssuesFragment extends BaseFragment {
     private IssuesAdapter mIssuesAdapter;
     private EventReceiver mEventReceiver;
 
-    @BindString(R.string.issue_opened)
+    @BindString(R.string.issue_state_value_default)
     String mState;
     private String[] mStates;
 
