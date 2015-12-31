@@ -31,50 +31,61 @@ public class FeedFragment extends BaseFragment {
     public static FeedFragment newInstance(String feedUrl) {
         Bundle args = new Bundle();
         args.putString(EXTRA_FEED_URL, feedUrl);
+
         FeedFragment fragment = new FeedFragment();
         fragment.setArguments(args);
         return fragment;
     }
 
-    @Bind(R.id.error_text) TextView mErrorText;
     @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
-    @Bind(R.id.list) RecyclerView mEntryList;
+    @Bind(R.id.list) RecyclerView mEntryListView;
+    @Bind(R.id.message_text) TextView mMessageView;
 
-    String mFeedUrl;
-    EventReceiver mEventReceiver;
-    FeedAdapter mFeedAdapter;
+    private String mFeedUrl;
+    private EventReceiver mEventReceiver;
+    private FeedAdapter mFeedAdapter;
 
     private final Callback<Feed> mUserFeedCallback = new Callback<Feed>() {
         @Override
         public void onResponse(Response<Feed> response, Retrofit retrofit) {
-            if (mSwipeRefreshLayout == null) {
+            if (getView() == null) {
                 return;
             }
 
             mSwipeRefreshLayout.setRefreshing(false);
+
             if (!response.isSuccess()) {
                 Timber.e("Feed response was not a success: %d", response.code());
+                mMessageView.setVisibility(View.VISIBLE);
+                mMessageView.setText(R.string.connection_error);
+                mFeedAdapter.setEntries(null);
                 return;
             }
-            if (response.body().getEntries() == null || response.body().getEntries().isEmpty()) {
-                mErrorText.setVisibility(View.VISIBLE);
-                mErrorText.setText(R.string.no_activity);
+
+            if (response.body().getEntries() != null && !response.body().getEntries().isEmpty()) {
+                mMessageView.setVisibility(View.GONE);
             } else {
-                mFeedAdapter.setEntries(response.body().getEntries());
+                Timber.d("No activity in the feed");
+                mMessageView.setVisibility(View.VISIBLE);
+                mMessageView.setText(R.string.no_activity);
             }
+
+            mFeedAdapter.setEntries(response.body().getEntries());
         }
 
         @Override
         public void onFailure(Throwable t) {
             Timber.e(t, null);
 
-            if (mSwipeRefreshLayout == null) {
+            if (getView() == null) {
                 return;
             }
 
             mSwipeRefreshLayout.setRefreshing(false);
-            mErrorText.setVisibility(View.VISIBLE);
-            mErrorText.setText(R.string.connection_error);
+
+            mMessageView.setVisibility(View.VISIBLE);
+            mMessageView.setText(R.string.connection_error);
+            mFeedAdapter.setEntries(null);
         }
     };
 
@@ -101,9 +112,12 @@ public class FeedFragment extends BaseFragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
 
-        mEntryList.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mEventReceiver = new EventReceiver();
+        GitLabApp.bus().register(mEventReceiver);
+
         mFeedAdapter = new FeedAdapter(mFeedAdapterListener);
-        mEntryList.setAdapter(mFeedAdapter);
+        mEntryListView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mEntryListView.setAdapter(mFeedAdapter);
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -112,21 +126,22 @@ public class FeedFragment extends BaseFragment {
             }
         });
 
-        mEventReceiver = new EventReceiver();
-        GitLabApp.bus().register(mEventReceiver);
-
         loadData();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        GitLabApp.bus().unregister(mEventReceiver);
         ButterKnife.unbind(this);
+        GitLabApp.bus().unregister(mEventReceiver);
     }
 
     @Override
     protected void loadData() {
+        if (getView() == null) {
+            return;
+        }
+
         mSwipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
@@ -140,6 +155,5 @@ public class FeedFragment extends BaseFragment {
     }
 
     private class EventReceiver {
-
     }
 }

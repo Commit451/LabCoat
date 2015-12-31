@@ -1,8 +1,15 @@
 package com.commit451.gitlab.fragment;
 
+import com.commit451.gitlab.GitLabApp;
+import com.commit451.gitlab.R;
+import com.commit451.gitlab.adapter.ProjectsAdapter;
+import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.model.api.Project;
+import com.commit451.gitlab.util.NavigationManager;
+import com.commit451.gitlab.util.PaginationUtil;
+
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,16 +17,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
-import com.commit451.gitlab.GitLabApp;
-import com.commit451.gitlab.R;
-import com.commit451.gitlab.adapter.ProjectsAdapter;
-import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.event.ReloadDataEvent;
-import com.commit451.gitlab.model.api.Project;
-import com.commit451.gitlab.util.NavigationManager;
-import com.commit451.gitlab.util.PaginationUtil;
-import com.squareup.otto.Subscribe;
 
 import java.util.List;
 
@@ -30,10 +27,6 @@ import retrofit.Response;
 import retrofit.Retrofit;
 import timber.log.Timber;
 
-/**
- * Shows a mFilesList of projects
- * Created by Jawn on 9/21/2015.
- */
 public class ProjectsFragment extends BaseFragment {
 
     private static final String EXTRA_MODE = "extra_mode";
@@ -46,6 +39,7 @@ public class ProjectsFragment extends BaseFragment {
     public static ProjectsFragment newInstance(int mode) {
         Bundle args = new Bundle();
         args.putInt(EXTRA_MODE, mode);
+
         ProjectsFragment fragment = new ProjectsFragment();
         fragment.setArguments(args);
         return fragment;
@@ -55,18 +49,19 @@ public class ProjectsFragment extends BaseFragment {
         Bundle args = new Bundle();
         args.putInt(EXTRA_MODE, MODE_SEARCH);
         args.putString(EXTRA_QUERY, searchTerm);
+
         ProjectsFragment fragment = new ProjectsFragment();
         fragment.setArguments(args);
         return fragment;
     }
 
     @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
-    @Bind(R.id.list) RecyclerView mRecyclerView;
-    LinearLayoutManager mLayoutManager;
-    ProjectsAdapter mProjectsAdapter;
-    @Bind(R.id.message_text) TextView mMessageText;
+    @Bind(R.id.list) RecyclerView mProjectsListView;
+    @Bind(R.id.message_text) TextView mMessageView;
 
-    EventReceiver mEventReceiver;
+    private EventReceiver mEventReceiver;
+    private LinearLayoutManager mLayoutManager;
+    private ProjectsAdapter mProjectsAdapter;
 
     private int mMode;
     private String mQuery;
@@ -90,38 +85,55 @@ public class ProjectsFragment extends BaseFragment {
         @Override
         public void onResponse(Response<List<Project>> response, Retrofit retrofit) {
             mLoading = false;
+
             if (getView() == null) {
                 return;
             }
+
             mSwipeRefreshLayout.setRefreshing(false);
+
             if (!response.isSuccess()) {
-                mRecyclerView.setVisibility(View.GONE);
-                mMessageText.setVisibility(View.VISIBLE);
-                mMessageText.setText(R.string.connection_error);
+                Timber.e("Projects response was not a success: %d", response.code());
+                mMessageView.setVisibility(View.VISIBLE);
+                mMessageView.setText(R.string.connection_error);
+                mProjectsAdapter.setData(null);
+                mNextPageUrl = null;
                 return;
             }
-            mNextPageUrl = PaginationUtil.parse(response).getNext();
-            Timber.d("Next page url " + mNextPageUrl);
-            if (response.body().isEmpty()) {
-                mMessageText.setText(R.string.no_projects);
-                mRecyclerView.setVisibility(View.GONE);
-                mMessageText.setVisibility(View.VISIBLE);
+
+            if (!response.body().isEmpty()) {
+                mMessageView.setVisibility(View.GONE);
             } else {
-                mMessageText.setVisibility(View.GONE);
-                mRecyclerView.setVisibility(View.VISIBLE);
+                Timber.d("No projects found");
+                mMessageView.setVisibility(View.VISIBLE);
+                mMessageView.setText(R.string.no_projects);
+            }
+
+            if (mNextPageUrl == null) {
+                mProjectsAdapter.setData(response.body());
+            } else {
                 mProjectsAdapter.addData(response.body());
             }
+
+            mNextPageUrl = PaginationUtil.parse(response).getNext();
+            Timber.d("Next page url " + mNextPageUrl);
         }
 
         @Override
         public void onFailure(Throwable t) {
+            mLoading = false;
             Timber.e(t, null);
+
             if (getView() == null) {
                 return;
             }
+
             mSwipeRefreshLayout.setRefreshing(false);
-            mMessageText.setVisibility(View.VISIBLE);
-            mMessageText.setText(R.string.connection_error);
+
+            mMessageView.setVisibility(View.VISIBLE);
+            mMessageView.setText(R.string.connection_error);
+            mProjectsAdapter.setData(null);
+            mNextPageUrl = null;
         }
     };
 
@@ -139,7 +151,6 @@ public class ProjectsFragment extends BaseFragment {
         mQuery = getArguments().getString(EXTRA_QUERY);
     }
 
-    @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_projects, container, false);
@@ -153,32 +164,33 @@ public class ProjectsFragment extends BaseFragment {
         mEventReceiver = new EventReceiver();
         GitLabApp.bus().register(mEventReceiver);
 
+        mProjectsAdapter = new ProjectsAdapter(getActivity(), mProjectsListener);
+        mLayoutManager = new LinearLayoutManager(getActivity());
+        mProjectsListView.setLayoutManager(mLayoutManager);
+        mProjectsListView.setAdapter(mProjectsAdapter);
+        mProjectsListView.addOnScrollListener(mOnScrollListener);
+
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 loadData();
             }
         });
-        mMessageText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loadData();
-            }
-        });
-        mProjectsAdapter = new ProjectsAdapter(getActivity(), mProjectsListener);
-        mLayoutManager = new LinearLayoutManager(getActivity());
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.setAdapter(mProjectsAdapter);
-        mRecyclerView.addOnScrollListener(mOnScrollListener);
+
         loadData();
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
+        GitLabApp.bus().unregister(mEventReceiver);
+    }
+
+    @Override
     protected void loadData() {
-        super.loadData();
-        mMessageText.setVisibility(View.GONE);
-        mRecyclerView.setVisibility(View.VISIBLE);
-        mProjectsAdapter.clearData();
+        mNextPageUrl = null;
+
         switch (mMode) {
             case MODE_ALL:
                 showLoading();
@@ -195,15 +207,18 @@ public class ProjectsFragment extends BaseFragment {
                 }
                 break;
             default:
-                throw new IllegalStateException("this mode is not defined");
-
+                throw new IllegalStateException(mMode + " is not defined");
         }
     }
 
     private void loadMore() {
-        mLoading = true;
+        if (mNextPageUrl == null) {
+            return;
+        }
+
         Timber.d("loadMore called for " + mNextPageUrl);
-        GitLabClient.instance().getProjects(mNextPageUrl).enqueue(mProjectsCallback);
+        showLoading();
+        GitLabClient.instance().getProjects(mNextPageUrl.toString()).enqueue(mProjectsCallback);
     }
 
     private void showLoading() {
@@ -219,25 +234,11 @@ public class ProjectsFragment extends BaseFragment {
     }
 
     public void searchQuery(String query) {
-        if (mProjectsAdapter != null) {
-            mProjectsAdapter.clearData();
-        }
+        mProjectsAdapter.clearData();
         mQuery = query;
         loadData();
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        ButterKnife.unbind(this);
-        GitLabApp.bus().unregister(mEventReceiver);
-    }
-
     private class EventReceiver {
-
-        @Subscribe
-        public void onReloadDataEvent(ReloadDataEvent event) {
-            loadData();
-        }
     }
 }

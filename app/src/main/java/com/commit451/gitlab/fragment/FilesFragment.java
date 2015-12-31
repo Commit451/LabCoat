@@ -1,10 +1,22 @@
 package com.commit451.gitlab.fragment;
 
+import com.commit451.gitlab.GitLabApp;
+import com.commit451.gitlab.R;
+import com.commit451.gitlab.activity.ProjectActivity;
+import com.commit451.gitlab.adapter.BreadcrumbAdapter;
+import com.commit451.gitlab.adapter.FilesAdapter;
+import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.event.ProjectReloadEvent;
+import com.commit451.gitlab.model.api.Project;
+import com.commit451.gitlab.model.api.RepositoryTreeObject;
+import com.commit451.gitlab.util.IntentUtil;
+import com.commit451.gitlab.util.NavigationManager;
+import com.squareup.otto.Subscribe;
+
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,19 +26,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.commit451.gitlab.GitLabApp;
-import com.commit451.gitlab.R;
-import com.commit451.gitlab.activity.ProjectActivity;
-import com.commit451.gitlab.adapter.BreadcrumbAdapter;
-import com.commit451.gitlab.adapter.FilesAdapter;
-import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.event.ProjectReloadEvent;
-import com.commit451.gitlab.model.api.RepositoryTreeObject;
-import com.commit451.gitlab.model.api.Project;
-import com.commit451.gitlab.util.IntentUtil;
-import com.commit451.gitlab.util.NavigationManager;
-import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,26 +40,80 @@ import timber.log.Timber;
 public class FilesFragment extends BaseFragment {
 
     public static FilesFragment newInstance() {
-        Bundle args = new Bundle();
-        FilesFragment fragment = new FilesFragment();
-        fragment.setArguments(args);
-        return fragment;
+        return new FilesFragment();
     }
 
-    @Bind(R.id.error_text) TextView mErrorText;
     @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
-    @Bind(R.id.list) RecyclerView mFilesList;
-    @Bind(R.id.breadcrumb) RecyclerView mBreadcrumbList;
+    @Bind(R.id.list) RecyclerView mFilesListView;
+    @Bind(R.id.breadcrumb) RecyclerView mBreadcrumbListView;
+    @Bind(R.id.message_text) TextView mMessageView;
 
-    EventReceiver mEventReceiver;
-    Project mProject;
-    String mBranchName;
-    FilesAdapter mFilesAdapter;
-    BreadcrumbAdapter mBreadcrumbAdapter;
-    String mCurrentPath = "";
+    private Project mProject;
+    private String mBranchName;
+    private EventReceiver mEventReceiver;
+    private FilesAdapter mFilesAdapter;
+    private BreadcrumbAdapter mBreadcrumbAdapter;
+    private String mCurrentPath = "";
 
-    private FilesAdapter.Listener mFilesAdapterListener = new FilesAdapter.Listener() {
+    private class FilesCallback implements Callback<List<RepositoryTreeObject>> {
+        private final String mNewPath;
 
+        public FilesCallback(String newPath) {
+            this.mNewPath = newPath;
+        }
+
+        @Override
+        public void onResponse(Response<List<RepositoryTreeObject>> response, Retrofit retrofit) {
+            if (getView() == null) {
+                return;
+            }
+
+            mSwipeRefreshLayout.setRefreshing(false);
+
+            if (!response.isSuccess()) {
+                Timber.e("Files response was not a success: %d", response.code());
+                mMessageView.setVisibility(View.VISIBLE);
+                mMessageView.setText(R.string.connection_error_files);
+                mFilesAdapter.setData(null);
+
+                mCurrentPath = mNewPath;
+                updateBreadcrumbs();
+                return;
+            }
+
+            if (!response.body().isEmpty()) {
+                mMessageView.setVisibility(View.GONE);
+            } else {
+                Timber.d("No files found");
+                mMessageView.setVisibility(View.VISIBLE);
+                mMessageView.setText(R.string.no_files_found);
+            }
+
+            mFilesAdapter.setData(response.body());
+            mCurrentPath = mNewPath;
+            updateBreadcrumbs();
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+            Timber.e(t, null);
+
+            if (getView() == null) {
+                return;
+            }
+
+            mSwipeRefreshLayout.setRefreshing(false);
+
+            mMessageView.setVisibility(View.VISIBLE);
+            mMessageView.setText(R.string.connection_error_files);
+            mFilesAdapter.setData(null);
+
+            mCurrentPath = mNewPath;
+            updateBreadcrumbs();
+        }
+    }
+
+    private final FilesAdapter.Listener mFilesAdapterListener = new FilesAdapter.Listener() {
         @Override
         public void onFolderClicked(RepositoryTreeObject treeItem) {
             loadData(mCurrentPath + treeItem.getName() + "/");
@@ -74,8 +127,8 @@ public class FilesFragment extends BaseFragment {
 
         @Override
         public void onCopyClicked(RepositoryTreeObject treeItem) {
-            ClipboardManager clipboard = (ClipboardManager)
-                    getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+
             // Creates a new text clip to put on the clipboard
             ClipData clip = ClipData.newPlainText(treeItem.getName(), treeItem.getUrl(mProject, mBranchName, mCurrentPath).toString());
             clipboard.setPrimaryClip(clip);
@@ -94,49 +147,6 @@ public class FilesFragment extends BaseFragment {
         }
     };
 
-    private class FilesCallback implements Callback<List<RepositoryTreeObject>> {
-        String newPath;
-
-        public FilesCallback(String newPath) {
-            this.newPath = newPath;
-        }
-
-        @Override
-        public void onResponse(Response<List<RepositoryTreeObject>> response, Retrofit retrofit) {
-            if (getView() == null) {
-                return;
-            }
-            mSwipeRefreshLayout.setRefreshing(false);
-            if (!response.isSuccess()) {
-                mFilesAdapter.clear();
-                mErrorText.setVisibility(View.VISIBLE);
-                return;
-            }
-            if (response.body().isEmpty()) {
-                mFilesAdapter.clear();
-                mErrorText.setVisibility(View.VISIBLE);
-            } else {
-                mFilesList.setVisibility(View.VISIBLE);
-                mFilesAdapter.setData(response.body());
-                mErrorText.setVisibility(View.GONE);
-
-                mCurrentPath = newPath;
-                updateBreadcrumbs();
-            }
-        }
-
-        @Override
-        public void onFailure(Throwable t) {
-            Timber.e(t, null);
-            if (getView() == null) {
-                return;
-            }
-            mSwipeRefreshLayout.setRefreshing(false);
-            Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.connection_error_files), Snackbar.LENGTH_SHORT)
-                    .show();
-        }
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_files, container, false);
@@ -147,12 +157,16 @@ public class FilesFragment extends BaseFragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
 
+        mEventReceiver = new EventReceiver();
+        GitLabApp.bus().register(mEventReceiver);
+
         mFilesAdapter = new FilesAdapter(mFilesAdapterListener);
-        mFilesList.setAdapter(mFilesAdapter);
-        mFilesList.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mFilesListView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mFilesListView.setAdapter(mFilesAdapter);
+
         mBreadcrumbAdapter = new BreadcrumbAdapter();
-        mBreadcrumbList.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
-        mBreadcrumbList.setAdapter(mBreadcrumbAdapter);
+        mBreadcrumbListView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        mBreadcrumbListView.setAdapter(mBreadcrumbAdapter);
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -161,15 +175,10 @@ public class FilesFragment extends BaseFragment {
             }
         });
 
-        mEventReceiver = new EventReceiver();
-        GitLabApp.bus().register(mEventReceiver);
-
         if (getActivity() instanceof ProjectActivity) {
             mProject = ((ProjectActivity) getActivity()).getProject();
             mBranchName = ((ProjectActivity) getActivity()).getBranchName();
-            if (!TextUtils.isEmpty(mBranchName) && mProject != null) {
-                loadData("");
-            }
+            loadData("");
         } else {
             throw new IllegalStateException("Incorrect parent activity");
         }
@@ -178,8 +187,8 @@ public class FilesFragment extends BaseFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        GitLabApp.bus().unregister(mEventReceiver);
         ButterKnife.unbind(this);
+        GitLabApp.bus().unregister(mEventReceiver);
     }
 
     @Override
@@ -188,6 +197,14 @@ public class FilesFragment extends BaseFragment {
     }
 
     public void loadData(String newPath) {
+        if (getView() == null) {
+            return;
+        }
+
+        if (mProject == null || TextUtils.isEmpty(mBranchName)) {
+            return;
+        }
+
         mSwipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
@@ -242,15 +259,14 @@ public class FilesFragment extends BaseFragment {
         }
 
         mBreadcrumbAdapter.setData(breadcrumbs);
-        mBreadcrumbList.scrollToPosition(mBreadcrumbAdapter.getItemCount() - 1);
+        mBreadcrumbListView.scrollToPosition(mBreadcrumbAdapter.getItemCount() - 1);
     }
 
     private class EventReceiver {
-
         @Subscribe
-        public void onLoadReady(ProjectReloadEvent event) {
-            mProject = event.project;
-            mBranchName = event.branchName;
+        public void onProjectReload(ProjectReloadEvent event) {
+            mProject = event.mProject;
+            mBranchName = event.mBranchName;
 
             loadData("");
         }

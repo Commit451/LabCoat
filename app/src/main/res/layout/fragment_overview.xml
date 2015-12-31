@@ -25,10 +25,11 @@
     </com.commit451.gitlab.view.GitLabSwipeRefreshLayout>
 
     <TextView
-        android:id="@+id/error_text"
+        android:id="@+id/message_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:text="@string/no_readme_found"
         android:visibility="gone"/>
 
 </FrameLayout>

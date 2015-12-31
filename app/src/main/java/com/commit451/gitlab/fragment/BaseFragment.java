@@ -1,29 +1,22 @@
 package com.commit451.gitlab.fragment;
 
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.view.View;
-
 import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.event.ReloadDataEvent;
 import com.squareup.otto.Subscribe;
 
-/**
- * Created by Jawn on 9/1/2015.
- */
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.View;
+
 public class BaseFragment extends Fragment{
 
-    EventReceiver mBaseEventReceiever;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mBaseEventReceiever = new EventReceiver();
-    }
+    private EventReceiver mBaseEventReceiever;
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        mBaseEventReceiever = new EventReceiver();
         GitLabApp.bus().register(mBaseEventReceiever);
     }
 
@@ -34,7 +27,6 @@ public class BaseFragment extends Fragment{
     }
 
     protected void loadData() {
-        //Override this
     }
 
     public boolean onBackPressed() {
@@ -42,7 +34,6 @@ public class BaseFragment extends Fragment{
     }
 
     private class EventReceiver {
-
         @Subscribe
         public void onReloadData(ReloadDataEvent event) {
             loadData();

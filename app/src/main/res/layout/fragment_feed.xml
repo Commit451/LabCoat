@@ -1,37 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <com.commit451.gitlab.view.GitLabSwipeRefreshLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/swipe_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
 
-    <LinearLayout
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/list"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
 
-        <com.commit451.gitlab.view.GitLabSwipeRefreshLayout
-                android:id="@+id/swipe_layout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:clipToPadding="false"
+            />
 
-            <android.support.v7.widget.RecyclerView
-                    android:id="@+id/list"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    />
-
-        </com.commit451.gitlab.view.GitLabSwipeRefreshLayout>
-
-    </LinearLayout>
+    </com.commit451.gitlab.view.GitLabSwipeRefreshLayout>
 
     <TextView
-            android:id="@+id/error_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:gravity="center"
-            android:layout_gravity="center"
-            android:visibility="gone"/>
+        android:id="@+id/message_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="@string/no_activity"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:visibility="gone"/>
 
 </FrameLayout>
 

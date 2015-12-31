@@ -1,5 +1,16 @@
 package com.commit451.gitlab.fragment;
 
+import com.commit451.gitlab.GitLabApp;
+import com.commit451.gitlab.R;
+import com.commit451.gitlab.activity.ProjectActivity;
+import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.event.ProjectReloadEvent;
+import com.commit451.gitlab.model.api.Project;
+import com.commit451.gitlab.model.api.RepositoryFile;
+import com.commit451.gitlab.model.api.RepositoryTreeObject;
+import com.commit451.gitlab.util.PicassoImageGetter;
+import com.squareup.otto.Subscribe;
+
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -10,17 +21,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
-import com.commit451.gitlab.GitLabApp;
-import com.commit451.gitlab.R;
-import com.commit451.gitlab.activity.ProjectActivity;
-import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.event.ProjectReloadEvent;
-import com.commit451.gitlab.model.api.RepositoryTreeObject;
-import com.commit451.gitlab.model.api.RepositoryFile;
-import com.commit451.gitlab.model.api.Project;
-import com.commit451.gitlab.util.PicassoImageGetter;
-import com.squareup.otto.Subscribe;
 
 import java.nio.charset.Charset;
 import java.util.List;
@@ -33,60 +33,63 @@ import retrofit.Response;
 import retrofit.Retrofit;
 import timber.log.Timber;
 
-/**
- * Displays the README of the project if it exists
- * Created by John on 10/3/15.
- */
 public class OverviewFragment extends BaseFragment {
 
     public static OverviewFragment newInstance() {
-
-        Bundle args = new Bundle();
-
-        OverviewFragment fragment = new OverviewFragment();
-        fragment.setArguments(args);
-        return fragment;
+        return new OverviewFragment();
     }
 
     @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
-    @Bind(R.id.overview_text) TextView mOverview;
-    @Bind(R.id.error_text) TextView mErrorText;
+    @Bind(R.id.overview_text) TextView mOverviewVew;
+    @Bind(R.id.message_text) TextView mMessageView;
 
-    EventReceiver mEventReceiver;
-    Project mProject;
-    String mBranchName;
-    Bypass mBypass;
+    private Project mProject;
+    private String mBranchName;
+    private EventReceiver mEventReceiver;
+    private Bypass mBypass;
 
-    private Callback<List<RepositoryTreeObject>> mFilesCallback = new Callback<List<RepositoryTreeObject>>() {
+    private final Callback<List<RepositoryTreeObject>> mFilesCallback = new Callback<List<RepositoryTreeObject>>() {
         @Override
         public void onResponse(Response<List<RepositoryTreeObject>> response, Retrofit retrofit) {
             if (getView() == null) {
                 return;
             }
+
             if (!response.isSuccess()) {
+                Timber.e("Files response was not a success: %d", response.code());
                 mSwipeRefreshLayout.setRefreshing(false);
-                showError(getString(R.string.no_readme_found));
+                mMessageView.setVisibility(View.VISIBLE);
+                mMessageView.setText(R.string.connection_error);
+                mOverviewVew.setVisibility(View.GONE);
                 return;
             }
+
             for (RepositoryTreeObject treeItem : response.body()) {
                 if (treeItem.getName().equalsIgnoreCase("README.md")) {
                     GitLabClient.instance().getFile(mProject.getId(), treeItem.getName(), mBranchName).enqueue(mFileCallback);
                     return;
                 }
             }
+
             mSwipeRefreshLayout.setRefreshing(false);
-            showError(getString(R.string.no_readme_found));
+            mMessageView.setVisibility(View.VISIBLE);
+            mMessageView.setText(R.string.no_readme_found);
+            mOverviewVew.setVisibility(View.GONE);
         }
 
         @Override
         public void onFailure(Throwable t) {
             Timber.e(t, null);
+
             if (getView() == null) {
                 return;
             }
 
             mSwipeRefreshLayout.setRefreshing(false);
-            showError(getString(R.string.failed_to_load));
+
+            mMessageView.setVisibility(View.VISIBLE);
+            mMessageView.setText(R.string.connection_error);
+            mOverviewVew.setVisibility(View.GONE);
         }
     };
 
@@ -96,32 +99,45 @@ public class OverviewFragment extends BaseFragment {
             if (getView() == null) {
                 return;
             }
+
             mSwipeRefreshLayout.setRefreshing(false);
+
             if (!response.isSuccess()) {
-                showError(getString(R.string.no_readme_found));
+                Timber.e("File response was not a success: %d", response.code());
+                mMessageView.setVisibility(View.VISIBLE);
+                mMessageView.setText(R.string.connection_error);
+                mOverviewVew.setVisibility(View.GONE);
                 return;
             }
 
+            mMessageView.setVisibility(View.GONE);
+
             String text = new String(Base64.decode(response.body().getContent(), Base64.DEFAULT), Charset.forName("UTF-8"));
-            mOverview.setText(mBypass.markdownToSpannable(text,
-                    new PicassoImageGetter(mOverview, getResources(), GitLabClient.getPicasso())));
+
+            mOverviewVew.setVisibility(View.VISIBLE);
+            mOverviewVew.setText(mBypass.markdownToSpannable(text,
+                    new PicassoImageGetter(mOverviewVew, getResources(), GitLabClient.getPicasso())));
         }
 
         @Override
         public void onFailure(Throwable t) {
             Timber.e(t, null);
+
             if (getView() == null) {
                 return;
             }
+
             mSwipeRefreshLayout.setRefreshing(false);
-            showError(getString(R.string.failed_to_load));
+
+            mMessageView.setVisibility(View.VISIBLE);
+            mMessageView.setText(R.string.connection_error);
+            mOverviewVew.setVisibility(View.GONE);
         }
     };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mEventReceiver = new EventReceiver();
         mBypass = new Bypass(getActivity());
     }
 
@@ -135,20 +151,23 @@ public class OverviewFragment extends BaseFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
+
+        mEventReceiver = new EventReceiver();
         GitLabApp.bus().register(mEventReceiver);
+
+        mOverviewVew.setMovementMethod(LinkMovementMethod.getInstance());
+
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 loadData();
             }
         });
-        mOverview.setMovementMethod(LinkMovementMethod.getInstance());
+
         if (getActivity() instanceof ProjectActivity) {
             mProject = ((ProjectActivity) getActivity()).getProject();
             mBranchName = ((ProjectActivity) getActivity()).getBranchName();
-            if (!TextUtils.isEmpty(mBranchName) && mProject != null) {
-                loadData();
-            }
+            loadData();
         } else {
             throw new IllegalStateException("Incorrect parent activity");
         }
@@ -157,14 +176,20 @@ public class OverviewFragment extends BaseFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        GitLabApp.bus().unregister(mEventReceiver);
         ButterKnife.unbind(this);
+        GitLabApp.bus().unregister(mEventReceiver);
     }
 
     @Override
     protected void loadData() {
-        super.loadData();
-        mErrorText.setVisibility(View.GONE);
+        if (getView() == null) {
+            return;
+        }
+
+        if (mProject == null || TextUtils.isEmpty(mBranchName)) {
+            return;
+        }
+
         mSwipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
@@ -173,23 +198,15 @@ public class OverviewFragment extends BaseFragment {
                 }
             }
         });
+
         GitLabClient.instance().getTree(mProject.getId(), mBranchName, null).enqueue(mFilesCallback);
     }
 
-    private void showError(String error) {
-        if (getView() != null) {
-            mErrorText.setVisibility(View.VISIBLE);
-            mOverview.setVisibility(View.GONE);
-            mErrorText.setText(error);
-        }
-    }
-
     private class EventReceiver {
-
         @Subscribe
-        public void onProjectChanged(ProjectReloadEvent event) {
-            mProject = event.project;
-            mBranchName = event.branchName;
+        public void onProjectReload(ProjectReloadEvent event) {
+            mProject = event.mProject;
+            mBranchName = event.mBranchName;
             loadData();
         }
     }

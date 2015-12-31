@@ -7,9 +7,9 @@ import com.commit451.gitlab.model.api.Issue;
  * Created by Jawn on 7/31/2015.
  */
 public class IssueCreatedEvent {
-    public Issue issue;
+    public final Issue mIssue;
 
     public IssueCreatedEvent(Issue issue) {
-        this.issue = issue;
+        this.mIssue = issue;
     }
 }

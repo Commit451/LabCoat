@@ -7,9 +7,9 @@ import com.commit451.gitlab.model.api.Member;
  * Created by Jawn on 9/17/2015.
  */
 public class MemberAddedEvent {
+    public final Member mMember;
 
-    public Member member;
     public MemberAddedEvent(Member member) {
-        this.member = member;
+        this.mMember = member;
     }
 }

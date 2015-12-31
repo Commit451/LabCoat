@@ -18,8 +18,6 @@ import com.commit451.gitlab.model.api.UserBasic;
 import com.commit451.gitlab.model.api.UserFull;
 import com.commit451.gitlab.model.api.UserLogin;
 
-import android.net.Uri;
-
 import java.util.List;
 
 import retrofit.Call;
@@ -60,7 +58,7 @@ public interface GitLab {
     Call<List<UserBasic>> getUsers();
 
     @GET
-    Call<List<UserBasic>> getUsers(@Url Uri url);
+    Call<List<UserBasic>> getUsers(@Url String url);
 
     @GET(API_VERSION + "/users?per_page=100")
     Call<List<UserBasic>> searchUsers(@Query("search") String query);
@@ -74,7 +72,7 @@ public interface GitLab {
     Call<List<Group>> getGroups();
 
     @GET
-    Call<List<Group>> getGroups(@Url Uri url);
+    Call<List<Group>> getGroups(@Url String url);
 
     @GET(API_VERSION + "/groups/{id}")
     Call<GroupDetail> getGroup(@Path("id") long id);
@@ -110,7 +108,7 @@ public interface GitLab {
     Call<Project> getProject(@Path("id") long projectId);
 
     @GET
-    Call<List<Project>> getProjects(@Url Uri url);
+    Call<List<Project>> getProjects(@Url String url);
 
     @GET(API_VERSION + "/projects?order_by=last_activity_at&per_page=100")
     Call<List<Project>> searchAllProjects(@Query("search") String query);
@@ -140,7 +138,7 @@ public interface GitLab {
     Call<List<Milestone>> getMilestones(@Path("id") long projectId);
 
     @GET
-    Call<List<Milestone>> getMilestones(@Url Uri url);
+    Call<List<Milestone>> getMilestones(@Url String url);
 
     /* --- MERGE REQUESTS --- */
 
@@ -152,7 +150,7 @@ public interface GitLab {
                                               @Query("state") String state);
 
     @GET
-    Call<List<MergeRequest>> getMergeRequests(@Url Uri url);
+    Call<List<MergeRequest>> getMergeRequests(@Url String url);
 
     @GET(API_VERSION + "/projects/{id}/merge_request/{merge_request_id}")
     Call<MergeRequest> getMergeRequest(@Path("id") long projectId,
@@ -178,7 +176,7 @@ public interface GitLab {
     Call<List<Issue>> getIssues(@Path("id") long projectId);
 
     @GET(API_VERSION + "/projects/{id}/issues?per_page=100")
-    Call<List<Issue>> getIssues(@Url Uri url);
+    Call<List<Issue>> getIssues(@Url String url);
 
     @GET(API_VERSION + "/projects/{id}/issues/{issue_id}")
     Call<Issue> getIssue(@Path("id") long projectId,
@@ -234,7 +232,7 @@ public interface GitLab {
                                             @Query("ref_name") String branchName);
 
     @GET
-    Call<List<RepositoryCommit>> getCommits(@Url Uri url);
+    Call<List<RepositoryCommit>> getCommits(@Url String url);
 
     @GET(API_VERSION + "/projects/{id}/repository/commits/{sha}")
     Call<RepositoryCommit> getCommit(@Path("id") long projectId,
