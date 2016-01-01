@@ -25,6 +25,7 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.data.Prefs;
 import com.commit451.gitlab.event.LoginEvent;
+import com.commit451.gitlab.event.ReloadDataEvent;
 import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.model.api.UserFull;
 import com.commit451.gitlab.model.api.UserLogin;
@@ -165,6 +166,8 @@ public class LoginActivity extends BaseActivity {
             Prefs.addAccount(LoginActivity.this, mAccount);
             GitLabClient.setAccount(mAccount);
             GitLabApp.bus().post(new LoginEvent(mAccount));
+            //This is mostly for if projects already exists, then we will reload the data
+            GitLabApp.bus().post(new ReloadDataEvent());
             NavigationManager.navigateToProjects(LoginActivity.this);
             finish();
         }

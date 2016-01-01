@@ -99,6 +99,7 @@ public class GitLabNavigationView extends NavigationView {
         @Override
         public void onAddAccountClicked() {
             NavigationManager.navigateToLogin((Activity) getContext());
+            toggleAccounts();
             GitLabApp.bus().post(new CloseDrawerEvent());
         }
 
@@ -226,6 +227,9 @@ public class GitLabNavigationView extends NavigationView {
                 .into(mProfileImage);
     }
 
+    /**
+     * Toggle the visibility of accounts. Meaning hide it if it is showing, show it if it is hidden
+     */
     private void toggleAccounts() {
         if (mAccountList.getVisibility() == View.GONE) {
             mAccountList.setVisibility(View.VISIBLE);
@@ -263,6 +267,7 @@ public class GitLabNavigationView extends NavigationView {
         public void onUserLoggedIn(LoginEvent event) {
             if (mAccountAdapter != null) {
                 mAccountAdapter.addAccount(event.account);
+                mAccountAdapter.notifyDataSetChanged();
             }
         }
     }
