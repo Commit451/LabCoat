@@ -1,13 +1,5 @@
 package com.commit451.gitlab.fragment;
 
-import com.commit451.gitlab.GitLabApp;
-import com.commit451.gitlab.R;
-import com.commit451.gitlab.adapter.ProjectsAdapter;
-import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.model.api.Project;
-import com.commit451.gitlab.util.NavigationManager;
-import com.commit451.gitlab.util.PaginationUtil;
-
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -17,6 +9,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.commit451.gitlab.R;
+import com.commit451.gitlab.adapter.ProjectsAdapter;
+import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.model.api.Project;
+import com.commit451.gitlab.util.NavigationManager;
+import com.commit451.gitlab.util.PaginationUtil;
 
 import java.util.List;
 
@@ -34,7 +33,8 @@ public class ProjectsFragment extends BaseFragment {
 
     public static final int MODE_ALL = 0;
     public static final int MODE_MINE = 1;
-    public static final int MODE_SEARCH = 2;
+    public static final int MODE_STARRED = 2;
+    public static final int MODE_SEARCH = 3;
 
     public static ProjectsFragment newInstance(int mode) {
         Bundle args = new Bundle();
@@ -59,7 +59,6 @@ public class ProjectsFragment extends BaseFragment {
     @Bind(R.id.list) RecyclerView mProjectsListView;
     @Bind(R.id.message_text) TextView mMessageView;
 
-    private EventReceiver mEventReceiver;
     private LinearLayoutManager mLayoutManager;
     private ProjectsAdapter mProjectsAdapter;
 
@@ -161,9 +160,6 @@ public class ProjectsFragment extends BaseFragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
 
-        mEventReceiver = new EventReceiver();
-        GitLabApp.bus().register(mEventReceiver);
-
         mProjectsAdapter = new ProjectsAdapter(getActivity(), mProjectsListener);
         mLayoutManager = new LinearLayoutManager(getActivity());
         mProjectsListView.setLayoutManager(mLayoutManager);
@@ -184,7 +180,6 @@ public class ProjectsFragment extends BaseFragment {
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
-        GitLabApp.bus().unregister(mEventReceiver);
     }
 
     @Override
@@ -199,6 +194,10 @@ public class ProjectsFragment extends BaseFragment {
             case MODE_MINE:
                 showLoading();
                 GitLabClient.instance().getMyProjects().enqueue(mProjectsCallback);
+                break;
+            case MODE_STARRED:
+                showLoading();
+                GitLabClient.instance().getStarredProjects().enqueue(mProjectsCallback);
                 break;
             case MODE_SEARCH:
                 if (mQuery != null) {
@@ -237,8 +236,5 @@ public class ProjectsFragment extends BaseFragment {
         mProjectsAdapter.clearData();
         mQuery = query;
         loadData();
-    }
-
-    private class EventReceiver {
     }
 }

@@ -104,6 +104,9 @@ public interface GitLab {
     @GET(API_VERSION + "/projects/owned?order_by=last_activity_at&per_page=100")
     Call<List<Project>> getMyProjects();
 
+    @GET(API_VERSION + "/projects/starred?per_page=100")
+    Call<List<Project>> getStarredProjects();
+
     @GET(API_VERSION + "/projects/{id}")
     Call<Project> getProject(@Path("id") long projectId);
 
