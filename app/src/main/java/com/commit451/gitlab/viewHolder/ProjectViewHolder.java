@@ -1,10 +1,5 @@
 package com.commit451.gitlab.viewHolder;
 
-import com.commit451.gitlab.R;
-import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.model.api.Project;
-import com.github.ivbaranov.mli.MaterialLetterIcon;
-
 import android.graphics.Color;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +9,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.commit451.gitlab.R;
+import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.model.api.Project;
+import com.github.ivbaranov.mli.MaterialLetterIcon;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -34,8 +34,6 @@ public class ProjectViewHolder extends RecyclerView.ViewHolder {
     @Bind(R.id.project_letter) MaterialLetterIcon mLetterView;
     @Bind(R.id.project_title) TextView mTitleView;
     @Bind(R.id.project_description) TextView mDescriptionView;
-    @Bind(R.id.project_stars) TextView mStarsView;
-    @Bind(R.id.project_forks) TextView mForksView;
     @Bind(R.id.project_visibility) ImageView mVisibilityView;
 
     public ProjectViewHolder(View view) {
@@ -68,9 +66,6 @@ public class ProjectViewHolder extends RecyclerView.ViewHolder {
             mDescriptionView.setVisibility(View.GONE);
             mDescriptionView.setText("");
         }
-
-        mStarsView.setText(project.getStarCount() + "");
-        mForksView.setText(project.getForksCount() + "");
 
         if (project.isPublic()) {
             mVisibilityView.setImageResource(R.drawable.ic_public_24dp);

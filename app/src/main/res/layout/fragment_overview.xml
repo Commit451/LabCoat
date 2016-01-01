@@ -1,35 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+
+<com.commit451.gitlab.view.GitLabSwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipe_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.commit451.gitlab.view.GitLabSwipeRefreshLayout
-        android:id="@+id/swipe_layout"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ScrollView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_margin="16dp">
+
+                <TextView
+                    android:id="@+id/star_count"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:drawableLeft="@drawable/ic_star_24dp"
+                    android:drawablePadding="8dp"
+                    tools:text="100" />
+
+                <TextView
+                    android:id="@+id/forks_count"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:drawableLeft="@drawable/ic_fork_24dp"
+                    android:drawablePadding="8dp"
+                    tools:text="100" />
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/overview_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp"/>
+                android:padding="16dp" />
+        </LinearLayout>
 
-        </ScrollView>
+    </ScrollView>
 
-    </com.commit451.gitlab.view.GitLabSwipeRefreshLayout>
-
-    <TextView
-        android:id="@+id/message_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/no_readme_found"
-        android:visibility="gone"/>
-
-</FrameLayout>
+</com.commit451.gitlab.view.GitLabSwipeRefreshLayout>
