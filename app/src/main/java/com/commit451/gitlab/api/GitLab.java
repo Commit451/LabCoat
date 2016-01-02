@@ -98,13 +98,13 @@ public interface GitLab {
 
     /* --- PROJECTS --- */
 
-    @GET(API_VERSION + "/projects?order_by=last_activity_at&per_page=100")
+    @GET(API_VERSION + "/projects?order_by=last_activity_at")
     Call<List<Project>> getAllProjects();
 
-    @GET(API_VERSION + "/projects/owned?order_by=last_activity_at&per_page=100")
+    @GET(API_VERSION + "/projects/owned?order_by=last_activity_at")
     Call<List<Project>> getMyProjects();
 
-    @GET(API_VERSION + "/projects/starred?per_page=100")
+    @GET(API_VERSION + "/projects/starred")
     Call<List<Project>> getStarredProjects();
 
     @GET(API_VERSION + "/projects/{id}")
@@ -113,8 +113,8 @@ public interface GitLab {
     @GET
     Call<List<Project>> getProjects(@Url String url);
 
-    @GET(API_VERSION + "/projects?order_by=last_activity_at&per_page=100")
-    Call<List<Project>> searchAllProjects(@Query("search") String query);
+    @GET(API_VERSION + "/projects/search/{query}")
+    Call<List<Project>> searchAllProjects(@Path("query") String query);
 
     @GET(API_VERSION + "/projects/{id}/members?per_page=100")
     Call<List<Member>> getProjectMembers(@Path("id") long projectId);
