@@ -60,6 +60,15 @@ public class Diff {
         return mDeletedFile;
     }
 
+    public String getFileName() {
+        if (mNewPath.contains("/")) {
+            String[] paths = mNewPath.split("/");
+            return paths[paths.length-1];
+        } else {
+            return mNewPath;
+        }
+    }
+
     public List<Line> getLines() {
         List<Line> lines = new ArrayList<>();
 

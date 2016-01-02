@@ -4,18 +4,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.commit451.gitlab.R;
+import com.commit451.gitlab.adapter.DiffAdapter;
 import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.model.api.RepositoryCommit;
 import com.commit451.gitlab.model.api.Diff;
 import com.commit451.gitlab.model.api.Project;
-import com.commit451.gitlab.view.DiffView;
-import com.commit451.gitlab.view.MessageView;
+import com.commit451.gitlab.model.api.RepositoryCommit;
 
 import org.parceler.Parcels;
 
@@ -28,6 +29,9 @@ import retrofit.Response;
 import retrofit.Retrofit;
 import timber.log.Timber;
 
+/**
+ * Shows the lines of a commit aka the diff
+ */
 public class DiffActivity extends BaseActivity {
 
     private static final String EXTRA_PROJECT = "extra_project";
@@ -41,50 +45,33 @@ public class DiffActivity extends BaseActivity {
     }
 
     @Bind(R.id.toolbar) Toolbar mToolbar;
-    @Bind(R.id.message_container) LinearLayout mMessageContainer;
-    @Bind(R.id.diff_container) LinearLayout mDiffContainer;
+    @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
+    @Bind(R.id.list) RecyclerView mDiffRecyclerView;
+    DiffAdapter mDiffAdapter;
+    @Bind(R.id.message_text) TextView mMessageText;
 
     private Project mProject;
     private RepositoryCommit mCommit;
-    private boolean textWrapped = true;
-
-    private Callback<RepositoryCommit> mCommitCallback = new Callback<RepositoryCommit>() {
-        @Override
-        public void onResponse(Response<RepositoryCommit> response, Retrofit retrofit) {
-            if (response.isSuccess()) {
-                mMessageContainer.removeAllViews();
-
-                MessageView messageView = new MessageView(DiffActivity.this, response.body());
-                messageView.setWrapped(textWrapped);
-                mMessageContainer.addView(messageView);
-            }
-        }
-
-        @Override
-        public void onFailure(Throwable t) {
-            Timber.e(t, null);
-            Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
-                    .show();
-        }
-    };
 
     private Callback<List<Diff>> mDiffCallback = new Callback<List<Diff>>() {
         @Override
         public void onResponse(Response<List<Diff>> response, Retrofit retrofit) {
-            if (response.isSuccess()) {
-                mDiffContainer.removeAllViews();
-
-                for (Diff diff : response.body()) {
-                    DiffView diffView = new DiffView(DiffActivity.this, diff);
-                    diffView.setWrapped(textWrapped);
-                    mDiffContainer.addView(diffView);
-                }
+            mSwipeRefreshLayout.setRefreshing(false);
+            if (!response.isSuccess()) {
+                return;
             }
+            for (Diff diff : response.body()) {
+                Timber.d("diff text: "+ diff.getDiff());
+            }
+            mDiffAdapter.setData(response.body());
         }
 
         @Override
         public void onFailure(Throwable t) {
+            mSwipeRefreshLayout.setRefreshing(false);
             Timber.e(t, null);
+            mMessageText.setText(R.string.connection_error);
+            mMessageText.setVisibility(View.VISIBLE);
             Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
                     .show();
         }
@@ -107,36 +94,35 @@ public class DiffActivity extends BaseActivity {
             }
         });
         mToolbar.setTitle(mCommit.getShortId());
-        mToolbar.inflateMenu(R.menu.menu_diff);
-        mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+
+        mDiffAdapter = new DiffAdapter(new DiffAdapter.Listener() {
             @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case android.R.id.home:
-                        finish();
-                        return true;
-                    case R.id.text_wrap_checkbox:
-                        textWrapped = !item.isChecked();
-                        item.setChecked(textWrapped);
-                        updateTextWrap(textWrapped);
-                        return true;
-                }
-                return false;
+            public void onDiffClicked(Diff diff) {
+
+            }
+        });
+        mDiffRecyclerView.setAdapter(mDiffAdapter);
+        mDiffRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadData();
             }
         });
 
-        //TODO make this use RecyclerViews, cause this is insane
-        GitLabClient.instance().getCommit(mProject.getId(), mCommit.getId()).enqueue(mCommitCallback);
-        GitLabClient.instance().getCommitDiff(mProject.getId(), mCommit.getId()).enqueue(mDiffCallback);
+        loadData();
     }
 
-    private void updateTextWrap(boolean checked) {
-        for (int i = 0; i < mMessageContainer.getChildCount(); i++) {
-            ((MessageView) mMessageContainer.getChildAt(i)).setWrapped(checked);
-        }
-
-        for (int i = 0; i < mDiffContainer.getChildCount(); i++) {
-            ((DiffView) mDiffContainer.getChildAt(i)).setWrapped(checked);
-        }
+    private void loadData() {
+        mMessageText.setVisibility(View.GONE);
+        mSwipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+            if (mSwipeRefreshLayout != null) {
+                mSwipeRefreshLayout.setRefreshing(true);
+            }
+            }
+        });
+        GitLabClient.instance().getCommitDiff(mProject.getId(), mCommit.getId()).enqueue(mDiffCallback);
     }
 }
