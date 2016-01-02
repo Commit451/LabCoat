@@ -21,4 +21,4 @@ before_script:
     - chmod +x scripts/prepare-build.sh
     - ./prepare-build.sh
 
-script: "./gradlew build -x fabricGenerateResourcesRelease"
+script: "./gradlew build"

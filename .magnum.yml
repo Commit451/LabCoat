@@ -7,4 +7,4 @@ before_script:
   - ./prepare-build.sh
 
 script:
-  - ./gradlew build -x fabricGenerateResourcesRelease
+  - ./gradlew build
