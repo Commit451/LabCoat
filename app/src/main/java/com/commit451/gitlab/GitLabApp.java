@@ -2,12 +2,10 @@ package com.commit451.gitlab;
 
 import android.app.Application;
 
-import com.crashlytics.android.Crashlytics;
 import com.squareup.otto.Bus;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
-import io.fabric.sdk.android.Fabric;
 import timber.log.Timber;
 
 /**
@@ -35,8 +33,6 @@ public class GitLabApp extends Application {
         instance = this;
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
-        } else {
-            Fabric.with(this, new Crashlytics());
         }
         JodaTimeAndroid.init(this);
     }

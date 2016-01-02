@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'io.fabric'
 apply plugin: 'com.neenbedankt.android-apt'
 
 android {
@@ -17,14 +16,10 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            ext.enableCrashlytics = true
-            manifestPlaceholders = [fabric_key: project.GITLAB_FABRIC_KEY]
         }
         debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            ext.enableCrashlytics = false
-            manifestPlaceholders = [fabric_key: ""]
         }
     }
     lintOptions {
@@ -62,7 +57,4 @@ dependencies {
     compile 'com.commit451:easel:0.0.4'
     compile 'com.github.ivbaranov:MaterialLetterIcon:0.2.1'
     compile 'com.github.johnkil.android-robototextview:robototextview:2.4.3'
-    compile('com.crashlytics.sdk.android:crashlytics:2.5.3@aar') {
-        transitive = true;
-    }
 }

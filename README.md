@@ -10,11 +10,6 @@ This is the source code for the unofficial GitLab Android app.
 Please see the [issues](https://gitlab.com/Commit451/GitLabAndroid/issues) section to
 report any bugs or feature requests and to see the list of known issues.
 
-## Building
-The app uses Fabric for Crashlytics, so you will need to generate your own Crashlytics/Fabric key. All in all, your gradle.properties will look something like this:
-```Gradle
-GITLAB_FABRIC_KEY = FABRIC_KEY_GOES_HERE_BUT_ONLY_REALLY_NEEDED_FOR_RELEASE_BUILDS
-```
 ## Libraries
 The following 3rd party libraries are the reason this app works. Rapid development is easily attainable thanks to these fine folks and the work they do:
 

@@ -56,9 +56,6 @@
             android:theme="@style/Activity.Group"/>
         <activity android:name=".activities.MergeRequestActivity"/>
         <activity android:name=".dialogs.NewIssuePopupDialog" android:theme="@style/Activity.Translucent"/>
-        <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="${fabric_key}" />
     </application>
 
 </manifest>
