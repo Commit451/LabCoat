@@ -22,6 +22,7 @@
     <string name="title_overview">Overview</string>
     <string name="title_activity">Activity</string>
     <string name="title_commits">Commits</string>
+    <string name="title_milestones">Milestones</string>
     <string name="title_issues">Issues</string>
     <string name="title_files">Files</string>
     <string name="title_merge_requests">Merge Requests</string>
@@ -32,6 +33,7 @@
         <item>@string/title_activity</item>
         <item>@string/title_files</item>
         <item>@string/title_commits</item>
+        <item>@string/title_milestones</item>
         <item>@string/title_issues</item>
         <item>@string/title_merge_requests</item>
         <item>@string/title_members</item>
@@ -232,6 +234,9 @@
         <item>closed</item>
         <item>all</item>
     </string-array>
+
+    <!-- Milestones -->
+    <string name="no_milestones">No milestones</string>
 
     <!-- Members -->
     <string name="no_project_members">No project members.</string>

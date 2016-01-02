@@ -10,6 +10,7 @@ import com.commit451.gitlab.fragment.CommitsFragment;
 import com.commit451.gitlab.fragment.FeedFragment;
 import com.commit451.gitlab.fragment.FilesFragment;
 import com.commit451.gitlab.fragment.IssuesFragment;
+import com.commit451.gitlab.fragment.MilestonesFragment;
 import com.commit451.gitlab.fragment.ProjectMembersFragment;
 import com.commit451.gitlab.fragment.MergeRequestsFragment;
 import com.commit451.gitlab.fragment.OverviewFragment;
@@ -29,9 +30,10 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     private static final int ACTIVITY_POS = 1;
     private static final int FILES_POS = 2;
     private static final int COMMITS_POS = 3;
-    private static final int ISSUES_POS = 4;
-    private static final int MERGE_REQUESTS_POS = 5;
-    private static final int PROJECT_MEMBERS_POS = 6;
+    private static final int MILESTONES_POS = 4;
+    private static final int ISSUES_POS = 5;
+    private static final int MERGE_REQUESTS_POS = 6;
+    private static final int PROJECT_MEMBERS_POS = 7;
 
     private final Project mProject;
     private final String[] mTitles;
@@ -77,6 +79,8 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
                 return FilesFragment.newInstance();
             case COMMITS_POS:
                 return CommitsFragment.newInstance();
+            case MILESTONES_POS:
+                return MilestonesFragment.newInstance();
             case ISSUES_POS:
                 return IssuesFragment.newInstance();
             case MERGE_REQUESTS_POS:

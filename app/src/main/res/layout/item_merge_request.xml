@@ -16,7 +16,7 @@
         android:layout_marginRight="16dp"
         android:layout_marginLeft="16dp"
         android:contentDescription="@null"
-        tools:src="@drawable/ic_doc"
+        tools:src="@drawable/ic_assign_24dp"
         />
 
     <RelativeLayout

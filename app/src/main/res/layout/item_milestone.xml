@@ -1,29 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/twoline_list_item"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="2dp"
-    android:paddingLeft="8dp"
-    android:paddingRight="?android:attr/scrollbarSize"
-    android:gravity="center_vertical"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:background="?attr/selectableItemBackground"
+    android:padding="16dp">
 
     <TextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_marginLeft="4dp"
-        android:text="Username"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textSize="16sp"
+        tools:text="milestone 100" />
 
     <TextView
-        android:id="@+id/summary"
+        android:id="@+id/due_date"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_marginLeft="4dp"
-        android:text="email@server.tld"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textColor="?android:attr/textColorSecondary" />
+        tools:text="12/12/12" />
 
 </LinearLayout>
