@@ -69,8 +69,8 @@ public class IssueActivity extends BaseActivity {
     }
 
     @OnClick(R.id.fab_edit_issue)
-    public void onEditIssueClick() {
-        NavigationManager.navigateToEditIssue(IssueActivity.this, mProject, mIssue);
+    public void onEditIssueClick(View fab) {
+        NavigationManager.navigateToEditIssue(IssueActivity.this, fab, mProject, mIssue);
     }
 
     MenuItem mOpenCloseMenuItem;

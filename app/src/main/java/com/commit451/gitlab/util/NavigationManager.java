@@ -23,7 +23,7 @@ import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.activity.ProjectsActivity;
 import com.commit451.gitlab.activity.SearchActivity;
 import com.commit451.gitlab.activity.UserActivity;
-import com.commit451.gitlab.dialog.NewIssuePopupDialog;
+import com.commit451.gitlab.activity.AddIssueActivity;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.model.api.Issue;
 import com.commit451.gitlab.model.api.MergeRequest;
@@ -112,8 +112,8 @@ public class NavigationManager {
         activity.startActivity(AddUserActivity.newIntent(activity, group));
     }
 
-    public static void navigateToEditIssue(Activity activity, Project project, Issue issue) {
-        navigateToAddIssue(activity, null, project, issue);
+    public static void navigateToEditIssue(Activity activity, View fab, Project project, Issue issue) {
+        navigateToAddIssue(activity, fab, project, issue);
     }
 
     public static void navigateToAddIssue(Activity activity, View fab, Project project) {
@@ -121,7 +121,7 @@ public class NavigationManager {
     }
 
     private static void navigateToAddIssue(Activity activity, View fab, Project project, Issue issue) {
-        Intent intent = NewIssuePopupDialog.newIntent(activity, project, issue);
+        Intent intent = AddIssueActivity.newIntent(activity, project, issue);
         if (Build.VERSION.SDK_INT >= 21 && fab != null) {
             ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation
                     (activity, fab, activity.getString(R.string.transition_morph));

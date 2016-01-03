@@ -55,7 +55,7 @@
         <activity android:name=".activity.GroupActivity"
             android:theme="@style/Activity.Group"/>
         <activity android:name=".activity.MergeRequestActivity"/>
-        <activity android:name=".dialog.NewIssuePopupDialog" android:theme="@style/Activity.Translucent"/>
+        <activity android:name=".activity.AddIssueActivity"/>
         <activity android:name=".activity.MilestoneActivity"/>
         <activity android:name=".activity.AddMilestoneActivity"/>
         <meta-data
