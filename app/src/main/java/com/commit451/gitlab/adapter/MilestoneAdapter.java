@@ -46,6 +46,21 @@ public class MilestoneAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         notifyItemInserted(0);
     }
 
+    public void updateIssue(Milestone milestone) {
+        int indexToDelete = -1;
+        for (int i=0; i<mValues.size(); i++) {
+            if (mValues.get(i).getId() == milestone.getId()) {
+                indexToDelete = i;
+                break;
+            }
+        }
+        if (indexToDelete != -1) {
+            mValues.remove(indexToDelete);
+            mValues.add(indexToDelete, milestone);
+        }
+        notifyItemChanged(indexToDelete);
+    }
+
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         MilestoneViewHolder holder = MilestoneViewHolder.newInstance(parent);

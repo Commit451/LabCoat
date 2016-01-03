@@ -16,9 +16,12 @@ import android.widget.EditText;
 import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.event.MilestoneChangedEvent;
 import com.commit451.gitlab.event.MilestoneCreatedEvent;
 import com.commit451.gitlab.model.api.Milestone;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
+
+import org.parceler.Parcels;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -34,10 +37,18 @@ import timber.log.Timber;
 public class AddMilestoneActivity extends BaseActivity {
 
     private static final String KEY_PROJECT_ID = "project_id";
+    private static final String KEY_MILESTONE = "milestone";
 
     public static Intent newInstance(Context context, long projectId) {
+        return newInstance(context, projectId, null);
+    }
+
+    public static Intent newInstance(Context context, long projectId, Milestone milestone) {
         Intent intent = new Intent(context, AddMilestoneActivity.class);
         intent.putExtra(KEY_PROJECT_ID, projectId);
+        if (milestone != null) {
+            intent.putExtra(KEY_MILESTONE, Parcels.wrap(milestone));
+        }
         return intent;
     }
 
@@ -72,6 +83,7 @@ public class AddMilestoneActivity extends BaseActivity {
     }
 
     long mProjectId;
+    Milestone mMilestone;
     Date mCurrentDate;
 
     private final DatePickerDialog.OnDateSetListener mOnDateSetListener = new DatePickerDialog.OnDateSetListener() {
@@ -102,7 +114,11 @@ public class AddMilestoneActivity extends BaseActivity {
                 showError();
                 return;
             }
-            GitLabApp.bus().post(new MilestoneCreatedEvent(response.body()));
+            if (mMilestone == null) {
+                GitLabApp.bus().post(new MilestoneCreatedEvent(response.body()));
+            } else {
+                GitLabApp.bus().post(new MilestoneChangedEvent(response.body()));
+            }
             finish();
         }
 
@@ -120,6 +136,10 @@ public class AddMilestoneActivity extends BaseActivity {
         setContentView(R.layout.activity_add_milestone);
         ButterKnife.bind(this);
         mProjectId = getIntent().getLongExtra(KEY_PROJECT_ID, -1);
+        mMilestone = Parcels.unwrap(getIntent().getParcelableExtra(KEY_MILESTONE));
+        if (mMilestone != null) {
+            bind(mMilestone);
+        }
         mToolbar.setNavigationIcon(R.drawable.ic_back_24dp);
         mToolbar.setNavigationOnClickListener(mOnBackPressed);
         mToolbar.inflateMenu(R.menu.menu_add_milestone);
@@ -148,10 +168,18 @@ public class AddMilestoneActivity extends BaseActivity {
             dueDate = Milestone.DUE_DATE_FORMAT.format(mCurrentDate);
         }
 
-        GitLabClient.instance().createMilestone(mProjectId,
-                mTitle.getText().toString(),
-                mDescription.getText().toString(),
-                dueDate).enqueue(mMilestoneCallback);
+        if (mMilestone == null) {
+            GitLabClient.instance().createMilestone(mProjectId,
+                    mTitle.getText().toString(),
+                    mDescription.getText().toString(),
+                    dueDate).enqueue(mMilestoneCallback);
+        } else {
+            GitLabClient.instance().editMilestone(mProjectId,
+                    mMilestone.getId(),
+                    mTitle.getText().toString(),
+                    mDescription.getText().toString(),
+                    dueDate).enqueue(mMilestoneCallback);
+        }
 
     }
 
@@ -162,5 +190,16 @@ public class AddMilestoneActivity extends BaseActivity {
 
     private void bind(Date date) {
         mDueDate.setText(Milestone.DUE_DATE_FORMAT.format(date));
+    }
+
+    private void bind(Milestone milestone) {
+        mTitle.setText(milestone.getTitle());
+        if (milestone.getDescription() != null) {
+            mDescription.setText(milestone.getDescription());
+        }
+        if (milestone.getDueDate() != null) {
+            mCurrentDate = milestone.getDueDate();
+            bind(mCurrentDate);
+        }
     }
 }

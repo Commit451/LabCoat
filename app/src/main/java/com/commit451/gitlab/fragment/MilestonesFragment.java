@@ -18,6 +18,7 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.adapter.MilestoneAdapter;
 import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.event.MilestoneChangedEvent;
 import com.commit451.gitlab.event.MilestoneCreatedEvent;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Milestone;
@@ -210,6 +211,11 @@ public class MilestonesFragment extends BaseFragment {
             mMessageView.setVisibility(View.GONE);
             mMilestoneAdapter.addMilestone(event.mMilestone);
             mRecyclerView.smoothScrollToPosition(0);
+        }
+
+        @Subscribe
+        public void onIssueChanged(MilestoneChangedEvent event) {
+            mMilestoneAdapter.updateIssue(event.mMilestone);
         }
     }
 }

@@ -154,6 +154,13 @@ public interface GitLab {
                             @Field("description") String description,
                             @Field("due_date") String dueDate);
 
+    @PUT(API_VERSION + "/projects/{id}/milestones/{milestone_id}")
+    Call<Milestone> editMilestone(@Path("id") long projectId,
+                            @Field("milestone_id") long issueId,
+                            @Field("title") String title,
+                            @Field("description") String description,
+                            @Field("due_date") String dueDate);
+
     /* --- MERGE REQUESTS --- */
 
     @GET(API_VERSION + "/projects/{id}/merge_requests?per_page=100")
