@@ -36,6 +36,8 @@
                     android:id="@+id/title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:inputType="textCapSentences|textAutoCorrect|textMultiLine"
+                    android:imeOptions="actionNone"
                     android:hint="@string/milestone_hint_title" />
 
             </android.support.design.widget.TextInputLayout>
@@ -49,6 +51,8 @@
                     android:id="@+id/description"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:inputType="textCapSentences|textAutoCorrect|textMultiLine"
+                    android:imeOptions="actionNone"
                     android:hint="@string/milestone_hint_description" />
 
             </android.support.design.widget.TextInputLayout>

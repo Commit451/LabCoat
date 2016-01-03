@@ -18,6 +18,10 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.MilestoneCreatedEvent;
 import com.commit451.gitlab.model.api.Milestone;
+import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
+
+import java.util.Calendar;
+import java.util.Date;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -54,10 +58,33 @@ public class AddMilestoneActivity extends BaseActivity {
 
     @OnClick(R.id.due_date)
     void onDueDateClicked() {
-        //TODO bring up the calendar dialog
+        Calendar now = Calendar.getInstance();
+        if (mCurrentDate != null) {
+            now.setTime(mCurrentDate);
+        }
+        DatePickerDialog dpd = DatePickerDialog.newInstance(
+                mOnDateSetListener,
+                now.get(Calendar.YEAR),
+                now.get(Calendar.MONTH),
+                now.get(Calendar.DAY_OF_MONTH)
+        );
+        dpd.show(getFragmentManager(), "date_picker");
     }
 
     long mProjectId;
+    Date mCurrentDate;
+
+    private final DatePickerDialog.OnDateSetListener mOnDateSetListener = new DatePickerDialog.OnDateSetListener() {
+        @Override
+        public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.YEAR, year);
+            calendar.set(Calendar.MONTH, monthOfYear);
+            calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+            mCurrentDate = calendar.getTime();
+            bind(mCurrentDate);
+        }
+    };
 
     private final View.OnClickListener mOnBackPressed = new View.OnClickListener() {
         @Override
@@ -117,7 +144,10 @@ public class AddMilestoneActivity extends BaseActivity {
 
         mProgress.setVisibility(View.VISIBLE);
         String dueDate = null;
-        //TODO make this the current due date
+        if (mCurrentDate != null) {
+            dueDate = Milestone.DUE_DATE_FORMAT.format(mCurrentDate);
+        }
+
         GitLabClient.instance().createMilestone(mProjectId,
                 mTitle.getText().toString(),
                 mDescription.getText().toString(),
@@ -128,5 +158,9 @@ public class AddMilestoneActivity extends BaseActivity {
     private void showError() {
         Snackbar.make(mRoot, getString(R.string.failed_to_create_milestone), Snackbar.LENGTH_SHORT)
                 .show();
+    }
+
+    private void bind(Date date) {
+        mDueDate.setText(Milestone.DUE_DATE_FORMAT.format(date));
     }
 }
