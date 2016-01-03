@@ -61,7 +61,7 @@ public class IssueHeaderViewHolder extends RecyclerView.ViewHolder {
         }
         author += itemView.getResources().getString(R.string.created_issue);
         if (issue.getCreatedAt() != null) {
-            author += DateUtils.getRelativeTimeSpanString(itemView.getContext(), issue.getCreatedAt());
+            author = author + " " + DateUtils.getRelativeTimeSpanString(itemView.getContext(), issue.getCreatedAt());
         }
         mAuthorView.setText(author);
     }
