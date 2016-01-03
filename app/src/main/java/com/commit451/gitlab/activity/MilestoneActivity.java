@@ -11,13 +11,16 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
 
+import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.MilestoneIssuesAdapter;
 import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.event.MilestoneChangedEvent;
 import com.commit451.gitlab.model.api.Issue;
 import com.commit451.gitlab.model.api.Milestone;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.util.NavigationManager;
+import com.squareup.otto.Subscribe;
 
 import org.parceler.Parcels;
 
@@ -25,6 +28,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
@@ -42,20 +46,32 @@ public class MilestoneActivity extends BaseActivity {
         return intent;
     }
 
+    @Bind(R.id.root)
+    View mRoot;
     @Bind(R.id.toolbar)
     Toolbar mToolbar;
     @Bind(R.id.swipe_layout)
     SwipeRefreshLayout mSwipeRefreshLayout;
     @Bind(R.id.list)
     RecyclerView mDiffRecyclerView;
-    MilestoneIssuesAdapter mIssuesAdapter;
+    MilestoneIssuesAdapter mMilestoneIssuesAdapter;
     @Bind(R.id.message_text)
     TextView mMessageText;
-    @Bind(R.id.add_issue_button)
-    View mAddIssueButton;
 
     private Project mProject;
     private Milestone mMilestone;
+
+    EventReceiver mEventReceiver;
+
+    @OnClick(R.id.add)
+    void onAddClick() {
+        NavigationManager.navigateToAddIssue(MilestoneActivity.this, null, mProject);
+    }
+
+    @OnClick(R.id.edit)
+    void onEditClicked() {
+        NavigationManager.navigateToEditMilestone(MilestoneActivity.this, mProject, mMilestone);
+    }
 
     private final Callback<List<Issue>> mIssuesCallback = new Callback<List<Issue>>() {
         @Override
@@ -66,8 +82,7 @@ public class MilestoneActivity extends BaseActivity {
                 Timber.e("Issues response was not a success: %d", response.code());
                 mMessageText.setVisibility(View.VISIBLE);
                 mMessageText.setText(R.string.connection_error_issues);
-                mAddIssueButton.setVisibility(View.GONE);
-                mIssuesAdapter.setIssues(null);
+                mMilestoneIssuesAdapter.setIssues(null);
                 return;
             }
 
@@ -79,9 +94,7 @@ public class MilestoneActivity extends BaseActivity {
                 mMessageText.setText(R.string.no_issues);
             }
 
-            mAddIssueButton.setVisibility(View.VISIBLE);
-
-            mIssuesAdapter.setIssues(response.body());
+            mMilestoneIssuesAdapter.setIssues(response.body());
         }
 
         @Override
@@ -92,16 +105,17 @@ public class MilestoneActivity extends BaseActivity {
 
             mMessageText.setVisibility(View.VISIBLE);
             mMessageText.setText(R.string.connection_error);
-            mAddIssueButton.setVisibility(View.GONE);
-            mIssuesAdapter.setIssues(null);
+            mMilestoneIssuesAdapter.setIssues(null);
         }
     };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_diff);
+        setContentView(R.layout.activity_milestone);
         ButterKnife.bind(this);
+        mEventReceiver = new EventReceiver();
+        GitLabApp.bus().register(mEventReceiver);
 
         mProject = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_PROJECT));
         mMilestone = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_MILESTONE));
@@ -113,15 +127,15 @@ public class MilestoneActivity extends BaseActivity {
                 onBackPressed();
             }
         });
-        mToolbar.setTitle(mMilestone.getTitle());
 
-        mIssuesAdapter = new MilestoneIssuesAdapter(new MilestoneIssuesAdapter.Listener() {
+        mMilestoneIssuesAdapter = new MilestoneIssuesAdapter(new MilestoneIssuesAdapter.Listener() {
             @Override
             public void onIssueClicked(Issue issue) {
                 NavigationManager.navigateToIssue(MilestoneActivity.this, mProject, issue);
             }
         });
-        mDiffRecyclerView.setAdapter(mIssuesAdapter);
+        bind(mMilestone);
+        mDiffRecyclerView.setAdapter(mMilestoneIssuesAdapter);
         mDiffRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -131,6 +145,17 @@ public class MilestoneActivity extends BaseActivity {
         });
 
         loadData();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        GitLabApp.bus().unregister(mEventReceiver);
+    }
+
+    private void bind(Milestone milestone) {
+        mToolbar.setTitle(milestone.getTitle());
+        mMilestoneIssuesAdapter.setMilestone(milestone);
     }
 
     private void loadData() {
@@ -144,5 +169,16 @@ public class MilestoneActivity extends BaseActivity {
             }
         });
         GitLabClient.instance().getMilestoneIssues(mProject.getId(), mMilestone.getId()).enqueue(mIssuesCallback);
+    }
+
+    private class EventReceiver {
+
+        @Subscribe
+        public void onMilestoneChanged(MilestoneChangedEvent event) {
+            if (mMilestone.getId() == event.mMilestone.getId()) {
+                mMilestone = event.mMilestone;
+                bind(mMilestone);
+            }
+        }
     }
 }

@@ -139,15 +139,18 @@ public class AddMilestoneActivity extends BaseActivity {
         mMilestone = Parcels.unwrap(getIntent().getParcelableExtra(KEY_MILESTONE));
         if (mMilestone != null) {
             bind(mMilestone);
+            mToolbar.inflateMenu(R.menu.menu_edit_milestone);
+        } else {
+            mToolbar.inflateMenu(R.menu.menu_add_milestone);
         }
         mToolbar.setNavigationIcon(R.drawable.ic_back_24dp);
         mToolbar.setNavigationOnClickListener(mOnBackPressed);
-        mToolbar.inflateMenu(R.menu.menu_add_milestone);
         mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.action_create:
+                    case R.id.action_edit:
                         createMilestone();
                         return true;
                 }

@@ -154,9 +154,10 @@ public interface GitLab {
                             @Field("description") String description,
                             @Field("due_date") String dueDate);
 
+    @FormUrlEncoded
     @PUT(API_VERSION + "/projects/{id}/milestones/{milestone_id}")
     Call<Milestone> editMilestone(@Path("id") long projectId,
-                            @Field("milestone_id") long issueId,
+                            @Path("milestone_id") long milestoneId,
                             @Field("title") String title,
                             @Field("description") String description,
                             @Field("due_date") String dueDate);

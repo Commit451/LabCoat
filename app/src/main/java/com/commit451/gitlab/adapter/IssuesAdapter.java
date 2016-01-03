@@ -42,7 +42,7 @@ public class IssuesAdapter extends RecyclerView.Adapter<IssueViewHolder> {
 
     @Override
     public IssueViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        IssueViewHolder holder = IssueViewHolder.create(parent);
+        IssueViewHolder holder = IssueViewHolder.newInstance(parent);
         holder.itemView.setOnClickListener(onProjectClickListener);
         return holder;
     }

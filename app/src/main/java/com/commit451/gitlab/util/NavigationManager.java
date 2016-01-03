@@ -135,4 +135,8 @@ public class NavigationManager {
     public static void navigateToAddMilestone(Activity activity, Project project) {
         activity.startActivity(AddMilestoneActivity.newInstance(activity, project.getId()));
     }
+
+    public static void navigateToEditMilestone(Activity activity, Project project, Milestone milestone) {
+        activity.startActivity(AddMilestoneActivity.newInstance(activity, project.getId(), milestone));
+    }
 }

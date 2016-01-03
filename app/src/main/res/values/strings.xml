@@ -18,6 +18,7 @@
     <string name="action_close">Close</string>
     <string name="action_assign">Assign</string>
     <string name="action_create">Create</string>
+    <string name="action_edit">Edit</string>
 
     <!-- Tabs -->
     <string name="title_overview">Overview</string>

@@ -48,7 +48,6 @@
     </LinearLayout>
     
     <LinearLayout
-        android:id="@+id/rel1"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:orientation="horizontal"
