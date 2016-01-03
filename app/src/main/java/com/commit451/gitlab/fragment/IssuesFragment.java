@@ -1,18 +1,5 @@
 package com.commit451.gitlab.fragment;
 
-import com.commit451.gitlab.GitLabApp;
-import com.commit451.gitlab.R;
-import com.commit451.gitlab.activity.ProjectActivity;
-import com.commit451.gitlab.adapter.IssuesAdapter;
-import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.event.IssueChangedEvent;
-import com.commit451.gitlab.event.IssueCreatedEvent;
-import com.commit451.gitlab.event.ProjectReloadEvent;
-import com.commit451.gitlab.model.api.Issue;
-import com.commit451.gitlab.model.api.Project;
-import com.commit451.gitlab.util.NavigationManager;
-import com.squareup.otto.Subscribe;
-
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -25,6 +12,19 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import com.commit451.gitlab.GitLabApp;
+import com.commit451.gitlab.R;
+import com.commit451.gitlab.activity.ProjectActivity;
+import com.commit451.gitlab.adapter.IssuesAdapter;
+import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.event.IssueChangedEvent;
+import com.commit451.gitlab.event.IssueCreatedEvent;
+import com.commit451.gitlab.event.ProjectReloadEvent;
+import com.commit451.gitlab.model.api.Issue;
+import com.commit451.gitlab.model.api.Project;
+import com.commit451.gitlab.util.NavigationManager;
+import com.squareup.otto.Subscribe;
 
 import java.util.List;
 
@@ -47,7 +47,6 @@ public class IssuesFragment extends BaseFragment {
     @Bind(R.id.list) RecyclerView mIssueListView;
     @Bind(R.id.message_text) TextView mMessageView;
     @Bind(R.id.issue_spinner) Spinner mSpinner;
-    @Bind(R.id.add_issue_button) View mAddIssueButton;
 
     private Project mProject;
     private IssuesAdapter mIssuesAdapter;
@@ -70,7 +69,6 @@ public class IssuesFragment extends BaseFragment {
                 Timber.e("Issues response was not a success: %d", response.code());
                 mMessageView.setVisibility(View.VISIBLE);
                 mMessageView.setText(R.string.connection_error_issues);
-                mAddIssueButton.setVisibility(View.GONE);
                 mIssuesAdapter.setIssues(null);
                 return;
             }
@@ -82,8 +80,6 @@ public class IssuesFragment extends BaseFragment {
                 mMessageView.setVisibility(View.VISIBLE);
                 mMessageView.setText(R.string.no_issues);
             }
-
-            mAddIssueButton.setVisibility(View.VISIBLE);
 
             mIssuesAdapter.setIssues(response.body());
         }
@@ -100,7 +96,6 @@ public class IssuesFragment extends BaseFragment {
 
             mMessageView.setVisibility(View.VISIBLE);
             mMessageView.setText(R.string.connection_error);
-            mAddIssueButton.setVisibility(View.GONE);
             mIssuesAdapter.setIssues(null);
         }
     };

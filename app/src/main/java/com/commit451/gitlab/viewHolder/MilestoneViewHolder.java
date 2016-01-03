@@ -33,7 +33,8 @@ public class MilestoneViewHolder extends RecyclerView.ViewHolder {
         mTitleView.setText(milestone.getTitle());
         if (milestone.getDueDate() != null) {
             mDueDateView.setVisibility(View.VISIBLE);
-            mDueDateView.setText(DateUtils.getRelativeTimeSpanString(itemView.getContext(), milestone.getDueDate()));
+            CharSequence due = DateUtils.getRelativeTimeSpanString(itemView.getContext(), milestone.getDueDate());
+            mDueDateView.setText(String.format(itemView.getResources().getString(R.string.due_date_formatted), due));
         } else {
             mDueDateView.setVisibility(View.GONE);
             mDueDateView.setText("");

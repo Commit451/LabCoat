@@ -143,6 +143,17 @@ public interface GitLab {
     @GET
     Call<List<Milestone>> getMilestones(@Url String url);
 
+    @GET(API_VERSION + "/projects/{id}/milestones/{milestone_id}/issues?per_page=100")
+    Call<List<Issue>> getMilestoneIssues(@Path("id") long projectId,
+                                        @Path("milestone_id") long milestoneId);
+
+    @FormUrlEncoded
+    @POST(API_VERSION + "/projects/{id}/milestones")
+    Call<Milestone> createMilestone(@Path("id") long projectId,
+                            @Field("title") String title,
+                            @Field("description") String description,
+                            @Field("due_date") String dueDate);
+
     /* --- MERGE REQUESTS --- */
 
     @GET(API_VERSION + "/projects/{id}/merge_requests?per_page=100")

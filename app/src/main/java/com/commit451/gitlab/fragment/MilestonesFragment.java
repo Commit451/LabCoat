@@ -1,6 +1,7 @@
 package com.commit451.gitlab.fragment;
 
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,9 +18,11 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.adapter.MilestoneAdapter;
 import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.event.MilestoneCreatedEvent;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Milestone;
 import com.commit451.gitlab.model.api.Project;
+import com.commit451.gitlab.util.NavigationManager;
 import com.squareup.otto.Subscribe;
 
 import java.util.List;
@@ -27,6 +30,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.BindString;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
@@ -41,8 +45,7 @@ public class MilestonesFragment extends BaseFragment {
     @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
     @Bind(R.id.list) RecyclerView mRecyclerView;
     @Bind(R.id.message_text) TextView mMessageView;
-    @Bind(R.id.state_spinner)
-    Spinner mSpinner;
+    @Bind(R.id.state_spinner) Spinner mSpinner;
 
     private Project mProject;
     private EventReceiver mEventReceiver;
@@ -51,6 +54,16 @@ public class MilestonesFragment extends BaseFragment {
     @BindString(R.string.merge_request_state_value_default)
     String mState;
     private String[] mStates;
+
+    @OnClick(R.id.add)
+    public void onAddClicked() {
+        if (mProject != null) {
+            NavigationManager.navigateToAddMilestone(getActivity(), mProject);
+        } else {
+            Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.wait_for_project_to_load), Snackbar.LENGTH_SHORT)
+                    .show();
+        }
+    }
 
     private final AdapterView.OnItemSelectedListener mSpinnerItemSelectedListener = new AdapterView.OnItemSelectedListener() {
         @Override
@@ -66,7 +79,7 @@ public class MilestonesFragment extends BaseFragment {
     private final MilestoneAdapter.Listener mMilestoneListener = new MilestoneAdapter.Listener() {
         @Override
         public void onMilestoneClicked(Milestone milestone) {
-            //TODO navigate to milestone
+            NavigationManager.navigateToMilestone(getActivity(), mProject, milestone);
         }
     };
 
@@ -123,7 +136,7 @@ public class MilestonesFragment extends BaseFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_merge_request, container, false);
+        return inflater.inflate(R.layout.fragment_milestones, container, false);
     }
 
     @Override
@@ -190,6 +203,13 @@ public class MilestonesFragment extends BaseFragment {
         public void onProjectReload(ProjectReloadEvent event) {
             mProject = event.mProject;
             loadData();
+        }
+
+        @Subscribe
+        public void onMilestoneCreated(MilestoneCreatedEvent event) {
+            mMessageView.setVisibility(View.GONE);
+            mMilestoneAdapter.addMilestone(event.mMilestone);
+            mRecyclerView.smoothScrollToPosition(0);
         }
     }
 }

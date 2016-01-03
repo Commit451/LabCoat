@@ -43,7 +43,6 @@ import timber.log.Timber;
 
 /**
  * Add a new user to the repo or to the group, depending on the mode
- * Created by Jawn on 9/15/2015.
  */
 public class AddUserActivity extends BaseActivity {
 

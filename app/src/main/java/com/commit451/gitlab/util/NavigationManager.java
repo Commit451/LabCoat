@@ -10,6 +10,7 @@ import android.widget.ImageView;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.AboutActivity;
+import com.commit451.gitlab.activity.AddMilestoneActivity;
 import com.commit451.gitlab.activity.AddUserActivity;
 import com.commit451.gitlab.activity.FileActivity;
 import com.commit451.gitlab.activity.GroupActivity;
@@ -17,6 +18,7 @@ import com.commit451.gitlab.activity.GroupsActivity;
 import com.commit451.gitlab.activity.IssueActivity;
 import com.commit451.gitlab.activity.LoginActivity;
 import com.commit451.gitlab.activity.MergeRequestActivity;
+import com.commit451.gitlab.activity.MilestoneActivity;
 import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.activity.ProjectsActivity;
 import com.commit451.gitlab.activity.SearchActivity;
@@ -25,6 +27,7 @@ import com.commit451.gitlab.dialog.NewIssuePopupDialog;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.model.api.Issue;
 import com.commit451.gitlab.model.api.MergeRequest;
+import com.commit451.gitlab.model.api.Milestone;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.UserBasic;
 
@@ -84,6 +87,10 @@ public class NavigationManager {
         activity.startActivity(GroupActivity.newInstance(activity, groupId));
     }
 
+    public static void navigateToMilestone(Activity activity, Project project, Milestone milestone) {
+        activity.startActivity(MilestoneActivity.newInstance(activity, project, milestone));
+    }
+
     public static void navigateToIssue(Activity activity, Project project, Issue issue) {
         activity.startActivity(IssueActivity.newInstance(activity, project, issue));
     }
@@ -123,5 +130,9 @@ public class NavigationManager {
             activity.startActivity(intent);
             activity.overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
         }
+    }
+
+    public static void navigateToAddMilestone(Activity activity, Project project) {
+        activity.startActivity(AddMilestoneActivity.newInstance(activity, project.getId()));
     }
 }

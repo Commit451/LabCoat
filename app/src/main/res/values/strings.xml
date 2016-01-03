@@ -17,6 +17,7 @@
     <string name="action_copy_link">Copy link</string>
     <string name="action_close">Close</string>
     <string name="action_assign">Assign</string>
+    <string name="action_create">Create</string>
 
     <!-- Tabs -->
     <string name="title_overview">Overview</string>
@@ -237,6 +238,11 @@
 
     <!-- Milestones -->
     <string name="no_milestones">No milestones</string>
+    <string name="due_date_formatted">Due %1$s</string>
+    <string name="milestone_hint_title">Title</string>
+    <string name="milestone_hint_description">Description</string>
+    <string name="due_date">Due Date</string>
+    <string name="failed_to_create_milestone">Failed to create or modify milestone</string>
 
     <!-- Members -->
     <string name="no_project_members">No project members.</string>

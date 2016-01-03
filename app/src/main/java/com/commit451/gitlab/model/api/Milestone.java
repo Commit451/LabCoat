@@ -1,14 +1,21 @@
 package com.commit451.gitlab.model.api;
 
+import android.support.annotation.Nullable;
+import android.support.annotation.StringDef;
+import android.text.TextUtils;
+
 import com.google.gson.annotations.SerializedName;
 
 import org.parceler.Parcel;
 
-import android.support.annotation.StringDef;
-
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
+
+import timber.log.Timber;
 
 @Parcel
 public class Milestone {
@@ -18,6 +25,8 @@ public class Milestone {
     @StringDef({STATE_REOPEN, STATE_CLOSE})
     @Retention(RetentionPolicy.SOURCE)
     public @interface EditState {}
+
+    public static final SimpleDateFormat DUE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-d", Locale.US);
 
     @SerializedName("id")
     long mId;
@@ -36,7 +45,7 @@ public class Milestone {
     @SerializedName("updated_at")
     Date mUpdatedAt;
     @SerializedName("due_date")
-    Date mDueDate;
+    String mDueDate;
 
     public Milestone() {}
 
@@ -72,8 +81,17 @@ public class Milestone {
         return mUpdatedAt;
     }
 
+    @Nullable
     public Date getDueDate() {
-        return mDueDate;
+        if (TextUtils.isEmpty(mDueDate)) {
+            return null;
+        }
+        try {
+            return DUE_DATE_FORMAT.parse(mDueDate);
+        } catch (ParseException e) {
+            Timber.e(null, e);
+        }
+        return null;
     }
 
     @Override

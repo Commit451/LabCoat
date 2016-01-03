@@ -41,6 +41,11 @@ public class MilestoneAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         notifyDataSetChanged();
     }
 
+    public void addMilestone(Milestone milestone) {
+        mValues.add(0, milestone);
+        notifyItemInserted(0);
+    }
+
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         MilestoneViewHolder holder = MilestoneViewHolder.newInstance(parent);
