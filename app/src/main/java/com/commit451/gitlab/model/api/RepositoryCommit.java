@@ -6,9 +6,7 @@ import com.commit451.gitlab.util.ObjectUtil;
 
 import org.parceler.Parcel;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 @Parcel
 public class RepositoryCommit {
@@ -57,24 +55,6 @@ public class RepositoryCommit {
         return mMessage;
     }
 
-    public List<Line> getLines() {
-        if (mMessage == null) {
-            return null;
-        }
-
-        List<Line> lines = new ArrayList<>();
-
-        String[] temp = mMessage.split("\\r?\\n");
-        for (String s : temp) {
-            Line line = new Line();
-            line.lineContent = s;
-
-            lines.add(line);
-        }
-
-        return lines;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof RepositoryCommit)) {
@@ -88,9 +68,5 @@ public class RepositoryCommit {
     @Override
     public int hashCode() {
         return ObjectUtil.hash(mId);
-    }
-
-    public class Line {
-        public String lineContent;
     }
 }
