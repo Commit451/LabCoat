@@ -25,7 +25,7 @@ import java.util.Set;
  */
 public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-    private static final int SECTION_COUNT = 7;
+    private static final int SECTION_COUNT = 8;
     private static final int OVERVIEW_POS = 0;
     private static final int ACTIVITY_POS = 1;
     private static final int FILES_POS = 2;

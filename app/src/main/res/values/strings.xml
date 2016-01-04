@@ -159,6 +159,8 @@
     </string-array>
     <string name="created_time">Created %1$s by %2$s</string>
     <string name="no_assignee">No Assignee</string>
+    <string name="assignee">Assignee</string>
+    <string name="milestone">Milestone</string>
 
     <!-- User -->
     <string name="remove_user_dialog_title">Remove user?</string>

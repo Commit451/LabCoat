@@ -109,6 +109,11 @@ public class Milestone {
         return (int) (mId ^ (mId >>> 32));
     }
 
+    @Override
+    public String toString() {
+        return mTitle;
+    }
+
     public enum State {
         @SerializedName("opened")
         OPENED,

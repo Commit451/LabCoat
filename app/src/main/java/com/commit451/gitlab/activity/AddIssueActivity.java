@@ -9,7 +9,9 @@ import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.commit451.gitlab.GitLabApp;
@@ -18,9 +20,12 @@ import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.IssueChangedEvent;
 import com.commit451.gitlab.event.IssueCreatedEvent;
 import com.commit451.gitlab.model.api.Issue;
+import com.commit451.gitlab.model.api.Milestone;
 import com.commit451.gitlab.model.api.Project;
 
 import org.parceler.Parcels;
+
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -52,26 +57,60 @@ public class AddIssueActivity extends MorphActivity {
     @Bind(R.id.title) EditText mTitleInput;
     @Bind(R.id.description) EditText mDescriptionInput;
     @Bind(R.id.progress) View mProgress;
+    @Bind(R.id.assignee_spinner) Spinner mAssigneeSpinner;
+    @Bind(R.id.milestone_progress) View mMilestoneProgress;
+    @Bind(R.id.milestone_spinner) Spinner mMilestoneSpinner;
+    ArrayAdapter<Milestone> mMilestoneArrayAdapter;
+
 
     private Project mProject;
     private Issue mIssue;
 
-    private void save() {
-        if(!TextUtils.isEmpty(mTitleInput.getText())) {
-            mTitleInputLayout.setError(null);
-            showLoading();
-            if (mIssue == null) {
-                GitLabClient.instance().createIssue(mProject.getId(), mTitleInput.getText().toString().trim(), mDescriptionInput.getText().toString().trim())
-                        .enqueue(mIssueCallback);
-            } else {
-                GitLabClient.instance().updateIssue(mProject.getId(), mIssue.getId(), mTitleInput.getText().toString(), mDescriptionInput.getText().toString())
-                        .enqueue(mIssueCallback);
+    private final Callback<List<Milestone>> mMilestonesCallback = new Callback<List<Milestone>>() {
+        @Override
+        public void onResponse(Response<List<Milestone>> response, Retrofit retrofit) {
+            mMilestoneProgress.setVisibility(View.GONE);
+            if (!response.isSuccess()) {
+                mMilestoneSpinner.setVisibility(View.GONE);
+                return;
             }
+            mMilestoneSpinner.setVisibility(View.VISIBLE);
+            mMilestoneArrayAdapter.clear();
+            mMilestoneArrayAdapter.addAll(response.body());
         }
-        else {
-            mTitleInputLayout.setError(getString(R.string.required_field));
+
+        @Override
+        public void onFailure(Throwable t) {
+            Timber.e(t, null);
+            mMilestoneProgress.setVisibility(View.GONE);
+            mMilestoneSpinner.setVisibility(View.GONE);
         }
-    }
+    };
+
+    private final Callback<Issue> mIssueCallback = new Callback<Issue>() {
+
+        @Override
+        public void onResponse(Response<Issue> response, Retrofit retrofit) {
+            if (!response.isSuccess()) {
+                Toast.makeText(AddIssueActivity.this, getString(R.string.failed_to_create_issue), Toast.LENGTH_SHORT)
+                        .show();
+                return;
+            }
+            if (mIssue == null) {
+                GitLabApp.bus().post(new IssueCreatedEvent(response.body()));
+            } else {
+                GitLabApp.bus().post(new IssueChangedEvent(response.body()));
+            }
+            dismiss();
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+            Timber.e(t, null);
+            Toast.makeText(AddIssueActivity.this, getString(R.string.connection_error), Toast.LENGTH_SHORT)
+                    .show();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,32 +148,16 @@ public class AddIssueActivity extends MorphActivity {
         } else {
             mToolbar.inflateMenu(R.menu.menu_add_milestone);
         }
+
+        mMilestoneArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1);
+        mMilestoneSpinner.setAdapter(mMilestoneArrayAdapter);
+
+        load();
     }
 
-    private Callback<Issue> mIssueCallback = new Callback<Issue>() {
-
-        @Override
-        public void onResponse(Response<Issue> response, Retrofit retrofit) {
-            if (!response.isSuccess()) {
-                Toast.makeText(AddIssueActivity.this, getString(R.string.failed_to_create_issue), Toast.LENGTH_SHORT)
-                        .show();
-                return;
-            }
-            if (mIssue == null) {
-                GitLabApp.bus().post(new IssueCreatedEvent(response.body()));
-            } else {
-                GitLabApp.bus().post(new IssueChangedEvent(response.body()));
-            }
-            dismiss();
-        }
-
-        @Override
-        public void onFailure(Throwable t) {
-            Timber.e(t, null);
-            Toast.makeText(AddIssueActivity.this, getString(R.string.connection_error), Toast.LENGTH_SHORT)
-                    .show();
-        }
-    };
+    private void load() {
+        GitLabClient.instance().getMilestones(mProject.getId()).enqueue(mMilestonesCallback);
+    }
 
     private void showLoading() {
         mProgress.setVisibility(View.VISIBLE);
@@ -148,6 +171,23 @@ public class AddIssueActivity extends MorphActivity {
         }
         if (!TextUtils.isEmpty(mIssue.getDescription())) {
             mDescriptionInput.setText(mIssue.getDescription());
+        }
+    }
+
+    private void save() {
+        if(!TextUtils.isEmpty(mTitleInput.getText())) {
+            mTitleInputLayout.setError(null);
+            showLoading();
+            if (mIssue == null) {
+                GitLabClient.instance().createIssue(mProject.getId(), mTitleInput.getText().toString().trim(), mDescriptionInput.getText().toString().trim())
+                        .enqueue(mIssueCallback);
+            } else {
+                GitLabClient.instance().updateIssue(mProject.getId(), mIssue.getId(), mTitleInput.getText().toString(), mDescriptionInput.getText().toString())
+                        .enqueue(mIssueCallback);
+            }
+        }
+        else {
+            mTitleInputLayout.setError(getString(R.string.required_field));
         }
     }
 
