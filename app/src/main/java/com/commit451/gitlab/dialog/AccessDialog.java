@@ -72,7 +72,7 @@ public class AccessDialog extends AppCompatDialog {
 
         @Override
         public void onFailure(Throwable t) {
-            Timber.e(null, t);
+            Timber.e(t, null);
             onError();
         }
     };

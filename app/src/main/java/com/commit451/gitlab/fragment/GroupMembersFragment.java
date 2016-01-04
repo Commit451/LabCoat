@@ -125,7 +125,7 @@ public class GroupMembersFragment extends BaseFragment {
 
         @Override
         public void onFailure(Throwable t) {
-            Timber.e(null, t);
+            Timber.e(t, null);
 
             if (getView() == null) {
                 return;

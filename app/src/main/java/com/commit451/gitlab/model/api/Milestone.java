@@ -89,7 +89,7 @@ public class Milestone {
         try {
             return DUE_DATE_FORMAT.parse(mDueDate);
         } catch (ParseException e) {
-            Timber.e(null, e);
+            Timber.e(e, null);
         }
         return null;
     }
