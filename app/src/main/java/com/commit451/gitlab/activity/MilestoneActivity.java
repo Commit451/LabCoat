@@ -69,8 +69,8 @@ public class MilestoneActivity extends BaseActivity {
     }
 
     @OnClick(R.id.edit)
-    void onEditClicked() {
-        NavigationManager.navigateToEditMilestone(MilestoneActivity.this, mProject, mMilestone);
+    void onEditClicked(View fab) {
+        NavigationManager.navigateToEditMilestone(MilestoneActivity.this, fab, mProject, mMilestone);
     }
 
     private final Callback<List<Issue>> mIssuesCallback = new Callback<List<Issue>>() {

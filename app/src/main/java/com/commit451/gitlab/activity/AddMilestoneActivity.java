@@ -34,7 +34,7 @@ import retrofit.Response;
 import retrofit.Retrofit;
 import timber.log.Timber;
 
-public class AddMilestoneActivity extends BaseActivity {
+public class AddMilestoneActivity extends MorphActivity {
 
     private static final String KEY_PROJECT_ID = "project_id";
     private static final String KEY_MILESTONE = "milestone";
@@ -135,6 +135,7 @@ public class AddMilestoneActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_milestone);
         ButterKnife.bind(this);
+        morph(mRoot);
         mProjectId = getIntent().getLongExtra(KEY_PROJECT_ID, -1);
         mMilestone = Parcels.unwrap(getIntent().getParcelableExtra(KEY_MILESTONE));
         if (mMilestone != null) {

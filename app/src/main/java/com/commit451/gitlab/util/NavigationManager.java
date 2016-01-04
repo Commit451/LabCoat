@@ -122,6 +122,20 @@ public class NavigationManager {
 
     private static void navigateToAddIssue(Activity activity, View fab, Project project, Issue issue) {
         Intent intent = AddIssueActivity.newIntent(activity, project, issue);
+        startMorphActivity(activity, fab, intent);
+    }
+
+    public static void navigateToAddMilestone(Activity activity, View fab, Project project) {
+        Intent intent = AddMilestoneActivity.newInstance(activity, project.getId());
+        startMorphActivity(activity, fab, intent);
+    }
+
+    public static void navigateToEditMilestone(Activity activity, View fab, Project project, Milestone milestone) {
+        Intent intent = AddMilestoneActivity.newInstance(activity, project.getId(), milestone);
+        startMorphActivity(activity, fab, intent);
+    }
+
+    private static void startMorphActivity(Activity activity, View fab, Intent intent) {
         if (Build.VERSION.SDK_INT >= 21 && fab != null) {
             ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation
                     (activity, fab, activity.getString(R.string.transition_morph));
@@ -130,13 +144,5 @@ public class NavigationManager {
             activity.startActivity(intent);
             activity.overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
         }
-    }
-
-    public static void navigateToAddMilestone(Activity activity, Project project) {
-        activity.startActivity(AddMilestoneActivity.newInstance(activity, project.getId()));
-    }
-
-    public static void navigateToEditMilestone(Activity activity, Project project, Milestone milestone) {
-        activity.startActivity(AddMilestoneActivity.newInstance(activity, project.getId(), milestone));
     }
 }

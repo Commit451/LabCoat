@@ -57,9 +57,9 @@ public class MilestonesFragment extends BaseFragment {
     private String[] mStates;
 
     @OnClick(R.id.add)
-    public void onAddClicked() {
+    public void onAddClicked(View fab) {
         if (mProject != null) {
-            NavigationManager.navigateToAddMilestone(getActivity(), mProject);
+            NavigationManager.navigateToAddMilestone(getActivity(), fab, mProject);
         } else {
             Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.wait_for_project_to_load), Snackbar.LENGTH_SHORT)
                     .show();

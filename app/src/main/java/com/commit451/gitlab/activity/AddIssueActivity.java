@@ -1,27 +1,17 @@
 package com.commit451.gitlab.activity;
 
-import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.transition.ArcMotion;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AnimationUtils;
-import android.view.animation.Interpolator;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.commit451.easel.Easel;
 import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
@@ -29,8 +19,6 @@ import com.commit451.gitlab.event.IssueChangedEvent;
 import com.commit451.gitlab.event.IssueCreatedEvent;
 import com.commit451.gitlab.model.api.Issue;
 import com.commit451.gitlab.model.api.Project;
-import com.commit451.gitlab.transition.MorphDialogToFab;
-import com.commit451.gitlab.transition.MorphFabToDialog;
 
 import org.parceler.Parcels;
 
@@ -44,7 +32,7 @@ import timber.log.Timber;
 /**
  * Dialog to input new issues, but not really a dialog at all wink wink
  */
-public class AddIssueActivity extends BaseActivity {
+public class AddIssueActivity extends MorphActivity {
 
     private static final String KEY_PROJECT = "project";
     private static final String KEY_ISSUE = "issue";
@@ -58,7 +46,7 @@ public class AddIssueActivity extends BaseActivity {
         return intent;
     }
 
-    @Bind(R.id.root) ViewGroup mContainer;
+    @Bind(R.id.root) ViewGroup mRoot;
     @Bind(R.id.toolbar) Toolbar mToolbar;
     @Bind(R.id.title_text_input_layout) TextInputLayout mTitleInputLayout;
     @Bind(R.id.title) EditText mTitleInput;
@@ -90,6 +78,7 @@ public class AddIssueActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_issue);
         ButterKnife.bind(this);
+        morph(mRoot);
 
         mProject = Parcels.unwrap(getIntent().getParcelableExtra(KEY_PROJECT));
         mIssue = Parcels.unwrap(getIntent().getParcelableExtra(KEY_ISSUE));
@@ -120,53 +109,6 @@ public class AddIssueActivity extends BaseActivity {
         } else {
             mToolbar.inflateMenu(R.menu.menu_add_milestone);
         }
-
-        if (Build.VERSION.SDK_INT >= 21) {
-            int fabColor = Easel.getThemeAttrColor(this, R.attr.colorAccent);
-            int dialogColor = ContextCompat.getColor(this, R.color.grey);
-            setupSharedElementTransitionsFab(this, mContainer,
-                    fabColor,
-                    dialogColor,
-                    getResources().getDimensionPixelSize(R.dimen.dialog_corners));
-        }
-    }
-
-    @TargetApi(21)
-    public void setupSharedElementTransitionsFab(@NonNull Activity activity,
-                                                 @Nullable View target,
-                                                 int fabColor,
-                                                 int dialogColor,
-                                                 int dialogCornerRadius) {
-        ArcMotion arcMotion = new ArcMotion();
-        arcMotion.setMinimumHorizontalAngle(50f);
-        arcMotion.setMinimumVerticalAngle(50f);
-        Interpolator easeInOut = AnimationUtils.loadInterpolator(activity, android.R.interpolator.fast_out_slow_in);
-        MorphFabToDialog sharedEnter = new MorphFabToDialog(fabColor, dialogColor, dialogCornerRadius);
-        sharedEnter.setPathMotion(arcMotion);
-        sharedEnter.setInterpolator(easeInOut);
-        MorphDialogToFab sharedReturn = new MorphDialogToFab(dialogColor, fabColor);
-        sharedReturn.setPathMotion(arcMotion);
-        sharedReturn.setInterpolator(easeInOut);
-        if (target != null) {
-            sharedEnter.addTarget(target);
-            sharedReturn.addTarget(target);
-        }
-        activity.getWindow().setSharedElementEnterTransition(sharedEnter);
-        activity.getWindow().setSharedElementReturnTransition(sharedReturn);
-    }
-
-    @TargetApi(21)
-    public void dismiss() {
-        if (Build.VERSION.SDK_INT >= 21) {
-            finishAfterTransition();
-        } else {
-            finish();
-        }
-    }
-
-    @Override
-    public void onBackPressed() {
-        dismiss();
     }
 
     private Callback<Issue> mIssueCallback = new Callback<Issue>() {
