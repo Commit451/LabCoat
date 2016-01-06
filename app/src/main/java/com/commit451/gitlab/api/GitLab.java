@@ -137,7 +137,7 @@ public interface GitLab {
 
     /* --- MILESTONES --- */
 
-    @GET(API_VERSION + "/projects/{id}/milestones?per_page=100")
+    @GET(API_VERSION + "/projects/{id}/milestones?per_page=10")
     Call<List<Milestone>> getMilestones(@Path("id") long projectId);
 
     @GET
@@ -234,7 +234,7 @@ public interface GitLab {
     @GET(API_VERSION + "/projects/{id}/repository/contributors?per_page=100")
     Call<List<Contributor>> getContributors(@Path("id") long projectId);
 
-    @GET(API_VERSION + "/projects/{id}/repository/tree?per_page=100")
+    @GET(API_VERSION + "/projects/{id}/repository/tree")
     Call<List<RepositoryTreeObject>> getTree(@Path("id") long projectId,
                                              @Query("ref_name") String branchName,
                                              @Query("path") String path);

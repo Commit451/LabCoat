@@ -1,18 +1,5 @@
 package com.commit451.gitlab.fragment;
 
-import com.commit451.gitlab.GitLabApp;
-import com.commit451.gitlab.R;
-import com.commit451.gitlab.activity.ProjectActivity;
-import com.commit451.gitlab.adapter.BreadcrumbAdapter;
-import com.commit451.gitlab.adapter.FilesAdapter;
-import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.event.ProjectReloadEvent;
-import com.commit451.gitlab.model.api.Project;
-import com.commit451.gitlab.model.api.RepositoryTreeObject;
-import com.commit451.gitlab.util.IntentUtil;
-import com.commit451.gitlab.util.NavigationManager;
-import com.squareup.otto.Subscribe;
-
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -26,6 +13,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.commit451.gitlab.GitLabApp;
+import com.commit451.gitlab.R;
+import com.commit451.gitlab.activity.ProjectActivity;
+import com.commit451.gitlab.adapter.BreadcrumbAdapter;
+import com.commit451.gitlab.adapter.FilesAdapter;
+import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.event.ProjectReloadEvent;
+import com.commit451.gitlab.model.api.Project;
+import com.commit451.gitlab.model.api.RepositoryTreeObject;
+import com.commit451.gitlab.util.IntentUtil;
+import com.commit451.gitlab.util.NavigationManager;
+import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -232,7 +232,7 @@ public class FilesFragment extends BaseFragment {
 
     private void updateBreadcrumbs() {
         List<BreadcrumbAdapter.Breadcrumb> breadcrumbs = new ArrayList<>();
-        breadcrumbs.add(new BreadcrumbAdapter.Breadcrumb("ROOT", new BreadcrumbAdapter.Listener() {
+        breadcrumbs.add(new BreadcrumbAdapter.Breadcrumb(mProject.getName(), new BreadcrumbAdapter.Listener() {
             @Override
             public void onClick() {
                 loadData("");

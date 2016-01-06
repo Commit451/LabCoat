@@ -35,6 +35,10 @@ public class MilestoneAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     public void setData(Collection<Milestone> milestones) {
         mValues.clear();
+        addData(milestones);
+    }
+
+    public void addData(Collection<Milestone> milestones) {
         if (milestones != null) {
             mValues.addAll(milestones);
         }
