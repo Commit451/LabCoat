@@ -38,6 +38,10 @@ public class MergeRequestAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     public void setData(Collection<MergeRequest> mergeRequests) {
         mValues.clear();
+        addData(mergeRequests);
+    }
+
+    public void addData(Collection<MergeRequest> mergeRequests) {
         if (mergeRequests != null) {
             mValues.addAll(mergeRequests);
         }

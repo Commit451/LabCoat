@@ -137,7 +137,7 @@ public interface GitLab {
 
     /* --- MILESTONES --- */
 
-    @GET(API_VERSION + "/projects/{id}/milestones?per_page=10")
+    @GET(API_VERSION + "/projects/{id}/milestones")
     Call<List<Milestone>> getMilestones(@Path("id") long projectId);
 
     @GET
@@ -167,12 +167,10 @@ public interface GitLab {
     @GET(API_VERSION + "/projects/{id}/merge_requests?per_page=100")
     Call<List<MergeRequest>> getMergeRequests(@Path("id") long projectId);
 
-    @GET(API_VERSION + "/projects/{id}/merge_requests?per_page=100")
+    @GET(API_VERSION + "/projects/{id}/merge_requests")
     Call<List<MergeRequest>> getMergeRequests(@Path("id") long projectId,
-                                              @Query("state") String state);
-
-    @GET
-    Call<List<MergeRequest>> getMergeRequests(@Url String url);
+                                              @Query("state") String state,
+                                              @Query("page") int page);
 
     @GET(API_VERSION + "/projects/{id}/merge_request/{merge_request_id}")
     Call<MergeRequest> getMergeRequest(@Path("id") long projectId,

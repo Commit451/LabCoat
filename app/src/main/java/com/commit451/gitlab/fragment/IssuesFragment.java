@@ -220,7 +220,8 @@ public class IssuesFragment extends BaseFragment {
         }
     }
 
-    public void loadData() {
+    @Override
+    protected void loadData() {
         if (getView() == null) {
             return;
         }
@@ -250,10 +251,8 @@ public class IssuesFragment extends BaseFragment {
             return;
         }
         mPage++;
-
         mLoading = true;
         Timber.d("loadMore called for " + mPage);
-
         GitLabClient.instance().getIssues(mProject.getId(), mState, mPage).enqueue(mMoreIssuesCallback);
     }
 

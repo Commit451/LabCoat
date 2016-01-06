@@ -1,16 +1,5 @@
 package com.commit451.gitlab.fragment;
 
-import com.commit451.gitlab.GitLabApp;
-import com.commit451.gitlab.R;
-import com.commit451.gitlab.activity.ProjectActivity;
-import com.commit451.gitlab.adapter.MergeRequestAdapter;
-import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.event.ProjectReloadEvent;
-import com.commit451.gitlab.model.api.MergeRequest;
-import com.commit451.gitlab.model.api.Project;
-import com.commit451.gitlab.util.NavigationManager;
-import com.squareup.otto.Subscribe;
-
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,6 +11,17 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import com.commit451.gitlab.GitLabApp;
+import com.commit451.gitlab.R;
+import com.commit451.gitlab.activity.ProjectActivity;
+import com.commit451.gitlab.adapter.MergeRequestAdapter;
+import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.event.ProjectReloadEvent;
+import com.commit451.gitlab.model.api.MergeRequest;
+import com.commit451.gitlab.model.api.Project;
+import com.commit451.gitlab.util.NavigationManager;
+import com.squareup.otto.Subscribe;
 
 import java.util.List;
 
@@ -47,10 +47,14 @@ public class MergeRequestsFragment extends BaseFragment {
     private Project mProject;
     private EventReceiver mEventReceiver;
     private MergeRequestAdapter mMergeRequestAdapter;
+    private LinearLayoutManager mMergeLayoutManager;
 
     @BindString(R.string.merge_request_state_value_default)
     String mState;
     private String[] mStates;
+    private int mPage;
+    private boolean mLoading = false;
+    private boolean mDoneLoading;
 
     private final AdapterView.OnItemSelectedListener mSpinnerItemSelectedListener = new AdapterView.OnItemSelectedListener() {
         @Override
@@ -70,6 +74,19 @@ public class MergeRequestsFragment extends BaseFragment {
         }
     };
 
+    private final RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+            int visibleItemCount = mMergeLayoutManager.getChildCount();
+            int totalItemCount = mMergeLayoutManager.getItemCount();
+            int firstVisibleItem = mMergeLayoutManager.findFirstVisibleItemPosition();
+            if (firstVisibleItem + visibleItemCount >= totalItemCount && !mLoading && !mDoneLoading) {
+                loadMore();
+            }
+        }
+    };
+
     private final Callback<List<MergeRequest>> mCallback = new Callback<List<MergeRequest>>() {
         @Override
         public void onResponse(Response<List<MergeRequest>> response, Retrofit retrofit) {
@@ -86,6 +103,7 @@ public class MergeRequestsFragment extends BaseFragment {
             }
 
             mSwipeRefreshLayout.setRefreshing(false);
+            mLoading = false;
 
             if (!response.body().isEmpty()) {
                 mMessageView.setVisibility(View.GONE);
@@ -105,6 +123,7 @@ public class MergeRequestsFragment extends BaseFragment {
             if (getView() == null) {
                 return;
             }
+            mLoading = false;
 
             mSwipeRefreshLayout.setRefreshing(false);
 
@@ -114,10 +133,34 @@ public class MergeRequestsFragment extends BaseFragment {
         }
     };
 
+    private final Callback<List<MergeRequest>> mMoreCallback = new Callback<List<MergeRequest>>() {
+        @Override
+        public void onResponse(Response<List<MergeRequest>> response, Retrofit retrofit) {
+            if (getView() == null) {
+                return;
+            }
+
+            mLoading = false;
+            mMergeRequestAdapter.addData(response.body());
+            if (response.body().isEmpty()) {
+                mDoneLoading = true;
+            }
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+            Timber.e(t, null);
+
+            if (getView() == null) {
+                return;
+            }
+            mLoading = false;
+        }
+    };
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         mStates = getContext().getResources().getStringArray(R.array.merge_request_state_values);
     }
 
@@ -135,8 +178,10 @@ public class MergeRequestsFragment extends BaseFragment {
         GitLabApp.bus().register(mEventReceiver);
 
         mMergeRequestAdapter = new MergeRequestAdapter(mMergeRequestAdapterListener);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mMergeLayoutManager = new LinearLayoutManager(getActivity());
+        mRecyclerView.setLayoutManager(mMergeLayoutManager);
         mRecyclerView.setAdapter(mMergeRequestAdapter);
+        mRecyclerView.addOnScrollListener(mOnScrollListener);
 
         mSpinner.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, getResources().getStringArray(R.array.merge_request_state_names)));
         mSpinner.setOnItemSelectedListener(mSpinnerItemSelectedListener);
@@ -173,6 +218,10 @@ public class MergeRequestsFragment extends BaseFragment {
             return;
         }
 
+        mPage = 1;
+        mLoading = true;
+        mDoneLoading = false;
+
         mSwipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
@@ -182,7 +231,17 @@ public class MergeRequestsFragment extends BaseFragment {
             }
         });
 
-        GitLabClient.instance().getMergeRequests(mProject.getId(), mState).enqueue(mCallback);
+        GitLabClient.instance().getMergeRequests(mProject.getId(), mState, mPage).enqueue(mCallback);
+    }
+
+    private void loadMore() {
+        if (getView() == null) {
+            return;
+        }
+        mPage++;
+        mLoading = true;
+        Timber.d("loadMore called for " + mPage);
+        GitLabClient.instance().getMergeRequests(mProject.getId(), mState, mPage).enqueue(mMoreCallback);
     }
 
     private class EventReceiver {
