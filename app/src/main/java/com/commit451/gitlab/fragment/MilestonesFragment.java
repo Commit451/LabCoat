@@ -22,6 +22,7 @@ import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.MilestoneChangedEvent;
 import com.commit451.gitlab.event.MilestoneCreatedEvent;
 import com.commit451.gitlab.event.ProjectReloadEvent;
+import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.model.api.Milestone;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.util.NavigationManager;
@@ -105,16 +106,17 @@ public class MilestonesFragment extends BaseFragment {
     private final Callback<List<Milestone>> mCallback = new Callback<List<Milestone>>() {
         @Override
         public void onResponse(Response<List<Milestone>> response, Retrofit retrofit) {
+            mLoading = false;
             if (getView() == null) {
                 return;
             }
 
-            mLoading = false;
             if (!response.isSuccess()) {
                 Timber.e("Milestones requests response was not a success: %d", response.code());
                 mMessageView.setVisibility(View.VISIBLE);
                 mMessageView.setText(R.string.connection_error_merge_requests);
                 mMilestoneAdapter.setData(null);
+                mNextPageUrl = null;
                 return;
             }
 
@@ -122,17 +124,25 @@ public class MilestonesFragment extends BaseFragment {
 
             if (!response.body().isEmpty()) {
                 mMessageView.setVisibility(View.GONE);
-            } else {
+            } else if (mNextPageUrl == null) {
                 Timber.d("No milestones requests found");
                 mMessageView.setVisibility(View.VISIBLE);
                 mMessageView.setText(R.string.no_milestones);
             }
+
+            if (mNextPageUrl == null) {
+                mMilestoneAdapter.setData(response.body());
+            } else {
+                mMilestoneAdapter.addData(response.body());
+            }
+
             mNextPageUrl = PaginationUtil.parse(response).getNext();
-            mMilestoneAdapter.setData(response.body());
+            Timber.d("Next page url " + mNextPageUrl);
         }
 
         @Override
         public void onFailure(Throwable t) {
+            mLoading = false;
             Timber.e(t, null);
 
             if (getView() == null) {
@@ -144,29 +154,7 @@ public class MilestonesFragment extends BaseFragment {
             mMessageView.setVisibility(View.VISIBLE);
             mMessageView.setText(R.string.connection_error);
             mMilestoneAdapter.setData(null);
-        }
-    };
-
-    private final Callback<List<Milestone>> mMoreCallback = new Callback<List<Milestone>>() {
-        @Override
-        public void onResponse(Response<List<Milestone>> response, Retrofit retrofit) {
-            if (getView() == null) {
-                return;
-            }
-
-            mLoading = false;
-            mNextPageUrl = PaginationUtil.parse(response).getNext();
-            mMilestoneAdapter.addData(response.body());
-        }
-
-        @Override
-        public void onFailure(Throwable t) {
-            Timber.e(t, null);
-
-            if (getView() == null) {
-                return;
-            }
-            mLoading = false;
+            mNextPageUrl = null;
         }
     };
 
@@ -240,14 +228,35 @@ public class MilestonesFragment extends BaseFragment {
                 }
             }
         });
+
+        mNextPageUrl = null;
         mLoading = true;
 
         GitLabClient.instance().getMilestones(mProject.getId()).enqueue(mCallback);
     }
 
     private void loadMore() {
+        if (getView() == null) {
+            return;
+        }
+
+        if (mNextPageUrl == null) {
+            return;
+        }
+
+        mSwipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                if (mSwipeRefreshLayout != null) {
+                    mSwipeRefreshLayout.setRefreshing(true);
+                }
+            }
+        });
+
         mLoading = true;
-        GitLabClient.instance().getMilestones(mNextPageUrl.toString()).enqueue(mMoreCallback);
+
+        Timber.d("loadMore called for " + mNextPageUrl);
+        GitLabClient.instance().getMilestones(mNextPageUrl.toString()).enqueue(mCallback);
     }
 
     private class EventReceiver {
@@ -259,9 +268,11 @@ public class MilestonesFragment extends BaseFragment {
 
         @Subscribe
         public void onMilestoneCreated(MilestoneCreatedEvent event) {
-            mMessageView.setVisibility(View.GONE);
             mMilestoneAdapter.addMilestone(event.mMilestone);
-            mRecyclerView.smoothScrollToPosition(0);
+            if (getView() != null) {
+                mMessageView.setVisibility(View.GONE);
+                mRecyclerView.smoothScrollToPosition(0);
+            }
         }
 
         @Subscribe

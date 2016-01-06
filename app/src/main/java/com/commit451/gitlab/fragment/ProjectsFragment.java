@@ -102,7 +102,7 @@ public class ProjectsFragment extends BaseFragment {
 
             if (!response.body().isEmpty()) {
                 mMessageView.setVisibility(View.GONE);
-            } else {
+            } else if (mNextPageUrl == null) {
                 Timber.d("No projects found");
                 mMessageView.setVisibility(View.VISIBLE);
                 mMessageView.setText(R.string.no_projects);
@@ -215,9 +215,22 @@ public class ProjectsFragment extends BaseFragment {
     }
 
     private void loadMore() {
+        if (getView() == null) {
+            return;
+        }
+
         if (mNextPageUrl == null) {
             return;
         }
+
+        mSwipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                if (mSwipeRefreshLayout != null) {
+                    mSwipeRefreshLayout.setRefreshing(true);
+                }
+            }
+        });
 
         Timber.d("loadMore called for " + mNextPageUrl);
         showLoading();

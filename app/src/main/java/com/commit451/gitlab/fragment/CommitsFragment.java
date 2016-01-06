@@ -47,7 +47,6 @@ public class CommitsFragment extends BaseFragment {
     private CommitsAdapter mCommitsAdapter;
     private int mPage = 0;
     private boolean mLoading = false;
-    private boolean mDoneLoading = false;
 
     private final RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
         @Override
@@ -56,7 +55,7 @@ public class CommitsFragment extends BaseFragment {
             int visibleItemCount = mCommitsLayoutManager.getChildCount();
             int totalItemCount = mCommitsLayoutManager.getItemCount();
             int firstVisibleItem = mCommitsLayoutManager.findFirstVisibleItemPosition();
-            if (firstVisibleItem + visibleItemCount >= totalItemCount && !mLoading && !mDoneLoading) {
+            if (firstVisibleItem + visibleItemCount >= totalItemCount && !mLoading && mPage >= 1) {
                 loadMore();
             }
         }
@@ -65,11 +64,11 @@ public class CommitsFragment extends BaseFragment {
     private final Callback<List<RepositoryCommit>> mCommitsCallback = new Callback<List<RepositoryCommit>>() {
         @Override
         public void onResponse(Response<List<RepositoryCommit>> response, Retrofit retrofit) {
+            mLoading = false;
             if (getView() == null) {
                 return;
             }
 
-            mLoading = false;
             mSwipeRefreshLayout.setRefreshing(false);
 
             if (!response.isSuccess()) {
@@ -77,25 +76,34 @@ public class CommitsFragment extends BaseFragment {
                 mMessageView.setVisibility(View.VISIBLE);
                 mMessageView.setText(R.string.connection_error_commits);
                 mCommitsAdapter.setData(null);
+                mPage = 0;
                 return;
             }
 
             if (!response.body().isEmpty()) {
                 mMessageView.setVisibility(View.GONE);
-            } else {
+            } else if (mPage <= 1) {
                 Timber.d("No commits have been made");
                 mMessageView.setVisibility(View.VISIBLE);
                 mMessageView.setText(R.string.no_commits_found);
             }
 
-            mCommitsAdapter.setData(response.body());
+            if (mPage <= 1) {
+                mCommitsAdapter.setData(response.body());
+            } else {
+                mCommitsAdapter.addData(response.body());
+            }
+
+            if (response.body().isEmpty()) {
+                mPage = 0;
+            }
         }
 
         @Override
         public void onFailure(Throwable t) {
+            mLoading = false;
             Timber.e(t, null);
 
-            mLoading = false;
             if (getView() == null) {
                 return;
             }
@@ -105,37 +113,7 @@ public class CommitsFragment extends BaseFragment {
             mMessageView.setVisibility(View.VISIBLE);
             mMessageView.setText(R.string.connection_error);
             mCommitsAdapter.setData(null);
-        }
-    };
-
-    private final Callback<List<RepositoryCommit>> mMoreCommitsCallback = new Callback<List<RepositoryCommit>>() {
-        @Override
-        public void onResponse(Response<List<RepositoryCommit>> response, Retrofit retrofit) {
-            if (getView() == null) {
-                return;
-            }
-            mLoading = false;
-            mSwipeRefreshLayout.setRefreshing(false);
-
-            if (!response.isSuccess()) {
-                return;
-            }
-
-            mCommitsAdapter.addData(response.body());
-            if (response.body().isEmpty()) {
-                mDoneLoading = true;
-            }
-        }
-
-        @Override
-        public void onFailure(Throwable t) {
-            Timber.e(t, null);
-            mLoading = false;
-            if (getView() == null) {
-                return;
-            }
-
-            mSwipeRefreshLayout.setRefreshing(false);
+            mPage = 0;
         }
     };
 
@@ -199,9 +177,29 @@ public class CommitsFragment extends BaseFragment {
             return;
         }
 
+        mSwipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                if (mSwipeRefreshLayout != null) {
+                    mSwipeRefreshLayout.setRefreshing(true);
+                }
+            }
+        });
+
+        mPage = 1;
         mLoading = true;
-        mPage = 0;
-        mDoneLoading = false;
+
+        GitLabClient.instance().getCommits(mProject.getId(), mBranchName, mPage).enqueue(mCommitsCallback);
+    }
+
+    private void loadMore() {
+        if (getView() == null) {
+            return;
+        }
+
+        if (mProject == null || TextUtils.isEmpty(mBranchName) || mPage < 1) {
+            return;
+        }
 
         mSwipeRefreshLayout.post(new Runnable() {
             @Override
@@ -212,15 +210,11 @@ public class CommitsFragment extends BaseFragment {
             }
         });
 
-        GitLabClient.instance().getCommits(mProject.getId(), mBranchName, mPage).enqueue(mCommitsCallback);
-    }
-
-    private void loadMore() {
-        mLoading = true;
         mPage++;
+        mLoading = true;
 
         Timber.d("loadMore called for " + mPage);
-        GitLabClient.instance().getCommits(mProject.getId(), mBranchName, mPage).enqueue(mMoreCommitsCallback);
+        GitLabClient.instance().getCommits(mProject.getId(), mBranchName, mPage).enqueue(mCommitsCallback);
     }
 
     private class EventReceiver {

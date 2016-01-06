@@ -169,8 +169,11 @@ public interface GitLab {
 
     @GET(API_VERSION + "/projects/{id}/merge_requests")
     Call<List<MergeRequest>> getMergeRequests(@Path("id") long projectId,
-                                              @Query("state") String state,
-                                              @Query("page") int page);
+                                              @Query("state") String state);
+
+    @GET
+    Call<List<MergeRequest>> getMergeRequests(@Url String url,
+                                              @Query("state") String state);
 
     @GET(API_VERSION + "/projects/{id}/merge_request/{merge_request_id}")
     Call<MergeRequest> getMergeRequest(@Path("id") long projectId,
@@ -190,8 +193,11 @@ public interface GitLab {
 
     @GET(API_VERSION + "/projects/{id}/issues")
     Call<List<Issue>> getIssues(@Path("id") long projectId,
-                                @Query("state") String state,
-                                @Query("page") int page);
+                                @Query("state") String state);
+
+    @GET
+    Call<List<Issue>> getIssues(@Url String url,
+                                @Query("state") String state);
 
     @GET(API_VERSION + "/projects/{id}/issues/{issue_id}")
     Call<Issue> getIssue(@Path("id") long projectId,
@@ -226,10 +232,10 @@ public interface GitLab {
 
     /* --- REPOSITORY --- */
 
-    @GET(API_VERSION + "/projects/{id}/repository/branches?per_page=100&order_by=last_activity_at")
+    @GET(API_VERSION + "/projects/{id}/repository/branches?order_by=last_activity_at")
     Call<List<Branch>> getBranches(@Path("id") long projectId);
 
-    @GET(API_VERSION + "/projects/{id}/repository/contributors?per_page=100")
+    @GET(API_VERSION + "/projects/{id}/repository/contributors")
     Call<List<Contributor>> getContributors(@Path("id") long projectId);
 
     @GET(API_VERSION + "/projects/{id}/repository/tree")

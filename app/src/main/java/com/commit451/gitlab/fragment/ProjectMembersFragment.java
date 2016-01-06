@@ -73,24 +73,26 @@ public class ProjectMembersFragment extends BaseFragment {
     private final Callback<List<Member>> mProjectMembersCallback = new Callback<List<Member>>() {
         @Override
         public void onResponse(Response<List<Member>> response, Retrofit retrofit) {
+            mLoading = false;
             if (getView() == null) {
                 return;
             }
 
             mSwipeRefreshLayout.setRefreshing(false);
-            mLoading = false;
 
             if (!response.isSuccess()) {
                 Timber.e("Project members response was not a success: %d", response.code());
                 mMessageView.setVisibility(View.VISIBLE);
                 mMessageView.setText(R.string.connection_error_users);
                 mAddUserButton.setVisibility(View.GONE);
+                mAdapter.setProjectMembers(null);
+                mNextPageUrl = null;
                 return;
             }
 
             if (!response.body().isEmpty()) {
                 mMessageView.setVisibility(View.GONE);
-            } else {
+            } else if (mNextPageUrl == null) {
                 Timber.d("No project members found");
                 mMessageView.setText(R.string.no_project_members);
                 mMessageView.setVisibility(View.VISIBLE);
@@ -98,48 +100,32 @@ public class ProjectMembersFragment extends BaseFragment {
 
             mAddUserButton.setVisibility(View.VISIBLE);
 
-            mAdapter.setProjectMembers(response.body());
+            if (mNextPageUrl == null) {
+                mAdapter.setProjectMembers(response.body());
+            } else {
+                mAdapter.addProjectMembers(response.body());
+            }
+
             mNextPageUrl = PaginationUtil.parse(response).getNext();
+            Timber.d("Next page url " + mNextPageUrl);
         }
 
         @Override
         public void onFailure(Throwable t) {
+            mLoading = false;
             Timber.e(t, null);
 
             if (getView() == null) {
                 return;
             }
 
-            mLoading = false;
             mSwipeRefreshLayout.setRefreshing(false);
 
             mMessageView.setVisibility(View.VISIBLE);
             mMessageView.setText(R.string.connection_error);
             mAddUserButton.setVisibility(View.GONE);
-        }
-    };
-
-    private final Callback<List<Member>> mMoreProjectMembersCallback = new Callback<List<Member>>() {
-        @Override
-        public void onResponse(Response<List<Member>> response, Retrofit retrofit) {
-
-            mLoading = false;
-            if (getView() == null || !response.isSuccess()) {
-                return;
-            }
-
-            mAdapter.addProjectMembers(response.body());
-            mNextPageUrl = PaginationUtil.parse(response).getNext();
-        }
-
-        @Override
-        public void onFailure(Throwable t) {
-            Timber.e(t, null);
-
-            if (getView() == null) {
-                return;
-            }
-            mLoading = false;
+            mAdapter.setProjectMembers(null);
+            mNextPageUrl = null;
         }
     };
 
@@ -253,6 +239,7 @@ public class ProjectMembersFragment extends BaseFragment {
         NavigationManager.navigateToAddProjectMember(getActivity(), mProject.getId());
     }
 
+    @Override
     public void loadData() {
         if (getView() == null) {
             return;
@@ -272,16 +259,34 @@ public class ProjectMembersFragment extends BaseFragment {
             }
         });
 
+        mNextPageUrl = null;
+        mLoading = true;
+
         GitLabClient.instance().getProjectMembers(mProject.getId()).enqueue(mProjectMembersCallback);
     }
 
     private void loadMore() {
+        if (getView() == null) {
+            return;
+        }
+
         if (mNextPageUrl == null) {
             return;
         }
 
+        mSwipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                if (mSwipeRefreshLayout != null) {
+                    mSwipeRefreshLayout.setRefreshing(true);
+                }
+            }
+        });
+
+        mLoading = true;
+
         Timber.d("loadMore called for " + mNextPageUrl);
-        GitLabClient.instance().getProjectMembers(mNextPageUrl.toString()).enqueue(mMoreProjectMembersCallback);
+        GitLabClient.instance().getProjectMembers(mNextPageUrl.toString()).enqueue(mProjectMembersCallback);
     }
 
     private void setNamespace() {
@@ -309,7 +314,10 @@ public class ProjectMembersFragment extends BaseFragment {
         public void onMemberAdded(MemberAddedEvent event) {
             if (mAdapter != null) {
                 mAdapter.addMember(event.mMember);
-                mMessageView.setVisibility(View.GONE);
+
+                if (getView() != null) {
+                    mMessageView.setVisibility(View.GONE);
+                }
             }
         }
     }

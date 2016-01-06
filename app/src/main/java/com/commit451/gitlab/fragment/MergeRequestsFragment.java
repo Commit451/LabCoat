@@ -1,5 +1,6 @@
 package com.commit451.gitlab.fragment;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,6 +22,7 @@ import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.util.NavigationManager;
+import com.commit451.gitlab.util.PaginationUtil;
 import com.squareup.otto.Subscribe;
 
 import java.util.List;
@@ -52,9 +54,8 @@ public class MergeRequestsFragment extends BaseFragment {
     @BindString(R.string.merge_request_state_value_default)
     String mState;
     private String[] mStates;
-    private int mPage;
+    private Uri mNextPageUrl;
     private boolean mLoading = false;
-    private boolean mDoneLoading;
 
     private final AdapterView.OnItemSelectedListener mSpinnerItemSelectedListener = new AdapterView.OnItemSelectedListener() {
         @Override
@@ -81,7 +82,7 @@ public class MergeRequestsFragment extends BaseFragment {
             int visibleItemCount = mMergeLayoutManager.getChildCount();
             int totalItemCount = mMergeLayoutManager.getItemCount();
             int firstVisibleItem = mMergeLayoutManager.findFirstVisibleItemPosition();
-            if (firstVisibleItem + visibleItemCount >= totalItemCount && !mLoading && !mDoneLoading) {
+            if (firstVisibleItem + visibleItemCount >= totalItemCount && !mLoading && mNextPageUrl != null) {
                 loadMore();
             }
         }
@@ -90,6 +91,7 @@ public class MergeRequestsFragment extends BaseFragment {
     private final Callback<List<MergeRequest>> mCallback = new Callback<List<MergeRequest>>() {
         @Override
         public void onResponse(Response<List<MergeRequest>> response, Retrofit retrofit) {
+            mLoading = false;
             if (getView() == null) {
                 return;
             }
@@ -99,62 +101,45 @@ public class MergeRequestsFragment extends BaseFragment {
                 mMessageView.setVisibility(View.VISIBLE);
                 mMessageView.setText(R.string.connection_error_merge_requests);
                 mMergeRequestAdapter.setData(null);
+                mNextPageUrl = null;
                 return;
             }
 
             mSwipeRefreshLayout.setRefreshing(false);
-            mLoading = false;
 
             if (!response.body().isEmpty()) {
                 mMessageView.setVisibility(View.GONE);
-            } else {
+            } else if (mNextPageUrl == null) {
                 Timber.d("No merge requests found");
                 mMessageView.setVisibility(View.VISIBLE);
                 mMessageView.setText(R.string.no_merge_requests);
             }
 
-            mMergeRequestAdapter.setData(response.body());
+            if (mNextPageUrl == null) {
+                mMergeRequestAdapter.setData(response.body());
+            } else {
+                mMergeRequestAdapter.addData(response.body());
+            }
+
+            mNextPageUrl = PaginationUtil.parse(response).getNext();
+            Timber.d("Next page url " + mNextPageUrl);
         }
 
         @Override
         public void onFailure(Throwable t) {
+            mLoading = false;
             Timber.e(t, null);
 
             if (getView() == null) {
                 return;
             }
-            mLoading = false;
 
             mSwipeRefreshLayout.setRefreshing(false);
 
             mMessageView.setVisibility(View.VISIBLE);
             mMessageView.setText(R.string.connection_error);
             mMergeRequestAdapter.setData(null);
-        }
-    };
-
-    private final Callback<List<MergeRequest>> mMoreCallback = new Callback<List<MergeRequest>>() {
-        @Override
-        public void onResponse(Response<List<MergeRequest>> response, Retrofit retrofit) {
-            if (getView() == null) {
-                return;
-            }
-
-            mLoading = false;
-            mMergeRequestAdapter.addData(response.body());
-            if (response.body().isEmpty()) {
-                mDoneLoading = true;
-            }
-        }
-
-        @Override
-        public void onFailure(Throwable t) {
-            Timber.e(t, null);
-
-            if (getView() == null) {
-                return;
-            }
-            mLoading = false;
+            mNextPageUrl = null;
         }
     };
 
@@ -219,9 +204,29 @@ public class MergeRequestsFragment extends BaseFragment {
             return;
         }
 
-        mPage = 1;
+        mSwipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                if (mSwipeRefreshLayout != null) {
+                    mSwipeRefreshLayout.setRefreshing(true);
+                }
+            }
+        });
+
+        mNextPageUrl = null;
         mLoading = true;
-        mDoneLoading = false;
+
+        GitLabClient.instance().getMergeRequests(mProject.getId(), mState).enqueue(mCallback);
+    }
+
+    private void loadMore() {
+        if (getView() == null) {
+            return;
+        }
+
+        if (mNextPageUrl == null) {
+            return;
+        }
 
         mSwipeRefreshLayout.post(new Runnable() {
             @Override
@@ -232,17 +237,10 @@ public class MergeRequestsFragment extends BaseFragment {
             }
         });
 
-        GitLabClient.instance().getMergeRequests(mProject.getId(), mState, mPage).enqueue(mCallback);
-    }
-
-    private void loadMore() {
-        if (getView() == null) {
-            return;
-        }
-        mPage++;
         mLoading = true;
-        Timber.d("loadMore called for " + mPage);
-        GitLabClient.instance().getMergeRequests(mProject.getId(), mState, mPage).enqueue(mMoreCallback);
+
+        Timber.d("loadMore called for " + mNextPageUrl);
+        GitLabClient.instance().getMergeRequests(mNextPageUrl.toString(), mState).enqueue(mCallback);
     }
 
     private class EventReceiver {

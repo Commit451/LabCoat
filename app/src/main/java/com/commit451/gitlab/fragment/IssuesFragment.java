@@ -1,5 +1,6 @@
 package com.commit451.gitlab.fragment;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -24,6 +25,7 @@ import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Issue;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.util.NavigationManager;
+import com.commit451.gitlab.util.PaginationUtil;
 import com.squareup.otto.Subscribe;
 
 import java.util.List;
@@ -56,9 +58,8 @@ public class IssuesFragment extends BaseFragment {
     @BindString(R.string.issue_state_value_default)
     String mState;
     private String[] mStates;
-    private int mPage;
-    private boolean mLoading;
-    private boolean mDoneLoading;
+    private Uri mNextPageUrl;
+    private boolean mLoading = false;
 
     private final RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
         @Override
@@ -67,7 +68,7 @@ public class IssuesFragment extends BaseFragment {
             int visibleItemCount = mIssuesLayoutManager.getChildCount();
             int totalItemCount = mIssuesLayoutManager.getItemCount();
             int firstVisibleItem = mIssuesLayoutManager.findFirstVisibleItemPosition();
-            if (firstVisibleItem + visibleItemCount >= totalItemCount && !mLoading && !mDoneLoading) {
+            if (firstVisibleItem + visibleItemCount >= totalItemCount && !mLoading && mNextPageUrl != null) {
                 loadMore();
             }
         }
@@ -76,6 +77,7 @@ public class IssuesFragment extends BaseFragment {
     private final Callback<List<Issue>> mIssuesCallback = new Callback<List<Issue>>() {
         @Override
         public void onResponse(Response<List<Issue>> response, Retrofit retrofit) {
+            mLoading = false;
             if (getView() == null) {
                 return;
             }
@@ -87,53 +89,43 @@ public class IssuesFragment extends BaseFragment {
                 mMessageView.setVisibility(View.VISIBLE);
                 mMessageView.setText(R.string.connection_error_issues);
                 mIssuesAdapter.setIssues(null);
+                mNextPageUrl = null;
                 return;
             }
 
             if (!response.body().isEmpty()) {
                 mMessageView.setVisibility(View.GONE);
-            } else {
+            } else if (mNextPageUrl == null) {
                 Timber.d("No issues found");
                 mMessageView.setVisibility(View.VISIBLE);
                 mMessageView.setText(R.string.no_issues);
             }
-            mLoading = false;
-            mIssuesAdapter.setIssues(response.body());
+
+            if (mNextPageUrl == null) {
+                mIssuesAdapter.setIssues(response.body());
+            } else {
+                mIssuesAdapter.addIssues(response.body());
+            }
+
+            mNextPageUrl = PaginationUtil.parse(response).getNext();
+            Timber.d("Next page url " + mNextPageUrl);
         }
 
         @Override
         public void onFailure(Throwable t) {
+            mLoading = false;
             Timber.e(t, null);
 
             if (getView() == null) {
                 return;
             }
-            mLoading = false;
+
             mSwipeRefreshLayout.setRefreshing(false);
 
             mMessageView.setVisibility(View.VISIBLE);
             mMessageView.setText(R.string.connection_error);
             mIssuesAdapter.setIssues(null);
-        }
-    };
-
-    private final Callback<List<Issue>> mMoreIssuesCallback = new Callback<List<Issue>>() {
-        @Override
-        public void onResponse(Response<List<Issue>> response, Retrofit retrofit) {
-            if (getView() == null || !response.isSuccess()) {
-                return;
-            }
-            mLoading = false;
-            mIssuesAdapter.addIssues(response.body());
-            if (response.body().isEmpty()) {
-                mDoneLoading = true;
-            }
-        }
-
-        @Override
-        public void onFailure(Throwable t) {
-            mLoading = false;
-            Timber.e(t, null);
+            mNextPageUrl = null;
         }
     };
 
@@ -231,9 +223,29 @@ public class IssuesFragment extends BaseFragment {
             return;
         }
 
-        mPage = 1;
+        mSwipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                if (mSwipeRefreshLayout != null) {
+                    mSwipeRefreshLayout.setRefreshing(true);
+                }
+            }
+        });
+
+        mNextPageUrl = null;
         mLoading = true;
-        mDoneLoading = false;
+
+        GitLabClient.instance().getIssues(mProject.getId(), mState).enqueue(mIssuesCallback);
+    }
+
+    private void loadMore() {
+        if (getView() == null) {
+            return;
+        }
+
+        if (mNextPageUrl == null) {
+            return;
+        }
 
         mSwipeRefreshLayout.post(new Runnable() {
             @Override
@@ -244,17 +256,10 @@ public class IssuesFragment extends BaseFragment {
             }
         });
 
-        GitLabClient.instance().getIssues(mProject.getId(), mState, mPage).enqueue(mIssuesCallback);
-    }
-
-    private void loadMore() {
-        if (getView() == null) {
-            return;
-        }
-        mPage++;
         mLoading = true;
-        Timber.d("loadMore called for " + mPage);
-        GitLabClient.instance().getIssues(mProject.getId(), mState, mPage).enqueue(mMoreIssuesCallback);
+
+        Timber.d("loadMore called for " + mNextPageUrl);
+        GitLabClient.instance().getIssues(mNextPageUrl.toString(), mState).enqueue(mIssuesCallback);
     }
 
     private class EventReceiver {
@@ -266,9 +271,11 @@ public class IssuesFragment extends BaseFragment {
 
         @Subscribe
         public void onIssueCreated(IssueCreatedEvent event) {
-            mMessageView.setVisibility(View.GONE);
             mIssuesAdapter.addIssue(event.mIssue);
-            mIssueListView.smoothScrollToPosition(0);
+            if (getView() != null) {
+                mMessageView.setVisibility(View.GONE);
+                mIssueListView.smoothScrollToPosition(0);
+            }
         }
 
         @Subscribe
