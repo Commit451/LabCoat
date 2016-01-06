@@ -7,6 +7,7 @@ import timber.log.Timber;
 
 public final class PaginationUtil {
 
+    private static final String PREV_PAGE_SUFFIX = "rel=\"prev\"";
     private static final String NEXT_PAGE_SUFFIX = "rel=\"next\"";
     private static final String FIRST_PAGE_SUFFIX = "rel=\"first\"";
     private static final String LAST_PAGE_SUFFIX = "rel=\"last\"";
@@ -14,6 +15,7 @@ public final class PaginationUtil {
     private PaginationUtil() {}
 
     public static PaginationData parse(Response response) {
+        Uri prev = null;
         Uri next = null;
         Uri first = null;
         Uri last = null;
@@ -28,7 +30,9 @@ public final class PaginationUtil {
 
                     Uri link = Uri.parse(part.substring(linkStart, linkEnd));
 
-                    if (part.contains(NEXT_PAGE_SUFFIX)) {
+                    if (part.contains(PREV_PAGE_SUFFIX)) {
+                        prev = link;
+                    } else if (part.contains(NEXT_PAGE_SUFFIX)) {
                         next = link;
                     } else if (part.contains(FIRST_PAGE_SUFFIX)) {
                         first = link;
@@ -41,18 +45,24 @@ public final class PaginationUtil {
             }
         }
 
-        return new PaginationData(next, first, last);
+        return new PaginationData(prev, next, first, last);
     }
 
     public static class PaginationData {
+        private final Uri prev;
         private final Uri next;
         private final Uri first;
         private final Uri last;
 
-        private PaginationData(Uri next, Uri first, Uri last) {
+        private PaginationData(Uri prev, Uri next, Uri first, Uri last) {
+            this.prev = prev;
             this.next = next;
             this.first = first;
             this.last = last;
+        }
+
+        public Uri getPrev() {
+            return prev;
         }
 
         public Uri getNext() {
