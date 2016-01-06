@@ -90,6 +90,7 @@ public class FilesFragment extends BaseFragment {
             }
 
             mFilesAdapter.setData(response.body());
+            mFilesListView.scrollToPosition(0);
             mCurrentPath = mNewPath;
             updateBreadcrumbs();
         }
