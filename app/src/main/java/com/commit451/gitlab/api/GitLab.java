@@ -190,15 +190,10 @@ public interface GitLab {
 
     /* --- ISSUES --- */
 
-    @GET(API_VERSION + "/projects/{id}/issues?per_page=100")
+    @GET(API_VERSION + "/projects/{id}/issues")
     Call<List<Issue>> getIssues(@Path("id") long projectId,
-                                @Query("state") String state);
-
-    @GET(API_VERSION + "/projects/{id}/issues?per_page=100")
-    Call<List<Issue>> getIssues(@Path("id") long projectId);
-
-    @GET(API_VERSION + "/projects/{id}/issues?per_page=100")
-    Call<List<Issue>> getIssues(@Url String url);
+                                @Query("state") String state,
+                                @Query("page") int page);
 
     @GET(API_VERSION + "/projects/{id}/issues/{issue_id}")
     Call<Issue> getIssue(@Path("id") long projectId,
@@ -249,7 +244,7 @@ public interface GitLab {
                                  @Query("file_path") String path,
                                  @Query("ref") String ref);
 
-    @GET(API_VERSION + "/projects/{id}/repository/commits?per_page=100")
+    @GET(API_VERSION + "/projects/{id}/repository/commits")
     Call<List<RepositoryCommit>> getCommits(@Path("id") long projectId,
                                             @Query("ref_name") String branchName,
                                             @Query("page") int page);

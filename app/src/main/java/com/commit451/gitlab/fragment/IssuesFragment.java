@@ -50,11 +50,28 @@ public class IssuesFragment extends BaseFragment {
 
     private Project mProject;
     private IssuesAdapter mIssuesAdapter;
+    private LinearLayoutManager mIssuesLayoutManager;
     private EventReceiver mEventReceiver;
 
     @BindString(R.string.issue_state_value_default)
     String mState;
     private String[] mStates;
+    private int mPage;
+    private boolean mLoading;
+    private boolean mDoneLoading;
+
+    private final RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+            int visibleItemCount = mIssuesLayoutManager.getChildCount();
+            int totalItemCount = mIssuesLayoutManager.getItemCount();
+            int firstVisibleItem = mIssuesLayoutManager.findFirstVisibleItemPosition();
+            if (firstVisibleItem + visibleItemCount >= totalItemCount && !mLoading && !mDoneLoading) {
+                loadMore();
+            }
+        }
+    };
 
     private final Callback<List<Issue>> mIssuesCallback = new Callback<List<Issue>>() {
         @Override
@@ -80,7 +97,7 @@ public class IssuesFragment extends BaseFragment {
                 mMessageView.setVisibility(View.VISIBLE);
                 mMessageView.setText(R.string.no_issues);
             }
-
+            mLoading = false;
             mIssuesAdapter.setIssues(response.body());
         }
 
@@ -91,12 +108,32 @@ public class IssuesFragment extends BaseFragment {
             if (getView() == null) {
                 return;
             }
-
+            mLoading = false;
             mSwipeRefreshLayout.setRefreshing(false);
 
             mMessageView.setVisibility(View.VISIBLE);
             mMessageView.setText(R.string.connection_error);
             mIssuesAdapter.setIssues(null);
+        }
+    };
+
+    private final Callback<List<Issue>> mMoreIssuesCallback = new Callback<List<Issue>>() {
+        @Override
+        public void onResponse(Response<List<Issue>> response, Retrofit retrofit) {
+            if (getView() == null || !response.isSuccess()) {
+                return;
+            }
+            mLoading = false;
+            mIssuesAdapter.addIssues(response.body());
+            if (response.body().isEmpty()) {
+                mDoneLoading = true;
+            }
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+            mLoading = false;
+            Timber.e(t, null);
         }
     };
 
@@ -143,8 +180,10 @@ public class IssuesFragment extends BaseFragment {
         GitLabApp.bus().register(mEventReceiver);
 
         mIssuesAdapter = new IssuesAdapter(mIssuesAdapterListener);
-        mIssueListView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mIssuesLayoutManager = new LinearLayoutManager(getActivity());
+        mIssueListView.setLayoutManager(mIssuesLayoutManager);
         mIssueListView.setAdapter(mIssuesAdapter);
+        mIssueListView.addOnScrollListener(mOnScrollListener);
 
         mSpinner.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, getResources().getStringArray(R.array.issue_state_names)));
         mSpinner.setOnItemSelectedListener(mSpinnerItemSelectedListener);
@@ -190,6 +229,10 @@ public class IssuesFragment extends BaseFragment {
             return;
         }
 
+        mPage = 1;
+        mLoading = true;
+        mDoneLoading = false;
+
         mSwipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
@@ -199,7 +242,19 @@ public class IssuesFragment extends BaseFragment {
             }
         });
 
-        GitLabClient.instance().getIssues(mProject.getId(), mState).enqueue(mIssuesCallback);
+        GitLabClient.instance().getIssues(mProject.getId(), mState, mPage).enqueue(mIssuesCallback);
+    }
+
+    private void loadMore() {
+        if (getView() == null) {
+            return;
+        }
+        mPage++;
+
+        mLoading = true;
+        Timber.d("loadMore called for " + mPage);
+
+        GitLabClient.instance().getIssues(mProject.getId(), mState, mPage).enqueue(mMoreIssuesCallback);
     }
 
     private class EventReceiver {

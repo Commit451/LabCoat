@@ -61,6 +61,10 @@ public class IssuesAdapter extends RecyclerView.Adapter<IssueViewHolder> {
 
     public void setIssues(Collection<Issue> issues) {
         mValues.clear();
+        addIssues(issues);
+    }
+
+    public void addIssues(Collection<Issue> issues) {
         if (issues != null) {
             mValues.addAll(issues);
         }
