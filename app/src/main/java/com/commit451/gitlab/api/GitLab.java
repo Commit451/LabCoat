@@ -251,10 +251,8 @@ public interface GitLab {
 
     @GET(API_VERSION + "/projects/{id}/repository/commits?per_page=100")
     Call<List<RepositoryCommit>> getCommits(@Path("id") long projectId,
-                                            @Query("ref_name") String branchName);
-
-    @GET
-    Call<List<RepositoryCommit>> getCommits(@Url String url);
+                                            @Query("ref_name") String branchName,
+                                            @Query("page") int page);
 
     @GET(API_VERSION + "/projects/{id}/repository/commits/{sha}")
     Call<RepositoryCommit> getCommit(@Path("id") long projectId,

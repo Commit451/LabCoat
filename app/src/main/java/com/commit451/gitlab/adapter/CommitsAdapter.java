@@ -32,13 +32,17 @@ public class CommitsAdapter extends RecyclerView.Adapter<CommitViewHolder> {
         mValues = new ArrayList<>();
     }
 
-    public void setData(Collection<RepositoryCommit> commits) {
-        mValues.clear();
+    public void addData(Collection<RepositoryCommit> commits) {
         if (commits != null) {
             mValues.addAll(commits);
             notifyItemRangeInserted(0, commits.size());
         }
         notifyDataSetChanged();
+    }
+
+    public void setData(Collection<RepositoryCommit> commits) {
+        mValues.clear();
+        addData(commits);
     }
 
     private final View.OnClickListener onProjectClickListener = new View.OnClickListener() {
