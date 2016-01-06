@@ -215,6 +215,7 @@ public class MergeRequestsFragment extends BaseFragment {
         }
 
         if (mProject == null) {
+            mSwipeRefreshLayout.setRefreshing(false);
             return;
         }
 

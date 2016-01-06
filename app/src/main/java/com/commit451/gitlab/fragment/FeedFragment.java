@@ -142,6 +142,11 @@ public class FeedFragment extends BaseFragment {
             return;
         }
 
+        if (mFeedUrl == null) {
+            mSwipeRefreshLayout.setRefreshing(false);
+            return;
+        }
+
         mSwipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {

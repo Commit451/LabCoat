@@ -227,6 +227,7 @@ public class IssuesFragment extends BaseFragment {
         }
 
         if (mProject == null) {
+            mSwipeRefreshLayout.setRefreshing(false);
             return;
         }
 

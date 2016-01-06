@@ -195,8 +195,10 @@ public class CommitsFragment extends BaseFragment {
         }
 
         if (mProject == null || TextUtils.isEmpty(mBranchName)) {
+            mSwipeRefreshLayout.setRefreshing(false);
             return;
         }
+
         mLoading = true;
         mPage = 0;
         mDoneLoading = false;

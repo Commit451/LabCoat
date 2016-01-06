@@ -156,6 +156,7 @@ public class UsersFragment extends BaseFragment {
         }
 
         if (TextUtils.isEmpty(mQuery)) {
+            mSwipeRefreshLayout.setRefreshing(false);
             return;
         }
 

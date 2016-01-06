@@ -176,6 +176,7 @@ public class OverviewFragment extends BaseFragment {
         }
 
         if (mProject == null || TextUtils.isEmpty(mBranchName)) {
+            mSwipeRefreshLayout.setRefreshing(false);
             return;
         }
 

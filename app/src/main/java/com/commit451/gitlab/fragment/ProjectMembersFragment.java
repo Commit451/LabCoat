@@ -259,6 +259,7 @@ public class ProjectMembersFragment extends BaseFragment {
         }
 
         if (mProject == null) {
+            mSwipeRefreshLayout.setRefreshing(false);
             return;
         }
 

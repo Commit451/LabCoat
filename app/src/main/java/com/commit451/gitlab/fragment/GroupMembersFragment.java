@@ -215,6 +215,11 @@ public class GroupMembersFragment extends BaseFragment {
             return;
         }
 
+        if (mGroup == null) {
+            mSwipeRefreshLayout.setRefreshing(false);
+            return;
+        }
+
         mSwipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {

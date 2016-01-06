@@ -184,6 +184,10 @@ public class ProjectsFragment extends BaseFragment {
 
     @Override
     protected void loadData() {
+        if (getView() == null) {
+            return;
+        }
+
         mNextPageUrl = null;
 
         switch (mMode) {

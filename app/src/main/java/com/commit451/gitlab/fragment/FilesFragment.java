@@ -203,6 +203,7 @@ public class FilesFragment extends BaseFragment {
         }
 
         if (mProject == null || TextUtils.isEmpty(mBranchName)) {
+            mSwipeRefreshLayout.setRefreshing(false);
             return;
         }
 
