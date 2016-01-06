@@ -116,8 +116,11 @@ public interface GitLab {
     @GET(API_VERSION + "/projects/search/{query}")
     Call<List<Project>> searchAllProjects(@Path("query") String query);
 
-    @GET(API_VERSION + "/projects/{id}/members?per_page=100")
+    @GET(API_VERSION + "/projects/{id}/members")
     Call<List<Member>> getProjectMembers(@Path("id") long projectId);
+
+    @GET
+    Call<List<Member>> getProjectMembers(@Url String url);
 
     @FormUrlEncoded
     @POST(API_VERSION + "/projects/{id}/members")
@@ -163,9 +166,6 @@ public interface GitLab {
                             @Field("due_date") String dueDate);
 
     /* --- MERGE REQUESTS --- */
-
-    @GET(API_VERSION + "/projects/{id}/merge_requests?per_page=100")
-    Call<List<MergeRequest>> getMergeRequests(@Path("id") long projectId);
 
     @GET(API_VERSION + "/projects/{id}/merge_requests")
     Call<List<MergeRequest>> getMergeRequests(@Path("id") long projectId,

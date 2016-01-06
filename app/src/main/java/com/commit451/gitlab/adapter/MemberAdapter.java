@@ -78,6 +78,10 @@ public class MemberAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     public void setProjectMembers(Collection<Member> data) {
         mProjectMembers.clear();
+        addProjectMembers(data);
+    }
+
+    public void addProjectMembers(Collection<Member> data) {
         if (data != null) {
             mProjectMembers.addAll(data);
         }

@@ -1,5 +1,17 @@
 package com.commit451.gitlab.fragment;
 
+import android.net.Uri;
+import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
 import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ProjectActivity;
@@ -11,19 +23,9 @@ import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Member;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.util.NavigationManager;
+import com.commit451.gitlab.util.PaginationUtil;
 import com.commit451.gitlab.viewHolder.ProjectMemberViewHolder;
 import com.squareup.otto.Subscribe;
-
-import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
 import java.util.List;
 
@@ -50,7 +52,23 @@ public class ProjectMembersFragment extends BaseFragment {
     private Project mProject;
     private EventReceiver mEventReceiver;
     private MemberAdapter mAdapter;
+    private GridLayoutManager mProjectLayoutManager;
     private Member mMember;
+    private Uri mNextPageUrl;
+    private boolean mLoading = false;
+
+    private final RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+            int visibleItemCount = mProjectLayoutManager.getChildCount();
+            int totalItemCount = mProjectLayoutManager.getItemCount();
+            int firstVisibleItem = mProjectLayoutManager.findFirstVisibleItemPosition();
+            if (firstVisibleItem + visibleItemCount >= totalItemCount && !mLoading && mNextPageUrl != null) {
+                loadMore();
+            }
+        }
+    };
 
     private final Callback<List<Member>> mProjectMembersCallback = new Callback<List<Member>>() {
         @Override
@@ -60,6 +78,7 @@ public class ProjectMembersFragment extends BaseFragment {
             }
 
             mSwipeRefreshLayout.setRefreshing(false);
+            mLoading = false;
 
             if (!response.isSuccess()) {
                 Timber.e("Project members response was not a success: %d", response.code());
@@ -80,6 +99,7 @@ public class ProjectMembersFragment extends BaseFragment {
             mAddUserButton.setVisibility(View.VISIBLE);
 
             mAdapter.setProjectMembers(response.body());
+            mNextPageUrl = PaginationUtil.parse(response).getNext();
         }
 
         @Override
@@ -90,11 +110,36 @@ public class ProjectMembersFragment extends BaseFragment {
                 return;
             }
 
+            mLoading = false;
             mSwipeRefreshLayout.setRefreshing(false);
 
             mMessageView.setVisibility(View.VISIBLE);
             mMessageView.setText(R.string.connection_error);
             mAddUserButton.setVisibility(View.GONE);
+        }
+    };
+
+    private final Callback<List<Member>> mMoreProjectMembersCallback = new Callback<List<Member>>() {
+        @Override
+        public void onResponse(Response<List<Member>> response, Retrofit retrofit) {
+
+            mLoading = false;
+            if (getView() == null || !response.isSuccess()) {
+                return;
+            }
+
+            mAdapter.addProjectMembers(response.body());
+            mNextPageUrl = PaginationUtil.parse(response).getNext();
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+            Timber.e(t, null);
+
+            if (getView() == null) {
+                return;
+            }
+            mLoading = false;
         }
     };
 
@@ -174,10 +219,11 @@ public class ProjectMembersFragment extends BaseFragment {
         GitLabApp.bus().register(mEventReceiver);
 
         mAdapter = new MemberAdapter(mMemberAdapterListener);
-        GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 2);
-        layoutManager.setSpanSizeLookup(mAdapter.getSpanSizeLookup());
-        mMembersListView.setLayoutManager(layoutManager);
+        mProjectLayoutManager = new GridLayoutManager(getActivity(), 2);
+        mProjectLayoutManager.setSpanSizeLookup(mAdapter.getSpanSizeLookup());
+        mMembersListView.setLayoutManager(mProjectLayoutManager);
         mMembersListView.setAdapter(mAdapter);
+        mMembersListView.addOnScrollListener(mOnScrollListener);
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -226,6 +272,15 @@ public class ProjectMembersFragment extends BaseFragment {
         });
 
         GitLabClient.instance().getProjectMembers(mProject.getId()).enqueue(mProjectMembersCallback);
+    }
+
+    private void loadMore() {
+        if (mNextPageUrl == null) {
+            return;
+        }
+
+        Timber.d("loadMore called for " + mNextPageUrl);
+        GitLabClient.instance().getProjectMembers(mNextPageUrl.toString()).enqueue(mMoreProjectMembersCallback);
     }
 
     private void setNamespace() {
