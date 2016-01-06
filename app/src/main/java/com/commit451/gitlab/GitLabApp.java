@@ -1,12 +1,16 @@
 package com.commit451.gitlab;
 
 import android.app.Application;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.core.CrashlyticsCore;
 import com.squareup.otto.Bus;
 
 import net.danlew.android.joda.JodaTimeAndroid;
+
+import java.util.Locale;
 
 import io.fabric.sdk.android.Fabric;
 import timber.log.Timber;
@@ -35,6 +39,8 @@ public class GitLabApp extends Application {
         super.onCreate();
         sInstance = this;
 
+        forceLocale(Locale.ENGLISH);
+
         CrashlyticsCore core = new CrashlyticsCore.Builder()
                 .disabled(BuildConfig.DEBUG)
                 .build();
@@ -45,5 +51,23 @@ public class GitLabApp extends Application {
         }
 
         JodaTimeAndroid.init(this);
+    }
+
+    private void forceLocale(Locale locale){
+        try {
+            Locale.setDefault(locale);
+
+            Resources[] resources = new Resources[]{
+                    Resources.getSystem(),
+                    getBaseContext().getResources()
+            };
+            for (Resources res : resources) {
+                Configuration configuration = res.getConfiguration();
+                configuration.locale = locale;
+                res.updateConfiguration(configuration, res.getDisplayMetrics());
+            }
+        } catch (Exception e) {
+            Timber.e(e, null);
+        }
     }
 }
