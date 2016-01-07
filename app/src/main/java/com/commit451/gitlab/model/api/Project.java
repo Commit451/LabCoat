@@ -1,10 +1,10 @@
 package com.commit451.gitlab.model.api;
 
+import android.net.Uri;
+
 import com.google.gson.annotations.SerializedName;
 
 import org.parceler.Parcel;
-
-import android.net.Uri;
 
 import java.util.Date;
 import java.util.List;
@@ -190,6 +190,11 @@ public class Project {
 
     public Uri getFeedUrl() {
         return Uri.parse(mWebUrl.toString() + ".atom");
+    }
+
+    public boolean belongsToGroup() {
+        //If there is an owner, then there is no group
+        return getOwner() == null;
     }
 
     @Override

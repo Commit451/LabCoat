@@ -295,10 +295,10 @@ public class ProjectMembersFragment extends BaseFragment {
         }
 
         //If there is an owner, then there is no group
-        if (mProject.getOwner() != null) {
-            mAdapter.setNamespace(null);
-        } else {
+        if (mProject.belongsToGroup()) {
             mAdapter.setNamespace(mProject.getNamespace());
+        } else {
+            mAdapter.setNamespace(null);
         }
     }
 

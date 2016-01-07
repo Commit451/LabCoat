@@ -161,6 +161,7 @@
     <string name="no_assignee">No Assignee</string>
     <string name="assignee">Assignee</string>
     <string name="milestone">Milestone</string>
+    <string name="no_milestone">No Milestone</string>
 
     <!-- User -->
     <string name="remove_user_dialog_title">Remove user?</string>

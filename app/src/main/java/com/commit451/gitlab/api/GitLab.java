@@ -1,5 +1,7 @@
 package com.commit451.gitlab.api;
 
+import android.support.annotation.Nullable;
+
 import com.commit451.gitlab.model.api.Branch;
 import com.commit451.gitlab.model.api.Contributor;
 import com.commit451.gitlab.model.api.Diff;
@@ -207,13 +209,17 @@ public interface GitLab {
     @POST(API_VERSION + "/projects/{id}/issues")
     Call<Issue> createIssue(@Path("id") long projectId,
                             @Field("title") String title,
-                            @Field("description") String description);
+                            @Field("description") String description,
+                            @Field("assignee_id") @Nullable  Long assigneeId,
+                            @Field("milestone_id") @Nullable Long milestoneId);
 
     @PUT(API_VERSION + "/projects/{id}/issues/{issue_id}")
     Call<Issue> updateIssue(@Path("id") long projectId,
                             @Path("issue_id") long issueId,
                             @Query("title") String title,
-                            @Query("description") String description);
+                            @Query("description") String description,
+                            @Query("assignee_id") @Nullable Long assigneeId,
+                            @Query("milestone_id") @Nullable Long milestoneId);
 
     @PUT(API_VERSION + "/projects/{id}/issues/{issue_id}")
     Call<Issue> updateIssueStatus(@Path("id") long projectId,

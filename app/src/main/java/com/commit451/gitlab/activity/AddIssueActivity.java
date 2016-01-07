@@ -9,13 +9,14 @@ import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
+import com.commit451.gitlab.adapter.AssigneeSpinnerAdapter;
+import com.commit451.gitlab.adapter.MilestoneSpinnerAdapter;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.IssueChangedEvent;
 import com.commit451.gitlab.event.IssueCreatedEvent;
@@ -26,6 +27,8 @@ import com.commit451.gitlab.model.api.Project;
 
 import org.parceler.Parcels;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import butterknife.Bind;
@@ -36,7 +39,7 @@ import retrofit.Retrofit;
 import timber.log.Timber;
 
 /**
- * Dialog to input new issues, but not really a dialog at all wink wink
+ * Activity to input new issues, but not really a dialog at all wink wink
  */
 public class AddIssueActivity extends MorphActivity {
 
@@ -62,12 +65,10 @@ public class AddIssueActivity extends MorphActivity {
     @Bind(R.id.assignee_spinner) Spinner mAssigneeSpinner;
     @Bind(R.id.milestone_progress) View mMilestoneProgress;
     @Bind(R.id.milestone_spinner) Spinner mMilestoneSpinner;
-    ArrayAdapter<Milestone> mMilestoneArrayAdapter;
-    ArrayAdapter<Member> mAssigneeArrayAdapter;
-
 
     private Project mProject;
     private Issue mIssue;
+    private HashSet<Member> mMembers;
 
     private final Callback<List<Milestone>> mMilestonesCallback = new Callback<List<Milestone>>() {
         @Override
@@ -78,8 +79,11 @@ public class AddIssueActivity extends MorphActivity {
                 return;
             }
             mMilestoneSpinner.setVisibility(View.VISIBLE);
-            mMilestoneArrayAdapter.clear();
-            mMilestoneArrayAdapter.addAll(response.body());
+            MilestoneSpinnerAdapter milestoneSpinnerAdapter = new MilestoneSpinnerAdapter(AddIssueActivity.this, response.body());
+            mMilestoneSpinner.setAdapter(milestoneSpinnerAdapter);
+            if (mIssue != null) {
+                mMilestoneSpinner.setSelection(milestoneSpinnerAdapter.getSelectedItemPosition(mIssue.getMilestone()));
+            }
         }
 
         @Override
@@ -93,21 +97,48 @@ public class AddIssueActivity extends MorphActivity {
     private final Callback<List<Member>> mAssigneeCallback = new Callback<List<Member>>() {
         @Override
         public void onResponse(Response<List<Member>> response, Retrofit retrofit) {
-            mAssigneeProgress.setVisibility(View.GONE);
             if (!response.isSuccess()) {
+                mAssigneeProgress.setVisibility(View.GONE);
                 mAssigneeSpinner.setVisibility(View.GONE);
                 return;
             }
-            mAssigneeSpinner.setVisibility(View.VISIBLE);
-            mAssigneeArrayAdapter.clear();
-            mAssigneeArrayAdapter.addAll(response.body());
+            if (response.body() != null) {
+                mMembers.addAll(response.body());
+            }
+            if (mProject.belongsToGroup()) {
+                Timber.d("Project belongs to a group, loading those users too");
+                GitLabClient.instance().getGroupMembers(mProject.getNamespace().getId()).enqueue(mGroupMembersCallback);
+            } else {
+                setAssignees();
+            }
         }
 
         @Override
         public void onFailure(Throwable t) {
             Timber.e(t, null);
-            mMilestoneProgress.setVisibility(View.GONE);
-            mMilestoneSpinner.setVisibility(View.GONE);
+            mAssigneeSpinner.setVisibility(View.GONE);
+            mAssigneeProgress.setVisibility(View.GONE);
+        }
+    };
+
+    private final Callback<List<Member>> mGroupMembersCallback = new Callback<List<Member>>() {
+        @Override
+        public void onResponse(Response<List<Member>> response, Retrofit retrofit) {
+            if (!response.isSuccess()) {
+                mAssigneeSpinner.setVisibility(View.GONE);
+                return;
+            }
+            if (response.body() != null) {
+                mMembers.addAll(response.body());
+            }
+            setAssignees();
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+            Timber.e(t, null);
+            mAssigneeSpinner.setVisibility(View.GONE);
+            mAssigneeProgress.setVisibility(View.GONE);
         }
     };
 
@@ -145,6 +176,7 @@ public class AddIssueActivity extends MorphActivity {
 
         mProject = Parcels.unwrap(getIntent().getParcelableExtra(KEY_PROJECT));
         mIssue = Parcels.unwrap(getIntent().getParcelableExtra(KEY_ISSUE));
+        mMembers = new HashSet<>();
 
         mToolbar.setNavigationIcon(R.drawable.ic_back_24dp);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -173,10 +205,6 @@ public class AddIssueActivity extends MorphActivity {
             mToolbar.inflateMenu(R.menu.menu_add_milestone);
         }
 
-        mMilestoneArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1);
-        mMilestoneSpinner.setAdapter(mMilestoneArrayAdapter);
-        mAssigneeArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1);
-        mAssigneeSpinner.setAdapter(mAssigneeArrayAdapter);
         load();
     }
 
@@ -200,20 +228,66 @@ public class AddIssueActivity extends MorphActivity {
         }
     }
 
+    private void setAssignees() {
+        mAssigneeProgress.setVisibility(View.GONE);
+        mAssigneeSpinner.setVisibility(View.VISIBLE);
+        AssigneeSpinnerAdapter assigneeSpinnerAdapter = new AssigneeSpinnerAdapter(this, new ArrayList<>(mMembers));
+        mAssigneeSpinner.setAdapter(assigneeSpinnerAdapter);
+        if (mIssue != null) {
+            mAssigneeSpinner.setSelection(assigneeSpinnerAdapter.getSelectedItemPosition(mIssue.getAssignee()));
+        }
+    }
+
     private void save() {
         if(!TextUtils.isEmpty(mTitleInput.getText())) {
             mTitleInputLayout.setError(null);
             showLoading();
-            if (mIssue == null) {
-                GitLabClient.instance().createIssue(mProject.getId(), mTitleInput.getText().toString().trim(), mDescriptionInput.getText().toString().trim())
-                        .enqueue(mIssueCreatedCallback);
-            } else {
-                GitLabClient.instance().updateIssue(mProject.getId(), mIssue.getId(), mTitleInput.getText().toString(), mDescriptionInput.getText().toString())
-                        .enqueue(mIssueCreatedCallback);
+            Long assigneeId = null;
+            if (mAssigneeSpinner.getAdapter() != null ) {
+                //the user did make a selection of some sort. So update it
+                Member member = (Member) mAssigneeSpinner.getSelectedItem();
+                if (member == null) {
+                    //TODO figure out what id to pass if the user wants to remove the currently assigned user
+                } else {
+                    assigneeId = member.getId();
+                }
             }
+
+            Long milestoneId = null;
+            if (mMilestoneSpinner.getAdapter() != null) {
+                //the user did make a selection of some sort. So update it
+                Milestone milestone = (Milestone) mMilestoneSpinner.getSelectedItem();
+                if (milestone == null) {
+                    //TODO figure out what id to pass if the user wants to remove the currently assigned milestone
+                } else {
+                    milestoneId = milestone.getId();
+                }
+            }
+            createOrSaveIssue(mTitleInput.getText().toString(),
+                    mDescriptionInput.getText().toString(),
+                    assigneeId,
+                    milestoneId);
         }
         else {
             mTitleInputLayout.setError(getString(R.string.required_field));
+        }
+    }
+
+    private void createOrSaveIssue(String title, String description, Long assigneeId, Long milestoneId) {
+        if (mIssue == null) {
+            GitLabClient.instance().createIssue(
+                    mProject.getId(),
+                    title,
+                    description,
+                    assigneeId,
+                    milestoneId).enqueue(mIssueCreatedCallback);
+        } else {
+            GitLabClient.instance().updateIssue(mProject.getId(),
+                    mIssue.getId(),
+                    title,
+                    description,
+                    assigneeId,
+                    milestoneId).enqueue(mIssueCreatedCallback);
         }
     }
 
