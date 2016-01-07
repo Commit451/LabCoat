@@ -247,7 +247,8 @@ public class AddIssueActivity extends MorphActivity {
                 //the user did make a selection of some sort. So update it
                 Member member = (Member) mAssigneeSpinner.getSelectedItem();
                 if (member == null) {
-                    //TODO figure out what id to pass if the user wants to remove the currently assigned user
+                    //Removes the assignment
+                    assigneeId = 0L;
                 } else {
                     assigneeId = member.getId();
                 }
@@ -258,7 +259,8 @@ public class AddIssueActivity extends MorphActivity {
                 //the user did make a selection of some sort. So update it
                 Milestone milestone = (Milestone) mMilestoneSpinner.getSelectedItem();
                 if (milestone == null) {
-                    //TODO figure out what id to pass if the user wants to remove the currently assigned milestone
+                    //Removes the assignment
+                    milestoneId = 0L;
                 } else {
                     milestoneId = milestone.getId();
                 }
