@@ -104,8 +104,9 @@ public class NavigationManager {
         activity.startActivity(FileActivity.newIntent(activity, projectId, path, branchName));
     }
 
-    public static void navigateToAddProjectMember(Activity activity, long projectId) {
-        activity.startActivity(AddUserActivity.newInstance(activity, projectId));
+    public static void navigateToAddProjectMember(Activity activity, View fab, long projectId) {
+        Intent intent = AddUserActivity.newInstance(activity, projectId);
+        startMorphActivity(activity, fab, intent);
     }
 
     public static void navigateToAddGroupMember(Activity activity, Group group) {

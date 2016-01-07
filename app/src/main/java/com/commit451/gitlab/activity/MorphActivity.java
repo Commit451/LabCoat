@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.transition.ArcMotion;
 import android.view.View;
 import android.view.animation.AnimationUtils;
@@ -29,7 +28,7 @@ public class MorphActivity extends BaseActivity {
         }
         if (Build.VERSION.SDK_INT >= 21) {
             int fabColor = Easel.getThemeAttrColor(this, R.attr.colorAccent);
-            int dialogColor = ContextCompat.getColor(this, R.color.grey);
+            int dialogColor = Easel.getThemeAttrColor(this, android.R.attr.windowBackground);
             setupSharedElementTransitionsFab(this, root,
                     fabColor,
                     dialogColor,

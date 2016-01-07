@@ -48,4 +48,9 @@ public class Member extends UserBasic {
 
         return "Unknown";
     }
+
+    @Override
+    public String toString() {
+        return getUsername();
+    }
 }

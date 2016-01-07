@@ -127,7 +127,7 @@ public class AccessDialog extends AppCompatDialog {
         }
     }
 
-    private void showLoading() {
+    public void showLoading() {
         mContentRoot.animate().alpha(0.0f);
         mProgress.setVisibility(View.VISIBLE);
     }

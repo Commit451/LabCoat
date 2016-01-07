@@ -20,6 +20,7 @@ import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.IssueChangedEvent;
 import com.commit451.gitlab.event.IssueCreatedEvent;
 import com.commit451.gitlab.model.api.Issue;
+import com.commit451.gitlab.model.api.Member;
 import com.commit451.gitlab.model.api.Milestone;
 import com.commit451.gitlab.model.api.Project;
 
@@ -57,10 +58,12 @@ public class AddIssueActivity extends MorphActivity {
     @Bind(R.id.title) EditText mTitleInput;
     @Bind(R.id.description) EditText mDescriptionInput;
     @Bind(R.id.progress) View mProgress;
+    @Bind(R.id.assignee_progress) View mAssigneeProgress;
     @Bind(R.id.assignee_spinner) Spinner mAssigneeSpinner;
     @Bind(R.id.milestone_progress) View mMilestoneProgress;
     @Bind(R.id.milestone_spinner) Spinner mMilestoneSpinner;
     ArrayAdapter<Milestone> mMilestoneArrayAdapter;
+    ArrayAdapter<Member> mAssigneeArrayAdapter;
 
 
     private Project mProject;
@@ -87,7 +90,28 @@ public class AddIssueActivity extends MorphActivity {
         }
     };
 
-    private final Callback<Issue> mIssueCallback = new Callback<Issue>() {
+    private final Callback<List<Member>> mAssigneeCallback = new Callback<List<Member>>() {
+        @Override
+        public void onResponse(Response<List<Member>> response, Retrofit retrofit) {
+            mAssigneeProgress.setVisibility(View.GONE);
+            if (!response.isSuccess()) {
+                mAssigneeSpinner.setVisibility(View.GONE);
+                return;
+            }
+            mAssigneeSpinner.setVisibility(View.VISIBLE);
+            mAssigneeArrayAdapter.clear();
+            mAssigneeArrayAdapter.addAll(response.body());
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+            Timber.e(t, null);
+            mMilestoneProgress.setVisibility(View.GONE);
+            mMilestoneSpinner.setVisibility(View.GONE);
+        }
+    };
+
+    private final Callback<Issue> mIssueCreatedCallback = new Callback<Issue>() {
 
         @Override
         public void onResponse(Response<Issue> response, Retrofit retrofit) {
@@ -151,12 +175,14 @@ public class AddIssueActivity extends MorphActivity {
 
         mMilestoneArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1);
         mMilestoneSpinner.setAdapter(mMilestoneArrayAdapter);
-
+        mAssigneeArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1);
+        mAssigneeSpinner.setAdapter(mAssigneeArrayAdapter);
         load();
     }
 
     private void load() {
         GitLabClient.instance().getMilestones(mProject.getId()).enqueue(mMilestonesCallback);
+        GitLabClient.instance().getProjectMembers(mProject.getId()).enqueue(mAssigneeCallback);
     }
 
     private void showLoading() {
@@ -180,10 +206,10 @@ public class AddIssueActivity extends MorphActivity {
             showLoading();
             if (mIssue == null) {
                 GitLabClient.instance().createIssue(mProject.getId(), mTitleInput.getText().toString().trim(), mDescriptionInput.getText().toString().trim())
-                        .enqueue(mIssueCallback);
+                        .enqueue(mIssueCreatedCallback);
             } else {
                 GitLabClient.instance().updateIssue(mProject.getId(), mIssue.getId(), mTitleInput.getText().toString(), mDescriptionInput.getText().toString())
-                        .enqueue(mIssueCallback);
+                        .enqueue(mIssueCreatedCallback);
             }
         }
         else {

@@ -44,7 +44,7 @@ import timber.log.Timber;
 /**
  * Add a new user to the repo or to the group, depending on the mode
  */
-public class AddUserActivity extends BaseActivity {
+public class AddUserActivity extends MorphActivity {
 
     private static final String KEY_PROJECT_ID = "project_id";
     private static final String KEY_GROUP = "group";
@@ -61,6 +61,7 @@ public class AddUserActivity extends BaseActivity {
         return intent;
     }
 
+    @Bind(R.id.root) View mRoot;
     @Bind(R.id.toolbar) Toolbar mToolbar;
     @Bind(R.id.search) EditText mUserSearch;
     @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
@@ -156,6 +157,7 @@ public class AddUserActivity extends BaseActivity {
 
         @Override
         public void onAccessApplied(int accessLevel) {
+            mAccessDialog.showLoading();
             if (mGroup == null) {
                 GitLabClient.instance().addProjectMember(
                         mProjectId,
@@ -181,7 +183,7 @@ public class AddUserActivity extends BaseActivity {
             }
             Toast.makeText(AddUserActivity.this, R.string.user_added_successfully, Toast.LENGTH_SHORT).show();
             mAccessDialog.dismiss();
-            finish();
+            dismiss();
             GitLabApp.bus().post(new MemberAddedEvent(response.body()));
         }
 
@@ -206,5 +208,7 @@ public class AddUserActivity extends BaseActivity {
         mRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         mAdapter = new UsersAdapter(mUserClickListener);
         mRecyclerView.setAdapter(mAdapter);
+
+        morph(mRoot);
     }
 }

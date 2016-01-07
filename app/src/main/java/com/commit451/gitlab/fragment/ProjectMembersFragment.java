@@ -235,8 +235,8 @@ public class ProjectMembersFragment extends BaseFragment {
     }
 
     @OnClick(R.id.add_user_button)
-    public void onAddUserClick() {
-        NavigationManager.navigateToAddProjectMember(getActivity(), mProject.getId());
+    public void onAddUserClick(View fab) {
+        NavigationManager.navigateToAddProjectMember(getActivity(), fab, mProject.getId());
     }
 
     @Override
