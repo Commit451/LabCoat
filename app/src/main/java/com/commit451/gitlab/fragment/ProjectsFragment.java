@@ -13,9 +13,12 @@ import android.widget.TextView;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.ProjectsAdapter;
 import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.util.NavigationManager;
 import com.commit451.gitlab.util.PaginationUtil;
+
+import org.parceler.Parcels;
 
 import java.util.List;
 
@@ -30,11 +33,13 @@ public class ProjectsFragment extends BaseFragment {
 
     private static final String EXTRA_MODE = "extra_mode";
     private static final String EXTRA_QUERY = "extra_query";
+    private static final String EXTRA_GROUP = "extra_group";
 
     public static final int MODE_ALL = 0;
     public static final int MODE_MINE = 1;
     public static final int MODE_STARRED = 2;
     public static final int MODE_SEARCH = 3;
+    public static final int MODE_GROUP = 4;
 
     public static ProjectsFragment newInstance(int mode) {
         Bundle args = new Bundle();
@@ -49,7 +54,15 @@ public class ProjectsFragment extends BaseFragment {
         Bundle args = new Bundle();
         args.putInt(EXTRA_MODE, MODE_SEARCH);
         args.putString(EXTRA_QUERY, searchTerm);
+        ProjectsFragment fragment = new ProjectsFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
 
+    public static ProjectsFragment newInstance(Group group) {
+        Bundle args = new Bundle();
+        args.putInt(EXTRA_MODE, MODE_GROUP);
+        args.putParcelable(EXTRA_GROUP, Parcels.wrap(group));
         ProjectsFragment fragment = new ProjectsFragment();
         fragment.setArguments(args);
         return fragment;
@@ -208,6 +221,14 @@ public class ProjectsFragment extends BaseFragment {
                     showLoading();
                     GitLabClient.instance().searchAllProjects(mQuery).enqueue(mProjectsCallback);
                 }
+                break;
+            case MODE_GROUP:
+                showLoading();
+                Group group = Parcels.unwrap(getArguments().getParcelable(EXTRA_GROUP));
+                if (group == null) {
+                    throw new IllegalStateException("You must also pass a group if you want to show a groups projects");
+                }
+                GitLabClient.instance().getGroupProjects(group.getId()).enqueue(mProjectsCallback);
                 break;
             default:
                 throw new IllegalStateException(mMode + " is not defined");

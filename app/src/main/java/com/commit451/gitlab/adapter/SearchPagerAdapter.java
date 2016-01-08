@@ -19,7 +19,7 @@ public class SearchPagerAdapter extends FragmentPagerAdapter {
 
     private String[] mTitles;
     private ProjectsFragment mProjectsFragment;
-    //TODO change this to users
+
     private UsersFragment mUsersFragment;
 
     public SearchPagerAdapter(Context context, FragmentManager fm) {

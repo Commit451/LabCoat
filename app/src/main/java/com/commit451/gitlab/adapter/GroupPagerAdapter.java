@@ -56,8 +56,7 @@ public class GroupPagerAdapter extends FragmentPagerAdapter {
             case ACTIVITY_POS:
                 return FeedFragment.newInstance(mGroup.getFeedUrl().toString());
             case PROJECTS_POS:
-                //TODO Show only projects of the given group
-                return ProjectsFragment.newInstance(ProjectsFragment.MODE_ALL);
+                return ProjectsFragment.newInstance(mGroup);
             case MEMBERS_POS:
                 return GroupMembersFragment.newInstance(mGroup);
         }

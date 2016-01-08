@@ -82,6 +82,9 @@ public interface GitLab {
     @GET(API_VERSION + "/groups/{id}")
     Call<GroupDetail> getGroup(@Path("id") long id);
 
+    @GET(API_VERSION + "/groups/{id}/projects?order_by=last_activity_at")
+    Call<List<Project>> getGroupProjects(@Path("id") long id);
+
     @GET(API_VERSION + "/groups/{id}/members?per_page=100")
     Call<List<Member>> getGroupMembers(@Path("id") long groupId);
 

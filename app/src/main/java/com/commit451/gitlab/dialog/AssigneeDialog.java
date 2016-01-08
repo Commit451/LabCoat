@@ -25,7 +25,6 @@ import timber.log.Timber;
 
 /**
  * Assign peeps to an issue
- * Created by Jawn on 12/18/2015.
  */
 public class AssigneeDialog extends AppCompatDialog {
 
