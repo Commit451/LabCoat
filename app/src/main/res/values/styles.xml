@@ -13,15 +13,11 @@
     <style name="Activity" parent="AppTheme"/>
 
     <style name="Activity.Projects">
-        <item name="colorPrimaryDark">?attr/colorPrimary</item>
-        <item name="android:statusBarColor" tools:ignore="NewApi">@android:color/transparent</item>
-        <item name="android:windowTranslucentStatus" tools:ignore="NewApi">true</item>
+        <!--Check v21 for the good bits-->
     </style>
 
     <style name="Activity.Groups">
-        <item name="colorPrimaryDark">?attr/colorPrimary</item>
-        <item name="android:statusBarColor" tools:ignore="NewApi">@android:color/transparent</item>
-        <item name="android:windowTranslucentStatus" tools:ignore="NewApi">true</item>
+        <!--Check v21 for the good bits-->
     </style>
 
     <style name="Activity.User">
