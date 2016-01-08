@@ -1,23 +1,26 @@
 package com.commit451.gitlab.fragment;
 
-import com.commit451.gitlab.GitLabApp;
-import com.commit451.gitlab.R;
-import com.commit451.gitlab.adapter.UsersAdapter;
-import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.model.api.UserBasic;
-import com.commit451.gitlab.util.NavigationManager;
-import com.commit451.gitlab.viewHolder.UserViewHolder;
-
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.commit451.gitlab.GitLabApp;
+import com.commit451.gitlab.R;
+import com.commit451.gitlab.adapter.UsersAdapter;
+import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.model.api.UserBasic;
+import com.commit451.gitlab.util.NavigationManager;
+import com.commit451.gitlab.util.PaginationUtil;
+import com.commit451.gitlab.viewHolder.UserViewHolder;
 
 import java.util.List;
 
@@ -52,10 +55,26 @@ public class UsersFragment extends BaseFragment {
     @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
     @Bind(R.id.list) RecyclerView mUsersListView;
     @Bind(R.id.message_text) TextView mMessageView;
+    private LinearLayoutManager mUserLinearLayoutManager;
 
     private String mQuery;
     private EventReceiver mEventReceiver;
     private UsersAdapter mUsersAdapter;
+    private boolean mLoading;
+    private Uri mNextPageUrl;
+
+    private final RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+            int visibleItemCount = mUserLinearLayoutManager.getChildCount();
+            int totalItemCount = mUserLinearLayoutManager.getItemCount();
+            int firstVisibleItem = mUserLinearLayoutManager.findFirstVisibleItemPosition();
+            if (firstVisibleItem + visibleItemCount >= totalItemCount && !mLoading && mNextPageUrl != null) {
+                loadMore();
+            }
+        }
+    };
 
     private final UsersAdapter.Listener mUsersAdapterListener = new UsersAdapter.Listener() {
         @Override
@@ -72,6 +91,7 @@ public class UsersFragment extends BaseFragment {
             }
 
             mSwipeRefreshLayout.setRefreshing(false);
+            mLoading = false;
 
             if (!response.isSuccess()) {
                 Timber.e("Users response was not a success: %d", response.code());
@@ -88,13 +108,14 @@ public class UsersFragment extends BaseFragment {
                 mMessageView.setVisibility(View.VISIBLE);
                 mMessageView.setText(R.string.no_users_found);
             }
-
             mUsersAdapter.setData(response.body());
+            mNextPageUrl = PaginationUtil.parse(response).getNext();
         }
 
         @Override
         public void onFailure(Throwable t) {
             Timber.e(t, null);
+            mLoading = false;
 
             if (getView() == null) {
                 return;
@@ -105,6 +126,24 @@ public class UsersFragment extends BaseFragment {
             mMessageView.setText(R.string.connection_error);
             mMessageView.setVisibility(View.VISIBLE);
             mUsersAdapter.setData(null);
+        }
+    };
+
+    public Callback<List<UserBasic>> mMoreUsersCallback = new Callback<List<UserBasic>>() {
+        @Override
+        public void onResponse(Response<List<UserBasic>> response, Retrofit retrofit) {
+            mLoading = false;
+            if (getView() == null || !response.isSuccess()) {
+                return;
+            }
+            mUsersAdapter.addData(response.body());
+            mNextPageUrl = PaginationUtil.parse(response).getNext();
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+            Timber.e(t, null);
+            mLoading = false;
         }
     };
 
@@ -129,8 +168,10 @@ public class UsersFragment extends BaseFragment {
         GitLabApp.bus().register(mEventReceiver);
 
         mUsersAdapter = new UsersAdapter(mUsersAdapterListener);
-        mUsersListView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+        mUserLinearLayoutManager = new GridLayoutManager(getActivity(), 2);
+        mUsersListView.setLayoutManager(mUserLinearLayoutManager);
         mUsersListView.setAdapter(mUsersAdapter);
+        mUsersListView.addOnScrollListener(mOnScrollListener);
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -151,6 +192,7 @@ public class UsersFragment extends BaseFragment {
 
     @Override
     protected void loadData() {
+        mLoading = true;
         if (getView() == null) {
             return;
         }
@@ -170,6 +212,12 @@ public class UsersFragment extends BaseFragment {
         });
 
         GitLabClient.instance().searchUsers(mQuery).enqueue(mSearchCallback);
+    }
+
+    private void loadMore() {
+        mLoading = true;
+        Timber.d("loadMore called for " + mNextPageUrl.toString() + " " + mQuery);
+        GitLabClient.instance().searchUsers(mNextPageUrl.toString(), mQuery).enqueue(mMoreUsersCallback);
     }
 
     public void searchQuery(String query) {

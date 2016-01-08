@@ -62,6 +62,10 @@ public class UsersAdapter extends RecyclerView.Adapter<UserViewHolder>  {
 
     public void setData(Collection<UserBasic> users) {
         mData.clear();
+        addData(users);
+    }
+
+    public void addData(Collection<UserBasic> users) {
         if (users != null) {
             mData.addAll(users);
         }

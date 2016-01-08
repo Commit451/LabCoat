@@ -62,8 +62,11 @@ public interface GitLab {
     @GET
     Call<List<UserBasic>> getUsers(@Url String url);
 
-    @GET(API_VERSION + "/users?per_page=100")
+    @GET(API_VERSION + "/users")
     Call<List<UserBasic>> searchUsers(@Query("search") String query);
+
+    @GET
+    Call<List<UserBasic>> searchUsers(@Url String url, @Query("search") String query);
 
     @GET(API_VERSION + "/users/{id}")
     Call<UserBasic> getUser(@Path("id") long userId);

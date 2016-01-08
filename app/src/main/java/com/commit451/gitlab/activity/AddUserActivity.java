@@ -2,10 +2,12 @@ package com.commit451.gitlab.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -27,6 +29,7 @@ import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.model.api.Member;
 import com.commit451.gitlab.model.api.UserBasic;
 import com.commit451.gitlab.util.KeyboardUtil;
+import com.commit451.gitlab.util.PaginationUtil;
 import com.commit451.gitlab.viewHolder.UserViewHolder;
 
 import org.parceler.Parcels;
@@ -67,6 +70,7 @@ public class AddUserActivity extends MorphActivity {
     @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
     @Bind(R.id.list) RecyclerView mRecyclerView;
     @Bind(R.id.clear) View mClearView;
+    LinearLayoutManager mUserLinearLayoutManager;
 
     @OnClick(R.id.clear)
     void onClearClick() {
@@ -84,6 +88,9 @@ public class AddUserActivity extends MorphActivity {
     UserBasic mSelectedUser;
     long mProjectId;
     Group mGroup;
+    String mSearchQuery;
+    Uri mNextPageUrl;
+    boolean mLoading = false;
 
     private final View.OnClickListener mOnBackPressed = new View.OnClickListener() {
         @Override
@@ -92,13 +99,25 @@ public class AddUserActivity extends MorphActivity {
         }
     };
 
+    private final RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+            int visibleItemCount = mUserLinearLayoutManager.getChildCount();
+            int totalItemCount = mUserLinearLayoutManager.getItemCount();
+            int firstVisibleItem = mUserLinearLayoutManager.findFirstVisibleItemPosition();
+            if (firstVisibleItem + visibleItemCount >= totalItemCount && !mLoading && mNextPageUrl != null) {
+                loadMore();
+            }
+        }
+    };
+
     private final TextView.OnEditorActionListener mSearchEditorActionListener = new TextView.OnEditorActionListener() {
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
             if (!TextUtils.isEmpty(mUserSearch.getText())) {
-                KeyboardUtil.hideKeyboard(AddUserActivity.this);
-                mSwipeRefreshLayout.setRefreshing(true);
-                GitLabClient.instance().searchUsers(mUserSearch.getText().toString()).enqueue(mUserCallback);
+                mSearchQuery = mUserSearch.getText().toString();
+                loadData();
             }
             return true;
         }
@@ -131,10 +150,33 @@ public class AddUserActivity extends MorphActivity {
         @Override
         public void onResponse(Response<List<UserBasic>> response, Retrofit retrofit) {
             mSwipeRefreshLayout.setRefreshing(false);
+            mLoading = false;
             if (!response.isSuccess()) {
                 return;
             }
             mAdapter.setData(response.body());
+            mNextPageUrl = PaginationUtil.parse(response).getNext();
+            Timber.d("HAHA Next page url is " + mNextPageUrl);
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+            Timber.e(t, null);
+            mLoading = false;
+            Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error_users), Snackbar.LENGTH_SHORT)
+                    .show();
+        }
+    };
+
+    private final Callback<List<UserBasic>> mMoreUsersCallback = new Callback<List<UserBasic>>() {
+        @Override
+        public void onResponse(Response<List<UserBasic>> response, Retrofit retrofit) {
+            mLoading = false;
+            if (!response.isSuccess()) {
+                return;
+            }
+            mAdapter.addData(response.body());
+            mNextPageUrl = PaginationUtil.parse(response).getNext();
         }
 
         @Override
@@ -205,10 +247,25 @@ public class AddUserActivity extends MorphActivity {
         mToolbar.setNavigationOnClickListener(mOnBackPressed);
         mUserSearch.setOnEditorActionListener(mSearchEditorActionListener);
         mUserSearch.addTextChangedListener(mTextWatcher);
-        mRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+        mUserLinearLayoutManager = new GridLayoutManager(this, 2);
+        mRecyclerView.setLayoutManager(mUserLinearLayoutManager);
         mAdapter = new UsersAdapter(mUserClickListener);
         mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.addOnScrollListener(mOnScrollListener);
 
         morph(mRoot);
+    }
+
+    private void loadData() {
+        KeyboardUtil.hideKeyboard(AddUserActivity.this);
+        mSwipeRefreshLayout.setRefreshing(true);
+        mLoading = true;
+        GitLabClient.instance().searchUsers(mSearchQuery).enqueue(mUserCallback);
+    }
+
+    private void loadMore() {
+        mLoading = true;
+        Timber.d("loadMore " + mNextPageUrl.toString() + " " + mSearchQuery);
+        GitLabClient.instance().searchUsers(mNextPageUrl.toString(), mSearchQuery).enqueue(mMoreUsersCallback);
     }
 }
