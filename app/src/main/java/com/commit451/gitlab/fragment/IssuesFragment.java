@@ -21,6 +21,7 @@ import com.commit451.gitlab.adapter.IssuesAdapter;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.IssueChangedEvent;
 import com.commit451.gitlab.event.IssueCreatedEvent;
+import com.commit451.gitlab.event.IssueReloadEvent;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Issue;
 import com.commit451.gitlab.model.api.Project;
@@ -281,6 +282,11 @@ public class IssuesFragment extends BaseFragment {
         @Subscribe
         public void onIssueChanged(IssueChangedEvent event) {
             mIssuesAdapter.updateIssue(event.mIssue);
+        }
+
+        @Subscribe
+        public void onIssueReload(IssueReloadEvent event) {
+            loadData();
         }
     }
 }

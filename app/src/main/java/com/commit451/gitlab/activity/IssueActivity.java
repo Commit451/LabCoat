@@ -18,8 +18,8 @@ import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.IssueDetailsAdapter;
 import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.dialog.AssigneeDialog;
 import com.commit451.gitlab.event.IssueChangedEvent;
+import com.commit451.gitlab.event.IssueReloadEvent;
 import com.commit451.gitlab.model.api.Issue;
 import com.commit451.gitlab.model.api.Note;
 import com.commit451.gitlab.model.api.Project;
@@ -89,10 +89,7 @@ public class IssueActivity extends BaseActivity {
                     IntentUtil.share(getWindow().getDecorView(), mIssue.getUrl(mProject));
                     return true;
                 case R.id.action_close:
-                    closeIssue();
-                    return true;
-                case R.id.action_assign:
-                    new AssigneeDialog(IssueActivity.this, mIssue.getAssignee(), mProject).show();
+                    closeOrOpenIssue();
                     return true;
             }
             return false;
@@ -132,6 +129,7 @@ public class IssueActivity extends BaseActivity {
             }
             mIssue = response.body();
             GitLabApp.bus().post(new IssueChangedEvent(mIssue));
+            GitLabApp.bus().post(new IssueReloadEvent());
             setOpenCloseMenuStatus();
             loadNotes();
         }
@@ -254,7 +252,7 @@ public class IssueActivity extends BaseActivity {
         GitLabClient.instance().addIssueNote(mProject.getId(), mIssue.getId(), body).enqueue(mPostNoteCallback);
     }
 
-    private void closeIssue() {
+    private void closeOrOpenIssue() {
         mProgress.setVisibility(View.VISIBLE);
         if (mIssue.getState() == Issue.State.CLOSED) {
             GitLabClient.instance().updateIssueStatus(mProject.getId(), mIssue.getId(), Issue.STATE_REOPEN)
