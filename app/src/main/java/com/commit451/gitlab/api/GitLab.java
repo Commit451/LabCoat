@@ -70,7 +70,7 @@ public interface GitLab {
 
     /* --- GROUPS --- */
 
-    @GET(API_VERSION + "/groups?per_page=100")
+    @GET(API_VERSION + "/groups")
     Call<List<Group>> getGroups();
 
     @GET

@@ -38,10 +38,14 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupViewHolder> {
         }
     };
 
-    public void setGroups(Collection<Group> entries) {
+    public void setGroups(Collection<Group> groups) {
         mValues.clear();
-        if (entries != null) {
-            mValues.addAll(entries);
+        addGroups(groups);
+    }
+
+    public void addGroups(Collection<Group> groups) {
+        if (groups != null) {
+            mValues.addAll(groups);
         }
         notifyDataSetChanged();
     }

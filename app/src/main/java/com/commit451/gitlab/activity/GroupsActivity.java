@@ -2,11 +2,13 @@ package com.commit451.gitlab.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -17,6 +19,7 @@ import com.commit451.gitlab.adapter.GroupAdapter;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.util.NavigationManager;
+import com.commit451.gitlab.util.PaginationUtil;
 import com.commit451.gitlab.viewHolder.GroupViewHolder;
 
 import java.util.List;
@@ -45,10 +48,28 @@ public class GroupsActivity extends BaseActivity {
     @Bind(R.id.list) RecyclerView mGroupRecyclerView;
     @Bind(R.id.message_text) TextView mMessageText;
     GroupAdapter mGroupAdapter;
+    LinearLayoutManager mGroupLayoutManager;
+
+    private Uri mNextPageUrl;
+    private boolean mLoading = false;
+
+    private final RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+            int visibleItemCount = mGroupLayoutManager.getChildCount();
+            int totalItemCount = mGroupLayoutManager.getItemCount();
+            int firstVisibleItem = mGroupLayoutManager.findFirstVisibleItemPosition();
+            if (firstVisibleItem + visibleItemCount >= totalItemCount && !mLoading && mNextPageUrl != null) {
+                loadMore();
+            }
+        }
+    };
 
     private final Callback<List<Group>> mGroupsCallback = new Callback<List<Group>>() {
         @Override
         public void onResponse(Response<List<Group>> response, Retrofit retrofit) {
+            mLoading = false;
             mSwipeRefreshLayout.setRefreshing(false);
             if (!response.isSuccess()) {
                 return;
@@ -67,8 +88,27 @@ public class GroupsActivity extends BaseActivity {
         @Override
         public void onFailure(Throwable t) {
             Timber.e(t, null);
+            mLoading = false;
             mMessageText.setVisibility(View.VISIBLE);
             mMessageText.setText(R.string.connection_error);
+        }
+    };
+
+    private final Callback<List<Group>> mMoreGroupsCallback = new Callback<List<Group>>() {
+        @Override
+        public void onResponse(Response<List<Group>> response, Retrofit retrofit) {
+            mLoading = false;
+            if (!response.isSuccess()) {
+                return;
+            }
+            mGroupAdapter.addGroups(response.body());
+            mNextPageUrl = PaginationUtil.parse(response).getNext();
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+            Timber.e(t, null);
+            mLoading = false;
         }
     };
 
@@ -104,9 +144,11 @@ public class GroupsActivity extends BaseActivity {
                 load();
             }
         });
-        mGroupRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+        mGroupLayoutManager = new GridLayoutManager(this, 2);
+        mGroupRecyclerView.setLayoutManager(mGroupLayoutManager);
         mGroupAdapter = new GroupAdapter(mGroupAdapterListener);
         mGroupRecyclerView.setAdapter(mGroupAdapter);
+        mGroupRecyclerView.addOnScrollListener(mOnScrollListener);
         load();
     }
 
@@ -119,6 +161,30 @@ public class GroupsActivity extends BaseActivity {
                 }
             }
         });
+
+        mNextPageUrl = null;
+        mLoading = true;
+
         GitLabClient.instance().getGroups().enqueue(mGroupsCallback);
+    }
+
+    private void loadMore() {
+        if (mNextPageUrl == null) {
+            return;
+        }
+
+        mSwipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                if (mSwipeRefreshLayout != null) {
+                    mSwipeRefreshLayout.setRefreshing(true);
+                }
+            }
+        });
+
+        mLoading = true;
+
+        Timber.d("loadMore called for " + mNextPageUrl);
+        GitLabClient.instance().getGroups(mNextPageUrl.toString()).enqueue(mMoreGroupsCallback);
     }
 }
