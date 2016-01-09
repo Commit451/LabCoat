@@ -248,6 +248,18 @@
     <string name="milestone_hint_description">Description</string>
     <string name="due_date">Due Date</string>
     <string name="failed_to_create_milestone">Failed to create or modify milestone</string>
+    <string name="milestone_state_value_default">opened</string>
+    <string-array name="milestone_state_names">
+        <item>Open</item>
+        <item>Closed</item>
+        <item>All</item>
+    </string-array>
+
+    <string-array name="milestone_state_values">
+        <item>opened</item>
+        <item>closed</item>
+        <item>all</item>
+    </string-array>
 
     <!-- Members -->
     <string name="no_project_members">No project members.</string>

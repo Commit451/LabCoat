@@ -56,7 +56,7 @@ public class MilestonesFragment extends BaseFragment {
     private MilestoneAdapter mMilestoneAdapter;
     private LinearLayoutManager mMilestoneLayoutManager;
 
-    @BindString(R.string.merge_request_state_value_default)
+    @BindString(R.string.milestone_state_value_default)
     String mState;
     private String[] mStates;
     private boolean mLoading = false;
@@ -162,7 +162,7 @@ public class MilestonesFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mStates = getContext().getResources().getStringArray(R.array.merge_request_state_values);
+        mStates = getContext().getResources().getStringArray(R.array.milestone_state_values);
     }
 
     @Override
