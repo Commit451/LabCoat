@@ -149,14 +149,17 @@
     <string name="no_issues">No issues. Good job?</string>
     <string name="issue_opened">Opened</string>
     <string name="issue_closed">Closed</string>
+    <string name="issue_all">All</string>
     <string name="issue_state_value_default">opened</string>
     <string-array name="issue_state_names">
         <item>@string/issue_opened</item>
         <item>@string/issue_closed</item>
+        <item>@string/issue_all</item>
     </string-array>
     <string-array name="issue_state_values">
         <item>opened</item>
         <item>closed</item>
+        <item>all</item>
     </string-array>
     <string name="created_time">Created %1$s by %2$s</string>
     <string name="no_assignee">No Assignee</string>
@@ -226,12 +229,16 @@
     <!-- Merge Requests -->
     <string name="no_merge_requests">No merge requests</string>
     <string name="merge_request_number">Merge Request #</string>
+    <string name="merge_request_opened">Opened</string>
+    <string name="merge_request_merged">Merged</string>
+    <string name="merge_request_closed">Closed</string>
+    <string name="merge_request_all">All</string>
     <string name="merge_request_state_value_default">opened</string>
     <string-array name="merge_request_state_names">
-        <item>Open</item>
-        <item>Merged</item>
-        <item>Closed</item>
-        <item>All</item>
+        <item>@string/merge_request_opened</item>
+        <item>@string/merge_request_merged</item>
+        <item>@string/merge_request_closed</item>
+        <item>@string/merge_request_all</item>
     </string-array>
 
     <string-array name="merge_request_state_values">
@@ -248,11 +255,14 @@
     <string name="milestone_hint_description">Description</string>
     <string name="due_date">Due Date</string>
     <string name="failed_to_create_milestone">Failed to create or modify milestone</string>
+    <string name="milestone_opened">Opened</string>
+    <string name="milestone_closed">Closed</string>
+    <string name="milestone_all">Closed</string>
     <string name="milestone_state_value_default">opened</string>
     <string-array name="milestone_state_names">
-        <item>Open</item>
-        <item>Closed</item>
-        <item>All</item>
+        <item>@string/milestone_opened</item>
+        <item>@string/milestone_closed</item>
+        <item>@string/milestone_all</item>
     </string-array>
 
     <string-array name="milestone_state_values">
