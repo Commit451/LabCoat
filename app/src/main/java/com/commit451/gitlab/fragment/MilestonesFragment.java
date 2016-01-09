@@ -114,7 +114,7 @@ public class MilestonesFragment extends BaseFragment {
             if (!response.isSuccess()) {
                 Timber.e("Milestones requests response was not a success: %d", response.code());
                 mMessageView.setVisibility(View.VISIBLE);
-                mMessageView.setText(R.string.connection_error_merge_requests);
+                mMessageView.setText(R.string.connection_error_milestones);
                 mMilestoneAdapter.setData(null);
                 mNextPageUrl = null;
                 return;
