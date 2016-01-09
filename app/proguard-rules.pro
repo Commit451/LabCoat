@@ -57,6 +57,9 @@
 -keep class sun.misc.Unsafe { *; }
 -keep class com.google.gson.stream.** { *; }
 
+# Application classes that will be serialized/deserialized over Gson
+-keep class com.commit451.gitlab.model.** { *; }
+
 # Simple-Xml Proguard Config
 
 # Keep public classes and methods.
@@ -110,3 +113,6 @@
 }
 
 -keep class org.parceler.Parceler$$Parcels
+
+# Unicoding Bypass library
+-keep class in.uncod.android.** { *; }
