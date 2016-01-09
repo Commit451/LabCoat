@@ -24,6 +24,7 @@ import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.data.Prefs;
+import com.commit451.gitlab.dialog.HttpLoginDialog;
 import com.commit451.gitlab.event.LoginEvent;
 import com.commit451.gitlab.event.ReloadDataEvent;
 import com.commit451.gitlab.model.Account;
@@ -34,6 +35,7 @@ import com.commit451.gitlab.ssl.X509Util;
 import com.commit451.gitlab.util.KeyboardUtil;
 import com.commit451.gitlab.util.NavigationManager;
 import com.commit451.gitlab.view.EmailAutoCompleteTextView;
+import com.squareup.okhttp.Credentials;
 
 import java.security.cert.CertificateEncodingException;
 import java.util.Date;
@@ -74,6 +76,7 @@ public class LoginActivity extends BaseActivity {
 
     private boolean mIsNormalLogin = true;
     private String mTrustedCertificate;
+    private String mAuthorizationHeader;
     private Account mAccount;
 
     private final TextView.OnEditorActionListener onEditorActionListener = new TextView.OnEditorActionListener() {
@@ -123,6 +126,7 @@ public class LoginActivity extends BaseActivity {
         mAccount = new Account();
         mAccount.setServerUrl(Uri.parse(url));
         mAccount.setTrustedCertificate(mTrustedCertificate);
+        mAccount.setAuthorizationHeader(mAuthorizationHeader);
 
         if(mIsNormalLogin) {
             connect(true);
@@ -138,7 +142,7 @@ public class LoginActivity extends BaseActivity {
         public void onResponse(Response<UserLogin> response, Retrofit retrofit) {
             mTrustedCertificate = null;
             if (!response.isSuccess()) {
-                handleConnectionResponse(response.code());
+                handleConnectionResponse(response);
                 return;
             }
             mAccount.setPrivateToken(response.body().getPrivateToken());
@@ -158,7 +162,7 @@ public class LoginActivity extends BaseActivity {
         public void onResponse(Response<UserFull> response, Retrofit retrofit) {
             mProgress.setVisibility(View.GONE);
             if (!response.isSuccess()) {
-                handleConnectionResponse(response.code());
+                handleConnectionResponse(response);
                 return;
             }
             mAccount.setUser(response.body());
@@ -174,9 +178,9 @@ public class LoginActivity extends BaseActivity {
 
         @Override
         public void onFailure(Throwable t) {
+            mTrustedCertificate = null;
             Timber.e(t, null);
-            Snackbar.make(mRoot, getString(R.string.login_error), Snackbar.LENGTH_LONG)
-                    .show();
+            handleConnectionError(t);
         }
     };
 
@@ -289,10 +293,15 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
-    private void handleConnectionResponse(int responseCode) {
+    private void handleConnectionResponse(Response response) {
         mProgress.setVisibility(View.GONE);
-        switch (responseCode) {
+        switch (response.code()) {
             case 401:
+                String header = response.headers().get("WWW-Authenticate");
+                if (header != null) {
+                    handleBasicAuthentication(response);
+                    return;
+                }
                 Snackbar.make(mRoot, getString(R.string.login_unauthorized), Snackbar.LENGTH_LONG)
                         .show();
                 return;
@@ -300,5 +309,35 @@ public class LoginActivity extends BaseActivity {
                 Snackbar.make(mRoot, getString(R.string.login_error), Snackbar.LENGTH_LONG)
                         .show();
         }
+    }
+
+    private void handleBasicAuthentication(Response response) {
+        String header = response.headers().get("WWW-Authenticate").trim();
+        if (!header.startsWith("Basic")) {
+            Snackbar.make(mRoot, getString(R.string.login_unsupported_authentication), Snackbar.LENGTH_LONG)
+                    .show();
+            return;
+        }
+
+        int realmStart = header.indexOf('"') + 1;
+        int realmEnd = header.lastIndexOf('"');
+        String realm = "";
+        if (realmStart > 0 && realmEnd > -1) {
+            realm = header.substring(realmStart, realmEnd);
+        }
+
+        HttpLoginDialog dialog = new HttpLoginDialog(this, realm, new HttpLoginDialog.LoginListener() {
+            @Override
+            public void onLogin(String username, String password) {
+                mAuthorizationHeader = Credentials.basic(username, password);
+                onLoginClick();
+            }
+
+            @Override
+            public void onCancel() {
+                mAuthorizationHeader = null;
+            }
+        });
+        dialog.show();
     }
 }

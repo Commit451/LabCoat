@@ -14,14 +14,15 @@ import timber.log.Timber;
  * Adds the private token to all requests
  * Created by Jawn on 9/15/2015.
  */
-public class PrivateTokenRequestInterceptor implements Interceptor {
+public class AuthenticationRequestInterceptor implements Interceptor {
 
+    private static final String AUTHORIZATION_HEADER_FIELD = "Authorization";
     private static final String PRIVATE_TOKEN_HEADER_FIELD = "PRIVATE-TOKEN";
     private static final String PRIVATE_TOKEN_GET_PARAMETER = "private_token";
 
     private Account mAccount;
 
-    public PrivateTokenRequestInterceptor(Account account) {
+    public AuthenticationRequestInterceptor(Account account) {
         mAccount = account;
     }
 
@@ -31,6 +32,13 @@ public class PrivateTokenRequestInterceptor implements Interceptor {
 
         HttpUrl url = request.httpUrl();
         if (url.toString().startsWith(mAccount.getServerUrl().toString())) {
+            String authorizationHeader = mAccount.getAuthorizationHeader();
+            if (authorizationHeader != null) {
+                request = request.newBuilder()
+                        .header(AUTHORIZATION_HEADER_FIELD, authorizationHeader)
+                        .build();
+            }
+
             String privateToken = mAccount.getPrivateToken();
             if (privateToken == null) {
                 Timber.e("The private token was null");

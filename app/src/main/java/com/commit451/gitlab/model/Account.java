@@ -29,6 +29,8 @@ public class Account implements Comparable<Account>{
 
     @SerializedName("server_url")
     Uri mServerUrl;
+    @SerializedName("authorization_header")
+    String mAuthorizationHeader;
     @SerializedName("private_token")
     String mPrivateToken;
     @SerializedName("trusted_certificate")
@@ -46,6 +48,14 @@ public class Account implements Comparable<Account>{
 
     public void setServerUrl(Uri url) {
         mServerUrl = url;
+    }
+
+    public String getAuthorizationHeader() {
+        return mAuthorizationHeader;
+    }
+
+    public void setAuthorizationHeader(String authorizationHeader) {
+        mAuthorizationHeader = authorizationHeader;
     }
 
     public String getPrivateToken() {
@@ -93,13 +103,11 @@ public class Account implements Comparable<Account>{
 
         Account account = (Account) o;
         return ObjectUtil.equals(mServerUrl, account.mServerUrl)
-                && ObjectUtil.equals(mPrivateToken, account.mPrivateToken)
-                && ObjectUtil.equals(mTrustedCertificate, account.mTrustedCertificate)
                 && ObjectUtil.equals(mUser, account.mUser);
     }
 
     @Override
     public int hashCode() {
-        return ObjectUtil.hash(mServerUrl, mPrivateToken, mTrustedCertificate, mUser);
+        return ObjectUtil.hash(mServerUrl, mUser);
     }
 }

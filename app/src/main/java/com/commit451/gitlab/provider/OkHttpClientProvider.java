@@ -1,7 +1,7 @@
 package com.commit451.gitlab.provider;
 
 import com.commit451.gitlab.BuildConfig;
-import com.commit451.gitlab.api.PrivateTokenRequestInterceptor;
+import com.commit451.gitlab.api.AuthenticationRequestInterceptor;
 import com.commit451.gitlab.api.TimberRequestInterceptor;
 import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.ssl.CustomTrustManager;
@@ -20,7 +20,7 @@ public final class OkHttpClientProvider {
     private OkHttpClientProvider() {}
 
     public static OkHttpClient getInstance(Account account) {
-        if ((sAccount != null || account != null) && (sAccount == null || !sAccount.equals(account))) {
+        if (sAccount != account) {
             sOkHttpClient = null;
         }
         if (sOkHttpClient == null) {
@@ -35,7 +35,7 @@ public final class OkHttpClientProvider {
 
         OkHttpClient client = new OkHttpClient();
         client.setSslSocketFactory(sCustomTrustManager.getSSLSocketFactory());
-        client.interceptors().add(new PrivateTokenRequestInterceptor(account));
+        client.interceptors().add(new AuthenticationRequestInterceptor(account));
         if (BuildConfig.DEBUG) {
             client.networkInterceptors().add(new TimberRequestInterceptor());
         }
