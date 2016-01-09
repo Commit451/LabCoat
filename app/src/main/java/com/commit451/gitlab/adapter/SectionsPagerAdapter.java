@@ -52,6 +52,9 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
         if (!project.isMergeRequestsEnabled()) {
             mDisabledSections.add(MERGE_REQUESTS_POS);
         }
+        if (!project.isIssuesEnabled() && !project.isMergeRequestsEnabled()) {
+            mDisabledSections.add(MILESTONES_POS);
+        }
     }
 
     @Override
