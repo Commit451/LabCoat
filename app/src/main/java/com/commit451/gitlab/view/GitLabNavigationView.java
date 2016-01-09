@@ -119,18 +119,18 @@ public class GitLabNavigationView extends NavigationView {
         }
     };
 
-    @OnClick(R.id.drawer_header)
-    public void onHeaderClick() {
-        toggleAccounts();
-    }
-
-    private final Callback<UserFull> userCallback = new Callback<UserFull>() {
+    private final Callback<UserFull> mUserCallback = new Callback<UserFull>() {
 
         @Override
         public void onResponse(Response<UserFull> response, Retrofit retrofit) {
             if (!response.isSuccess()) {
                 return;
             }
+            //Store the newly retrieved user to the account so that it stays up to date
+            // in local storage
+            Account account = GitLabClient.getAccount();
+            account.setUser(response.body());
+            Prefs.updateAccount(getContext(), account);
             bindUser(response.body());
         }
 
@@ -139,6 +139,11 @@ public class GitLabNavigationView extends NavigationView {
             Timber.e(t, null);
         }
     };
+
+    @OnClick(R.id.drawer_header)
+    public void onHeaderClick() {
+        toggleAccounts();
+    }
 
     public GitLabNavigationView(Context context) {
         super(context);
@@ -208,7 +213,7 @@ public class GitLabNavigationView extends NavigationView {
     }
 
     private void loadCurrentUser() {
-        GitLabClient.instance().getThisUser().enqueue(userCallback);
+        GitLabClient.instance().getThisUser().enqueue(mUserCallback);
     }
 
     private void bindUser(UserFull user) {

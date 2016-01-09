@@ -45,6 +45,13 @@ public class Prefs {
         setAccounts(context, accounts);
     }
 
+    public static void updateAccount(Context context, Account account) {
+        List<Account> accounts = getAccounts(context);
+        accounts.remove(account);
+        accounts.add(account);
+        setAccounts(context, accounts);
+    }
+
     private static void setAccounts(Context context, List<Account> accounts) {
         getSharedPrefs(context)
                 .edit()
