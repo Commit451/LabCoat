@@ -193,9 +193,12 @@ public interface GitLab {
     Call<MergeRequest> getMergeRequest(@Path("id") long projectId,
                                        @Path("merge_request_id") long mergeRequestId);
 
-    @GET(API_VERSION + "/projects/{id}/merge_requests/{merge_request_id}/notes?per_page=100")
+    @GET(API_VERSION + "/projects/{id}/merge_requests/{merge_request_id}/notes")
     Call<List<Note>> getMergeRequestNotes(@Path("id") long projectId,
                                           @Path("merge_request_id") long mergeRequestId);
+
+    @GET
+    Call<List<Note>> getMergeRequestNotes(@Url String url);
 
     @FormUrlEncoded
     @POST(API_VERSION + "/projects/{id}/merge_requests/{merge_request_id}/notes")

@@ -5,6 +5,7 @@ import android.view.ViewGroup;
 
 import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.model.api.Note;
+import com.commit451.gitlab.viewHolder.LoadingFooterViewHolder;
 import com.commit451.gitlab.viewHolder.MergeRequestHeaderViewHolder;
 import com.commit451.gitlab.viewHolder.NoteViewHolder;
 
@@ -19,11 +20,14 @@ public class MergeRequestDetailAdapter extends RecyclerView.Adapter<RecyclerView
 
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_COMMENT = 1;
+    private static final int TYPE_FOOTER = 2;
 
     private static final int HEADER_COUNT = 1;
+    private static final int FOOTER_COUNT = 1;
 
     private ArrayList<Note> mNotes;
     private MergeRequest mMergeRequest;
+    private boolean mLoading = false;
 
     public MergeRequestDetailAdapter(MergeRequest mergeRequest) {
         mMergeRequest = mergeRequest;
@@ -37,6 +41,8 @@ public class MergeRequestDetailAdapter extends RecyclerView.Adapter<RecyclerView
         } else if (viewType == TYPE_COMMENT) {
             RecyclerView.ViewHolder holder = NoteViewHolder.inflate(parent);
             return holder;
+        } else if (viewType == TYPE_FOOTER) {
+            return LoadingFooterViewHolder.inflate(parent);
         }
         throw new IllegalArgumentException("No view type matches");
     }
@@ -48,18 +54,22 @@ public class MergeRequestDetailAdapter extends RecyclerView.Adapter<RecyclerView
         } else if (holder instanceof NoteViewHolder) {
             Note note = getNoteAt(position);
             ((NoteViewHolder) holder).bind(note);
+        } else if (holder instanceof LoadingFooterViewHolder) {
+            ((LoadingFooterViewHolder) holder).bind(mLoading);
         }
     }
 
     @Override
     public int getItemCount() {
-        return mNotes.size() + HEADER_COUNT;
+        return mNotes.size() + HEADER_COUNT + FOOTER_COUNT;
     }
 
     @Override
     public int getItemViewType(int position) {
         if (isPositionHeader(position)) {
             return TYPE_HEADER;
+        } else if (position == HEADER_COUNT + mNotes.size()) {
+            return TYPE_FOOTER;
         } else {
             return TYPE_COMMENT;
         }
@@ -78,16 +88,20 @@ public class MergeRequestDetailAdapter extends RecyclerView.Adapter<RecyclerView
         notifyItemInserted(mNotes.size() + HEADER_COUNT);
     }
 
+    public void setNotes(List<Note> notes) {
+        mNotes.clear();
+        addNotes(notes);
+    }
+
     public void addNotes(List<Note> notes) {
         if (!notes.isEmpty()) {
-            mNotes.clear();
             mNotes.addAll(notes);
         }
         notifyDataSetChanged();
     }
 
-    public void updateMergeRequest(MergeRequest mergeRequest) {
-        mMergeRequest = mergeRequest;
-        notifyItemChanged(0);
+    public void setLoading(boolean loading) {
+        mLoading = loading;
+        notifyItemChanged(mNotes.size() + HEADER_COUNT);
     }
 }
