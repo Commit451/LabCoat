@@ -28,7 +28,6 @@ import com.squareup.otto.Subscribe;
 import java.util.List;
 
 import butterknife.Bind;
-import butterknife.BindString;
 import butterknife.ButterKnife;
 import retrofit.Callback;
 import retrofit.Response;
@@ -51,8 +50,7 @@ public class MergeRequestsFragment extends BaseFragment {
     private MergeRequestAdapter mMergeRequestAdapter;
     private LinearLayoutManager mMergeLayoutManager;
 
-    @BindString(R.string.merge_request_state_value_default)
-    String mState;
+    private String mState;
     private String[] mStates;
     private Uri mNextPageUrl;
     private boolean mLoading = false;
@@ -161,6 +159,7 @@ public class MergeRequestsFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mState = getContext().getResources().getString(R.string.merge_request_state_value_default);
         mStates = getContext().getResources().getStringArray(R.array.merge_request_state_values);
     }
 

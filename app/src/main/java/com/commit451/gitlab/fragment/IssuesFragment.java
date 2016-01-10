@@ -32,7 +32,6 @@ import com.squareup.otto.Subscribe;
 import java.util.List;
 
 import butterknife.Bind;
-import butterknife.BindString;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import retrofit.Callback;
@@ -56,7 +55,6 @@ public class IssuesFragment extends BaseFragment {
     private LinearLayoutManager mIssuesLayoutManager;
     private EventReceiver mEventReceiver;
 
-    @BindString(R.string.issue_state_value_default)
     String mState;
     private String[] mStates;
     private Uri mNextPageUrl;
@@ -171,6 +169,7 @@ public class IssuesFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mState = getResources().getString(R.string.issue_state_value_default);
         mStates = getResources().getStringArray(R.array.issue_state_values);
     }
 

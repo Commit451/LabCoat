@@ -31,7 +31,6 @@ import com.squareup.otto.Subscribe;
 import java.util.List;
 
 import butterknife.Bind;
-import butterknife.BindString;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import retrofit.Callback;
@@ -55,8 +54,7 @@ public class MilestonesFragment extends BaseFragment {
     private MilestoneAdapter mMilestoneAdapter;
     private LinearLayoutManager mMilestoneLayoutManager;
 
-    @BindString(R.string.milestone_state_value_default)
-    String mState;
+    private String mState;
     private String[] mStates;
     private boolean mLoading = false;
     private Uri mNextPageUrl;
@@ -176,8 +174,8 @@ public class MilestonesFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        mStates = getContext().getResources().getStringArray(R.array.milestone_state_values);
+        mState = getResources().getString(R.string.milestone_state_value_default);
+        mStates = getResources().getStringArray(R.array.milestone_state_values);
     }
 
     @Override
