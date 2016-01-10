@@ -195,7 +195,7 @@ public interface GitLab {
     @POST(API_VERSION + "/projects/{id}/merge_requests/{merge_request_id}/notes")
     Call<Note> addMergeRequestNote(@Path("id") long projectId,
                                    @Path("merge_request_id") long mergeRequestId,
-                                   @Field("note") String body);
+                                   @Field("body") String body);
 
     /* --- ISSUES --- */
 
@@ -232,7 +232,7 @@ public interface GitLab {
                                   @Path("issue_id") long issueId,
                                   @Query("state_event") @Issue.EditState String status);
 
-    @GET(API_VERSION + "/projects/{id}/issues/{issue_id}/notes?order_by=last_activity_at&per_page=100")
+    @GET(API_VERSION + "/projects/{id}/issues/{issue_id}/notes?per_page=100")
     Call<List<Note>> getIssueNotes(@Path("id") long projectId,
                                    @Path("issue_id") long issueId);
 
