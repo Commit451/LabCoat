@@ -55,6 +55,10 @@ public class ProjectActivity extends BaseActivity {
     private final AdapterView.OnItemSelectedListener mSpinnerItemSelectedListener = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            if (!(view instanceof TextView)) {
+                return;
+            }
+
             mBranchName = ((TextView)view).getText().toString();
             broadcastLoad();
         }
