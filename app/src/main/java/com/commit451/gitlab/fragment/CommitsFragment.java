@@ -88,11 +88,7 @@ public class CommitsFragment extends BaseFragment {
                 mMessageView.setText(R.string.no_commits_found);
             }
 
-            if (mPage <= 0) {
-                mCommitsAdapter.setData(response.body());
-            } else {
-                mCommitsAdapter.addData(response.body());
-            }
+            mCommitsAdapter.setData(response.body());
 
             if (response.body().isEmpty()) {
                 mPage = -1;
@@ -114,6 +110,26 @@ public class CommitsFragment extends BaseFragment {
             mMessageView.setText(R.string.connection_error);
             mCommitsAdapter.setData(null);
             mPage = -1;
+        }
+    };
+
+    private final Callback<List<RepositoryCommit>> mMoreCommitsCallback = new Callback<List<RepositoryCommit>>() {
+        @Override
+        public void onResponse(Response<List<RepositoryCommit>> response, Retrofit retrofit) {
+            if (!response.isSuccess()) {
+                return;
+            }
+            mLoading = false;
+            mCommitsAdapter.setLoading(false);
+            mPage++;
+            mCommitsAdapter.addData(response.body());
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+            Timber.e(t, null);
+            mCommitsAdapter.setLoading(false);
+            mLoading = false;
         }
     };
 
@@ -201,20 +217,12 @@ public class CommitsFragment extends BaseFragment {
             return;
         }
 
-        mSwipeRefreshLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                if (mSwipeRefreshLayout != null) {
-                    mSwipeRefreshLayout.setRefreshing(true);
-                }
-            }
-        });
-
         mPage++;
         mLoading = true;
+        mCommitsAdapter.setLoading(true);
 
         Timber.d("loadMore called for " + mPage);
-        GitLabClient.instance().getCommits(mProject.getId(), mBranchName, mPage).enqueue(mCommitsCallback);
+        GitLabClient.instance().getCommits(mProject.getId(), mBranchName, mPage).enqueue(mMoreCommitsCallback);
     }
 
     private class EventReceiver {

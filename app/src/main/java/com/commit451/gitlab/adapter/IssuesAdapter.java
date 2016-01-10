@@ -121,7 +121,6 @@ public class IssuesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     public void setLoading(boolean loading) {
         mLoading = loading;
-        notifyDataSetChanged();
-        //notifyItemChanged(mValues.size());
+        notifyItemChanged(mValues.size());
     }
 }
