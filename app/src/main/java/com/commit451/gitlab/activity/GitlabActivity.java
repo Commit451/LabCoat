@@ -2,7 +2,6 @@ package com.commit451.gitlab.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import com.commit451.gitlab.BuildConfig;
 import com.commit451.gitlab.api.GitLabClient;
@@ -25,7 +24,7 @@ public class GitlabActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         int savedVersion = Prefs.getSavedVersion(this);
-        if (savedVersion < BuildConfig.VERSION_CODE) {
+        if (savedVersion != -1 && savedVersion < BuildConfig.VERSION_CODE) {
             Timber.d("Performing upgrade");
             performUpgrade(savedVersion, BuildConfig.VERSION_CODE);
             Prefs.setSavedVersion(this);
@@ -46,9 +45,6 @@ public class GitlabActivity extends Activity {
      * Perform an upgrade from one version to another. This should only be one time upgrade things
      */
     private void performUpgrade(int previousVersion, int currentVersion) {
-        if (previousVersion <= 220 && currentVersion == 220) {
-            Toast.makeText(GitlabActivity.this, "You have been signed out to support multiple logged in accounts", Toast.LENGTH_LONG)
-                    .show();
-        }
+        
     }
 }
