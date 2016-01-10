@@ -10,8 +10,8 @@ android {
         applicationId "com.commit451.gitlab"
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 214
-        versionName "2.1.4"
+        versionCode 220
+        versionName "2.2.0"
     }
     buildTypes {
         release {
@@ -47,7 +47,7 @@ dependencies {
         exclude group: 'stax', module: 'stax-api'
         exclude group: 'stax', module: 'stax'
     }
-    compile 'com.squareup.okhttp:okhttp:2.7.1'
+    compile 'com.squareup.okhttp:okhttp:2.7.2'
     compile 'com.squareup:otto:1.3.8'
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'com.jakewharton.timber:timber:4.1.0'
