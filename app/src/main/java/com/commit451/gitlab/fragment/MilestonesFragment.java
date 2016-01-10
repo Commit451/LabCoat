@@ -22,7 +22,6 @@ import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.MilestoneChangedEvent;
 import com.commit451.gitlab.event.MilestoneCreatedEvent;
 import com.commit451.gitlab.event.ProjectReloadEvent;
-import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.model.api.Milestone;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.util.NavigationManager;
@@ -130,11 +129,7 @@ public class MilestonesFragment extends BaseFragment {
                 mMessageView.setText(R.string.no_milestones);
             }
 
-            if (mNextPageUrl == null) {
-                mMilestoneAdapter.setData(response.body());
-            } else {
-                mMilestoneAdapter.addData(response.body());
-            }
+            mMilestoneAdapter.setData(response.body());
 
             mNextPageUrl = PaginationUtil.parse(response).getNext();
             Timber.d("Next page url " + mNextPageUrl);
@@ -155,6 +150,26 @@ public class MilestonesFragment extends BaseFragment {
             mMessageView.setText(R.string.connection_error);
             mMilestoneAdapter.setData(null);
             mNextPageUrl = null;
+        }
+    };
+
+    private final Callback<List<Milestone>> mMoreMilestonesCallback = new Callback<List<Milestone>>() {
+        @Override
+        public void onResponse(Response<List<Milestone>> response, Retrofit retrofit) {
+            if (!response.isSuccess()) {
+                return;
+            }
+            mLoading = false;
+            mMilestoneAdapter.setLoading(false);
+            mNextPageUrl = PaginationUtil.parse(response).getNext();
+            mMilestoneAdapter.addData(response.body());
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+            Timber.e(t, null);
+            mMilestoneAdapter.setLoading(false);
+            mLoading = false;
         }
     };
 
@@ -244,19 +259,11 @@ public class MilestonesFragment extends BaseFragment {
             return;
         }
 
-        mSwipeRefreshLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                if (mSwipeRefreshLayout != null) {
-                    mSwipeRefreshLayout.setRefreshing(true);
-                }
-            }
-        });
-
         mLoading = true;
+        mMilestoneAdapter.setLoading(true);
 
         Timber.d("loadMore called for " + mNextPageUrl);
-        GitLabClient.instance().getMilestones(mNextPageUrl.toString()).enqueue(mCallback);
+        GitLabClient.instance().getMilestones(mNextPageUrl.toString()).enqueue(mMoreMilestonesCallback);
     }
 
     private class EventReceiver {

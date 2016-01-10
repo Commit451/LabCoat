@@ -114,12 +114,7 @@ public class MergeRequestsFragment extends BaseFragment {
                 mMessageView.setVisibility(View.VISIBLE);
                 mMessageView.setText(R.string.no_merge_requests);
             }
-
-            if (mNextPageUrl == null) {
-                mMergeRequestAdapter.setData(response.body());
-            } else {
-                mMergeRequestAdapter.addData(response.body());
-            }
+            mMergeRequestAdapter.setData(response.body());
 
             mNextPageUrl = PaginationUtil.parse(response).getNext();
             Timber.d("Next page url " + mNextPageUrl);
@@ -140,6 +135,26 @@ public class MergeRequestsFragment extends BaseFragment {
             mMessageView.setText(R.string.connection_error);
             mMergeRequestAdapter.setData(null);
             mNextPageUrl = null;
+        }
+    };
+
+    private final Callback<List<MergeRequest>> mMoreIssuesCallback = new Callback<List<MergeRequest>>() {
+        @Override
+        public void onResponse(Response<List<MergeRequest>> response, Retrofit retrofit) {
+            if (!response.isSuccess()) {
+                return;
+            }
+            mLoading = false;
+            mMergeRequestAdapter.setLoading(false);
+            mNextPageUrl = PaginationUtil.parse(response).getNext();
+            mMergeRequestAdapter.addData(response.body());
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+            Timber.e(t, null);
+            mMergeRequestAdapter.setLoading(false);
+            mLoading = false;
         }
     };
 
@@ -228,19 +243,11 @@ public class MergeRequestsFragment extends BaseFragment {
             return;
         }
 
-        mSwipeRefreshLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                if (mSwipeRefreshLayout != null) {
-                    mSwipeRefreshLayout.setRefreshing(true);
-                }
-            }
-        });
-
+        mMergeRequestAdapter.setLoading(true);
         mLoading = true;
 
         Timber.d("loadMore called for " + mNextPageUrl);
-        GitLabClient.instance().getMergeRequests(mNextPageUrl.toString(), mState).enqueue(mCallback);
+        GitLabClient.instance().getMergeRequests(mNextPageUrl.toString(), mState).enqueue(mMoreIssuesCallback);
     }
 
     private class EventReceiver {
