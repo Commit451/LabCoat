@@ -16,6 +16,14 @@
 #   public *;
 #}
 
+
+# Just want proguard to strip unused things, don't care about people
+# seeing the source
+-dontobfuscate
+
+# So that Fabric can still have line numbers
+-keepattributes SourceFile,LineNumberTable
+
 # Picasso rules
 -dontwarn com.squareup.okhttp.**
 
