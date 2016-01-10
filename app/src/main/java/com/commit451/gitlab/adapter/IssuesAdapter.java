@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.api.Issue;
 import com.commit451.gitlab.viewHolder.IssueViewHolder;
+import com.commit451.gitlab.viewHolder.LoadingFooterViewHolder;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,17 +16,19 @@ import java.util.Collection;
  * Issues adapter
  * Created by Jawn on 7/28/2015.
  */
-public class IssuesAdapter extends RecyclerView.Adapter<IssueViewHolder> {
+public class IssuesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+    private static final int FOOTER_COUNT = 1;
+
+    private static final int TYPE_ITEM = 0;
+    private static final int TYPE_FOOTER = 1;
 
     public interface Listener {
         void onIssueClicked(Issue issue);
     }
     private Listener mListener;
     private ArrayList<Issue> mValues;
-
-    public Issue getValueAt(int position) {
-        return mValues.get(position);
-    }
+    private boolean mLoading = false;
 
     public IssuesAdapter(Listener listener) {
         mListener = listener;
@@ -41,22 +44,43 @@ public class IssuesAdapter extends RecyclerView.Adapter<IssueViewHolder> {
     };
 
     @Override
-    public IssueViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        IssueViewHolder holder = IssueViewHolder.newInstance(parent);
-        holder.itemView.setOnClickListener(onProjectClickListener);
-        return holder;
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        switch (viewType) {
+            case TYPE_ITEM:
+                IssueViewHolder holder = IssueViewHolder.newInstance(parent);
+                holder.itemView.setOnClickListener(onProjectClickListener);
+                return holder;
+            case TYPE_FOOTER:
+                return LoadingFooterViewHolder.newInstance(parent);
+        }
+        throw new IllegalStateException("No holder for view type " + viewType);
     }
 
     @Override
-    public void onBindViewHolder(final IssueViewHolder holder, int position) {
-        Issue issue = getValueAt(position);
-        holder.bind(issue);
-        holder.itemView.setTag(R.id.list_position, position);
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
+        if (holder instanceof IssueViewHolder) {
+            Issue issue = getValueAt(position);
+            ((IssueViewHolder) holder).bind(issue);
+            holder.itemView.setTag(R.id.list_position, position);
+        } else if (holder instanceof LoadingFooterViewHolder) {
+            ((LoadingFooterViewHolder) holder).bind(mLoading);
+        } else {
+            throw new IllegalStateException("What is this holder?");
+        }
     }
 
     @Override
     public int getItemCount() {
-        return mValues.size();
+        return mValues.size() + FOOTER_COUNT;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (position == mValues.size()) {
+            return TYPE_FOOTER;
+        } else {
+            return TYPE_ITEM;
+        }
     }
 
     public void setIssues(Collection<Issue> issues) {
@@ -89,5 +113,15 @@ public class IssuesAdapter extends RecyclerView.Adapter<IssueViewHolder> {
             mValues.add(indexToDelete, issue);
         }
         notifyItemChanged(indexToDelete);
+    }
+
+    public Issue getValueAt(int position) {
+        return mValues.get(position);
+    }
+
+    public void setLoading(boolean loading) {
+        mLoading = loading;
+        notifyDataSetChanged();
+        //notifyItemChanged(mValues.size());
     }
 }

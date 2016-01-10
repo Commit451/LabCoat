@@ -102,12 +102,7 @@ public class IssuesFragment extends BaseFragment {
                 mMessageView.setText(R.string.no_issues);
             }
 
-            if (mNextPageUrl == null) {
-                mIssuesAdapter.setIssues(response.body());
-            } else {
-                mIssuesAdapter.addIssues(response.body());
-            }
-
+            mIssuesAdapter.setIssues(response.body());
             mNextPageUrl = PaginationUtil.parse(response).getNext();
             Timber.d("Next page url " + mNextPageUrl);
         }
@@ -127,6 +122,26 @@ public class IssuesFragment extends BaseFragment {
             mMessageView.setText(R.string.connection_error);
             mIssuesAdapter.setIssues(null);
             mNextPageUrl = null;
+        }
+    };
+
+    private final Callback<List<Issue>> mMoreIssuesCallback = new Callback<List<Issue>>() {
+        @Override
+        public void onResponse(Response<List<Issue>> response, Retrofit retrofit) {
+            if (!response.isSuccess()) {
+                return;
+            }
+            mLoading = false;
+            mIssuesAdapter.setLoading(false);
+            mNextPageUrl = PaginationUtil.parse(response).getNext();
+            mIssuesAdapter.addIssues(response.body());
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+            Timber.e(t, null);
+            mIssuesAdapter.setLoading(false);
+            mLoading = false;
         }
     };
 
@@ -248,19 +263,11 @@ public class IssuesFragment extends BaseFragment {
             return;
         }
 
-        mSwipeRefreshLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                if (mSwipeRefreshLayout != null) {
-                    mSwipeRefreshLayout.setRefreshing(true);
-                }
-            }
-        });
-
+        mIssuesAdapter.setLoading(true);
         mLoading = true;
 
         Timber.d("loadMore called for " + mNextPageUrl);
-        GitLabClient.instance().getIssues(mNextPageUrl.toString(), mState).enqueue(mIssuesCallback);
+        GitLabClient.instance().getIssues(mNextPageUrl.toString(), mState).enqueue(mMoreIssuesCallback);
     }
 
     private class EventReceiver {
