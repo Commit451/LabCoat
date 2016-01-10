@@ -83,7 +83,10 @@ public class FileActivity extends BaseActivity {
             String mimeType = null;
             String extension = fileExt(mFileName);
             if (extension != null) {
-                mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension).toLowerCase();
+                mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+                if (mimeType != null) {
+                    mimeType = mimeType.toLowerCase();
+                }
             }
 
             if (mimeType != null && mimeType.startsWith("image/")) {
