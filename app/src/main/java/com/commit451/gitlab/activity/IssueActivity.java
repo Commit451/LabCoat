@@ -2,6 +2,7 @@ package com.commit451.gitlab.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -26,11 +27,11 @@ import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.util.IntentUtil;
 import com.commit451.gitlab.util.KeyboardUtil;
 import com.commit451.gitlab.util.NavigationManager;
+import com.commit451.gitlab.util.PaginationUtil;
 import com.squareup.otto.Subscribe;
 
 import org.parceler.Parcels;
 
-import java.util.Collections;
 import java.util.List;
 
 import butterknife.Bind;
@@ -59,7 +60,7 @@ public class IssueActivity extends BaseActivity {
     @Bind(R.id.toolbar) Toolbar mToolbar;
     @Bind(R.id.issue_title) TextView mIssueTitle;
     @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
-    @Bind(R.id.list) RecyclerView mListView;
+    @Bind(R.id.list) RecyclerView mNotesRecyclerView;
     @Bind(R.id.new_note_edit) EditText mNewNoteEdit;
     @Bind(R.id.progress) View mProgress;
 
@@ -73,13 +74,29 @@ public class IssueActivity extends BaseActivity {
         NavigationManager.navigateToEditIssue(IssueActivity.this, fab, mProject, mIssue);
     }
 
-    MenuItem mOpenCloseMenuItem;
+    private MenuItem mOpenCloseMenuItem;
 
-    IssueDetailsAdapter mIssueDetailsAdapter;
-    Project mProject;
-    Issue mIssue;
+    private IssueDetailsAdapter mIssueDetailsAdapter;
+    private LinearLayoutManager mNotesLayoutManager;
+    private Project mProject;
+    private Issue mIssue;
+    private boolean mLoading;
+    private Uri mNextPageUrl;
 
-    EventReceiver mEventReceiver;
+    private EventReceiver mEventReceiver;
+
+    private final RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+            int visibleItemCount = mNotesLayoutManager.getChildCount();
+            int totalItemCount = mNotesLayoutManager.getItemCount();
+            int firstVisibleItem = mNotesLayoutManager.findFirstVisibleItemPosition();
+            if (firstVisibleItem + visibleItemCount >= totalItemCount && !mLoading && mNextPageUrl != null) {
+                loadMoreNotes();
+            }
+        }
+    };
 
     private final Toolbar.OnMenuItemClickListener mOnMenuItemClickListener = new Toolbar.OnMenuItemClickListener() {
         @Override
@@ -100,21 +117,43 @@ public class IssueActivity extends BaseActivity {
 
         @Override
         public void onResponse(Response<List<Note>> response, Retrofit retrofit) {
+            mLoading = false;
             if (!response.isSuccess()) {
                 return;
             }
             mSwipeRefreshLayout.setRefreshing(false);
-            //Annoying that this is not API controlled...
-            Collections.reverse(response.body());
+            mNextPageUrl = PaginationUtil.parse(response).getNext();
+            mIssueDetailsAdapter.setNotes(response.body());
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+            mLoading = false;
+            Timber.e(t, null);
+            mSwipeRefreshLayout.setRefreshing(false);
+            Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
+                    .show();
+        }
+    };
+
+    private Callback<List<Note>> mMoreNotesCallback = new Callback<List<Note>>() {
+
+        @Override
+        public void onResponse(Response<List<Note>> response, Retrofit retrofit) {
+            mLoading = false;
+            if (!response.isSuccess()) {
+                return;
+            }
+            mIssueDetailsAdapter.setLoading(false);
+            mNextPageUrl = PaginationUtil.parse(response).getNext();
             mIssueDetailsAdapter.addNotes(response.body());
         }
 
         @Override
         public void onFailure(Throwable t) {
+            mLoading = false;
             Timber.e(t, null);
-            mSwipeRefreshLayout.setRefreshing(false);
-            Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
-                    .show();
+            mIssueDetailsAdapter.setLoading(false);
         }
     };
 
@@ -152,7 +191,7 @@ public class IssueActivity extends BaseActivity {
             }
             mProgress.setVisibility(View.GONE);
             mIssueDetailsAdapter.addNote(response.body());
-            mListView.smoothScrollToPosition(mIssueDetailsAdapter.getItemCount());
+            mNotesRecyclerView.smoothScrollToPosition(IssueDetailsAdapter.getHeaderCount());
         }
 
         @Override
@@ -188,8 +227,10 @@ public class IssueActivity extends BaseActivity {
         mToolbar.setOnMenuItemClickListener(mOnMenuItemClickListener);
 
         mIssueDetailsAdapter = new IssueDetailsAdapter(mIssue);
-        mListView.setLayoutManager(new LinearLayoutManager(this));
-        mListView.setAdapter(mIssueDetailsAdapter);
+        mNotesLayoutManager = new LinearLayoutManager(this);
+        mNotesRecyclerView.setLayoutManager(mNotesLayoutManager);
+        mNotesRecyclerView.setAdapter(mIssueDetailsAdapter);
+        mNotesRecyclerView.addOnScrollListener(mOnScrollListener);
 
         mNewNoteEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -231,8 +272,14 @@ public class IssueActivity extends BaseActivity {
                 }
             }
         });
-        mSwipeRefreshLayout.setRefreshing(true);
+        mLoading = true;
         GitLabClient.instance().getIssueNotes(mProject.getId(), mIssue.getId()).enqueue(mNotesCallback);
+    }
+
+    private void loadMoreNotes() {
+        mLoading = true;
+        mIssueDetailsAdapter.setLoading(true);
+        GitLabClient.instance().getIssueNotes(mNextPageUrl.toString()).enqueue(mMoreNotesCallback);
     }
 
     private void postNote() {

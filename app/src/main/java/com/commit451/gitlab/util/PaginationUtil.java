@@ -5,6 +5,10 @@ import android.net.Uri;
 import retrofit.Response;
 import timber.log.Timber;
 
+/**
+ * Gets the pages
+ * https://github.com/gitlabhq/gitlabhq/tree/master/doc/api#pagination
+ */
 public final class PaginationUtil {
 
     private static final String PREV_PAGE_SUFFIX = "rel=\"prev\"";

@@ -238,9 +238,12 @@ public interface GitLab {
                                   @Path("issue_id") long issueId,
                                   @Query("state_event") @Issue.EditState String status);
 
-    @GET(API_VERSION + "/projects/{id}/issues/{issue_id}/notes?per_page=100")
+    @GET(API_VERSION + "/projects/{id}/issues/{issue_id}/notes")
     Call<List<Note>> getIssueNotes(@Path("id") long projectId,
                                    @Path("issue_id") long issueId);
+
+    @GET
+    Call<List<Note>> getIssueNotes(@Url String url);
 
     @FormUrlEncoded
     @POST(API_VERSION + "/projects/{id}/issues/{issue_id}/notes")
