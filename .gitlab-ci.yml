@@ -13,4 +13,4 @@ before_script:
 
 build:
   script:
-    - ./gradlew build -x fabricGenerateResourcesRelease --stacktrace
+    - ./gradlew build -x fabricGenerateResourcesRelease -x crashlyticsStoreDeobsRelease -x crashlyticsUploadDeobsRelease --stacktrace
