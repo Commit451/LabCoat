@@ -7,6 +7,8 @@ import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.ssl.CustomTrustManager;
 import com.squareup.okhttp.OkHttpClient;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * Creates an OkHttpClient with the needed defaults
  * Created by Jawn on 12/4/2015.
@@ -34,6 +36,7 @@ public final class OkHttpClientProvider {
         sCustomTrustManager.setTrustedCertificate(account.getTrustedCertificate());
 
         OkHttpClient client = new OkHttpClient();
+        client.setConnectTimeout(30, TimeUnit.SECONDS);
         client.setSslSocketFactory(sCustomTrustManager.getSSLSocketFactory());
         client.interceptors().add(new AuthenticationRequestInterceptor(account));
         if (BuildConfig.DEBUG) {

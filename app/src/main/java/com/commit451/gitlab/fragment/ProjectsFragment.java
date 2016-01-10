@@ -121,11 +121,7 @@ public class ProjectsFragment extends BaseFragment {
                 mMessageView.setText(R.string.no_projects);
             }
 
-            if (mNextPageUrl == null) {
-                mProjectsAdapter.setData(response.body());
-            } else {
-                mProjectsAdapter.addData(response.body());
-            }
+            mProjectsAdapter.setData(response.body());
 
             mNextPageUrl = PaginationUtil.parse(response).getNext();
             Timber.d("Next page url " + mNextPageUrl);
@@ -146,6 +142,37 @@ public class ProjectsFragment extends BaseFragment {
             mMessageView.setText(R.string.connection_error);
             mProjectsAdapter.setData(null);
             mNextPageUrl = null;
+        }
+    };
+
+    private final Callback<List<Project>> mMoreProjectsCallback = new Callback<List<Project>>() {
+        @Override
+        public void onResponse(Response<List<Project>> response, Retrofit retrofit) {
+            mLoading = false;
+
+            if (getView() == null) {
+                return;
+            }
+            mProjectsAdapter.setLoading(false);
+
+            if (!response.isSuccess()) {
+                return;
+            }
+            mProjectsAdapter.addData(response.body());
+
+            mNextPageUrl = PaginationUtil.parse(response).getNext();
+            Timber.d("Next page url " + mNextPageUrl);
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+            mLoading = false;
+            Timber.e(t, null);
+
+            if (getView() == null) {
+                return;
+            }
+            mProjectsAdapter.setLoading(false);
         }
     };
 
@@ -243,19 +270,10 @@ public class ProjectsFragment extends BaseFragment {
         if (mNextPageUrl == null) {
             return;
         }
-
-        mSwipeRefreshLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                if (mSwipeRefreshLayout != null) {
-                    mSwipeRefreshLayout.setRefreshing(true);
-                }
-            }
-        });
-
+        mLoading = true;
+        mProjectsAdapter.setLoading(true);
         Timber.d("loadMore called for " + mNextPageUrl);
-        showLoading();
-        GitLabClient.instance().getProjects(mNextPageUrl.toString()).enqueue(mProjectsCallback);
+        GitLabClient.instance().getProjects(mNextPageUrl.toString()).enqueue(mMoreProjectsCallback);
     }
 
     private void showLoading() {

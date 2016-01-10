@@ -45,6 +45,6 @@ public class GitlabActivity extends Activity {
      * Perform an upgrade from one version to another. This should only be one time upgrade things
      */
     private void performUpgrade(int previousVersion, int currentVersion) {
-        
+
     }
 }
