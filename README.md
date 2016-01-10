@@ -11,22 +11,31 @@ Please see the [issues](https://gitlab.com/Commit451/GitLabAndroid/issues) secti
 report any bugs or feature requests and to see the list of known issues.
 
 ## Libraries
-The following 3rd party libraries are the reason this app works. Rapid development is easily attainable thanks to these fine folks and the work they do:
+The following 3rd party libraries and resources are the reason this app works. Rapid development is easily attainable thanks to these fine folks and the work they do:
 
 - AppCompat (https://developer.android.com/tools/support-library/features.html)
 - Design (https://developer.android.com/tools/support-library/features.html)
 - RecyclerView (https://developer.android.com/tools/support-library/features.html)
+- CardView (https://developer.android.com/tools/support-library/features.html)
+- Palette (https://developer.android.com/tools/support-library/features.html)
+- Picasso (http://square.github.io/picasso/)
 - Retrofit (http://square.github.io/retrofit/)
 - OkHttp (http://square.github.io/okhttp/)
-- Picasso (http://square.github.io/picasso/)
+- Otto (http://square.github.io/otto/)
 - Butter Knife (http://jakewharton.github.io/butterknife/)
 - Timber (https://github.com/JakeWharton/timber)
 - GSON (https://github.com/google/gson)
+- Joda Time Android (https://github.com/dlew/joda-time-android)
 - Parceler (https://github.com/johncarl81/parceler)
-- Bypass (https://github.com/Uncodin/bypass)
+- Bypasses (https://github.com/Commit451/bypasses)
+- Easel (https://github.com/Commit451/Easel)
+- CircleImageView (https://github.com/hdodenhof/CircleImageView)
 - Material-ish Progress (https://github.com/pnikosis/materialish-progress)
 - PhysicsLayout (https://github.com/Jawnnypoo/PhysicsLayout)
-- CircleImageView (https://github.com/hdodenhof/CircleImageView)
+- Material Letter Icon (https://github.com/IvBaranov/MaterialLetterIcon)
+- RobotoTextView (https://github.com/johnkil/Android-RobotoTextView)
+- GitDiffTextView (https://github.com/alorma/GitDiffTextView)
+- MaterialDateTimePicker (https://github.com/wdullaer/MaterialDateTimePicker)
 
 ## Contributing
 Please fork this repository and contribute back! All Merge Requests should be made against the `develop` branch, as it is the active branch for development. Please make your best effort to break up commits as much as possible to improve the reviewing process.

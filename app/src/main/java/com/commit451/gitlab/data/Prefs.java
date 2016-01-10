@@ -3,62 +3,71 @@ package com.commit451.gitlab.data;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 
-import java.util.Collections;
-import java.util.Set;
+import com.commit451.gitlab.BuildConfig;
+import com.commit451.gitlab.model.Account;
+import com.commit451.gitlab.provider.GsonProvider;
+import com.google.gson.reflect.TypeToken;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Shared prefs things
- * Created by Jawn on 7/28/2015.
  */
 public class Prefs {
 
-    private static final String LOGGED_IN = "logged_in";
-    private static final String SERVER_URL = "server_url";
-    private static final String PRIVATE_TOKEN = "private_token";
-    private static final String TRUSTED_CERTIFICATES = "trusted_certificates";
+    private static final String KEY_ACCOUNTS = "accounts";
+    private static final String KEY_VERSION = "current_version";
 
     private static SharedPreferences getSharedPrefs(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context);
     }
 
-    public static boolean isLoggedIn(Context context) {
-        return getSharedPrefs(context).getBoolean(LOGGED_IN, false);
+    public static List<Account> getAccounts(Context context) {
+        String accountsJson = getSharedPrefs(context).getString(KEY_ACCOUNTS, null);
+        if (!TextUtils.isEmpty(accountsJson)) {
+            return GsonProvider.getInstance().fromJson(accountsJson, new TypeToken<List<Account>>(){}.getType());
+        } else {
+            return new ArrayList<>();
+        }
     }
 
-    public static void setLoggedIn(Context context, boolean loggedIn) {
-        SharedPreferences.Editor editor = getSharedPrefs(context).edit();
-        editor.putBoolean(LOGGED_IN, loggedIn);
-        editor.commit();
+    public static void addAccount(Context context, Account account) {
+        List<Account> accounts = getAccounts(context);
+        accounts.add(account);
+        setAccounts(context, accounts);
     }
 
-    public static void setServerUrl(Context context, String serverUrl) {
-        SharedPreferences.Editor editor = getSharedPrefs(context).edit();
-        editor.putString(SERVER_URL, serverUrl);
-        editor.commit();
+    public static void removeAccount(Context context, Account account) {
+        List<Account> accounts = getAccounts(context);
+        accounts.remove(account);
+        setAccounts(context, accounts);
     }
 
-    public static String getServerUrl(Context context) {
-        return getSharedPrefs(context).getString(SERVER_URL, "");
+    public static void updateAccount(Context context, Account account) {
+        List<Account> accounts = getAccounts(context);
+        accounts.remove(account);
+        accounts.add(account);
+        setAccounts(context, accounts);
     }
 
-    public static void setPrivateToken(Context context, String privateToken) {
-        SharedPreferences.Editor editor = getSharedPrefs(context).edit();
-        editor.putString(PRIVATE_TOKEN, privateToken);
-        editor.commit();
+    private static void setAccounts(Context context, List<Account> accounts) {
+        getSharedPrefs(context)
+                .edit()
+                .putString(KEY_ACCOUNTS, GsonProvider.getInstance().toJson(accounts))
+                .commit();
     }
 
-    public static String getPrivateToken(Context context) {
-        return getSharedPrefs(context).getString(PRIVATE_TOKEN, null);
+    public static int getSavedVersion(Context context) {
+        return getSharedPrefs(context).getInt(KEY_VERSION, -1);
     }
 
-    public static void setTrustedCertificates(Context context, Set<String> certificates) {
-        SharedPreferences.Editor editor = getSharedPrefs(context).edit();
-        editor.putStringSet(TRUSTED_CERTIFICATES, certificates);
-        editor.commit();
-    }
-
-    public static Set<String> getTrustedCertificates(Context context) {
-        return getSharedPrefs(context).getStringSet(TRUSTED_CERTIFICATES, Collections.<String>emptySet());
+    public static void setSavedVersion(Context context) {
+        getSharedPrefs(context)
+                .edit()
+                .putInt(KEY_VERSION, BuildConfig.VERSION_CODE)
+                .commit();
     }
 }

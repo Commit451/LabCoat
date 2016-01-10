@@ -7,7 +7,6 @@
     <string name="nav_projects">Projects</string>
     <string name="nav_groups">Groups</string>
     <!-- Menu -->
-    <string name="action_lock_orientation">Lock orientation</string>
     <string name="action_logout">Logout</string>
     <string name="action_save">Save</string>
     <string name="action_open">Open</string>
@@ -17,10 +16,15 @@
     <string name="action_search">Search</string>
     <string name="action_copy_link">Copy link</string>
     <string name="action_close">Close</string>
+    <string name="action_assign">Assign</string>
+    <string name="action_create">Create</string>
+    <string name="action_edit">Edit</string>
 
     <!-- Tabs -->
     <string name="title_overview">Overview</string>
+    <string name="title_activity">Activity</string>
     <string name="title_commits">Commits</string>
+    <string name="title_milestones">Milestones</string>
     <string name="title_issues">Issues</string>
     <string name="title_files">Files</string>
     <string name="title_merge_requests">Merge Requests</string>
@@ -28,18 +32,22 @@
 
     <string-array name="main_tabs">
         <item>@string/title_overview</item>
-        <item>@string/title_commits</item>
-        <item>@string/title_issues</item>
+        <item>@string/title_activity</item>
         <item>@string/title_files</item>
+        <item>@string/title_commits</item>
+        <item>@string/title_milestones</item>
+        <item>@string/title_issues</item>
         <item>@string/title_merge_requests</item>
         <item>@string/title_members</item>
     </string-array>
 
     <string name="title_all">All</string>
     <string name="title_mine">Mine</string>
+    <string name="title_starred">Starred</string>
     <string-array name="projects_tabs">
         <item>@string/title_all</item>
         <item>@string/title_mine</item>
+        <item>@string/title_starred</item>
     </string-array>
 
     <string name="title_projects">Projects</string>
@@ -63,6 +71,8 @@
     <string name="certificate_title">Certificate not trusted</string>
     <string name="certificate_message">The certificate the server used was not issued by a trusted authority.\n\nThis could mean a hacker is trying to intercept your communications.\n\nIf you trust the certificate, press OK to continue.\n\nFingerprint (SHA-1):\n%1$s</string>
     <string name="not_a_valid_url">Not a valid URL</string>
+    <string name="not_a_valid_private_token">Not a valid private token</string>
+    <string name="realm_message">A username and password are being requested by the server.\nThe server says: \"%1$s\"</string>
 
     <!-- Error messages -->
     <string name="connection_error">Connection failed</string>
@@ -70,11 +80,18 @@
     <string name="connection_error_issues">Failed to load issues</string>
     <string name="connection_error_files">Failed to load files</string>
     <string name="connection_error_users">Failed to load users</string>
+    <string name="connection_error_feed">Failed to load feed</string>
+    <string name="connection_error_merge_requests">Failed to load merge requests</string>
+    <string name="connection_error_milestones">Failed to load milestones</string>
+    <string name="connection_error_readme">Failed to load readme</string>
+    <string name="connection_error_projects">Failed to projects</string>
 
     <string name="login_unauthorized">Incorrect credentials. Try again</string>
     <string name="login_error">Login failed. Please check your login information</string>
     <string name="login_input_error">Please enter a valid url.</string>
+    <string name="login_unsupported_authentication">Unsupported form of HTTP authentication.</string>
 
+    <string name="file_too_big">File too big to show</string>
     <string name="file_load_error">Failed to load file</string>
     <string name="save_error">Could not write to storage medium</string>
     <string name="open_error">File could not be opened</string>
@@ -106,7 +123,6 @@
     <string name="logout_title">Are you sure you want to log out?</string>
     <string name="failed_to_load">Failed to load</string>
     <string name="just_now">Just now</string>
-    <string name="no_project_members">No project members.</string>
     <string name="failed_to_create_issue">Failed to create or modify issue</string>
 
     <!-- Overview -->
@@ -137,15 +153,23 @@
     <string name="no_issues">No issues. Good job?</string>
     <string name="issue_opened">Opened</string>
     <string name="issue_closed">Closed</string>
+    <string name="issue_all">All</string>
+    <string name="issue_state_value_default">opened</string>
     <string-array name="issue_state_names">
         <item>@string/issue_opened</item>
         <item>@string/issue_closed</item>
+        <item>@string/issue_all</item>
     </string-array>
     <string-array name="issue_state_values">
         <item>opened</item>
         <item>closed</item>
+        <item>all</item>
     </string-array>
     <string name="created_time">Created %1$s by %2$s</string>
+    <string name="no_assignee">No Assignee</string>
+    <string name="assignee">Assignee</string>
+    <string name="milestone">Milestone</string>
+    <string name="no_milestone">No Milestone</string>
 
     <!-- User -->
     <string name="remove_user_dialog_title">Remove user?</string>
@@ -155,9 +179,16 @@
     <string name="search_for_user">Search for user</string>
     <string name="set_project_access">Project Access</string>
     <string name="user_added_successfully">User added successfully</string>
+
+    <!-- Feed -->
     <string name="no_activity">No Activity</string>
 
-    <string-array name="role_names">
+
+    <!-- Access -->
+    <string name="action_apply">Apply</string>
+    <string name="please_select_access_level">Please select an access level</string>
+    <string name="failed_to_apply_access_level">Failed to apply access level</string>
+    <string-array name="project_role_names">
         <item>Guest</item>
         <item>Reporter</item>
         <item>Developer</item>
@@ -165,7 +196,23 @@
         <item>Owner</item>
     </string-array>
 
-    <string-array name="role_values" translatable="false">
+    <string-array name="project_role_values" translatable="false">
+        <item>10</item>
+        <item>20</item>
+        <item>30</item>
+        <item>40</item>
+        <item>50</item>
+    </string-array>
+
+    <string-array name="group_role_names">
+        <item>Guest</item>
+        <item>Reporter</item>
+        <item>Developer</item>
+        <item>Master</item>
+        <item>Owner</item>
+    </string-array>
+
+    <string-array name="group_role_values" translatable="false">
         <item>10</item>
         <item>20</item>
         <item>30</item>
@@ -186,23 +233,66 @@
     <!-- Merge Requests -->
     <string name="no_merge_requests">No merge requests</string>
     <string name="merge_request_number">Merge Request #</string>
+    <string name="merge_request_opened">Opened</string>
+    <string name="merge_request_merged">Merged</string>
+    <string name="merge_request_closed">Closed</string>
+    <string name="merge_request_all">All</string>
     <string name="merge_request_state_value_default">opened</string>
     <string-array name="merge_request_state_names">
-        <item>Open</item>
-        <item>Merged</item>
-        <item>Closed</item>
-        <item>All</item>
+        <item>@string/merge_request_opened</item>
+        <item>@string/merge_request_merged</item>
+        <item>@string/merge_request_closed</item>
+        <item>@string/merge_request_all</item>
     </string-array>
 
     <string-array name="merge_request_state_values">
-        <item>@string/merge_request_state_value_default</item>
+        <item>opened</item>
         <item>merged</item>
         <item>closed</item>
         <item>all</item>
     </string-array>
 
+    <!-- Milestones -->
+    <string name="no_milestones">No milestones</string>
+    <string name="due_date_formatted">Due %1$s</string>
+    <string name="milestone_hint_title">Title</string>
+    <string name="milestone_hint_description">Description</string>
+    <string name="due_date">Due Date</string>
+    <string name="failed_to_create_milestone">Failed to create or modify milestone</string>
+    <string name="milestone_opened">Opened</string>
+    <string name="milestone_closed">Closed</string>
+    <string name="milestone_all">Closed</string>
+    <string name="milestone_state_value_default">opened</string>
+    <string-array name="milestone_state_names">
+        <item>@string/milestone_opened</item>
+        <item>@string/milestone_closed</item>
+        <item>@string/milestone_all</item>
+    </string-array>
+
+    <string-array name="milestone_state_values">
+        <item>opened</item>
+        <item>closed</item>
+        <item>all</item>
+    </string-array>
+
+    <!-- Members -->
+    <string name="no_project_members">No project members.</string>
+    <string name="project_members">Project Members</string>
+    <string name="group_members">See %1$s Members</string>
+    <string name="change_access">Change Access</string>
+    <string name="remove">Remove</string>
+
     <!-- Groups -->
     <string name="no_groups">No groups.</string>
+    <string name="title_group_activity">Activity</string>
+    <string name="title_group_projects">Projects</string>
+    <string name="title_group_members">Members</string>
+    <string-array name="group_tabs">
+        <item>@string/title_group_activity</item>
+        <item>@string/title_group_projects</item>
+        <item>@string/title_group_members</item>
+    </string-array>
+    <string name="failed_to_remove_member">Failed to remove member</string>
 
     <!-- Settings -->
     <string name="trust_all_hosts">Trust all hosts</string>

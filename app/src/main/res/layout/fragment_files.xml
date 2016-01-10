@@ -13,11 +13,13 @@
             android:id="@+id/breadcrumb"
             android:layout_width="match_parent"
             android:layout_height="32dp"
-            android:paddingLeft="28dp"
-            android:paddingRight="28dp"
+            android:paddingLeft="54dp"
+            android:paddingRight="54dp"
+            android:clipToPadding="false"
+            android:clipChildren="false"
             android:background="?attr/colorPrimary"/>
 
-        <com.commit451.gitlab.views.GitLabSwipeRefreshLayout
+        <com.commit451.gitlab.view.GitLabSwipeRefreshLayout
             android:id="@+id/swipe_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -28,12 +30,12 @@
                 android:layout_height="match_parent"
                 />
 
-        </com.commit451.gitlab.views.GitLabSwipeRefreshLayout>
+        </com.commit451.gitlab.view.GitLabSwipeRefreshLayout>
 
     </LinearLayout>
 
     <TextView
-        android:id="@+id/error_text"
+        android:id="@+id/message_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"

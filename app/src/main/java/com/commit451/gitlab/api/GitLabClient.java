@@ -1,95 +1,96 @@
 package com.commit451.gitlab.api;
 
-import com.commit451.gitlab.BuildConfig;
 import com.commit451.gitlab.GitLabApp;
-import com.commit451.gitlab.data.Prefs;
-import com.commit451.gitlab.ssl.CustomTrustManager;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
-import com.squareup.okhttp.OkHttpClient;
-
-import org.joda.time.format.ISODateTimeFormat;
-
-import java.lang.reflect.Type;
-import java.util.Date;
+import com.commit451.gitlab.model.Account;
+import com.commit451.gitlab.provider.GsonProvider;
+import com.commit451.gitlab.provider.OkHttpClientProvider;
+import com.commit451.gitlab.provider.SimpleXmlProvider;
+import com.squareup.picasso.OkHttpDownloader;
+import com.squareup.picasso.Picasso;
 
 import retrofit.GsonConverterFactory;
 import retrofit.Retrofit;
 import retrofit.SimpleXmlConverterFactory;
 
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManager;
-
 /**
  * Pulls all the GitLab stuff from the API
  * Created by Jawn on 7/28/2015.
  */
-public class GitLabClient {
+public final class GitLabClient {
 
-    private static GitLab gitLab;
+    private static Account sAccount;
+
+    private static GitLab sGitLab;
     private static GitLabRss sGitLabRss;
+    private static Picasso sPicasso;
+
+    private GitLabClient() {}
+
+    public static void setAccount(Account account) {
+        sAccount = account;
+        sGitLab = null;
+        sGitLabRss = null;
+        sPicasso = null;
+    }
+
+    public static Account getAccount() {
+        return sAccount;
+    }
+
+    public static GitLab instance(Account account) {
+        checkAccountSet(account);
+        Retrofit restAdapter = new Retrofit.Builder()
+                .baseUrl(account.getServerUrl().toString())
+                .client(OkHttpClientProvider.getInstance(account))
+                .addConverterFactory(GsonConverterFactory.create(GsonProvider.createInstance(account)))
+                .build();
+        return restAdapter.create(GitLab.class);
+    }
 
     public static GitLab instance() {
-
-        if(gitLab == null) {
-            // Configure Gson to handle dates correctly
-            GsonBuilder gsonBuilder = new GsonBuilder();
-            gsonBuilder.registerTypeAdapter(Date.class, new JsonDeserializer<Date>() {
-                @Override
-                public Date deserialize(JsonElement json, Type type, JsonDeserializationContext context) throws JsonParseException {
-                    return ISODateTimeFormat.dateTimeParser().parseDateTime(json.getAsString()).toDate();
-                }
-            });
-            Gson gson = gsonBuilder.create();
-            OkHttpClient client = new OkHttpClient();
-            client.setSslSocketFactory(createSSLSocketFactory());
-            client.interceptors().add(new ApiKeyRequestInterceptor());
-            client.interceptors().add(new TimberRequestInterceptor());
-
-            Retrofit restAdapter = new Retrofit.Builder()
-                    .baseUrl(Prefs.getServerUrl(GitLabApp.instance()))
-                    .client(client)
-                    .addConverterFactory(GsonConverterFactory.create(gson))
-                    .build();
-            gitLab = restAdapter.create(GitLab.class);
+        if (sGitLab == null) {
+            sGitLab = instance(sAccount);
         }
 
-        return gitLab;
+        return sGitLab;
+    }
+
+    public static GitLabRss rssInstance(Account account) {
+        checkAccountSet(account);
+        Retrofit restAdapter = new Retrofit.Builder()
+                .baseUrl(account.getServerUrl().toString())
+                .client(OkHttpClientProvider.getInstance(account))
+                .addConverterFactory(SimpleXmlConverterFactory.create(SimpleXmlProvider.createPersister(account)))
+                .build();
+        return restAdapter.create(GitLabRss.class);
     }
 
     public static GitLabRss rssInstance() {
         if (sGitLabRss == null) {
-            OkHttpClient client = new OkHttpClient();
-            client.setSslSocketFactory(createSSLSocketFactory());
-            if (BuildConfig.DEBUG) {
-                client.networkInterceptors().add(new TimberRequestInterceptor());
-            }
-            Retrofit restAdapter = new Retrofit.Builder()
-                    .baseUrl(Prefs.getServerUrl(GitLabApp.instance()))
-                    .addConverterFactory(SimpleXmlConverterFactory.create())
-                    .client(client)
-                    .build();
-            sGitLabRss = restAdapter.create(GitLabRss.class);
+            sGitLabRss = rssInstance(sAccount);
         }
+
         return sGitLabRss;
     }
 
-    public static void reset() {
-        gitLab = null;
+    public static Picasso getPicasso(Account account) {
+        checkAccountSet(account);
+        return new Picasso.Builder(GitLabApp.instance())
+                .downloader(new OkHttpDownloader(OkHttpClientProvider.getInstance(account)))
+                .build();
     }
 
-    private static SSLSocketFactory createSSLSocketFactory() {
-        try {
-            SSLContext sslContext = SSLContext.getInstance("TLS");
-            sslContext.init(null, new TrustManager[]{new CustomTrustManager()}, null);
-            return sslContext.getSocketFactory();
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
+    public static Picasso getPicasso() {
+        if (sPicasso == null) {
+            sPicasso = getPicasso(sAccount);
+        }
+
+        return sPicasso;
+    }
+
+    private static void checkAccountSet(Account account) {
+        if (account == null) {
+            throw new IllegalStateException("You cannot do any network calls before the account is set!");
         }
     }
 }

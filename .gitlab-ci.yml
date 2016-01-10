@@ -1,13 +1,15 @@
 before_script:
+  - unset DISPLAY
+  - export TERM=dumb
+  - export _JAVA_OPTIONS="-Djava.awt.headless=true"
   - apt-get -q -y update
   - apt-get -q -y install wget tar openjdk-7-jdk lib32stdc++6 lib32z1
   - wget -q http://dl.google.com/android/android-sdk_r24.4.1-linux.tgz
-  - tar xvzf android-sdk_r24.4.1-linux.tgz
-  - echo y | android-sdk-linux/tools/android --silent update sdk --no-ui --all --filter tools,platform-tools,build-tools-23.0.2,android-23,extra-android-m2repository
+  - tar xzf android-sdk_r24.4.1-linux.tgz
+  - echo y | android-sdk-linux/tools/android -s update sdk --no-ui --all --filter tools,platform-tools,build-tools-23.0.2,android-23,extra-android-m2repository
   - export ANDROID_HOME=$PWD/android-sdk-linux
-  - chmod +x prepare-build.sh
-  - ./prepare-build.sh
+  - chmod +x gradlew
 
-test:
+build:
   script:
-    - ./gradlew build
+    - ./gradlew build --stacktrace

@@ -6,7 +6,7 @@ import android.view.ViewGroup;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.rss.Entry;
-import com.commit451.gitlab.viewHolders.FeedEntryViewHolder;
+import com.commit451.gitlab.viewHolder.FeedEntryViewHolder;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -47,7 +47,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedEntryViewHolder> {
 
     @Override
     public FeedEntryViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        FeedEntryViewHolder holder = FeedEntryViewHolder.newInstance(parent);
+        FeedEntryViewHolder holder = FeedEntryViewHolder.inflate(parent);
         holder.itemView.setOnClickListener(mOnItemClickListener);
         return holder;
     }

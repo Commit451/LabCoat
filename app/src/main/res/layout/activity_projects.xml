@@ -22,7 +22,7 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:background="?attr/colorPrimary" />
+                android:background="?attr/colorPrimary"/>
 
             <android.support.design.widget.TabLayout
                 android:id="@+id/tabs"
@@ -44,14 +44,11 @@
 
     </LinearLayout>
 
-    <com.commit451.gitlab.views.GitLabNavigationView
+    <com.commit451.gitlab.view.GitLabNavigationView
         android:id="@+id/navigation_view"
         android:layout_width="304dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:clickable="true"
-        android:background="@color/window_background_color"
-        android:fitsSystemWindows="true"
-        />
+        android:clickable="true" />
 
 </android.support.v4.widget.DrawerLayout>

@@ -1,39 +1,64 @@
 package com.commit451.gitlab;
 
 import android.app.Application;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 
 import com.squareup.otto.Bus;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
+import java.util.Locale;
+
 import timber.log.Timber;
 
 /**
- * App for one time init things
- * Created by Jawn on 7/27/2015.
+ * App for one time init things and to house singletons
  */
 public class GitLabApp extends Application {
 
-    private static Bus bus;
+    private static Bus sBus;
     public static Bus bus() {
-        if (bus == null) {
-            bus = new Bus();
+        if (sBus == null) {
+            sBus = new Bus();
         }
-        return bus;
+        return sBus;
     }
 
-    private static GitLabApp instance;
+    private static GitLabApp sInstance;
     public static GitLabApp instance() {
-        return instance;
+        return sInstance;
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
-        instance = this;
+        sInstance = this;
+
+        forceLocale(Locale.ENGLISH);
+
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
         }
+
         JodaTimeAndroid.init(this);
+    }
+
+    private void forceLocale(Locale locale){
+        try {
+            Locale.setDefault(locale);
+
+            Resources[] resources = new Resources[]{
+                    Resources.getSystem(),
+                    getBaseContext().getResources()
+            };
+            for (Resources res : resources) {
+                Configuration configuration = res.getConfiguration();
+                configuration.locale = locale;
+                res.updateConfiguration(configuration, res.getDisplayMetrics());
+            }
+        } catch (Exception e) {
+            Timber.e(e, null);
+        }
     }
 }

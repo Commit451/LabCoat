@@ -17,7 +17,7 @@
             android:layout_marginRight="16dp"/>
 
 
-        <com.commit451.gitlab.views.GitLabSwipeRefreshLayout
+        <com.commit451.gitlab.view.GitLabSwipeRefreshLayout
             android:id="@+id/swipe_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -32,12 +32,12 @@
                 android:paddingTop="8dp"
                 />
 
-        </com.commit451.gitlab.views.GitLabSwipeRefreshLayout>
+        </com.commit451.gitlab.view.GitLabSwipeRefreshLayout>
 
     </LinearLayout>
 
     <TextView
-        android:id="@+id/error_text"
+        android:id="@+id/message_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"

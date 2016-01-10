@@ -4,20 +4,17 @@ import org.parceler.Parcel;
 import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Root;
 
-/**
- * Thumbnail
- * Created by John on 10/8/15.
- */
+import android.net.Uri;
+
 @Parcel
 @Root(strict = false)
 public class Thumbnail {
-
-    @Attribute(name = "url")
-    String mUrl;
+    @Attribute(name = "url", required = true)
+    Uri mUrl;
 
     public Thumbnail() {}
 
-    public String getUrl() {
+    public Uri getUrl() {
         return mUrl;
     }
 }

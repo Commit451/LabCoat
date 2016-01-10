@@ -4,21 +4,17 @@ import org.parceler.Parcel;
 import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Root;
 
-/**
- * Link!
- * Created by John on 10/8/15.
- */
+import android.net.Uri;
+
 @Parcel
 @Root(strict = false)
 public class Link {
+    @Attribute(name = "href", required = true)
+    Uri mHref;
 
-    @Attribute(name = "href")
-    String mHref;
+    public Link() {}
 
-    public Link() {
-    }
-
-    public String getHref() {
+    public Uri getHref() {
         return mHref;
     }
 }

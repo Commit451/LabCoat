@@ -5,8 +5,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.model.Group;
-import com.commit451.gitlab.viewHolders.GroupViewHolder;
+import com.commit451.gitlab.model.api.Group;
+import com.commit451.gitlab.viewHolder.GroupViewHolder;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,17 +38,21 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupViewHolder> {
         }
     };
 
-    public void setGroups(Collection<Group> entries) {
+    public void setGroups(Collection<Group> groups) {
         mValues.clear();
-        if (entries != null) {
-            mValues.addAll(entries);
+        addGroups(groups);
+    }
+
+    public void addGroups(Collection<Group> groups) {
+        if (groups != null) {
+            mValues.addAll(groups);
         }
         notifyDataSetChanged();
     }
 
     @Override
     public GroupViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        GroupViewHolder holder = GroupViewHolder.newInstance(parent);
+        GroupViewHolder holder = GroupViewHolder.inflate(parent);
         holder.itemView.setOnClickListener(mOnItemClickListener);
         return holder;
     }

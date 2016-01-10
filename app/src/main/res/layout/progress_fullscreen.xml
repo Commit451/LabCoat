@@ -8,5 +8,6 @@
     android:layout_gravity="center"
     android:background="@color/grey_60"
     android:visibility="gone"
+    android:clickable="true"
     app:matProg_barColor="?attr/colorAccent"
     app:matProg_progressIndeterminate="true" />

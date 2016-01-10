@@ -1,6 +1,5 @@
 package com.commit451.gitlab.ssl;
 
-import android.util.Log;
 import timber.log.Timber;
 
 import java.security.KeyStore;
@@ -8,16 +7,15 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.Collections;
-import java.util.Set;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
 public class CustomTrustManager implements X509TrustManager {
-    private static X509TrustManager DEFAULT_TRUST_MANAGER;
-    private static Set<String> TRUSTED_CERTIFICATES = Collections.emptySet();
+    private static X509TrustManager sDefaultTrustManager;
 
     static {
         try {
@@ -28,7 +26,7 @@ public class CustomTrustManager implements X509TrustManager {
             if (trustManagers != null) {
                 for (TrustManager trustManager : trustManagers) {
                     if (trustManager instanceof X509TrustManager) {
-                        DEFAULT_TRUST_MANAGER = (X509TrustManager) trustManager;
+                        sDefaultTrustManager = (X509TrustManager) trustManager;
                         break;
                     }
                 }
@@ -40,36 +38,44 @@ public class CustomTrustManager implements X509TrustManager {
         }
     }
 
-    public static void setTrustedCertificates(Set<String> trustedCertificates) {
-        TRUSTED_CERTIFICATES = trustedCertificates;
-    }
+    private String mTrustedCertificate;
+    private SSLSocketFactory mSSLSocketFactory;
 
     public CustomTrustManager() {}
 
+    public void setTrustedCertificate(String trustedCertificate) {
+        if ((mTrustedCertificate == null && trustedCertificate == null) || (mTrustedCertificate != null && mTrustedCertificate.equals(trustedCertificate))) {
+            return;
+        }
+
+        mTrustedCertificate = trustedCertificate;
+        mSSLSocketFactory = null;
+    }
+
     @Override
     public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-        if (DEFAULT_TRUST_MANAGER == null) {
+        if (sDefaultTrustManager == null) {
             throw new IllegalStateException("No default TrustManager available");
         }
 
-        DEFAULT_TRUST_MANAGER.checkClientTrusted(chain, authType);
+        sDefaultTrustManager.checkClientTrusted(chain, authType);
     }
 
     @Override
     public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-        if (DEFAULT_TRUST_MANAGER == null) {
+        if (sDefaultTrustManager == null) {
             throw new IllegalStateException("No default TrustManager available");
         }
 
         CertificateException cause;
         try {
-            DEFAULT_TRUST_MANAGER.checkServerTrusted(chain, authType);
+            sDefaultTrustManager.checkServerTrusted(chain, authType);
             return;
         } catch (CertificateException e) {
             cause = e;
         }
 
-        if (TRUSTED_CERTIFICATES.contains(X509Util.getFingerPrint(chain[0]))) {
+        if (mTrustedCertificate != null && mTrustedCertificate.equals(X509Util.getFingerPrint(chain[0]))) {
             return;
         }
 
@@ -78,10 +84,26 @@ public class CustomTrustManager implements X509TrustManager {
 
     @Override
     public X509Certificate[] getAcceptedIssuers() {
-        if (DEFAULT_TRUST_MANAGER == null) {
+        if (sDefaultTrustManager == null) {
             throw new IllegalStateException("No default TrustManager available");
         }
 
-        return DEFAULT_TRUST_MANAGER.getAcceptedIssuers();
+        return sDefaultTrustManager.getAcceptedIssuers();
+    }
+
+    public SSLSocketFactory getSSLSocketFactory() {
+        if (mSSLSocketFactory != null) {
+            return mSSLSocketFactory;
+        }
+
+        try {
+            SSLContext sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(null, new TrustManager[]{this}, null);
+            mSSLSocketFactory = sslContext.getSocketFactory();
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+
+        return mSSLSocketFactory;
     }
 }

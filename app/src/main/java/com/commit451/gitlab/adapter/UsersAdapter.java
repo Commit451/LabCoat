@@ -5,8 +5,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.model.User;
-import com.commit451.gitlab.viewHolders.UserViewHolder;
+import com.commit451.gitlab.model.api.UserBasic;
+import com.commit451.gitlab.viewHolder.UserViewHolder;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,10 +18,10 @@ import java.util.Collection;
 public class UsersAdapter extends RecyclerView.Adapter<UserViewHolder>  {
 
     public interface Listener {
-        void onUserClicked(User user, UserViewHolder userViewHolder);
+        void onUserClicked(UserBasic user, UserViewHolder userViewHolder);
     }
     private Listener mListener;
-    private ArrayList<User> mData;
+    private ArrayList<UserBasic> mData;
 
     private final View.OnClickListener mItemClickListener = new View.OnClickListener() {
         @Override
@@ -39,7 +39,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UserViewHolder>  {
 
     @Override
     public UserViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        UserViewHolder holder = UserViewHolder.newInstance(parent);
+        UserViewHolder holder = UserViewHolder.inflate(parent);
         holder.itemView.setOnClickListener(mItemClickListener);
         return holder;
     }
@@ -56,12 +56,16 @@ public class UsersAdapter extends RecyclerView.Adapter<UserViewHolder>  {
         return mData.size();
     }
 
-    private User getUser(int position) {
+    private UserBasic getUser(int position) {
         return mData.get(position);
     }
 
-    public void setData(Collection<User> users) {
+    public void setData(Collection<UserBasic> users) {
         mData.clear();
+        addData(users);
+    }
+
+    public void addData(Collection<UserBasic> users) {
         if (users != null) {
             mData.addAll(users);
         }

@@ -31,6 +31,11 @@ public final class X509Util {
             hexChars[i * 3 + 2] = ':';
         }
 
-        return new String(hexChars, 0, hexChars.length - 1);
+        int length = hexChars.length;
+        if (length > 0) {
+            return new String(hexChars, 0, length - 1);
+        } else {
+            return "";
+        }
     }
 }

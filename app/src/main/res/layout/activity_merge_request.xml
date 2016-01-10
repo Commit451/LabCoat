@@ -32,7 +32,7 @@
 
         </android.support.design.widget.AppBarLayout>
 
-        <com.commit451.gitlab.views.GitLabSwipeRefreshLayout
+        <com.commit451.gitlab.view.GitLabSwipeRefreshLayout
             android:id="@+id/swipe_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -42,7 +42,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
-        </com.commit451.gitlab.views.GitLabSwipeRefreshLayout>
+        </com.commit451.gitlab.view.GitLabSwipeRefreshLayout>
 
     </LinearLayout>
 

@@ -13,26 +13,22 @@
     <style name="Activity" parent="AppTheme"/>
 
     <style name="Activity.Projects">
-        <item name="android:colorPrimaryDark">?attr/colorPrimary</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:windowTranslucentStatus" tools:ignore="NewApi">true</item>
+        <!--Check v21 for the good bits-->
     </style>
 
     <style name="Activity.Groups">
-        <item name="android:colorPrimaryDark">?attr/colorPrimary</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:windowTranslucentStatus" tools:ignore="NewApi">true</item>
+        <!--Check v21 for the good bits-->
     </style>
 
     <style name="Activity.User">
-        <item name="android:colorPrimaryDark">@android:color/transparent</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="colorPrimaryDark">@android:color/transparent</item>
+        <item name="android:statusBarColor" tools:ignore="NewApi">@android:color/transparent</item>
         <item name="android:windowTranslucentStatus" tools:ignore="NewApi">true</item>
     </style>
 
     <style name="Activity.Group">
-        <item name="android:colorPrimaryDark">@android:color/transparent</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="colorPrimaryDark">@android:color/transparent</item>
+        <item name="android:statusBarColor" tools:ignore="NewApi">@android:color/transparent</item>
         <item name="android:windowTranslucentStatus" tools:ignore="NewApi">true</item>
     </style>
 
