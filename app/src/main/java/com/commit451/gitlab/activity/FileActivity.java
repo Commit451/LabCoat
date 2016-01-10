@@ -45,22 +45,22 @@ public class FileActivity extends BaseActivity {
         return intent;
     }
 
-    @Bind(R.id.toolbar) Toolbar toolbar;
-    @Bind(R.id.file_blob) WebView fileBlobView;
-    @Bind(R.id.progress) View progress;
+    @Bind(R.id.toolbar) Toolbar mToolbar;
+    @Bind(R.id.file_blob) WebView mFileBlobView;
+    @Bind(R.id.progress) View mProgressView;
 
-    long mProjectId;
-    String mPath;
-    String mRef;
+    private long mProjectId;
+    private String mPath;
+    private String mRef;
 
-    String mFileName;
-    byte[] mBlob;
+    private String mFileName;
+    private byte[] mBlob;
 
     private final Callback<RepositoryFile> mFileResponseCallback = new Callback<RepositoryFile>() {
 
         @Override
         public void onResponse(Response<RepositoryFile> response, Retrofit retrofit) {
-            progress.setVisibility(View.GONE);
+            mProgressView.setVisibility(View.GONE);
 
             if (!response.isSuccess()) {
                 Snackbar.make(getWindow().getDecorView(), R.string.file_load_error, Snackbar.LENGTH_SHORT)
@@ -73,6 +73,7 @@ public class FileActivity extends BaseActivity {
                         .show();
                 return;
             }
+
             // Receiving side
             mFileName = response.body().getFileName();
             mBlob = Base64.decode(response.body().getContent(), Base64.DEFAULT);
@@ -80,31 +81,30 @@ public class FileActivity extends BaseActivity {
             String content;
 
             String mimeType = null;
-            String ext = fileExt(mFileName);
-            if (ext != null) {
-                mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext.substring(1));
+            String extension = fileExt(mFileName);
+            if (extension != null) {
+                mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension).toLowerCase();
             }
 
             if (mimeType != null && mimeType.startsWith("image/")) {
                 String imageURL = "data:" + mimeType + ";base64," + response.body().getContent();
 
                 content = "<!DOCTYPE html><html><head><link href=\"github.css\" rel=\"stylesheet\" /></head><body><img style=\"width: 100%;\" src=\"" + imageURL + "\"></body></html>";
-            }
-            else {
+            } else {
                 String text = new String(mBlob, Charset.forName("UTF-8"));
 
                 content = "<!DOCTYPE html><html><head><link href=\"github.css\" rel=\"stylesheet\" /></head><body><pre><code>" + Html.escapeHtml(text) + "</code></pre><script src=\"highlight.pack.js\"></script><script>hljs.initHighlightingOnLoad();</script></body></html>";
             }
 
-            fileBlobView.loadDataWithBaseURL("file:///android_asset/", content, "text/html", "utf8", null);
-            toolbar.setTitle(mFileName);
-            toolbar.inflateMenu(R.menu.file);
+            mFileBlobView.loadDataWithBaseURL("file:///android_asset/", content, "text/html", "utf8", null);
+            mToolbar.setTitle(mFileName);
+            mToolbar.inflateMenu(R.menu.file);
         }
 
         @Override
         public void onFailure(Throwable t) {
             Timber.e(t, null);
-            progress.setVisibility(View.GONE);
+            mProgressView.setVisibility(View.GONE);
             Snackbar.make(getWindow().getDecorView(), R.string.file_load_error, Snackbar.LENGTH_SHORT)
                     .show();
         }
@@ -115,27 +115,19 @@ public class FileActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file);
         ButterKnife.bind(this);
+
         mProjectId = getIntent().getLongExtra(EXTRA_PROJECT_ID, -1);
         mPath = getIntent().getStringExtra(EXTRA_PATH);
         mRef = getIntent().getStringExtra(EXTRA_REF);
-        setupUI();
-        load();
-    }
 
-    private void load() {
-        progress.setVisibility(View.VISIBLE);
-        GitLabClient.instance().getFile(mProjectId, mPath, mRef).enqueue(mFileResponseCallback);
-    }
-
-    private void setupUI() {
-        toolbar.setNavigationIcon(R.drawable.ic_back_24dp);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        mToolbar.setNavigationIcon(R.drawable.ic_back_24dp);
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
             }
         });
-        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+        mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 switch(item.getItemId()) {
@@ -150,33 +142,42 @@ public class FileActivity extends BaseActivity {
             }
         });
 
+        loadData();
+    }
+
+    private void loadData() {
+        mProgressView.setVisibility(View.VISIBLE);
+        GitLabClient.instance().getFile(mProjectId, mPath, mRef).enqueue(mFileResponseCallback);
     }
 
     private File saveBlob() {
         String state = Environment.getExternalStorageState();
 
-        if(Environment.MEDIA_MOUNTED.equals(state) && mBlob != null) {
-            File downloadFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        if (Environment.MEDIA_MOUNTED.equals(state) && mBlob != null) {
+            File targetFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), mFileName);
 
-            File newFile = new File(downloadFolder, mFileName);
-
+            FileOutputStream outputStream = null;
             try {
-                FileOutputStream f = new FileOutputStream(newFile);
-                f.write(mBlob);
-                f.close();
+                outputStream = new FileOutputStream(targetFile);
+                outputStream.write(mBlob);
 
                 Snackbar.make(getWindow().getDecorView(), getString(R.string.file_saved), Snackbar.LENGTH_SHORT)
                         .show();
 
-                return newFile;
-            }
-            catch(IOException e) {
+                return targetFile;
+            } catch (IOException e) {
                 Timber.e(e, null);
                 Snackbar.make(getWindow().getDecorView(), getString(R.string.save_error), Snackbar.LENGTH_SHORT)
                         .show();
+            } finally {
+                if (outputStream != null) {
+                    try {
+                        outputStream.close();
+                    } catch (IOException e) {
+                    }
+                }
             }
-        }
-        else {
+        } else {
             Snackbar.make(getWindow().getDecorView(), getString(R.string.save_error), Snackbar.LENGTH_SHORT)
                     .show();
         }
@@ -186,53 +187,36 @@ public class FileActivity extends BaseActivity {
 
     private void openFile() {
         File file = saveBlob();
-
-        if(file == null) {
+        if (file == null) {
             Snackbar.make(getWindow().getDecorView(), getString(R.string.open_error), Snackbar.LENGTH_SHORT)
                     .show();
             return;
         }
 
-        MimeTypeMap myMime = MimeTypeMap.getSingleton();
-        Intent newIntent = new Intent(Intent.ACTION_VIEW);
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setData(Uri.fromFile(file));
 
-        String fileExt = fileExt(file.toString());
-        if (fileExt == null) {
-            Snackbar.make(getWindow().getDecorView(), getString(R.string.open_error), Snackbar.LENGTH_SHORT)
-                    .show();
-            return;
+        String extension = fileExt(file.getName());
+        if (extension != null) {
+            intent.setTypeAndNormalize(MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension));
         }
-        String mimeType = myMime.getMimeTypeFromExtension(fileExt.substring(1));
-        newIntent.setDataAndType(Uri.fromFile(file), mimeType);
-        newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         try {
-            startActivity(newIntent);
-        }
-        catch(ActivityNotFoundException e) {
+            startActivity(intent);
+        } catch (ActivityNotFoundException | SecurityException e) {
             Timber.e(e, null);
             Snackbar.make(getWindow().getDecorView(), getString(R.string.open_error), Snackbar.LENGTH_SHORT)
                     .show();
         }
     }
 
-    private String fileExt(String url) {
-        if(url.contains("?")) {
-            url = url.substring(0, url.indexOf("?"));
-        }
-        if(!url.contains(".")) {
+    private static String fileExt(String filename) {
+        int extStart = filename.lastIndexOf(".") + 1;
+        if (extStart < 1) {
             return null;
         }
-        else {
-            String ext = url.substring(url.lastIndexOf("."));
-            if(ext.contains("%")) {
-                ext = ext.substring(0, ext.indexOf("%"));
-            }
-            if(ext.contains("/")) {
-                ext = ext.substring(0, ext.indexOf("/"));
-            }
 
-            return ext.toLowerCase();
-        }
+        return filename.substring(extStart);
     }
 }
