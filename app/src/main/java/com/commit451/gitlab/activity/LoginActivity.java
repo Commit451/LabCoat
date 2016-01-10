@@ -54,7 +54,8 @@ import timber.log.Timber;
 public class LoginActivity extends BaseActivity {
 
     private static final int PERMISSION_REQUEST_GET_ACCOUNTS = 1337;
-    private static Pattern mUrlPattern = Patterns.WEB_URL;
+    private static Pattern sUrlPattern = Patterns.WEB_URL;
+    private static Pattern sTokenPattern = Pattern.compile("^[A-Za-z0-9-_]*$");
 
     public static Intent newInstance(Context context) {
         Intent intent = new Intent(context, LoginActivity.class);
@@ -105,33 +106,43 @@ public class LoginActivity extends BaseActivity {
     @OnClick(R.id.login_button)
     public void onLoginClick() {
         KeyboardUtil.hideKeyboard(this);
+
         if (hasEmptyFields(mUrlHint)) {
             return;
         }
+        if (!sUrlPattern.matcher(mUrlInput.getText()).matches()) {
+            mUrlHint.setError(getString(R.string.not_a_valid_url));
+            return;
+        } else {
+            mUrlHint.setError(null);
+        }
+
         if (mIsNormalLogin) {
             if (hasEmptyFields(mUrlHint, mUserHint, mPasswordHint)) {
                 return;
             }
-            if (!mUrlPattern.matcher(mUrlInput.getText()).matches()) {
-                mUrlHint.setError(getString(R.string.not_a_valid_url));
+        } else {
+            if (hasEmptyFields(mTokenHint)) {
+                return;
+            }
+            if (!sTokenPattern.matcher(mTokenInput.getText()).matches()) {
+                mTokenHint.setError(getString(R.string.not_a_valid_private_token));
                 return;
             } else {
-                mUrlHint.setError(null);
+                mTokenHint.setError(null);
             }
         }
-        if (!mIsNormalLogin && hasEmptyFields(mTokenHint)) {
-            return;
-        }
+
         String url = mUrlInput.getText().toString();
+
         mAccount = new Account();
         mAccount.setServerUrl(Uri.parse(url));
         mAccount.setTrustedCertificate(mTrustedCertificate);
         mAccount.setAuthorizationHeader(mAuthorizationHeader);
 
-        if(mIsNormalLogin) {
+        if (mIsNormalLogin) {
             connect(true);
-        }
-        else {
+        } else {
             connect(false);
         }
     }

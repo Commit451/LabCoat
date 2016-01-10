@@ -32,7 +32,7 @@ import retrofit.Retrofit;
 import timber.log.Timber;
 
 public class FileActivity extends BaseActivity {
-
+    private static final long MAX_FILE_SIZE = 1024 * 1024;
     private static final String EXTRA_PROJECT_ID = "extra_project_id";
     private static final String EXTRA_PATH = "extra_path";
     private static final String EXTRA_REF = "extra_ref";
@@ -60,10 +60,19 @@ public class FileActivity extends BaseActivity {
 
         @Override
         public void onResponse(Response<RepositoryFile> response, Retrofit retrofit) {
+            progress.setVisibility(View.GONE);
+
             if (!response.isSuccess()) {
+                Snackbar.make(getWindow().getDecorView(), R.string.file_load_error, Snackbar.LENGTH_SHORT)
+                        .show();
                 return;
             }
-            progress.setVisibility(View.GONE);
+
+            if (response.body().getSize() > MAX_FILE_SIZE) {
+                Snackbar.make(getWindow().getDecorView(), R.string.file_too_big, Snackbar.LENGTH_SHORT)
+                        .show();
+                return;
+            }
             // Receiving side
             mFileName = response.body().getFileName();
             mBlob = Base64.decode(response.body().getContent(), Base64.DEFAULT);
