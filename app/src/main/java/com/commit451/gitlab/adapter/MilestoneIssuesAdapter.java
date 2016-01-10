@@ -88,6 +88,10 @@ public class MilestoneIssuesAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     public void setIssues(Collection<Issue> issues) {
         mValues.clear();
+        addIssues(issues);
+    }
+
+    public void addIssues(Collection<Issue> issues) {
         if (issues != null) {
             mValues.addAll(issues);
         }

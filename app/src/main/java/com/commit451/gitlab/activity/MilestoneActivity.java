@@ -3,6 +3,7 @@ package com.commit451.gitlab.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,6 +21,7 @@ import com.commit451.gitlab.model.api.Issue;
 import com.commit451.gitlab.model.api.Milestone;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.util.NavigationManager;
+import com.commit451.gitlab.util.PaginationUtil;
 import com.squareup.otto.Subscribe;
 
 import org.parceler.Parcels;
@@ -53,13 +55,16 @@ public class MilestoneActivity extends BaseActivity {
     @Bind(R.id.swipe_layout)
     SwipeRefreshLayout mSwipeRefreshLayout;
     @Bind(R.id.list)
-    RecyclerView mDiffRecyclerView;
+    RecyclerView mIssuesRecyclerView;
     MilestoneIssuesAdapter mMilestoneIssuesAdapter;
+    LinearLayoutManager mIssuesLayoutManager;
     @Bind(R.id.message_text)
     TextView mMessageText;
 
     private Project mProject;
     private Milestone mMilestone;
+    private Uri mNextPageUrl;
+    private boolean mLoading = false;
 
     EventReceiver mEventReceiver;
 
@@ -77,6 +82,7 @@ public class MilestoneActivity extends BaseActivity {
         @Override
         public void onResponse(Response<List<Issue>> response, Retrofit retrofit) {
             mSwipeRefreshLayout.setRefreshing(false);
+            mLoading = false;
 
             if (!response.isSuccess()) {
                 Timber.e("Issues response was not a success: %d", response.code());
@@ -94,18 +100,51 @@ public class MilestoneActivity extends BaseActivity {
                 mMessageText.setText(R.string.no_issues);
             }
 
+            mNextPageUrl = PaginationUtil.parse(response).getNext();
             mMilestoneIssuesAdapter.setIssues(response.body());
         }
 
         @Override
         public void onFailure(Throwable t) {
             Timber.e(t, null);
+            mLoading = false;
 
             mSwipeRefreshLayout.setRefreshing(false);
 
             mMessageText.setVisibility(View.VISIBLE);
             mMessageText.setText(R.string.connection_error);
             mMilestoneIssuesAdapter.setIssues(null);
+        }
+    };
+
+    private final Callback<List<Issue>> mMoreIssuesCallback = new Callback<List<Issue>>() {
+        @Override
+        public void onResponse(Response<List<Issue>> response, Retrofit retrofit) {
+            if (!response.isSuccess()) {
+                return;
+            }
+            mLoading = false;
+            mNextPageUrl = PaginationUtil.parse(response).getNext();
+            mMilestoneIssuesAdapter.addIssues(response.body());
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+            Timber.e(t, null);
+            mLoading = false;
+        }
+    };
+
+    private final RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+            int visibleItemCount = mIssuesLayoutManager.getChildCount();
+            int totalItemCount = mIssuesLayoutManager.getItemCount();
+            int firstVisibleItem = mIssuesLayoutManager.findFirstVisibleItemPosition();
+            if (firstVisibleItem + visibleItemCount >= totalItemCount && !mLoading && mNextPageUrl != null) {
+                loadMore();
+            }
         }
     };
 
@@ -135,8 +174,10 @@ public class MilestoneActivity extends BaseActivity {
             }
         });
         bind(mMilestone);
-        mDiffRecyclerView.setAdapter(mMilestoneIssuesAdapter);
-        mDiffRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mIssuesRecyclerView.setAdapter(mMilestoneIssuesAdapter);
+        mIssuesLayoutManager = new LinearLayoutManager(this);
+        mIssuesRecyclerView.setLayoutManager(mIssuesLayoutManager);
+        mIssuesRecyclerView.addOnScrollListener(mOnScrollListener);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -160,6 +201,7 @@ public class MilestoneActivity extends BaseActivity {
 
     private void loadData() {
         mMessageText.setVisibility(View.GONE);
+        mLoading = true;
         mSwipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
@@ -169,6 +211,18 @@ public class MilestoneActivity extends BaseActivity {
             }
         });
         GitLabClient.instance().getMilestoneIssues(mProject.getId(), mMilestone.getId()).enqueue(mIssuesCallback);
+    }
+
+    private void loadMore() {
+
+        if (mNextPageUrl == null) {
+            return;
+        }
+
+        mLoading = true;
+
+        Timber.d("loadMore called for " + mNextPageUrl);
+        GitLabClient.instance().getMilestoneIssues(mNextPageUrl.toString()).enqueue(mMoreIssuesCallback);
     }
 
     private class EventReceiver {

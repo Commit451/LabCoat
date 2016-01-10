@@ -33,6 +33,10 @@ import retrofit.http.Path;
 import retrofit.http.Query;
 import retrofit.http.Url;
 
+/**
+ * Defines the interface for Retrofit for the GitLab API
+ * http://doc.gitlab.com/ce/api/README.html
+ */
 public interface GitLab {
     String API_VERSION = "api/v3";
 
@@ -56,7 +60,7 @@ public interface GitLab {
     @GET(API_VERSION + "/user")
     Call<UserFull> getThisUser();
 
-    @GET(API_VERSION + "/users?per_page=100")
+    @GET(API_VERSION + "/users")
     Call<List<UserBasic>> getUsers();
 
     @GET
@@ -85,7 +89,7 @@ public interface GitLab {
     @GET(API_VERSION + "/groups/{id}/projects?order_by=last_activity_at")
     Call<List<Project>> getGroupProjects(@Path("id") long id);
 
-    @GET(API_VERSION + "/groups/{id}/members?per_page=100")
+    @GET(API_VERSION + "/groups/{id}/members")
     Call<List<Member>> getGroupMembers(@Path("id") long groupId);
 
     @FormUrlEncoded
@@ -154,9 +158,11 @@ public interface GitLab {
     @GET
     Call<List<Milestone>> getMilestones(@Url String url);
 
-    @GET(API_VERSION + "/projects/{id}/milestones/{milestone_id}/issues?per_page=100")
+    @GET(API_VERSION + "/projects/{id}/milestones/{milestone_id}/issues")
     Call<List<Issue>> getMilestoneIssues(@Path("id") long projectId,
                                         @Path("milestone_id") long milestoneId);
+    @GET
+    Call<List<Issue>> getMilestoneIssues(@Url String url);
 
     @FormUrlEncoded
     @POST(API_VERSION + "/projects/{id}/milestones")
