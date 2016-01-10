@@ -20,11 +20,10 @@ import butterknife.ButterKnife;
 
 /**
  * Projects, yay!
- * Created by Jawn on 6/11/2015.
  */
 public class ProjectViewHolder extends RecyclerView.ViewHolder {
 
-    public static ProjectViewHolder create(ViewGroup parent) {
+    public static ProjectViewHolder inflate(ViewGroup parent) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_project, parent, false);
         return new ProjectViewHolder(view);

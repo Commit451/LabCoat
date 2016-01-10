@@ -1,10 +1,5 @@
 package com.commit451.gitlab.viewHolder;
 
-import com.commit451.gitlab.R;
-import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.model.api.UserBasic;
-import com.commit451.gitlab.util.ImageUtil;
-
 import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -15,16 +10,20 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.commit451.gitlab.R;
+import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.model.api.UserBasic;
+import com.commit451.gitlab.util.ImageUtil;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
 /**
  * Shows an assignee
- * Created by Jawn on 12/18/2015.
  */
 public class AssigneeViewHolder extends RecyclerView.ViewHolder {
 
-    public static AssigneeViewHolder newInstance(ViewGroup parent) {
+    public static AssigneeViewHolder inflate(ViewGroup parent) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_assignee, parent, false);
         return new AssigneeViewHolder(view);

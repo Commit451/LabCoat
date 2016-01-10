@@ -33,9 +33,9 @@ public class MergeRequestDetailAdapter extends RecyclerView.Adapter<RecyclerView
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == TYPE_HEADER) {
-            return MergeRequestHeaderViewHolder.newInstance(parent);
+            return MergeRequestHeaderViewHolder.inflate(parent);
         } else if (viewType == TYPE_COMMENT) {
-            RecyclerView.ViewHolder holder = NoteViewHolder.newInstance(parent);
+            RecyclerView.ViewHolder holder = NoteViewHolder.inflate(parent);
             return holder;
         }
         throw new IllegalArgumentException("No view type matches");

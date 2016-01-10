@@ -47,11 +47,11 @@ public class IssuesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
             case TYPE_ITEM:
-                IssueViewHolder holder = IssueViewHolder.newInstance(parent);
+                IssueViewHolder holder = IssueViewHolder.inflate(parent);
                 holder.itemView.setOnClickListener(onProjectClickListener);
                 return holder;
             case TYPE_FOOTER:
-                return LoadingFooterViewHolder.newInstance(parent);
+                return LoadingFooterViewHolder.inflate(parent);
         }
         throw new IllegalStateException("No holder for view type " + viewType);
     }

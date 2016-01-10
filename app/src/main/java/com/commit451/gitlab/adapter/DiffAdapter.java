@@ -51,7 +51,7 @@ public class DiffAdapter extends RecyclerView.Adapter<DiffViewHolder> {
 
     @Override
     public DiffViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        DiffViewHolder holder = DiffViewHolder.newInstance(parent);
+        DiffViewHolder holder = DiffViewHolder.inflate(parent);
         holder.itemView.setOnClickListener(onProjectClickListener);
         return holder;
     }

@@ -50,7 +50,7 @@ public class FilesAdapter extends RecyclerView.Adapter<FileViewHolder> {
 
     @Override
     public FileViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        FileViewHolder holder = FileViewHolder.newInstance(parent);
+        FileViewHolder holder = FileViewHolder.inflate(parent);
         holder.itemView.setOnClickListener(onProjectClickListener);
         return holder;
     }

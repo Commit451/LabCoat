@@ -39,7 +39,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UserViewHolder>  {
 
     @Override
     public UserViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        UserViewHolder holder = UserViewHolder.newInstance(parent);
+        UserViewHolder holder = UserViewHolder.inflate(parent);
         holder.itemView.setOnClickListener(mItemClickListener);
         return holder;
     }

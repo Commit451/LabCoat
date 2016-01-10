@@ -97,11 +97,11 @@ public class MemberAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
             case TYPE_MEMBER:
-                ProjectMemberViewHolder projectViewHolder = ProjectMemberViewHolder.newInstance(parent);
+                ProjectMemberViewHolder projectViewHolder = ProjectMemberViewHolder.inflate(parent);
                 projectViewHolder.itemView.setOnClickListener(mProjectMemberClickListener);
                 return projectViewHolder;
             case TYPE_FOOTER:
-                ProjectMemberFooterViewHolder footerHolder = ProjectMemberFooterViewHolder.newInstance(parent);
+                ProjectMemberFooterViewHolder footerHolder = ProjectMemberFooterViewHolder.inflate(parent);
                 footerHolder.itemView.setOnClickListener(mFooterClickListener);
                 return footerHolder;
         }

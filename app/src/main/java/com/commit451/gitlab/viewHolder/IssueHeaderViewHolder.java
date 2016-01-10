@@ -24,7 +24,7 @@ import in.uncod.android.bypass.Bypass;
  */
 public class IssueHeaderViewHolder extends RecyclerView.ViewHolder {
 
-    public static IssueHeaderViewHolder newInstance(ViewGroup parent) {
+    public static IssueHeaderViewHolder inflate(ViewGroup parent) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.header_issue, parent, false);
         return new IssueHeaderViewHolder(view);

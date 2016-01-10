@@ -52,7 +52,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupViewHolder> {
 
     @Override
     public GroupViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        GroupViewHolder holder = GroupViewHolder.newInstance(parent);
+        GroupViewHolder holder = GroupViewHolder.inflate(parent);
         holder.itemView.setOnClickListener(mOnItemClickListener);
         return holder;
     }

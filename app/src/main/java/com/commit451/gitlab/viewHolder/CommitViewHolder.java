@@ -1,11 +1,5 @@
 package com.commit451.gitlab.viewHolder;
 
-import com.commit451.gitlab.R;
-import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.model.api.RepositoryCommit;
-import com.commit451.gitlab.util.DateUtils;
-import com.commit451.gitlab.util.ImageUtil;
-
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,16 +7,21 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.commit451.gitlab.R;
+import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.model.api.RepositoryCommit;
+import com.commit451.gitlab.util.DateUtils;
+import com.commit451.gitlab.util.ImageUtil;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
 /**
- * Files, yay!
- * Created by Jawn on 6/11/2015.
+ * Shows a commit
  */
 public class CommitViewHolder extends RecyclerView.ViewHolder {
 
-    public static CommitViewHolder create(ViewGroup parent) {
+    public static CommitViewHolder inflate(ViewGroup parent) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_commit, parent, false);
         return new CommitViewHolder(view);

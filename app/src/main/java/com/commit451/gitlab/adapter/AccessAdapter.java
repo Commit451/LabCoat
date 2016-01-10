@@ -44,7 +44,7 @@ public class AccessAdapter extends RecyclerView.Adapter<AccessViewHolder> {
 
     @Override
     public AccessViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        AccessViewHolder holder = AccessViewHolder.create(parent);
+        AccessViewHolder holder = AccessViewHolder.inflate(parent);
         holder.itemView.setOnClickListener(onProjectClickListener);
         return holder;
     }

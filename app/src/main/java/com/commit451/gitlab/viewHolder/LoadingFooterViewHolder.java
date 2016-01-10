@@ -12,7 +12,7 @@ import com.commit451.gitlab.R;
  */
 public class LoadingFooterViewHolder extends RecyclerView.ViewHolder {
 
-    public static LoadingFooterViewHolder newInstance(ViewGroup parent) {
+    public static LoadingFooterViewHolder inflate(ViewGroup parent) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.footer_loading, parent, false);
         return new LoadingFooterViewHolder(view);

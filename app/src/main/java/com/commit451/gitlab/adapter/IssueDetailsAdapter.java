@@ -39,9 +39,9 @@ public class IssueDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == TYPE_HEADER) {
-            return IssueHeaderViewHolder.newInstance(parent);
+            return IssueHeaderViewHolder.inflate(parent);
         } else if (viewType == TYPE_COMMENT) {
-            RecyclerView.ViewHolder holder = NoteViewHolder.newInstance(parent);
+            RecyclerView.ViewHolder holder = NoteViewHolder.inflate(parent);
             return holder;
         }
         throw new IllegalArgumentException("No view type matches");

@@ -21,7 +21,7 @@ import butterknife.ButterKnife;
  */
 public class AssigneeSpinnerViewHolder extends RecyclerView.ViewHolder {
 
-    public static AssigneeSpinnerViewHolder newInstance(ViewGroup parent) {
+    public static AssigneeSpinnerViewHolder inflate(ViewGroup parent) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_assignee, parent, false);
         return new AssigneeSpinnerViewHolder(view);

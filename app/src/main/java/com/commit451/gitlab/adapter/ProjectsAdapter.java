@@ -65,7 +65,7 @@ public class ProjectsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        ProjectViewHolder holder = ProjectViewHolder.create(parent);
+        ProjectViewHolder holder = ProjectViewHolder.inflate(parent);
         holder.itemView.setOnClickListener(onProjectClickListener);
         return holder;
     }

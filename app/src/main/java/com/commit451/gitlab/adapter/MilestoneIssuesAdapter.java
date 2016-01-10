@@ -51,9 +51,9 @@ public class MilestoneIssuesAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
             case TYPE_HEADER:
-                return MilestoneHeaderViewHolder.newInstance(parent);
+                return MilestoneHeaderViewHolder.inflate(parent);
             case TYPE_MILESTONE:
-                IssueViewHolder issueViewHolder = IssueViewHolder.newInstance(parent);
+                IssueViewHolder issueViewHolder = IssueViewHolder.inflate(parent);
                 issueViewHolder.itemView.setOnClickListener(mOnProjectClickListener);
                 return issueViewHolder;
         }

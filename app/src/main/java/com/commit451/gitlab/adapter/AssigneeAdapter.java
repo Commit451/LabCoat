@@ -55,7 +55,7 @@ public class AssigneeAdapter extends RecyclerView.Adapter<AssigneeViewHolder> {
 
     @Override
     public AssigneeViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        AssigneeViewHolder holder = AssigneeViewHolder.newInstance(parent);
+        AssigneeViewHolder holder = AssigneeViewHolder.inflate(parent);
         holder.itemView.setOnClickListener(mOnItemClickListener);
         return holder;
     }

@@ -77,11 +77,11 @@ public class AccountsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
             case TYPE_ACCOUNT:
-                AccountViewHolder holder = AccountViewHolder.newInstance(parent);
+                AccountViewHolder holder = AccountViewHolder.inflate(parent);
                 holder.itemView.setOnClickListener(mOnItemClickListener);
                 return holder;
             case TYPE_FOOTER:
-                AccountFooterViewHolder footerViewHolder = AccountFooterViewHolder.newInstance(parent);
+                AccountFooterViewHolder footerViewHolder = AccountFooterViewHolder.inflate(parent);
                 footerViewHolder.itemView.setOnClickListener(mOnFooterClickListener);
                 return footerViewHolder;
         }

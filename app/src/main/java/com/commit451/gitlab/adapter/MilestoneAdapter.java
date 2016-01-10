@@ -45,11 +45,11 @@ public class MilestoneAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
             case TYPE_ITEM:
-                MilestoneViewHolder holder = MilestoneViewHolder.newInstance(parent);
+                MilestoneViewHolder holder = MilestoneViewHolder.inflate(parent);
                 holder.itemView.setOnClickListener(mOnItemClickListener);
                 return holder;
             case TYPE_FOOTER:
-                return LoadingFooterViewHolder.newInstance(parent);
+                return LoadingFooterViewHolder.inflate(parent);
         }
         throw new IllegalStateException("No holder for viewType " + viewType);
     }

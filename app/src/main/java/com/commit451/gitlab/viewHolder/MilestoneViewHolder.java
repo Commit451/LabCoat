@@ -13,9 +13,12 @@ import com.commit451.gitlab.util.DateUtils;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
+/**
+ * Milestone
+ */
 public class MilestoneViewHolder extends RecyclerView.ViewHolder {
 
-    public static MilestoneViewHolder newInstance(ViewGroup parent) {
+    public static MilestoneViewHolder inflate(ViewGroup parent) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_milestone, parent, false);
         return new MilestoneViewHolder(view);

@@ -49,7 +49,7 @@ public class MilestoneSpinnerAdapter extends ArrayAdapter<Milestone> {
         Milestone milestone = getItem(position);
         MilestoneSpinnerViewHolder milestoneSpinnerViewHolder;
         if (convertView == null) {
-            milestoneSpinnerViewHolder = MilestoneSpinnerViewHolder.newInstance(parent);
+            milestoneSpinnerViewHolder = MilestoneSpinnerViewHolder.inflate(parent);
             milestoneSpinnerViewHolder.itemView.setTag(R.id.list_view_holder, milestoneSpinnerViewHolder);
         } else {
             milestoneSpinnerViewHolder = (MilestoneSpinnerViewHolder) convertView.getTag(R.id.list_view_holder);

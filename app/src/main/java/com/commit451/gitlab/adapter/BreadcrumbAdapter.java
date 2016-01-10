@@ -36,7 +36,7 @@ public class BreadcrumbAdapter extends RecyclerView.Adapter<BreadcrumbViewHolder
 
     @Override
     public BreadcrumbViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        BreadcrumbViewHolder holder = BreadcrumbViewHolder.newInstance(parent);
+        BreadcrumbViewHolder holder = BreadcrumbViewHolder.inflate(parent);
         holder.itemView.setOnClickListener(onProjectClickListener);
         return holder;
     }

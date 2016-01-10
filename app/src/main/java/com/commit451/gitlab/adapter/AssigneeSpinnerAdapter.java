@@ -50,7 +50,7 @@ public class AssigneeSpinnerAdapter extends ArrayAdapter<Member> {
         Member member = getItem(position);
         AssigneeSpinnerViewHolder assigneeSpinnerViewHolder;
         if (convertView == null) {
-            assigneeSpinnerViewHolder = AssigneeSpinnerViewHolder.newInstance(parent);
+            assigneeSpinnerViewHolder = AssigneeSpinnerViewHolder.inflate(parent);
             assigneeSpinnerViewHolder.itemView.setTag(R.id.list_view_holder, assigneeSpinnerViewHolder);
         } else {
             assigneeSpinnerViewHolder = (AssigneeSpinnerViewHolder) convertView.getTag(R.id.list_view_holder);

@@ -18,7 +18,7 @@ import butterknife.ButterKnife;
  */
 public class MilestoneHeaderViewHolder extends RecyclerView.ViewHolder {
 
-    public static MilestoneHeaderViewHolder newInstance(ViewGroup parent) {
+    public static MilestoneHeaderViewHolder inflate(ViewGroup parent) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.header_milestone, parent, false);
         return new MilestoneHeaderViewHolder(view);

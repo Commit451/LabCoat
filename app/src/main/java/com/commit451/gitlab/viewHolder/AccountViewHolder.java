@@ -1,10 +1,5 @@
 package com.commit451.gitlab.viewHolder;
 
-import com.commit451.gitlab.R;
-import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.model.Account;
-import com.commit451.gitlab.util.ImageUtil;
-
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,16 +8,20 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import com.commit451.gitlab.R;
+import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.model.Account;
+import com.commit451.gitlab.util.ImageUtil;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
 /**
  * A signed in account
- * Created by Jawn on 12/6/2015.
  */
 public class AccountViewHolder extends RecyclerView.ViewHolder{
 
-    public static AccountViewHolder newInstance(ViewGroup parent) {
+    public static AccountViewHolder inflate(ViewGroup parent) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_account, parent, false);
         return new AccountViewHolder(view);

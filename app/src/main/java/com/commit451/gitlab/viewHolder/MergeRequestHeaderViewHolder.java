@@ -1,11 +1,5 @@
 package com.commit451.gitlab.viewHolder;
 
-import com.commit451.gitlab.R;
-import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.model.api.MergeRequest;
-import com.commit451.gitlab.util.DateUtils;
-import com.commit451.gitlab.util.ImageUtil;
-
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
@@ -15,13 +9,22 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.commit451.gitlab.R;
+import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.model.api.MergeRequest;
+import com.commit451.gitlab.util.DateUtils;
+import com.commit451.gitlab.util.ImageUtil;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import in.uncod.android.bypass.Bypass;
 
+/**
+ * Header that gives the details of a merge request
+ */
 public class MergeRequestHeaderViewHolder extends RecyclerView.ViewHolder {
 
-    public static MergeRequestHeaderViewHolder newInstance(ViewGroup parent) {
+    public static MergeRequestHeaderViewHolder inflate(ViewGroup parent) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.header_merge_request, parent, false);
         return new MergeRequestHeaderViewHolder(view);

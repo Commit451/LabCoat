@@ -1,7 +1,5 @@
 package com.commit451.gitlab.viewHolder;
 
-import com.commit451.gitlab.R;
-
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,16 +8,17 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.commit451.gitlab.R;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
 /**
- * Access denied!
- * Created by Jawn on 9/16/2015.
+ * Shows an access level
  */
 public class AccessViewHolder extends RecyclerView.ViewHolder {
 
-    public static AccessViewHolder create(ViewGroup parent) {
+    public static AccessViewHolder inflate(ViewGroup parent) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_access, parent, false);
         return new AccessViewHolder(view);

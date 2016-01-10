@@ -43,7 +43,7 @@ public class GroupMembersAdapter extends RecyclerView.Adapter<ProjectMemberViewH
 
     @Override
     public ProjectMemberViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        ProjectMemberViewHolder holder = ProjectMemberViewHolder.newInstance(parent);
+        ProjectMemberViewHolder holder = ProjectMemberViewHolder.inflate(parent);
         holder.itemView.setOnClickListener(mItemClickListener);
         return holder;
     }

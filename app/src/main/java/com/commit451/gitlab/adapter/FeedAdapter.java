@@ -47,7 +47,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedEntryViewHolder> {
 
     @Override
     public FeedEntryViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        FeedEntryViewHolder holder = FeedEntryViewHolder.newInstance(parent);
+        FeedEntryViewHolder holder = FeedEntryViewHolder.inflate(parent);
         holder.itemView.setOnClickListener(mOnItemClickListener);
         return holder;
     }

@@ -18,11 +18,10 @@ import butterknife.ButterKnife;
 
 /**
  * issues, yay!
- * Created by Jawn on 6/11/2015.
  */
 public class IssueViewHolder extends RecyclerView.ViewHolder {
 
-    public static IssueViewHolder newInstance(ViewGroup parent) {
+    public static IssueViewHolder inflate(ViewGroup parent) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_issue, parent, false);
         return new IssueViewHolder(view);

@@ -47,11 +47,11 @@ public class CommitsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
             case TYPE_ITEM:
-                CommitViewHolder holder = CommitViewHolder.create(parent);
+                CommitViewHolder holder = CommitViewHolder.inflate(parent);
                 holder.itemView.setOnClickListener(onProjectClickListener);
                 return holder;
             case TYPE_FOOTER:
-                return LoadingFooterViewHolder.newInstance(parent);
+                return LoadingFooterViewHolder.inflate(parent);
         }
         throw new IllegalStateException("No known ViewHolder for type " + viewType);
     }

@@ -15,11 +15,10 @@ import butterknife.ButterKnife;
 
 /**
  * Displays a diff to a user
- * Created by Jawn on 1/1/2016.
  */
 public class DiffViewHolder extends RecyclerView.ViewHolder {
 
-    public static DiffViewHolder newInstance(ViewGroup parent) {
+    public static DiffViewHolder inflate(ViewGroup parent) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_diff, parent, false);
         return new DiffViewHolder(view);

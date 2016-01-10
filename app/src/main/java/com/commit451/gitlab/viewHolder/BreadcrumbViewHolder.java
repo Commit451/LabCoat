@@ -1,7 +1,5 @@
 package com.commit451.gitlab.viewHolder;
 
-import com.commit451.gitlab.R;
-
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,16 +8,17 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.commit451.gitlab.R;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
 /**
  * Breadcrumb view
- * Created by Jawnnypoo on 11/22/2015.
  */
 public class BreadcrumbViewHolder extends RecyclerView.ViewHolder {
 
-    public static BreadcrumbViewHolder newInstance(ViewGroup parent) {
+    public static BreadcrumbViewHolder inflate(ViewGroup parent) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_breadcrumb, parent, false);
         return new BreadcrumbViewHolder(view);
