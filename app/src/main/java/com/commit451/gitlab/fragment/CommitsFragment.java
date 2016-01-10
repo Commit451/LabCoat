@@ -45,7 +45,7 @@ public class CommitsFragment extends BaseFragment {
     private EventReceiver mEventReceiver;
     private LinearLayoutManager mCommitsLayoutManager;
     private CommitsAdapter mCommitsAdapter;
-    private int mPage = 0;
+    private int mPage = -1;
     private boolean mLoading = false;
 
     private final RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
@@ -55,7 +55,7 @@ public class CommitsFragment extends BaseFragment {
             int visibleItemCount = mCommitsLayoutManager.getChildCount();
             int totalItemCount = mCommitsLayoutManager.getItemCount();
             int firstVisibleItem = mCommitsLayoutManager.findFirstVisibleItemPosition();
-            if (firstVisibleItem + visibleItemCount >= totalItemCount && !mLoading && mPage >= 1) {
+            if (firstVisibleItem + visibleItemCount >= totalItemCount && !mLoading && mPage >= 0) {
                 loadMore();
             }
         }
@@ -82,20 +82,20 @@ public class CommitsFragment extends BaseFragment {
 
             if (!response.body().isEmpty()) {
                 mMessageView.setVisibility(View.GONE);
-            } else if (mPage <= 1) {
+            } else if (mPage <= 0) {
                 Timber.d("No commits have been made");
                 mMessageView.setVisibility(View.VISIBLE);
                 mMessageView.setText(R.string.no_commits_found);
             }
 
-            if (mPage <= 1) {
+            if (mPage <= 0) {
                 mCommitsAdapter.setData(response.body());
             } else {
                 mCommitsAdapter.addData(response.body());
             }
 
             if (response.body().isEmpty()) {
-                mPage = 0;
+                mPage = -1;
             }
         }
 
@@ -113,7 +113,7 @@ public class CommitsFragment extends BaseFragment {
             mMessageView.setVisibility(View.VISIBLE);
             mMessageView.setText(R.string.connection_error);
             mCommitsAdapter.setData(null);
-            mPage = 0;
+            mPage = -1;
         }
     };
 
@@ -186,7 +186,7 @@ public class CommitsFragment extends BaseFragment {
             }
         });
 
-        mPage = 1;
+        mPage = 0;
         mLoading = true;
 
         GitLabClient.instance().getCommits(mProject.getId(), mBranchName, mPage).enqueue(mCommitsCallback);
@@ -197,7 +197,7 @@ public class CommitsFragment extends BaseFragment {
             return;
         }
 
-        if (mProject == null || TextUtils.isEmpty(mBranchName) || mPage < 1) {
+        if (mProject == null || TextUtils.isEmpty(mBranchName) || mPage < 0) {
             return;
         }
 
