@@ -2,18 +2,21 @@ package com.commit451.gitlab.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.widget.Toast;
 
+import com.commit451.gitlab.BuildConfig;
 import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.data.Prefs;
 import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.util.NavigationManager;
 
 import java.util.List;
 
+import timber.log.Timber;
+
 /**
  * This activity acts as switching platform for the application directing the user to the appropriate
  * activity based on their logged in state
- *
- * Created by r0adkll on 9/18/15.
  */
 public class GitlabActivity extends Activity {
 
@@ -21,6 +24,12 @@ public class GitlabActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        int savedVersion = Prefs.getSavedVersion(this);
+        if (savedVersion < BuildConfig.VERSION_CODE) {
+            Timber.d("Performing upgrade");
+            performUpgrade(savedVersion, BuildConfig.VERSION_CODE);
+            Prefs.setSavedVersion(this);
+        }
         List<Account> accounts = Account.getAccounts(this);
         if(accounts.isEmpty()) {
             NavigationManager.navigateToLogin(this);
@@ -31,5 +40,15 @@ public class GitlabActivity extends Activity {
 
         // Always finish this activity
         finish();
+    }
+
+    /**
+     * Perform an upgrade from one version to another. This should only be one time upgrade things
+     */
+    private void performUpgrade(int previousVersion, int currentVersion) {
+        if (previousVersion <= 220 && currentVersion == 220) {
+            Toast.makeText(GitlabActivity.this, "You have been signed out to support multiple logged in accounts", Toast.LENGTH_LONG)
+                    .show();
+        }
     }
 }
