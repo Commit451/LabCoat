@@ -16,8 +16,7 @@ import io.fabric.sdk.android.Fabric;
 import timber.log.Timber;
 
 /**
- * App for one time init things
- * Created by Jawn on 7/27/2015.
+ * App for one time init things and to house singletons
  */
 public class GitLabApp extends Application {
 

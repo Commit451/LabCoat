@@ -67,8 +67,10 @@ public class AccountsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     public void addAccount(Account account) {
-        mAccounts.add(0, account);
-        notifyItemInserted(0);
+        if (!mAccounts.contains(account)) {
+            mAccounts.add(0, account);
+            notifyItemInserted(0);
+        }
     }
 
     @Override

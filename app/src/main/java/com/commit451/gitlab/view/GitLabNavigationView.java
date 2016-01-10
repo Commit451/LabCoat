@@ -207,6 +207,7 @@ public class GitLabNavigationView extends NavigationView {
 
     private void setAccounts() {
         List<Account> accounts = Prefs.getAccounts(getContext());
+        Timber.d("Got %s accounts", accounts.size());
         Collections.sort(accounts);
         Collections.reverse(accounts);
         mAccountAdapter.setAccounts(accounts);
@@ -255,15 +256,18 @@ public class GitLabNavigationView extends NavigationView {
     }
 
     private void switchToAccount(Account account) {
+        Timber.d("Switching to account: %s", account);
         account.setLastUsed(new Date());
         GitLabClient.setAccount(account);
-        Prefs.removeAccount(getContext(), account);
-        Prefs.addAccount(getContext(), account);
+        Prefs.updateAccount(getContext(), account);
         bindUser(account.getUser());
         toggleAccounts();
         GitLabApp.bus().post(new ReloadDataEvent());
         GitLabApp.bus().post(new CloseDrawerEvent());
+        // Trigger a reload in the adapter so that we will place the accounts
+        // in the correct order from most recently used
         mAccountAdapter.notifyDataSetChanged();
+        loadCurrentUser();
     }
 
     private class EventReceiver {
@@ -273,6 +277,7 @@ public class GitLabNavigationView extends NavigationView {
             if (mAccountAdapter != null) {
                 mAccountAdapter.addAccount(event.account);
                 mAccountAdapter.notifyDataSetChanged();
+                loadCurrentUser();
             }
         }
     }
