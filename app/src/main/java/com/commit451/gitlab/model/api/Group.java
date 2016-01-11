@@ -48,6 +48,10 @@ public class Group {
     }
 
     public Uri getFeedUrl() {
+        if (mWebUrl == null) {
+            return null;
+        }
+
         return Uri.parse(mWebUrl.toString() + ".atom");
     }
 
