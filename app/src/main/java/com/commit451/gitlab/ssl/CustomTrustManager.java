@@ -99,7 +99,7 @@ public class CustomTrustManager implements X509TrustManager {
         try {
             SSLContext sslContext = SSLContext.getInstance("TLS");
             sslContext.init(null, new TrustManager[]{this}, null);
-            mSSLSocketFactory = sslContext.getSocketFactory();
+            mSSLSocketFactory = new CustomSSLSocketFactory(sslContext.getSocketFactory());
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
