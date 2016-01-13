@@ -45,6 +45,10 @@ public class NavigationManager {
         activity.startActivity(ProjectActivity.newInstance(activity, project));
     }
 
+    public static void navigateToProject(Activity activity, long projectId) {
+        activity.startActivity(ProjectActivity.newInstance(activity, projectId));
+    }
+
     public static void navigateToProjects(Activity activity) {
         activity.startActivity(ProjectsActivity.newInstance(activity));
     }

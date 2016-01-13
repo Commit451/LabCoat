@@ -20,6 +20,7 @@ import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Contributor;
 import com.commit451.gitlab.util.ImageUtil;
 import com.commit451.gitlab.util.IntentUtil;
+import com.commit451.gitlab.util.NavigationManager;
 import com.commit451.gitlab.util.WindowUtil;
 import com.jawnnypoo.physicslayout.Physics;
 import com.jawnnypoo.physicslayout.PhysicsConfig;
@@ -57,7 +58,11 @@ public class AboutActivity extends BaseActivity {
     @Bind(R.id.physics_layout) PhysicsFrameLayout physicsLayout;
     @OnClick(R.id.sauce)
     void onSauceClick() {
-        IntentUtil.openPage(root, Uri.parse(getString(R.string.source_url)));
+        if ("https://gitlab.com".equals(GitLabClient.getAccount().getServerUrl().toString())) {
+            NavigationManager.navigateToProject(AboutActivity.this, REPO_ID);
+        } else {
+            IntentUtil.openPage(root, Uri.parse(getString(R.string.source_url)));
+        }
     }
 
     SensorManager sensorManager;
