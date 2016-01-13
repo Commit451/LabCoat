@@ -38,7 +38,7 @@ public class RepositoryTreeObject {
 
     public int getDrawableForType() {
         if (mType == null) {
-            return R.drawable.ic_file_24dp;
+            return R.drawable.ic_unknown_24dp;
         }
         switch (mType) {
             case FILE:
@@ -49,7 +49,7 @@ public class RepositoryTreeObject {
                 return R.drawable.ic_repo_24dp;
         }
 
-        return R.drawable.ic_file_24dp;
+        return R.drawable.ic_unknown_24dp;
     }
 
     public Uri getUrl(Project project, String branchName, String currentPath) {
