@@ -15,7 +15,6 @@ import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.ContextCompat;
 import android.text.method.LinkMovementMethod;
-import android.util.Patterns;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
@@ -36,6 +35,7 @@ import com.commit451.gitlab.util.KeyboardUtil;
 import com.commit451.gitlab.util.NavigationManager;
 import com.commit451.gitlab.view.EmailAutoCompleteTextView;
 import com.squareup.okhttp.Credentials;
+import com.squareup.okhttp.HttpUrl;
 
 import java.security.cert.CertificateEncodingException;
 import java.util.Date;
@@ -54,7 +54,6 @@ import timber.log.Timber;
 public class LoginActivity extends BaseActivity {
 
     private static final int PERMISSION_REQUEST_GET_ACCOUNTS = 1337;
-    private static Pattern sUrlPattern = Patterns.WEB_URL;
     private static Pattern sTokenPattern = Pattern.compile("^[A-Za-z0-9-_]*$");
 
     public static Intent newInstance(Context context) {
@@ -110,7 +109,18 @@ public class LoginActivity extends BaseActivity {
         if (hasEmptyFields(mUrlHint)) {
             return;
         }
-        if (!sUrlPattern.matcher(mUrlInput.getText()).matches()) {
+
+        Uri uri = null;
+        try {
+            String url = mUrlInput.getText().toString();
+            if (HttpUrl.parse(url) != null) {
+                uri = Uri.parse(url);
+            }
+        } catch (Exception e) {
+            Timber.e(e, null);
+        }
+
+        if (uri == null) {
             mUrlHint.setError(getString(R.string.not_a_valid_url));
             return;
         } else {
@@ -133,10 +143,8 @@ public class LoginActivity extends BaseActivity {
             }
         }
 
-        String url = mUrlInput.getText().toString();
-
         mAccount = new Account();
-        mAccount.setServerUrl(Uri.parse(url));
+        mAccount.setServerUrl(uri);
         mAccount.setTrustedCertificate(mTrustedCertificate);
         mAccount.setAuthorizationHeader(mAuthorizationHeader);
 

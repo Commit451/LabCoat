@@ -13,7 +13,8 @@
         android:contentDescription="@null"
         android:fitsSystemWindows="false"
         android:scaleType="fitXY"
-        android:src="@drawable/header"/>
+        android:src="@drawable/header"
+        android:background="#D7C1E5"/>
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profile_image"

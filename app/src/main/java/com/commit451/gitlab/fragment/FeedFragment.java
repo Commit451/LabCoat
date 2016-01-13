@@ -1,13 +1,6 @@
 package com.commit451.gitlab.fragment;
 
-import com.commit451.gitlab.GitLabApp;
-import com.commit451.gitlab.R;
-import com.commit451.gitlab.adapter.FeedAdapter;
-import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.model.rss.Entry;
-import com.commit451.gitlab.model.rss.Feed;
-import com.commit451.gitlab.util.IntentUtil;
-
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,6 +9,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.commit451.gitlab.GitLabApp;
+import com.commit451.gitlab.R;
+import com.commit451.gitlab.adapter.FeedAdapter;
+import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.model.rss.Entry;
+import com.commit451.gitlab.model.rss.Feed;
+import com.commit451.gitlab.util.IntentUtil;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -28,9 +29,9 @@ public class FeedFragment extends BaseFragment {
 
     private static final String EXTRA_FEED_URL = "extra_feed_url";
 
-    public static FeedFragment newInstance(String feedUrl) {
+    public static FeedFragment newInstance(Uri feedUrl) {
         Bundle args = new Bundle();
-        args.putString(EXTRA_FEED_URL, feedUrl);
+        args.putParcelable(EXTRA_FEED_URL, feedUrl);
 
         FeedFragment fragment = new FeedFragment();
         fragment.setArguments(args);
@@ -41,7 +42,7 @@ public class FeedFragment extends BaseFragment {
     @Bind(R.id.list) RecyclerView mEntryListView;
     @Bind(R.id.message_text) TextView mMessageView;
 
-    private String mFeedUrl;
+    private Uri mFeedUrl;
     private EventReceiver mEventReceiver;
     private FeedAdapter mFeedAdapter;
 
@@ -99,7 +100,7 @@ public class FeedFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mFeedUrl = getArguments().getString(EXTRA_FEED_URL);
+        mFeedUrl = getArguments().getParcelable(EXTRA_FEED_URL);
     }
 
     @Override
@@ -144,8 +145,10 @@ public class FeedFragment extends BaseFragment {
 
         if (mFeedUrl == null) {
             mSwipeRefreshLayout.setRefreshing(false);
+            mMessageView.setVisibility(View.VISIBLE);
             return;
         }
+        mMessageView.setVisibility(View.GONE);
 
         mSwipeRefreshLayout.post(new Runnable() {
             @Override
@@ -156,7 +159,7 @@ public class FeedFragment extends BaseFragment {
             }
         });
 
-        GitLabClient.rssInstance().getFeed(mFeedUrl).enqueue(mUserFeedCallback);
+        GitLabClient.rssInstance().getFeed(mFeedUrl.toString()).enqueue(mUserFeedCallback);
     }
 
     private class EventReceiver {

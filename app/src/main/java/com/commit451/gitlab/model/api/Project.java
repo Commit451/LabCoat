@@ -1,6 +1,7 @@
 package com.commit451.gitlab.model.api;
 
 import android.net.Uri;
+import android.support.annotation.Nullable;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -188,8 +189,12 @@ public class Project {
         return mOpenIssuesCount;
     }
 
+    @Nullable
     public Uri getFeedUrl() {
-        return Uri.parse(mWebUrl.toString() + ".atom");
+        if (mWebUrl == null) {
+            return null;
+        }
+        return Uri.parse(mWebUrl + ".atom");
     }
 
     public boolean belongsToGroup() {

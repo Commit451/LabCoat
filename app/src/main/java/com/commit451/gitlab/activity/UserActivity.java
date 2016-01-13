@@ -91,7 +91,7 @@ public class UserActivity extends BaseActivity {
 
         if (savedInstanceState == null) {
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.add(R.id.user_feed, FeedFragment.newInstance(mUser.getFeedUrl().toString())).commit();
+            fragmentTransaction.add(R.id.user_feed, FeedFragment.newInstance(mUser.getFeedUrl())).commit();
         }
     }
 

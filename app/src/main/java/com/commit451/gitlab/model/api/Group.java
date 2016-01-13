@@ -1,10 +1,11 @@
 package com.commit451.gitlab.model.api;
 
+import android.net.Uri;
+import android.support.annotation.Nullable;
+
 import com.google.gson.annotations.SerializedName;
 
 import org.parceler.Parcel;
-
-import android.net.Uri;
 
 @Parcel
 public class Group {
@@ -47,7 +48,12 @@ public class Group {
         return mWebUrl;
     }
 
+    @Nullable
     public Uri getFeedUrl() {
+        if (mWebUrl == null) {
+            return null;
+        }
+
         return Uri.parse(mWebUrl.toString() + ".atom");
     }
 

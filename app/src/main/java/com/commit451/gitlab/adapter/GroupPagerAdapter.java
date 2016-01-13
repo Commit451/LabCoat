@@ -54,7 +54,7 @@ public class GroupPagerAdapter extends FragmentPagerAdapter {
 
         switch (position) {
             case ACTIVITY_POS:
-                return FeedFragment.newInstance(mGroup.getFeedUrl().toString());
+                return FeedFragment.newInstance(mGroup.getFeedUrl());
             case PROJECTS_POS:
                 return ProjectsFragment.newInstance(mGroup);
             case MEMBERS_POS:
