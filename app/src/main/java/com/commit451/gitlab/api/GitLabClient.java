@@ -8,6 +8,8 @@ import com.commit451.gitlab.provider.SimpleXmlProvider;
 import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
 
+import java.util.List;
+
 import retrofit.GsonConverterFactory;
 import retrofit.Retrofit;
 import retrofit.SimpleXmlConverterFactory;
@@ -37,8 +39,12 @@ public final class GitLabClient {
         return sAccount;
     }
 
+    /**
+     * Get a GitLab instance with the current account passed. Used for login only
+     * @param account the account to try and log in with
+     * @return the GitLab instance
+     */
     public static GitLab instance(Account account) {
-        checkAccountSet(account);
         Retrofit restAdapter = new Retrofit.Builder()
                 .baseUrl(account.getServerUrl().toString())
                 .client(OkHttpClientProvider.getInstance(account))
@@ -49,6 +55,7 @@ public final class GitLabClient {
 
     public static GitLab instance() {
         if (sGitLab == null) {
+            checkAccountSet();
             sGitLab = instance(sAccount);
         }
 
@@ -56,7 +63,7 @@ public final class GitLabClient {
     }
 
     public static GitLabRss rssInstance(Account account) {
-        checkAccountSet(account);
+        checkAccountSet();
         Retrofit restAdapter = new Retrofit.Builder()
                 .baseUrl(account.getServerUrl().toString())
                 .client(OkHttpClientProvider.getInstance(account))
@@ -74,7 +81,7 @@ public final class GitLabClient {
     }
 
     public static Picasso getPicasso(Account account) {
-        checkAccountSet(account);
+        checkAccountSet();
         return new Picasso.Builder(GitLabApp.instance())
                 .downloader(new OkHttpDownloader(OkHttpClientProvider.getInstance(account)))
                 .build();
@@ -88,9 +95,10 @@ public final class GitLabClient {
         return sPicasso;
     }
 
-    private static void checkAccountSet(Account account) {
-        if (account == null) {
-            throw new IllegalStateException("You cannot do any network calls before the account is set!");
+    private static void checkAccountSet() {
+        if (sAccount == null) {
+            List<Account> accounts = Account.getAccounts(GitLabApp.instance());
+            GitLabClient.setAccount(accounts.get(0));
         }
     }
 }

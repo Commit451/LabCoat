@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.os.Bundle;
 
 import com.commit451.gitlab.BuildConfig;
-import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.data.Prefs;
 import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.util.NavigationManager;
@@ -33,7 +32,6 @@ public class GitlabActivity extends Activity {
         if(accounts.isEmpty()) {
             NavigationManager.navigateToLogin(this);
         } else {
-            GitLabClient.setAccount(accounts.get(0));
             NavigationManager.navigateToProjects(this);
         }
 
