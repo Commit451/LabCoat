@@ -21,10 +21,10 @@ import com.commit451.gitlab.util.KeyboardUtil;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import timber.log.Timber;
 
 /**
  * Search for :allthethings:
- * Created by Jawn on 9/21/2015.
  */
 public class SearchActivity extends BaseActivity {
 
@@ -33,6 +33,7 @@ public class SearchActivity extends BaseActivity {
         return intent;
     }
 
+    @Bind(R.id.root) View mRoot;
     @Bind(R.id.tabs) TabLayout mTabLayout;
     @Bind(R.id.pager) ViewPager mViewPager;
     SearchPagerAdapter mSearchPagerAdapter;
@@ -51,14 +52,17 @@ public class SearchActivity extends BaseActivity {
         });
     }
 
+    private SearchDebouncer mSearchDebouncer;
+
     private final TextView.OnEditorActionListener mOnSearchEditorActionListener = new TextView.OnEditorActionListener() {
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
             if (TextUtils.isEmpty(mSearchView.getText())) {
                 mSearchView.setText("unicorns");
             }
-            mSearchPagerAdapter.searchQuery(mSearchView.getText().toString());
+            search();
             KeyboardUtil.hideKeyboard(SearchActivity.this);
+            mRoot.removeCallbacks(mSearchDebouncer);
             return false;
         }
     };
@@ -76,9 +80,19 @@ public class SearchActivity extends BaseActivity {
                         mClearView.setVisibility(View.GONE);
                     }
                 });
-            } else {
+            } else if (count == 1) {
                 mClearView.setVisibility(View.VISIBLE);
                 mClearView.animate().alpha(1.0f);
+            }
+            if (s != null &&  s.length() > 3) {
+                Timber.d("Posting new future search");
+                mRoot.removeCallbacks(mSearchDebouncer);
+                mRoot.postDelayed(mSearchDebouncer, 500);
+            }
+            //This means they are backspacing
+            if (before > count) {
+                Timber.d("Removing future search");
+                mRoot.removeCallbacks(mSearchDebouncer);
             }
         }
 
@@ -103,5 +117,18 @@ public class SearchActivity extends BaseActivity {
         mTabLayout.setupWithViewPager(mViewPager);
         mSearchView.setOnEditorActionListener(mOnSearchEditorActionListener);
         mSearchView.addTextChangedListener(mTextWatcher);
+        mSearchDebouncer = new SearchDebouncer();
+    }
+
+    private void search() {
+        Timber.d("Searching");
+        mSearchPagerAdapter.searchQuery(mSearchView.getText().toString());
+    }
+
+    private class SearchDebouncer implements Runnable{
+        @Override
+        public void run() {
+            search();
+        }
     }
 }
