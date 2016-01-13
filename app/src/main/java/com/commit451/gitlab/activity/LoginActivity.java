@@ -39,6 +39,7 @@ import com.squareup.okhttp.HttpUrl;
 
 import java.security.cert.CertificateEncodingException;
 import java.util.Date;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.net.ssl.SSLHandshakeException;
@@ -141,6 +142,12 @@ public class LoginActivity extends BaseActivity {
             } else {
                 mTokenHint.setError(null);
             }
+        }
+
+        if (isAlreadySignedIn(uri.toString(), mIsNormalLogin ? mUserInput.getText().toString() : mTokenInput.getText().toString())) {
+            Snackbar.make(mRoot, getString(R.string.already_logged_in), Snackbar.LENGTH_LONG)
+                    .show();
+            return;
         }
 
         mAccount = new Account();
@@ -358,5 +365,19 @@ public class LoginActivity extends BaseActivity {
             }
         });
         dialog.show();
+    }
+
+    private boolean isAlreadySignedIn(@NonNull String url, @NonNull String usernameOrEmailOrPrivateToken) {
+        List<Account> accounts = Prefs.getAccounts(this);
+        for (Account account : accounts) {
+            if (account.getServerUrl().equals(Uri.parse(url))) {
+                if (usernameOrEmailOrPrivateToken.equals(account.getUser().getUsername())
+                        || usernameOrEmailOrPrivateToken.equalsIgnoreCase(account.getUser().getEmail())
+                        || usernameOrEmailOrPrivateToken.equalsIgnoreCase(account.getPrivateToken())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

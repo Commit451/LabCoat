@@ -73,6 +73,7 @@
     <string name="not_a_valid_url">Not a valid URL</string>
     <string name="not_a_valid_private_token">Not a valid private token</string>
     <string name="realm_message">A username and password are being requested by the server.\nThe server says: \"%1$s\"</string>
+    <string name="already_logged_in">This account is already logged in</string>
 
     <!-- Error messages -->
     <string name="connection_error">Connection failed</string>
