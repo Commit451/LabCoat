@@ -77,7 +77,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
             case OVERVIEW_POS:
                 return OverviewFragment.newInstance();
             case ACTIVITY_POS:
-                return FeedFragment.newInstance(mProject.getFeedUrl().toString());
+                return FeedFragment.newInstance(mProject.getFeedUrl());
             case FILES_POS:
                 return FilesFragment.newInstance();
             case COMMITS_POS:
