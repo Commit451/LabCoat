@@ -289,7 +289,9 @@ public class ProjectsFragment extends BaseFragment {
     }
 
     public void searchQuery(String query) {
-        mProjectsAdapter.clearData();
+        if (mProjectsAdapter != null) {
+            mProjectsAdapter.clearData();
+        }
         mQuery = query;
         loadData();
     }
