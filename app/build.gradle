@@ -10,8 +10,9 @@ android {
         applicationId "com.commit451.gitlab"
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 220
-        versionName "2.2.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        versionCode 221
+        versionName "2.2.1"
     }
     buildTypes {
         release {
@@ -34,6 +35,8 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.robolectric:robolectric:3.0'
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:design:23.1.1'
     compile 'com.android.support:recyclerview-v7:23.1.1'

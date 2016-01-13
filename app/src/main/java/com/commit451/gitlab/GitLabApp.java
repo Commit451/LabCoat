@@ -39,17 +39,20 @@ public class GitLabApp extends Application {
         sInstance = this;
 
         forceLocale(Locale.ENGLISH);
-
-        CrashlyticsCore core = new CrashlyticsCore.Builder()
-                .disabled(BuildConfig.DEBUG)
-                .build();
-        Fabric.with(this, new Crashlytics.Builder().core(core).build());
+        setupCrashReporting();
 
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
         }
 
         JodaTimeAndroid.init(this);
+    }
+
+    protected void setupCrashReporting() {
+        CrashlyticsCore core = new CrashlyticsCore.Builder()
+                .disabled(BuildConfig.DEBUG)
+                .build();
+        Fabric.with(this, new Crashlytics.Builder().core(core).build());
     }
 
     private void forceLocale(Locale locale){
