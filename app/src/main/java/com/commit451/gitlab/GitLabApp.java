@@ -6,6 +6,7 @@ import android.content.res.Resources;
 
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.core.CrashlyticsCore;
+import com.squareup.leakcanary.LeakCanary;
 import com.squareup.otto.Bus;
 
 import net.danlew.android.joda.JodaTimeAndroid;
@@ -46,6 +47,7 @@ public class GitLabApp extends Application {
         }
 
         JodaTimeAndroid.init(this);
+        LeakCanary.install(this);
     }
 
     protected void setupCrashReporting() {
