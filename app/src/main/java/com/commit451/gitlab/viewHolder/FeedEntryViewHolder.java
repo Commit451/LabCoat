@@ -27,9 +27,9 @@ public class FeedEntryViewHolder extends RecyclerView.ViewHolder {
         return new FeedEntryViewHolder(view);
     }
 
-    @Bind(R.id.entry_image) ImageView mImageView;
-    @Bind(R.id.entry_title) TextView mTitleView;
-    @Bind(R.id.entry_summary) TextView mSummaryView;
+    @Bind(R.id.image) ImageView mImageView;
+    @Bind(R.id.title) TextView mTitleView;
+    @Bind(R.id.description) TextView mSummaryView;
 
     public FeedEntryViewHolder(View view) {
         super(view);

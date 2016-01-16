@@ -48,6 +48,7 @@ public class SearchActivity extends BaseActivity {
             public void run() {
                 mClearView.setVisibility(View.GONE);
                 mSearchView.getText().clear();
+                KeyboardUtil.showKeyboard(SearchActivity.this, mSearchView);
             }
         });
     }

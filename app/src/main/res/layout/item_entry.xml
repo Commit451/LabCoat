@@ -1,63 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/Card"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginLeft="@dimen/activity_horizontal_margin"
-    android:layout_marginRight="@dimen/activity_horizontal_margin"
-    android:layout_marginTop="8dp"
-    android:layout_marginBottom="8dp">
+    android:layout_height="wrap_content"
+    android:minHeight="72dp"
+    android:background="?attr/selectableItemBackground">
 
-    <RelativeLayout
-        android:id="@+id/list_item"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/selectableItemBackground"
-        android:minHeight="?android:attr/listPreferredItemHeight">
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_gravity="center_vertical"
+        android:orientation="horizontal">
 
         <ImageView
-            android:id="@+id/entry_image"
+            android:id="@+id/image"
             android:layout_width="@dimen/image_size"
             android:layout_height="@dimen/image_size"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
+            android:layout_gravity="center_vertical"
             android:contentDescription="@null"
-            tools:src="@drawable/ic_folder_24dp"
-            />
+            tools:src="@drawable/ic_person_add_24dp"/>
 
-        <RelativeLayout
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="16dp"
-            android:layout_toRightOf="@id/entry_image"
-            android:orientation="vertical"
-            android:paddingBottom="8dp"
-            android:paddingTop="8dp"
-            >
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="8dp"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/entry_title"
+            <com.devspark.robototextview.widget.RobotoTextView
+                android:id="@+id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:textColor="?android:attr/textColorPrimary"
-                android:textSize="@dimen/text_size_small"
-                tools:text="I commited all the code at once cause I am cool. So sorry"/>
+                android:layout_gravity="center_vertical"
+                app:typeface="roboto_medium"
+                android:textSize="16sp"
+                android:textColor="@color/white"
+                tools:text="Project"
+                />
 
-            <TextView
-                android:id="@+id/entry_summary"
+            <com.devspark.robototextview.widget.RobotoTextView
+                android:id="@+id/description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/entry_title"
-                android:textColor="?android:attr/textColorSecondary"
-                android:textSize="@dimen/text_size_tiny"
-                tools:text="Jawnnypoo"/>
+                android:layout_gravity="center_vertical"
+                app:typeface="roboto_regular"
+                android:textSize="14sp"
+                tools:text="I like this project because its called a project and it has a really long description that should cut off after a few lines"
+                />
 
-        </RelativeLayout>
+        </LinearLayout>
 
-    </RelativeLayout>
-</android.support.v7.widget.CardView>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_gravity="bottom"
+        android:background="@color/divider_color"/>
+</FrameLayout>
