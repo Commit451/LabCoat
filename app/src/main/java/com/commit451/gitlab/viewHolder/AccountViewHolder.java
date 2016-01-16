@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.Account;
+import com.commit451.gitlab.transformation.CircleTransformation;
 import com.commit451.gitlab.util.ImageUtil;
 
 import butterknife.Bind;
@@ -61,6 +62,7 @@ public class AccountViewHolder extends RecyclerView.ViewHolder{
 
         GitLabClient.getPicasso()
                 .load(ImageUtil.getAvatarUrl(account.getUser(), itemView.getResources().getDimensionPixelSize(R.dimen.user_list_image_size)))
+                .transform(new CircleTransformation())
                 .into(mImageView);
     }
 }

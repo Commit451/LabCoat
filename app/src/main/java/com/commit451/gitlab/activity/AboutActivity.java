@@ -2,7 +2,6 @@ package com.commit451.gitlab.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -13,11 +12,13 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Contributor;
+import com.commit451.gitlab.transformation.CircleTransformation;
 import com.commit451.gitlab.util.ImageUtil;
 import com.commit451.gitlab.util.IntentUtil;
 import com.commit451.gitlab.util.NavigationManager;
@@ -33,7 +34,6 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
@@ -145,13 +145,11 @@ public class AboutActivity extends BaseActivity {
         int imageSize = getResources().getDimensionPixelSize(R.dimen.circle_size);
         for (int i=0; i<contributors.size(); i++) {
             Contributor contributor = contributors.get(i);
-            CircleImageView imageView = new CircleImageView(this);
+            ImageView imageView = new ImageView(this);
             FrameLayout.LayoutParams llp = new FrameLayout.LayoutParams(
                     imageSize,
                     imageSize);
             imageView.setLayoutParams(llp);
-            imageView.setBorderWidth(borderSize);
-            imageView.setBorderColor(Color.BLACK);
             Physics.setPhysicsConfig(imageView, config);
             physicsLayout.addView(imageView);
             imageView.setX(x);
@@ -166,6 +164,7 @@ public class AboutActivity extends BaseActivity {
             Uri url = ImageUtil.getAvatarUrl(contributor.getEmail(), imageSize);
             GitLabClient.getPicasso()
                     .load(url)
+                    .transform(new CircleTransformation())
                     .into(imageView);
         }
         physicsLayout.getPhysics().onLayout(true);

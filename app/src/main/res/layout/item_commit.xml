@@ -8,7 +8,7 @@
     android:minHeight="?android:attr/listPreferredItemHeight"
     android:background="?attr/selectableItemBackground">
 
-    <de.hdodenhof.circleimageview.CircleImageView
+    <ImageView
         android:id="@+id/commit_image"
         android:layout_width="@dimen/image_size"
         android:layout_height="@dimen/image_size"
@@ -16,7 +16,7 @@
         android:layout_marginRight="16dp"
         android:layout_marginLeft="16dp"
         android:contentDescription="@null"
-        tools:src="@drawable/ic_doc"
+        tools:src="@drawable/ic_star_24dp"
         />
 
     <RelativeLayout

@@ -1,6 +1,5 @@
 package com.commit451.gitlab.util;
 
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
@@ -13,18 +12,18 @@ import com.squareup.picasso.Picasso;
 import in.uncod.android.bypass.Bypass;
 import timber.log.Timber;
 
-// credits: http://stackoverflow.com/a/25530488/504611
+/**
+ * Original credits: http://stackoverflow.com/a/25530488/504611
+ */
 public class PicassoImageGetter implements Bypass.ImageGetter {
 
-    private final Resources resources;
-    private final Picasso pablo;
-    private final TextView textView;
+    private final Picasso mPicasso;
+    private final TextView mTextView;
     private int maxWidth = -1;
 
-    public PicassoImageGetter(final TextView textView, final Resources resources, final Picasso pablo) {
-        this.textView = textView;
-        this.resources = resources;
-        this.pablo = pablo;
+    public PicassoImageGetter(final TextView textView, final Picasso picasso) {
+        mTextView = textView;
+        mPicasso = picasso;
     }
 
     @Override
@@ -38,7 +37,7 @@ public class PicassoImageGetter implements Bypass.ImageGetter {
             @Override
             protected Bitmap doInBackground(final Void... meh) {
                 try {
-                    return pablo.load(finalSource).get();
+                    return mPicasso.load(finalSource).get();
                 } catch (Exception e) {
                     return null;
                 }
@@ -48,14 +47,14 @@ public class PicassoImageGetter implements Bypass.ImageGetter {
             protected void onPostExecute(final Bitmap bitmap) {
                 try {
                     if (maxWidth == -1) {
-                        int horizontalPadding = textView.getPaddingLeft() + textView.getPaddingRight();
-                        maxWidth = textView.getMeasuredWidth() - horizontalPadding;
+                        int horizontalPadding = mTextView.getPaddingLeft() + mTextView.getPaddingRight();
+                        maxWidth = mTextView.getMeasuredWidth() - horizontalPadding;
                         if (maxWidth == 0) {
                             maxWidth = Integer.MAX_VALUE;
                         }
                     }
 
-                    final BitmapDrawable drawable = new BitmapDrawable(resources, bitmap);
+                    final BitmapDrawable drawable = new BitmapDrawable(mTextView.getResources(), bitmap);
                     final double aspectRatio = 1.0 * drawable.getIntrinsicWidth() / drawable.getIntrinsicHeight();
                     final int width = Math.min(maxWidth, drawable.getIntrinsicWidth());
                     final int height = (int) (width / aspectRatio);
@@ -65,7 +64,7 @@ public class PicassoImageGetter implements Bypass.ImageGetter {
                     result.setDrawable(drawable);
                     result.setBounds(0, 0, width, height);
 
-                    textView.setText(textView.getText()); // invalidate() doesn't work correctly...
+                    mTextView.setText(mTextView.getText()); // invalidate() doesn't work correctly...
                 } catch (Exception e) {
                     Timber.e(e, null);
                 }
@@ -76,7 +75,7 @@ public class PicassoImageGetter implements Bypass.ImageGetter {
         return result;
     }
 
-    static class BitmapDrawablePlaceHolder extends BitmapDrawable {
+    private static class BitmapDrawablePlaceHolder extends BitmapDrawable {
 
         protected Drawable drawable;
 

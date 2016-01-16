@@ -1,5 +1,6 @@
 package com.commit451.gitlab.adapter;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
@@ -11,6 +12,8 @@ import com.commit451.gitlab.viewHolder.NoteViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import in.uncod.android.bypass.Bypass;
 
 /**
  * Shows the comments and details of a merge request
@@ -28,10 +31,12 @@ public class MergeRequestDetailAdapter extends RecyclerView.Adapter<RecyclerView
     private ArrayList<Note> mNotes;
     private MergeRequest mMergeRequest;
     private boolean mLoading = false;
+    private Bypass mBypass;
 
-    public MergeRequestDetailAdapter(MergeRequest mergeRequest) {
+    public MergeRequestDetailAdapter(Context context, MergeRequest mergeRequest) {
         mMergeRequest = mergeRequest;
         mNotes = new ArrayList<>();
+        mBypass = new Bypass(context);
     }
 
     @Override
@@ -50,10 +55,10 @@ public class MergeRequestDetailAdapter extends RecyclerView.Adapter<RecyclerView
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof MergeRequestHeaderViewHolder) {
-            ((MergeRequestHeaderViewHolder) holder).bind(mMergeRequest);
+            ((MergeRequestHeaderViewHolder) holder).bind(mMergeRequest, mBypass);
         } else if (holder instanceof NoteViewHolder) {
             Note note = getNoteAt(position);
-            ((NoteViewHolder) holder).bind(note);
+            ((NoteViewHolder) holder).bind(note, mBypass);
         } else if (holder instanceof LoadingFooterViewHolder) {
             ((LoadingFooterViewHolder) holder).bind(mLoading);
         }

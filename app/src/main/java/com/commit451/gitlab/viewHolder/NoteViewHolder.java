@@ -11,8 +11,10 @@ import android.widget.TextView;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Note;
+import com.commit451.gitlab.transformation.CircleTransformation;
 import com.commit451.gitlab.util.DateUtils;
 import com.commit451.gitlab.util.ImageUtil;
+import com.commit451.gitlab.util.PicassoImageGetter;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -35,15 +37,12 @@ public class NoteViewHolder extends RecyclerView.ViewHolder {
     @Bind(R.id.creation_date) TextView mCreationDateView;
     @Bind(R.id.icon) ImageView mIconView;
 
-    private final Bypass mBypass;
-
     public NoteViewHolder(View view) {
         super(view);
         ButterKnife.bind(this, view);
-        mBypass = new Bypass(view.getContext());
     }
 
-    public void bind(Note note) {
+    public void bind(Note note, Bypass bypass) {
         if (note.getCreatedAt() != null) {
             mCreationDateView.setText(DateUtils.getRelativeTimeSpanString(itemView.getContext(), note.getCreatedAt()));
         }
@@ -57,11 +56,12 @@ public class NoteViewHolder extends RecyclerView.ViewHolder {
             summary = note.getBody();
         }
 
-        mSummaryView.setText(mBypass.markdownToSpannable(summary));
+        mSummaryView.setText(bypass.markdownToSpannable(summary, new PicassoImageGetter(mSummaryView, GitLabClient.getPicasso())));
         mSummaryView.setMovementMethod(LinkMovementMethod.getInstance());
 
         GitLabClient.getPicasso()
                 .load(ImageUtil.getAvatarUrl(note.getAuthor(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size)))
+                .transform(new CircleTransformation())
                 .into(mIconView);
     }
 }

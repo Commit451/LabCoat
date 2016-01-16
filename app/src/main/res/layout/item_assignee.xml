@@ -8,7 +8,7 @@
     android:minHeight="?android:attr/listPreferredItemHeight"
     android:padding="8dp">
 
-    <de.hdodenhof.circleimageview.CircleImageView
+    <ImageView
         android:id="@+id/user_image"
         android:layout_width="@dimen/image_size"
         android:layout_height="@dimen/image_size"

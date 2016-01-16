@@ -17,7 +17,7 @@
         android:background="?attr/selectableItemBackground"
         android:minHeight="?android:attr/listPreferredItemHeight">
 
-        <de.hdodenhof.circleimageview.CircleImageView
+        <ImageView
             android:id="@+id/entry_image"
             android:layout_width="@dimen/image_size"
             android:layout_height="@dimen/image_size"

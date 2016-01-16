@@ -12,8 +12,10 @@ import android.widget.TextView;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.MergeRequest;
+import com.commit451.gitlab.transformation.CircleTransformation;
 import com.commit451.gitlab.util.DateUtils;
 import com.commit451.gitlab.util.ImageUtil;
+import com.commit451.gitlab.util.PicassoImageGetter;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -34,25 +36,23 @@ public class MergeRequestHeaderViewHolder extends RecyclerView.ViewHolder {
     @Bind(R.id.author_image) ImageView mAuthorImageView;
     @Bind(R.id.author) TextView mAuthorView;
 
-    private final Bypass mBypass;
-
     public MergeRequestHeaderViewHolder(View view) {
         super(view);
         ButterKnife.bind(this, view);
-        mBypass = new Bypass(view.getContext());
     }
 
-    public void bind(MergeRequest mergeRequest) {
+    public void bind(MergeRequest mergeRequest, Bypass bypass) {
         if (TextUtils.isEmpty(mergeRequest.getDescription())) {
             mDescriptionView.setVisibility(View.GONE);
         } else {
             mDescriptionView.setVisibility(View.VISIBLE);
-            mDescriptionView.setText(mBypass.markdownToSpannable(mergeRequest.getDescription()));
+            mDescriptionView.setText(bypass.markdownToSpannable(mergeRequest.getDescription(), new PicassoImageGetter(mDescriptionView, GitLabClient.getPicasso())));
             mDescriptionView.setMovementMethod(LinkMovementMethod.getInstance());
         }
 
         GitLabClient.getPicasso()
                 .load(ImageUtil.getAvatarUrl(mergeRequest.getAuthor(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size)))
+                .transform(new CircleTransformation())
                 .into(mAuthorImageView);
 
         String author = "";

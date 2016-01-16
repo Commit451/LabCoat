@@ -10,14 +10,13 @@
     android:minHeight="?android:attr/listPreferredItemHeight"
     android:foreground="?attr/selectableItemBackground">
 
-    <de.hdodenhof.circleimageview.CircleImageView
+    <ImageView
         android:id="@+id/account_image"
         android:layout_width="@dimen/image_size"
         android:layout_height="@dimen/image_size"
         android:layout_marginRight="8dp"
         android:layout_gravity="center_vertical"
         android:contentDescription="@null"
-        android:transitionName="@string/transition_user"
         tools:src="@drawable/ic_assign_24dp"
         />
 

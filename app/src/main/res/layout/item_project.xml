@@ -23,18 +23,18 @@
             android:layout_height="@dimen/image_size"
             android:layout_gravity="center_vertical">
 
-            <de.hdodenhof.circleimageview.CircleImageView
+            <ImageView
                 android:id="@+id/project_image"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="@dimen/image_size"
+                android:layout_height="@dimen/image_size"
                 android:layout_gravity="center_vertical"
                 android:contentDescription="@null"
                 tools:src="@drawable/ic_person_add_24dp"/>
 
             <com.github.ivbaranov.mli.MaterialLetterIcon
                 android:id="@+id/project_letter"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="@dimen/image_size"
+                android:layout_height="@dimen/image_size"
                 android:layout_gravity="center_vertical"/>
 
         </FrameLayout>

@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.rss.Entry;
+import com.commit451.gitlab.transformation.CircleTransformation;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -38,6 +39,7 @@ public class FeedEntryViewHolder extends RecyclerView.ViewHolder {
     public void bind(Entry entry) {
         GitLabClient.getPicasso()
                 .load(entry.getThumbnail().getUrl())
+                .transform(new CircleTransformation())
                 .into(mImageView);
 
         mTitleView.setText(Html.fromHtml(entry.getTitle()));

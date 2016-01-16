@@ -26,6 +26,7 @@ import com.commit451.gitlab.event.LoginEvent;
 import com.commit451.gitlab.event.ReloadDataEvent;
 import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.model.api.UserFull;
+import com.commit451.gitlab.transformation.CircleTransformation;
 import com.commit451.gitlab.util.ImageUtil;
 import com.commit451.gitlab.util.NavigationManager;
 import com.squareup.otto.Subscribe;
@@ -231,6 +232,7 @@ public class GitLabNavigationView extends NavigationView {
         Uri url = ImageUtil.getAvatarUrl(user, getResources().getDimensionPixelSize(R.dimen.larger_image_size));
         GitLabClient.getPicasso()
                 .load(url)
+                .transform(new CircleTransformation())
                 .into(mProfileImage);
     }
 

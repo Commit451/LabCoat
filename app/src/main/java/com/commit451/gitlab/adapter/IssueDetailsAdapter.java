@@ -1,5 +1,6 @@
 package com.commit451.gitlab.adapter;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
@@ -11,6 +12,8 @@ import com.commit451.gitlab.viewHolder.NoteViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import in.uncod.android.bypass.Bypass;
 
 /**
  * Nice notes
@@ -28,10 +31,12 @@ public class IssueDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private ArrayList<Note> mNotes;
     private Issue mIssue;
     private boolean mLoading = false;
+    private Bypass mBypass;
 
-    public IssueDetailsAdapter(Issue issue) {
+    public IssueDetailsAdapter(Context context, Issue issue) {
         mIssue = issue;
         mNotes = new ArrayList<>();
+        mBypass = new Bypass(context);
     }
 
     @Override
@@ -53,7 +58,7 @@ public class IssueDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             ((IssueHeaderViewHolder) holder).bind(mIssue);
         } else if (holder instanceof NoteViewHolder) {
             Note note = getNoteAt(position);
-            ((NoteViewHolder) holder).bind(note);
+            ((NoteViewHolder) holder).bind(note, mBypass);
         } else if (holder instanceof LoadingFooterViewHolder) {
             ((LoadingFooterViewHolder) holder).bind(mLoading);
         }

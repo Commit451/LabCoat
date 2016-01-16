@@ -34,7 +34,6 @@ The following 3rd party libraries and resources are the reason this app works. R
 - Parceler (https://github.com/johncarl81/parceler)
 - Bypasses (https://github.com/Commit451/bypasses)
 - Easel (https://github.com/Commit451/Easel)
-- CircleImageView (https://github.com/hdodenhof/CircleImageView)
 - Material-ish Progress (https://github.com/pnikosis/materialish-progress)
 - PhysicsLayout (https://github.com/Jawnnypoo/PhysicsLayout)
 - Material Letter Icon (https://github.com/IvBaranov/MaterialLetterIcon)

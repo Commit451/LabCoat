@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Issue;
+import com.commit451.gitlab.transformation.CircleTransformation;
 import com.commit451.gitlab.util.DateUtils;
 import com.commit451.gitlab.util.ImageUtil;
 
@@ -44,6 +45,7 @@ public class IssueViewHolder extends RecyclerView.ViewHolder {
 
         GitLabClient.getPicasso()
                 .load(ImageUtil.getAvatarUrl(issue.getAssignee(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size)))
+                .transform(new CircleTransformation())
                 .into(mImageView);
 
         mMessageView.setText("#" + tempId + ": " + issue.getTitle());

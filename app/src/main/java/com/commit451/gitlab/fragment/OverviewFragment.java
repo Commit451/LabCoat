@@ -106,7 +106,7 @@ public class OverviewFragment extends BaseFragment {
             String text = new String(Base64.decode(response.body().getContent(), Base64.DEFAULT), Charset.forName("UTF-8"));
 
             mOverviewVew.setText(mBypass.markdownToSpannable(text,
-                    new PicassoImageGetter(mOverviewVew, getResources(), GitLabClient.getPicasso())));
+                    new PicassoImageGetter(mOverviewVew, GitLabClient.getPicasso())));
         }
 
         @Override

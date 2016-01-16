@@ -226,7 +226,7 @@ public class IssueActivity extends BaseActivity {
         mOpenCloseMenuItem = mToolbar.getMenu().findItem(R.id.action_close);
         mToolbar.setOnMenuItemClickListener(mOnMenuItemClickListener);
 
-        mIssueDetailsAdapter = new IssueDetailsAdapter(mIssue);
+        mIssueDetailsAdapter = new IssueDetailsAdapter(IssueActivity.this, mIssue);
         mNotesLayoutManager = new LinearLayoutManager(this);
         mNotesRecyclerView.setLayoutManager(mNotesLayoutManager);
         mNotesRecyclerView.setAdapter(mIssueDetailsAdapter);
