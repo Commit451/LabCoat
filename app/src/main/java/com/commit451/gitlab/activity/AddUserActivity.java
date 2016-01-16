@@ -17,7 +17,6 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
@@ -219,11 +218,13 @@ public class AddUserActivity extends MorphActivity {
             if (!response.isSuccess()) {
                 //Conflict
                 if (response.code() == 409) {
-                    Toast.makeText(AddUserActivity.this, R.string.error_user_conflict, Toast.LENGTH_SHORT).show();
+                    Snackbar.make(mRoot, R.string.error_user_conflict, Snackbar.LENGTH_SHORT)
+                            .show();
                 }
                 return;
             }
-            Toast.makeText(AddUserActivity.this, R.string.user_added_successfully, Toast.LENGTH_SHORT).show();
+            Snackbar.make(mRoot, R.string.user_added_successfully, Snackbar.LENGTH_SHORT)
+                    .show();
             mAccessDialog.dismiss();
             dismiss();
             GitLabApp.bus().post(new MemberAddedEvent(response.body()));

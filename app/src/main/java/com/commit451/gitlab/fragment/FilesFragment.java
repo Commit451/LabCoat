@@ -4,6 +4,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
@@ -43,6 +43,7 @@ public class FilesFragment extends BaseFragment {
         return new FilesFragment();
     }
 
+    @Bind(R.id.root) View mRoot;
     @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
     @Bind(R.id.list) RecyclerView mFilesListView;
     @Bind(R.id.breadcrumb) RecyclerView mBreadcrumbListView;
@@ -133,7 +134,7 @@ public class FilesFragment extends BaseFragment {
             // Creates a new text clip to put on the clipboard
             ClipData clip = ClipData.newPlainText(treeItem.getName(), treeItem.getUrl(mProject, mBranchName, mCurrentPath).toString());
             clipboard.setPrimaryClip(clip);
-            Toast.makeText(getActivity(), R.string.copied_to_clipboard, Toast.LENGTH_SHORT)
+            Snackbar.make(mRoot, R.string.copied_to_clipboard, Snackbar.LENGTH_SHORT)
                     .show();
         }
 

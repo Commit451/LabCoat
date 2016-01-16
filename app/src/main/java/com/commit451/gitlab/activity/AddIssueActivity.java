@@ -3,6 +3,7 @@ package com.commit451.gitlab.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -11,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
@@ -147,7 +147,7 @@ public class AddIssueActivity extends MorphActivity {
         @Override
         public void onResponse(Response<Issue> response, Retrofit retrofit) {
             if (!response.isSuccess()) {
-                Toast.makeText(AddIssueActivity.this, getString(R.string.failed_to_create_issue), Toast.LENGTH_SHORT)
+                Snackbar.make(mRoot, getString(R.string.failed_to_create_issue), Snackbar.LENGTH_SHORT)
                         .show();
                 return;
             }
@@ -162,7 +162,7 @@ public class AddIssueActivity extends MorphActivity {
         @Override
         public void onFailure(Throwable t) {
             Timber.e(t, null);
-            Toast.makeText(AddIssueActivity.this, getString(R.string.connection_error), Toast.LENGTH_SHORT)
+            Snackbar.make(mRoot, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
                     .show();
         }
     };
