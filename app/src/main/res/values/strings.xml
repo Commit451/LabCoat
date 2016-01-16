@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">GitLab</string>
+    <string name="app_name">LabCoat</string>
 
     <!-- Drawer -->
     <string name="nav_projects">Projects</string>
@@ -138,6 +138,7 @@
     <string name="file_saved">File saved successfully to Download folder</string>
     <string name="no_files_found">No files found.</string>
     <string name="copied_to_clipboard">Copied to clipboard</string>
+    <string name="root">ROOT</string>
 
     <!-- Issues -->
     <string name="new_note_hint">Add comment</string>

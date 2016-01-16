@@ -29,7 +29,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_gravity="bottom"
-        android:background="@color/grey_60">
+        android:background="@color/main_blue_60">
 
         <TextView
             android:id="@+id/name"

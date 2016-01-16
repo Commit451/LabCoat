@@ -234,7 +234,7 @@ public class FilesFragment extends BaseFragment {
 
     private void updateBreadcrumbs() {
         List<BreadcrumbAdapter.Breadcrumb> breadcrumbs = new ArrayList<>();
-        breadcrumbs.add(new BreadcrumbAdapter.Breadcrumb(mProject.getName(), new BreadcrumbAdapter.Listener() {
+        breadcrumbs.add(new BreadcrumbAdapter.Breadcrumb(getString(R.string.root), new BreadcrumbAdapter.Listener() {
             @Override
             public void onClick() {
                 loadData("");

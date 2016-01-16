@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.support.design.widget.NavigationView;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
@@ -14,6 +13,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.commit451.easel.Easel;
 import com.commit451.gitlab.GitLabApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.GroupsActivity;
@@ -163,10 +163,11 @@ public class GitLabNavigationView extends NavigationView {
     private void init() {
         mEventReceiver = new EventReceiver();
         GitLabApp.bus().register(mEventReceiver);
+        int colorPrimary = Easel.getThemeAttrColor(getContext(), R.attr.colorPrimary);
 
         setNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         inflateMenu(R.menu.navigation);
-        setBackgroundColor(ContextCompat.getColor(getContext(), R.color.window_background_color));
+        setBackgroundColor(colorPrimary);
         View header = inflateHeaderView(R.layout.header_nav_drawer);
         ButterKnife.bind(this, header);
 
@@ -175,7 +176,7 @@ public class GitLabNavigationView extends NavigationView {
         addView(mAccountList);
         LayoutParams params = (FrameLayout.LayoutParams) mAccountList.getLayoutParams();
         params.setMargins(0, getResources().getDimensionPixelSize(R.dimen.navigation_drawer_header_height), 0, 0);
-        mAccountList.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.window_background_color));
+        mAccountList.setBackgroundColor(colorPrimary);
         mAccountList.setVisibility(View.GONE);
         mAccountAdapter = new AccountsAdapter(getContext(), mAccountsAdapterListener);
         mAccountList.setAdapter(mAccountAdapter);
