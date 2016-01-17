@@ -91,7 +91,12 @@ public class ProjectActivity extends BaseActivity {
         @Override
         public void onFailure(Throwable t) {
             Timber.e(t, null);
-            mProgress.setVisibility(View.GONE);
+            mProgress.animate().alpha(0.0f).withEndAction(new Runnable() {
+                @Override
+                public void run() {
+                    mProgress.setVisibility(View.GONE);
+                }
+            });
             Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
                     .show();
         }
@@ -104,7 +109,12 @@ public class ProjectActivity extends BaseActivity {
             if (!response.isSuccess()) {
                 return;
             }
-            mProgress.setVisibility(View.GONE);
+            mProgress.animate().alpha(0.0f).withEndAction(new Runnable() {
+                @Override
+                public void run() {
+                    mProgress.setVisibility(View.GONE);
+                }
+            });
 
             if(response.body().isEmpty()) {
                 mBranchSpinner.setVisibility(View.GONE);
@@ -131,7 +141,12 @@ public class ProjectActivity extends BaseActivity {
         @Override
         public void onFailure(Throwable t) {
             Timber.e(t, null);
-            mProgress.setVisibility(View.GONE);
+            mProgress.animate().alpha(0.0f).withEndAction(new Runnable() {
+                @Override
+                public void run() {
+                    mProgress.setVisibility(View.GONE);
+                }
+            });
             Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
                     .show();
         }
@@ -176,12 +191,16 @@ public class ProjectActivity extends BaseActivity {
     }
 
     private void loadProject(long projectId) {
+        mProgress.setAlpha(0.0f);
         mProgress.setVisibility(View.VISIBLE);
+        mProgress.animate().alpha(1.0f);
         GitLabClient.instance().getProject(projectId).enqueue(mProjectCallback);
     }
 
     private void loadBranches() {
+        mProgress.setAlpha(0.0f);
         mProgress.setVisibility(View.VISIBLE);
+        mProgress.animate().alpha(1.0f);
         GitLabClient.instance().getBranches(mProject.getId()).enqueue(mBranchesCallback);
     }
 
