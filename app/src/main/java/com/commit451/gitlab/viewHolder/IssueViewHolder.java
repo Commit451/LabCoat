@@ -38,17 +38,17 @@ public class IssueViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(Issue issue) {
-        long tempId = issue.getIid();
-        if (tempId < 1) {
-            tempId = issue.getId();
+
+        if (issue.getAssignee() != null) {
+            GitLabClient.getPicasso()
+                    .load(ImageUtil.getAvatarUrl(issue.getAssignee(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size)))
+                    .transform(new CircleTransformation())
+                    .into(mImageView);
+        } else {
+            mImageView.setImageBitmap(null);
         }
 
-        GitLabClient.getPicasso()
-                .load(ImageUtil.getAvatarUrl(issue.getAssignee(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size)))
-                .transform(new CircleTransformation())
-                .into(mImageView);
-
-        mMessageView.setText("#" + tempId + ": " + issue.getTitle());
+        mMessageView.setText(issue.getTitle());
 
         String time = "";
         if (issue.getCreatedAt() != null) {
@@ -58,7 +58,11 @@ public class IssueViewHolder extends RecyclerView.ViewHolder {
         if (issue.getAuthor() != null) {
             author += issue.getAuthor().getUsername();
         }
+        long id = issue.getIid();
+        if (id < 1) {
+            id = issue.getId();
+        }
 
-        mCreatorView.setText(String.format(itemView.getContext().getString(R.string.created_time), time, author));
+        mCreatorView.setText(String.format(itemView.getContext().getString(R.string.opened_time), id, time, author));
     }
 }

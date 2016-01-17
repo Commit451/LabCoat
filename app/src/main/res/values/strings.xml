@@ -167,7 +167,7 @@
         <item>closed</item>
         <item>all</item>
     </string-array>
-    <string name="created_time">Created %1$s by %2$s</string>
+    <string name="opened_time">%1$s · opened %2$s by %3$s</string>
     <string name="no_assignee">No Assignee</string>
     <string name="assignee">Assignee</string>
     <string name="milestone">Milestone</string>
