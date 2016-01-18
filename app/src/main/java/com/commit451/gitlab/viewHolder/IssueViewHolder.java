@@ -58,10 +58,12 @@ public class IssueViewHolder extends RecyclerView.ViewHolder {
         if (issue.getAuthor() != null) {
             author += issue.getAuthor().getUsername();
         }
-        long id = issue.getIid();
-        if (id < 1) {
-            id = issue.getId();
+        String id = "";
+        long issueId = issue.getIid();
+        if (issueId < 1) {
+            issueId = issue.getId();
         }
+        id = "#" + issueId;
 
         mCreatorView.setText(String.format(itemView.getContext().getString(R.string.opened_time), id, time, author));
     }

@@ -1,54 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/list_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="?android:attr/listPreferredItemHeight"
-    android:background="?attr/selectableItemBackground">
+    android:background="?attr/selectableItemBackground"
+    android:minHeight="?android:attr/listPreferredItemHeight">
 
-    <ImageView
-        android:id="@+id/request_image"
-        android:layout_width="@dimen/image_size"
-        android:layout_height="@dimen/image_size"
-        android:layout_centerVertical="true"
-        android:layout_marginRight="16dp"
-        android:layout_marginLeft="16dp"
-        android:contentDescription="@null"
-        tools:src="@drawable/ic_assign_24dp"
-        />
-
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_centerVertical="true"
-        android:layout_toRightOf="@id/request_image"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
-        android:layout_marginRight="16dp"
-        >
+        android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/request_title"
-            android:layout_width="wrap_content"
+        <ImageView
+            android:id="@+id/request_image"
+            android:layout_width="@dimen/image_size"
+            android:layout_height="@dimen/image_size"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:contentDescription="@null"
+            tools:src="@drawable/ic_assign_24dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/text_size_small"
-            android:textColor="?android:attr/textColorPrimary"
-            android:maxLines="2"
-            android:ellipsize="end"
-            tools:text="I commited all the code at once cause I am cool. So sorry"/>
+            android:orientation="vertical"
+            android:layout_margin="8dp">
 
-        <TextView
-            android:id="@+id/request_author"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/request_title"
-            android:textSize="@dimen/text_size_tiny"
-            android:textColor="?android:attr/textColorSecondary"
-            tools:text="Jawnnypoo"/>
+            <TextView
+                android:id="@+id/request_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="@dimen/text_size_small"
+                tools:text="I commited all the code at once cause I am cool. So sorry" />
 
-    </RelativeLayout>
+            <TextView
+                android:id="@+id/request_author"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="?android:attr/textColorSecondary"
+                android:textSize="@dimen/text_size_tiny"
+                tools:text="Jawnnypoo" />
 
-</RelativeLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_gravity="bottom"
+        android:background="@color/divider_color" />
+
+</FrameLayout>
