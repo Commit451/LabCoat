@@ -141,6 +141,11 @@ public class GitLabNavigationView extends NavigationView {
         }
     };
 
+    @OnClick(R.id.profile_image)
+    public void onUserImageClick(ImageView imageView) {
+        NavigationManager.navigateToUser((Activity) getContext(), imageView, GitLabClient.getAccount().getUser());
+    }
+
     @OnClick(R.id.drawer_header)
     public void onHeaderClick() {
         toggleAccounts();
