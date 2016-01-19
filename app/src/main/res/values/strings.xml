@@ -128,6 +128,7 @@
 
     <!-- Overview -->
     <string name="no_readme_found">No README found for project</string>
+    <string name="created_by">Created by %1$s</string>
     <!-- Commits -->
     <string name="no_commits_found">No commits found.</string>
 

@@ -19,6 +19,7 @@ import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryFile;
 import com.commit451.gitlab.model.api.RepositoryTreeObject;
+import com.commit451.gitlab.util.NavigationManager;
 import com.commit451.gitlab.util.PicassoImageGetter;
 import com.squareup.otto.Subscribe;
 
@@ -27,6 +28,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import in.uncod.android.bypass.Bypass;
 import retrofit.Callback;
 import retrofit.Response;
@@ -40,6 +42,7 @@ public class OverviewFragment extends BaseFragment {
     }
 
     @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
+    @Bind(R.id.creator) TextView mCreatorView;
     @Bind(R.id.star_count) TextView mStarCountView;
     @Bind(R.id.forks_count) TextView mForksCountView;
     @Bind(R.id.overview_text) TextView mOverviewVew;
@@ -48,6 +51,17 @@ public class OverviewFragment extends BaseFragment {
     private String mBranchName;
     private EventReceiver mEventReceiver;
     private Bypass mBypass;
+
+    @OnClick(R.id.creator)
+    void onCreatorClick() {
+        if (mProject != null) {
+            if (mProject.belongsToGroup()) {
+                NavigationManager.navigateToGroup(getActivity(), mProject.getNamespace().getId());
+            } else {
+                NavigationManager.navigateToUser(getActivity(), mProject.getOwner());
+            }
+        }
+    }
 
     private final Callback<List<RepositoryTreeObject>> mFilesCallback = new Callback<List<RepositoryTreeObject>>() {
         @Override
@@ -193,6 +207,11 @@ public class OverviewFragment extends BaseFragment {
     }
 
     private void bindProject(Project project) {
+        if (project.belongsToGroup()) {
+            mCreatorView.setText(String.format(getString(R.string.created_by), project.getNamespace().getName()));
+        } else {
+            mCreatorView.setText(String.format(getString(R.string.created_by), project.getOwner().getUsername()));
+        }
         mStarCountView.setText(String.valueOf(project.getStarCount()));
         mForksCountView.setText(String.valueOf(project.getForksCount()));
     }

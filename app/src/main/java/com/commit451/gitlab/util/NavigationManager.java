@@ -65,9 +65,13 @@ public class NavigationManager {
         activity.startActivity(SearchActivity.newInstance(activity));
     }
 
+    public static void navigateToUser(Activity activity, UserBasic user) {
+        navigateToUser(activity, null, user);
+    }
+
     public static void navigateToUser(Activity activity, ImageView profileImage, UserBasic user) {
         Intent intent = UserActivity.newInstance(activity, user);
-        if (Build.VERSION.SDK_INT >= 21) {
+        if (Build.VERSION.SDK_INT >= 21 && profileImage != null) {
             ActivityOptionsCompat options = ActivityOptionsCompat.
                     makeSceneTransitionAnimation(activity, profileImage, activity.getString(R.string.transition_user));
             activity.startActivity(intent, options.toBundle());
