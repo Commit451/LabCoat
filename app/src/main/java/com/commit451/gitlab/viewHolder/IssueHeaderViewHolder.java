@@ -34,6 +34,8 @@ public class IssueHeaderViewHolder extends RecyclerView.ViewHolder {
     @Bind(R.id.description) TextView mDescriptionView;
     @Bind(R.id.author_image) ImageView mAuthorImageView;
     @Bind(R.id.author) TextView mAuthorView;
+    @Bind(R.id.milestone_root) ViewGroup mMilestoneRoot;
+    @Bind(R.id.milestone_text) TextView mMilestoneText;
 
     private final Bypass mBypass;
 
@@ -66,5 +68,11 @@ public class IssueHeaderViewHolder extends RecyclerView.ViewHolder {
             author = author + " " + DateUtils.getRelativeTimeSpanString(itemView.getContext(), issue.getCreatedAt());
         }
         mAuthorView.setText(author);
+        if (issue.getMilestone() != null) {
+            mMilestoneRoot.setVisibility(View.VISIBLE);
+            mMilestoneText.setText(issue.getMilestone().getTitle());
+        } else {
+            mMilestoneRoot.setVisibility(View.GONE);
+        }
     }
 }
