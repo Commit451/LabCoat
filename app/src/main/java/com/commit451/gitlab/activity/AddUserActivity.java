@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -69,7 +68,7 @@ public class AddUserActivity extends MorphActivity {
     @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
     @Bind(R.id.list) RecyclerView mRecyclerView;
     @Bind(R.id.clear) View mClearView;
-    LinearLayoutManager mUserLinearLayoutManager;
+    GridLayoutManager mUserLinearLayoutManager;
 
     @OnClick(R.id.clear)
     void onClearClick() {
@@ -155,12 +154,13 @@ public class AddUserActivity extends MorphActivity {
             }
             mAdapter.setData(response.body());
             mNextPageUrl = PaginationUtil.parse(response).getNext();
-            Timber.d("HAHA Next page url is " + mNextPageUrl);
+            Timber.d("Next page url is %s", mNextPageUrl);
         }
 
         @Override
         public void onFailure(Throwable t) {
             Timber.e(t, null);
+            mSwipeRefreshLayout.setRefreshing(false);
             mLoading = false;
             Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error_users), Snackbar.LENGTH_SHORT)
                     .show();
@@ -171,18 +171,19 @@ public class AddUserActivity extends MorphActivity {
         @Override
         public void onResponse(Response<List<UserBasic>> response, Retrofit retrofit) {
             mLoading = false;
+            mAdapter.setLoading(false);
             if (!response.isSuccess()) {
                 return;
             }
             mAdapter.addData(response.body());
             mNextPageUrl = PaginationUtil.parse(response).getNext();
+
         }
 
         @Override
         public void onFailure(Throwable t) {
             Timber.e(t, null);
-            Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error_users), Snackbar.LENGTH_SHORT)
-                    .show();
+            mAdapter.setLoading(false);
         }
     };
 
@@ -248,10 +249,11 @@ public class AddUserActivity extends MorphActivity {
         mToolbar.setNavigationOnClickListener(mOnBackPressed);
         mUserSearch.setOnEditorActionListener(mSearchEditorActionListener);
         mUserSearch.addTextChangedListener(mTextWatcher);
-        mUserLinearLayoutManager = new GridLayoutManager(this, 2);
-        mRecyclerView.setLayoutManager(mUserLinearLayoutManager);
         mAdapter = new UsersAdapter(mUserClickListener);
         mRecyclerView.setAdapter(mAdapter);
+        mUserLinearLayoutManager = new GridLayoutManager(this, 2);
+        mUserLinearLayoutManager.setSpanSizeLookup(mAdapter.getSpanSizeLookup());
+        mRecyclerView.setLayoutManager(mUserLinearLayoutManager);
         mRecyclerView.addOnScrollListener(mOnScrollListener);
 
         morph(mRoot);
@@ -266,6 +268,7 @@ public class AddUserActivity extends MorphActivity {
 
     private void loadMore() {
         mLoading = true;
+        mAdapter.setLoading(true);
         Timber.d("loadMore " + mNextPageUrl.toString() + " " + mSearchQuery);
         GitLabClient.instance().searchUsers(mNextPageUrl.toString(), mSearchQuery).enqueue(mMoreUsersCallback);
     }

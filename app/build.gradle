@@ -60,6 +60,7 @@ dependencies {
     apt "org.parceler:parceler:1.0.3"
     compile 'com.commit451:bypasses:1.0.1'
     compile 'com.commit451:easel:0.0.4'
+    compile 'com.commit451:foregroundviews:1.0.0'
     compile 'com.pnikosis:materialish-progress:1.7'
     compile 'com.jawnnypoo:physicslayout:1.0.1'
     compile 'com.github.ivbaranov:MaterialLetterIcon:0.2.1'

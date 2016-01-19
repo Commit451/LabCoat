@@ -16,7 +16,7 @@
         android:src="@drawable/header"
         android:background="@color/background_color"/>
 
-    <ImageView
+    <com.commit451.foregroundimageview.ForegroundImageView
         android:id="@+id/profile_image"
         android:layout_width="@dimen/larger_image_size"
         android:layout_height="@dimen/larger_image_size"
@@ -24,6 +24,7 @@
         android:layout_marginRight="16dp"
         android:layout_marginTop="32dp"
         android:fitsSystemWindows="true"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
         tools:src="@drawable/ic_assign_24dp"/>
 
     <FrameLayout
