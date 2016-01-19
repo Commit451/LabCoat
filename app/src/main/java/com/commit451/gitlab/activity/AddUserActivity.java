@@ -50,7 +50,7 @@ public class AddUserActivity extends MorphActivity {
     private static final String KEY_PROJECT_ID = "project_id";
     private static final String KEY_GROUP = "group";
 
-    public static Intent newInstance(Context context, long projectId) {
+    public static Intent newIntent(Context context, long projectId) {
         Intent intent = new Intent(context, AddUserActivity.class);
         intent.putExtra(KEY_PROJECT_ID, projectId);
         return intent;
