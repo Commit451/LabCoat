@@ -61,7 +61,7 @@ public class AboutActivity extends BaseActivity {
         if ("https://gitlab.com".equals(GitLabClient.getAccount().getServerUrl().toString())) {
             NavigationManager.navigateToProject(AboutActivity.this, REPO_ID);
         } else {
-            IntentUtil.openPage(root, Uri.parse(getString(R.string.source_url)));
+            IntentUtil.openPage(AboutActivity.this, getString(R.string.source_url));
         }
     }
 

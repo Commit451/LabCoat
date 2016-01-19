@@ -1,12 +1,18 @@
 package com.commit451.gitlab.util;
 
+import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.customtabs.CustomTabsIntent;
 import android.support.design.widget.Snackbar;
+import android.text.TextUtils;
 import android.view.View;
 
+import com.commit451.easel.Easel;
 import com.commit451.gitlab.R;
+import com.commit451.gitlab.customtabs.BrowserFallback;
+import com.commit451.gitlab.customtabs.CustomTabsActivityHelper;
 
 /**
  * All the things to do with intents
@@ -14,19 +20,16 @@ import com.commit451.gitlab.R;
  */
 public class IntentUtil {
 
-    public static void openPage(View root, Uri url) {
-        if (url == null || url.equals(Uri.EMPTY)) {
+    public static void openPage(Activity activity, String url) {
+        if (TextUtils.isEmpty(url)) {
             return;
         }
 
-        Intent i = new Intent(Intent.ACTION_VIEW);
-        i.setData(url);
-        try {
-            root.getContext().startActivity(i);
-        } catch (ActivityNotFoundException e) {
-            Snackbar.make(root, R.string.error_no_browser, Snackbar.LENGTH_SHORT)
-                    .show();
-        }
+        CustomTabsIntent.Builder intentBuilder = new CustomTabsIntent.Builder();
+        intentBuilder.setToolbarColor(Easel.getThemeAttrColor(activity, R.attr.colorPrimary));
+        intentBuilder.setStartAnimations(activity, R.anim.fade_in, R.anim.do_nothing);
+        intentBuilder.setExitAnimations(activity, R.anim.do_nothing, R.anim.fade_out);
+        CustomTabsActivityHelper.openCustomTab(activity, intentBuilder.build(), Uri.parse(url), new BrowserFallback());
     }
 
     public static void share(View root, Uri url) {

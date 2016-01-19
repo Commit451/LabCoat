@@ -93,7 +93,7 @@ public class FeedFragment extends BaseFragment {
     private final FeedAdapter.Listener mFeedAdapterListener = new FeedAdapter.Listener() {
         @Override
         public void onFeedEntryClicked(Entry entry) {
-            IntentUtil.openPage(getActivity().getWindow().getDecorView(), entry.getLink().getHref());
+            IntentUtil.openPage(getActivity(), entry.getLink().getHref().toString());
         }
     };
 

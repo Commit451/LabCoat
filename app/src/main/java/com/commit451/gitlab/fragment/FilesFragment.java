@@ -145,7 +145,7 @@ public class FilesFragment extends BaseFragment {
 
         @Override
         public void onOpenInBrowserClicked(RepositoryTreeObject treeItem){
-            IntentUtil.openPage(getView(), treeItem.getUrl(mProject, mBranchName, mCurrentPath));
+            IntentUtil.openPage(getActivity(), treeItem.getUrl(mProject, mBranchName, mCurrentPath).toString());
         }
     };
 
