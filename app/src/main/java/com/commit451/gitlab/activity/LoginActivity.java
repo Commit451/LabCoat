@@ -19,7 +19,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
 
-import com.commit451.gitlab.GitLabApp;
+import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.data.Prefs;
@@ -195,9 +195,9 @@ public class LoginActivity extends BaseActivity {
             mAccount.setLastUsed(new Date());
             Prefs.addAccount(LoginActivity.this, mAccount);
             GitLabClient.setAccount(mAccount);
-            GitLabApp.bus().post(new LoginEvent(mAccount));
+            LabCoatApp.bus().post(new LoginEvent(mAccount));
             //This is mostly for if projects already exists, then we will reload the data
-            GitLabApp.bus().post(new ReloadDataEvent());
+            LabCoatApp.bus().post(new ReloadDataEvent());
             NavigationManager.navigateToProjects(LoginActivity.this);
             finish();
         }

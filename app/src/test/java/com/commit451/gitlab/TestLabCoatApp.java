@@ -7,7 +7,7 @@ import java.lang.reflect.Method;
 /**
  * Test version of our Application class, used by Robolectric
  */
-public class TestGitLabApp extends GitLabApp implements TestLifecycleApplication {
+public class TestLabCoatApp extends LabCoatApp implements TestLifecycleApplication {
 
     @Override
     public void beforeTest(Method method) {

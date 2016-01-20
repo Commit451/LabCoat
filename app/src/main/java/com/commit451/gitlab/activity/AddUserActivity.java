@@ -17,7 +17,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.commit451.gitlab.GitLabApp;
+import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.UsersAdapter;
 import com.commit451.gitlab.api.GitLabClient;
@@ -228,7 +228,7 @@ public class AddUserActivity extends MorphActivity {
                     .show();
             mAccessDialog.dismiss();
             dismiss();
-            GitLabApp.bus().post(new MemberAddedEvent(response.body()));
+            LabCoatApp.bus().post(new MemberAddedEvent(response.body()));
         }
 
         @Override

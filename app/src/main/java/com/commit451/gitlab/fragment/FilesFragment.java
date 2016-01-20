@@ -14,7 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.commit451.gitlab.GitLabApp;
+import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.adapter.BreadcrumbAdapter;
@@ -160,7 +160,7 @@ public class FilesFragment extends BaseFragment {
         ButterKnife.bind(this, view);
 
         mEventReceiver = new EventReceiver();
-        GitLabApp.bus().register(mEventReceiver);
+        LabCoatApp.bus().register(mEventReceiver);
 
         mFilesAdapter = new FilesAdapter(mFilesAdapterListener);
         mFilesListView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -190,7 +190,7 @@ public class FilesFragment extends BaseFragment {
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
-        GitLabApp.bus().unregister(mEventReceiver);
+        LabCoatApp.bus().unregister(mEventReceiver);
     }
 
     @Override

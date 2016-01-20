@@ -14,7 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.commit451.easel.Easel;
-import com.commit451.gitlab.GitLabApp;
+import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.GroupsActivity;
 import com.commit451.gitlab.activity.ProjectsActivity;
@@ -70,7 +70,7 @@ public class GitLabNavigationView extends NavigationView {
                         ((Activity) getContext()).finish();
                         ((Activity)getContext()).overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
                     }
-                    GitLabApp.bus().post(new CloseDrawerEvent());
+                    LabCoatApp.bus().post(new CloseDrawerEvent());
                     return true;
                 case R.id.nav_groups:
                     if (getContext() instanceof GroupsActivity) {
@@ -80,10 +80,10 @@ public class GitLabNavigationView extends NavigationView {
                         ((Activity) getContext()).finish();
                         ((Activity)getContext()).overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
                     }
-                    GitLabApp.bus().post(new CloseDrawerEvent());
+                    LabCoatApp.bus().post(new CloseDrawerEvent());
                     return true;
                 case R.id.nav_about:
-                    GitLabApp.bus().post(new CloseDrawerEvent());
+                    LabCoatApp.bus().post(new CloseDrawerEvent());
                     NavigationManager.navigateToAbout((Activity) getContext());
                     return true;
             }
@@ -101,7 +101,7 @@ public class GitLabNavigationView extends NavigationView {
         public void onAddAccountClicked() {
             NavigationManager.navigateToLogin((Activity) getContext());
             toggleAccounts();
-            GitLabApp.bus().post(new CloseDrawerEvent());
+            LabCoatApp.bus().post(new CloseDrawerEvent());
         }
 
         @Override
@@ -168,7 +168,7 @@ public class GitLabNavigationView extends NavigationView {
 
     private void init() {
         mEventReceiver = new EventReceiver();
-        GitLabApp.bus().register(mEventReceiver);
+        LabCoatApp.bus().register(mEventReceiver);
         int colorPrimary = Easel.getThemeAttrColor(getContext(), R.attr.colorPrimary);
 
         setNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -193,7 +193,7 @@ public class GitLabNavigationView extends NavigationView {
 
     @Override
     protected void onDetachedFromWindow() {
-        GitLabApp.bus().unregister(mEventReceiver);
+        LabCoatApp.bus().unregister(mEventReceiver);
         super.onDetachedFromWindow();
     }
 
@@ -270,8 +270,8 @@ public class GitLabNavigationView extends NavigationView {
         Prefs.updateAccount(getContext(), account);
         bindUser(account.getUser());
         toggleAccounts();
-        GitLabApp.bus().post(new ReloadDataEvent());
-        GitLabApp.bus().post(new CloseDrawerEvent());
+        LabCoatApp.bus().post(new ReloadDataEvent());
+        LabCoatApp.bus().post(new CloseDrawerEvent());
         // Trigger a reload in the adapter so that we will place the accounts
         // in the correct order from most recently used
         mAccountAdapter.notifyDataSetChanged();

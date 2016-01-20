@@ -12,7 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.commit451.gitlab.GitLabApp;
+import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.UsersAdapter;
 import com.commit451.gitlab.api.GitLabClient;
@@ -166,7 +166,7 @@ public class UsersFragment extends BaseFragment {
         ButterKnife.bind(this, view);
 
         mEventReceiver = new EventReceiver();
-        GitLabApp.bus().register(mEventReceiver);
+        LabCoatApp.bus().register(mEventReceiver);
 
         mUsersAdapter = new UsersAdapter(mUsersAdapterListener);
         mUserLinearLayoutManager = new GridLayoutManager(getActivity(), 2);
@@ -189,7 +189,7 @@ public class UsersFragment extends BaseFragment {
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
-        GitLabApp.bus().unregister(mEventReceiver);
+        LabCoatApp.bus().unregister(mEventReceiver);
     }
 
     @Override

@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-import com.commit451.gitlab.GitLabApp;
+import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.AssigneeSpinnerAdapter;
 import com.commit451.gitlab.adapter.MilestoneSpinnerAdapter;
@@ -152,9 +152,9 @@ public class AddIssueActivity extends MorphActivity {
                 return;
             }
             if (mIssue == null) {
-                GitLabApp.bus().post(new IssueCreatedEvent(response.body()));
+                LabCoatApp.bus().post(new IssueCreatedEvent(response.body()));
             } else {
-                GitLabApp.bus().post(new IssueChangedEvent(response.body()));
+                LabCoatApp.bus().post(new IssueChangedEvent(response.body()));
             }
             dismiss();
         }

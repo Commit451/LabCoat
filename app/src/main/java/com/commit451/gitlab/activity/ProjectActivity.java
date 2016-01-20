@@ -15,7 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.commit451.gitlab.GitLabApp;
+import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.SectionsPagerAdapter;
 import com.commit451.gitlab.api.GitLabClient;
@@ -205,7 +205,7 @@ public class ProjectActivity extends BaseActivity {
     }
 
     private void broadcastLoad() {
-        GitLabApp.bus().post(new ProjectReloadEvent(mProject, mBranchName));
+        LabCoatApp.bus().post(new ProjectReloadEvent(mProject, mBranchName));
     }
 
     @Override

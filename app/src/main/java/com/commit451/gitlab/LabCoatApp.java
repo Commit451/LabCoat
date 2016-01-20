@@ -19,7 +19,7 @@ import timber.log.Timber;
 /**
  * App for one time init things and to house singletons
  */
-public class GitLabApp extends Application {
+public class LabCoatApp extends Application {
 
     private static Bus sBus;
     public static Bus bus() {
@@ -29,8 +29,8 @@ public class GitLabApp extends Application {
         return sBus;
     }
 
-    private static GitLabApp sInstance;
-    public static GitLabApp instance() {
+    private static LabCoatApp sInstance;
+    public static LabCoatApp instance() {
         return sInstance;
     }
 
