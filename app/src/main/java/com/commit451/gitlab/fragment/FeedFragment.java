@@ -16,7 +16,7 @@ import com.commit451.gitlab.adapter.FeedAdapter;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.rss.Entry;
 import com.commit451.gitlab.model.rss.Feed;
-import com.commit451.gitlab.util.IntentUtil;
+import com.commit451.gitlab.util.NavigationManager;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -93,7 +93,7 @@ public class FeedFragment extends BaseFragment {
     private final FeedAdapter.Listener mFeedAdapterListener = new FeedAdapter.Listener() {
         @Override
         public void onFeedEntryClicked(Entry entry) {
-            IntentUtil.openPage(getActivity(), entry.getLink().getHref().toString());
+            NavigationManager.navigateToUrl(getActivity(), entry.getLink().getHref(), GitLabClient.getAccount());
         }
     };
 
