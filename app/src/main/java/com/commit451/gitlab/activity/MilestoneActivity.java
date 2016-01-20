@@ -12,7 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
 
-import com.commit451.gitlab.GitLabApp;
+import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.MilestoneIssuesAdapter;
 import com.commit451.gitlab.api.GitLabClient;
@@ -154,7 +154,7 @@ public class MilestoneActivity extends BaseActivity {
         setContentView(R.layout.activity_milestone);
         ButterKnife.bind(this);
         mEventReceiver = new EventReceiver();
-        GitLabApp.bus().register(mEventReceiver);
+        LabCoatApp.bus().register(mEventReceiver);
 
         mProject = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_PROJECT));
         mMilestone = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_MILESTONE));
@@ -191,7 +191,7 @@ public class MilestoneActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        GitLabApp.bus().unregister(mEventReceiver);
+        LabCoatApp.bus().unregister(mEventReceiver);
     }
 
     private void bind(Milestone milestone) {

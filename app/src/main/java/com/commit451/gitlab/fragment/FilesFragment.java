@@ -4,6 +4,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,9 +13,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.commit451.gitlab.GitLabApp;
+import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.adapter.BreadcrumbAdapter;
@@ -43,6 +43,7 @@ public class FilesFragment extends BaseFragment {
         return new FilesFragment();
     }
 
+    @Bind(R.id.root) View mRoot;
     @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
     @Bind(R.id.list) RecyclerView mFilesListView;
     @Bind(R.id.breadcrumb) RecyclerView mBreadcrumbListView;
@@ -133,7 +134,7 @@ public class FilesFragment extends BaseFragment {
             // Creates a new text clip to put on the clipboard
             ClipData clip = ClipData.newPlainText(treeItem.getName(), treeItem.getUrl(mProject, mBranchName, mCurrentPath).toString());
             clipboard.setPrimaryClip(clip);
-            Toast.makeText(getActivity(), R.string.copied_to_clipboard, Toast.LENGTH_SHORT)
+            Snackbar.make(mRoot, R.string.copied_to_clipboard, Snackbar.LENGTH_SHORT)
                     .show();
         }
 
@@ -144,7 +145,7 @@ public class FilesFragment extends BaseFragment {
 
         @Override
         public void onOpenInBrowserClicked(RepositoryTreeObject treeItem){
-            IntentUtil.openPage(getView(), treeItem.getUrl(mProject, mBranchName, mCurrentPath));
+            IntentUtil.openPage(getActivity(), treeItem.getUrl(mProject, mBranchName, mCurrentPath).toString());
         }
     };
 
@@ -159,7 +160,7 @@ public class FilesFragment extends BaseFragment {
         ButterKnife.bind(this, view);
 
         mEventReceiver = new EventReceiver();
-        GitLabApp.bus().register(mEventReceiver);
+        LabCoatApp.bus().register(mEventReceiver);
 
         mFilesAdapter = new FilesAdapter(mFilesAdapterListener);
         mFilesListView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -189,7 +190,7 @@ public class FilesFragment extends BaseFragment {
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
-        GitLabApp.bus().unregister(mEventReceiver);
+        LabCoatApp.bus().unregister(mEventReceiver);
     }
 
     @Override
@@ -234,7 +235,7 @@ public class FilesFragment extends BaseFragment {
 
     private void updateBreadcrumbs() {
         List<BreadcrumbAdapter.Breadcrumb> breadcrumbs = new ArrayList<>();
-        breadcrumbs.add(new BreadcrumbAdapter.Breadcrumb(mProject.getName(), new BreadcrumbAdapter.Listener() {
+        breadcrumbs.add(new BreadcrumbAdapter.Breadcrumb(getString(R.string.root), new BreadcrumbAdapter.Listener() {
             @Override
             public void onClick() {
                 loadData("");

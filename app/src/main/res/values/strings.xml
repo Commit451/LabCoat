@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">GitLab</string>
+    <string name="app_name">LabCoat</string>
 
     <!-- Drawer -->
     <string name="nav_projects">Projects</string>
@@ -73,6 +73,7 @@
     <string name="not_a_valid_url">Not a valid URL</string>
     <string name="not_a_valid_private_token">Not a valid private token</string>
     <string name="realm_message">A username and password are being requested by the server.\nThe server says: \"%1$s\"</string>
+    <string name="already_logged_in">This account is already logged in</string>
 
     <!-- Error messages -->
     <string name="connection_error">Connection failed</string>
@@ -127,6 +128,7 @@
 
     <!-- Overview -->
     <string name="no_readme_found">No README found for project</string>
+    <string name="created_by">Created by %1$s</string>
     <!-- Commits -->
     <string name="no_commits_found">No commits found.</string>
 
@@ -137,6 +139,7 @@
     <string name="file_saved">File saved successfully to Download folder</string>
     <string name="no_files_found">No files found.</string>
     <string name="copied_to_clipboard">Copied to clipboard</string>
+    <string name="root">ROOT</string>
 
     <!-- Issues -->
     <string name="new_note_hint">Add comment</string>
@@ -165,7 +168,7 @@
         <item>closed</item>
         <item>all</item>
     </string-array>
-    <string name="created_time">Created %1$s by %2$s</string>
+    <string name="opened_time">%1$s · opened %2$s by %3$s</string>
     <string name="no_assignee">No Assignee</string>
     <string name="assignee">Assignee</string>
     <string name="milestone">Milestone</string>

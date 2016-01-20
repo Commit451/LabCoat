@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.commit451.gitlab.GitLabApp;
+import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.FeedAdapter;
 import com.commit451.gitlab.api.GitLabClient;
@@ -93,7 +93,7 @@ public class FeedFragment extends BaseFragment {
     private final FeedAdapter.Listener mFeedAdapterListener = new FeedAdapter.Listener() {
         @Override
         public void onFeedEntryClicked(Entry entry) {
-            IntentUtil.openPage(getActivity().getWindow().getDecorView(), entry.getLink().getHref());
+            IntentUtil.openPage(getActivity(), entry.getLink().getHref().toString());
         }
     };
 
@@ -114,7 +114,7 @@ public class FeedFragment extends BaseFragment {
         ButterKnife.bind(this, view);
 
         mEventReceiver = new EventReceiver();
-        GitLabApp.bus().register(mEventReceiver);
+        LabCoatApp.bus().register(mEventReceiver);
 
         mFeedAdapter = new FeedAdapter(mFeedAdapterListener);
         mEntryListView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -134,7 +134,7 @@ public class FeedFragment extends BaseFragment {
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
-        GitLabApp.bus().unregister(mEventReceiver);
+        LabCoatApp.bus().unregister(mEventReceiver);
     }
 
     @Override

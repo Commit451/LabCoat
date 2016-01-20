@@ -1,6 +1,6 @@
 package com.commit451.gitlab.api;
 
-import com.commit451.gitlab.GitLabApp;
+import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.provider.GsonProvider;
 import com.commit451.gitlab.provider.OkHttpClientProvider;
@@ -82,7 +82,7 @@ public final class GitLabClient {
 
     public static Picasso getPicasso(Account account) {
         checkAccountSet();
-        return new Picasso.Builder(GitLabApp.instance())
+        return new Picasso.Builder(LabCoatApp.instance())
                 .downloader(new OkHttpDownloader(OkHttpClientProvider.getInstance(account)))
                 .build();
     }
@@ -97,7 +97,7 @@ public final class GitLabClient {
 
     private static void checkAccountSet() {
         if (sAccount == null) {
-            List<Account> accounts = Account.getAccounts(GitLabApp.instance());
+            List<Account> accounts = Account.getAccounts(LabCoatApp.instance());
             GitLabClient.setAccount(accounts.get(0));
         }
     }

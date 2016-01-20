@@ -12,7 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.commit451.gitlab.GitLabApp;
+import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.ProjectsPagerAdapter;
 import com.commit451.gitlab.event.CloseDrawerEvent;
@@ -59,7 +59,7 @@ public class ProjectsActivity extends BaseActivity {
         setContentView(R.layout.activity_projects);
         ButterKnife.bind(this);
         mEventReceiver = new EventReceiver();
-        GitLabApp.bus().register(mEventReceiver);
+        LabCoatApp.bus().register(mEventReceiver);
 
         mToolbar.setTitle(R.string.projects);
         mToolbar.setNavigationIcon(R.drawable.ic_menu_24dp);
@@ -78,7 +78,7 @@ public class ProjectsActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        GitLabApp.bus().unregister(mEventReceiver);
+        LabCoatApp.bus().unregister(mEventReceiver);
     }
 
     private class EventReceiver {

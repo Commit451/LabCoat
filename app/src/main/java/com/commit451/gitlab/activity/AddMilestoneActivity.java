@@ -13,7 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.commit451.gitlab.GitLabApp;
+import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.MilestoneChangedEvent;
@@ -115,9 +115,9 @@ public class AddMilestoneActivity extends MorphActivity {
                 return;
             }
             if (mMilestone == null) {
-                GitLabApp.bus().post(new MilestoneCreatedEvent(response.body()));
+                LabCoatApp.bus().post(new MilestoneCreatedEvent(response.body()));
             } else {
-                GitLabApp.bus().post(new MilestoneChangedEvent(response.body()));
+                LabCoatApp.bus().post(new MilestoneChangedEvent(response.body()));
             }
             finish();
         }

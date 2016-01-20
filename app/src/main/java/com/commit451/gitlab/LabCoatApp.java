@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 
+import com.squareup.leakcanary.LeakCanary;
 import com.squareup.otto.Bus;
 
 import net.danlew.android.joda.JodaTimeAndroid;
@@ -15,7 +16,7 @@ import timber.log.Timber;
 /**
  * App for one time init things and to house singletons
  */
-public class GitLabApp extends Application {
+public class LabCoatApp extends Application {
 
     private static Bus sBus;
     public static Bus bus() {
@@ -25,8 +26,8 @@ public class GitLabApp extends Application {
         return sBus;
     }
 
-    private static GitLabApp sInstance;
-    public static GitLabApp instance() {
+    private static LabCoatApp sInstance;
+    public static LabCoatApp instance() {
         return sInstance;
     }
 
@@ -42,6 +43,7 @@ public class GitLabApp extends Application {
         }
 
         JodaTimeAndroid.init(this);
+        LeakCanary.install(this);
     }
 
     private void forceLocale(Locale locale){

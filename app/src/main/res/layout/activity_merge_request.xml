@@ -46,36 +46,7 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/rel1"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:orientation="horizontal"
-        android:layout_gravity="bottom"
-        android:background="?attr/colorPrimary" >
-
-        <EditText
-            android:id="@+id/new_note_edit"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginLeft="8dp"
-            android:layout_gravity="center_vertical"
-            android:hint="@string/new_note_hint"
-            android:inputType="textCapSentences|textAutoCorrect|textMultiLine"
-            android:imeOptions="actionNone" />
-
-        <ImageView
-            android:id="@+id/new_note_button"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:paddingRight="16dp"
-            android:paddingLeft="16dp"
-            android:contentDescription="@null"
-            android:src="@drawable/ic_send_24dp"
-            android:background="?attr/selectableItemBackgroundBorderless"/>
-
-    </LinearLayout>
+    <include layout="@layout/view_send_message"/>
 
     <include layout="@layout/progress_fullscreen"/>
 

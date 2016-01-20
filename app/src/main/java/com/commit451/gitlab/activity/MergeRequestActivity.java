@@ -173,7 +173,7 @@ public class MergeRequestActivity extends BaseActivity {
         mToolbar.setSubtitle(mProject.getNameWithNamespace());
         mMergeRequestTitle.setText(mMergeRequest.getTitle());
 
-        mMergeRequestDetailAdapter = new MergeRequestDetailAdapter(mMergeRequest);
+        mMergeRequestDetailAdapter = new MergeRequestDetailAdapter(MergeRequestActivity.this, mMergeRequest);
         mNotesLinearLayoutManager = new LinearLayoutManager(this);
         mNotesRecyclerView.setLayoutManager(mNotesLinearLayoutManager);
         mNotesRecyclerView.setAdapter(mMergeRequestDetailAdapter);

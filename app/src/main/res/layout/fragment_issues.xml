@@ -21,12 +21,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
 
+        <!--
+            We set the padding bottom so that the FAB is not covered
+            It is the size of the FAB 56dp + 8dp padding
+        -->
         <android.support.v7.widget.RecyclerView
             android:id="@+id/list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingTop="8dp"
-            android:paddingBottom="88dp"
+            android:paddingBottom="64dp"
             android:clipToPadding="false"
             />
 

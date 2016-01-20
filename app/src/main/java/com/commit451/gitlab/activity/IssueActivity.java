@@ -15,7 +15,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.commit451.gitlab.GitLabApp;
+import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.IssueDetailsAdapter;
 import com.commit451.gitlab.api.GitLabClient;
@@ -167,8 +167,8 @@ public class IssueActivity extends BaseActivity {
                 return;
             }
             mIssue = response.body();
-            GitLabApp.bus().post(new IssueChangedEvent(mIssue));
-            GitLabApp.bus().post(new IssueReloadEvent());
+            LabCoatApp.bus().post(new IssueChangedEvent(mIssue));
+            LabCoatApp.bus().post(new IssueReloadEvent());
             setOpenCloseMenuStatus();
             loadNotes();
         }
@@ -209,7 +209,7 @@ public class IssueActivity extends BaseActivity {
         setContentView(R.layout.activity_issue);
         ButterKnife.bind(this);
         mEventReceiver = new EventReceiver();
-        GitLabApp.bus().register(mEventReceiver);
+        LabCoatApp.bus().register(mEventReceiver);
 
         mProject = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_PROJECT));
         mIssue = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_SELECTED_ISSUE));
@@ -226,7 +226,7 @@ public class IssueActivity extends BaseActivity {
         mOpenCloseMenuItem = mToolbar.getMenu().findItem(R.id.action_close);
         mToolbar.setOnMenuItemClickListener(mOnMenuItemClickListener);
 
-        mIssueDetailsAdapter = new IssueDetailsAdapter(mIssue);
+        mIssueDetailsAdapter = new IssueDetailsAdapter(IssueActivity.this, mIssue);
         mNotesLayoutManager = new LinearLayoutManager(this);
         mNotesRecyclerView.setLayoutManager(mNotesLayoutManager);
         mNotesRecyclerView.setAdapter(mIssueDetailsAdapter);
@@ -253,7 +253,7 @@ public class IssueActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        GitLabApp.bus().unregister(mEventReceiver);
+        LabCoatApp.bus().unregister(mEventReceiver);
     }
 
     private void bindIssue() {

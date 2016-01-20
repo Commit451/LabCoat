@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.support.design.widget.NavigationView;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
@@ -14,7 +13,8 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.commit451.gitlab.GitLabApp;
+import com.commit451.easel.Easel;
+import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.GroupsActivity;
 import com.commit451.gitlab.activity.ProjectsActivity;
@@ -26,6 +26,7 @@ import com.commit451.gitlab.event.LoginEvent;
 import com.commit451.gitlab.event.ReloadDataEvent;
 import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.model.api.UserFull;
+import com.commit451.gitlab.transformation.CircleTransformation;
 import com.commit451.gitlab.util.ImageUtil;
 import com.commit451.gitlab.util.NavigationManager;
 import com.squareup.otto.Subscribe;
@@ -69,7 +70,7 @@ public class GitLabNavigationView extends NavigationView {
                         ((Activity) getContext()).finish();
                         ((Activity)getContext()).overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
                     }
-                    GitLabApp.bus().post(new CloseDrawerEvent());
+                    LabCoatApp.bus().post(new CloseDrawerEvent());
                     return true;
                 case R.id.nav_groups:
                     if (getContext() instanceof GroupsActivity) {
@@ -79,10 +80,10 @@ public class GitLabNavigationView extends NavigationView {
                         ((Activity) getContext()).finish();
                         ((Activity)getContext()).overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
                     }
-                    GitLabApp.bus().post(new CloseDrawerEvent());
+                    LabCoatApp.bus().post(new CloseDrawerEvent());
                     return true;
                 case R.id.nav_about:
-                    GitLabApp.bus().post(new CloseDrawerEvent());
+                    LabCoatApp.bus().post(new CloseDrawerEvent());
                     NavigationManager.navigateToAbout((Activity) getContext());
                     return true;
             }
@@ -100,7 +101,7 @@ public class GitLabNavigationView extends NavigationView {
         public void onAddAccountClicked() {
             NavigationManager.navigateToLogin((Activity) getContext());
             toggleAccounts();
-            GitLabApp.bus().post(new CloseDrawerEvent());
+            LabCoatApp.bus().post(new CloseDrawerEvent());
         }
 
         @Override
@@ -140,6 +141,11 @@ public class GitLabNavigationView extends NavigationView {
         }
     };
 
+    @OnClick(R.id.profile_image)
+    public void onUserImageClick(ImageView imageView) {
+        NavigationManager.navigateToUser((Activity) getContext(), imageView, GitLabClient.getAccount().getUser());
+    }
+
     @OnClick(R.id.drawer_header)
     public void onHeaderClick() {
         toggleAccounts();
@@ -162,11 +168,12 @@ public class GitLabNavigationView extends NavigationView {
 
     private void init() {
         mEventReceiver = new EventReceiver();
-        GitLabApp.bus().register(mEventReceiver);
+        LabCoatApp.bus().register(mEventReceiver);
+        int colorPrimary = Easel.getThemeAttrColor(getContext(), R.attr.colorPrimary);
 
         setNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         inflateMenu(R.menu.navigation);
-        setBackgroundColor(ContextCompat.getColor(getContext(), R.color.window_background_color));
+        setBackgroundColor(colorPrimary);
         View header = inflateHeaderView(R.layout.header_nav_drawer);
         ButterKnife.bind(this, header);
 
@@ -175,7 +182,7 @@ public class GitLabNavigationView extends NavigationView {
         addView(mAccountList);
         LayoutParams params = (FrameLayout.LayoutParams) mAccountList.getLayoutParams();
         params.setMargins(0, getResources().getDimensionPixelSize(R.dimen.navigation_drawer_header_height), 0, 0);
-        mAccountList.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.window_background_color));
+        mAccountList.setBackgroundColor(colorPrimary);
         mAccountList.setVisibility(View.GONE);
         mAccountAdapter = new AccountsAdapter(getContext(), mAccountsAdapterListener);
         mAccountList.setAdapter(mAccountAdapter);
@@ -186,7 +193,7 @@ public class GitLabNavigationView extends NavigationView {
 
     @Override
     protected void onDetachedFromWindow() {
-        GitLabApp.bus().unregister(mEventReceiver);
+        LabCoatApp.bus().unregister(mEventReceiver);
         super.onDetachedFromWindow();
     }
 
@@ -230,6 +237,7 @@ public class GitLabNavigationView extends NavigationView {
         Uri url = ImageUtil.getAvatarUrl(user, getResources().getDimensionPixelSize(R.dimen.larger_image_size));
         GitLabClient.getPicasso()
                 .load(url)
+                .transform(new CircleTransformation())
                 .into(mProfileImage);
     }
 
@@ -262,8 +270,8 @@ public class GitLabNavigationView extends NavigationView {
         Prefs.updateAccount(getContext(), account);
         bindUser(account.getUser());
         toggleAccounts();
-        GitLabApp.bus().post(new ReloadDataEvent());
-        GitLabApp.bus().post(new CloseDrawerEvent());
+        LabCoatApp.bus().post(new ReloadDataEvent());
+        LabCoatApp.bus().post(new CloseDrawerEvent());
         // Trigger a reload in the adapter so that we will place the accounts
         // in the correct order from most recently used
         mAccountAdapter.notifyDataSetChanged();

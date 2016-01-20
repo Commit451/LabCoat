@@ -14,7 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.commit451.gitlab.GitLabApp;
+import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.adapter.MilestoneAdapter;
@@ -189,7 +189,7 @@ public class MilestonesFragment extends BaseFragment {
         ButterKnife.bind(this, view);
 
         mEventReceiver = new EventReceiver();
-        GitLabApp.bus().register(mEventReceiver);
+        LabCoatApp.bus().register(mEventReceiver);
 
         mMilestoneAdapter = new MilestoneAdapter(mMilestoneListener);
         mMilestoneLayoutManager = new LinearLayoutManager(getActivity());
@@ -219,7 +219,7 @@ public class MilestonesFragment extends BaseFragment {
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
-        GitLabApp.bus().unregister(mEventReceiver);
+        LabCoatApp.bus().unregister(mEventReceiver);
     }
 
     @Override

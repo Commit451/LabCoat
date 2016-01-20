@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -13,7 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.commit451.gitlab.GitLabApp;
+import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.UsersAdapter;
 import com.commit451.gitlab.api.GitLabClient;
@@ -55,7 +54,7 @@ public class UsersFragment extends BaseFragment {
     @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
     @Bind(R.id.list) RecyclerView mUsersListView;
     @Bind(R.id.message_text) TextView mMessageView;
-    private LinearLayoutManager mUserLinearLayoutManager;
+    private GridLayoutManager mUserLinearLayoutManager;
 
     private String mQuery;
     private EventReceiver mEventReceiver;
@@ -138,12 +137,14 @@ public class UsersFragment extends BaseFragment {
             }
             mUsersAdapter.addData(response.body());
             mNextPageUrl = PaginationUtil.parse(response).getNext();
+            mUsersAdapter.setLoading(false);
         }
 
         @Override
         public void onFailure(Throwable t) {
             Timber.e(t, null);
             mLoading = false;
+            mUsersAdapter.setLoading(false);
         }
     };
 
@@ -165,10 +166,11 @@ public class UsersFragment extends BaseFragment {
         ButterKnife.bind(this, view);
 
         mEventReceiver = new EventReceiver();
-        GitLabApp.bus().register(mEventReceiver);
+        LabCoatApp.bus().register(mEventReceiver);
 
         mUsersAdapter = new UsersAdapter(mUsersAdapterListener);
         mUserLinearLayoutManager = new GridLayoutManager(getActivity(), 2);
+        mUserLinearLayoutManager.setSpanSizeLookup(mUsersAdapter.getSpanSizeLookup());
         mUsersListView.setLayoutManager(mUserLinearLayoutManager);
         mUsersListView.setAdapter(mUsersAdapter);
         mUsersListView.addOnScrollListener(mOnScrollListener);
@@ -187,7 +189,7 @@ public class UsersFragment extends BaseFragment {
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
-        GitLabApp.bus().unregister(mEventReceiver);
+        LabCoatApp.bus().unregister(mEventReceiver);
     }
 
     @Override
@@ -216,7 +218,8 @@ public class UsersFragment extends BaseFragment {
 
     private void loadMore() {
         mLoading = true;
-        Timber.d("loadMore called for " + mNextPageUrl.toString() + " " + mQuery);
+        mUsersAdapter.setLoading(true);
+        Timber.d("loadMore called for %s %s", mNextPageUrl.toString(), mQuery);
         GitLabClient.instance().searchUsers(mNextPageUrl.toString(), mQuery).enqueue(mMoreUsersCallback);
     }
 

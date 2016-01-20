@@ -13,7 +13,6 @@ import java.util.Collection;
 
 /**
  * Adapts the feeds
- * Created by John on 10/8/15.
  */
 public class FeedAdapter extends RecyclerView.Adapter<FeedEntryViewHolder> {
 

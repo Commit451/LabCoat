@@ -45,6 +45,10 @@ public class NavigationManager {
         activity.startActivity(ProjectActivity.newInstance(activity, project));
     }
 
+    public static void navigateToProject(Activity activity, long projectId) {
+        activity.startActivity(ProjectActivity.newInstance(activity, projectId));
+    }
+
     public static void navigateToProjects(Activity activity) {
         activity.startActivity(ProjectsActivity.newInstance(activity));
     }
@@ -61,9 +65,13 @@ public class NavigationManager {
         activity.startActivity(SearchActivity.newInstance(activity));
     }
 
+    public static void navigateToUser(Activity activity, UserBasic user) {
+        navigateToUser(activity, null, user);
+    }
+
     public static void navigateToUser(Activity activity, ImageView profileImage, UserBasic user) {
         Intent intent = UserActivity.newInstance(activity, user);
-        if (Build.VERSION.SDK_INT >= 21) {
+        if (Build.VERSION.SDK_INT >= 21 && profileImage != null) {
             ActivityOptionsCompat options = ActivityOptionsCompat.
                     makeSceneTransitionAnimation(activity, profileImage, activity.getString(R.string.transition_user));
             activity.startActivity(intent, options.toBundle());
@@ -105,12 +113,13 @@ public class NavigationManager {
     }
 
     public static void navigateToAddProjectMember(Activity activity, View fab, long projectId) {
-        Intent intent = AddUserActivity.newInstance(activity, projectId);
+        Intent intent = AddUserActivity.newIntent(activity, projectId);
         startMorphActivity(activity, fab, intent);
     }
 
-    public static void navigateToAddGroupMember(Activity activity, Group group) {
-        activity.startActivity(AddUserActivity.newIntent(activity, group));
+    public static void navigateToAddGroupMember(Activity activity, View fab, Group group) {
+        Intent intent = AddUserActivity.newIntent(activity, group);
+        startMorphActivity(activity, fab, intent);
     }
 
     public static void navigateToEditIssue(Activity activity, View fab, Project project, Issue issue) {

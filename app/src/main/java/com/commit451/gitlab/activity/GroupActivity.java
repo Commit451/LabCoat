@@ -4,10 +4,8 @@ import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -25,8 +23,7 @@ import com.commit451.gitlab.adapter.GroupPagerAdapter;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.model.api.GroupDetail;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
+import com.commit451.gitlab.transformation.PaletteTransformation;
 
 import org.parceler.Parcels;
 
@@ -64,24 +61,6 @@ public class GroupActivity extends BaseActivity {
     @Bind(R.id.viewpager) ViewPager mViewPager;
     @Bind(R.id.tabs) TabLayout mTabLayout;
     @Bind(R.id.backdrop) ImageView mBackdrop;
-
-    private final Target mImageLoadTarget = new Target() {
-        @Override
-        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-            mBackdrop.setImageBitmap(bitmap);
-            Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
-                public void onGenerated(Palette p) {
-                    bindPalette(p);
-                }
-            });
-        }
-
-        @Override
-        public void onBitmapFailed(Drawable errorDrawable) {}
-
-        @Override
-        public void onPrepareLoad(Drawable placeHolderDrawable) {}
-    };
 
     private final Callback<GroupDetail> mGroupCallback = new Callback<GroupDetail>() {
         @Override
@@ -131,7 +110,16 @@ public class GroupActivity extends BaseActivity {
     private void bind(Group group) {
         GitLabClient.getPicasso()
                 .load(group.getAvatarUrl())
-                .into(mImageLoadTarget);
+                .transform(PaletteTransformation.instance())
+                .into(mBackdrop, new PaletteTransformation.PaletteCallback(mBackdrop) {
+                    @Override
+                    protected void onSuccess(Palette palette) {
+                        bindPalette(palette);
+                    }
+
+                    @Override
+                    public void onError() {}
+                });
 
         mViewPager.setAdapter(new GroupPagerAdapter(this, getSupportFragmentManager(), group));
         mTabLayout.setupWithViewPager(mViewPager);

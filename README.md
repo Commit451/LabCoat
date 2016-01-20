@@ -1,14 +1,15 @@
-# GitLab for Android
-[![Google Play](https://gitlab.com/Commit451/GitLabAndroid/raw/master/art/google-play-badge.png)](https://play.google.com/store/apps/details?id=com.commit451.gitlab)
+# LabCoat for GitLab
+[![Google Play](https://gitlab.com/Commit451/LabCoat/raw/master/art/google-play-badge.png)](https://play.google.com/store/apps/details?id=com.commit451.gitlab)
 
 [![build status](https://gitlab.com/ci/projects/7701/status.png?ref=master)](https://gitlab.com/ci/projects/7701?ref=master)
 
 This is the source code for the unofficial GitLab Android app.
 
-![Image](https://gitlab.com/Commit451/GitLabAndroid/raw/master/art/screenshot-1.png)
+![Image](https://gitlab.com/Commit451/LabCoat/raw/master/art/screenshot-1.png)
 
-Please see the [issues](https://gitlab.com/Commit451/GitLabAndroid/issues) section to
+Please see the [issues](https://gitlab.com/Commit451/LabCoat/issues) section to
 report any bugs or feature requests and to see the list of known issues.
+
 
 ## Libraries
 The following 3rd party libraries and resources are the reason this app works. Rapid development is easily attainable thanks to these fine folks and the work they do:
@@ -29,7 +30,6 @@ The following 3rd party libraries and resources are the reason this app works. R
 - Parceler (https://github.com/johncarl81/parceler)
 - Bypasses (https://github.com/Commit451/bypasses)
 - Easel (https://github.com/Commit451/Easel)
-- CircleImageView (https://github.com/hdodenhof/CircleImageView)
 - Material-ish Progress (https://github.com/pnikosis/materialish-progress)
 - PhysicsLayout (https://github.com/Jawnnypoo/PhysicsLayout)
 - Material Letter Icon (https://github.com/IvBaranov/MaterialLetterIcon)
@@ -43,7 +43,7 @@ Please fork this repository and contribute back! All Merge Requests should be ma
 License
 --------
 
-    Copyright 2015 Commit 451
+    Copyright 2016 Commit 451
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.

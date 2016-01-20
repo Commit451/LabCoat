@@ -1,6 +1,16 @@
 package com.commit451.gitlab.fragment;
 
-import com.commit451.gitlab.GitLabApp;
+import android.os.Bundle;
+import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.GroupMembersAdapter;
 import com.commit451.gitlab.api.GitLabClient;
@@ -13,16 +23,6 @@ import com.commit451.gitlab.viewHolder.ProjectMemberViewHolder;
 import com.squareup.otto.Subscribe;
 
 import org.parceler.Parcels;
-
-import android.os.Bundle;
-import android.support.design.widget.Snackbar;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
 import java.util.List;
 
@@ -182,7 +182,7 @@ public class GroupMembersFragment extends BaseFragment {
         ButterKnife.bind(this, view);
 
         mEventReceiver = new EventReceiver();
-        GitLabApp.bus().register(mEventReceiver);
+        LabCoatApp.bus().register(mEventReceiver);
 
         mGroupMembersAdapter = new GroupMembersAdapter(mListener);
         mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
@@ -202,12 +202,12 @@ public class GroupMembersFragment extends BaseFragment {
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
-        GitLabApp.bus().unregister(mEventReceiver);
+        LabCoatApp.bus().unregister(mEventReceiver);
     }
 
     @OnClick(R.id.add_user_button)
-    public void onAddUserClick() {
-        NavigationManager.navigateToAddGroupMember(getActivity(), mGroup);
+    public void onAddUserClick(View fab) {
+        NavigationManager.navigateToAddGroupMember(getActivity(), fab, mGroup);
     }
 
     public void loadData() {

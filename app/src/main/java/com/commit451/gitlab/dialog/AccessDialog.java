@@ -23,7 +23,6 @@ import timber.log.Timber;
 
 /**
  * Change a users access level, either for a group or for a project
- * Created by Jawn on 9/16/2015.
  */
 public class AccessDialog extends AppCompatDialog {
 

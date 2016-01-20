@@ -15,7 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.commit451.gitlab.GitLabApp;
+import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.SectionsPagerAdapter;
 import com.commit451.gitlab.api.GitLabClient;
@@ -39,10 +39,17 @@ import timber.log.Timber;
 public class ProjectActivity extends BaseActivity {
 
     private static final String EXTRA_PROJECT = "extra_project";
+    private static final String EXTRA_PROJECT_ID = "extra_project_id";
 
     public static Intent newInstance(Context context, Project project) {
         Intent intent = new Intent(context, ProjectActivity.class);
         intent.putExtra(EXTRA_PROJECT, Parcels.wrap(project));
+        return intent;
+    }
+
+    public static Intent newInstance(Context context, long projectId) {
+        Intent intent = new Intent(context, ProjectActivity.class);
+        intent.putExtra(EXTRA_PROJECT_ID, projectId);
         return intent;
     }
 
@@ -70,14 +77,44 @@ public class ProjectActivity extends BaseActivity {
     Project mProject;
     String mBranchName;
 
-    private Callback<List<Branch>> mBranchesCallback = new Callback<List<Branch>>() {
+    private final Callback<Project> mProjectCallback = new Callback<Project>() {
+        @Override
+        public void onResponse(Response<Project> response, Retrofit retrofit) {
+            if (!response.isSuccess()) {
+                return;
+            }
+            mProject = response.body();
+            setupTabs();
+            loadBranches();
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+            Timber.e(t, null);
+            mProgress.animate().alpha(0.0f).withEndAction(new Runnable() {
+                @Override
+                public void run() {
+                    mProgress.setVisibility(View.GONE);
+                }
+            });
+            Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
+                    .show();
+        }
+    };
+
+    private final Callback<List<Branch>> mBranchesCallback = new Callback<List<Branch>>() {
 
         @Override
         public void onResponse(Response<List<Branch>> response, Retrofit retrofit) {
             if (!response.isSuccess()) {
                 return;
             }
-            mProgress.setVisibility(View.GONE);
+            mProgress.animate().alpha(0.0f).withEndAction(new Runnable() {
+                @Override
+                public void run() {
+                    mProgress.setVisibility(View.GONE);
+                }
+            });
 
             if(response.body().isEmpty()) {
                 mBranchSpinner.setVisibility(View.GONE);
@@ -104,7 +141,12 @@ public class ProjectActivity extends BaseActivity {
         @Override
         public void onFailure(Throwable t) {
             Timber.e(t, null);
-            mProgress.setVisibility(View.GONE);
+            mProgress.animate().alpha(0.0f).withEndAction(new Runnable() {
+                @Override
+                public void run() {
+                    mProgress.setVisibility(View.GONE);
+                }
+            });
             Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
                     .show();
         }
@@ -139,19 +181,31 @@ public class ProjectActivity extends BaseActivity {
         mToolbar.inflateMenu(R.menu.menu_repository);
         mToolbar.setOnMenuItemClickListener(mOnMenuItemClickListener);
 
-        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
+        if (mProject == null) {
+            long projectId = getIntent().getLongExtra(EXTRA_PROJECT_ID, -1);
+            loadProject(projectId);
+        } else {
+            setupTabs();
+            loadBranches();
+        }
+    }
 
-        mViewPager.setAdapter(sectionsPagerAdapter);
-        mTabLayout.setupWithViewPager(mViewPager);
-        loadBranches();
+    private void loadProject(long projectId) {
+        mProgress.setAlpha(0.0f);
+        mProgress.setVisibility(View.VISIBLE);
+        mProgress.animate().alpha(1.0f);
+        GitLabClient.instance().getProject(projectId).enqueue(mProjectCallback);
     }
 
     private void loadBranches() {
+        mProgress.setAlpha(0.0f);
+        mProgress.setVisibility(View.VISIBLE);
+        mProgress.animate().alpha(1.0f);
         GitLabClient.instance().getBranches(mProject.getId()).enqueue(mBranchesCallback);
     }
 
     private void broadcastLoad() {
-        GitLabApp.bus().post(new ProjectReloadEvent(mProject, mBranchName));
+        LabCoatApp.bus().post(new ProjectReloadEvent(mProject, mBranchName));
     }
 
     @Override
@@ -172,5 +226,12 @@ public class ProjectActivity extends BaseActivity {
 
     public Project getProject() {
         return mProject;
+    }
+
+    private void setupTabs() {
+        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
+
+        mViewPager.setAdapter(sectionsPagerAdapter);
+        mTabLayout.setupWithViewPager(mViewPager);
     }
 }

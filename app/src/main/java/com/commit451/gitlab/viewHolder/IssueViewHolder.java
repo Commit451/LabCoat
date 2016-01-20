@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Issue;
+import com.commit451.gitlab.transformation.CircleTransformation;
 import com.commit451.gitlab.util.DateUtils;
 import com.commit451.gitlab.util.ImageUtil;
 
@@ -37,16 +38,17 @@ public class IssueViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(Issue issue) {
-        long tempId = issue.getIid();
-        if (tempId < 1) {
-            tempId = issue.getId();
+
+        if (issue.getAssignee() != null) {
+            GitLabClient.getPicasso()
+                    .load(ImageUtil.getAvatarUrl(issue.getAssignee(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size)))
+                    .transform(new CircleTransformation())
+                    .into(mImageView);
+        } else {
+            mImageView.setImageBitmap(null);
         }
 
-        GitLabClient.getPicasso()
-                .load(ImageUtil.getAvatarUrl(issue.getAssignee(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size)))
-                .into(mImageView);
-
-        mMessageView.setText("#" + tempId + ": " + issue.getTitle());
+        mMessageView.setText(issue.getTitle());
 
         String time = "";
         if (issue.getCreatedAt() != null) {
@@ -56,7 +58,13 @@ public class IssueViewHolder extends RecyclerView.ViewHolder {
         if (issue.getAuthor() != null) {
             author += issue.getAuthor().getUsername();
         }
+        String id = "";
+        long issueId = issue.getIid();
+        if (issueId < 1) {
+            issueId = issue.getId();
+        }
+        id = "#" + issueId;
 
-        mCreatorView.setText(String.format(itemView.getContext().getString(R.string.created_time), time, author));
+        mCreatorView.setText(String.format(itemView.getContext().getString(R.string.opened_time), id, time, author));
     }
 }

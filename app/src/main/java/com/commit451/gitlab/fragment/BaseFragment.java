@@ -1,6 +1,6 @@
 package com.commit451.gitlab.fragment;
 
-import com.commit451.gitlab.GitLabApp;
+import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.event.ReloadDataEvent;
 import com.squareup.otto.Subscribe;
 
@@ -17,13 +17,13 @@ public class BaseFragment extends Fragment{
         super.onViewCreated(view, savedInstanceState);
 
         mBaseEventReceiever = new EventReceiver();
-        GitLabApp.bus().register(mBaseEventReceiever);
+        LabCoatApp.bus().register(mBaseEventReceiever);
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        GitLabApp.bus().unregister(mBaseEventReceiever);
+        LabCoatApp.bus().unregister(mBaseEventReceiever);
     }
 
     protected void loadData() {

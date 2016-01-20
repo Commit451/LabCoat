@@ -19,7 +19,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
 
-import com.commit451.gitlab.GitLabApp;
+import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.data.Prefs;
@@ -39,6 +39,7 @@ import com.squareup.okhttp.HttpUrl;
 
 import java.security.cert.CertificateEncodingException;
 import java.util.Date;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.net.ssl.SSLHandshakeException;
@@ -143,6 +144,12 @@ public class LoginActivity extends BaseActivity {
             }
         }
 
+        if (isAlreadySignedIn(uri.toString(), mIsNormalLogin ? mUserInput.getText().toString() : mTokenInput.getText().toString())) {
+            Snackbar.make(mRoot, getString(R.string.already_logged_in), Snackbar.LENGTH_LONG)
+                    .show();
+            return;
+        }
+
         mAccount = new Account();
         mAccount.setServerUrl(uri);
         mAccount.setTrustedCertificate(mTrustedCertificate);
@@ -188,9 +195,9 @@ public class LoginActivity extends BaseActivity {
             mAccount.setLastUsed(new Date());
             Prefs.addAccount(LoginActivity.this, mAccount);
             GitLabClient.setAccount(mAccount);
-            GitLabApp.bus().post(new LoginEvent(mAccount));
+            LabCoatApp.bus().post(new LoginEvent(mAccount));
             //This is mostly for if projects already exists, then we will reload the data
-            GitLabApp.bus().post(new ReloadDataEvent());
+            LabCoatApp.bus().post(new ReloadDataEvent());
             NavigationManager.navigateToProjects(LoginActivity.this);
             finish();
         }
@@ -358,5 +365,19 @@ public class LoginActivity extends BaseActivity {
             }
         });
         dialog.show();
+    }
+
+    private boolean isAlreadySignedIn(@NonNull String url, @NonNull String usernameOrEmailOrPrivateToken) {
+        List<Account> accounts = Prefs.getAccounts(this);
+        for (Account account : accounts) {
+            if (account.getServerUrl().equals(Uri.parse(url))) {
+                if (usernameOrEmailOrPrivateToken.equals(account.getUser().getUsername())
+                        || usernameOrEmailOrPrivateToken.equalsIgnoreCase(account.getUser().getEmail())
+                        || usernameOrEmailOrPrivateToken.equalsIgnoreCase(account.getPrivateToken())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
