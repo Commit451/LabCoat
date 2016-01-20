@@ -6,20 +6,23 @@ android {
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
 
+    project.ext {
+        GITLAB_FABRIC_KEY = project.hasProperty("GITLAB_FABRIC_KEY") ? project.GITLAB_FABRIC_KEY: "";
+    }
     defaultConfig {
         applicationId "com.commit451.gitlab"
         minSdkVersion 16
         targetSdkVersion 23
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        versionCode 221
-        versionName "2.2.1"
+        versionCode 222
+        versionName "2.2.2"
     }
     buildTypes {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             ext.enableCrashlytics = true
-            manifestPlaceholders = [fabric_key: project.GITLAB_FABRIC_KEY]
+            manifestPlaceholders = [fabric_key: project.ext.GITLAB_FABRIC_KEY]
         }
         debug {
             minifyEnabled false
