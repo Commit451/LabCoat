@@ -7,7 +7,7 @@ android {
     buildToolsVersion "23.0.2"
 
     project.ext {
-        GITLAB_FABRIC_KEY = project.hasProperty("GITLAB_FABRIC_KEY") ? project.GITLAB_FABRIC_KEY: "";
+        LABCOAT_FABRIC_KEY = project.hasProperty("LABCOAT_FABRIC_KEY") ? project.LABCOAT_FABRIC_KEY : "";
     }
     defaultConfig {
         applicationId "com.commit451.gitlab"
@@ -22,7 +22,7 @@ android {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             ext.enableCrashlytics = true
-            manifestPlaceholders = [fabric_key: project.ext.GITLAB_FABRIC_KEY]
+            manifestPlaceholders = [fabric_key: project.ext.LABCOAT_FABRIC_KEY]
         }
         debug {
             minifyEnabled false
