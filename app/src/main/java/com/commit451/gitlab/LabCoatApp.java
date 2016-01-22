@@ -3,6 +3,7 @@ package com.commit451.gitlab;
 import android.app.Application;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.support.annotation.VisibleForTesting;
 
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.core.CrashlyticsCore;
@@ -41,20 +42,26 @@ public class LabCoatApp extends Application {
 
         forceLocale(Locale.ENGLISH);
         setupCrashReporting();
+        setupLeakCanary();
 
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
         }
 
         JodaTimeAndroid.init(this);
-        LeakCanary.install(this);
     }
 
+    @VisibleForTesting
     protected void setupCrashReporting() {
         CrashlyticsCore core = new CrashlyticsCore.Builder()
                 .disabled(BuildConfig.DEBUG)
                 .build();
         Fabric.with(this, new Crashlytics.Builder().core(core).build());
+    }
+
+    @VisibleForTesting
+    protected void setupLeakCanary() {
+        LeakCanary.install(this);
     }
 
     private void forceLocale(Locale locale){
