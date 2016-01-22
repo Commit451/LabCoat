@@ -41,6 +41,7 @@ The following 3rd party libraries and resources are the reason this app works. R
 - GitDiffTextView (https://github.com/alorma/GitDiffTextView)
 - MaterialDateTimePicker (https://github.com/wdullaer/MaterialDateTimePicker)
 - Crashlytics (https://www.crashlytics.com)
+- highlight.js (https://highlightjs.org/)
 
 ## Contributing
 Please fork this repository and contribute back! All Merge Requests should be made against the `develop` branch, as it is the active branch for development. Please make your best effort to break up commits as much as possible to improve the reviewing process.

@@ -111,11 +111,28 @@ public class FileActivity extends BaseActivity {
             if (mimeType != null && mimeType.startsWith("image/")) {
                 String imageURL = "data:" + mimeType + ";base64," + response.body().getContent();
 
-                content = "<!DOCTYPE html><html><head><link href=\"github.css\" rel=\"stylesheet\" /></head><body><img style=\"width: 100%;\" src=\"" + imageURL + "\"></body></html>";
+                content = "<!DOCTYPE html>" +
+                        "<html>" +
+                        "<body>" +
+                        "<img style=\"width: 100%;\" src=\"" + imageURL + "\">" +
+                        "</body>" +
+                        "</html>";
             } else {
                 String text = new String(mBlob, Charset.forName("UTF-8"));
 
-                content = "<!DOCTYPE html><html><head><link href=\"github.css\" rel=\"stylesheet\" /></head><body><pre><code>" + Html.escapeHtml(text) + "</code></pre><script src=\"highlight.pack.js\"></script><script>hljs.initHighlightingOnLoad();</script></body></html>";
+                content = "<!DOCTYPE html>" +
+                        "<html>" +
+                        "<head>" +
+                        "<link href=\"github.css\" rel=\"stylesheet\" />" +
+                        "</head>" +
+                        "<body>" +
+                        "<pre><code>" +
+                        Html.escapeHtml(text) +
+                        "</code></pre>" +
+                        "<script src=\"highlight.pack.js\"></script>" +
+                        "<script>hljs.initHighlightingOnLoad();</script>" +
+                        "</body>" +
+                        "</html>";
             }
 
             mFileBlobView.loadDataWithBaseURL("file:///android_asset/", content, "text/html", "utf8", null);
