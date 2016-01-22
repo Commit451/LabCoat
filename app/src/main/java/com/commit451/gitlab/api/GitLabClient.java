@@ -63,7 +63,6 @@ public final class GitLabClient {
     }
 
     public static GitLabRss rssInstance(Account account) {
-        checkAccountSet();
         Retrofit restAdapter = new Retrofit.Builder()
                 .baseUrl(account.getServerUrl().toString())
                 .client(OkHttpClientProvider.getInstance(account))
@@ -74,6 +73,7 @@ public final class GitLabClient {
 
     public static GitLabRss rssInstance() {
         if (sGitLabRss == null) {
+            checkAccountSet();
             sGitLabRss = rssInstance(sAccount);
         }
 
@@ -81,7 +81,6 @@ public final class GitLabClient {
     }
 
     public static Picasso getPicasso(Account account) {
-        checkAccountSet();
         return new Picasso.Builder(LabCoatApp.instance())
                 .downloader(new OkHttpDownloader(OkHttpClientProvider.getInstance(account)))
                 .build();
@@ -89,6 +88,7 @@ public final class GitLabClient {
 
     public static Picasso getPicasso() {
         if (sPicasso == null) {
+            checkAccountSet();
             sPicasso = getPicasso(sAccount);
         }
 
@@ -98,6 +98,10 @@ public final class GitLabClient {
     private static void checkAccountSet() {
         if (sAccount == null) {
             List<Account> accounts = Account.getAccounts(LabCoatApp.instance());
+            if (accounts.isEmpty()) {
+                throw new IllegalStateException("No accounts found");
+            }
+
             GitLabClient.setAccount(accounts.get(0));
         }
     }
