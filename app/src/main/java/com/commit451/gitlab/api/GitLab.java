@@ -16,6 +16,7 @@ import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryCommit;
 import com.commit451.gitlab.model.api.RepositoryFile;
 import com.commit451.gitlab.model.api.RepositoryTreeObject;
+import com.commit451.gitlab.model.api.User;
 import com.commit451.gitlab.model.api.UserBasic;
 import com.commit451.gitlab.model.api.UserFull;
 import com.commit451.gitlab.model.api.UserLogin;
@@ -73,7 +74,7 @@ public interface GitLab {
     Call<List<UserBasic>> searchUsers(@Url String url, @Query("search") String query);
 
     @GET(API_VERSION + "/users/{id}")
-    Call<UserBasic> getUser(@Path("id") long userId);
+    Call<User> getUser(@Path("id") long userId);
 
     /* --- GROUPS --- */
 

@@ -31,7 +31,14 @@ public class AuthenticationRequestInterceptor implements Interceptor {
         Request request = chain.request();
 
         HttpUrl url = request.httpUrl();
-        if (url.toString().startsWith(mAccount.getServerUrl().toString())) {
+
+        String cleanUrl = url.toString();
+        cleanUrl = cleanUrl.substring(cleanUrl.indexOf(':'));
+
+        String cleanServerUrl = mAccount.getServerUrl().toString();
+        cleanServerUrl = cleanServerUrl.substring(cleanServerUrl.indexOf(':'));
+
+        if (cleanUrl.startsWith(cleanServerUrl)) {
             String authorizationHeader = mAccount.getAuthorizationHeader();
             if (authorizationHeader != null) {
                 request = request.newBuilder()

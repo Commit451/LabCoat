@@ -1,17 +1,24 @@
 package com.commit451.gitlab.activity;
 
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.annotation.IntDef;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Base64;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 import android.webkit.WebView;
 
@@ -22,6 +29,8 @@ import com.commit451.gitlab.model.api.RepositoryFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.nio.charset.Charset;
 
 import butterknife.Bind;
@@ -32,10 +41,19 @@ import retrofit.Retrofit;
 import timber.log.Timber;
 
 public class FileActivity extends BaseActivity {
+
+    private static final int PERMISSION_REQUEST_WRITE_STORAGE = 1337;
+
     private static final long MAX_FILE_SIZE = 1024 * 1024;
     private static final String EXTRA_PROJECT_ID = "extra_project_id";
     private static final String EXTRA_PATH = "extra_path";
     private static final String EXTRA_REF = "extra_ref";
+
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({OPTION_SAVE, OPTION_OPEN})
+    public @interface Option {}
+    public static final int OPTION_SAVE = 0;
+    public static final int OPTION_OPEN = 1;
 
     public static Intent newIntent(Context context, long projectId, String path, String ref) {
         Intent intent = new Intent(context, FileActivity.class);
@@ -45,6 +63,7 @@ public class FileActivity extends BaseActivity {
         return intent;
     }
 
+    @Bind(R.id.root) ViewGroup mRoot;
     @Bind(R.id.toolbar) Toolbar mToolbar;
     @Bind(R.id.file_blob) WebView mFileBlobView;
     @Bind(R.id.progress) View mProgressView;
@@ -52,9 +71,9 @@ public class FileActivity extends BaseActivity {
     private long mProjectId;
     private String mPath;
     private String mRef;
-
     private String mFileName;
     private byte[] mBlob;
+    private @Option int mOption;
 
     private final Callback<RepositoryFile> mFileResponseCallback = new Callback<RepositoryFile>() {
 
@@ -135,10 +154,12 @@ public class FileActivity extends BaseActivity {
             public boolean onMenuItemClick(MenuItem item) {
                 switch(item.getItemId()) {
                     case R.id.action_open:
-                        openFile();
+                        mOption = OPTION_OPEN;
+                        checkAccountPermission();
                         return true;
                     case R.id.action_save:
-                        saveBlob();
+                        mOption = OPTION_SAVE;
+                        checkAccountPermission();
                         return true;
                 }
                 return false;
@@ -151,6 +172,34 @@ public class FileActivity extends BaseActivity {
     private void loadData() {
         mProgressView.setVisibility(View.VISIBLE);
         GitLabClient.instance().getFile(mProjectId, mPath, mRef).enqueue(mFileResponseCallback);
+    }
+
+    @TargetApi(23)
+    private void checkAccountPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            if (mOption == OPTION_SAVE) {
+                saveBlob();
+            } else {
+                openFile();
+            }
+        } else {
+            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_REQUEST_WRITE_STORAGE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_REQUEST_WRITE_STORAGE: {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if (mOption == OPTION_SAVE) {
+                        saveBlob();
+                    } else {
+                        openFile();
+                    }
+                }
+            }
+        }
     }
 
     private File saveBlob() {
@@ -177,6 +226,7 @@ public class FileActivity extends BaseActivity {
                     try {
                         outputStream.close();
                     } catch (IOException e) {
+                        Timber.e(e, null);
                     }
                 }
             }

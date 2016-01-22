@@ -23,4 +23,9 @@ public class TestLabCoatApp extends LabCoatApp implements TestLifecycleApplicati
     public void afterTest(Method method) {
 
     }
+
+    @Override
+    protected void setupLeakCanary() {
+        //Intentionally left blank
+    }
 }

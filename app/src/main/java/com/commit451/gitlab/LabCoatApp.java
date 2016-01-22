@@ -3,6 +3,7 @@ package com.commit451.gitlab;
 import android.app.Application;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.support.annotation.VisibleForTesting;
 
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.otto.Bus;
@@ -37,12 +38,17 @@ public class LabCoatApp extends Application {
         sInstance = this;
 
         forceLocale(Locale.ENGLISH);
+        setupLeakCanary();
 
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
         }
 
         JodaTimeAndroid.init(this);
+    }
+
+    @VisibleForTesting
+    protected void setupLeakCanary() {
         LeakCanary.install(this);
     }
 
