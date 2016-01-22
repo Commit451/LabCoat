@@ -28,4 +28,9 @@ public class TestLabCoatApp extends LabCoatApp implements TestLifecycleApplicati
     protected void setupCrashReporting() {
         //Intentionally left blank
     }
+
+    @Override
+    protected void setupLeakCanary() {
+        //Intentionally left blank
+    }
 }
