@@ -82,7 +82,7 @@ public class CommitsFragment extends BaseFragment {
 
             if (!response.body().isEmpty()) {
                 mMessageView.setVisibility(View.GONE);
-            } else if (mPage <= 0) {
+            } else {
                 Timber.d("No commits have been made");
                 mMessageView.setVisibility(View.VISIBLE);
                 mMessageView.setText(R.string.no_commits_found);
@@ -116,20 +116,24 @@ public class CommitsFragment extends BaseFragment {
     private final Callback<List<RepositoryCommit>> mMoreCommitsCallback = new Callback<List<RepositoryCommit>>() {
         @Override
         public void onResponse(Response<List<RepositoryCommit>> response, Retrofit retrofit) {
+            mLoading = false;
             if (!response.isSuccess()) {
                 return;
             }
-            mLoading = false;
             mCommitsAdapter.setLoading(false);
-            mPage++;
+            if (response.body().isEmpty()) {
+                mPage = -1;
+                return;
+            }
+
             mCommitsAdapter.addData(response.body());
         }
 
         @Override
         public void onFailure(Throwable t) {
+            mLoading = false;
             Timber.e(t, null);
             mCommitsAdapter.setLoading(false);
-            mLoading = false;
         }
     };
 
