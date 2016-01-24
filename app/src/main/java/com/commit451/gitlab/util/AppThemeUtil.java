@@ -1,6 +1,7 @@
 package com.commit451.gitlab.util;
 
 import android.content.Context;
+import android.util.TypedValue;
 
 import com.afollestad.appthemeengine.ATE;
 import com.commit451.gitlab.R;
@@ -30,5 +31,11 @@ public class AppThemeUtil {
                     //.navigationViewSelectedTextRes(R.color.colorAccentDarkDefault)
                     .commit();
         }
+    }
+
+    public static String resolveThemeKey(Context context) {
+        TypedValue typedValue = new TypedValue();
+        context.getTheme().resolveAttribute(R.attr.ate_key, typedValue, true);
+        return (String) typedValue.coerceToString();
     }
 }

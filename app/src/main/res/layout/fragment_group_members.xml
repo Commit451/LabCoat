@@ -33,6 +33,7 @@
         android:layout_width="wrap_content"
         android:layout_gravity="bottom|right"
         android:src="@drawable/ic_add_24dp"
+        android:tag="bg_tint_accent_color_selector_darker"
         android:layout_margin="@dimen/padding_normal"/>
 
 </FrameLayout >

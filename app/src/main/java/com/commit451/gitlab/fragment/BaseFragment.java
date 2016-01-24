@@ -1,7 +1,9 @@
 package com.commit451.gitlab.fragment;
 
+import com.afollestad.appthemeengine.ATE;
 import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.event.ReloadDataEvent;
+import com.commit451.gitlab.util.AppThemeUtil;
 import com.squareup.otto.Subscribe;
 
 import android.os.Bundle;
@@ -15,6 +17,9 @@ public class BaseFragment extends Fragment{
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        // Apply theming to the Fragment view
+        ATE.apply(this, AppThemeUtil.resolveThemeKey(getActivity()));
 
         mBaseEventReceiever = new EventReceiver();
         LabCoatApp.bus().register(mBaseEventReceiever);

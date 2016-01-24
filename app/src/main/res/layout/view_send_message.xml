@@ -28,6 +28,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:src="@drawable/ic_send_24dp"
+        android:tag="bg_tint_accent_color_selector_darker"
         app:fabSize="mini" />
 
 </LinearLayout>

@@ -5,6 +5,7 @@ import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 
 import com.afollestad.appthemeengine.Config;
+import com.commit451.gitlab.util.AppThemeUtil;
 import com.pnikosis.materialishprogress.ProgressWheel;
 
 /**
@@ -23,8 +24,6 @@ public class GitLabProgressView extends ProgressWheel {
     }
 
     private void init() {
-        String key = PreferenceManager.getDefaultSharedPreferences(getContext())
-                .getBoolean("dark_theme", true) ? "dark_theme" : "light_theme";
-        setBarColor(Config.accentColor(getContext(), key));
+        setBarColor(Config.accentColor(getContext(), AppThemeUtil.resolveThemeKey(getContext())));
     }
 }

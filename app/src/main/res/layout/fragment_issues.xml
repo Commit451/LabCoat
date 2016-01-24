@@ -43,7 +43,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         android:layout_margin="@dimen/padding_normal"
-        android:src="@drawable/ic_add_24dp" />
+        android:src="@drawable/ic_add_24dp"
+        android:tag="bg_tint_accent_color_selector_darker" />
 
     <TextView
         android:id="@+id/message_text"
