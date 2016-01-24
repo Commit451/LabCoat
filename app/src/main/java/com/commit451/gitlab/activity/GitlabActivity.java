@@ -6,6 +6,7 @@ import android.os.Bundle;
 import com.commit451.gitlab.BuildConfig;
 import com.commit451.gitlab.data.Prefs;
 import com.commit451.gitlab.model.Account;
+import com.commit451.gitlab.util.AppThemeUtil;
 import com.commit451.gitlab.util.NavigationManager;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class GitlabActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        AppThemeUtil.setupDefaultConfigs(this);
         super.onCreate(savedInstanceState);
 
         int savedVersion = Prefs.getSavedVersion(this);

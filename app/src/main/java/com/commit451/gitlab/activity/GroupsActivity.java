@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -14,6 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
 
+import com.afollestad.appthemeengine.customizers.ATEActivityThemeCustomizer;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.GroupAdapter;
 import com.commit451.gitlab.api.GitLabClient;
@@ -35,7 +37,13 @@ import timber.log.Timber;
  * Displays the groups of the current user
  * Created by Jawn on 10/4/2015.
  */
-public class GroupsActivity extends BaseActivity {
+public class GroupsActivity extends BaseActivity implements ATEActivityThemeCustomizer {
+
+    @Override
+    public int getActivityTheme() {
+        return PreferenceManager.getDefaultSharedPreferences(this).getBoolean("dark_theme", true) ?
+                R.style.Activity_Groups : R.style.ActivityLight_Groups;
+    }
 
     public static Intent newInstance(Context context) {
         Intent intent = new Intent(context, GroupsActivity.class);

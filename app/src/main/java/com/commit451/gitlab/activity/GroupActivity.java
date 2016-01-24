@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -17,6 +18,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.afollestad.appthemeengine.customizers.ATEActivityThemeCustomizer;
 import com.commit451.easel.Easel;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.GroupPagerAdapter;
@@ -38,7 +40,13 @@ import timber.log.Timber;
  * See the things about the group
  * Created by John on 10/14/15.
  */
-public class GroupActivity extends BaseActivity {
+public class GroupActivity extends BaseActivity implements ATEActivityThemeCustomizer {
+
+    @Override
+    public int getActivityTheme() {
+        return PreferenceManager.getDefaultSharedPreferences(this).getBoolean("dark_theme", true) ?
+                R.style.Activity_Group : R.style.ActivityLight_Group;
+    }
 
     private static final String KEY_GROUP = "key_group";
     private static final String KEY_GROUP_ID = "key_group_id";

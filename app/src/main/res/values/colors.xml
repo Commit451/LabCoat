@@ -27,4 +27,7 @@
 
     <color name="scrim">#99323232</color>
 
+    <color name="primary_default">@color/main_blue</color>
+    <color name="accent_default">@color/yellow</color>
+
 </resources>

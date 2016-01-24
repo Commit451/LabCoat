@@ -82,6 +82,10 @@ public class GitLabNavigationView extends NavigationView {
                     }
                     LabCoatApp.bus().post(new CloseDrawerEvent());
                     return true;
+                case R.id.nav_settings:
+                    LabCoatApp.bus().post(new CloseDrawerEvent());
+                    NavigationManager.navigateToSettings((Activity) getContext());
+                    return true;
                 case R.id.nav_about:
                     LabCoatApp.bus().post(new CloseDrawerEvent());
                     NavigationManager.navigateToAbout((Activity) getContext());

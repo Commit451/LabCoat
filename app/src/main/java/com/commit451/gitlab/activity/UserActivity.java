@@ -11,6 +11,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.graphics.Palette;
@@ -18,6 +19,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.afollestad.appthemeengine.customizers.ATEActivityThemeCustomizer;
 import com.commit451.easel.Easel;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
@@ -36,7 +38,13 @@ import butterknife.ButterKnife;
  * User activity, which shows the user!
  * Created by Jawn on 9/21/2015.
  */
-public class UserActivity extends BaseActivity {
+public class UserActivity extends BaseActivity implements ATEActivityThemeCustomizer {
+
+    @Override
+    public int getActivityTheme() {
+        return PreferenceManager.getDefaultSharedPreferences(this).getBoolean("dark_theme", true) ?
+                R.style.Activity_User : R.style.ActivityLight_User;
+    }
 
     private static final String KEY_USER = "user";
 

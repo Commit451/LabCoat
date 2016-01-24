@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.afollestad.appthemeengine.prefs.ATEPreferenceCategory
+        android:title="@string/preference_category_theme"
+        app:ateKey_prefCategory_textColor="?ate_key">
+
+        <com.afollestad.appthemeengine.prefs.ATESwitchPreference
+            android:defaultValue="true"
+            android:key="dark_theme"
+            android:persistent="true"
+            android:summary="@string/dark_theme_summary"
+            android:title="@string/dark_theme"
+            android:widgetLayout="@layout/ate_preference_checkbox"
+            app:ateKey_pref_switch="?ate_key" />
+
+        <com.afollestad.appthemeengine.prefs.ATEColorPreference
+            android:key="primary_color"
+            android:persistent="false"
+            android:summary="@string/primary_color_summary"
+            android:title="@string/primary_color"
+            app:ateKey_pref_color="?ate_key" />
+
+        <com.afollestad.appthemeengine.prefs.ATEColorPreference
+            android:key="accent_color"
+            android:persistent="false"
+            android:summary="@string/accent_color_summary"
+            android:title="@string/accent_color"
+            app:ateKey_pref_color="?ate_key" />
+
+    </com.afollestad.appthemeengine.prefs.ATEPreferenceCategory>
+
+</PreferenceScreen>

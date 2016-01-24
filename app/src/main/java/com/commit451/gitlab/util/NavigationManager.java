@@ -24,6 +24,7 @@ import com.commit451.gitlab.activity.MilestoneActivity;
 import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.activity.ProjectsActivity;
 import com.commit451.gitlab.activity.SearchActivity;
+import com.commit451.gitlab.activity.SettingsActivity;
 import com.commit451.gitlab.activity.UserActivity;
 import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.model.api.Group;
@@ -45,6 +46,10 @@ public class NavigationManager {
 
     public static void navigateToAbout(Activity activity) {
         activity.startActivity(AboutActivity.newInstance(activity));
+    }
+
+    public static void navigateToSettings(Activity activity) {
+        activity.startActivity(SettingsActivity.newInstance(activity));
     }
 
     public static void navigateToProject(Activity activity, Project project) {
