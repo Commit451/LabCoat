@@ -8,10 +8,12 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import com.afollestad.appthemeengine.ATE;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.transformation.CircleTransformation;
+import com.commit451.gitlab.util.AppThemeUtil;
 import com.commit451.gitlab.util.ImageUtil;
 
 import butterknife.Bind;
@@ -38,6 +40,7 @@ public class AccountViewHolder extends RecyclerView.ViewHolder{
     public AccountViewHolder(View view) {
         super(view);
         ButterKnife.bind(this, view);
+        ATE.apply(view, AppThemeUtil.resolveThemeKey(view.getContext()));
 
         mPopupMenu = new PopupMenu(itemView.getContext(), mMoreView);
         mPopupMenu.getMenuInflater().inflate(R.menu.item_menu_account, mPopupMenu.getMenu());

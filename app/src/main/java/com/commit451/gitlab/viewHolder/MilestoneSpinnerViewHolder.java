@@ -7,8 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.afollestad.appthemeengine.ATE;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.api.Milestone;
+import com.commit451.gitlab.util.AppThemeUtil;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -30,6 +32,7 @@ public class MilestoneSpinnerViewHolder extends RecyclerView.ViewHolder {
     public MilestoneSpinnerViewHolder(View view) {
         super(view);
         ButterKnife.bind(this, view);
+        ATE.apply(view, AppThemeUtil.resolveThemeKey(view.getContext()));
     }
 
     public void bind(@Nullable Milestone milestone) {

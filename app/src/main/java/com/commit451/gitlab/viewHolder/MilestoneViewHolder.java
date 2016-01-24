@@ -6,8 +6,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.afollestad.appthemeengine.ATE;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.api.Milestone;
+import com.commit451.gitlab.util.AppThemeUtil;
 import com.commit451.gitlab.util.DateUtils;
 
 import butterknife.Bind;
@@ -30,6 +32,7 @@ public class MilestoneViewHolder extends RecyclerView.ViewHolder {
     public MilestoneViewHolder(View view) {
         super(view);
         ButterKnife.bind(this, view);
+        ATE.apply(view, AppThemeUtil.resolveThemeKey(view.getContext()));
     }
 
     public void bind(Milestone milestone) {

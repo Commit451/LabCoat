@@ -8,8 +8,10 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import com.afollestad.appthemeengine.ATE;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.api.RepositoryTreeObject;
+import com.commit451.gitlab.util.AppThemeUtil;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -34,6 +36,7 @@ public class FileViewHolder extends RecyclerView.ViewHolder {
     public FileViewHolder(View view) {
         super(view);
         ButterKnife.bind(this, view);
+        ATE.apply(view, AppThemeUtil.resolveThemeKey(view.getContext()));
 
         popupMenu = new PopupMenu(itemView.getContext(), mMoreView);
         popupMenu.getMenuInflater().inflate(R.menu.item_menu_file, popupMenu.getMenu());

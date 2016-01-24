@@ -8,9 +8,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.afollestad.appthemeengine.ATE;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Group;
+import com.commit451.gitlab.util.AppThemeUtil;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -32,6 +34,7 @@ public class GroupViewHolder extends RecyclerView.ViewHolder{
     public GroupViewHolder(View view) {
         super(view);
         ButterKnife.bind(this, view);
+        ATE.apply(view, AppThemeUtil.resolveThemeKey(view.getContext()));
     }
 
     public void bind(Group group) {

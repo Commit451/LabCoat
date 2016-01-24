@@ -7,10 +7,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.afollestad.appthemeengine.ATE;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.RepositoryCommit;
 import com.commit451.gitlab.transformation.CircleTransformation;
+import com.commit451.gitlab.util.AppThemeUtil;
 import com.commit451.gitlab.util.DateUtils;
 import com.commit451.gitlab.util.ImageUtil;
 
@@ -36,6 +38,7 @@ public class CommitViewHolder extends RecyclerView.ViewHolder {
     public CommitViewHolder(View view) {
         super(view);
         ButterKnife.bind(this, view);
+        ATE.apply(view, AppThemeUtil.resolveThemeKey(view.getContext()));
     }
 
     public void bind(RepositoryCommit commit) {

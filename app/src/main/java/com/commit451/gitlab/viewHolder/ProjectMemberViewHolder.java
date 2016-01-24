@@ -8,9 +8,11 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import com.afollestad.appthemeengine.ATE;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Member;
+import com.commit451.gitlab.util.AppThemeUtil;
 import com.commit451.gitlab.util.ImageUtil;
 
 import butterknife.Bind;
@@ -37,6 +39,7 @@ public class ProjectMemberViewHolder extends RecyclerView.ViewHolder{
     public ProjectMemberViewHolder(View view) {
         super(view);
         ButterKnife.bind(this, view);
+        ATE.apply(view, AppThemeUtil.resolveThemeKey(view.getContext()));
 
         mPopupMenu = new PopupMenu(itemView.getContext(), mOverflowView);
         mPopupMenu.getMenuInflater().inflate(R.menu.item_menu_project_member, mPopupMenu.getMenu());
