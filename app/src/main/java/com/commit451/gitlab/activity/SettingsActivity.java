@@ -8,7 +8,9 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.TextView;
 
 import com.afollestad.appthemeengine.ATE;
 import com.afollestad.appthemeengine.Config;
@@ -16,6 +18,7 @@ import com.afollestad.appthemeengine.prefs.ATEColorPreference;
 import com.afollestad.materialdialogs.color.ColorChooserDialog;
 import com.commit451.gitlab.R;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
 
 /**
@@ -30,11 +33,22 @@ public class SettingsActivity extends BaseActivity
         return intent;
     }
 
+    @Bind(R.id.toolbar) Toolbar toolbar;
+    @Bind(R.id.toolbar_title) TextView toolbarTitle;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
         ButterKnife.bind(this);
+        toolbar.setNavigationIcon(R.drawable.ic_back_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+        toolbarTitle.setText(R.string.settings);
 
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction().replace(R.id.settings_container, new SettingsFragment()).commit();
