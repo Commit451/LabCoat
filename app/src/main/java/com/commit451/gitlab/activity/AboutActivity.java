@@ -53,7 +53,6 @@ public class AboutActivity extends BaseActivity {
 
     @Bind(R.id.root) View root;
     @Bind(R.id.toolbar) Toolbar toolbar;
-    @Bind(R.id.toolbar_title) TextView toolbarTitle;
     @Bind(R.id.contributors) TextView contributors;
     @Bind(R.id.physics_layout) PhysicsFrameLayout physicsLayout;
     @OnClick(R.id.sauce)
@@ -113,7 +112,7 @@ public class AboutActivity extends BaseActivity {
                 onBackPressed();
             }
         });
-        toolbarTitle.setText(R.string.about);
+        toolbar.setTitle(R.string.about);
         physicsLayout.getPhysics().enableFling();
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         gravitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);

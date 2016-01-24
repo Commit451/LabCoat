@@ -34,7 +34,6 @@ public class SettingsActivity extends BaseActivity
     }
 
     @Bind(R.id.toolbar) Toolbar toolbar;
-    @Bind(R.id.toolbar_title) TextView toolbarTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +47,7 @@ public class SettingsActivity extends BaseActivity
                 onBackPressed();
             }
         });
-        toolbarTitle.setText(R.string.settings);
+        toolbar.setTitle(R.string.settings);
 
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction().replace(R.id.settings_container, new SettingsFragment()).commit();
