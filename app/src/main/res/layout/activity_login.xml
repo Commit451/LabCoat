@@ -1,27 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorPrimary">
+    android:tag="bg_primary_color">
 
     <ImageView
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_marginTop="40dp"
         android:layout_gravity="center_horizontal"
+        android:layout_marginTop="40dp"
         android:contentDescription="@string/app_name"
         android:src="@mipmap/ic_launcher" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:layout_gravity="center"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginRight="@dimen/activity_horizontal_margin">
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:orientation="vertical">
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/url_hint"
@@ -35,8 +34,9 @@
                 android:layout_below="@+id/title"
                 android:layout_centerHorizontal="true"
                 android:hint="@string/url_hint"
-                android:text="@string/url_gitlab"
-                android:inputType="textUri">
+                android:inputType="textUri"
+                android:tag="tint_accent_color"
+                android:text="@string/url_gitlab">
 
             </EditText>
 
@@ -48,37 +48,39 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/user_input_hint"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <com.commit451.gitlab.view.EmailAutoCompleteTextView
-                android:id="@+id/user_input"
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/user_input_hint"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:ems="10"
-                android:hint="@string/user_hint"
-                android:inputType="textEmailAddress" />
+                android:layout_height="wrap_content">
 
-        </android.support.design.widget.TextInputLayout>
+                <com.commit451.gitlab.view.EmailAutoCompleteTextView
+                    android:id="@+id/user_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:ems="10"
+                    android:hint="@string/user_hint"
+                    android:inputType="textEmailAddress"
+                    android:tag="tint_accent_color" />
 
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/password_hint"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            </android.support.design.widget.TextInputLayout>
 
-            <EditText
-                android:id="@+id/password_input"
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/password_hint"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/user_input"
-                android:layout_centerHorizontal="true"
-                android:hint="@string/password_hint"
-                android:inputType="textPassword" />
+                android:layout_height="wrap_content">
 
-        </android.support.design.widget.TextInputLayout>
+                <EditText
+                    android:id="@+id/password_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/user_input"
+                    android:layout_centerHorizontal="true"
+                    android:hint="@string/password_hint"
+                    android:inputType="textPassword"
+                    android:tag="tint_accent_color" />
+
+            </android.support.design.widget.TextInputLayout>
         </LinearLayout>
 
         <LinearLayout
@@ -88,32 +90,33 @@
             android:orientation="vertical"
             android:visibility="gone">
 
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/token_hint"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <EditText
-                android:id="@+id/token_input"
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/token_hint"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:hint="@string/token_hint"
-                android:inputType="textVisiblePassword" />
-        </android.support.design.widget.TextInputLayout>
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/token_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:hint="@string/token_hint"
+                    android:inputType="textVisiblePassword"
+                    android:tag="tint_accent_color" />
+            </android.support.design.widget.TextInputLayout>
         </LinearLayout>
 
         <TextView
             android:id="@+id/show_normal_link"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="20dp"
-            android:text="@string/token_link"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="?attr/colorAccent"
+            android:background="?attr/selectableItemBackground"
             android:gravity="center_horizontal"
-            android:background="?attr/selectableItemBackground"/>
+            android:padding="20dp"
+            android:tag="text_accent_color"
+            android:text="@string/token_link"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
     </LinearLayout>
 
@@ -121,15 +124,15 @@
         android:id="@+id/login_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/padding_normal"
         android:layout_gravity="bottom"
+        android:background="?attr/selectableItemBackground"
         android:gravity="center_horizontal"
-        android:textColor="?attr/colorAccent"
+        android:padding="@dimen/padding_normal"
+        android:tag="text_accent_color"
         android:text="@string/login_button"
         android:textAllCaps="true"
-        app:typeface="roboto_medium"
-        android:background="?attr/selectableItemBackground"/>
+        app:typeface="roboto_medium" />
 
-    <include layout="@layout/progress_fullscreen"/>
+    <include layout="@layout/progress_fullscreen" />
 
 </FrameLayout>
