@@ -5,12 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="40dp">
 
-    <com.pnikosis.materialishprogress.ProgressWheel
+    <com.commit451.gitlab.view.GitLabProgressView
         android:id="@+id/progress"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_gravity="center"
-        app:matProg_barColor="?attr/colorAccent"
         app:matProg_progressIndeterminate="true" />
 
 </FrameLayout>
