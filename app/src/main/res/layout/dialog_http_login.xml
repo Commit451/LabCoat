@@ -14,6 +14,7 @@
     <EditText android:id="@+id/login_username"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
+              android:tag="tint_accent_color"
               android:inputType="text"
               android:hint="@string/user_hint">
 
@@ -23,6 +24,7 @@
     <EditText android:id="@+id/login_password"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
+              android:tag="tint_accent_color"
               android:inputType="textPassword"
               android:hint="@string/password_hint"/>
 

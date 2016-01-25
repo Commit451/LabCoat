@@ -28,8 +28,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:focusable="true"
-                android:text="@string/cancel_button"
-                android:textColor="?attr/colorAccent" />
+                android:tag="text_accent_color"
+                android:text="@string/cancel_button" />
 
             <Button
                 android:id="@+id/assign_button"
@@ -38,8 +38,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:focusable="true"
-                android:text="@string/action_assign"
-                android:textColor="?attr/colorAccent" />
+                android:tag="text_accent_color"
+                android:text="@string/action_assign" />
 
         </LinearLayout>
 
