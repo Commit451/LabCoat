@@ -26,8 +26,8 @@
             android:id="@+id/issue_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:tag="text_primary"
             android:textSize="@dimen/text_size_small"
-            android:textColor="?android:attr/textColorPrimary"
             android:maxLines="2"
             android:ellipsize="end"
             tools:text="I commited all the code at once cause I am cool. So sorry"/>
@@ -36,8 +36,8 @@
             android:id="@+id/issue_creator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:tag="text_secondary"
             android:textSize="@dimen/text_size_tiny"
-            android:textColor="?android:attr/textColorSecondary"
             tools:text="Created 45 days ago by Jawnnypoo"/>
 
     </LinearLayout>

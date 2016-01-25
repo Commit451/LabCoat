@@ -39,9 +39,9 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
                 tools:text="Username"
+                android:tag="text_secondary"
                 android:textStyle="italic"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="?android:attr/textColorTertiary" />
+                android:textAppearance="?android:attr/textAppearanceSmall" />
 
             <TextView
                 android:id="@+id/creation_date"
@@ -50,9 +50,9 @@
                 android:layout_alignParentRight="true"
                 android:layout_alignParentTop="true"
                 tools:text="Time"
+                android:tag="text_secondary"
                 android:textStyle="bold"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="?android:attr/textColorTertiary"/>
+                android:textAppearance="?android:attr/textAppearanceSmall" />
 
         </RelativeLayout>
 
@@ -61,8 +61,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:text="Comment"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="?android:attr/textColorPrimary" />
+            android:tag="text_primary"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
 
     </LinearLayout>
 

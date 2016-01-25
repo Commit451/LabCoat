@@ -33,7 +33,7 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="2"
-                android:textColor="?android:attr/textColorPrimary"
+                android:tag="text_primary"
                 android:textSize="@dimen/text_size_small"
                 tools:text="I commited all the code at once cause I am cool. So sorry" />
 
@@ -41,7 +41,7 @@
                 android:id="@+id/request_author"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="?android:attr/textColorSecondary"
+                android:tag="text_secondary"
                 android:textSize="@dimen/text_size_tiny"
                 tools:text="Jawnnypoo" />
 

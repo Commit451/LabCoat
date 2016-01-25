@@ -39,7 +39,6 @@ public class ProjectMemberViewHolder extends RecyclerView.ViewHolder{
     public ProjectMemberViewHolder(View view) {
         super(view);
         ButterKnife.bind(this, view);
-        ATE.apply(view, AppThemeUtil.resolveThemeKey(view.getContext()));
 
         mPopupMenu = new PopupMenu(itemView.getContext(), mOverflowView);
         mPopupMenu.getMenuInflater().inflate(R.menu.item_menu_project_member, mPopupMenu.getMenu());

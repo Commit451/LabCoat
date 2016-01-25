@@ -20,8 +20,8 @@
             android:id="@+id/file_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:tag="text_accent_color"
             android:textSize="18sp"
-            android:textColor="?attr/colorAccent"
             android:layout_marginBottom="4dp"
             tools:text="NewFile.java"/>
 

@@ -22,6 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:contentDescription="@null"
+            android:tag="tint_text_primary"
             tools:src="@drawable/ic_folder_24dp"
             />
 
@@ -33,6 +34,7 @@
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_gravity="center_vertical"
+            android:tag="text_primary"
             android:textSize="@dimen/text_size_small"
             android:maxLines="2"
             android:ellipsize="end"
@@ -45,6 +47,7 @@
             android:layout_height="wrap_content"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_overflow_24dp"
+            android:tag="tint_text_primary"
             android:padding="2dp"
             android:layout_gravity="center_vertical"
             android:contentDescription="@null"/>

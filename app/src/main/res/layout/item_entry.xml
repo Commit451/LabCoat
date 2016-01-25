@@ -41,8 +41,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 app:typeface="roboto_medium"
+                android:tag="text_primary"
                 android:textSize="16sp"
-                android:textColor="@color/white"
                 tools:text="Project"
                 />
 
@@ -52,6 +52,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 app:typeface="roboto_regular"
+                android:tag="text_secondary"
                 android:textSize="14sp"
                 tools:text="I like this project because its called a project and it has a really long description that should cut off after a few lines"
                 />

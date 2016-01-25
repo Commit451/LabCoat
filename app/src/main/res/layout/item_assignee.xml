@@ -23,7 +23,7 @@
         android:layout_marginLeft="@dimen/image_size"
         android:paddingLeft="8dp"
         android:layout_gravity="center_vertical"
-        android:textColor="@color/white"
+        android:tag="text_primary"
         android:textSize="20sp"
         tools:text="Jawnnypoo" />
 

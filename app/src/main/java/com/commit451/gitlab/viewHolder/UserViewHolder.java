@@ -34,7 +34,6 @@ public class UserViewHolder extends RecyclerView.ViewHolder {
     public UserViewHolder(View view) {
         super(view);
         ButterKnife.bind(this, view);
-        ATE.apply(view, AppThemeUtil.resolveThemeKey(view.getContext()));
     }
 
     public void bind(UserBasic user) {

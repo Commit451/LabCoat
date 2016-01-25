@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.afollestad.appthemeengine.ATE;
+import com.afollestad.appthemeengine.util.TintHelper;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.util.AppThemeUtil;
 
@@ -33,6 +34,8 @@ public class BreadcrumbViewHolder extends RecyclerView.ViewHolder {
         super(view);
         ButterKnife.bind(this, view);
         ATE.apply(view, AppThemeUtil.resolveThemeKey(view.getContext()));
+        // We need to tint arrow based on text color
+        TintHelper.setTint(mArrowView, mTextView.getTextColors().getDefaultColor());
     }
 
     public void bind(String breadcrumb, boolean showArrow) {
