@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="bottom"
-    android:background="?attr/colorPrimary"
+    android:tag="bg_primary_color"
+    android:elevation="4dp"
     android:minHeight="?attr/actionBarSize"
     android:paddingTop="8dp"
     android:orientation="horizontal">
@@ -16,7 +17,7 @@
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="8dp"
         android:layout_weight="1"
-        android:tag="tint_accent_color"
+        android:tag="tint_accent_color,text_primary_dependent"
         android:hint="@string/new_note_hint"
         android:imeOptions="actionNone"
         android:inputType="textCapSentences|textAutoCorrect|textMultiLine"

@@ -4,7 +4,9 @@ import android.content.Context;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.AttributeSet;
 
+import com.afollestad.appthemeengine.Config;
 import com.commit451.gitlab.R;
+import com.commit451.gitlab.util.AppThemeUtil;
 
 
 /**
@@ -24,6 +26,8 @@ public class GitLabSwipeRefreshLayout extends SwipeRefreshLayout {
     }
 
     private void init() {
-        setColorSchemeResources(R.color.red, R.color.orange, R.color.yellow);
+        int accentColor = Config.accentColor(getContext(),
+                AppThemeUtil.resolveThemeKey(getContext()));
+        setColorSchemeColors(accentColor, accentColor, accentColor);
     }
 }

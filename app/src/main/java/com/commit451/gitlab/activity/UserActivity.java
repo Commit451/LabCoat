@@ -19,12 +19,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.afollestad.appthemeengine.Config;
 import com.afollestad.appthemeengine.customizers.ATEActivityThemeCustomizer;
 import com.commit451.easel.Easel;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.fragment.FeedFragment;
 import com.commit451.gitlab.model.api.UserBasic;
+import com.commit451.gitlab.util.AppThemeUtil;
 import com.commit451.gitlab.util.ImageUtil;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -84,6 +86,13 @@ public class UserActivity extends BaseActivity implements ATEActivityThemeCustom
         setContentView(R.layout.activity_user);
         ButterKnife.bind(this);
         mUser = Parcels.unwrap(getIntent().getParcelableExtra(KEY_USER));
+
+        // Default content and scrim colors
+        mCollapsingToolbarLayout.setContentScrimColor(
+                Config.primaryColor(this, AppThemeUtil.resolveThemeKey(this)));
+        mCollapsingToolbarLayout.setStatusBarScrimColor(
+                Config.primaryColorDark(this, AppThemeUtil.resolveThemeKey(this)));
+
         mToolbar.setNavigationIcon(R.drawable.ic_back_24dp);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override

@@ -18,6 +18,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.afollestad.appthemeengine.Config;
 import com.afollestad.appthemeengine.customizers.ATEActivityThemeCustomizer;
 import com.commit451.easel.Easel;
 import com.commit451.gitlab.R;
@@ -26,6 +27,7 @@ import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.model.api.GroupDetail;
 import com.commit451.gitlab.transformation.PaletteTransformation;
+import com.commit451.gitlab.util.AppThemeUtil;
 
 import org.parceler.Parcels;
 
@@ -92,6 +94,12 @@ public class GroupActivity extends BaseActivity implements ATEActivityThemeCusto
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group);
         ButterKnife.bind(this);
+
+        // Default content and scrim colors
+        mCollapsingToolbarLayout.setContentScrimColor(
+                Config.primaryColor(this, AppThemeUtil.resolveThemeKey(this)));
+        mCollapsingToolbarLayout.setStatusBarScrimColor(
+                Config.primaryColorDark(this, AppThemeUtil.resolveThemeKey(this)));
 
         mToolbar.setNavigationIcon(R.drawable.ic_back_24dp);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {

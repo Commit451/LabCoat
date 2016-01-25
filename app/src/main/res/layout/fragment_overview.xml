@@ -17,12 +17,13 @@
 
             <com.devspark.robototextview.widget.RobotoTextView
                 android:id="@+id/creator"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingLeft="@dimen/activity_horizontal_margin"
                 android:paddingRight="@dimen/activity_horizontal_margin"
                 android:paddingBottom="@dimen/activity_vertical_margin"
                 android:paddingTop="@dimen/activity_vertical_margin"
+                android:tag="text_primary"
                 android:textSize="14sp"
                 android:background="?attr/selectableItemBackground"
                 tools:text="Created by Commit451"/>
@@ -44,6 +45,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/ic_star_24dp"
+                        android:tag="tint_text_primary"
                         android:contentDescription="@null"/>
 
                     <TextView
@@ -52,6 +54,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginLeft="8dp"
+                        android:tag="text_primary"
                         tools:text="100" />
 
                 </LinearLayout>
@@ -66,6 +69,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/ic_fork"
+                        android:tag="tint_text_primary"
                         android:contentDescription="@null"/>
 
                     <TextView
@@ -74,6 +78,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginLeft="8dp"
+                        android:tag="text_primary"
                         tools:text="100" />
 
                 </LinearLayout>
@@ -83,6 +88,7 @@
                 android:id="@+id/overview_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:tag="text_primary,text_link_accent_color"
                 android:padding="16dp" />
         </LinearLayout>
 

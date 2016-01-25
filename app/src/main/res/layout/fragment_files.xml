@@ -13,12 +13,12 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/breadcrumb"
             android:layout_width="match_parent"
-            android:layout_height="32dp"
+            android:layout_height="40dp"
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:paddingRight="@dimen/activity_horizontal_margin"
             android:clipToPadding="false"
             android:clipChildren="false"
-            android:background="?attr/colorPrimary"/>
+            android:tag="bg_primary_color_dark"/>
 
         <com.commit451.gitlab.view.GitLabSwipeRefreshLayout
             android:id="@+id/swipe_layout"

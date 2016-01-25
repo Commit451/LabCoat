@@ -28,6 +28,7 @@
                 android:layout_height="wrap_content"
                 android:padding="16dp"
                 android:layout_marginRight="56dp"
+                android:tag="text_primary_dependent"
                 tools:text="This is an issue"/>
 
         </android.support.design.widget.AppBarLayout>
