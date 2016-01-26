@@ -66,10 +66,6 @@ public class SettingsActivity extends BaseActivity
                 break;
             case R.string.accent_color:
                 config.accentColor(selectedColor);
-                // We've overridden the navigation view selected colors in the default config,
-                // which means we are responsible for keeping those colors up to date.
-                //config.navigationViewSelectedIcon(selectedColor);
-                //config.navigationViewSelectedText(selectedColor);
                 break;
         }
         config.commit();

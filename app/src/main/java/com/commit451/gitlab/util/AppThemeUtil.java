@@ -17,8 +17,6 @@ public class AppThemeUtil {
                     .accentColorRes(R.color.accent_default)
                     .coloredNavigationBar(false)
                     .usingMaterialDialogs(true)
-                    //.navigationViewSelectedIconRes(R.color.colorAccentLightDefault)
-                    //.navigationViewSelectedTextRes(R.color.colorAccentLightDefault)
                     .commit();
         }
         if (!ATE.config(context, "dark_theme").isConfigured(0)) {
@@ -28,8 +26,6 @@ public class AppThemeUtil {
                     .accentColorRes(R.color.accent_default)
                     .coloredNavigationBar(true)
                     .usingMaterialDialogs(true)
-                    //.navigationViewSelectedIconRes(R.color.colorAccentDarkDefault)
-                    //.navigationViewSelectedTextRes(R.color.colorAccentDarkDefault)
                     .commit();
         }
     }

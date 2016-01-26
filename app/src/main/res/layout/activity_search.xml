@@ -27,7 +27,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:tag="text_primary_dependent"
+                android:tag="text_primary_color_dependent"
                 android:hint="@string/action_search"
                 android:layout_marginRight="32dp"
                 android:inputType="text"
