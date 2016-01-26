@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
+import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.gitlab.adapter.FeedAdapter;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.rss.Entry;
@@ -118,6 +119,7 @@ public class FeedFragment extends BaseFragment {
 
         mFeedAdapter = new FeedAdapter(mFeedAdapterListener);
         mEntryListView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mEntryListView.addItemDecoration(new DividerItemDecoration(getActivity()));
         mEntryListView.setAdapter(mFeedAdapter);
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {

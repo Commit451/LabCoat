@@ -23,4 +23,6 @@
     <dimen name="user_header_image_size">300dp</dimen>
 
     <dimen name="dialog_corners">2dp</dimen>
+
+    <dimen name="divider_height">1dp</dimen>
 </resources>

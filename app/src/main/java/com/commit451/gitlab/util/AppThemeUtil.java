@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.TypedValue;
 
 import com.afollestad.appthemeengine.ATE;
+import com.afollestad.appthemeengine.Config;
 import com.commit451.gitlab.R;
 
 public class AppThemeUtil {
@@ -37,5 +38,17 @@ public class AppThemeUtil {
         TypedValue typedValue = new TypedValue();
         context.getTheme().resolveAttribute(R.attr.ate_key, typedValue, true);
         return (String) typedValue.coerceToString();
+    }
+
+    public static int resolvePrimaryColor(Context context) {
+        return Config.primaryColor(context, resolveThemeKey(context));
+    }
+
+    public static int resolvePrimaryColorDark(Context context) {
+        return Config.primaryColorDark(context, resolveThemeKey(context));
+    }
+
+    public static int resolveAccentColor(Context context) {
+        return Config.accentColor(context, resolveThemeKey(context));
     }
 }

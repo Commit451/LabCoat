@@ -15,6 +15,7 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.DiffActivity;
 import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.adapter.CommitsAdapter;
+import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Project;
@@ -156,6 +157,7 @@ public class CommitsFragment extends BaseFragment {
         mCommitsAdapter = new CommitsAdapter(mCommitsAdapterListener);
         mCommitsLayoutManager = new LinearLayoutManager(getActivity());
         mCommitsListView.setLayoutManager(mCommitsLayoutManager);
+        mCommitsListView.addItemDecoration(new DividerItemDecoration(getActivity()));
         mCommitsListView.setAdapter(mCommitsAdapter);
         mCommitsListView.addOnScrollListener(mOnScrollListener);
 

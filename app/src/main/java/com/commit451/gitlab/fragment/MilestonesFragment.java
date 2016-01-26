@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ProjectActivity;
+import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.gitlab.adapter.MilestoneAdapter;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.MilestoneChangedEvent;
@@ -194,6 +195,7 @@ public class MilestonesFragment extends BaseFragment {
         mMilestoneAdapter = new MilestoneAdapter(mMilestoneListener);
         mMilestoneLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mMilestoneLayoutManager);
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity()));
         mRecyclerView.setAdapter(mMilestoneAdapter);
         mRecyclerView.addOnScrollListener(mOnScrollListener);
 

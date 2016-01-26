@@ -1,38 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/selectableItemBackground"
-    android:minHeight="?android:attr/listPreferredItemHeight">
+    android:minHeight="?android:attr/listPreferredItemHeight"
+    android:orientation="vertical"
+    android:padding="16dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_margin="16dp">
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:tag="text_primary"
+        android:textSize="16sp"
+        tools:text="milestone 100" />
 
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:tag="text_primary"
-            android:textSize="16sp"
-            tools:text="milestone 100" />
+    <TextView
+        android:id="@+id/due_date"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:tag="text_secondary"
+        tools:text="12/12/12" />
 
-        <TextView
-            android:id="@+id/due_date"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:tag="text_secondary"
-            tools:text="12/12/12" />
-
-    </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_gravity="bottom"
-        android:background="?android:attr/listDivider"/>
-
-</FrameLayout>
+</LinearLayout>

@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ProjectActivity;
+import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.gitlab.adapter.MergeRequestAdapter;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.ProjectReloadEvent;
@@ -179,6 +180,7 @@ public class MergeRequestsFragment extends BaseFragment {
         mMergeRequestAdapter = new MergeRequestAdapter(mMergeRequestAdapterListener);
         mMergeLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mMergeLayoutManager);
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity()));
         mRecyclerView.setAdapter(mMergeRequestAdapter);
         mRecyclerView.addOnScrollListener(mOnScrollListener);
 
