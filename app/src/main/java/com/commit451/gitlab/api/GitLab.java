@@ -111,10 +111,10 @@ public interface GitLab {
 
     /* --- PROJECTS --- */
 
-    @GET(API_VERSION + "/projects?order_by=last_activity_at")
+    @GET(API_VERSION + "/projects?order_by=last_activity_at&archived=false")
     Call<List<Project>> getAllProjects();
 
-    @GET(API_VERSION + "/projects/owned?order_by=last_activity_at")
+    @GET(API_VERSION + "/projects/owned?order_by=last_activity_at&archived=false")
     Call<List<Project>> getMyProjects();
 
     @GET(API_VERSION + "/projects/starred")
