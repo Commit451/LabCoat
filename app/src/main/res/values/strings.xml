@@ -70,6 +70,8 @@
     <string name="normal_link"><u>Login using username or email</u></string>
     <string name="certificate_title">Certificate not trusted</string>
     <string name="certificate_message">The certificate the server used was not issued by a trusted authority.\n\nThis could mean a hacker is trying to intercept your communications.\n\nIf you trust the certificate, press OK to continue.\n\nFingerprint (SHA-1):\n%1$s</string>
+    <string name="hostname_title">Hostname did not match</string>
+    <string name="hostname_message">The hostname in the certificate did not match the hostname you are connecting to.\n\nThis could mean a hacker is trying to intercept your communications.\n\nIf you trust the certificate, press OK to continue.</string>
     <string name="not_a_valid_url">Not a valid URL</string>
     <string name="not_a_valid_private_token">Not a valid private token</string>
     <string name="realm_message">A username and password are being requested by the server.\nThe server says: \"%1$s\"</string>
