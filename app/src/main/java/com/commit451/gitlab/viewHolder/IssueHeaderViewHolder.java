@@ -44,7 +44,6 @@ public class IssueHeaderViewHolder extends RecyclerView.ViewHolder {
     public IssueHeaderViewHolder(View view) {
         super(view);
         ButterKnife.bind(this, view);
-        ATE.apply(view, AppThemeUtil.resolveThemeKey(view.getContext()));
         mBypass = new Bypass(view.getContext());
     }
 

@@ -18,9 +18,6 @@ public class BaseFragment extends Fragment{
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Apply theming to the Fragment view
-        ATE.apply(this, AppThemeUtil.resolveThemeKey(getActivity()));
-
         mBaseEventReceiever = new EventReceiver();
         LabCoatApp.bus().register(mBaseEventReceiever);
     }

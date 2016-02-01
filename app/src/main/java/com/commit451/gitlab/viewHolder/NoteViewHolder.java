@@ -42,7 +42,6 @@ public class NoteViewHolder extends RecyclerView.ViewHolder {
     public NoteViewHolder(View view) {
         super(view);
         ButterKnife.bind(this, view);
-        ATE.apply(view, AppThemeUtil.resolveThemeKey(view.getContext()));
     }
 
     public void bind(Note note, Bypass bypass) {

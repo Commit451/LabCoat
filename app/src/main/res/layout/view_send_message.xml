@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="bottom"
-    android:tag="bg_primary_color"
+    android:tag="background|primary_color"
     android:elevation="4dp"
     android:minHeight="?attr/actionBarSize"
     android:paddingTop="8dp"
@@ -17,7 +17,7 @@
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="8dp"
         android:layout_weight="1"
-        android:tag="tint_accent_color,text_primary_color_dependent"
+        android:tag="text_color|primary_color_dependent,text_color_hint|primary_color_dependent"
         android:hint="@string/new_note_hint"
         android:imeOptions="actionNone"
         android:inputType="textCapSentences|textAutoCorrect|textMultiLine"
@@ -30,7 +30,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:src="@drawable/ic_send_24dp"
-        android:tag="bg_tint_accent_color_selector_darker"
+        android:tag="tint_selector|accent_color"
         app:fabSize="mini" />
 
 </LinearLayout>

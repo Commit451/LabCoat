@@ -35,7 +35,7 @@ import android.widget.Filterable;
 import android.widget.TextView;
 
 import com.afollestad.appthemeengine.Config;
-import com.afollestad.appthemeengine.util.Util;
+import com.afollestad.appthemeengine.util.ATEUtil;
 import com.commit451.gitlab.util.AppThemeUtil;
 
 import java.util.ArrayList;
@@ -397,7 +397,7 @@ public class ThemedArrayAdapter<T> extends BaseAdapter implements Filterable, Th
             text.setTextColor(Config.textColorPrimary(view.getContext(),
                     AppThemeUtil.resolveThemeKey(view.getContext())));
         } else {
-            text.setTextColor(Util.isColorLight(Config.primaryColor(view.getContext(),
+            text.setTextColor(ATEUtil.isColorLight(Config.primaryColor(view.getContext(),
                     AppThemeUtil.resolveThemeKey(view.getContext()))) ? Color.BLACK : Color.WHITE);
         }
 

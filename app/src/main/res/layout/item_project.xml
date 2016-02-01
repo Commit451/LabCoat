@@ -51,7 +51,7 @@
             android:layout_gravity="center_vertical"
             android:ellipsize="end"
             android:maxLines="2"
-            android:tag="text_primary"
+            android:tag="text_color|primary_text"
             android:textSize="16sp"
             app:typeface="roboto_medium"
             tools:text="Project" />
@@ -63,7 +63,7 @@
             android:layout_gravity="center_vertical"
             android:ellipsize="end"
             android:maxLines="2"
-            android:tag="text_secondary"
+            android:tag="text_color|secondary_text"
             android:textSize="14sp"
             app:typeface="roboto_regular"
             tools:text="I like this project because its called a project and it has a really long description that should cut off after a few lines" />
@@ -75,7 +75,7 @@
         android:layout_width="16dp"
         android:layout_height="16dp"
         android:contentDescription="@null"
-        android:tag="tint_text_primary"
+        android:tag="tint|primary_text"
         tools:src="@drawable/ic_public_24dp" />
 
 </LinearLayout>

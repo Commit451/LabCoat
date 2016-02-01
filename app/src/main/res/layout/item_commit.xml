@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="2"
-            android:tag="text_primary"
+            android:tag="text_color|primary_text"
             android:textSize="@dimen/text_size_small"
             tools:text="I commited all the code at once cause I am cool. So sorry" />
 
@@ -42,7 +42,7 @@
                 android:id="@+id/commit_author"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:tag="text_secondary"
+                android:tag="text_color|secondary_text"
                 android:textSize="@dimen/text_size_tiny"
                 tools:text="Jawnnypoo" />
 
@@ -51,7 +51,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
-                android:tag="text_secondary"
+                android:tag="text_color|secondary_text"
                 android:textSize="@dimen/text_size_tiny"
                 tools:text="May 25, 2019" />
         </FrameLayout>

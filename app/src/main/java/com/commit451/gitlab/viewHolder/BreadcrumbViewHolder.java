@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.afollestad.appthemeengine.Config;
-import com.afollestad.appthemeengine.util.Util;
+import com.afollestad.appthemeengine.util.ATEUtil;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.util.AppThemeUtil;
 
@@ -37,9 +37,9 @@ public class BreadcrumbViewHolder extends RecyclerView.ViewHolder {
     public BreadcrumbViewHolder(View view) {
         super(view);
         ButterKnife.bind(this, view);
-        mPrimaryTextColor = Util.isColorLight(Config.primaryColor(view.getContext(),
+        mPrimaryTextColor = ATEUtil.isColorLight(Config.primaryColor(view.getContext(),
                 AppThemeUtil.resolveThemeKey(view.getContext()))) ? Color.BLACK : Color.WHITE;
-        mSecondaryTextColor = Util.adjustAlpha(mPrimaryTextColor, 0.5f);
+        mSecondaryTextColor = ATEUtil.adjustAlpha(mPrimaryTextColor, 0.5f);
         // We need to tint arrow based on text color
         mArrowView.setColorFilter(mSecondaryTextColor, PorterDuff.Mode.SRC_IN);
     }

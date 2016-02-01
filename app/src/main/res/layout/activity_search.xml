@@ -27,7 +27,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:tag="text_primary_color_dependent"
+                android:tag="text_color|primary_color_dependent,text_color_hint|primary_color_dependent"
                 android:hint="@string/action_search"
                 android:layout_marginRight="32dp"
                 android:inputType="text"
@@ -48,8 +48,7 @@
         <android.support.design.widget.TabLayout
             android:id="@+id/tabs"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:tag="tab_indicator_accent_color"/>
+            android:layout_height="wrap_content"/>
 
     </android.support.design.widget.AppBarLayout>
 

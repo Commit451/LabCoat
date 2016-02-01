@@ -32,7 +32,6 @@ public class DiffViewHolder extends RecyclerView.ViewHolder {
     public DiffViewHolder(View view) {
         super(view);
         ButterKnife.bind(this, view);
-        ATE.apply(view, AppThemeUtil.resolveThemeKey(view.getContext()));
     }
 
     public void bind(Diff diff) {

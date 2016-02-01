@@ -20,7 +20,7 @@ import android.widget.ImageView;
 
 import com.afollestad.appthemeengine.Config;
 import com.afollestad.appthemeengine.customizers.ATEActivityThemeCustomizer;
-import com.afollestad.appthemeengine.util.Util;
+import com.afollestad.appthemeengine.util.ATEUtil;
 import com.commit451.easel.Easel;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.GroupPagerAdapter;
@@ -145,7 +145,7 @@ public class GroupActivity extends BaseActivity implements ATEActivityThemeCusto
     private void bindPalette(Palette palette) {
         int animationTime = 1000;
         int vibrantColor = palette.getVibrantColor(AppThemeUtil.resolvePrimaryColor(this));
-        int darkerColor = Util.darkenColor(vibrantColor);
+        int darkerColor = ATEUtil.darkenColor(vibrantColor);
 
         if (Build.VERSION.SDK_INT >= 21) {
             Easel.getNavigationBarColorAnimator(getWindow(), darkerColor)

@@ -16,7 +16,6 @@ public class AppThemeUtil {
                     .primaryColorRes(R.color.primary_default)
                     .accentColorRes(R.color.accent_default)
                     .coloredNavigationBar(false)
-                    .usingMaterialDialogs(true)
                     .commit();
         }
         if (!ATE.config(context, "dark_theme").isConfigured(0)) {
@@ -25,7 +24,6 @@ public class AppThemeUtil {
                     .primaryColorRes(R.color.primary_default)
                     .accentColorRes(R.color.accent_default)
                     .coloredNavigationBar(true)
-                    .usingMaterialDialogs(true)
                     .commit();
         }
     }

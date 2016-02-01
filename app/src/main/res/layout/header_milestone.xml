@@ -13,7 +13,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginTop="16dp"
-        android:tag="text_primary"
+        android:tag="text_color|primary_text"
         tools:text="Description"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -24,7 +24,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginTop="16dp"
-        android:tag="text_primary"
+        android:tag="text_color|primary_text"
         tools:text="Due January 20th, 2012"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 

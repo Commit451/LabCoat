@@ -40,7 +40,6 @@ public class AccountViewHolder extends RecyclerView.ViewHolder{
     public AccountViewHolder(View view) {
         super(view);
         ButterKnife.bind(this, view);
-        ATE.apply(view, AppThemeUtil.resolveThemeKey(view.getContext()));
 
         mPopupMenu = new PopupMenu(itemView.getContext(), mMoreView);
         mPopupMenu.getMenuInflater().inflate(R.menu.item_menu_account, mPopupMenu.getMenu());

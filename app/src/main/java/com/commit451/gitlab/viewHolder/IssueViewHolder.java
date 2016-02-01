@@ -37,7 +37,6 @@ public class IssueViewHolder extends RecyclerView.ViewHolder {
     public IssueViewHolder(View view) {
         super(view);
         ButterKnife.bind(this, view);
-        ATE.apply(view, AppThemeUtil.resolveThemeKey(view.getContext()));
     }
 
     public void bind(Issue issue) {

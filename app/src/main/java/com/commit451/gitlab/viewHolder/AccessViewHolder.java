@@ -31,7 +31,6 @@ public class AccessViewHolder extends RecyclerView.ViewHolder {
     public AccessViewHolder(View view) {
         super(view);
         ButterKnife.bind(this, view);
-        ATE.apply(view, AppThemeUtil.resolveThemeKey(view.getContext()));
     }
 
     public void bind(String access, int colorSelected, boolean isSelected) {

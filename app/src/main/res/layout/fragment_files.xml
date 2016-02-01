@@ -18,7 +18,7 @@
             android:paddingRight="@dimen/activity_horizontal_margin"
             android:clipToPadding="false"
             android:clipChildren="false"
-            android:tag="bg_primary_color_dark"/>
+            android:tag="background|primary_color_dark"/>
 
         <com.commit451.gitlab.view.GitLabSwipeRefreshLayout
             android:id="@+id/swipe_layout"

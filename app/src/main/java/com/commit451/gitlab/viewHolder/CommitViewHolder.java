@@ -38,7 +38,6 @@ public class CommitViewHolder extends RecyclerView.ViewHolder {
     public CommitViewHolder(View view) {
         super(view);
         ButterKnife.bind(this, view);
-        ATE.apply(view, AppThemeUtil.resolveThemeKey(view.getContext()));
     }
 
     public void bind(RepositoryCommit commit) {

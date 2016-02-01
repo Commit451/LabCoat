@@ -25,6 +25,5 @@ public class AccountFooterViewHolder extends RecyclerView.ViewHolder {
     public AccountFooterViewHolder(View view) {
         super(view);
         ButterKnife.bind(this, view);
-        ATE.apply(view, AppThemeUtil.resolveThemeKey(view.getContext()));
     }
 }

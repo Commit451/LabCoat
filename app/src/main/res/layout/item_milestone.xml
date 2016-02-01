@@ -12,7 +12,7 @@
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:tag="text_primary"
+        android:tag="text_color|primary_text"
         android:textSize="16sp"
         tools:text="milestone 100" />
 
@@ -20,7 +20,7 @@
         android:id="@+id/due_date"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:tag="text_secondary"
+        android:tag="text_color|secondary_text"
         tools:text="12/12/12" />
 
 </LinearLayout>
