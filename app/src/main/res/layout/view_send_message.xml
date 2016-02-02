@@ -17,7 +17,7 @@
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="8dp"
         android:layout_weight="1"
-        android:tag="text_color|primary_color_dependent,text_color_hint|primary_color_dependent"
+        android:tag="tint|parent_dependent,text_color|primary_color_dependent,text_color_hint|primary_color_dependent"
         android:hint="@string/new_note_hint"
         android:imeOptions="actionNone"
         android:inputType="textCapSentences|textAutoCorrect|textMultiLine"

@@ -93,6 +93,8 @@ public class UserActivity extends BaseActivity implements ATEActivityThemeCustom
                 Config.primaryColor(this, AppThemeUtil.resolveThemeKey(this)));
         mCollapsingToolbarLayout.setStatusBarScrimColor(
                 Config.primaryColorDark(this, AppThemeUtil.resolveThemeKey(this)));
+        mCollapsingToolbarLayout.setCollapsedTitleTextColor(Color.WHITE);
+        mCollapsingToolbarLayout.setExpandedTitleColor(Color.WHITE);
 
         mToolbar.setNavigationIcon(R.drawable.ic_back_24dp);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
