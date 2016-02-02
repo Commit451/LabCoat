@@ -60,7 +60,8 @@
                 android:layout_alignParentTop="true"
                 android:ems="10"
                 android:hint="@string/user_hint"
-                android:inputType="textEmailAddress" />
+                android:inputType="textEmailAddress"
+                android:imeOptions="actionNext" />
 
         </android.support.design.widget.TextInputLayout>
 
