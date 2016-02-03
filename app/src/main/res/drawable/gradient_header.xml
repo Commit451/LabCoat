@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape>
+            <!--40% opacity to 0% opacity, as Material Design Spec suggests-->
+            <gradient
+                android:startColor="#00000000"
+                android:endColor="#66000000"
+                android:angle="270" />
+        </shape>
+    </item>
+</selector>
