@@ -14,7 +14,7 @@
         android:fitsSystemWindows="false"
         android:scaleType="fitXY"
         android:src="@drawable/header"
-        android:background="@color/background_color"/>
+        android:tag="background|primary_color"/>
 
     <com.commit451.foregroundimageview.ForegroundImageView
         android:id="@+id/profile_image"

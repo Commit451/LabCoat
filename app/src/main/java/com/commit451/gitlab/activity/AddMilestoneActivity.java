@@ -19,6 +19,7 @@ import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.MilestoneChangedEvent;
 import com.commit451.gitlab.event.MilestoneCreatedEvent;
 import com.commit451.gitlab.model.api.Milestone;
+import com.commit451.gitlab.util.AppThemeUtil;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import org.parceler.Parcels;
@@ -79,6 +80,7 @@ public class AddMilestoneActivity extends MorphActivity {
                 now.get(Calendar.MONTH),
                 now.get(Calendar.DAY_OF_MONTH)
         );
+        dpd.setAccentColor(AppThemeUtil.resolveAccentColor(this));
         dpd.show(getFragmentManager(), "date_picker");
     }
 
