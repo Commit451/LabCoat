@@ -22,3 +22,7 @@ allprojects {
         maven { url "https://jitpack.io" }
     }
 }
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.10'
+}
