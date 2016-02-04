@@ -42,11 +42,11 @@
     </string-array>
 
     <string name="title_all">All</string>
-    <string name="title_mine">Mine</string>
+    <string name="title_your_projects">Your Projects</string>
     <string name="title_starred">Starred</string>
     <string-array name="projects_tabs">
         <item>@string/title_all</item>
-        <item>@string/title_mine</item>
+        <item>@string/title_your_projects</item>
         <item>@string/title_starred</item>
     </string-array>
 
