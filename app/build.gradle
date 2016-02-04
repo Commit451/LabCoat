@@ -67,7 +67,7 @@ dependencies {
     compile 'com.commit451:foregroundviews:1.0.0'
     compile 'com.pnikosis:materialish-progress:1.7'
     compile 'com.jawnnypoo:physicslayout:1.0.1'
-    compile 'com.github.ivbaranov:MaterialLetterIcon:0.2.1'
+    compile 'com.github.ivbaranov:materiallettericon:0.2.1'
     compile 'com.github.johnkil.android-robototextview:robototextview:2.4.3'
     compile 'com.github.alorma:diff-textview:1.1.0'
     compile 'com.wdullaer:materialdatetimepicker:2.1.1'
