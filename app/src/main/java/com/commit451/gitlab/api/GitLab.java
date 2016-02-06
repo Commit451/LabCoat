@@ -8,6 +8,7 @@ import com.commit451.gitlab.model.api.Diff;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.model.api.GroupDetail;
 import com.commit451.gitlab.model.api.Issue;
+import com.commit451.gitlab.model.api.Label;
 import com.commit451.gitlab.model.api.Member;
 import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.model.api.Milestone;
@@ -285,4 +286,33 @@ public interface GitLab {
     @GET(API_VERSION + "/projects/{id}/repository/commits/{sha}/diff")
     Call<List<Diff>> getCommitDiff(@Path("id") long projectId,
                                    @Path("sha") String commitSHA);
+    /**
+     * Get the current labels for a project
+     * @param projectId id
+     * @return all the labels within a project
+     */
+    @GET(API_VERSION + "/projects/{id}/labels")
+    Call<List<Label>> getLabels(@Path("id") long projectId);
+
+    /**
+     * Create a new label
+     * @param projectId id
+     * @param name the name of the label
+     * @param color the color, ex. #ff0000
+     * @return call onSuccess the newly created label
+     */
+    @POST(API_VERSION + "/projects/{id}/labels")
+    Call<Label> createLabel(@Path("id") long projectId,
+                            @Query("name") String name,
+                            @Query("color") String color);
+
+    /**
+     * Delete the label by its name
+     * @param projectId id
+     * @return all the labels within a project
+     */
+    @DELETE(API_VERSION + "/projects/{id}/labels")
+    Call<Label> deleteLabel(@Path("id") long projectId,
+                          @Query("name") String name);
+
 }
