@@ -9,10 +9,11 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import com.commit451.elasticdragdismisslayout.ElasticDragDismissFrameLayout;
+import com.commit451.elasticdragdismisslayout.ElasticDragDismissListener;
 import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.AssigneeSpinnerAdapter;
@@ -55,7 +56,7 @@ public class AddIssueActivity extends MorphActivity {
         return intent;
     }
 
-    @Bind(R.id.root) ViewGroup mRoot;
+    @Bind(R.id.root) ElasticDragDismissFrameLayout mRoot;
     @Bind(R.id.toolbar) Toolbar mToolbar;
     @Bind(R.id.title_text_input_layout) TextInputLayout mTitleInputLayout;
     @Bind(R.id.title) EditText mTitleInput;
@@ -205,6 +206,15 @@ public class AddIssueActivity extends MorphActivity {
             mToolbar.inflateMenu(R.menu.menu_add_milestone);
         }
 
+        mRoot.addListener(new ElasticDragDismissListener() {
+            @Override
+            public void onDrag(float elasticOffset, float elasticOffsetPixels, float rawOffset, float rawOffsetPixels) {}
+
+            @Override
+            public void onDragDismissed() {
+                onBackPressed();
+            }
+        });
         load();
     }
 

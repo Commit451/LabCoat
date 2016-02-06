@@ -55,9 +55,11 @@
         <activity android:name=".activity.GroupActivity"
             android:theme="@style/Activity.Group"/>
         <activity android:name=".activity.MergeRequestActivity"/>
-        <activity android:name=".activity.AddIssueActivity"/>
+        <activity android:name=".activity.AddIssueActivity"
+            android:theme="@style/Activity.Translucent"/>
         <activity android:name=".activity.MilestoneActivity"/>
-        <activity android:name=".activity.AddMilestoneActivity"/>
+        <activity android:name=".activity.AddMilestoneActivity"
+            android:theme="@style/Activity.Translucent"/>
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="${fabric_key}" />

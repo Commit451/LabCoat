@@ -13,6 +13,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.commit451.elasticdragdismisslayout.ElasticDragDismissFrameLayout;
+import com.commit451.elasticdragdismisslayout.ElasticDragDismissListener;
 import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
@@ -53,7 +55,7 @@ public class AddMilestoneActivity extends MorphActivity {
     }
 
     @Bind(R.id.root)
-    View mRoot;
+    ElasticDragDismissFrameLayout mRoot;
     @Bind(R.id.toolbar)
     Toolbar mToolbar;
     @Bind(R.id.title_text_input_layout)
@@ -156,6 +158,15 @@ public class AddMilestoneActivity extends MorphActivity {
                         return true;
                 }
                 return false;
+            }
+        });
+        mRoot.addListener(new ElasticDragDismissListener() {
+            @Override
+            public void onDrag(float elasticOffset, float elasticOffsetPixels, float rawOffset, float rawOffsetPixels) {}
+
+            @Override
+            public void onDragDismissed() {
+                onBackPressed();
             }
         });
     }
