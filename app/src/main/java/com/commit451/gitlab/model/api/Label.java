@@ -1,7 +1,6 @@
 package com.commit451.gitlab.model.api;
 
-import com.bluelinelabs.logansquare.annotation.JsonField;
-import com.bluelinelabs.logansquare.annotation.JsonObject;
+import com.google.gson.annotations.SerializedName;
 
 import org.parceler.Parcel;
 
@@ -9,10 +8,9 @@ import org.parceler.Parcel;
  * A label
  */
 @Parcel
-@JsonObject
 public class Label {
 
-    @JsonField(name = "color")
+    @SerializedName("color")
     int mColor;
 
     protected Label() {
