@@ -85,6 +85,7 @@ public class GroupsActivity extends BaseActivity {
         @Override
         public void onAllFailure(Throwable t) {
             Timber.e(t, null);
+            mSwipeRefreshLayout.setRefreshing(false);
             mLoading = false;
             mMessageText.setVisibility(View.VISIBLE);
             mMessageText.setText(R.string.connection_error);

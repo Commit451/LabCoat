@@ -34,9 +34,11 @@ public abstract class EasyCallback<T> implements Callback<T> {
         mResponse = response;
         if (!response.isSuccess()) {
             onAllFailure(new HttpException(response.code(), response.errorBody()));
+            return;
         }
         if (response.body() == null) {
             onAllFailure(new NullBodyException());
+            return;
         }
         onResponse(response.body());
     }
