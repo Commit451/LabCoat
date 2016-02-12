@@ -15,7 +15,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
-import android.util.Base64;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +25,7 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.RepositoryFile;
+import com.commit451.gitlab.observable.DecodeObservableFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -37,6 +37,9 @@ import java.nio.charset.Charset;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import retrofit.Callback;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class FileActivity extends BaseActivity {
@@ -70,6 +73,7 @@ public class FileActivity extends BaseActivity {
     private long mProjectId;
     private String mPath;
     private String mRef;
+    private RepositoryFile mRepositoryFile;
     private String mFileName;
     private byte[] mBlob;
     private @Option int mOption;
@@ -133,18 +137,41 @@ public class FileActivity extends BaseActivity {
     }
 
     private void bindFile(RepositoryFile repositoryFile) {
+        mRepositoryFile = repositoryFile;
+        mFileName = repositoryFile.getFileName();
+        mToolbar.setTitle(mFileName);
         if (repositoryFile.getSize() > MAX_FILE_SIZE) {
             Snackbar.make(mRoot, R.string.file_too_big, Snackbar.LENGTH_SHORT)
                     .show();
-            return;
+        } else {
+            loadBlob(repositoryFile);
         }
+    }
 
-        // Receiving side
-        mFileName = repositoryFile.getFileName();
-        mBlob = Base64.decode(repositoryFile.getContent(), Base64.DEFAULT);
+    private void loadBlob(RepositoryFile repositoryFile) {
+        DecodeObservableFactory.newDecode(repositoryFile.getContent())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<byte[]>() {
+                    @Override
+                    public void onCompleted() {}
 
+                    @Override
+                    public void onError(Throwable e) {
+                        Snackbar.make(mRoot, R.string.failed_to_load, Snackbar.LENGTH_SHORT)
+                                .show();
+                    }
+
+                    @Override
+                    public void onNext(byte[] bytes) {
+                        bindBlob(bytes);
+                    }
+                });
+    }
+
+    private void bindBlob(byte[] blob) {
+        mBlob = blob;
         String content;
-
         String mimeType = null;
         String extension = fileExt(mFileName);
         if (extension != null) {
@@ -155,7 +182,7 @@ public class FileActivity extends BaseActivity {
         }
 
         if (mimeType != null && mimeType.startsWith("image/")) {
-            String imageURL = "data:" + mimeType + ";base64," + repositoryFile.getContent();
+            String imageURL = "data:" + mimeType + ";base64," + mRepositoryFile.getContent();
 
             content = "<!DOCTYPE html>" +
                     "<html>" +
@@ -182,7 +209,6 @@ public class FileActivity extends BaseActivity {
         }
 
         mFileBlobView.loadDataWithBaseURL("file:///android_asset/", content, "text/html", "utf8", null);
-        mToolbar.setTitle(mFileName);
         mToolbar.inflateMenu(R.menu.file);
     }
 
