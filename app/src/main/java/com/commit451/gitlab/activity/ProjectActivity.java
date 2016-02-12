@@ -3,6 +3,7 @@ package com.commit451.gitlab.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -10,6 +11,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
@@ -18,6 +20,8 @@ import android.widget.TextView;
 import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.SectionsPagerAdapter;
+import com.commit451.gitlab.animation.HideRunnable;
+import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.fragment.BaseFragment;
@@ -32,8 +36,6 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
 import timber.log.Timber;
 
 public class ProjectActivity extends BaseActivity {
@@ -53,11 +55,18 @@ public class ProjectActivity extends BaseActivity {
         return intent;
     }
 
-    @Bind(R.id.toolbar) Toolbar mToolbar;
-    @Bind(R.id.tabs) TabLayout mTabLayout;
-    @Bind(R.id.branch_spinner) Spinner mBranchSpinner;
-    @Bind(R.id.progress) View mProgress;
-    @Bind(R.id.pager) ViewPager mViewPager;
+    @Bind(R.id.root)
+    ViewGroup mRoot;
+    @Bind(R.id.toolbar)
+    Toolbar mToolbar;
+    @Bind(R.id.tabs)
+    TabLayout mTabLayout;
+    @Bind(R.id.branch_spinner)
+    Spinner mBranchSpinner;
+    @Bind(R.id.progress)
+    View mProgress;
+    @Bind(R.id.pager)
+    ViewPager mViewPager;
 
     private final AdapterView.OnItemSelectedListener mSpinnerItemSelectedListener = new AdapterView.OnItemSelectedListener() {
         @Override
@@ -66,88 +75,74 @@ public class ProjectActivity extends BaseActivity {
                 return;
             }
 
-            mBranchName = ((TextView)view).getText().toString();
+            mBranchName = ((TextView) view).getText().toString();
             broadcastLoad();
         }
 
         @Override
-        public void onNothingSelected(AdapterView<?> parent) { }
+        public void onNothingSelected(AdapterView<?> parent) {
+        }
     };
 
     Project mProject;
     String mBranchName;
 
-    private final Callback<Project> mProjectCallback = new Callback<Project>() {
+    private final Callback<Project> mProjectCallback = new EasyCallback<Project>() {
         @Override
-        public void onResponse(Response<Project> response, Retrofit retrofit) {
-            if (!response.isSuccess()) {
-                return;
-            }
-            mProject = response.body();
+        public void onResponse(@NonNull Project response) {
+            mProject = response;
             setupTabs();
             loadBranches();
         }
 
         @Override
-        public void onFailure(Throwable t) {
+        public void onAllFailure(Throwable t) {
             Timber.e(t, null);
-            mProgress.animate().alpha(0.0f).withEndAction(new Runnable() {
-                @Override
-                public void run() {
-                    mProgress.setVisibility(View.GONE);
-                }
-            });
-            Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
+            mProgress.animate()
+                    .alpha(0.0f)
+                    .withEndAction(new HideRunnable(mProgress));
+            Snackbar.make(mRoot, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
                     .show();
         }
     };
 
-    private final Callback<List<Branch>> mBranchesCallback = new Callback<List<Branch>>() {
+    private final Callback<List<Branch>> mBranchesCallback = new EasyCallback<List<Branch>>() {
 
         @Override
-        public void onResponse(Response<List<Branch>> response, Retrofit retrofit) {
-            if (!response.isSuccess()) {
-                return;
-            }
-            mProgress.animate().alpha(0.0f).withEndAction(new Runnable() {
-                @Override
-                public void run() {
-                    mProgress.setVisibility(View.GONE);
-                }
-            });
+        public void onResponse(@NonNull List<Branch> response) {
+            mProgress.animate()
+                    .alpha(0.0f)
+                    .withEndAction(new HideRunnable(mProgress));
 
-            if(response.body().isEmpty()) {
+            if (response.isEmpty()) {
                 mBranchSpinner.setVisibility(View.GONE);
             } else {
                 mBranchSpinner.setVisibility(View.VISIBLE);
                 mBranchSpinner.setAlpha(0.0f);
                 mBranchSpinner.animate().alpha(1.0f);
                 // Set up the dropdown list navigation in the action bar.
-                mBranchSpinner.setAdapter(new ArrayAdapter<>(ProjectActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, response.body()));
+                mBranchSpinner.setAdapter(new ArrayAdapter<>(ProjectActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, response));
             }
-            for (int i=0; i<response.body().size(); i++) {
-                if (response.body().get(i).getName().equals(mProject.getDefaultBranch())) {
+            for (int i = 0; i < response.size(); i++) {
+                if (response.get(i).getName().equals(mProject.getDefaultBranch())) {
                     mBranchSpinner.setSelection(i);
                 }
             }
 
             mBranchSpinner.setOnItemSelectedListener(mSpinnerItemSelectedListener);
 
-            if(response.body().isEmpty()) {
+            if (response.isEmpty()) {
                 broadcastLoad();
             }
         }
 
         @Override
-        public void onFailure(Throwable t) {
+        public void onAllFailure(Throwable t) {
             Timber.e(t, null);
-            mProgress.animate().alpha(0.0f).withEndAction(new Runnable() {
-                @Override
-                public void run() {
-                    mProgress.setVisibility(View.GONE);
-                }
-            });
-            Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
+            mProgress.animate()
+                    .alpha(0.0f)
+                    .withEndAction(new HideRunnable(mProgress));
+            Snackbar.make(mRoot, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
                     .show();
         }
     };
@@ -157,7 +152,7 @@ public class ProjectActivity extends BaseActivity {
         public boolean onMenuItemClick(MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.action_share:
-                    IntentUtil.share(getWindow().getDecorView(), mProject.getWebUrl());
+                    IntentUtil.share(mRoot, mProject.getWebUrl());
                     return true;
             }
             return false;

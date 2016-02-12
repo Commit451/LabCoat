@@ -4,6 +4,7 @@ package com.commit451.gitlab.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.widget.Toolbar;
@@ -17,6 +18,7 @@ import com.commit451.elasticdragdismisslayout.ElasticDragDismissFrameLayout;
 import com.commit451.elasticdragdismisslayout.ElasticDragDismissListener;
 import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
+import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.MilestoneChangedEvent;
 import com.commit451.gitlab.event.MilestoneCreatedEvent;
@@ -32,8 +34,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
 import timber.log.Timber;
 
 public class AddMilestoneActivity extends MorphActivity {
@@ -107,25 +107,21 @@ public class AddMilestoneActivity extends MorphActivity {
         }
     };
 
-    private Callback<Milestone> mMilestoneCallback = new Callback<Milestone>() {
+    private Callback<Milestone> mMilestoneCallback = new EasyCallback<Milestone>() {
 
         @Override
-        public void onResponse(Response<Milestone> response, Retrofit retrofit) {
+        public void onResponse(@NonNull Milestone response) {
             mProgress.setVisibility(View.GONE);
-            if (!response.isSuccess()) {
-                showError();
-                return;
-            }
             if (mMilestone == null) {
-                LabCoatApp.bus().post(new MilestoneCreatedEvent(response.body()));
+                LabCoatApp.bus().post(new MilestoneCreatedEvent(response));
             } else {
-                LabCoatApp.bus().post(new MilestoneChangedEvent(response.body()));
+                LabCoatApp.bus().post(new MilestoneChangedEvent(response));
             }
             finish();
         }
 
         @Override
-        public void onFailure(Throwable t) {
+        public void onAllFailure(Throwable t) {
             Timber.e(t, null);
             mProgress.setVisibility(View.GONE);
             showError();

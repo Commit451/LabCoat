@@ -1,6 +1,7 @@
 package com.commit451.gitlab.fragment;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.GroupMembersAdapter;
+import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.dialog.AccessDialog;
 import com.commit451.gitlab.event.MemberAddedEvent;
@@ -30,8 +32,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
 import timber.log.Timber;
 
 public class GroupMembersFragment extends BaseFragment {
@@ -58,84 +58,6 @@ public class GroupMembersFragment extends BaseFragment {
     private GroupMembersAdapter mGroupMembersAdapter;
     private Member mMember;
 
-    private final Callback<List<Member>> mGroupMembersCallback = new Callback<List<Member>>() {
-        @Override
-        public void onResponse(Response<List<Member>> response, Retrofit retrofit) {
-            if (getView() == null) {
-                return;
-            }
-
-            mSwipeRefreshLayout.setRefreshing(false);
-
-            if (!response.isSuccess()) {
-                Timber.e("Group members response was not a success: %d", response.code());
-                mMessageView.setVisibility(View.VISIBLE);
-                mMessageView.setText(R.string.connection_error_users);
-                mAddUserButton.setVisibility(View.GONE);
-                mGroupMembersAdapter.setData(null);
-                return;
-            }
-
-            if (!response.body().isEmpty()) {
-                mMessageView.setVisibility(View.GONE);
-            } else {
-                Timber.d("No group members found");
-                mMessageView.setVisibility(View.VISIBLE);
-                mMessageView.setText(R.string.no_project_members);
-            }
-
-            mAddUserButton.setVisibility(View.VISIBLE);
-
-            mGroupMembersAdapter.setData(response.body());
-        }
-
-        @Override
-        public void onFailure(Throwable t) {
-            Timber.e(t, null);
-
-            if (getView() == null) {
-                return;
-            }
-
-            mSwipeRefreshLayout.setRefreshing(false);
-
-            mMessageView.setVisibility(View.VISIBLE);
-            mMessageView.setText(R.string.connection_error);
-            mAddUserButton.setVisibility(View.GONE);
-            mGroupMembersAdapter.setData(null);
-        }
-    };
-
-    private final Callback<Void> mRemoveMemberCallback = new Callback<Void>() {
-        @Override
-        public void onResponse(Response<Void> response, Retrofit retrofit) {
-            if (getView() == null) {
-                return;
-            }
-
-            if (!response.isSuccess()) {
-                Timber.e("Remove member response was not a success: %d", response.code());
-                Snackbar.make(mRoot, R.string.failed_to_remove_member, Snackbar.LENGTH_SHORT)
-                        .show();
-                return;
-            }
-
-            mGroupMembersAdapter.removeMember(mMember);
-        }
-
-        @Override
-        public void onFailure(Throwable t) {
-            Timber.e(t, null);
-
-            if (getView() == null) {
-                return;
-            }
-
-            Snackbar.make(mRoot, R.string.connection_error, Snackbar.LENGTH_SHORT)
-                    .show();
-        }
-    };
-
     private final AccessDialog.OnAccessChangedListener mOnAccessChangedListener = new AccessDialog.OnAccessChangedListener() {
         @Override
         public void onAccessChanged(Member member, String accessLevel) {
@@ -143,7 +65,54 @@ public class GroupMembersFragment extends BaseFragment {
         }
     };
 
+    private final Callback<List<Member>> mGroupMembersCallback = new EasyCallback<List<Member>>() {
+        @Override
+        public void onResponse(@NonNull List<Member> response) {
+            if (getView() == null) {
+                return;
+            }
+            mSwipeRefreshLayout.setRefreshing(false);
+            if (response.isEmpty()) {
+                mMessageView.setVisibility(View.VISIBLE);
+                mMessageView.setText(R.string.no_project_members);
+            }
+            mAddUserButton.setVisibility(View.VISIBLE);
+            mGroupMembersAdapter.setData(response);
+        }
 
+        @Override
+        public void onAllFailure(Throwable t) {
+            Timber.e(t, null);
+            if (getView() == null) {
+                return;
+            }
+            mSwipeRefreshLayout.setRefreshing(false);
+            mMessageView.setVisibility(View.VISIBLE);
+            mMessageView.setText(R.string.connection_error_users);
+            mAddUserButton.setVisibility(View.GONE);
+            mGroupMembersAdapter.setData(null);
+        }
+    };
+
+    private final Callback<Void> mRemoveMemberCallback = new EasyCallback<Void>() {
+        @Override
+        public void onResponse(@NonNull Void response) {
+            if (getView() == null) {
+                return;
+            }
+            mGroupMembersAdapter.removeMember(mMember);
+        }
+
+        @Override
+        public void onAllFailure(Throwable t) {
+            Timber.e(t, null);
+            if (getView() == null) {
+                return;
+            }
+            Snackbar.make(mRoot, R.string.failed_to_remove_member, Snackbar.LENGTH_SHORT)
+                    .show();
+        }
+    };
 
     private final GroupMembersAdapter.Listener mListener = new GroupMembersAdapter.Listener() {
         @Override
@@ -214,12 +183,11 @@ public class GroupMembersFragment extends BaseFragment {
         if (getView() == null) {
             return;
         }
-
         if (mGroup == null) {
             mSwipeRefreshLayout.setRefreshing(false);
             return;
         }
-
+        mMessageView.setVisibility(View.GONE);
         mSwipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
@@ -228,7 +196,6 @@ public class GroupMembersFragment extends BaseFragment {
                 }
             }
         });
-
         GitLabClient.instance().getGroupMembers(mGroup.getId()).enqueue(mGroupMembersCallback);
     }
 

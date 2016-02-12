@@ -1,6 +1,7 @@
 package com.commit451.gitlab.fragment;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +16,7 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.DiffActivity;
 import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.adapter.CommitsAdapter;
+import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Project;
@@ -26,8 +28,6 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
 import timber.log.Timber;
 
 public class CommitsFragment extends BaseFragment {
@@ -61,76 +61,55 @@ public class CommitsFragment extends BaseFragment {
         }
     };
 
-    private final Callback<List<RepositoryCommit>> mCommitsCallback = new Callback<List<RepositoryCommit>>() {
+    private final Callback<List<RepositoryCommit>> mCommitsCallback = new EasyCallback<List<RepositoryCommit>>() {
         @Override
-        public void onResponse(Response<List<RepositoryCommit>> response, Retrofit retrofit) {
+        public void onResponse(@NonNull List<RepositoryCommit> response) {
             mLoading = false;
             if (getView() == null) {
                 return;
             }
-
             mSwipeRefreshLayout.setRefreshing(false);
-
-            if (!response.isSuccess()) {
-                Timber.e("Commits response was not a success: %d", response.code());
-                mMessageView.setVisibility(View.VISIBLE);
-                mMessageView.setText(R.string.connection_error_commits);
-                mCommitsAdapter.setData(null);
-                mPage = 0;
-                return;
-            }
-
-            if (!response.body().isEmpty()) {
+            if (!response.isEmpty()) {
                 mMessageView.setVisibility(View.GONE);
             } else {
-                Timber.d("No commits have been made");
                 mMessageView.setVisibility(View.VISIBLE);
                 mMessageView.setText(R.string.no_commits_found);
             }
-
-            mCommitsAdapter.setData(response.body());
-
-            if (response.body().isEmpty()) {
+            mCommitsAdapter.setData(response);
+            if (response.isEmpty()) {
                 mPage = -1;
             }
         }
 
         @Override
-        public void onFailure(Throwable t) {
+        public void onAllFailure(Throwable t) {
             mLoading = false;
             Timber.e(t, null);
-
             if (getView() == null) {
                 return;
             }
-
             mSwipeRefreshLayout.setRefreshing(false);
-
             mMessageView.setVisibility(View.VISIBLE);
-            mMessageView.setText(R.string.connection_error);
+            mMessageView.setText(R.string.connection_error_commits);
             mCommitsAdapter.setData(null);
             mPage = -1;
         }
     };
 
-    private final Callback<List<RepositoryCommit>> mMoreCommitsCallback = new Callback<List<RepositoryCommit>>() {
+    private final Callback<List<RepositoryCommit>> mMoreCommitsCallback = new EasyCallback<List<RepositoryCommit>>() {
         @Override
-        public void onResponse(Response<List<RepositoryCommit>> response, Retrofit retrofit) {
+        public void onResponse(@NonNull List<RepositoryCommit> response) {
             mLoading = false;
-            if (!response.isSuccess()) {
-                return;
-            }
             mCommitsAdapter.setLoading(false);
-            if (response.body().isEmpty()) {
+            if (response.isEmpty()) {
                 mPage = -1;
                 return;
             }
-
-            mCommitsAdapter.addData(response.body());
+            mCommitsAdapter.addData(response);
         }
 
         @Override
-        public void onFailure(Throwable t) {
+        public void onAllFailure(Throwable t) {
             mLoading = false;
             Timber.e(t, null);
             mCommitsAdapter.setLoading(false);

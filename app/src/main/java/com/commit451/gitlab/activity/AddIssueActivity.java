@@ -3,6 +3,7 @@ package com.commit451.gitlab.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.widget.Toolbar;
@@ -18,6 +19,7 @@ import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.AssigneeSpinnerAdapter;
 import com.commit451.gitlab.adapter.MilestoneSpinnerAdapter;
+import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.IssueChangedEvent;
 import com.commit451.gitlab.event.IssueCreatedEvent;
@@ -35,8 +37,6 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
 import timber.log.Timber;
 
 /**
@@ -56,31 +56,37 @@ public class AddIssueActivity extends MorphActivity {
         return intent;
     }
 
-    @Bind(R.id.root) ElasticDragDismissFrameLayout mRoot;
-    @Bind(R.id.toolbar) Toolbar mToolbar;
-    @Bind(R.id.title_text_input_layout) TextInputLayout mTitleInputLayout;
-    @Bind(R.id.title) EditText mTitleInput;
-    @Bind(R.id.description) EditText mDescriptionInput;
-    @Bind(R.id.progress) View mProgress;
-    @Bind(R.id.assignee_progress) View mAssigneeProgress;
-    @Bind(R.id.assignee_spinner) Spinner mAssigneeSpinner;
-    @Bind(R.id.milestone_progress) View mMilestoneProgress;
-    @Bind(R.id.milestone_spinner) Spinner mMilestoneSpinner;
+    @Bind(R.id.root)
+    ElasticDragDismissFrameLayout mRoot;
+    @Bind(R.id.toolbar)
+    Toolbar mToolbar;
+    @Bind(R.id.title_text_input_layout)
+    TextInputLayout mTitleInputLayout;
+    @Bind(R.id.title)
+    EditText mTitleInput;
+    @Bind(R.id.description)
+    EditText mDescriptionInput;
+    @Bind(R.id.progress)
+    View mProgress;
+    @Bind(R.id.assignee_progress)
+    View mAssigneeProgress;
+    @Bind(R.id.assignee_spinner)
+    Spinner mAssigneeSpinner;
+    @Bind(R.id.milestone_progress)
+    View mMilestoneProgress;
+    @Bind(R.id.milestone_spinner)
+    Spinner mMilestoneSpinner;
 
     private Project mProject;
     private Issue mIssue;
     private HashSet<Member> mMembers;
 
-    private final Callback<List<Milestone>> mMilestonesCallback = new Callback<List<Milestone>>() {
+    private final Callback<List<Milestone>> mMilestonesCallback = new EasyCallback<List<Milestone>>() {
         @Override
-        public void onResponse(Response<List<Milestone>> response, Retrofit retrofit) {
+        public void onResponse(@NonNull List<Milestone> response) {
             mMilestoneProgress.setVisibility(View.GONE);
-            if (!response.isSuccess()) {
-                mMilestoneSpinner.setVisibility(View.GONE);
-                return;
-            }
             mMilestoneSpinner.setVisibility(View.VISIBLE);
-            MilestoneSpinnerAdapter milestoneSpinnerAdapter = new MilestoneSpinnerAdapter(AddIssueActivity.this, response.body());
+            MilestoneSpinnerAdapter milestoneSpinnerAdapter = new MilestoneSpinnerAdapter(AddIssueActivity.this, response);
             mMilestoneSpinner.setAdapter(milestoneSpinnerAdapter);
             if (mIssue != null) {
                 mMilestoneSpinner.setSelection(milestoneSpinnerAdapter.getSelectedItemPosition(mIssue.getMilestone()));
@@ -88,24 +94,17 @@ public class AddIssueActivity extends MorphActivity {
         }
 
         @Override
-        public void onFailure(Throwable t) {
+        public void onAllFailure(Throwable t) {
             Timber.e(t, null);
             mMilestoneProgress.setVisibility(View.GONE);
             mMilestoneSpinner.setVisibility(View.GONE);
         }
     };
 
-    private final Callback<List<Member>> mAssigneeCallback = new Callback<List<Member>>() {
+    private final Callback<List<Member>> mAssigneeCallback = new EasyCallback<List<Member>>() {
         @Override
-        public void onResponse(Response<List<Member>> response, Retrofit retrofit) {
-            if (!response.isSuccess()) {
-                mAssigneeProgress.setVisibility(View.GONE);
-                mAssigneeSpinner.setVisibility(View.GONE);
-                return;
-            }
-            if (response.body() != null) {
-                mMembers.addAll(response.body());
-            }
+        public void onResponse(@NonNull List<Member> response) {
+            mMembers.addAll(response);
             if (mProject.belongsToGroup()) {
                 Timber.d("Project belongs to a group, loading those users too");
                 GitLabClient.instance().getGroupMembers(mProject.getNamespace().getId()).enqueue(mGroupMembersCallback);
@@ -115,55 +114,44 @@ public class AddIssueActivity extends MorphActivity {
         }
 
         @Override
-        public void onFailure(Throwable t) {
+        public void onAllFailure(Throwable t) {
             Timber.e(t, null);
             mAssigneeSpinner.setVisibility(View.GONE);
             mAssigneeProgress.setVisibility(View.GONE);
         }
     };
 
-    private final Callback<List<Member>> mGroupMembersCallback = new Callback<List<Member>>() {
+    private final Callback<List<Member>> mGroupMembersCallback = new EasyCallback<List<Member>>() {
         @Override
-        public void onResponse(Response<List<Member>> response, Retrofit retrofit) {
-            if (!response.isSuccess()) {
-                mAssigneeSpinner.setVisibility(View.GONE);
-                return;
-            }
-            if (response.body() != null) {
-                mMembers.addAll(response.body());
-            }
+        public void onResponse(@NonNull List<Member> response) {
+            mMembers.addAll(response);
             setAssignees();
         }
 
         @Override
-        public void onFailure(Throwable t) {
+        public void onAllFailure(Throwable t) {
             Timber.e(t, null);
             mAssigneeSpinner.setVisibility(View.GONE);
             mAssigneeProgress.setVisibility(View.GONE);
         }
     };
 
-    private final Callback<Issue> mIssueCreatedCallback = new Callback<Issue>() {
+    private final Callback<Issue> mIssueCreatedCallback = new EasyCallback<Issue>() {
 
         @Override
-        public void onResponse(Response<Issue> response, Retrofit retrofit) {
-            if (!response.isSuccess()) {
-                Snackbar.make(mRoot, getString(R.string.failed_to_create_issue), Snackbar.LENGTH_SHORT)
-                        .show();
-                return;
-            }
+        public void onResponse(@NonNull Issue response) {
             if (mIssue == null) {
-                LabCoatApp.bus().post(new IssueCreatedEvent(response.body()));
+                LabCoatApp.bus().post(new IssueCreatedEvent(response));
             } else {
-                LabCoatApp.bus().post(new IssueChangedEvent(response.body()));
+                LabCoatApp.bus().post(new IssueChangedEvent(response));
             }
             dismiss();
         }
 
         @Override
-        public void onFailure(Throwable t) {
+        public void onAllFailure(Throwable t) {
             Timber.e(t, null);
-            Snackbar.make(mRoot, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
+            Snackbar.make(mRoot, getString(R.string.failed_to_create_issue), Snackbar.LENGTH_SHORT)
                     .show();
         }
     };
@@ -208,7 +196,8 @@ public class AddIssueActivity extends MorphActivity {
 
         mRoot.addListener(new ElasticDragDismissListener() {
             @Override
-            public void onDrag(float elasticOffset, float elasticOffsetPixels, float rawOffset, float rawOffsetPixels) {}
+            public void onDrag(float elasticOffset, float elasticOffsetPixels, float rawOffset, float rawOffsetPixels) {
+            }
 
             @Override
             public void onDragDismissed() {
@@ -249,11 +238,11 @@ public class AddIssueActivity extends MorphActivity {
     }
 
     private void save() {
-        if(!TextUtils.isEmpty(mTitleInput.getText())) {
+        if (!TextUtils.isEmpty(mTitleInput.getText())) {
             mTitleInputLayout.setError(null);
             showLoading();
             Long assigneeId = null;
-            if (mAssigneeSpinner.getAdapter() != null ) {
+            if (mAssigneeSpinner.getAdapter() != null) {
                 //the user did make a selection of some sort. So update it
                 Member member = (Member) mAssigneeSpinner.getSelectedItem();
                 if (member == null) {
@@ -279,8 +268,7 @@ public class AddIssueActivity extends MorphActivity {
                     mDescriptionInput.getText().toString(),
                     assigneeId,
                     milestoneId);
-        }
-        else {
+        } else {
             mTitleInputLayout.setError(getString(R.string.required_field));
         }
     }

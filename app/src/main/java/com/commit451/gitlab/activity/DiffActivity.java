@@ -3,16 +3,18 @@ package com.commit451.gitlab.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
+import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.DiffAdapter;
+import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Diff;
 import com.commit451.gitlab.model.api.Project;
@@ -25,8 +27,6 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
 import timber.log.Timber;
 
 /**
@@ -44,6 +44,7 @@ public class DiffActivity extends BaseActivity {
         return intent;
     }
 
+    @Bind(R.id.root) ViewGroup mRoot;
     @Bind(R.id.toolbar) Toolbar mToolbar;
     @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
     @Bind(R.id.list) RecyclerView mDiffRecyclerView;
@@ -53,27 +54,19 @@ public class DiffActivity extends BaseActivity {
     private Project mProject;
     private RepositoryCommit mCommit;
 
-    private Callback<List<Diff>> mDiffCallback = new Callback<List<Diff>>() {
+    private Callback<List<Diff>> mDiffCallback = new EasyCallback<List<Diff>>() {
         @Override
-        public void onResponse(Response<List<Diff>> response, Retrofit retrofit) {
+        public void onResponse(@NonNull List<Diff> response) {
             mSwipeRefreshLayout.setRefreshing(false);
-            if (!response.isSuccess()) {
-                return;
-            }
-            for (Diff diff : response.body()) {
-                Timber.d("diff text: "+ diff.getDiff());
-            }
-            mDiffAdapter.setData(response.body());
+            mDiffAdapter.setData(response);
         }
 
         @Override
-        public void onFailure(Throwable t) {
+        public void onAllFailure(Throwable t) {
             mSwipeRefreshLayout.setRefreshing(false);
             Timber.e(t, null);
             mMessageText.setText(R.string.connection_error);
             mMessageText.setVisibility(View.VISIBLE);
-            Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
-                    .show();
         }
     };
 

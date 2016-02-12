@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,12 +13,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.IssueDetailsAdapter;
+import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.IssueChangedEvent;
 import com.commit451.gitlab.event.IssueReloadEvent;
@@ -38,8 +41,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
 import timber.log.Timber;
 
 /**
@@ -57,12 +58,20 @@ public class IssueActivity extends BaseActivity {
         return intent;
     }
 
-    @Bind(R.id.toolbar) Toolbar mToolbar;
-    @Bind(R.id.issue_title) TextView mIssueTitle;
-    @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
-    @Bind(R.id.list) RecyclerView mNotesRecyclerView;
-    @Bind(R.id.new_note_edit) EditText mNewNoteEdit;
-    @Bind(R.id.progress) View mProgress;
+    @Bind(R.id.root)
+    ViewGroup mRoot;
+    @Bind(R.id.toolbar)
+    Toolbar mToolbar;
+    @Bind(R.id.issue_title)
+    TextView mIssueTitle;
+    @Bind(R.id.swipe_layout)
+    SwipeRefreshLayout mSwipeRefreshLayout;
+    @Bind(R.id.list)
+    RecyclerView mNotesRecyclerView;
+    @Bind(R.id.new_note_edit)
+    EditText mNewNoteEdit;
+    @Bind(R.id.progress)
+    View mProgress;
 
     @OnClick(R.id.new_note_button)
     public void onNewNoteClick() {
@@ -103,7 +112,7 @@ public class IssueActivity extends BaseActivity {
         public boolean onMenuItemClick(MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.action_share:
-                    IntentUtil.share(getWindow().getDecorView(), mIssue.getUrl(mProject));
+                    IntentUtil.share(mRoot, mIssue.getUrl(mProject));
                     return true;
                 case R.id.action_close:
                     closeOrOpenIssue();
@@ -113,60 +122,49 @@ public class IssueActivity extends BaseActivity {
         }
     };
 
-    private Callback<List<Note>> mNotesCallback = new Callback<List<Note>>() {
+    private Callback<List<Note>> mNotesCallback = new EasyCallback<List<Note>>() {
 
         @Override
-        public void onResponse(Response<List<Note>> response, Retrofit retrofit) {
+        public void onResponse(@NonNull List<Note> response) {
             mLoading = false;
-            if (!response.isSuccess()) {
-                return;
-            }
             mSwipeRefreshLayout.setRefreshing(false);
-            mNextPageUrl = PaginationUtil.parse(response).getNext();
-            mIssueDetailsAdapter.setNotes(response.body());
+            mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
+            mIssueDetailsAdapter.setNotes(response);
         }
 
         @Override
-        public void onFailure(Throwable t) {
+        public void onAllFailure(Throwable t) {
             mLoading = false;
             Timber.e(t, null);
             mSwipeRefreshLayout.setRefreshing(false);
-            Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
+            Snackbar.make(mRoot, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
                     .show();
         }
     };
 
-    private Callback<List<Note>> mMoreNotesCallback = new Callback<List<Note>>() {
+    private Callback<List<Note>> mMoreNotesCallback = new EasyCallback<List<Note>>() {
 
         @Override
-        public void onResponse(Response<List<Note>> response, Retrofit retrofit) {
+        public void onResponse(@NonNull List<Note> response) {
             mLoading = false;
-            if (!response.isSuccess()) {
-                return;
-            }
             mIssueDetailsAdapter.setLoading(false);
-            mNextPageUrl = PaginationUtil.parse(response).getNext();
-            mIssueDetailsAdapter.addNotes(response.body());
+            mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
+            mIssueDetailsAdapter.addNotes(response);
         }
 
         @Override
-        public void onFailure(Throwable t) {
+        public void onAllFailure(Throwable t) {
             mLoading = false;
             Timber.e(t, null);
             mIssueDetailsAdapter.setLoading(false);
         }
     };
 
-    private final Callback<Issue> mOpenCloseCallback = new Callback<Issue>() {
+    private final Callback<Issue> mOpenCloseCallback = new EasyCallback<Issue>() {
         @Override
-        public void onResponse(Response<Issue> response, Retrofit retrofit) {
+        public void onResponse(@NonNull Issue response) {
             mProgress.setVisibility(View.GONE);
-            if (!response.isSuccess()) {
-                Snackbar.make(getWindow().getDecorView(), getString(R.string.error_changing_issue), Snackbar.LENGTH_SHORT)
-                        .show();
-                return;
-            }
-            mIssue = response.body();
+            mIssue = response;
             LabCoatApp.bus().post(new IssueChangedEvent(mIssue));
             LabCoatApp.bus().post(new IssueReloadEvent());
             setOpenCloseMenuStatus();
@@ -174,31 +172,28 @@ public class IssueActivity extends BaseActivity {
         }
 
         @Override
-        public void onFailure(Throwable t) {
+        public void onAllFailure(Throwable t) {
             Timber.e(t, null);
             mProgress.setVisibility(View.GONE);
-            Snackbar.make(getWindow().getDecorView(), getString(R.string.error_changing_issue), Snackbar.LENGTH_SHORT)
+            Snackbar.make(mRoot, getString(R.string.error_changing_issue), Snackbar.LENGTH_SHORT)
                     .show();
         }
     };
 
-    private Callback<Note> mPostNoteCallback = new Callback<Note>() {
+    private Callback<Note> mPostNoteCallback = new EasyCallback<Note>() {
 
         @Override
-        public void onResponse(Response<Note> response, Retrofit retrofit) {
-            if (!response.isSuccess()) {
-                return;
-            }
+        public void onResponse(@NonNull Note response) {
             mProgress.setVisibility(View.GONE);
-            mIssueDetailsAdapter.addNote(response.body());
+            mIssueDetailsAdapter.addNote(response);
             mNotesRecyclerView.smoothScrollToPosition(IssueDetailsAdapter.getHeaderCount());
         }
 
         @Override
-        public void onFailure(Throwable t) {
+        public void onAllFailure(Throwable t) {
             Timber.e(t, null);
             mProgress.setVisibility(View.GONE);
-            Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
+            Snackbar.make(mRoot, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
                     .show();
         }
     };
@@ -285,7 +280,7 @@ public class IssueActivity extends BaseActivity {
     private void postNote() {
         String body = mNewNoteEdit.getText().toString();
 
-        if(body.length() < 1) {
+        if (body.length() < 1) {
             return;
         }
 
@@ -303,7 +298,7 @@ public class IssueActivity extends BaseActivity {
         mProgress.setVisibility(View.VISIBLE);
         if (mIssue.getState() == Issue.State.CLOSED) {
             GitLabClient.instance().updateIssueStatus(mProject.getId(), mIssue.getId(), Issue.STATE_REOPEN)
-                .enqueue(mOpenCloseCallback);
+                    .enqueue(mOpenCloseCallback);
         } else {
             GitLabClient.instance().updateIssueStatus(mProject.getId(), mIssue.getId(), Issue.STATE_CLOSE)
                     .enqueue(mOpenCloseCallback);

@@ -2,6 +2,7 @@ package com.commit451.gitlab.fragment;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.UsersAdapter;
+import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.UserBasic;
 import com.commit451.gitlab.util.NavigationManager;
@@ -26,8 +28,6 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
 import timber.log.Timber;
 
 public class UsersFragment extends BaseFragment {
@@ -51,9 +51,12 @@ public class UsersFragment extends BaseFragment {
         return fragment;
     }
 
-    @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
-    @Bind(R.id.list) RecyclerView mUsersListView;
-    @Bind(R.id.message_text) TextView mMessageView;
+    @Bind(R.id.swipe_layout)
+    SwipeRefreshLayout mSwipeRefreshLayout;
+    @Bind(R.id.list)
+    RecyclerView mUsersListView;
+    @Bind(R.id.message_text)
+    TextView mMessageView;
     private GridLayoutManager mUserLinearLayoutManager;
 
     private String mQuery;
@@ -82,68 +85,55 @@ public class UsersFragment extends BaseFragment {
         }
     };
 
-    public Callback<List<UserBasic>> mSearchCallback = new Callback<List<UserBasic>>() {
+    public Callback<List<UserBasic>> mSearchCallback = new EasyCallback<List<UserBasic>>() {
         @Override
-        public void onResponse(Response<List<UserBasic>> response, Retrofit retrofit) {
+        public void onResponse(@NonNull List<UserBasic> response) {
             if (getView() == null) {
                 return;
             }
-
             mSwipeRefreshLayout.setRefreshing(false);
             mLoading = false;
-
-            if (!response.isSuccess()) {
-                Timber.e("Users response was not a success: %d", response.code());
-                mMessageView.setText(R.string.connection_error_users);
-                mMessageView.setVisibility(View.VISIBLE);
-                mUsersAdapter.setData(null);
-                return;
-            }
-
-            if (!response.body().isEmpty()) {
-                mMessageView.setVisibility(View.GONE);
-            } else {
-                Timber.d("No users found");
+            if (response.isEmpty()) {
                 mMessageView.setVisibility(View.VISIBLE);
                 mMessageView.setText(R.string.no_users_found);
             }
-            mUsersAdapter.setData(response.body());
-            mNextPageUrl = PaginationUtil.parse(response).getNext();
+            mUsersAdapter.setData(response);
+            mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
         }
 
         @Override
-        public void onFailure(Throwable t) {
+        public void onAllFailure(Throwable t) {
             Timber.e(t, null);
             mLoading = false;
-
             if (getView() == null) {
                 return;
             }
-
             mSwipeRefreshLayout.setRefreshing(false);
-
-            mMessageView.setText(R.string.connection_error);
+            mMessageView.setText(R.string.connection_error_users);
             mMessageView.setVisibility(View.VISIBLE);
             mUsersAdapter.setData(null);
         }
     };
 
-    public Callback<List<UserBasic>> mMoreUsersCallback = new Callback<List<UserBasic>>() {
+    public Callback<List<UserBasic>> mMoreUsersCallback = new EasyCallback<List<UserBasic>>() {
         @Override
-        public void onResponse(Response<List<UserBasic>> response, Retrofit retrofit) {
+        public void onResponse(@NonNull List<UserBasic> response) {
             mLoading = false;
-            if (getView() == null || !response.isSuccess()) {
+            if (getView() == null) {
                 return;
             }
-            mUsersAdapter.addData(response.body());
-            mNextPageUrl = PaginationUtil.parse(response).getNext();
+            mUsersAdapter.addData(response);
+            mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
             mUsersAdapter.setLoading(false);
         }
 
         @Override
-        public void onFailure(Throwable t) {
+        public void onAllFailure(Throwable t) {
             Timber.e(t, null);
             mLoading = false;
+            if (getView() == null) {
+                return;
+            }
             mUsersAdapter.setLoading(false);
         }
     };
@@ -204,6 +194,7 @@ public class UsersFragment extends BaseFragment {
             return;
         }
 
+        mMessageView.setVisibility(View.GONE);
         mSwipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {

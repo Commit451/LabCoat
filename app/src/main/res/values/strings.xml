@@ -87,7 +87,7 @@
     <string name="connection_error_merge_requests">Failed to load merge requests</string>
     <string name="connection_error_milestones">Failed to load milestones</string>
     <string name="connection_error_readme">Failed to load readme</string>
-    <string name="connection_error_projects">Failed to projects</string>
+    <string name="connection_error_projects">Failed to load projects</string>
 
     <string name="login_unauthorized">Incorrect credentials. Try again</string>
     <string name="login_error">Login failed. Please check your login information</string>
@@ -110,6 +110,7 @@
     <string name="error_no_browser">No browser on device. What are you doing?</string>
     <string name="error_user_conflict">There is a conflict in adding this user.</string>
     <string name="error_creating_account">Error creating account</string>
+    <string name="error_failed_to_add_user">Failed to add user</string>
 
     <string name="required_field">Required Field</string>
     <string name="wait_for_project_to_load">Wait for the project to load!</string>

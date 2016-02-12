@@ -16,7 +16,7 @@ import com.commit451.gitlab.transition.MorphDialogToFab;
 import com.commit451.gitlab.transition.MorphFabToDialog;
 
 /**
- * Activity that morphs from a FAB. Make sure the view you want to morph has the view id R.id.root and
+ * Activity that morphs from a FAB. Make sure the view you want to morph has the view id R.id.mRoot and
  * call {@link #morph(View)} when the content view is set
  */
 public class MorphActivity extends BaseActivity {

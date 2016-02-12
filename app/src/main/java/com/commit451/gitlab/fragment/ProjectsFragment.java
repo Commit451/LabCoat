@@ -2,6 +2,7 @@ package com.commit451.gitlab.fragment;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.ProjectsAdapter;
+import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.model.api.Project;
@@ -25,8 +27,6 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
 import timber.log.Timber;
 
 public class ProjectsFragment extends BaseFragment {
@@ -93,51 +93,31 @@ public class ProjectsFragment extends BaseFragment {
         }
     };
 
-    private final Callback<List<Project>> mProjectsCallback = new Callback<List<Project>>() {
+    private final Callback<List<Project>> mProjectsCallback = new EasyCallback<List<Project>>() {
         @Override
-        public void onResponse(Response<List<Project>> response, Retrofit retrofit) {
+        public void onResponse(@NonNull List<Project> response) {
             mLoading = false;
-
             if (getView() == null) {
                 return;
             }
-
             mSwipeRefreshLayout.setRefreshing(false);
-
-            if (!response.isSuccess()) {
-                Timber.e("Projects response was not a success: %d", response.code());
-                mMessageView.setVisibility(View.VISIBLE);
-                mMessageView.setText(R.string.connection_error_projects);
-                mProjectsAdapter.setData(null);
-                mNextPageUrl = null;
-                return;
-            }
-
-            if (!response.body().isEmpty()) {
-                mMessageView.setVisibility(View.GONE);
-            } else if (mNextPageUrl == null) {
-                Timber.d("No projects found");
+            if (response.isEmpty()) {
                 mMessageView.setVisibility(View.VISIBLE);
                 mMessageView.setText(R.string.no_projects);
             }
-
-            mProjectsAdapter.setData(response.body());
-
-            mNextPageUrl = PaginationUtil.parse(response).getNext();
+            mProjectsAdapter.setData(response);
+            mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
             Timber.d("Next page url " + mNextPageUrl);
         }
 
         @Override
-        public void onFailure(Throwable t) {
+        public void onAllFailure(Throwable t) {
             mLoading = false;
             Timber.e(t, null);
-
             if (getView() == null) {
                 return;
             }
-
             mSwipeRefreshLayout.setRefreshing(false);
-
             mMessageView.setVisibility(View.VISIBLE);
             mMessageView.setText(R.string.connection_error);
             mProjectsAdapter.setData(null);
@@ -145,27 +125,21 @@ public class ProjectsFragment extends BaseFragment {
         }
     };
 
-    private final Callback<List<Project>> mMoreProjectsCallback = new Callback<List<Project>>() {
+    private final Callback<List<Project>> mMoreProjectsCallback = new EasyCallback<List<Project>>() {
         @Override
-        public void onResponse(Response<List<Project>> response, Retrofit retrofit) {
+        public void onResponse(@NonNull List<Project> response) {
             mLoading = false;
-
             if (getView() == null) {
                 return;
             }
             mProjectsAdapter.setLoading(false);
-
-            if (!response.isSuccess()) {
-                return;
-            }
-            mProjectsAdapter.addData(response.body());
-
-            mNextPageUrl = PaginationUtil.parse(response).getNext();
+            mProjectsAdapter.addData(response);
+            mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
             Timber.d("Next page url " + mNextPageUrl);
         }
 
         @Override
-        public void onFailure(Throwable t) {
+        public void onAllFailure(Throwable t) {
             mLoading = false;
             Timber.e(t, null);
 
@@ -227,6 +201,7 @@ public class ProjectsFragment extends BaseFragment {
         if (getView() == null) {
             return;
         }
+        mMessageView.setVisibility(View.GONE);
 
         mNextPageUrl = null;
 

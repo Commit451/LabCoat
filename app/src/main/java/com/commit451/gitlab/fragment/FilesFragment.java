@@ -4,6 +4,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,6 +20,7 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.adapter.BreadcrumbAdapter;
 import com.commit451.gitlab.adapter.FilesAdapter;
+import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Project;
@@ -32,9 +34,6 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
 import timber.log.Timber;
 
 public class FilesFragment extends BaseFragment {
@@ -56,7 +55,7 @@ public class FilesFragment extends BaseFragment {
     private BreadcrumbAdapter mBreadcrumbAdapter;
     private String mCurrentPath = "";
 
-    private class FilesCallback implements Callback<List<RepositoryTreeObject>> {
+    private class FilesCallback extends EasyCallback<List<RepositoryTreeObject>> {
         private final String mNewPath;
 
         public FilesCallback(String newPath) {
@@ -64,25 +63,12 @@ public class FilesFragment extends BaseFragment {
         }
 
         @Override
-        public void onResponse(Response<List<RepositoryTreeObject>> response, Retrofit retrofit) {
+        public void onResponse(@NonNull List<RepositoryTreeObject> response) {
             if (getView() == null) {
                 return;
             }
-
             mSwipeRefreshLayout.setRefreshing(false);
-
-            if (!response.isSuccess()) {
-                Timber.e("Files response was not a success: %d", response.code());
-                mMessageView.setVisibility(View.VISIBLE);
-                mMessageView.setText(R.string.connection_error_files);
-                mFilesAdapter.setData(null);
-
-                mCurrentPath = mNewPath;
-                updateBreadcrumbs();
-                return;
-            }
-
-            if (!response.body().isEmpty()) {
+            if (!response.isEmpty()) {
                 mMessageView.setVisibility(View.GONE);
             } else {
                 Timber.d("No files found");
@@ -90,26 +76,22 @@ public class FilesFragment extends BaseFragment {
                 mMessageView.setText(R.string.no_files_found);
             }
 
-            mFilesAdapter.setData(response.body());
+            mFilesAdapter.setData(response);
             mFilesListView.scrollToPosition(0);
             mCurrentPath = mNewPath;
             updateBreadcrumbs();
         }
 
         @Override
-        public void onFailure(Throwable t) {
+        public void onAllFailure(Throwable t) {
             Timber.e(t, null);
-
             if (getView() == null) {
                 return;
             }
-
             mSwipeRefreshLayout.setRefreshing(false);
-
             mMessageView.setVisibility(View.VISIBLE);
-            mMessageView.setText(R.string.connection_error);
+            mMessageView.setText(R.string.connection_error_files);
             mFilesAdapter.setData(null);
-
             mCurrentPath = mNewPath;
             updateBreadcrumbs();
         }
