@@ -35,7 +35,7 @@
                 android:layout_centerHorizontal="true"
                 android:hint="@string/url_hint"
                 android:inputType="textUri"
-                android:tag="text_color|primary_color_dependent,text_color_hint|primary_color_dependent"
+                android:tag="tint|primary_color_dependent,text_color|primary_color_dependent,text_color_hint|primary_color_dependent"
                 android:text="@string/url_gitlab">
 
             </EditText>
@@ -53,7 +53,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <com.commit451.gitlab.view.EmailAutoCompleteTextView
+                <android.support.v7.widget.AppCompatAutoCompleteTextView
                     android:id="@+id/user_input"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -61,7 +61,7 @@
                     android:ems="10"
                     android:hint="@string/user_hint"
                     android:inputType="textEmailAddress"
-                    android:tag="text_color|primary_color_dependent,text_color_hint|primary_color_dependent" />
+                    android:tag="tint|primary_color_dependent,text_color|primary_color_dependent,text_color_hint|primary_color_dependent" />
 
             </android.support.design.widget.TextInputLayout>
 
@@ -78,7 +78,7 @@
                     android:layout_centerHorizontal="true"
                     android:hint="@string/password_hint"
                     android:inputType="textPassword"
-                    android:tag="text_color|primary_color_dependent,text_color_hint|primary_color_dependent" />
+                    android:tag="tint|primary_color_dependent,text_color|primary_color_dependent,text_color_hint|primary_color_dependent" />
 
             </android.support.design.widget.TextInputLayout>
         </LinearLayout>
@@ -103,7 +103,7 @@
                     android:layout_centerHorizontal="true"
                     android:hint="@string/token_hint"
                     android:inputType="textVisiblePassword"
-                    android:tag="text_color|primary_color_dependent,text_color_hint|primary_color_dependent" />
+                    android:tag="tint|primary_color_dependent,text_color|primary_color_dependent,text_color_hint|primary_color_dependent" />
             </android.support.design.widget.TextInputLayout>
         </LinearLayout>
 
