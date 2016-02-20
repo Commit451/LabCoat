@@ -48,8 +48,7 @@ public class IssueDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         } else if (viewType == TYPE_HEADER_LABEL) {
             return IssueLabelsViewHolder.inflate(parent);
         } else if (viewType == TYPE_COMMENT) {
-            RecyclerView.ViewHolder holder = NoteViewHolder.inflate(parent);
-            return holder;
+            return NoteViewHolder.inflate(parent);
         } else if (viewType == TYPE_FOOTER) {
             return LoadingFooterViewHolder.inflate(parent);
         }
@@ -89,7 +88,7 @@ public class IssueDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     public Note getNoteAt(int position) {
-        return mNotes.get(position-1);
+        return mNotes.get(position - HEADER_COUNT);
     }
 
     public void setNotes(List<Note> notes) {

@@ -44,8 +44,7 @@ public class MergeRequestDetailAdapter extends RecyclerView.Adapter<RecyclerView
         if (viewType == TYPE_HEADER) {
             return MergeRequestHeaderViewHolder.inflate(parent);
         } else if (viewType == TYPE_COMMENT) {
-            RecyclerView.ViewHolder holder = NoteViewHolder.inflate(parent);
-            return holder;
+            return NoteViewHolder.inflate(parent);
         } else if (viewType == TYPE_FOOTER) {
             return LoadingFooterViewHolder.inflate(parent);
         }
@@ -85,7 +84,7 @@ public class MergeRequestDetailAdapter extends RecyclerView.Adapter<RecyclerView
     }
 
     public Note getNoteAt(int position) {
-        return mNotes.get(position-1);
+        return mNotes.get(position - HEADER_COUNT);
     }
 
     public void addNote(Note note) {
