@@ -10,7 +10,7 @@ import com.commit451.gitlab.viewHolder.LoadingFooterViewHolder;
 import com.commit451.gitlab.viewHolder.MergeRequestHeaderViewHolder;
 import com.commit451.gitlab.viewHolder.NoteViewHolder;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import in.uncod.android.bypass.Bypass;
@@ -28,14 +28,14 @@ public class MergeRequestDetailAdapter extends RecyclerView.Adapter<RecyclerView
     private static final int HEADER_COUNT = 1;
     private static final int FOOTER_COUNT = 1;
 
-    private ArrayList<Note> mNotes;
+    private LinkedList<Note> mNotes;
     private MergeRequest mMergeRequest;
     private boolean mLoading = false;
     private Bypass mBypass;
 
     public MergeRequestDetailAdapter(Context context, MergeRequest mergeRequest) {
         mMergeRequest = mergeRequest;
-        mNotes = new ArrayList<>();
+        mNotes = new LinkedList<>();
         mBypass = new Bypass(context);
     }
 
@@ -88,8 +88,8 @@ public class MergeRequestDetailAdapter extends RecyclerView.Adapter<RecyclerView
     }
 
     public void addNote(Note note) {
-        mNotes.add(note);
-        notifyItemInserted(mNotes.size() + HEADER_COUNT);
+        mNotes.addFirst(note);
+        notifyItemInserted(HEADER_COUNT);
     }
 
     public void setNotes(List<Note> notes) {
@@ -107,5 +107,9 @@ public class MergeRequestDetailAdapter extends RecyclerView.Adapter<RecyclerView
     public void setLoading(boolean loading) {
         mLoading = loading;
         notifyItemChanged(mNotes.size() + HEADER_COUNT);
+    }
+
+    public static int getHeaderCount() {
+        return HEADER_COUNT;
     }
 }

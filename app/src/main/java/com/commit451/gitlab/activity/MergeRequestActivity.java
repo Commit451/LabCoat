@@ -138,7 +138,7 @@ public class MergeRequestActivity extends BaseActivity {
         public void onResponse(@NonNull Note response) {
             mProgress.setVisibility(View.GONE);
             mMergeRequestDetailAdapter.addNote(response);
-            mNotesRecyclerView.smoothScrollToPosition(mMergeRequestDetailAdapter.getItemCount());
+            mNotesRecyclerView.smoothScrollToPosition(MergeRequestDetailAdapter.getHeaderCount());
         }
 
         @Override

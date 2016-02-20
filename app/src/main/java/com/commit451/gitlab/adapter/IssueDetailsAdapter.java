@@ -11,7 +11,7 @@ import com.commit451.gitlab.viewHolder.IssueLabelsViewHolder;
 import com.commit451.gitlab.viewHolder.LoadingFooterViewHolder;
 import com.commit451.gitlab.viewHolder.NoteViewHolder;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import in.uncod.android.bypass.Bypass;
@@ -30,14 +30,14 @@ public class IssueDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private static final int HEADER_COUNT = 2;
     private static final int FOOTER_COUNT = 1;
 
-    private ArrayList<Note> mNotes;
+    private LinkedList<Note> mNotes;
     private Issue mIssue;
     private boolean mLoading = false;
     private Bypass mBypass;
 
     public IssueDetailsAdapter(Context context, Issue issue) {
         mIssue = issue;
-        mNotes = new ArrayList<>();
+        mNotes = new LinkedList<>();
         mBypass = new Bypass(context);
     }
 
@@ -104,7 +104,7 @@ public class IssueDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     public void addNote(Note note) {
-        mNotes.add(note);
+        mNotes.addFirst(note);
         notifyItemInserted(HEADER_COUNT);
     }
 
