@@ -126,7 +126,7 @@
     <string name="filter_projects">Filter projects</string>
     <string name="logout_title">Are you sure you want to log out?</string>
     <string name="failed_to_load">Failed to load</string>
-    <string name="just_now">Just now</string>
+    <string name="just_now">just now</string>
     <string name="failed_to_create_issue">Failed to create or modify issue</string>
 
     <!-- Overview -->

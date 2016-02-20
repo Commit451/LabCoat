@@ -15,11 +15,13 @@ public class DateUtils {
 
     public static CharSequence getRelativeTimeSpanString(Context context, Date startTime) {
         Date now = new Date();
-        if (startTime.before(now) && now.getTime() - startTime.getTime() < android.text.format.DateUtils.SECOND_IN_MILLIS) {
+        if (Math.abs(now.getTime() - startTime.getTime()) < android.text.format.DateUtils.SECOND_IN_MILLIS) {
             return context.getString(R.string.just_now);
         }
+
         return android.text.format.DateUtils.getRelativeTimeSpanString(startTime.getTime(),
                 now.getTime(),
-                android.text.format.DateUtils.SECOND_IN_MILLIS);
+                android.text.format.DateUtils.SECOND_IN_MILLIS)
+                .toString().toLowerCase();
     }
 }
