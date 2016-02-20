@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,11 +12,13 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.MergeRequestDetailAdapter;
+import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.model.api.Note;
@@ -31,8 +34,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
 import timber.log.Timber;
 
 /**
@@ -50,12 +51,21 @@ public class MergeRequestActivity extends BaseActivity {
         return intent;
     }
 
-    @Bind(R.id.toolbar) Toolbar mToolbar;
-    @Bind(R.id.merge_request_title) TextView mMergeRequestTitle;
-    @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
-    @Bind(R.id.list) RecyclerView mNotesRecyclerView;
-    @Bind(R.id.new_note_edit) EditText mNewNoteEdit;
-    @Bind(R.id.progress) View mProgress;
+    @Bind(R.id.root)
+    ViewGroup mRoot;
+    @Bind(R.id.toolbar)
+    Toolbar mToolbar;
+    @Bind(R.id.merge_request_title)
+    TextView mMergeRequestTitle;
+    @Bind(R.id.swipe_layout)
+    SwipeRefreshLayout mSwipeRefreshLayout;
+    @Bind(R.id.list)
+    RecyclerView mNotesRecyclerView;
+    @Bind(R.id.new_note_edit)
+    EditText mNewNoteEdit;
+    @Bind(R.id.progress)
+    View mProgress;
+
     @OnClick(R.id.new_note_button)
     public void onNewNoteClick() {
         postNote();
@@ -82,73 +92,60 @@ public class MergeRequestActivity extends BaseActivity {
         }
     };
 
-    private Callback<List<Note>> mNotesCallback = new Callback<List<Note>>() {
+    private Callback<List<Note>> mNotesCallback = new EasyCallback<List<Note>>() {
 
         @Override
-        public void onResponse(Response<List<Note>> response, Retrofit retrofit) {
+        public void onResponse(@NonNull List<Note> response) {
             mSwipeRefreshLayout.setRefreshing(false);
             mLoading = false;
-            if (!response.isSuccess()) {
-                Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
-                        .show();
-                return;
-            }
-            mNextPageUrl = PaginationUtil.parse(response).getNext();
-            mMergeRequestDetailAdapter.setNotes(response.body());
+            mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
+            mMergeRequestDetailAdapter.setNotes(response);
         }
 
         @Override
-        public void onFailure(Throwable t) {
+        public void onAllFailure(Throwable t) {
             mLoading = false;
             Timber.e(t, null);
             mSwipeRefreshLayout.setRefreshing(false);
-            Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
+            Snackbar.make(mRoot, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
                     .show();
         }
     };
 
-    private Callback<List<Note>> mMoreNotesCallback = new Callback<List<Note>>() {
+    private Callback<List<Note>> mMoreNotesCallback = new EasyCallback<List<Note>>() {
 
         @Override
-        public void onResponse(Response<List<Note>> response, Retrofit retrofit) {
+        public void onResponse(@NonNull List<Note> response) {
             mMergeRequestDetailAdapter.setLoading(false);
             mLoading = false;
-            if (!response.isSuccess()) {
-                return;
-            }
-            mNextPageUrl = PaginationUtil.parse(response).getNext();
-            mMergeRequestDetailAdapter.addNotes(response.body());
+            mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
+            mMergeRequestDetailAdapter.addNotes(response);
         }
 
         @Override
-        public void onFailure(Throwable t) {
+        public void onAllFailure(Throwable t) {
             mLoading = false;
             Timber.e(t, null);
             mMergeRequestDetailAdapter.setLoading(false);
-            Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
+            Snackbar.make(mRoot, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
                     .show();
         }
     };
 
-    private Callback<Note> mPostNoteCallback = new Callback<Note>() {
+    private Callback<Note> mPostNoteCallback = new EasyCallback<Note>() {
 
         @Override
-        public void onResponse(Response<Note> response, Retrofit retrofit) {
+        public void onResponse(@NonNull Note response) {
             mProgress.setVisibility(View.GONE);
-            if (!response.isSuccess()) {
-                Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
-                        .show();
-                return;
-            }
-            mMergeRequestDetailAdapter.addNote(response.body());
+            mMergeRequestDetailAdapter.addNote(response);
             mNotesRecyclerView.smoothScrollToPosition(mMergeRequestDetailAdapter.getItemCount());
         }
 
         @Override
-        public void onFailure(Throwable t) {
+        public void onAllFailure(Throwable t) {
             Timber.e(t, null);
             mProgress.setVisibility(View.GONE);
-            Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
+            Snackbar.make(mRoot, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
                     .show();
         }
     };
@@ -216,7 +213,7 @@ public class MergeRequestActivity extends BaseActivity {
     private void postNote() {
         String body = mNewNoteEdit.getText().toString();
 
-        if(body.length() < 1) {
+        if (body.length() < 1) {
             return;
         }
 

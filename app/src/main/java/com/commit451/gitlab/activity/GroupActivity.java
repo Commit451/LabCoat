@@ -9,6 +9,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -24,6 +25,7 @@ import com.afollestad.appthemeengine.util.ATEUtil;
 import com.commit451.easel.Easel;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.GroupPagerAdapter;
+import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.model.api.GroupDetail;
@@ -35,13 +37,10 @@ import org.parceler.Parcels;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
 import timber.log.Timber;
 
 /**
  * See the things about the group
- * Created by John on 10/14/15.
  */
 public class GroupActivity extends BaseActivity implements ATEActivityThemeCustomizer {
 
@@ -73,18 +72,14 @@ public class GroupActivity extends BaseActivity implements ATEActivityThemeCusto
     @Bind(R.id.tabs) TabLayout mTabLayout;
     @Bind(R.id.backdrop) ImageView mBackdrop;
 
-    private final Callback<GroupDetail> mGroupCallback = new Callback<GroupDetail>() {
+    private final Callback<GroupDetail> mGroupCallback = new EasyCallback<GroupDetail>() {
         @Override
-        public void onResponse(Response<GroupDetail> response, Retrofit retrofit) {
-            if (!response.isSuccess()) {
-                showError();
-                return;
-            }
-            bind(response.body());
+        public void onResponse(@NonNull GroupDetail response) {
+            bind(response);
         }
 
         @Override
-        public void onFailure(Throwable t) {
+        public void onAllFailure(Throwable t) {
             Timber.e(t, null);
             showError();
         }

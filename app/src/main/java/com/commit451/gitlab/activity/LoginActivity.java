@@ -34,6 +34,7 @@ import com.commit451.gitlab.event.ReloadDataEvent;
 import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.model.api.UserFull;
 import com.commit451.gitlab.model.api.UserLogin;
+import com.commit451.gitlab.ssl.CustomHostnameVerifier;
 import com.commit451.gitlab.ssl.X509CertificateException;
 import com.commit451.gitlab.ssl.X509Util;
 import com.commit451.gitlab.util.KeyboardUtil;
@@ -52,6 +53,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import javax.net.ssl.SSLHandshakeException;
+import javax.net.ssl.SSLPeerUnverifiedException;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -85,8 +87,6 @@ public class LoginActivity extends BaseActivity {
     @Bind(R.id.progress) View mProgress;
 
     private boolean mIsNormalLogin = true;
-    private String mTrustedCertificate;
-    private String mAuthorizationHeader;
     private Account mAccount;
 
     private final TextView.OnEditorActionListener onEditorActionListener = new TextView.OnEditorActionListener() {
@@ -161,8 +161,20 @@ public class LoginActivity extends BaseActivity {
 
         mAccount = new Account();
         mAccount.setServerUrl(uri);
-        mAccount.setTrustedCertificate(mTrustedCertificate);
-        mAccount.setAuthorizationHeader(mAuthorizationHeader);
+
+        login();
+    }
+
+    private void login() {
+        // This seems useless - But believe me, it makes everything work! Don't remove it.
+        // (OkHttpClientProvider caches the clients and needs a new account to recreate them)
+
+        Account newAccount = new Account();
+        newAccount.setServerUrl(mAccount.getServerUrl());
+        newAccount.setTrustedCertificate(mAccount.getTrustedCertificate());
+        newAccount.setTrustedHostname(mAccount.getTrustedHostname());
+        newAccount.setAuthorizationHeader(mAccount.getAuthorizationHeader());
+        mAccount = newAccount;
 
         if (mIsNormalLogin) {
             connect(true);
@@ -175,18 +187,17 @@ public class LoginActivity extends BaseActivity {
 
         @Override
         public void onResponse(Response<UserLogin> response, Retrofit retrofit) {
-            mTrustedCertificate = null;
             if (!response.isSuccess()) {
                 handleConnectionResponse(response);
                 return;
             }
+
             mAccount.setPrivateToken(response.body().getPrivateToken());
             loadUser();
         }
 
         @Override
         public void onFailure(Throwable t) {
-            mTrustedCertificate = null;
             Timber.e(t, null);
             handleConnectionError(t);
         }
@@ -213,7 +224,6 @@ public class LoginActivity extends BaseActivity {
 
         @Override
         public void onFailure(Throwable t) {
-            mTrustedCertificate = null;
             Timber.e(t, null);
             handleConnectionError(t);
         }
@@ -249,7 +259,7 @@ public class LoginActivity extends BaseActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         switch (requestCode) {
             case PERMISSION_REQUEST_GET_ACCOUNTS: {
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     retrieveAccounts();
                 }
             }
@@ -290,7 +300,8 @@ public class LoginActivity extends BaseActivity {
     private void handleConnectionError(Throwable t) {
         mProgress.setVisibility(View.GONE);
 
-        if(t instanceof SSLHandshakeException && t.getCause() instanceof X509CertificateException) {
+        if (t instanceof SSLHandshakeException && t.getCause() instanceof X509CertificateException) {
+            mAccount.setTrustedCertificate(null);
             String fingerprint = null;
             try {
                 fingerprint = X509Util.getFingerPrint(((X509CertificateException) t.getCause()).getChain()[0]);
@@ -306,8 +317,8 @@ public class LoginActivity extends BaseActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             if (finalFingerprint != null) {
-                                mTrustedCertificate = finalFingerprint;
-                                onLoginClick();
+                                mAccount.setTrustedCertificate(finalFingerprint);
+                                login();
                             }
 
                             dialog.dismiss();
@@ -321,7 +332,33 @@ public class LoginActivity extends BaseActivity {
                     })
                     .show();
 
-            ((TextView)d.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
+            ((TextView) d.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
+        } else if (t instanceof SSLPeerUnverifiedException && t.getMessage().toLowerCase().contains("hostname")) {
+            mAccount.setTrustedHostname(null);
+            final String finalHostname = CustomHostnameVerifier.getLastFailedHostname();
+            Dialog d = new AlertDialog.Builder(this)
+                    .setTitle(R.string.hostname_title)
+                    .setMessage(R.string.hostname_message)
+                    .setPositiveButton(R.string.ok_button, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if (finalHostname != null) {
+                                mAccount.setTrustedHostname(finalHostname);
+                                login();
+                            }
+
+                            dialog.dismiss();
+                        }
+                    })
+                    .setNegativeButton(R.string.cancel_button, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .show();
+
+            ((TextView) d.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
         } else {
             Snackbar.make(mRoot, getString(R.string.login_error), Snackbar.LENGTH_LONG)
                     .show();
@@ -332,6 +369,8 @@ public class LoginActivity extends BaseActivity {
         mProgress.setVisibility(View.GONE);
         switch (response.code()) {
             case 401:
+                mAccount.setAuthorizationHeader(null);
+
                 String header = response.headers().get("WWW-Authenticate");
                 if (header != null) {
                     handleBasicAuthentication(response);
@@ -364,13 +403,12 @@ public class LoginActivity extends BaseActivity {
         HttpLoginDialog dialog = new HttpLoginDialog(this, realm, new HttpLoginDialog.LoginListener() {
             @Override
             public void onLogin(String username, String password) {
-                mAuthorizationHeader = Credentials.basic(username, password);
-                onLoginClick();
+                mAccount.setAuthorizationHeader(Credentials.basic(username, password));
+                login();
             }
 
             @Override
             public void onCancel() {
-                mAuthorizationHeader = null;
             }
         });
         dialog.show();

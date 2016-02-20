@@ -32,6 +32,7 @@
 
     <style name="Activity.Translucent">
         <item name="android:windowBackground">@color/scrim</item>
+        <item name="windowBackground">@color/background_material_dark</item>
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowAnimationStyle">@null</item>
     </style>
@@ -67,6 +68,7 @@
 
     <style name="ActivityLight.Translucent">
         <item name="android:windowBackground">@color/scrim</item>
+        <item name="windowBackground">@color/background_material_light</item>
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowAnimationStyle">@null</item>
     </style>

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
@@ -14,13 +15,17 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.UsersAdapter;
+import com.commit451.gitlab.animation.HideRunnable;
+import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.api.exception.HttpException;
 import com.commit451.gitlab.dialog.AccessDialog;
 import com.commit451.gitlab.event.MemberAddedEvent;
 import com.commit451.gitlab.model.api.Group;
@@ -38,8 +43,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
 import timber.log.Timber;
 
 /**
@@ -62,12 +65,18 @@ public class AddUserActivity extends MorphActivity {
         return intent;
     }
 
-    @Bind(R.id.root) View mRoot;
-    @Bind(R.id.toolbar) Toolbar mToolbar;
-    @Bind(R.id.search) EditText mUserSearch;
-    @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
-    @Bind(R.id.list) RecyclerView mRecyclerView;
-    @Bind(R.id.clear) View mClearView;
+    @Bind(R.id.root)
+    ViewGroup mRoot;
+    @Bind(R.id.toolbar)
+    Toolbar mToolbar;
+    @Bind(R.id.search)
+    EditText mUserSearch;
+    @Bind(R.id.swipe_layout)
+    SwipeRefreshLayout mSwipeRefreshLayout;
+    @Bind(R.id.list)
+    RecyclerView mRecyclerView;
+    @Bind(R.id.clear)
+    View mClearView;
     GridLayoutManager mUserLinearLayoutManager;
 
     @OnClick(R.id.clear)
@@ -77,6 +86,7 @@ public class AddUserActivity extends MorphActivity {
             public void run() {
                 mClearView.setVisibility(View.GONE);
                 mUserSearch.getText().clear();
+                KeyboardUtil.showKeyboard(AddUserActivity.this, mUserSearch);
             }
         });
     }
@@ -123,17 +133,15 @@ public class AddUserActivity extends MorphActivity {
 
     private final TextWatcher mTextWatcher = new TextWatcher() {
         @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             if (TextUtils.isEmpty(s)) {
-                mClearView.animate().alpha(0.0f).withEndAction(new Runnable() {
-                    @Override
-                    public void run() {
-                        mClearView.setVisibility(View.GONE);
-                    }
-                });
+                mClearView.animate()
+                        .alpha(0.0f)
+                        .withEndAction(new HideRunnable(mClearView));
             } else {
                 mClearView.setVisibility(View.VISIBLE);
                 mClearView.animate().alpha(1.0f);
@@ -141,49 +149,7 @@ public class AddUserActivity extends MorphActivity {
         }
 
         @Override
-        public void afterTextChanged(Editable s) {}
-    };
-
-    private final Callback<List<UserBasic>> mUserCallback = new Callback<List<UserBasic>>() {
-        @Override
-        public void onResponse(Response<List<UserBasic>> response, Retrofit retrofit) {
-            mSwipeRefreshLayout.setRefreshing(false);
-            mLoading = false;
-            if (!response.isSuccess()) {
-                return;
-            }
-            mAdapter.setData(response.body());
-            mNextPageUrl = PaginationUtil.parse(response).getNext();
-            Timber.d("Next page url is %s", mNextPageUrl);
-        }
-
-        @Override
-        public void onFailure(Throwable t) {
-            Timber.e(t, null);
-            mSwipeRefreshLayout.setRefreshing(false);
-            mLoading = false;
-            Snackbar.make(getWindow().getDecorView(), getString(R.string.connection_error_users), Snackbar.LENGTH_SHORT)
-                    .show();
-        }
-    };
-
-    private final Callback<List<UserBasic>> mMoreUsersCallback = new Callback<List<UserBasic>>() {
-        @Override
-        public void onResponse(Response<List<UserBasic>> response, Retrofit retrofit) {
-            mLoading = false;
-            mAdapter.setLoading(false);
-            if (!response.isSuccess()) {
-                return;
-            }
-            mAdapter.addData(response.body());
-            mNextPageUrl = PaginationUtil.parse(response).getNext();
-
-        }
-
-        @Override
-        public void onFailure(Throwable t) {
-            Timber.e(t, null);
-            mAdapter.setLoading(false);
+        public void afterTextChanged(Editable s) {
         }
     };
 
@@ -213,27 +179,65 @@ public class AddUserActivity extends MorphActivity {
         }
     };
 
-    private final Callback<Member> mAddGroupMemeberCallback = new Callback<Member>() {
+    private final Callback<List<UserBasic>> mUserCallback = new EasyCallback<List<UserBasic>>() {
         @Override
-        public void onResponse(Response<Member> response, Retrofit retrofit) {
-            if (!response.isSuccess()) {
-                //Conflict
-                if (response.code() == 409) {
-                    Snackbar.make(mRoot, R.string.error_user_conflict, Snackbar.LENGTH_SHORT)
-                            .show();
-                }
-                return;
-            }
+        public void onResponse(@NonNull List<UserBasic> response) {
+            mSwipeRefreshLayout.setRefreshing(false);
+            mLoading = false;
+            mAdapter.setData(response);
+            mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
+            Timber.d("Next page url is %s", mNextPageUrl);
+        }
+
+        @Override
+        public void onAllFailure(Throwable t) {
+            Timber.e(t, null);
+            mSwipeRefreshLayout.setRefreshing(false);
+            mLoading = false;
+            Snackbar.make(mRoot, getString(R.string.connection_error_users), Snackbar.LENGTH_SHORT)
+                    .show();
+        }
+    };
+
+    private final Callback<List<UserBasic>> mMoreUsersCallback = new EasyCallback<List<UserBasic>>() {
+        @Override
+        public void onResponse(@NonNull List<UserBasic> response) {
+            mLoading = false;
+            mAdapter.setLoading(false);
+            mAdapter.addData(response);
+            mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
+        }
+
+        @Override
+        public void onAllFailure(Throwable t) {
+            Timber.e(t, null);
+            mAdapter.setLoading(false);
+        }
+    };
+
+    private final Callback<Member> mAddGroupMemeberCallback = new EasyCallback<Member>() {
+        @Override
+        public void onResponse(@NonNull Member response) {
             Snackbar.make(mRoot, R.string.user_added_successfully, Snackbar.LENGTH_SHORT)
                     .show();
             mAccessDialog.dismiss();
             dismiss();
-            LabCoatApp.bus().post(new MemberAddedEvent(response.body()));
+            LabCoatApp.bus().post(new MemberAddedEvent(response));
         }
 
         @Override
-        public void onFailure(Throwable t) {
+        public void onAllFailure(Throwable t) {
             Timber.e(t, null);
+            if (t instanceof HttpException) {
+                //Conflict
+                if (((HttpException) t).getCode() == 409) {
+                    Snackbar.make(mRoot, R.string.error_user_conflict, Snackbar.LENGTH_SHORT)
+                            .show();
+                }
+            } else {
+                Snackbar.make(mRoot, R.string.error_failed_to_add_user, Snackbar.LENGTH_SHORT)
+                        .show();
+            }
         }
     };
 

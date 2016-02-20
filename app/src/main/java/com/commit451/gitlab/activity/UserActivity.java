@@ -4,10 +4,8 @@ import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -28,9 +26,8 @@ import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.fragment.FeedFragment;
 import com.commit451.gitlab.model.api.UserBasic;
 import com.commit451.gitlab.util.AppThemeUtil;
+import com.commit451.gitlab.transformation.PaletteTransformation;
 import com.commit451.gitlab.util.ImageUtil;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import org.parceler.Parcels;
 
@@ -63,24 +60,6 @@ public class UserActivity extends BaseActivity implements ATEActivityThemeCustom
 
     UserBasic mUser;
 
-    private final Target mImageLoadTarget = new Target() {
-        @Override
-        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-            mBackdrop.setImageBitmap(bitmap);
-            Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
-                public void onGenerated(Palette p) {
-                    bindPalette(p);
-                }
-            });
-        }
-
-        @Override
-        public void onBitmapFailed(Drawable errorDrawable) {}
-
-        @Override
-        public void onPrepareLoad(Drawable placeHolderDrawable) {}
-    };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,9 +84,19 @@ public class UserActivity extends BaseActivity implements ATEActivityThemeCustom
         });
         mToolbar.setTitle(mUser.getUsername());
         Uri url = ImageUtil.getAvatarUrl(mUser, getResources().getDimensionPixelSize(R.dimen.user_header_image_size));
+
         GitLabClient.getPicasso()
                 .load(url)
-                .into(mImageLoadTarget);
+                .transform(PaletteTransformation.instance())
+                .into(mBackdrop, new PaletteTransformation.PaletteCallback(mBackdrop) {
+                    @Override
+                    protected void onSuccess(Palette palette) {
+                        bindPalette(palette);
+                    }
+
+                    @Override
+                    public void onError() {}
+                });
 
         if (savedInstanceState == null) {
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();

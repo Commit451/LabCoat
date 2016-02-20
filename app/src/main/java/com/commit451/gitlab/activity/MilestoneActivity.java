@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,6 +17,7 @@ import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.gitlab.adapter.MilestoneIssuesAdapter;
+import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.MilestoneChangedEvent;
 import com.commit451.gitlab.model.api.Issue;
@@ -33,8 +35,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
 import timber.log.Timber;
 
 public class MilestoneActivity extends BaseActivity {
@@ -79,21 +79,13 @@ public class MilestoneActivity extends BaseActivity {
         NavigationManager.navigateToEditMilestone(MilestoneActivity.this, fab, mProject, mMilestone);
     }
 
-    private final Callback<List<Issue>> mIssuesCallback = new Callback<List<Issue>>() {
+    private final Callback<List<Issue>> mIssuesCallback = new EasyCallback<List<Issue>>() {
         @Override
-        public void onResponse(Response<List<Issue>> response, Retrofit retrofit) {
+        public void onResponse(@NonNull List<Issue> response) {
             mSwipeRefreshLayout.setRefreshing(false);
             mLoading = false;
 
-            if (!response.isSuccess()) {
-                Timber.e("Issues response was not a success: %d", response.code());
-                mMessageText.setVisibility(View.VISIBLE);
-                mMessageText.setText(R.string.connection_error_issues);
-                mMilestoneIssuesAdapter.setIssues(null);
-                return;
-            }
-
-            if (!response.body().isEmpty()) {
+            if (!response.isEmpty()) {
                 mMessageText.setVisibility(View.GONE);
             } else {
                 Timber.d("No issues found");
@@ -101,36 +93,31 @@ public class MilestoneActivity extends BaseActivity {
                 mMessageText.setText(R.string.no_issues);
             }
 
-            mNextPageUrl = PaginationUtil.parse(response).getNext();
-            mMilestoneIssuesAdapter.setIssues(response.body());
+            mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
+            mMilestoneIssuesAdapter.setIssues(response);
         }
 
         @Override
-        public void onFailure(Throwable t) {
+        public void onAllFailure(Throwable t) {
             Timber.e(t, null);
             mLoading = false;
-
             mSwipeRefreshLayout.setRefreshing(false);
-
             mMessageText.setVisibility(View.VISIBLE);
-            mMessageText.setText(R.string.connection_error);
+            mMessageText.setText(R.string.connection_error_issues);
             mMilestoneIssuesAdapter.setIssues(null);
         }
     };
 
-    private final Callback<List<Issue>> mMoreIssuesCallback = new Callback<List<Issue>>() {
+    private final Callback<List<Issue>> mMoreIssuesCallback = new EasyCallback<List<Issue>>() {
         @Override
-        public void onResponse(Response<List<Issue>> response, Retrofit retrofit) {
-            if (!response.isSuccess()) {
-                return;
-            }
+        public void onResponse(@NonNull List<Issue> response) {
             mLoading = false;
-            mNextPageUrl = PaginationUtil.parse(response).getNext();
-            mMilestoneIssuesAdapter.addIssues(response.body());
+            mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
+            mMilestoneIssuesAdapter.addIssues(response);
         }
 
         @Override
-        public void onFailure(Throwable t) {
+        public void onAllFailure(Throwable t) {
             Timber.e(t, null);
             mLoading = false;
         }

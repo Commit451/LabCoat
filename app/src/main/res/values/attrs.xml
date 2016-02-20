@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <attr name="ate_key" format="string" />
 
+    <!-- needed to provide proper background for translucent activity style -->
+    <attr name="windowBackground" format="color|reference" />
 </resources>

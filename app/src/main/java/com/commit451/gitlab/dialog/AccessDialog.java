@@ -1,6 +1,7 @@
 package com.commit451.gitlab.dialog;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +13,7 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.AccessAdapter;
+import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.model.api.Member;
@@ -23,8 +25,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
 import timber.log.Timber;
 
 /**
@@ -54,13 +54,9 @@ public class AccessDialog extends MaterialDialog {
     Group mGroup;
     Member mMember;
 
-    private final Callback<Member> mEditUserCallback = new Callback<Member>() {
+    private final Callback<Member> mEditUserCallback = new EasyCallback<Member>() {
         @Override
-        public void onResponse(Response<Member> response, Retrofit retrofit) {
-            if (!response.isSuccess()) {
-                onError();
-                return;
-            }
+        public void onResponse(@NonNull Member response) {
             if (mAccessChangedListener != null) {
                 mAccessChangedListener.onAccessChanged(mMember, mRoleNames[getSelectedIndex()]);
             }
@@ -68,7 +64,7 @@ public class AccessDialog extends MaterialDialog {
         }
 
         @Override
-        public void onFailure(Throwable t) {
+        public void onAllFailure(Throwable t) {
             Timber.e(t, null);
             onError();
         }

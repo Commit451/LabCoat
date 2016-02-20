@@ -2,6 +2,7 @@ package com.commit451.gitlab.fragment;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,6 +20,7 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.gitlab.adapter.IssuesAdapter;
+import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.IssueChangedEvent;
 import com.commit451.gitlab.event.IssueCreatedEvent;
@@ -36,8 +38,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
 import timber.log.Timber;
 
 public class IssuesFragment extends BaseFragment {
@@ -46,10 +46,16 @@ public class IssuesFragment extends BaseFragment {
         return new IssuesFragment();
     }
 
-    @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
-    @Bind(R.id.list) RecyclerView mIssueListView;
-    @Bind(R.id.message_text) TextView mMessageView;
-    @Bind(R.id.issue_spinner) Spinner mSpinner;
+    @Bind(R.id.root)
+    ViewGroup mRoot;
+    @Bind(R.id.swipe_layout)
+    SwipeRefreshLayout mSwipeRefreshLayout;
+    @Bind(R.id.list)
+    RecyclerView mIssueListView;
+    @Bind(R.id.message_text)
+    TextView mMessageView;
+    @Bind(R.id.issue_spinner)
+    Spinner mSpinner;
 
     private Project mProject;
     private IssuesAdapter mIssuesAdapter;
@@ -74,83 +80,13 @@ public class IssuesFragment extends BaseFragment {
         }
     };
 
-    private final Callback<List<Issue>> mIssuesCallback = new Callback<List<Issue>>() {
-        @Override
-        public void onResponse(Response<List<Issue>> response, Retrofit retrofit) {
-            mLoading = false;
-            if (getView() == null) {
-                return;
-            }
-
-            mSwipeRefreshLayout.setRefreshing(false);
-
-            if (!response.isSuccess()) {
-                Timber.e("Issues response was not a success: %d", response.code());
-                mMessageView.setVisibility(View.VISIBLE);
-                mMessageView.setText(R.string.connection_error_issues);
-                mIssuesAdapter.setIssues(null);
-                mNextPageUrl = null;
-                return;
-            }
-
-            if (!response.body().isEmpty()) {
-                mMessageView.setVisibility(View.GONE);
-            } else if (mNextPageUrl == null) {
-                Timber.d("No issues found");
-                mMessageView.setVisibility(View.VISIBLE);
-                mMessageView.setText(R.string.no_issues);
-            }
-
-            mIssuesAdapter.setIssues(response.body());
-            mNextPageUrl = PaginationUtil.parse(response).getNext();
-            Timber.d("Next page url " + mNextPageUrl);
-        }
-
-        @Override
-        public void onFailure(Throwable t) {
-            mLoading = false;
-            Timber.e(t, null);
-
-            if (getView() == null) {
-                return;
-            }
-
-            mSwipeRefreshLayout.setRefreshing(false);
-
-            mMessageView.setVisibility(View.VISIBLE);
-            mMessageView.setText(R.string.connection_error);
-            mIssuesAdapter.setIssues(null);
-            mNextPageUrl = null;
-        }
-    };
-
-    private final Callback<List<Issue>> mMoreIssuesCallback = new Callback<List<Issue>>() {
-        @Override
-        public void onResponse(Response<List<Issue>> response, Retrofit retrofit) {
-            if (!response.isSuccess()) {
-                return;
-            }
-            mLoading = false;
-            mIssuesAdapter.setLoading(false);
-            mNextPageUrl = PaginationUtil.parse(response).getNext();
-            mIssuesAdapter.addIssues(response.body());
-        }
-
-        @Override
-        public void onFailure(Throwable t) {
-            Timber.e(t, null);
-            mIssuesAdapter.setLoading(false);
-            mLoading = false;
-        }
-    };
-
     private final IssuesAdapter.Listener mIssuesAdapterListener = new IssuesAdapter.Listener() {
         @Override
         public void onIssueClicked(Issue issue) {
             if (mProject != null) {
                 NavigationManager.navigateToIssue(getActivity(), mProject, issue);
             } else {
-                Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.wait_for_project_to_load), Snackbar.LENGTH_SHORT)
+                Snackbar.make(mRoot, getString(R.string.wait_for_project_to_load), Snackbar.LENGTH_SHORT)
                         .show();
             }
         }
@@ -164,7 +100,57 @@ public class IssuesFragment extends BaseFragment {
         }
 
         @Override
-        public void onNothingSelected(AdapterView<?> parent) {}
+        public void onNothingSelected(AdapterView<?> parent) {
+        }
+    };
+
+    private final Callback<List<Issue>> mIssuesCallback = new EasyCallback<List<Issue>>() {
+        @Override
+        public void onResponse(@NonNull List<Issue> response) {
+            mLoading = false;
+            if (getView() == null) {
+                return;
+            }
+            mSwipeRefreshLayout.setRefreshing(false);
+            if (response.isEmpty()) {
+                mMessageView.setVisibility(View.VISIBLE);
+                mMessageView.setText(R.string.no_issues);
+            }
+            mIssuesAdapter.setIssues(response);
+            mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
+            Timber.d("Next page url " + mNextPageUrl);
+        }
+
+        @Override
+        public void onAllFailure(Throwable t) {
+            mLoading = false;
+            Timber.e(t, null);
+            if (getView() == null) {
+                return;
+            }
+            mSwipeRefreshLayout.setRefreshing(false);
+            mMessageView.setVisibility(View.VISIBLE);
+            mMessageView.setText(R.string.connection_error_issues);
+            mIssuesAdapter.setIssues(null);
+            mNextPageUrl = null;
+        }
+    };
+
+    private final Callback<List<Issue>> mMoreIssuesCallback = new EasyCallback<List<Issue>>() {
+        @Override
+        public void onResponse(@NonNull List<Issue> response) {
+            mLoading = false;
+            mIssuesAdapter.setLoading(false);
+            mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
+            mIssuesAdapter.addIssues(response);
+        }
+
+        @Override
+        public void onAllFailure(Throwable t) {
+            Timber.e(t, null);
+            mLoading = false;
+            mIssuesAdapter.setLoading(false);
+        }
     };
 
     @Override
@@ -224,7 +210,7 @@ public class IssuesFragment extends BaseFragment {
         if (mProject != null) {
             NavigationManager.navigateToAddIssue(getActivity(), fab, mProject);
         } else {
-            Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.wait_for_project_to_load), Snackbar.LENGTH_SHORT)
+            Snackbar.make(mRoot, getString(R.string.wait_for_project_to_load), Snackbar.LENGTH_SHORT)
                     .show();
         }
     }
@@ -234,12 +220,11 @@ public class IssuesFragment extends BaseFragment {
         if (getView() == null) {
             return;
         }
-
         if (mProject == null) {
             mSwipeRefreshLayout.setRefreshing(false);
             return;
         }
-
+        mMessageView.setVisibility(View.GONE);
         mSwipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
@@ -248,10 +233,8 @@ public class IssuesFragment extends BaseFragment {
                 }
             }
         });
-
         mNextPageUrl = null;
         mLoading = true;
-
         GitLabClient.instance().getIssues(mProject.getId(), mState).enqueue(mIssuesCallback);
     }
 

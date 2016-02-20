@@ -21,7 +21,6 @@ import java.util.Date;
 
 /**
  * Get a properly configured Gson object
- * Created by Jawn on 12/4/2015.
  */
 public final class GsonProvider {
 

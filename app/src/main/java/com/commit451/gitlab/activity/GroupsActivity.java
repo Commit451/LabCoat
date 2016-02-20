@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 import com.afollestad.appthemeengine.customizers.ATEActivityThemeCustomizer;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.GroupAdapter;
+import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.util.NavigationManager;
@@ -29,8 +31,6 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
 import timber.log.Timber;
 
 /**
@@ -74,47 +74,42 @@ public class GroupsActivity extends BaseActivity implements ATEActivityThemeCust
         }
     };
 
-    private final Callback<List<Group>> mGroupsCallback = new Callback<List<Group>>() {
+    private final Callback<List<Group>> mGroupsCallback = new EasyCallback<List<Group>>() {
         @Override
-        public void onResponse(Response<List<Group>> response, Retrofit retrofit) {
+        public void onResponse(@NonNull List<Group> response) {
             mLoading = false;
             mSwipeRefreshLayout.setRefreshing(false);
-            if (!response.isSuccess()) {
-                return;
-            }
-            if (response.body().isEmpty()) {
+            if (response.isEmpty()) {
                 mMessageText.setText(R.string.no_groups);
                 mMessageText.setVisibility(View.VISIBLE);
                 mGroupRecyclerView.setVisibility(View.GONE);
             } else {
-                mGroupAdapter.setGroups(response.body());
+                mGroupAdapter.setGroups(response);
                 mMessageText.setVisibility(View.GONE);
                 mGroupRecyclerView.setVisibility(View.VISIBLE);
             }
         }
 
         @Override
-        public void onFailure(Throwable t) {
+        public void onAllFailure(Throwable t) {
             Timber.e(t, null);
+            mSwipeRefreshLayout.setRefreshing(false);
             mLoading = false;
             mMessageText.setVisibility(View.VISIBLE);
             mMessageText.setText(R.string.connection_error);
         }
     };
 
-    private final Callback<List<Group>> mMoreGroupsCallback = new Callback<List<Group>>() {
+    private final Callback<List<Group>> mMoreGroupsCallback = new EasyCallback<List<Group>>() {
         @Override
-        public void onResponse(Response<List<Group>> response, Retrofit retrofit) {
+        public void onResponse(@NonNull List<Group> response) {
             mLoading = false;
-            if (!response.isSuccess()) {
-                return;
-            }
-            mGroupAdapter.addGroups(response.body());
-            mNextPageUrl = PaginationUtil.parse(response).getNext();
+            mGroupAdapter.addGroups(response);
+            mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
         }
 
         @Override
-        public void onFailure(Throwable t) {
+        public void onAllFailure(Throwable t) {
             Timber.e(t, null);
             mLoading = false;
         }
@@ -161,6 +156,7 @@ public class GroupsActivity extends BaseActivity implements ATEActivityThemeCust
     }
 
     private void load() {
+        mMessageText.setVisibility(View.GONE);
         mSwipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {

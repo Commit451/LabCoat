@@ -61,6 +61,7 @@
                     android:ems="10"
                     android:hint="@string/user_hint"
                     android:inputType="textEmailAddress"
+                    android:imeOptions="actionNext"
                     android:tag="tint|primary_color_dependent,text_color|primary_color_dependent,text_color_hint|primary_color_dependent" />
 
             </android.support.design.widget.TextInputLayout>

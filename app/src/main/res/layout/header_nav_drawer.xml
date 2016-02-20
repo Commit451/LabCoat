@@ -27,6 +27,11 @@
         android:foreground="?attr/selectableItemBackgroundBorderless"
         tools:src="@drawable/ic_assign_24dp"/>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/gradient_header"/>
+
     <FrameLayout
         android:id="@+id/drawer_header"
         android:layout_width="match_parent"

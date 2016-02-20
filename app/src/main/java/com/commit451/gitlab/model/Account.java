@@ -35,6 +35,8 @@ public class Account implements Comparable<Account>{
     String mPrivateToken;
     @SerializedName("trusted_certificate")
     String mTrustedCertificate;
+    @SerializedName("trusted_hostname")
+    String mTrustedHostname;
     @SerializedName("user")
     UserFull mUser;
     @SerializedName("last_used")
@@ -72,6 +74,14 @@ public class Account implements Comparable<Account>{
 
     public void setTrustedCertificate(String trustedCertificate) {
         mTrustedCertificate = trustedCertificate;
+    }
+
+    public String getTrustedHostname() {
+        return mTrustedHostname;
+    }
+
+    public void setTrustedHostname(String trustedHostname) {
+        mTrustedHostname = trustedHostname;
     }
 
     public UserFull getUser() {

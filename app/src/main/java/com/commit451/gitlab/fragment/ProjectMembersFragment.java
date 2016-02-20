@@ -2,6 +2,7 @@ package com.commit451.gitlab.fragment;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -16,6 +17,7 @@ import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.adapter.MemberAdapter;
+import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.dialog.AccessDialog;
 import com.commit451.gitlab.event.MemberAddedEvent;
@@ -33,8 +35,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
 import timber.log.Timber;
 
 public class ProjectMembersFragment extends BaseFragment {
@@ -70,95 +70,6 @@ public class ProjectMembersFragment extends BaseFragment {
         }
     };
 
-    private final Callback<List<Member>> mProjectMembersCallback = new Callback<List<Member>>() {
-        @Override
-        public void onResponse(Response<List<Member>> response, Retrofit retrofit) {
-            mLoading = false;
-            if (getView() == null) {
-                return;
-            }
-
-            mSwipeRefreshLayout.setRefreshing(false);
-
-            if (!response.isSuccess()) {
-                Timber.e("Project members response was not a success: %d", response.code());
-                mMessageView.setVisibility(View.VISIBLE);
-                mMessageView.setText(R.string.connection_error_users);
-                mAddUserButton.setVisibility(View.GONE);
-                mAdapter.setProjectMembers(null);
-                mNextPageUrl = null;
-                return;
-            }
-
-            if (!response.body().isEmpty()) {
-                mMessageView.setVisibility(View.GONE);
-            } else if (mNextPageUrl == null) {
-                Timber.d("No project members found");
-                mMessageView.setText(R.string.no_project_members);
-                mMessageView.setVisibility(View.VISIBLE);
-            }
-
-            mAddUserButton.setVisibility(View.VISIBLE);
-
-            if (mNextPageUrl == null) {
-                mAdapter.setProjectMembers(response.body());
-            } else {
-                mAdapter.addProjectMembers(response.body());
-            }
-
-            mNextPageUrl = PaginationUtil.parse(response).getNext();
-            Timber.d("Next page url " + mNextPageUrl);
-        }
-
-        @Override
-        public void onFailure(Throwable t) {
-            mLoading = false;
-            Timber.e(t, null);
-
-            if (getView() == null) {
-                return;
-            }
-
-            mSwipeRefreshLayout.setRefreshing(false);
-
-            mMessageView.setVisibility(View.VISIBLE);
-            mMessageView.setText(R.string.connection_error);
-            mAddUserButton.setVisibility(View.GONE);
-            mAdapter.setProjectMembers(null);
-            mNextPageUrl = null;
-        }
-    };
-
-    private final Callback<Void> mRemoveMemberCallback = new Callback<Void>() {
-        @Override
-        public void onResponse(Response<Void> response, Retrofit retrofit) {
-            if (getView() == null) {
-                return;
-            }
-
-            if (!response.isSuccess()) {
-                Timber.e("Remove member response was not a success: %d", response.code());
-                Snackbar.make(mRoot, R.string.failed_to_remove_member, Snackbar.LENGTH_SHORT)
-                        .show();
-                return;
-            }
-
-            mAdapter.removeMember(mMember);
-        }
-
-        @Override
-        public void onFailure(Throwable t) {
-            Timber.e(t, null);
-
-            if (getView() == null) {
-                return;
-            }
-
-            Snackbar.make(mRoot, R.string.connection_error, Snackbar.LENGTH_SHORT)
-                    .show();
-        }
-    };
-
     private final AccessDialog.OnAccessChangedListener mOnAccessChangedListener = new AccessDialog.OnAccessChangedListener() {
         @Override
         public void onAccessChanged(Member member, String accessLevel) {
@@ -188,6 +99,70 @@ public class ProjectMembersFragment extends BaseFragment {
         @Override
         public void onSeeGroupClicked() {
             NavigationManager.navigateToGroup(getActivity(), mProject.getNamespace().getId());
+        }
+    };
+
+    private final Callback<List<Member>> mProjectMembersCallback = new EasyCallback<List<Member>>() {
+        @Override
+        public void onResponse(@NonNull List<Member> response) {
+            mLoading = false;
+            if (getView() == null) {
+                return;
+            }
+            mSwipeRefreshLayout.setRefreshing(false);
+            if (!response.isEmpty()) {
+                mMessageView.setVisibility(View.GONE);
+            } else if (mNextPageUrl == null) {
+                Timber.d("No project members found");
+                mMessageView.setText(R.string.no_project_members);
+                mMessageView.setVisibility(View.VISIBLE);
+            }
+
+            mAddUserButton.setVisibility(View.VISIBLE);
+
+            if (mNextPageUrl == null) {
+                mAdapter.setProjectMembers(response);
+            } else {
+                mAdapter.addProjectMembers(response);
+            }
+
+            mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
+            Timber.d("Next page url " + mNextPageUrl);
+        }
+
+        @Override
+        public void onAllFailure(Throwable t) {
+            mLoading = false;
+            Timber.e(t, null);
+            if (getView() == null) {
+                return;
+            }
+            mSwipeRefreshLayout.setRefreshing(false);
+            mMessageView.setVisibility(View.VISIBLE);
+            mMessageView.setText(R.string.connection_error_users);
+            mAddUserButton.setVisibility(View.GONE);
+            mAdapter.setProjectMembers(null);
+            mNextPageUrl = null;
+        }
+    };
+
+    private final Callback<Void> mRemoveMemberCallback = new EasyCallback<Void>() {
+        @Override
+        public void onResponse(@NonNull Void response) {
+            if (getView() == null) {
+                return;
+            }
+            mAdapter.removeMember(mMember);
+        }
+
+        @Override
+        public void onAllFailure(Throwable t) {
+            Timber.e(t, null);
+            if (getView() == null) {
+                return;
+            }
+            Snackbar.make(mRoot, R.string.failed_to_remove_member, Snackbar.LENGTH_SHORT)
+                    .show();
         }
     };
 

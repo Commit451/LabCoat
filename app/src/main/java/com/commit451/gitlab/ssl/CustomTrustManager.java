@@ -8,7 +8,9 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
@@ -39,7 +41,9 @@ public class CustomTrustManager implements X509TrustManager {
     }
 
     private String mTrustedCertificate;
+    private String mTrustedHostname;
     private SSLSocketFactory mSSLSocketFactory;
+    private HostnameVerifier mHostnameVerifier;
 
     public CustomTrustManager() {}
 
@@ -50,6 +54,15 @@ public class CustomTrustManager implements X509TrustManager {
 
         mTrustedCertificate = trustedCertificate;
         mSSLSocketFactory = null;
+    }
+
+    public void setTrustedHostname(String trustedHostname) {
+        if ((mTrustedHostname == null && trustedHostname == null) || (mTrustedHostname != null && mTrustedHostname.equals(trustedHostname))) {
+            return;
+        }
+
+        mTrustedHostname = trustedHostname;
+        mHostnameVerifier = null;
     }
 
     @Override
@@ -105,5 +118,13 @@ public class CustomTrustManager implements X509TrustManager {
         }
 
         return mSSLSocketFactory;
+    }
+
+    public HostnameVerifier getHostnameVerifier() {
+        if (mHostnameVerifier == null) {
+            mHostnameVerifier = new CustomHostnameVerifier(mTrustedHostname);
+        }
+
+        return mHostnameVerifier;
     }
 }
