@@ -14,6 +14,7 @@ import com.commit451.gitlab.activity.AboutActivity;
 import com.commit451.gitlab.activity.AddIssueActivity;
 import com.commit451.gitlab.activity.AddMilestoneActivity;
 import com.commit451.gitlab.activity.AddUserActivity;
+import com.commit451.gitlab.activity.DiffActivity;
 import com.commit451.gitlab.activity.FileActivity;
 import com.commit451.gitlab.activity.GroupActivity;
 import com.commit451.gitlab.activity.GroupsActivity;
@@ -31,6 +32,7 @@ import com.commit451.gitlab.model.api.Issue;
 import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.model.api.Milestone;
 import com.commit451.gitlab.model.api.Project;
+import com.commit451.gitlab.model.api.RepositoryCommit;
 import com.commit451.gitlab.model.api.UserBasic;
 
 import java.util.List;
@@ -116,6 +118,10 @@ public class NavigationManager {
 
     public static void navigateToFile(Activity activity, long projectId, String path, String branchName) {
         activity.startActivity(FileActivity.newIntent(activity, projectId, path, branchName));
+    }
+
+    public static void navigateToDiffActivity(Activity activity, Project project, RepositoryCommit commit) {
+        activity.startActivity(DiffActivity.newInstance(activity, project, commit));
     }
 
     public static void navigateToAddProjectMember(Activity activity, View fab, long projectId) {

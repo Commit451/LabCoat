@@ -13,7 +13,6 @@ import android.widget.TextView;
 
 import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.activity.DiffActivity;
 import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.adapter.CommitsAdapter;
 import com.commit451.gitlab.api.EasyCallback;
@@ -21,6 +20,7 @@ import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryCommit;
+import com.commit451.gitlab.util.NavigationManager;
 import com.squareup.otto.Subscribe;
 
 import java.util.List;
@@ -119,7 +119,7 @@ public class CommitsFragment extends BaseFragment {
     private final CommitsAdapter.Listener mCommitsAdapterListener = new CommitsAdapter.Listener() {
         @Override
         public void onCommitClicked(RepositoryCommit commit) {
-            getActivity().startActivity(DiffActivity.newInstance(getActivity(), mProject, commit));
+            NavigationManager.navigateToDiffActivity(getActivity(), mProject, commit);
         }
     };
 
