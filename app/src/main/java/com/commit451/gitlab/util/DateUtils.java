@@ -22,6 +22,6 @@ public class DateUtils {
         return android.text.format.DateUtils.getRelativeTimeSpanString(startTime.getTime(),
                 now.getTime(),
                 android.text.format.DateUtils.SECOND_IN_MILLIS)
-                .toString().toLowerCase();
+                .toString();
     }
 }
