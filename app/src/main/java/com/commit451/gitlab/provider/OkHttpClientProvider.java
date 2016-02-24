@@ -35,6 +35,7 @@ public final class OkHttpClientProvider {
     private static OkHttpClient createInstance(Account account) {
         sCustomTrustManager.setTrustedCertificate(account.getTrustedCertificate());
         sCustomTrustManager.setTrustedHostname(account.getTrustedHostname());
+        sCustomTrustManager.setPrivateKeyAlias(account.getPrivateKeyAlias());
 
         OkHttpClient client = new OkHttpClient();
         client.setConnectTimeout(30, TimeUnit.SECONDS);

@@ -9,8 +9,8 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
 import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
@@ -42,6 +42,7 @@ public class CustomTrustManager implements X509TrustManager {
 
     private String mTrustedCertificate;
     private String mTrustedHostname;
+    private String mPrivateKeyAlias;
     private SSLSocketFactory mSSLSocketFactory;
     private HostnameVerifier mHostnameVerifier;
 
@@ -63,6 +64,15 @@ public class CustomTrustManager implements X509TrustManager {
 
         mTrustedHostname = trustedHostname;
         mHostnameVerifier = null;
+    }
+
+    public void setPrivateKeyAlias(String privateKeyAlias) {
+        if ((mPrivateKeyAlias == null && privateKeyAlias == null) || (mPrivateKeyAlias != null && mPrivateKeyAlias.equals(privateKeyAlias))) {
+            return;
+        }
+
+        mPrivateKeyAlias = privateKeyAlias;
+        mSSLSocketFactory = null;
     }
 
     @Override
@@ -109,9 +119,14 @@ public class CustomTrustManager implements X509TrustManager {
             return mSSLSocketFactory;
         }
 
+        KeyManager[] keyManagers = null;
+        if (mPrivateKeyAlias != null) {
+            keyManagers = new KeyManager[] { new CustomKeyManager(mPrivateKeyAlias) };
+        }
+
         try {
             SSLContext sslContext = SSLContext.getInstance("TLS");
-            sslContext.init(null, new TrustManager[]{this}, null);
+            sslContext.init(keyManagers, new TrustManager[]{this}, null);
             mSSLSocketFactory = new CustomSSLSocketFactory(sslContext.getSocketFactory());
         } catch (Exception e) {
             throw new IllegalStateException(e);

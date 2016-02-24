@@ -10,6 +10,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.security.KeyChain;
+import android.security.KeyChainAliasCallback;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
@@ -30,6 +32,7 @@ import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.model.api.UserFull;
 import com.commit451.gitlab.model.api.UserLogin;
 import com.commit451.gitlab.ssl.CustomHostnameVerifier;
+import com.commit451.gitlab.ssl.CustomKeyManager;
 import com.commit451.gitlab.ssl.X509CertificateException;
 import com.commit451.gitlab.ssl.X509Util;
 import com.commit451.gitlab.util.KeyboardUtil;
@@ -165,6 +168,7 @@ public class LoginActivity extends BaseActivity {
         newAccount.setServerUrl(mAccount.getServerUrl());
         newAccount.setTrustedCertificate(mAccount.getTrustedCertificate());
         newAccount.setTrustedHostname(mAccount.getTrustedHostname());
+        newAccount.setPrivateKeyAlias(mAccount.getPrivateKeyAlias());
         newAccount.setAuthorizationHeader(mAccount.getAuthorizationHeader());
         mAccount = newAccount;
 
@@ -173,6 +177,44 @@ public class LoginActivity extends BaseActivity {
         } else {
             connect(false);
         }
+    }
+
+    private void loginWithPrivateToken() {
+        KeyChain.choosePrivateKeyAlias(this, new KeyChainAliasCallback() {
+            @Override
+            public void alias(String alias) {
+                mAccount.setPrivateKeyAlias(alias);
+
+                if (alias != null) {
+                    if (!CustomKeyManager.isCached(alias)) {
+                        CustomKeyManager.cache(LoginActivity.this, alias, new CustomKeyManager.KeyCallback() {
+                            @Override
+                            public void onSuccess(CustomKeyManager.KeyEntry entry) {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        login();
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onError(Exception e) {
+                                mAccount.setPrivateKeyAlias(null);
+                                Timber.e(e, "Failed to load private key");
+                            }
+                        });
+                    } else {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                login();
+                            }
+                        });
+                    }
+                }
+            }
+        }, null, null, mAccount.getServerUrl().getHost(), mAccount.getServerUrl().getPort(), null);
     }
 
     private Callback<UserLogin> mLoginCallback = new Callback<UserLogin>() {
