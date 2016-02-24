@@ -209,7 +209,7 @@ public class FileActivity extends BaseActivity {
         }
 
         mFileBlobView.loadDataWithBaseURL("file:///android_asset/", content, "text/html", "utf8", null);
-        mToolbar.inflateMenu(R.menu.file);
+        mToolbar.inflateMenu(R.menu.menu_file);
     }
 
     @TargetApi(23)

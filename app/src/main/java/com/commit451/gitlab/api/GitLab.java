@@ -181,6 +181,11 @@ public interface GitLab {
                             @Field("description") String description,
                             @Field("due_date") String dueDate);
 
+    @PUT(API_VERSION + "/projects/{id}/milestones/{milestone_id}")
+    Call<Milestone> updateMilestoneStatus(@Path("id") long projectId,
+                                  @Path("milestone_id") long milestoneId,
+                                  @Query("state_event") @Milestone.StateEvent String status);
+
     /* --- MERGE REQUESTS --- */
 
     @GET(API_VERSION + "/projects/{id}/merge_requests")

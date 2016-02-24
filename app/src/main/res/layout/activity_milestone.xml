@@ -65,4 +65,6 @@
         android:layout_margin="@dimen/padding_normal"
         android:src="@drawable/ic_add_24dp" />
 
+    <include layout="@layout/progress_fullscreen"/>
+
 </android.support.design.widget.CoordinatorLayout>

@@ -38,6 +38,7 @@ import com.commit451.gitlab.view.EmailAutoCompleteTextView;
 import com.squareup.okhttp.Credentials;
 import com.squareup.okhttp.HttpUrl;
 
+import java.net.ConnectException;
 import java.security.cert.CertificateEncodingException;
 import java.util.Date;
 import java.util.List;
@@ -350,6 +351,9 @@ public class LoginActivity extends BaseActivity {
                     .show();
 
             ((TextView) d.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
+        } else if (t instanceof ConnectException) {
+            Snackbar.make(mRoot, t.getLocalizedMessage(), Snackbar.LENGTH_LONG)
+                    .show();
         } else {
             Snackbar.make(mRoot, getString(R.string.login_error), Snackbar.LENGTH_LONG)
                     .show();
@@ -370,6 +374,9 @@ public class LoginActivity extends BaseActivity {
                 Snackbar.make(mRoot, getString(R.string.login_unauthorized), Snackbar.LENGTH_LONG)
                         .show();
                 return;
+            case 404:
+                Snackbar.make(mRoot, getString(R.string.login_404_error), Snackbar.LENGTH_LONG)
+                        .show();
             default:
                 Snackbar.make(mRoot, getString(R.string.login_error), Snackbar.LENGTH_LONG)
                         .show();
