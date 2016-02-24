@@ -5,7 +5,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.viewHolder.IssueLabelsViewHolder;
 import com.commit451.gitlab.viewHolder.LabelViewHolder;
 
 import java.util.ArrayList;
@@ -17,7 +16,7 @@ import java.util.Collection;
 public class IssueLabelsAdapter extends RecyclerView.Adapter<LabelViewHolder> {
 
     public interface Listener {
-        void onLabelClicked(String label, IssueLabelsViewHolder viewHolder);
+        void onLabelClicked(String label, LabelViewHolder viewHolder);
     }
     private Listener mListener;
 
@@ -32,7 +31,7 @@ public class IssueLabelsAdapter extends RecyclerView.Adapter<LabelViewHolder> {
         @Override
         public void onClick(View v) {
             int position = (int) v.getTag(R.id.list_position);
-            IssueLabelsViewHolder holder = (IssueLabelsViewHolder) v.getTag(R.id.list_view_holder);
+            LabelViewHolder holder = (LabelViewHolder) v.getTag(R.id.list_view_holder);
             mListener.onLabelClicked(getEntry(position), holder);
         }
     };

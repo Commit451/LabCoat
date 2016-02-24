@@ -238,6 +238,12 @@
     <string name="add_account">Add account</string>
 
     <!-- Merge Requests -->
+    <string name="title_merge_discussion">discussion</string>
+    <string name="title_merge_commits">Commits</string>
+    <string-array name="merge_request_tabs">
+        <item>@string/title_merge_discussion</item>
+        <item>@string/title_merge_commits</item>
+    </string-array>
     <string name="no_merge_requests">No merge requests</string>
     <string name="merge_request_number">Merge Request #</string>
     <string name="merge_request_opened">Opened</string>

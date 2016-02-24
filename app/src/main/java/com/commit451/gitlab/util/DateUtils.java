@@ -9,7 +9,6 @@ import java.util.Date;
 /**
  * Our own DateUtils, which call forwards to {@link android.text.format.DateUtils} with some
  * nice defaults
- * Created by Jawnnypoo on 11/17/2015.
  */
 public class DateUtils {
 

@@ -31,7 +31,7 @@ public class IssueLabelsViewHolder extends RecyclerView.ViewHolder {
 
     private final IssueLabelsAdapter.Listener mListener = new IssueLabelsAdapter.Listener() {
         @Override
-        public void onLabelClicked(String label, IssueLabelsViewHolder viewHolder) {
+        public void onLabelClicked(String label, LabelViewHolder viewHolder) {
 
         }
     };

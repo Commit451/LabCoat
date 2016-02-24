@@ -10,7 +10,6 @@ import com.commit451.gitlab.fragment.ProjectsFragment;
 
 /**
  * Projects Pager Adapter
- * Created by Jawn on 9/21/2015.
  */
 public class ProjectsPagerAdapter extends FragmentPagerAdapter {
     private static final int SECTION_COUNT = 3;

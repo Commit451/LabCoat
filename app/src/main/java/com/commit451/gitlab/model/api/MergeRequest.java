@@ -1,5 +1,7 @@
 package com.commit451.gitlab.model.api;
 
+import android.support.annotation.Nullable;
+
 import com.google.gson.annotations.SerializedName;
 
 import org.parceler.Parcel;
@@ -49,6 +51,11 @@ public class MergeRequest {
     Milestone mMilestone;
     @SerializedName("merge_when_build_succeeds")
     boolean mMergeWhenBuildSucceeds;
+    @SerializedName("merge_status")
+    String mMergeStatus;
+    @SerializedName("changes")
+    @Nullable
+    List<Diff> mChanges;
 
     public MergeRequest() {}
 
@@ -130,6 +137,19 @@ public class MergeRequest {
 
     public boolean isMergeWhenBuildSucceedsEnabled() {
         return mMergeWhenBuildSucceeds;
+    }
+
+    public String getMergeStatus() {
+        return mMergeStatus;
+    }
+
+    /**
+     * Get the changes. Only not null if this merge request was retrieved via {@link com.commit451.gitlab.api.GitLab#getMergeRequestChanges(long, long)}
+     * @return the changes
+     */
+    @Nullable
+    public List<Diff> getChanges() {
+        return mChanges;
     }
 
     @Override
