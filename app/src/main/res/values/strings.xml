@@ -93,6 +93,7 @@
     <string name="login_error">Login failed. Please check your login information</string>
     <string name="login_input_error">Please enter a valid url.</string>
     <string name="login_unsupported_authentication">Unsupported form of HTTP authentication.</string>
+    <string name="login_404_error">Server not found. Please double check your url</string>
 
     <string name="file_too_big">File too big to show</string>
     <string name="file_load_error">Failed to load file</string>
@@ -126,7 +127,7 @@
     <string name="filter_projects">Filter projects</string>
     <string name="logout_title">Are you sure you want to log out?</string>
     <string name="failed_to_load">Failed to load</string>
-    <string name="just_now">Just now</string>
+    <string name="just_now">just now</string>
     <string name="failed_to_create_issue">Failed to create or modify issue</string>
 
     <!-- Overview -->
@@ -237,6 +238,12 @@
     <string name="add_account">Add account</string>
 
     <!-- Merge Requests -->
+    <string name="title_merge_discussion">discussion</string>
+    <string name="title_merge_commits">Commits</string>
+    <string-array name="merge_request_tabs">
+        <item>@string/title_merge_discussion</item>
+        <item>@string/title_merge_commits</item>
+    </string-array>
     <string name="no_merge_requests">No merge requests</string>
     <string name="merge_request_number">Merge Request #</string>
     <string name="merge_request_opened">Opened</string>
@@ -257,6 +264,7 @@
         <item>closed</item>
         <item>all</item>
     </string-array>
+    <string name="created_merge_request">created merge request</string>
 
     <!-- Milestones -->
     <string name="no_milestones">No milestones</string>

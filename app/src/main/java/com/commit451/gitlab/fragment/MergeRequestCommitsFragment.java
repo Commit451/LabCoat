@@ -2,27 +2,25 @@ package com.commit451.gitlab.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.adapter.CommitsAdapter;
-import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.event.ProjectReloadEvent;
+import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryCommit;
 import com.commit451.gitlab.util.NavigationManager;
-import com.squareup.otto.Subscribe;
+
+import org.parceler.Parcels;
 
 import java.util.List;
 
@@ -31,10 +29,21 @@ import butterknife.ButterKnife;
 import retrofit.Callback;
 import timber.log.Timber;
 
-public class CommitsFragment extends BaseFragment {
+/**
+ * Like {@link CommitsFragment} but showing commits for a merge request
+ */
+public class MergeRequestCommitsFragment extends BaseFragment {
 
-    public static CommitsFragment newInstance() {
-        return new CommitsFragment();
+    private static final String KEY_PROJECT = "project";
+    private static final String KEY_MERGE_REQUEST = "merge_request";
+
+    public static MergeRequestCommitsFragment newInstance(Project project, MergeRequest mergeRequest) {
+        MergeRequestCommitsFragment fragment = new MergeRequestCommitsFragment();
+        Bundle args = new Bundle();
+        args.putParcelable(KEY_PROJECT, Parcels.wrap(project));
+        args.putParcelable(KEY_MERGE_REQUEST, Parcels.wrap(mergeRequest));
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
@@ -42,8 +51,7 @@ public class CommitsFragment extends BaseFragment {
     @Bind(R.id.message_text) TextView mMessageView;
 
     private Project mProject;
-    private String mBranchName;
-    private EventReceiver mEventReceiver;
+    private MergeRequest mMergeRequest;
     private LinearLayoutManager mCommitsLayoutManager;
     private CommitsAdapter mCommitsAdapter;
     private int mPage = -1;
@@ -125,8 +133,15 @@ public class CommitsFragment extends BaseFragment {
     };
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mProject = Parcels.unwrap(getArguments().getParcelable(KEY_PROJECT));
+        mMergeRequest = Parcels.unwrap(getArguments().getParcelable(KEY_MERGE_REQUEST));
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_commits, container, false);
+        return inflater.inflate(R.layout.fragment_merge_request_commits, container, false);
     }
 
     @Override
@@ -134,13 +149,9 @@ public class CommitsFragment extends BaseFragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
 
-        mEventReceiver = new EventReceiver();
-        LabCoatApp.bus().register(mEventReceiver);
-
         mCommitsAdapter = new CommitsAdapter(mCommitsAdapterListener);
         mCommitsLayoutManager = new LinearLayoutManager(getActivity());
         mCommitsListView.setLayoutManager(mCommitsLayoutManager);
-        mCommitsListView.addItemDecoration(new DividerItemDecoration(getActivity()));
         mCommitsListView.setAdapter(mCommitsAdapter);
         mCommitsListView.addOnScrollListener(mOnScrollListener);
 
@@ -150,31 +161,18 @@ public class CommitsFragment extends BaseFragment {
                 loadData();
             }
         });
-
-        if (getActivity() instanceof ProjectActivity) {
-            mProject = ((ProjectActivity) getActivity()).getProject();
-            mBranchName = ((ProjectActivity) getActivity()).getBranchName();
-            loadData();
-        } else {
-            throw new IllegalStateException("Incorrect parent activity");
-        }
+        loadData();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
-        LabCoatApp.bus().unregister(mEventReceiver);
     }
 
     @Override
     protected void loadData() {
         if (getView() == null) {
-            return;
-        }
-
-        if (mProject == null || TextUtils.isEmpty(mBranchName)) {
-            mSwipeRefreshLayout.setRefreshing(false);
             return;
         }
 
@@ -190,7 +188,7 @@ public class CommitsFragment extends BaseFragment {
         mPage = 0;
         mLoading = true;
 
-        GitLabClient.instance().getCommits(mProject.getId(), mBranchName, mPage).enqueue(mCommitsCallback);
+        GitLabClient.instance().getMergeRequestCommits(mProject.getId(), mMergeRequest.getId()).enqueue(mCommitsCallback);
     }
 
     private void loadMore() {
@@ -198,24 +196,11 @@ public class CommitsFragment extends BaseFragment {
             return;
         }
 
-        if (mProject == null || TextUtils.isEmpty(mBranchName) || mPage < 0) {
-            return;
-        }
-
         mPage++;
         mLoading = true;
-        mCommitsAdapter.setLoading(true);
+        //mCommitsAdapter.setLoading(true);
 
         Timber.d("loadMore called for %s", mPage);
-        GitLabClient.instance().getCommits(mProject.getId(), mBranchName, mPage).enqueue(mMoreCommitsCallback);
-    }
-
-    private class EventReceiver {
-        @Subscribe
-        public void onProjectReload(ProjectReloadEvent event) {
-            mProject = event.mProject;
-            mBranchName = event.mBranchName;
-            loadData();
-        }
+        //TODO is this even a thing?
     }
 }

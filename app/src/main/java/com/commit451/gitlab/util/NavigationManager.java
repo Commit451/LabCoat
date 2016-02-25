@@ -14,6 +14,7 @@ import com.commit451.gitlab.activity.AboutActivity;
 import com.commit451.gitlab.activity.AddIssueActivity;
 import com.commit451.gitlab.activity.AddMilestoneActivity;
 import com.commit451.gitlab.activity.AddUserActivity;
+import com.commit451.gitlab.activity.DiffActivity;
 import com.commit451.gitlab.activity.FileActivity;
 import com.commit451.gitlab.activity.GroupActivity;
 import com.commit451.gitlab.activity.GroupsActivity;
@@ -32,9 +33,8 @@ import com.commit451.gitlab.model.api.Issue;
 import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.model.api.Milestone;
 import com.commit451.gitlab.model.api.Project;
+import com.commit451.gitlab.model.api.RepositoryCommit;
 import com.commit451.gitlab.model.api.UserBasic;
-
-import java.util.List;
 
 import timber.log.Timber;
 
@@ -123,6 +123,10 @@ public class NavigationManager {
         activity.startActivity(FileActivity.newIntent(activity, projectId, path, branchName));
     }
 
+    public static void navigateToDiffActivity(Activity activity, Project project, RepositoryCommit commit) {
+        activity.startActivity(DiffActivity.newInstance(activity, project, commit));
+    }
+
     public static void navigateToAddProjectMember(Activity activity, View fab, long projectId) {
         Intent intent = AddUserActivity.newIntent(activity, projectId);
         startMorphActivity(activity, fab, intent);
@@ -187,21 +191,21 @@ public class NavigationManager {
      */
     private static boolean navigateToUrl(Activity activity, Uri uri) {
         //TODO figure out the url to activity mapping
-        if (uri.getPath().contains("issues")) {
-            List<String> pathSegments = uri.getPathSegments();
-            for (int i=0; i<pathSegments.size(); i++) {
-                //segment == issues, and there is one more segment in the path
-                if (pathSegments.get(i).equals("issues") && i != pathSegments.size()-1) {
-                    //TODO this would probably break if we had query params or anything else in the url
-                    String issueId = pathSegments.get(i+1);
-                    //TODO actually navigate to issue activity which will load the needed project and issue
-                    //navigateToIssue(activity, null, issueId);
-                    return true;
-                }
-            }
-            navigateToProject(activity, -1);
-            return true;
-        }
+//        if (uri.getPath().contains("issues")) {
+//            List<String> pathSegments = uri.getPathSegments();
+//            for (int i=0; i<pathSegments.size(); i++) {
+//                //segment == issues, and there is one more segment in the path
+//                if (pathSegments.get(i).equals("issues") && i != pathSegments.size()-1) {
+//                    //TODO this would probably break if we had query params or anything else in the url
+//                    String issueId = pathSegments.get(i+1);
+//                    //TODO actually navigate to issue activity which will load the needed project and issue
+//                    //navigateToIssue(activity, null, issueId);
+//                    return true;
+//                }
+//            }
+//            navigateToProject(activity, -1);
+//            return true;
+//        }
         return false;
     }
 }

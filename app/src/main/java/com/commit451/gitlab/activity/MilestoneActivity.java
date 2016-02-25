@@ -6,10 +6,12 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -61,11 +63,15 @@ public class MilestoneActivity extends BaseActivity {
     LinearLayoutManager mIssuesLayoutManager;
     @Bind(R.id.message_text)
     TextView mMessageText;
+    @Bind(R.id.progress)
+    View mProgress;
 
-    private Project mProject;
-    private Milestone mMilestone;
-    private Uri mNextPageUrl;
-    private boolean mLoading = false;
+    MenuItem mOpenCloseMenuItem;
+
+    Project mProject;
+    Milestone mMilestone;
+    Uri mNextPageUrl;
+    boolean mLoading = false;
 
     EventReceiver mEventReceiver;
 
@@ -123,6 +129,24 @@ public class MilestoneActivity extends BaseActivity {
         }
     };
 
+    private final Callback<Milestone> mOpenCloseCallback = new EasyCallback<Milestone>() {
+        @Override
+        public void onResponse(@NonNull Milestone response) {
+            mProgress.setVisibility(View.GONE);
+            mMilestone = response;
+            LabCoatApp.bus().post(new MilestoneChangedEvent(mMilestone));
+            setOpenCloseMenuStatus();
+        }
+
+        @Override
+        public void onAllFailure(Throwable t) {
+            Timber.e(t, null);
+            mProgress.setVisibility(View.GONE);
+            Snackbar.make(mRoot, getString(R.string.failed_to_create_milestone), Snackbar.LENGTH_SHORT)
+                    .show();
+        }
+    };
+
     private final RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -152,6 +176,19 @@ public class MilestoneActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 onBackPressed();
+            }
+        });
+        mToolbar.inflateMenu(R.menu.menu_milestone);
+        mOpenCloseMenuItem = mToolbar.getMenu().findItem(R.id.action_close);
+        mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.action_close:
+                        closeOrOpenIssue();
+                        return true;
+                }
+                return false;
             }
         });
 
@@ -186,6 +223,7 @@ public class MilestoneActivity extends BaseActivity {
     private void bind(Milestone milestone) {
         mToolbar.setTitle(milestone.getTitle());
         mMilestoneIssuesAdapter.setMilestone(milestone);
+        setOpenCloseMenuStatus();
     }
 
     private void loadData() {
@@ -210,8 +248,23 @@ public class MilestoneActivity extends BaseActivity {
 
         mLoading = true;
 
-        Timber.d("loadMore called for " + mNextPageUrl);
+        Timber.d("loadMore called for %s", mNextPageUrl);
         GitLabClient.instance().getMilestoneIssues(mNextPageUrl.toString()).enqueue(mMoreIssuesCallback);
+    }
+
+    private void closeOrOpenIssue() {
+        mProgress.setVisibility(View.VISIBLE);
+        if (mMilestone.getState().equals(Milestone.STATE_ACTIVE)) {
+            GitLabClient.instance().updateMilestoneStatus(mProject.getId(), mMilestone.getId(), Milestone.STATE_EVENT_CLOSE)
+                    .enqueue(mOpenCloseCallback);
+        } else {
+            GitLabClient.instance().updateMilestoneStatus(mProject.getId(), mMilestone.getId(), Milestone.STATE_EVENT_ACTIVATE)
+                    .enqueue(mOpenCloseCallback);
+        }
+    }
+
+    private void setOpenCloseMenuStatus() {
+        mOpenCloseMenuItem.setTitle(mMilestone.getState().equals(Milestone.STATE_CLOSED) ? R.string.reopen : R.string.close);
     }
 
     private class EventReceiver {

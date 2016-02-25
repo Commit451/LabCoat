@@ -183,6 +183,10 @@ public class OverviewFragment extends BaseFragment {
     }
 
     private void bindProject(Project project) {
+        if (project == null) {
+            return;
+        }
+
         if (project.belongsToGroup()) {
             mCreatorView.setText(String.format(getString(R.string.created_by), project.getNamespace().getName()));
         } else {

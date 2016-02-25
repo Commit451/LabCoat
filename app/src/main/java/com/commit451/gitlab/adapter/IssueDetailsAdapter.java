@@ -11,7 +11,7 @@ import com.commit451.gitlab.viewHolder.IssueLabelsViewHolder;
 import com.commit451.gitlab.viewHolder.LoadingFooterViewHolder;
 import com.commit451.gitlab.viewHolder.NoteViewHolder;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import in.uncod.android.bypass.Bypass;
@@ -30,14 +30,14 @@ public class IssueDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private static final int HEADER_COUNT = 2;
     private static final int FOOTER_COUNT = 1;
 
-    private ArrayList<Note> mNotes;
+    private LinkedList<Note> mNotes;
     private Issue mIssue;
     private boolean mLoading = false;
     private Bypass mBypass;
 
     public IssueDetailsAdapter(Context context, Issue issue) {
         mIssue = issue;
-        mNotes = new ArrayList<>();
+        mNotes = new LinkedList<>();
         mBypass = new Bypass(context);
     }
 
@@ -48,8 +48,7 @@ public class IssueDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         } else if (viewType == TYPE_HEADER_LABEL) {
             return IssueLabelsViewHolder.inflate(parent);
         } else if (viewType == TYPE_COMMENT) {
-            RecyclerView.ViewHolder holder = NoteViewHolder.inflate(parent);
-            return holder;
+            return NoteViewHolder.inflate(parent);
         } else if (viewType == TYPE_FOOTER) {
             return LoadingFooterViewHolder.inflate(parent);
         }
@@ -89,7 +88,7 @@ public class IssueDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     public Note getNoteAt(int position) {
-        return mNotes.get(position-1);
+        return mNotes.get(position - HEADER_COUNT);
     }
 
     public void setNotes(List<Note> notes) {
@@ -105,7 +104,7 @@ public class IssueDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     public void addNote(Note note) {
-        mNotes.add(note);
+        mNotes.addFirst(note);
         notifyItemInserted(HEADER_COUNT);
     }
 

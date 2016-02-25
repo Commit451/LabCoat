@@ -77,7 +77,7 @@ public class ProjectsActivity extends BaseActivity implements ATEActivityThemeCu
                 mDrawerLayout.openDrawer(GravityCompat.START);
             }
         });
-        mToolbar.inflateMenu(R.menu.search);
+        mToolbar.inflateMenu(R.menu.menu_search);
         mToolbar.setOnMenuItemClickListener(mOnMenuItemClickListener);
         mViewPager.setAdapter(new ProjectsPagerAdapter(this, getSupportFragmentManager()));
         mTabLayout.setupWithViewPager(mViewPager);

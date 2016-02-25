@@ -88,7 +88,7 @@ public class DiffActivity extends BaseActivity {
         });
         mToolbar.setTitle(mCommit.getShortId());
 
-        mDiffAdapter = new DiffAdapter(new DiffAdapter.Listener() {
+        mDiffAdapter = new DiffAdapter(mCommit, new DiffAdapter.Listener() {
             @Override
             public void onDiffClicked(Diff diff) {
 

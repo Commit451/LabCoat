@@ -217,7 +217,7 @@ public class IssueActivity extends BaseActivity {
             }
         });
         mToolbar.setSubtitle(mProject.getNameWithNamespace());
-        mToolbar.inflateMenu(R.menu.issue);
+        mToolbar.inflateMenu(R.menu.menu_issue);
         mOpenCloseMenuItem = mToolbar.getMenu().findItem(R.id.action_close);
         mToolbar.setOnMenuItemClickListener(mOnMenuItemClickListener);
 

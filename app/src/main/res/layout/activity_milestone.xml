@@ -66,4 +66,6 @@
         android:src="@drawable/ic_add_24dp"
         android:tag="tint_selector|accent_color" />
 
+    <include layout="@layout/progress_fullscreen"/>
+
 </android.support.design.widget.CoordinatorLayout>

@@ -61,7 +61,7 @@ public class MergeRequestHeaderViewHolder extends RecyclerView.ViewHolder {
         if (mergeRequest.getAuthor() != null) {
             author += mergeRequest.getAuthor().getName() + " ";
         }
-        author += itemView.getResources().getString(R.string.created_issue);
+        author += itemView.getResources().getString(R.string.created_merge_request);
         if (mergeRequest.getCreatedAt() != null) {
             author += " " + DateUtils.getRelativeTimeSpanString(itemView.getContext(), mergeRequest.getCreatedAt());
         }

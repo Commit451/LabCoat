@@ -181,6 +181,11 @@ public interface GitLab {
                             @Field("description") String description,
                             @Field("due_date") String dueDate);
 
+    @PUT(API_VERSION + "/projects/{id}/milestones/{milestone_id}")
+    Call<Milestone> updateMilestoneStatus(@Path("id") long projectId,
+                                  @Path("milestone_id") long milestoneId,
+                                  @Query("state_event") @Milestone.StateEvent String status);
+
     /* --- MERGE REQUESTS --- */
 
     @GET(API_VERSION + "/projects/{id}/merge_requests")
@@ -198,6 +203,14 @@ public interface GitLab {
     @GET(API_VERSION + "/projects/{id}/merge_requests/{merge_request_id}/notes")
     Call<List<Note>> getMergeRequestNotes(@Path("id") long projectId,
                                           @Path("merge_request_id") long mergeRequestId);
+
+    @GET(API_VERSION + "/projects/{id}/merge_requests/{merge_request_id}/commits")
+    Call<List<RepositoryCommit>> getMergeRequestCommits(@Path("id") long projectId,
+                                          @Path("merge_request_id") long mergeRequestId);
+
+    @GET(API_VERSION + "/projects/{id}/merge_requests/{merge_request_id}/changes")
+    Call<MergeRequest> getMergeRequestChanges(@Path("id") long projectId,
+                                                        @Path("merge_request_id") long mergeRequestId);
 
     @GET
     Call<List<Note>> getMergeRequestNotes(@Url String url);

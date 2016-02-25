@@ -19,12 +19,19 @@ import timber.log.Timber;
 
 @Parcel
 public class Milestone {
-    public static final String STATE_REOPEN = "reopen";
-    public static final String STATE_CLOSE = "close";
+    public static final String STATE_ACTIVE = "active";
+    public static final String STATE_CLOSED = "closed";
 
-    @StringDef({STATE_REOPEN, STATE_CLOSE})
+    @StringDef({STATE_ACTIVE, STATE_CLOSED})
     @Retention(RetentionPolicy.SOURCE)
-    public @interface EditState {}
+    public @interface State {}
+
+    public static final String STATE_EVENT_ACTIVATE = "activate";
+    public static final String STATE_EVENT_CLOSE = "close";
+
+    @StringDef({STATE_EVENT_ACTIVATE, STATE_EVENT_CLOSE})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface StateEvent {}
 
     public static final SimpleDateFormat DUE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-d", Locale.US);
 
@@ -39,7 +46,7 @@ public class Milestone {
     @SerializedName("description")
     String mDescription;
     @SerializedName("state")
-    State mState;
+    String mState;
     @SerializedName("created_at")
     Date mCreatedAt;
     @SerializedName("updated_at")
@@ -69,7 +76,9 @@ public class Milestone {
         return mDescription;
     }
 
-    public State getState() {
+
+    @State
+    public String getState() {
         return mState;
     }
 
@@ -112,14 +121,5 @@ public class Milestone {
     @Override
     public String toString() {
         return mTitle;
-    }
-
-    public enum State {
-        @SerializedName("opened")
-        OPENED,
-        @SerializedName("reopened")
-        REOPENED,
-        @SerializedName("closed")
-        CLOSED
     }
 }
