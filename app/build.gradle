@@ -82,7 +82,7 @@ dependencies {
     compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
         transitive = true;
     }
-    compile('com.github.afollestad:app-theme-engine:f524a05e06@aar') {
+    compile('com.github.afollestad:app-theme-engine:1.0.1@aar') {
         transitive = true
     }
     compile('com.github.afollestad.material-dialogs:core:0.8.5.3@aar') {

@@ -17,7 +17,9 @@
     <dimen name="larger_image_size">56dp</dimen>
     <dimen name="border_size">2dp</dimen>
     <dimen name="circle_size">56dp</dimen>
-    <dimen name="navigation_drawer_header_height">148dp</dimen>
+
+    <dimen name="account_header_height">148dp</dimen>
+    <dimen name="account_header_margin_top">16dp</dimen>
 
     <dimen name="user_list_image_size">180dp</dimen>
     <dimen name="user_header_image_size">300dp</dimen>

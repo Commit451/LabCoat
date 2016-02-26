@@ -62,7 +62,6 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:clickable="true"
-        android:fitsSystemWindows="true"
-        />
+        android:fitsSystemWindows="true" />
 
 </android.support.v4.widget.DrawerLayout>

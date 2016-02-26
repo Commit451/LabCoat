@@ -58,11 +58,8 @@ public class DiffHeaderViewHolder extends RecyclerView.ViewHolder {
      * (the commit message also contains the commit title)
      */
     private String extractMessage(String title, String message) {
-        if (title.endsWith("\u2026")) {
-            String trailing = message.substring(title.length() - 1);
-            return trailing.equals("\u2026") ? "" : ("\u2026" + trailing).trim();
-        } else {
-            return ""; // No trailing part
-        }
+        boolean ellipsis = title.endsWith("\u2026") && message.charAt(title.length() - 1) != '\u2026';
+        String trailing = message.substring(title.length() - (ellipsis ? 1 : 0));
+        return trailing.equals("\u2026") ? "" : ((ellipsis ? "\u2026" : "") + trailing).trim();
     }
 }
