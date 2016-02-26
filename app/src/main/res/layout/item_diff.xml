@@ -1,38 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/Card"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_margin="16dp"
-    app:cardBackgroundColor="@color/white"
-    >
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
-    <LinearLayout
+    <com.devspark.robototextview.widget.RobotoTextView
+        android:id="@+id/file_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="8dp">
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="8dp"
+        android:tag="text_color|accent_color"
+        android:textSize="16sp"
+        app:typeface="roboto_medium"
+        tools:text="NewFile.java" />
 
-        <TextView
-            android:id="@+id/file_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:tag="text_color|accent_color"
-            android:textSize="18sp"
-            android:layout_marginBottom="4dp"
-            tools:text="NewFile.java"/>
+    <com.commit451.gitlab.view.GitLabCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        app:cardBackgroundColor="@android:color/white"
+        app:cardCornerRadius="0dp"
+        app:cardElevation="2dp">
 
         <com.alorma.diff.lib.DiffTextView
             android:id="@+id/diff"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/black"
+            android:fontFamily="monospace"
+            android:paddingBottom="8dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="8dp"
+            android:textColor="@android:color/black"
+            android:textSize="14sp"
             android:typeface="monospace"
-            tools:text="+blah blah blah"/>
+            app:diff_show_diff_info="true"
+            tools:text="+blah blah blah" />
 
-    </LinearLayout>
+    </com.commit451.gitlab.view.GitLabCardView>
 
-</android.support.v7.widget.CardView>
+</LinearLayout>

@@ -1,10 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.devspark.robototextview.widget.RobotoTextView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/title"
+<com.commit451.gitlab.view.GitLabCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginLeft="@dimen/activity_horizontal_margin"
-    android:layout_marginRight="@dimen/activity_horizontal_margin"
-    android:layout_marginTop="@dimen/activity_vertical_margin"
-    android:layout_marginBottom="@dimen/activity_vertical_margin"/>
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
+    app:cardBackgroundColor="?attr/cardBackgroundColor"
+    app:cardCornerRadius="0dp"
+    app:cardElevation="2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="@dimen/activity_vertical_margin">
+
+            <ImageView
+                android:id="@+id/commit_author_image"
+                android:layout_width="@dimen/image_size"
+                android:layout_height="@dimen/image_size"
+                android:contentDescription="@null" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:paddingLeft="@dimen/activity_horizontal_margin">
+
+                <com.devspark.robototextview.widget.RobotoTextView
+                    android:id="@+id/commit_author"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="2dp"
+                    android:tag="text_color|primary_text"
+                    android:textSize="14sp"
+                    tools:text="Jawnnypoo" />
+
+                <com.devspark.robototextview.widget.RobotoTextView
+                    android:id="@+id/commit_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:tag="text_color|secondary_text"
+                    android:textSize="14sp"
+                    tools:text="May 25, 2019" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <com.devspark.robototextview.widget.RobotoTextView
+            android:id="@+id/commit_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="2dp"
+            android:tag="text_color|primary_text"
+            android:textSize="16sp"
+            tools:text="I commited all the code at once cause I am cool. So sorry, the message is so long that..." />
+
+        <com.devspark.robototextview.widget.RobotoTextView
+            android:id="@+id/commit_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:tag="text_color|secondary_text"
+            android:textSize="14sp"
+            tools:text="... it doesn't even fit in the title." />
+    </LinearLayout>
+</com.commit451.gitlab.view.GitLabCardView>
