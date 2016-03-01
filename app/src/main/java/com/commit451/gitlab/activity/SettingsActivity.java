@@ -10,7 +10,6 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.TextView;
 
 import com.afollestad.appthemeengine.ATE;
 import com.afollestad.appthemeengine.Config;
@@ -23,7 +22,6 @@ import butterknife.ButterKnife;
 
 /**
  * Settings screens are fun!
- * Created by John on 11/10/15.
  */
 public class SettingsActivity extends BaseActivity
         implements ColorChooserDialog.ColorCallback {
@@ -53,7 +51,9 @@ public class SettingsActivity extends BaseActivity
             getFragmentManager().beginTransaction().replace(R.id.settings_container, new SettingsFragment()).commit();
         } else {
             SettingsFragment frag = (SettingsFragment) getFragmentManager().findFragmentById(R.id.settings_container);
-            if (frag != null) frag.invalidateSettings();
+            if (frag != null) {
+                frag.invalidateSettings();
+            }
         }
     }
 

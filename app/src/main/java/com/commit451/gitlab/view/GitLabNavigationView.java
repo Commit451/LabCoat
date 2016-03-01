@@ -103,7 +103,7 @@ public class GitLabNavigationView extends NavigationView {
 
         @Override
         public void onAddAccountClicked() {
-            NavigationManager.navigateToLogin((Activity) getContext());
+            NavigationManager.navigateToLogin((Activity) getContext(), true);
             toggleAccounts();
             LabCoatApp.bus().post(new CloseDrawerEvent());
         }

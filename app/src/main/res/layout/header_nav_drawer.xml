@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         android:contentDescription="@null"
         android:fitsSystemWindows="false"
-        android:scaleType="fitXY"
+        android:scaleType="centerCrop"
         android:src="@drawable/header"
         android:tag="background|primary_color"/>
 

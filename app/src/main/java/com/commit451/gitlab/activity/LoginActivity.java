@@ -42,7 +42,6 @@ import com.commit451.gitlab.ssl.X509CertificateException;
 import com.commit451.gitlab.ssl.X509Util;
 import com.commit451.gitlab.util.KeyboardUtil;
 import com.commit451.gitlab.util.NavigationManager;
-import com.commit451.gitlab.view.EmailAutoCompleteTextView;
 import com.squareup.okhttp.Credentials;
 import com.squareup.okhttp.HttpUrl;
 
@@ -69,26 +68,47 @@ import timber.log.Timber;
 
 public class LoginActivity extends BaseActivity {
 
+    private static final String EXTRA_SHOW_CLOSE = "show_close";
+
     private static final int PERMISSION_REQUEST_GET_ACCOUNTS = 1337;
     private static Pattern sTokenPattern = Pattern.compile("^[A-Za-z0-9-_]*$");
 
     public static Intent newInstance(Context context) {
+        return newInstance(context, false);
+    }
+
+    public static Intent newInstance(Context context, boolean showClose) {
         Intent intent = new Intent(context, LoginActivity.class);
+        intent.putExtra(EXTRA_SHOW_CLOSE, showClose);
         return intent;
     }
 
-    @Bind(R.id.root) View mRoot;
-    @Bind(R.id.url_hint) TextInputLayout mUrlHint;
-    @Bind(R.id.url_input) TextView mUrlInput;
-    @Bind(R.id.user_input_hint) TextInputLayout mUserHint;
-    @Bind(R.id.user_input) AppCompatAutoCompleteTextView mUserInput;
-    @Bind(R.id.password_hint) TextInputLayout mPasswordHint;
-    @Bind(R.id.password_input) TextView mPasswordInput;
-    @Bind(R.id.token_hint) TextInputLayout mTokenHint;
-    @Bind(R.id.token_input) TextView mTokenInput;
-    @Bind(R.id.normal_login) View mNormalLogin;
-    @Bind(R.id.token_login) View mTokenLogin;
-    @Bind(R.id.progress) View mProgress;
+    @Bind(R.id.root)
+    View mRoot;
+    @Bind(R.id.close)
+    View mClose;
+    @Bind(R.id.url_hint)
+    TextInputLayout mUrlHint;
+    @Bind(R.id.url_input)
+    TextView mUrlInput;
+    @Bind(R.id.user_input_hint)
+    TextInputLayout mUserHint;
+    @Bind(R.id.user_input)
+    AppCompatAutoCompleteTextView mUserInput;
+    @Bind(R.id.password_hint)
+    TextInputLayout mPasswordHint;
+    @Bind(R.id.password_input)
+    TextView mPasswordInput;
+    @Bind(R.id.token_hint)
+    TextInputLayout mTokenHint;
+    @Bind(R.id.token_input)
+    TextView mTokenInput;
+    @Bind(R.id.normal_login)
+    View mNormalLogin;
+    @Bind(R.id.token_login)
+    View mTokenLogin;
+    @Bind(R.id.progress)
+    View mProgress;
 
     private boolean mIsNormalLogin = true;
     private Account mAccount;
@@ -100,6 +120,11 @@ public class LoginActivity extends BaseActivity {
             return true;
         }
     };
+
+    @OnClick(R.id.close)
+    public void onCloseClick() {
+        onBackPressed();
+    }
 
     @OnClick(R.id.show_normal_link)
     public void showNormalLogin(TextView loginTypeTextView) {
@@ -277,6 +302,10 @@ public class LoginActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
+
+        boolean showClose = getIntent().getBooleanExtra(EXTRA_SHOW_CLOSE, false);
+
+        mClose.setVisibility(showClose ? View.VISIBLE : View.GONE);
         mPasswordInput.setOnEditorActionListener(onEditorActionListener);
         mTokenInput.setOnEditorActionListener(onEditorActionListener);
         mUserInput.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -314,19 +343,17 @@ public class LoginActivity extends BaseActivity {
         mProgress.setAlpha(0.0f);
         mProgress.animate().alpha(1.0f);
 
-        if(byAuth) {
+        if (byAuth) {
             connectByAuth();
-        }
-        else {
+        } else {
             connectByToken();
         }
     }
 
     private void connectByAuth() {
-        if(mUserInput.getText().toString().contains("@")) {
+        if (mUserInput.getText().toString().contains("@")) {
             GitLabClient.instance(mAccount).loginWithEmail(mUserInput.getText().toString(), mPasswordInput.getText().toString()).enqueue(mLoginCallback);
-        }
-        else {
+        } else {
             GitLabClient.instance(mAccount).loginWithUsername(mUserInput.getText().toString(), mPasswordInput.getText().toString()).enqueue(mLoginCallback);
         }
     }
@@ -493,6 +520,7 @@ public class LoginActivity extends BaseActivity {
 
     /**
      * Get all the accounts that appear to be email accounts. HashSet so that we do not get duplicates
+     *
      * @return list of email accounts
      */
     private Set<String> getEmailAccounts() {

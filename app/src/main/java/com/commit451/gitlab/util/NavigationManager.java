@@ -40,7 +40,6 @@ import timber.log.Timber;
 
 /**
  * Manages navigation so that we can override things as needed
- * Created by Jawn on 9/21/2015.
  */
 public class NavigationManager {
 
@@ -70,6 +69,10 @@ public class NavigationManager {
 
     public static void navigateToLogin(Activity activity) {
         activity.startActivity(LoginActivity.newInstance(activity));
+    }
+
+    public static void navigateToLogin(Activity activity, boolean showClose) {
+        activity.startActivity(LoginActivity.newInstance(activity, showClose));
     }
 
     public static void navigateToSearch(Activity activity) {
