@@ -16,6 +16,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
+            android:tag="tint|primary_text"
             android:visibility="gone"/>
 
         <com.commit451.gitlab.view.GitLabSwipeRefreshLayout
@@ -48,7 +49,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         android:layout_margin="@dimen/padding_normal"
-        android:src="@drawable/ic_add_24dp" />
+        android:src="@drawable/ic_add_24dp"
+        android:tag="tint_selector|accent_color" />
 
 </FrameLayout>
 

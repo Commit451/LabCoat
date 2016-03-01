@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
+import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.gitlab.adapter.MilestoneIssuesAdapter;
 import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
@@ -201,6 +202,7 @@ public class MilestoneActivity extends BaseActivity {
         mIssuesRecyclerView.setAdapter(mMilestoneIssuesAdapter);
         mIssuesLayoutManager = new LinearLayoutManager(this);
         mIssuesRecyclerView.setLayoutManager(mIssuesLayoutManager);
+        mIssuesRecyclerView.addItemDecoration(new DividerItemDecoration(this));
         mIssuesRecyclerView.addOnScrollListener(mOnScrollListener);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override

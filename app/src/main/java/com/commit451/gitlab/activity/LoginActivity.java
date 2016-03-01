@@ -1,6 +1,7 @@
 package com.commit451.gitlab.activity;
 
 import android.Manifest;
+import android.accounts.AccountManager;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -16,9 +17,13 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.AppCompatAutoCompleteTextView;
+import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
+import android.util.Patterns;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.commit451.gitlab.LabCoatApp;
@@ -43,8 +48,12 @@ import com.squareup.okhttp.HttpUrl;
 
 import java.net.ConnectException;
 import java.security.cert.CertificateEncodingException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import javax.net.ssl.SSLHandshakeException;
@@ -72,7 +81,7 @@ public class LoginActivity extends BaseActivity {
     @Bind(R.id.url_hint) TextInputLayout mUrlHint;
     @Bind(R.id.url_input) TextView mUrlInput;
     @Bind(R.id.user_input_hint) TextInputLayout mUserHint;
-    @Bind(R.id.user_input) EmailAutoCompleteTextView mUserInput;
+    @Bind(R.id.user_input) AppCompatAutoCompleteTextView mUserInput;
     @Bind(R.id.password_hint) TextInputLayout mPasswordHint;
     @Bind(R.id.password_input) TextView mPasswordInput;
     @Bind(R.id.token_hint) TextInputLayout mTokenHint;
@@ -283,7 +292,7 @@ public class LoginActivity extends BaseActivity {
     @TargetApi(23)
     private void checkAccountPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.GET_ACCOUNTS) == PackageManager.PERMISSION_GRANTED) {
-            mUserInput.retrieveAccounts();
+            retrieveAccounts();
         } else {
             requestPermissions(new String[]{Manifest.permission.GET_ACCOUNTS}, PERMISSION_REQUEST_GET_ACCOUNTS);
         }
@@ -294,7 +303,7 @@ public class LoginActivity extends BaseActivity {
         switch (requestCode) {
             case PERMISSION_REQUEST_GET_ACCOUNTS: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    mUserInput.retrieveAccounts();
+                    retrieveAccounts();
                 }
             }
         }
@@ -466,5 +475,35 @@ public class LoginActivity extends BaseActivity {
             }
         }
         return false;
+    }
+
+    /**
+     * Manually retrieve the accounts, typically used for API 23+ after getting the permission. Called automatically
+     * on creation, but needs to be recalled if the permission is granted later
+     */
+    public void retrieveAccounts() {
+        Collection<String> accounts = getEmailAccounts();
+        if (accounts != null && !accounts.isEmpty()) {
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                    R.layout.support_simple_spinner_dropdown_item,
+                    new ArrayList<>(accounts));
+            mUserInput.setAdapter(adapter);
+        }
+    }
+
+    /**
+     * Get all the accounts that appear to be email accounts. HashSet so that we do not get duplicates
+     * @return list of email accounts
+     */
+    private Set<String> getEmailAccounts() {
+        HashSet<String> emailAccounts = new HashSet<>();
+        AccountManager manager = (AccountManager) getSystemService(Context.ACCOUNT_SERVICE);
+        final android.accounts.Account[] accounts = manager.getAccounts();
+        for (android.accounts.Account account : accounts) {
+            if (!TextUtils.isEmpty(account.name) && Patterns.EMAIL_ADDRESS.matcher(account.name).matches()) {
+                emailAccounts.add(account.name);
+            }
+        }
+        return emailAccounts;
     }
 }

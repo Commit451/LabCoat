@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/navigation_drawer_header_height"
+    android:layout_height="@dimen/account_header_height"
     android:fitsSystemWindows="true">
 
     <ImageView
@@ -14,7 +14,7 @@
         android:fitsSystemWindows="false"
         android:scaleType="fitXY"
         android:src="@drawable/header"
-        android:background="@color/background_color"/>
+        android:tag="background|primary_color"/>
 
     <com.commit451.foregroundimageview.ForegroundImageView
         android:id="@+id/profile_image"
@@ -22,7 +22,7 @@
         android:layout_height="@dimen/larger_image_size"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="@dimen/account_header_margin_top"
         android:fitsSystemWindows="true"
         android:foreground="?attr/selectableItemBackgroundBorderless"
         tools:src="@drawable/ic_assign_24dp"/>

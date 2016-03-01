@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.commit451.gitlab.R;
+import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.gitlab.adapter.ProjectsAdapter;
 import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
@@ -177,6 +178,7 @@ public class ProjectsFragment extends BaseFragment {
         mProjectsAdapter = new ProjectsAdapter(getActivity(), mProjectsListener);
         mLayoutManager = new LinearLayoutManager(getActivity());
         mProjectsListView.setLayoutManager(mLayoutManager);
+        mProjectsListView.addItemDecoration(new DividerItemDecoration(getActivity()));
         mProjectsListView.setAdapter(mProjectsAdapter);
         mProjectsListView.addOnScrollListener(mOnScrollListener);
 

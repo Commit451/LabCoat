@@ -19,6 +19,7 @@ import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.adapter.BreadcrumbAdapter;
+import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.gitlab.adapter.FilesAdapter;
 import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
@@ -146,6 +147,7 @@ public class FilesFragment extends BaseFragment {
 
         mFilesAdapter = new FilesAdapter(mFilesAdapterListener);
         mFilesListView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mFilesListView.addItemDecoration(new DividerItemDecoration(getActivity()));
         mFilesListView.setAdapter(mFilesAdapter);
 
         mBreadcrumbAdapter = new BreadcrumbAdapter();

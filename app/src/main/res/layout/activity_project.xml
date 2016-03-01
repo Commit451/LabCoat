@@ -15,13 +15,13 @@
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary">
+            android:layout_height="?attr/actionBarSize">
 
             <android.support.v7.widget.AppCompatSpinner
                 android:id="@+id/branch_spinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:tag="tint|primary_color_dependent"
                 android:visibility="gone"
                 />
 

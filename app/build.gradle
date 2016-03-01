@@ -52,7 +52,7 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.squareup.retrofit:retrofit:2.0.0-beta2'
     compile 'com.squareup.retrofit:converter-gson:2.0.0-beta2'
-    compile ('com.squareup.retrofit:converter-simplexml:2.0.0-beta2') {
+    compile('com.squareup.retrofit:converter-simplexml:2.0.0-beta2') {
         exclude group: 'xpp3', module: 'xpp3'
         exclude group: 'stax', module: 'stax-api'
         exclude group: 'stax', module: 'stax'
@@ -81,5 +81,14 @@ dependencies {
     compile "com.wefika:flowlayout:0.4.1"
     compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
         transitive = true;
+    }
+    compile('com.github.afollestad:app-theme-engine:1.0.1@aar') {
+        transitive = true
+    }
+    compile('com.github.afollestad.material-dialogs:core:0.8.5.3@aar') {
+        transitive = true
+    }
+    compile('com.github.afollestad.material-dialogs:commons:0.8.5.3@aar') {
+        transitive = true
     }
 }

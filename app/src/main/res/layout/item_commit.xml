@@ -1,72 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/list_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/selectableItemBackground"
-    android:minHeight="?android:attr/listPreferredItemHeight">
+    android:minHeight="?android:attr/listPreferredItemHeight"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/commit_image"
+        android:layout_width="@dimen/image_size"
+        android:layout_height="@dimen/image_size"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:contentDescription="@null"
+        tools:src="@drawable/ic_star_24dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_margin="8dp"
+        android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/commit_image"
-            android:layout_width="@dimen/image_size"
-            android:layout_height="@dimen/image_size"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:contentDescription="@null"
-            tools:src="@drawable/ic_star_24dp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/commit_message"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_margin="8dp">
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:tag="text_color|primary_text"
+            android:textSize="@dimen/text_size_small"
+            tools:text="I commited all the code at once cause I am cool. So sorry" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/commit_message"
+                android:id="@+id/commit_author"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:maxLines="2"
-                android:textColor="?android:attr/textColorPrimary"
-                android:textSize="@dimen/text_size_small"
-                tools:text="I commited all the code at once cause I am cool. So sorry" />
+                android:tag="text_color|secondary_text"
+                android:textSize="@dimen/text_size_tiny"
+                tools:text="Jawnnypoo" />
 
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/commit_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:tag="text_color|secondary_text"
+                android:textSize="@dimen/text_size_tiny"
+                tools:text="May 25, 2019" />
+        </FrameLayout>
 
-                <TextView
-                    android:id="@+id/commit_author"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="?android:attr/textColorSecondary"
-                    android:textSize="@dimen/text_size_tiny"
-                    tools:text="Jawnnypoo" />
-
-                <TextView
-                    android:id="@+id/commit_time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="right"
-                    android:textColor="?android:attr/textColorSecondary"
-                    android:textSize="@dimen/text_size_tiny"
-                    tools:text="May 25, 2019" />
-            </FrameLayout>
-
-        </LinearLayout>
     </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/divider_color"
-        android:layout_gravity="bottom"/>
-
-</FrameLayout>
+</LinearLayout>

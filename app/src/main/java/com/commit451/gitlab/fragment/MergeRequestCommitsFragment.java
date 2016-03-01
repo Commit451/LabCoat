@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.CommitsAdapter;
+import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.MergeRequest;
@@ -152,6 +153,7 @@ public class MergeRequestCommitsFragment extends BaseFragment {
         mCommitsAdapter = new CommitsAdapter(mCommitsAdapterListener);
         mCommitsLayoutManager = new LinearLayoutManager(getActivity());
         mCommitsListView.setLayoutManager(mCommitsLayoutManager);
+        mCommitsListView.addItemDecoration(new DividerItemDecoration(getActivity()));
         mCommitsListView.setAdapter(mCommitsAdapter);
         mCommitsListView.addOnScrollListener(mOnScrollListener);
 

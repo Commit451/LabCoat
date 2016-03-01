@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ProjectActivity;
+import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.gitlab.adapter.IssuesAdapter;
 import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
@@ -175,6 +176,7 @@ public class IssuesFragment extends BaseFragment {
         mIssuesAdapter = new IssuesAdapter(mIssuesAdapterListener);
         mIssuesLayoutManager = new LinearLayoutManager(getActivity());
         mIssueListView.setLayoutManager(mIssuesLayoutManager);
+        mIssueListView.addItemDecoration(new DividerItemDecoration(getActivity()));
         mIssueListView.setAdapter(mIssuesAdapter);
         mIssueListView.addOnScrollListener(mOnScrollListener);
 

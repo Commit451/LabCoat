@@ -17,15 +17,14 @@
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"/>
+            android:layout_height="?attr/actionBarSize"/>
 
     </android.support.design.widget.AppBarLayout>
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/background_color"
+        android:background="?attr/windowBackground"
         android:layout_marginTop="?attr/actionBarSize">
 
         <LinearLayout
@@ -85,6 +84,7 @@
                     android:id="@+id/assignee_spinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:tag="tint|primary_text"
                     android:visibility="gone"/>
 
             </FrameLayout>
@@ -111,6 +111,7 @@
                     android:id="@+id/milestone_spinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:tag="tint|primary_text"
                     android:visibility="gone"/>
 
             </FrameLayout>

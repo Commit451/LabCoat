@@ -1,68 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_gravity="center_vertical"
+    android:paddingBottom="8dp"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="8dp"
+    android:background="?attr/selectableItemBackground"
     android:minHeight="72dp"
-    android:background="?attr/selectableItemBackground">
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="@dimen/image_size"
+        android:layout_height="@dimen/image_size"
+        android:layout_gravity="center_vertical"
+        android:contentDescription="@null"
+        tools:src="@drawable/ic_person_add_24dp" />
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:layout_gravity="center_vertical"
-        android:orientation="horizontal">
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="8dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/image"
-            android:layout_width="@dimen/image_size"
-            android:layout_height="@dimen/image_size"
-            android:layout_gravity="center_vertical"
-            android:contentDescription="@null"
-            tools:src="@drawable/ic_person_add_24dp"/>
-
-        <LinearLayout
-            android:layout_width="0dp"
+        <com.devspark.robototextview.widget.RobotoTextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="8dp"
-            android:layout_weight="1"
             android:layout_gravity="center_vertical"
-            android:orientation="vertical">
+            android:tag="text_color|primary_text"
+            android:textSize="16sp"
+            app:typeface="roboto_medium"
+            tools:text="Project" />
 
-            <com.devspark.robototextview.widget.RobotoTextView
-                android:id="@+id/title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                app:typeface="roboto_medium"
-                android:textSize="16sp"
-                android:textColor="@color/white"
-                tools:text="Project"
-                />
-
-            <com.devspark.robototextview.widget.RobotoTextView
-                android:id="@+id/description"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                app:typeface="roboto_regular"
-                android:textSize="14sp"
-                tools:text="I like this project because its called a project and it has a really long description that should cut off after a few lines"
-                />
-
-        </LinearLayout>
+        <com.devspark.robototextview.widget.RobotoTextView
+            android:id="@+id/description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:tag="text_color|secondary_text"
+            android:textSize="14sp"
+            app:typeface="roboto_regular"
+            tools:text="I like this project because its called a project and it has a really long description that should cut off after a few lines" />
 
     </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_gravity="bottom"
-        android:background="@color/divider_color"/>
-</FrameLayout>
+</LinearLayout>

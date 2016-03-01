@@ -82,6 +82,10 @@ public class GitLabNavigationView extends NavigationView {
                     }
                     LabCoatApp.bus().post(new CloseDrawerEvent());
                     return true;
+                case R.id.nav_settings:
+                    LabCoatApp.bus().post(new CloseDrawerEvent());
+                    NavigationManager.navigateToSettings((Activity) getContext());
+                    return true;
                 case R.id.nav_about:
                     LabCoatApp.bus().post(new CloseDrawerEvent());
                     NavigationManager.navigateToAbout((Activity) getContext());
@@ -178,7 +182,7 @@ public class GitLabNavigationView extends NavigationView {
         mAccountList.setLayoutManager(new LinearLayoutManager(getContext()));
         addView(mAccountList);
         LayoutParams params = (FrameLayout.LayoutParams) mAccountList.getLayoutParams();
-        params.setMargins(0, getResources().getDimensionPixelSize(R.dimen.navigation_drawer_header_height), 0, 0);
+        params.setMargins(0, getResources().getDimensionPixelSize(R.dimen.account_header_height), 0, 0);
         mAccountList.setBackgroundColor(colorPrimary);
         mAccountList.setVisibility(View.GONE);
         mAccountAdapter = new AccountsAdapter(getContext(), mAccountsAdapterListener);

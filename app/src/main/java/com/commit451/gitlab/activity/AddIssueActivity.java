@@ -3,6 +3,7 @@ package com.commit451.gitlab.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import com.afollestad.appthemeengine.customizers.ATEActivityThemeCustomizer;
 import com.commit451.elasticdragdismisslayout.ElasticDragDismissFrameLayout;
 import com.commit451.elasticdragdismisslayout.ElasticDragDismissListener;
 import com.commit451.gitlab.LabCoatApp;
@@ -42,7 +44,13 @@ import timber.log.Timber;
 /**
  * Activity to input new issues, but not really a dialog at all wink wink
  */
-public class AddIssueActivity extends MorphActivity {
+public class AddIssueActivity extends MorphActivity implements ATEActivityThemeCustomizer {
+
+    @Override
+    public int getActivityTheme() {
+        return PreferenceManager.getDefaultSharedPreferences(this).getBoolean("dark_theme", true) ?
+                R.style.Activity_Translucent : R.style.ActivityLight_Translucent;
+    }
 
     private static final String KEY_PROJECT = "project";
     private static final String KEY_ISSUE = "issue";
