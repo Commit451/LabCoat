@@ -6,7 +6,7 @@ before_script:
   - apt-get -q -y install wget tar expect openjdk-7-jdk lib32stdc++6 lib32z1
   - wget -q http://dl.google.com/android/android-sdk_r24.4.1-linux.tgz
   - tar xzf android-sdk_r24.4.1-linux.tgz
-  - expect -c 'set timeout -1; spawn android-sdk-linux/tools/android - -s update sdk --no-ui --all --filter tools,platform-tools,build-tools-23.0.2,android-23,extra-android-m2repository; expect { "Do you accept the license" { exp_send "y\r" ; exp_continue } eof }'
+  - ( sleep 5 && while [ 1 ]; do sleep 1; echo y; done ) | android-sdk-linux/tools/android -s update sdk --no-ui --all --filter tools,platform-tools,build-tools-23.0.2,android-23,extra-android-m2repository
   - export ANDROID_HOME=$PWD/android-sdk-linux
   - printf "GITLAB_FABRIC_KEY = \"\"\n" > gradle.properties
   - chmod +x gradlew
