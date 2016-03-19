@@ -255,7 +255,7 @@ public class LoginActivity extends BaseActivity {
 
         @Override
         public void onResponse(Call<UserLogin> call, Response<UserLogin> response) {
-            if (!response.isSuccessful()) {
+            if (!response.isSuccessful() || response.body() == null) {
                 handleConnectionResponse(response);
                 return;
             }
@@ -276,7 +276,7 @@ public class LoginActivity extends BaseActivity {
         @Override
         public void onResponse(Call<UserFull> call, Response<UserFull> response) {
             mProgress.setVisibility(View.GONE);
-            if (!response.isSuccessful()) {
+            if (!response.isSuccessful() || response.body() == null) {
                 handleConnectionResponse(response);
                 return;
             }
