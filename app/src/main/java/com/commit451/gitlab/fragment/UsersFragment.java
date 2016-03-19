@@ -214,9 +214,12 @@ public class UsersFragment extends BaseFragment {
     }
 
     public void searchQuery(String query) {
-        mUsersAdapter.clearData();
         mQuery = query;
-        loadData();
+
+        if (mUsersAdapter != null) {
+            mUsersAdapter.clearData();
+            loadData();
+        }
     }
 
     private class EventReceiver {
