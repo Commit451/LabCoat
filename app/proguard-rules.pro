@@ -23,22 +23,25 @@
 
 # So that Fabric can still have line numbers
 -keepattributes SourceFile,LineNumberTable
+-keep class com.commit451.gitlab.ssl.CustomSSLSocketFactory
 
 # Picasso rules
 -dontwarn com.squareup.okhttp.**
+-dontwarn okhttp3.**
 
 # Retrofit rules
--keep class com.squareup.okhttp.** { *; }
--keep class retrofit.** { *; }
--keep interface com.squareup.okhttp.** { *; }
+-keep class okhttp3.** { *; }
+-keep class retrofit2.** { *; }
+-keep interface okhttp3.** { *; }
 
 -dontwarn com.squareup.okhttp.**
+-dontwarn okhttp3.**
 -dontwarn okio.**
--dontwarn retrofit.**
+-dontwarn retrofit2.**
 -dontwarn rx.**
 
 -keepclasseswithmembers class * {
-    @retrofit.http.* <methods>;
+    @retrofit2.http.* <methods>;
 }
 
 # If in your rest service interface you use methods with Callback argument.
