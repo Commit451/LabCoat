@@ -10,9 +10,8 @@ before_script:
   - chmod +x accept-licenses
   - ./accept-licenses "android-sdk-linux/tools/android -s update sdk --no-ui --all --filter tools,platform-tools,build-tools-23.0.2,android-23,extra-android-m2repository" "android-sdk-license-5be876d5|android-sdk-license-ed0d0a5b"
   - export ANDROID_HOME=$PWD/android-sdk-linux
-  - printf "GITLAB_FABRIC_KEY = \"\"\n" > gradle.properties
   - chmod +x gradlew
 
 build:
   script:
-    - ./gradlew build -x fabricGenerateResourcesRelease -x crashlyticsStoreDeobsRelease -x crashlyticsUploadDeobsRelease --stacktrace
+    - ./gradlew build -x fabricGenerateResourcesRelease --stacktrace
