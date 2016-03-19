@@ -23,7 +23,7 @@ import org.robolectric.shadows.ShadowLog;
 
 import java.util.List;
 
-import retrofit.Response;
+import retrofit2.Response;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -49,7 +49,7 @@ public class ApiTests {
         Response<UserLogin> loginResponse = GitLabClient.instance(testAccount)
                 .loginWithUsername("TestAllTheThings", "testing123")
                 .execute();
-        assertTrue(loginResponse.isSuccess());
+        assertTrue(loginResponse.isSuccessful());
         assertNotNull(loginResponse.body().getPrivateToken());
         //attach the newly retrieved private token
         testAccount.setPrivateToken(loginResponse.body().getPrivateToken());
@@ -58,7 +58,7 @@ public class ApiTests {
         Response<Project> projectResponse = GitLabClient.instance()
                 .getProject(FAKE_GROUP_PROJECT_ID)
                 .execute();
-        assertTrue(projectResponse.isSuccess());
+        assertTrue(projectResponse.isSuccessful());
         assertNotNull(projectResponse.body());
 
         sFakeProject = projectResponse.body();
@@ -75,7 +75,7 @@ public class ApiTests {
         Response<List<Project>> projectsResponse = GitLabClient.instance()
                 .getAllProjects()
                 .execute();
-        assertTrue(projectsResponse.isSuccess());
+        assertTrue(projectsResponse.isSuccessful());
         assertNotNull(projectsResponse.body());
     }
 
@@ -84,7 +84,7 @@ public class ApiTests {
         Response<List<Group>> groupResponse = GitLabClient.instance()
                 .getGroups()
                 .execute();
-        assertTrue(groupResponse.isSuccess());
+        assertTrue(groupResponse.isSuccessful());
         assertNotNull(groupResponse.body());
     }
 
@@ -94,7 +94,7 @@ public class ApiTests {
         Response<List<Issue>> issuesResponse = GitLabClient.instance()
                 .getIssues(sFakeProject.getId(), defaultState)
                 .execute();
-        assertTrue(issuesResponse.isSuccess());
+        assertTrue(issuesResponse.isSuccessful());
         assertNotNull(issuesResponse.body());
     }
 
@@ -105,7 +105,7 @@ public class ApiTests {
         Response<List<RepositoryTreeObject>> treeResponse = GitLabClient.instance()
                 .getTree(sFakeProject.getId(), defaultBranch, currentPath)
                 .execute();
-        assertTrue(treeResponse.isSuccess());
+        assertTrue(treeResponse.isSuccessful());
         assertNotNull(treeResponse.body());
     }
 
@@ -115,7 +115,7 @@ public class ApiTests {
         Response<List<RepositoryCommit>> commitsResponse = GitLabClient.instance()
                 .getCommits(sFakeProject.getId(), defaultBranch, 0)
                 .execute();
-        assertTrue(commitsResponse.isSuccess());
+        assertTrue(commitsResponse.isSuccessful());
         assertNotNull(commitsResponse.body());
     }
 
@@ -125,7 +125,7 @@ public class ApiTests {
         Response<List<MergeRequest>> mergeRequestResponse = GitLabClient.instance()
                 .getMergeRequests(sFakeProject.getId(), defaultState)
                 .execute();
-        assertTrue(mergeRequestResponse.isSuccess());
+        assertTrue(mergeRequestResponse.isSuccessful());
         assertNotNull(mergeRequestResponse.body());
     }
 
@@ -134,7 +134,7 @@ public class ApiTests {
         Response<UserFull> userFullResponse = GitLabClient.instance()
                 .getThisUser()
                 .execute();
-        assertTrue(userFullResponse.isSuccess());
+        assertTrue(userFullResponse.isSuccessful());
         assertNotNull(userFullResponse.body());
     }
 
