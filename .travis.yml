@@ -11,4 +11,4 @@ before_script:
     - printf "GITLAB_FABRIC_KEY = \"\"\n" > gradle.properties
     - chmod +x gradlew
 
-script: "./gradlew build -x fabricGenerateResourcesRelease -x crashlyticsStoreDeobsRelease -x crashlyticsUploadDeobsRelease --stacktrace"
+script: "./gradlew build -x fabricGenerateResourcesRelease --stacktrace"
