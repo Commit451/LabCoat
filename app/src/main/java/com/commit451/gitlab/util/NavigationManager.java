@@ -153,6 +153,15 @@ public class NavigationManager {
         startMorphActivity(activity, fab, intent);
     }
 
+    public static void navigateToAddLabels(Activity activity, Project project, Issue issue) {
+        //TODO
+    }
+
+    public static void navigateToCreateLabels(Activity activity, View fab, Project project) {
+        Intent intent = AddMilestoneActivity.newInstance(activity, project.getId());
+        startMorphActivity(activity, fab, intent);
+    }
+
     public static void navigateToAddMilestone(Activity activity, View fab, Project project) {
         Intent intent = AddMilestoneActivity.newInstance(activity, project.getId());
         startMorphActivity(activity, fab, intent);

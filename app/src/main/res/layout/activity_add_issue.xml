@@ -115,6 +115,40 @@
                     android:visibility="gone"/>
 
             </FrameLayout>
+
+            <TextView
+                android:id="@+id/label_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/labels"/>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp">
+
+                <com.commit451.gitlab.view.GitLabProgressView
+                    android:id="@+id/labels_progress"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    app:matProg_barColor="?attr/colorAccent"
+                    app:matProg_progressIndeterminate="true"/>
+
+                <com.commit451.gitlab.view.AdapterFlowLayout
+                    android:id="@+id/list_labels"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"/>
+
+                <TextView
+                    android:id="@+id/text_add_labels"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/add_labels"
+                    android:visibility="gone"/>
+
+            </FrameLayout>
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 

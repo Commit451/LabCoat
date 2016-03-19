@@ -13,22 +13,28 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.afollestad.appthemeengine.customizers.ATEActivityThemeCustomizer;
 import com.commit451.elasticdragdismisslayout.ElasticDragDismissFrameLayout;
 import com.commit451.elasticdragdismisslayout.ElasticDragDismissListener;
 import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
+import com.commit451.gitlab.adapter.AddIssueLabelAdapter;
 import com.commit451.gitlab.adapter.AssigneeSpinnerAdapter;
 import com.commit451.gitlab.adapter.MilestoneSpinnerAdapter;
 import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.api.exception.NullBodyException;
 import com.commit451.gitlab.event.IssueChangedEvent;
 import com.commit451.gitlab.event.IssueCreatedEvent;
 import com.commit451.gitlab.model.api.Issue;
+import com.commit451.gitlab.model.api.Label;
 import com.commit451.gitlab.model.api.Member;
 import com.commit451.gitlab.model.api.Milestone;
 import com.commit451.gitlab.model.api.Project;
+import com.commit451.gitlab.util.NavigationManager;
+import com.commit451.gitlab.view.AdapterFlowLayout;
 
 import org.parceler.Parcels;
 
@@ -38,6 +44,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import retrofit2.Callback;
 import timber.log.Timber;
 
@@ -84,10 +91,24 @@ public class AddIssueActivity extends MorphActivity implements ATEActivityThemeC
     View mMilestoneProgress;
     @Bind(R.id.milestone_spinner)
     Spinner mMilestoneSpinner;
+    @Bind(R.id.label_label)
+    TextView mLabelLabel;
+    @Bind(R.id.labels_progress)
+    View mLabelsProgress;
+    @Bind(R.id.list_labels)
+    AdapterFlowLayout mListLabels;
+    @Bind(R.id.text_add_labels)
+    TextView mTextAddLabels;
 
     private Project mProject;
     private Issue mIssue;
     private HashSet<Member> mMembers;
+    private AddIssueLabelAdapter mLabelsAdapter;
+
+    @OnClick({R.id.text_add_labels, R.id.list_labels})
+    void onAddLabelsClick() {
+        NavigationManager.navigateToAddLabels(AddIssueActivity.this, mProject, mIssue);
+    }
 
     private final Callback<List<Milestone>> mMilestonesCallback = new EasyCallback<List<Milestone>>() {
         @Override
@@ -144,6 +165,28 @@ public class AddIssueActivity extends MorphActivity implements ATEActivityThemeC
         }
     };
 
+    private final Callback<List<Label>> mLabelCallback = new EasyCallback<List<Label>>() {
+        @Override
+        public void onResponse(@NonNull List<Label> response) {
+            mLabelsProgress.setVisibility(View.GONE);
+            mListLabels.setVisibility(View.VISIBLE);
+            setLabels(response);
+        }
+
+        @Override
+        public void onAllFailure(Throwable t) {
+            Timber.e(t, null);
+            //null body could just mean no labels have been created for this project
+            if (t instanceof NullBodyException) {
+                setLabels(new ArrayList<Label>());
+            } else {
+                mListLabels.setVisibility(View.GONE);
+                mLabelsProgress.setVisibility(View.GONE);
+                mLabelLabel.setVisibility(View.GONE);
+            }
+        }
+    };
+
     private final Callback<Issue> mIssueCreatedCallback = new EasyCallback<Issue>() {
 
         @Override
@@ -174,6 +217,8 @@ public class AddIssueActivity extends MorphActivity implements ATEActivityThemeC
         mProject = Parcels.unwrap(getIntent().getParcelableExtra(KEY_PROJECT));
         mIssue = Parcels.unwrap(getIntent().getParcelableExtra(KEY_ISSUE));
         mMembers = new HashSet<>();
+        mLabelsAdapter = new AddIssueLabelAdapter();
+        mListLabels.setAdapter(mLabelsAdapter);
 
         mToolbar.setNavigationIcon(R.drawable.ic_back_24dp);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -218,6 +263,7 @@ public class AddIssueActivity extends MorphActivity implements ATEActivityThemeC
     private void load() {
         GitLabClient.instance().getMilestones(mProject.getId()).enqueue(mMilestonesCallback);
         GitLabClient.instance().getProjectMembers(mProject.getId()).enqueue(mAssigneeCallback);
+        GitLabClient.instance().getLabels(mProject.getId()).enqueue(mLabelCallback);
     }
 
     private void showLoading() {
@@ -242,6 +288,24 @@ public class AddIssueActivity extends MorphActivity implements ATEActivityThemeC
         mAssigneeSpinner.setAdapter(assigneeSpinnerAdapter);
         if (mIssue != null) {
             mAssigneeSpinner.setSelection(assigneeSpinnerAdapter.getSelectedItemPosition(mIssue.getAssignee()));
+        }
+    }
+
+    private void setLabels(List<Label> projectLabels) {
+        if (projectLabels != null && !projectLabels.isEmpty()) {
+            ArrayList<Label> currentLabels = new ArrayList<>();
+            for (Label label : projectLabels) {
+                for (String labelName : mIssue.getLabels()) {
+                    if (labelName.equals(label.getName())) {
+                        currentLabels.add(label);
+                    }
+                }
+            }
+            if (!currentLabels.isEmpty()) {
+                mLabelsAdapter.setLabels(currentLabels);
+            }
+        } else {
+            mTextAddLabels.setVisibility(View.VISIBLE);
         }
     }
 
