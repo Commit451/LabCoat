@@ -14,12 +14,12 @@ android {
         minSdkVersion 16
         targetSdkVersion 23
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        versionCode 224
-        versionName "2.2.4"
+        versionCode 225
+        versionName "2.2.5"
     }
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             ext.enableCrashlytics = true
             manifestPlaceholders = [fabric_key: project.ext.LABCOAT_FABRIC_KEY]
