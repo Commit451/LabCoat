@@ -3,10 +3,10 @@ before_script:
   - export TERM=dumb
   - export _JAVA_OPTIONS="-Djava.awt.headless=true"
   - apt-get -q -y update
-  - apt-get -q -y install wget tar openjdk-7-jdk lib32stdc++6 lib32z1
+  - apt-get -q -y install wget tar expect openjdk-7-jdk lib32stdc++6 lib32z1
   - wget -q http://dl.google.com/android/android-sdk_r24.4.1-linux.tgz
   - tar xzf android-sdk_r24.4.1-linux.tgz
-  - echo y | android-sdk-linux/tools/android -s update sdk --no-ui --all --filter tools,platform-tools,build-tools-23.0.2,android-23,extra-android-m2repository
+  - expect -c 'set timeout -1; spawn android-sdk-linux/tools/android - -s update sdk --no-ui --all --filter tools,platform-tools,build-tools-23.0.2,android-23,extra-android-m2repository; expect { "Do you accept the license" { exp_send "y\r" ; exp_continue } eof }'
   - export ANDROID_HOME=$PWD/android-sdk-linux
   - printf "GITLAB_FABRIC_KEY = \"\"\n" > gradle.properties
   - chmod +x gradlew
