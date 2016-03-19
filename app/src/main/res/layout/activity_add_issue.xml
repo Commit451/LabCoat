@@ -72,7 +72,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <com.pnikosis.materialishprogress.ProgressWheel
+                <com.commit451.gitlab.view.GitLabProgressView
                     android:id="@+id/assignee_progress"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
@@ -99,7 +99,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp">
 
-                <com.pnikosis.materialishprogress.ProgressWheel
+                <com.commit451.gitlab.view.GitLabProgressView
                     android:id="@+id/milestone_progress"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
