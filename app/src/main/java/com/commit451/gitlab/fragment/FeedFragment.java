@@ -2,6 +2,7 @@ package com.commit451.gitlab.fragment;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,7 +13,9 @@ import android.widget.TextView;
 
 import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
+import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.gitlab.adapter.FeedAdapter;
+import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.rss.Entry;
 import com.commit451.gitlab.model.rss.Feed;
@@ -20,9 +23,6 @@ import com.commit451.gitlab.util.NavigationManager;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
 import timber.log.Timber;
 
 public class FeedFragment extends BaseFragment {
@@ -38,54 +38,43 @@ public class FeedFragment extends BaseFragment {
         return fragment;
     }
 
-    @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
-    @Bind(R.id.list) RecyclerView mEntryListView;
-    @Bind(R.id.message_text) TextView mMessageView;
+    @Bind(R.id.swipe_layout)
+    SwipeRefreshLayout mSwipeRefreshLayout;
+    @Bind(R.id.list)
+    RecyclerView mEntryListView;
+    @Bind(R.id.message_text)
+    TextView mMessageView;
 
     private Uri mFeedUrl;
     private EventReceiver mEventReceiver;
     private FeedAdapter mFeedAdapter;
 
-    private final Callback<Feed> mUserFeedCallback = new Callback<Feed>() {
+    private final EasyCallback<Feed> mUserFeedCallback = new EasyCallback<Feed>() {
         @Override
-        public void onResponse(Response<Feed> response, Retrofit retrofit) {
+        public void onResponse(@NonNull Feed response) {
             if (getView() == null) {
                 return;
             }
-
             mSwipeRefreshLayout.setRefreshing(false);
-
-            if (!response.isSuccess()) {
-                Timber.e("Feed response was not a success: %d", response.code());
-                mMessageView.setVisibility(View.VISIBLE);
-                mMessageView.setText(R.string.connection_error_feed);
-                mFeedAdapter.setEntries(null);
-                return;
-            }
-
-            if (response.body().getEntries() != null && !response.body().getEntries().isEmpty()) {
+            if (response.getEntries() != null && !response.getEntries().isEmpty()) {
                 mMessageView.setVisibility(View.GONE);
             } else {
                 Timber.d("No activity in the feed");
                 mMessageView.setVisibility(View.VISIBLE);
                 mMessageView.setText(R.string.no_activity);
             }
-
-            mFeedAdapter.setEntries(response.body().getEntries());
+            mFeedAdapter.setEntries(response.getEntries());
         }
 
         @Override
-        public void onFailure(Throwable t) {
+        public void onAllFailure(Throwable t) {
             Timber.e(t, null);
-
             if (getView() == null) {
                 return;
             }
-
             mSwipeRefreshLayout.setRefreshing(false);
-
             mMessageView.setVisibility(View.VISIBLE);
-            mMessageView.setText(R.string.connection_error);
+            mMessageView.setText(R.string.connection_error_feed);
             mFeedAdapter.setEntries(null);
         }
     };
@@ -118,6 +107,7 @@ public class FeedFragment extends BaseFragment {
 
         mFeedAdapter = new FeedAdapter(mFeedAdapterListener);
         mEntryListView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mEntryListView.addItemDecoration(new DividerItemDecoration(getActivity()));
         mEntryListView.setAdapter(mFeedAdapter);
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -142,14 +132,12 @@ public class FeedFragment extends BaseFragment {
         if (getView() == null) {
             return;
         }
-
         if (mFeedUrl == null) {
             mSwipeRefreshLayout.setRefreshing(false);
             mMessageView.setVisibility(View.VISIBLE);
             return;
         }
         mMessageView.setVisibility(View.GONE);
-
         mSwipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
@@ -158,7 +146,6 @@ public class FeedFragment extends BaseFragment {
                 }
             }
         });
-
         GitLabClient.rssInstance().getFeed(mFeedUrl.toString()).enqueue(mUserFeedCallback);
     }
 

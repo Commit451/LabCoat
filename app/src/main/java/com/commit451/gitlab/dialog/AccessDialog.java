@@ -1,39 +1,30 @@
 package com.commit451.gitlab.dialog;
 
 import android.content.Context;
-import android.support.v7.app.AppCompatDialog;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.adapter.AccessAdapter;
+import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.model.api.Member;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
+import java.util.Arrays;
+
+import retrofit2.Callback;
 import timber.log.Timber;
 
 /**
  * Change a users access level, either for a group or for a project
  */
-public class AccessDialog extends AppCompatDialog {
+public class AccessDialog extends MaterialDialog {
 
-    @Bind(R.id.list) RecyclerView mRecyclerView;
-    AccessAdapter mAdapter;
-    @Bind(R.id.progress) View mProgress;
-    @Bind(R.id.content_root) View mContentRoot;
-
-    @OnClick(R.id.apply)
     void onApply() {
-        String accessLevel = mAdapter.getSelectedValue();
+        String accessLevel = mRoleNames[getSelectedIndex()];
         if (accessLevel == null) {
             Toast.makeText(getContext(), R.string.please_select_access_level, Toast.LENGTH_LONG)
                     .show();
@@ -42,7 +33,6 @@ public class AccessDialog extends AppCompatDialog {
         }
     }
 
-    @OnClick(R.id.cancel_button)
     void onCancel() {
         dismiss();
     }
@@ -51,26 +41,21 @@ public class AccessDialog extends AppCompatDialog {
     OnAccessAppliedListener mAccessAppliedListener;
 
     String[] mRoleNames;
-    String[] mRoleValues;
     long mProjectId = -1;
     Group mGroup;
     Member mMember;
 
-    private final Callback<Member> mEditUserCallback = new Callback<Member>() {
+    private final Callback<Member> mEditUserCallback = new EasyCallback<Member>() {
         @Override
-        public void onResponse(Response<Member> response, Retrofit retrofit) {
-            if (!response.isSuccess()) {
-                onError();
-                return;
-            }
+        public void onResponse(@NonNull Member response) {
             if (mAccessChangedListener != null) {
-                mAccessChangedListener.onAccessChanged(mMember, mAdapter.getSelectedValue());
+                mAccessChangedListener.onAccessChanged(mMember, mRoleNames[getSelectedIndex()]);
             }
             dismiss();
         }
 
         @Override
-        public void onFailure(Throwable t) {
+        public void onAllFailure(Throwable t) {
             Timber.e(t, null);
             onError();
         }
@@ -90,25 +75,39 @@ public class AccessDialog extends AppCompatDialog {
     }
 
     private AccessDialog(Context context, Member member, Group group, long projectId) {
-        super(context);
-        setContentView(R.layout.dialog_access);
-        ButterKnife.bind(this);
+        super(new MaterialDialog.Builder(context)
+                .items((group == null) ? R.array.project_role_names : R.array.group_role_names)
+                .itemsCallbackSingleChoice(-1, new ListCallbackSingleChoice() {
+                    @Override
+                    public boolean onSelection(MaterialDialog materialDialog, View view, int i, CharSequence charSequence) {
+                        return true;
+                    }
+                })
+                .progress(true, 0) // So we can later show loading progress
+                .positiveText(R.string.action_apply)
+                .negativeText(R.string.md_cancel_label));
+        mRoleNames = getContext().getResources().getStringArray((group == null)
+                ? R.array.project_role_names
+                : R.array.group_role_names);
+        getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onApply();
+            }
+        });
+        getActionButton(DialogAction.NEGATIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onCancel();
+            }
+        });
         mMember = member;
-        if (group == null) {
-            mRoleValues = getContext().getResources().getStringArray(R.array.project_role_values);
-            mRoleNames = getContext().getResources().getStringArray(R.array.project_role_names);
-        } else {
-            mRoleValues = getContext().getResources().getStringArray(R.array.group_role_values);
-            mRoleNames = getContext().getResources().getStringArray(R.array.group_role_names);
-        }
         mGroup = group;
         mProjectId = projectId;
-        mAdapter = new AccessAdapter(getContext(), mRoleNames);
         if (mMember != null) {
-            mAdapter.setSelectedAccess(Member.getAccessLevel(mMember.getAccessLevel()));
+            setSelectedIndex(Arrays.asList(mRoleNames).indexOf(
+                    Member.getAccessLevel(mMember.getAccessLevel())));
         }
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        mRecyclerView.setAdapter(mAdapter);
     }
 
     private void changeAccess(int accessLevel) {
@@ -127,8 +126,7 @@ public class AccessDialog extends AppCompatDialog {
     }
 
     public void showLoading() {
-        mContentRoot.animate().alpha(0.0f);
-        mProgress.setVisibility(View.VISIBLE);
+        getActionButton(DialogAction.POSITIVE).setEnabled(false);
     }
 
     private void onError() {

@@ -3,6 +3,7 @@ package com.commit451.gitlab.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
@@ -12,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.afollestad.appthemeengine.customizers.ATEActivityThemeCustomizer;
 import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.ProjectsPagerAdapter;
@@ -26,7 +28,13 @@ import butterknife.ButterKnife;
  * Shows the projects
  * Created by Jawn on 9/21/2015.
  */
-public class ProjectsActivity extends BaseActivity {
+public class ProjectsActivity extends BaseActivity implements ATEActivityThemeCustomizer {
+
+    @Override
+    public int getActivityTheme() {
+        return PreferenceManager.getDefaultSharedPreferences(this).getBoolean("dark_theme", true) ?
+                R.style.Activity_Projects : R.style.ActivityLight_Projects;
+    }
 
     public static Intent newInstance(Context context) {
         Intent intent = new Intent(context, ProjectsActivity.class);
@@ -69,7 +77,7 @@ public class ProjectsActivity extends BaseActivity {
                 mDrawerLayout.openDrawer(GravityCompat.START);
             }
         });
-        mToolbar.inflateMenu(R.menu.search);
+        mToolbar.inflateMenu(R.menu.menu_search);
         mToolbar.setOnMenuItemClickListener(mOnMenuItemClickListener);
         mViewPager.setAdapter(new ProjectsPagerAdapter(this, getSupportFragmentManager()));
         mTabLayout.setupWithViewPager(mViewPager);

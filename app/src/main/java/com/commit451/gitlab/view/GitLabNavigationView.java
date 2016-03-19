@@ -3,6 +3,7 @@ package com.commit451.gitlab.view;
 import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,6 +20,7 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.GroupsActivity;
 import com.commit451.gitlab.activity.ProjectsActivity;
 import com.commit451.gitlab.adapter.AccountsAdapter;
+import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.data.Prefs;
 import com.commit451.gitlab.event.CloseDrawerEvent;
@@ -38,9 +40,6 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
 import timber.log.Timber;
 
 /**
@@ -82,6 +81,10 @@ public class GitLabNavigationView extends NavigationView {
                     }
                     LabCoatApp.bus().post(new CloseDrawerEvent());
                     return true;
+                case R.id.nav_settings:
+                    LabCoatApp.bus().post(new CloseDrawerEvent());
+                    NavigationManager.navigateToSettings((Activity) getContext());
+                    return true;
                 case R.id.nav_about:
                     LabCoatApp.bus().post(new CloseDrawerEvent());
                     NavigationManager.navigateToAbout((Activity) getContext());
@@ -99,7 +102,7 @@ public class GitLabNavigationView extends NavigationView {
 
         @Override
         public void onAddAccountClicked() {
-            NavigationManager.navigateToLogin((Activity) getContext());
+            NavigationManager.navigateToLogin((Activity) getContext(), true);
             toggleAccounts();
             LabCoatApp.bus().post(new CloseDrawerEvent());
         }
@@ -120,23 +123,20 @@ public class GitLabNavigationView extends NavigationView {
         }
     };
 
-    private final Callback<UserFull> mUserCallback = new Callback<UserFull>() {
+    private final EasyCallback<UserFull> mUserCallback = new EasyCallback<UserFull>() {
 
         @Override
-        public void onResponse(Response<UserFull> response, Retrofit retrofit) {
-            if (!response.isSuccess()) {
-                return;
-            }
+        public void onResponse(@NonNull UserFull response) {
             //Store the newly retrieved user to the account so that it stays up to date
             // in local storage
             Account account = GitLabClient.getAccount();
-            account.setUser(response.body());
+            account.setUser(response);
             Prefs.updateAccount(getContext(), account);
-            bindUser(response.body());
+            bindUser(response);
         }
 
         @Override
-        public void onFailure(Throwable t) {
+        public void onAllFailure(Throwable t) {
             Timber.e(t, null);
         }
     };
@@ -181,7 +181,7 @@ public class GitLabNavigationView extends NavigationView {
         mAccountList.setLayoutManager(new LinearLayoutManager(getContext()));
         addView(mAccountList);
         LayoutParams params = (FrameLayout.LayoutParams) mAccountList.getLayoutParams();
-        params.setMargins(0, getResources().getDimensionPixelSize(R.dimen.navigation_drawer_header_height), 0, 0);
+        params.setMargins(0, getResources().getDimensionPixelSize(R.dimen.account_header_height), 0, 0);
         mAccountList.setBackgroundColor(colorPrimary);
         mAccountList.setVisibility(View.GONE);
         mAccountAdapter = new AccountsAdapter(getContext(), mAccountsAdapterListener);

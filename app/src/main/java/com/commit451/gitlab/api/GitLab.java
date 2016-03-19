@@ -8,6 +8,7 @@ import com.commit451.gitlab.model.api.Diff;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.model.api.GroupDetail;
 import com.commit451.gitlab.model.api.Issue;
+import com.commit451.gitlab.model.api.Label;
 import com.commit451.gitlab.model.api.Member;
 import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.model.api.Milestone;
@@ -23,16 +24,17 @@ import com.commit451.gitlab.model.api.UserLogin;
 
 import java.util.List;
 
-import retrofit.Call;
-import retrofit.http.DELETE;
-import retrofit.http.Field;
-import retrofit.http.FormUrlEncoded;
-import retrofit.http.GET;
-import retrofit.http.POST;
-import retrofit.http.PUT;
-import retrofit.http.Path;
-import retrofit.http.Query;
-import retrofit.http.Url;
+import retrofit2.Call;
+import retrofit2.http.DELETE;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.GET;
+import retrofit2.http.POST;
+import retrofit2.http.PUT;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
+import retrofit2.http.Url;
+
 
 /**
  * Defines the interface for Retrofit for the GitLab API
@@ -111,10 +113,10 @@ public interface GitLab {
 
     /* --- PROJECTS --- */
 
-    @GET(API_VERSION + "/projects?order_by=last_activity_at")
+    @GET(API_VERSION + "/projects?order_by=last_activity_at&archived=false")
     Call<List<Project>> getAllProjects();
 
-    @GET(API_VERSION + "/projects/owned?order_by=last_activity_at")
+    @GET(API_VERSION + "/projects/owned?order_by=last_activity_at&archived=false")
     Call<List<Project>> getMyProjects();
 
     @GET(API_VERSION + "/projects/starred")
@@ -180,6 +182,11 @@ public interface GitLab {
                             @Field("description") String description,
                             @Field("due_date") String dueDate);
 
+    @PUT(API_VERSION + "/projects/{id}/milestones/{milestone_id}")
+    Call<Milestone> updateMilestoneStatus(@Path("id") long projectId,
+                                  @Path("milestone_id") long milestoneId,
+                                  @Query("state_event") @Milestone.StateEvent String status);
+
     /* --- MERGE REQUESTS --- */
 
     @GET(API_VERSION + "/projects/{id}/merge_requests")
@@ -197,6 +204,14 @@ public interface GitLab {
     @GET(API_VERSION + "/projects/{id}/merge_requests/{merge_request_id}/notes")
     Call<List<Note>> getMergeRequestNotes(@Path("id") long projectId,
                                           @Path("merge_request_id") long mergeRequestId);
+
+    @GET(API_VERSION + "/projects/{id}/merge_requests/{merge_request_id}/commits")
+    Call<List<RepositoryCommit>> getMergeRequestCommits(@Path("id") long projectId,
+                                          @Path("merge_request_id") long mergeRequestId);
+
+    @GET(API_VERSION + "/projects/{id}/merge_requests/{merge_request_id}/changes")
+    Call<MergeRequest> getMergeRequestChanges(@Path("id") long projectId,
+                                                        @Path("merge_request_id") long mergeRequestId);
 
     @GET
     Call<List<Note>> getMergeRequestNotes(@Url String url);
@@ -285,4 +300,33 @@ public interface GitLab {
     @GET(API_VERSION + "/projects/{id}/repository/commits/{sha}/diff")
     Call<List<Diff>> getCommitDiff(@Path("id") long projectId,
                                    @Path("sha") String commitSHA);
+    /**
+     * Get the current labels for a project
+     * @param projectId id
+     * @return all the labels within a project
+     */
+    @GET(API_VERSION + "/projects/{id}/labels")
+    Call<List<Label>> getLabels(@Path("id") long projectId);
+
+    /**
+     * Create a new label
+     * @param projectId id
+     * @param name the name of the label
+     * @param color the color, ex. #ff0000
+     * @return call onSuccess the newly created label
+     */
+    @POST(API_VERSION + "/projects/{id}/labels")
+    Call<Label> createLabel(@Path("id") long projectId,
+                            @Query("name") String name,
+                            @Query("color") String color);
+
+    /**
+     * Delete the label by its name
+     * @param projectId id
+     * @return all the labels within a project
+     */
+    @DELETE(API_VERSION + "/projects/{id}/labels")
+    Call<Label> deleteLabel(@Path("id") long projectId,
+                          @Query("name") String name);
+
 }

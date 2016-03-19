@@ -14,6 +14,7 @@ import com.commit451.gitlab.activity.AboutActivity;
 import com.commit451.gitlab.activity.AddIssueActivity;
 import com.commit451.gitlab.activity.AddMilestoneActivity;
 import com.commit451.gitlab.activity.AddUserActivity;
+import com.commit451.gitlab.activity.DiffActivity;
 import com.commit451.gitlab.activity.FileActivity;
 import com.commit451.gitlab.activity.GroupActivity;
 import com.commit451.gitlab.activity.GroupsActivity;
@@ -24,6 +25,7 @@ import com.commit451.gitlab.activity.MilestoneActivity;
 import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.activity.ProjectsActivity;
 import com.commit451.gitlab.activity.SearchActivity;
+import com.commit451.gitlab.activity.SettingsActivity;
 import com.commit451.gitlab.activity.UserActivity;
 import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.model.api.Group;
@@ -31,20 +33,22 @@ import com.commit451.gitlab.model.api.Issue;
 import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.model.api.Milestone;
 import com.commit451.gitlab.model.api.Project;
+import com.commit451.gitlab.model.api.RepositoryCommit;
 import com.commit451.gitlab.model.api.UserBasic;
-
-import java.util.List;
 
 import timber.log.Timber;
 
 /**
  * Manages navigation so that we can override things as needed
- * Created by Jawn on 9/21/2015.
  */
 public class NavigationManager {
 
     public static void navigateToAbout(Activity activity) {
         activity.startActivity(AboutActivity.newInstance(activity));
+    }
+
+    public static void navigateToSettings(Activity activity) {
+        activity.startActivity(SettingsActivity.newInstance(activity));
     }
 
     public static void navigateToProject(Activity activity, Project project) {
@@ -65,6 +69,10 @@ public class NavigationManager {
 
     public static void navigateToLogin(Activity activity) {
         activity.startActivity(LoginActivity.newInstance(activity));
+    }
+
+    public static void navigateToLogin(Activity activity, boolean showClose) {
+        activity.startActivity(LoginActivity.newInstance(activity, showClose));
     }
 
     public static void navigateToSearch(Activity activity) {
@@ -116,6 +124,10 @@ public class NavigationManager {
 
     public static void navigateToFile(Activity activity, long projectId, String path, String branchName) {
         activity.startActivity(FileActivity.newIntent(activity, projectId, path, branchName));
+    }
+
+    public static void navigateToDiffActivity(Activity activity, Project project, RepositoryCommit commit) {
+        activity.startActivity(DiffActivity.newInstance(activity, project, commit));
     }
 
     public static void navigateToAddProjectMember(Activity activity, View fab, long projectId) {
@@ -182,21 +194,21 @@ public class NavigationManager {
      */
     private static boolean navigateToUrl(Activity activity, Uri uri) {
         //TODO figure out the url to activity mapping
-        if (uri.getPath().contains("issues")) {
-            List<String> pathSegments = uri.getPathSegments();
-            for (int i=0; i<pathSegments.size(); i++) {
-                //segment == issues, and there is one more segment in the path
-                if (pathSegments.get(i).equals("issues") && i != pathSegments.size()-1) {
-                    //TODO this would probably break if we had query params or anything else in the url
-                    String issueId = pathSegments.get(i+1);
-                    //TODO actually navigate to issue activity which will load the needed project and issue
-                    //navigateToIssue(activity, null, issueId);
-                    return true;
-                }
-            }
-            navigateToProject(activity, -1);
-            return true;
-        }
+//        if (uri.getPath().contains("issues")) {
+//            List<String> pathSegments = uri.getPathSegments();
+//            for (int i=0; i<pathSegments.size(); i++) {
+//                //segment == issues, and there is one more segment in the path
+//                if (pathSegments.get(i).equals("issues") && i != pathSegments.size()-1) {
+//                    //TODO this would probably break if we had query params or anything else in the url
+//                    String issueId = pathSegments.get(i+1);
+//                    //TODO actually navigate to issue activity which will load the needed project and issue
+//                    //navigateToIssue(activity, null, issueId);
+//                    return true;
+//                }
+//            }
+//            navigateToProject(activity, -1);
+//            return true;
+//        }
         return false;
     }
 }

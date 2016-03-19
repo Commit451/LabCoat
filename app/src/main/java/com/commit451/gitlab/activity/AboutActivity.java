@@ -8,14 +8,17 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.commit451.gitlab.R;
+import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Contributor;
 import com.commit451.gitlab.transformation.CircleTransformation;
@@ -34,9 +37,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
+import retrofit2.Callback;
 import timber.log.Timber;
 
 /**
@@ -51,11 +52,15 @@ public class AboutActivity extends BaseActivity {
         return intent;
     }
 
-    @Bind(R.id.root) View root;
-    @Bind(R.id.toolbar) Toolbar toolbar;
-    @Bind(R.id.toolbar_title) TextView toolbarTitle;
-    @Bind(R.id.contributors) TextView contributors;
-    @Bind(R.id.physics_layout) PhysicsFrameLayout physicsLayout;
+    @Bind(R.id.root)
+    ViewGroup mRoot;
+    @Bind(R.id.toolbar)
+    Toolbar mToolbar;
+    @Bind(R.id.contributors)
+    TextView mContributors;
+    @Bind(R.id.physics_layout)
+    PhysicsFrameLayout mPhysicsLayout;
+
     @OnClick(R.id.sauce)
     void onSauceClick() {
         if ("https://gitlab.com".equals(GitLabClient.getAccount().getServerUrl().toString())) {
@@ -72,30 +77,28 @@ public class AboutActivity extends BaseActivity {
         @Override
         public void onSensorChanged(SensorEvent event) {
             if (event.sensor.getType() == Sensor.TYPE_GRAVITY) {
-                if (physicsLayout.getPhysics().getWorld() != null) {
+                if (mPhysicsLayout.getPhysics().getWorld() != null) {
                     WindowUtil.normalizeForOrientation(getWindow(), event);
-                    physicsLayout.getPhysics().getWorld().setGravity(new Vec2(-event.values[0], event.values[1]));
+                    mPhysicsLayout.getPhysics().getWorld().setGravity(new Vec2(-event.values[0], event.values[1]));
                 }
             }
         }
 
         @Override
-        public void onAccuracyChanged(Sensor sensor, int accuracy) { }
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        }
     };
 
-    private Callback<List<Contributor>> mContributorResponseCallback = new Callback<List<Contributor>>() {
+    private Callback<List<Contributor>> mContributorResponseCallback = new EasyCallback<List<Contributor>>() {
         @Override
-        public void onResponse(Response<List<Contributor>> response, Retrofit retrofit) {
-            if (!response.isSuccess()) {
-                return;
-            }
-            addContributors(Contributor.groupContributors(response.body()));
+        public void onResponse(@NonNull List<Contributor> response) {
+            addContributors(Contributor.groupContributors(response));
         }
 
         @Override
-        public void onFailure(Throwable t) {
+        public void onAllFailure(Throwable t) {
             Timber.e(t, null);
-            Snackbar.make(getWindow().getDecorView(), R.string.failed_to_load_contributors, Snackbar.LENGTH_SHORT)
+            Snackbar.make(mRoot, R.string.failed_to_load_contributors, Snackbar.LENGTH_SHORT)
                     .show();
         }
     };
@@ -106,15 +109,15 @@ public class AboutActivity extends BaseActivity {
         WindowUtil.lockToCurrentOrientation(this);
         setContentView(R.layout.activity_about);
         ButterKnife.bind(this);
-        toolbar.setNavigationIcon(R.drawable.ic_back_24dp);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        mToolbar.setNavigationIcon(R.drawable.ic_back_24dp);
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
             }
         });
-        toolbarTitle.setText(R.string.about);
-        physicsLayout.getPhysics().enableFling();
+        mToolbar.setTitle(R.string.about);
+        mPhysicsLayout.getPhysics().enableFling();
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         gravitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
         GitLabClient.instance().getContributors(REPO_ID).enqueue(mContributorResponseCallback);
@@ -139,11 +142,10 @@ public class AboutActivity extends BaseActivity {
                 .setFriction(0.0f)
                 .setRestitution(0.0f)
                 .build();
-        int borderSize = getResources().getDimensionPixelSize(R.dimen.border_size);
         int x = 0;
         int y = 0;
         int imageSize = getResources().getDimensionPixelSize(R.dimen.circle_size);
-        for (int i=0; i<contributors.size(); i++) {
+        for (int i = 0; i < contributors.size(); i++) {
             Contributor contributor = contributors.get(i);
             ImageView imageView = new ImageView(this);
             FrameLayout.LayoutParams llp = new FrameLayout.LayoutParams(
@@ -151,14 +153,14 @@ public class AboutActivity extends BaseActivity {
                     imageSize);
             imageView.setLayoutParams(llp);
             Physics.setPhysicsConfig(imageView, config);
-            physicsLayout.addView(imageView);
+            mPhysicsLayout.addView(imageView);
             imageView.setX(x);
             imageView.setY(y);
 
             x = (x + imageSize);
-            if (x > physicsLayout.getWidth()) {
+            if (x > mPhysicsLayout.getWidth()) {
                 x = 0;
-                y = (y + imageSize) % physicsLayout.getHeight();
+                y = (y + imageSize) % mPhysicsLayout.getHeight();
             }
 
             Uri url = ImageUtil.getAvatarUrl(contributor.getEmail(), imageSize);
@@ -167,6 +169,6 @@ public class AboutActivity extends BaseActivity {
                     .transform(new CircleTransformation())
                     .into(imageView);
         }
-        physicsLayout.getPhysics().onLayout(true);
+        mPhysicsLayout.getPhysics().onLayout(true);
     }
 }

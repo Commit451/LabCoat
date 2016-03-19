@@ -10,13 +10,15 @@ import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
 
+import com.afollestad.appthemeengine.Config;
 import com.commit451.easel.Easel;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.transition.MorphDialogToFab;
 import com.commit451.gitlab.transition.MorphFabToDialog;
+import com.commit451.gitlab.util.AppThemeUtil;
 
 /**
- * Activity that morphs from a FAB. Make sure the view you want to morph has the view id R.id.root and
+ * Activity that morphs from a FAB. Make sure the view you want to morph has the view id R.id.mRoot and
  * call {@link #morph(View)} when the content view is set
  */
 public class MorphActivity extends BaseActivity {
@@ -27,7 +29,7 @@ public class MorphActivity extends BaseActivity {
             throw new IllegalStateException("Cannot pass an empty view");
         }
         if (Build.VERSION.SDK_INT >= 21) {
-            int fabColor = Easel.getThemeAttrColor(this, R.attr.colorAccent);
+            int fabColor = Config.accentColor(this, AppThemeUtil.resolveThemeKey(this));
             int dialogColor = Easel.getThemeAttrColor(this, android.R.attr.windowBackground);
             setupSharedElementTransitionsFab(this, root,
                     fabColor,

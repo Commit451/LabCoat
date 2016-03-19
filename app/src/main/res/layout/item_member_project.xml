@@ -38,6 +38,7 @@
             android:layout_gravity="center_vertical"
             android:padding="8dp"
             android:textSize="14sp"
+            android:textColor="@color/white"
             tools:text="Jawnnypoo"/>
 
         <TextView
@@ -48,6 +49,7 @@
             android:paddingRight="8dp"
             android:paddingBottom="8dp"
             android:textSize="12sp"
+            android:textColor="@color/white"
             tools:text="Owner"/>
     </LinearLayout>
 </FrameLayout>

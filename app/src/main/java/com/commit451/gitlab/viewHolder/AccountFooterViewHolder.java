@@ -5,7 +5,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.afollestad.appthemeengine.ATE;
 import com.commit451.gitlab.R;
+import com.commit451.gitlab.util.AppThemeUtil;
 
 import butterknife.ButterKnife;
 

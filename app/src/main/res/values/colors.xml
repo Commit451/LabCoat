@@ -23,8 +23,9 @@
     <color name="card_background">@color/other_blue</color>
     <color name="background_color">@color/blue_background</color>
 
-    <color name="divider_color">#323C47</color>
-
     <color name="scrim">#99323232</color>
+
+    <color name="primary_default">@color/main_blue</color>
+    <color name="accent_default">@color/yellow</color>
 
 </resources>

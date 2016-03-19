@@ -2,9 +2,9 @@ package com.commit451.gitlab.api;
 
 import com.commit451.gitlab.model.rss.Feed;
 
-import retrofit.Call;
-import retrofit.http.GET;
-import retrofit.http.Url;
+import retrofit2.Call;
+import retrofit2.http.GET;
+import retrofit2.http.Url;
 
 public interface GitLabRss {
 

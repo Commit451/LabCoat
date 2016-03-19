@@ -22,7 +22,6 @@ import in.uncod.android.bypass.Bypass;
 
 /**
  * Notes, aka comments
- * Created by Jawn on 8/6/2015.
  */
 public class NoteViewHolder extends RecyclerView.ViewHolder {
 
