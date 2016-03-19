@@ -7,10 +7,11 @@ import android.view.ViewGroup;
 import com.commit451.gitlab.model.api.Issue;
 import com.commit451.gitlab.model.api.Note;
 import com.commit451.gitlab.viewHolder.IssueHeaderViewHolder;
+import com.commit451.gitlab.viewHolder.IssueLabelsViewHolder;
 import com.commit451.gitlab.viewHolder.LoadingFooterViewHolder;
 import com.commit451.gitlab.viewHolder.NoteViewHolder;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import in.uncod.android.bypass.Bypass;
@@ -22,20 +23,21 @@ import in.uncod.android.bypass.Bypass;
 public class IssueDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final int TYPE_HEADER = 0;
-    private static final int TYPE_COMMENT = 1;
-    private static final int TYPE_FOOTER = 2;
+    private static final int TYPE_HEADER_LABEL = 1;
+    private static final int TYPE_COMMENT = 2;
+    private static final int TYPE_FOOTER = 3;
 
-    private static final int HEADER_COUNT = 1;
+    private static final int HEADER_COUNT = 2;
     private static final int FOOTER_COUNT = 1;
 
-    private ArrayList<Note> mNotes;
+    private LinkedList<Note> mNotes;
     private Issue mIssue;
     private boolean mLoading = false;
     private Bypass mBypass;
 
     public IssueDetailsAdapter(Context context, Issue issue) {
         mIssue = issue;
-        mNotes = new ArrayList<>();
+        mNotes = new LinkedList<>();
         mBypass = new Bypass(context);
     }
 
@@ -43,9 +45,10 @@ public class IssueDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == TYPE_HEADER) {
             return IssueHeaderViewHolder.inflate(parent);
+        } else if (viewType == TYPE_HEADER_LABEL) {
+            return IssueLabelsViewHolder.inflate(parent);
         } else if (viewType == TYPE_COMMENT) {
-            RecyclerView.ViewHolder holder = NoteViewHolder.inflate(parent);
-            return holder;
+            return NoteViewHolder.inflate(parent);
         } else if (viewType == TYPE_FOOTER) {
             return LoadingFooterViewHolder.inflate(parent);
         }
@@ -56,6 +59,8 @@ public class IssueDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof IssueHeaderViewHolder) {
             ((IssueHeaderViewHolder) holder).bind(mIssue);
+        } else if (holder instanceof IssueLabelsViewHolder) {
+            ((IssueLabelsViewHolder) holder).bind(mIssue.getLabels());
         } else if (holder instanceof NoteViewHolder) {
             Note note = getNoteAt(position);
             ((NoteViewHolder) holder).bind(note, mBypass);
@@ -71,8 +76,10 @@ public class IssueDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public int getItemViewType(int position) {
-        if (isPositionHeader(position)) {
+        if (position == 0) {
             return TYPE_HEADER;
+        } else if (position == 1) {
+            return TYPE_HEADER_LABEL;
         } else if (position == HEADER_COUNT + mNotes.size()) {
             return TYPE_FOOTER;
         } else {
@@ -80,12 +87,8 @@ public class IssueDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
 
-    private boolean isPositionHeader(int position) {
-        return position == 0;
-    }
-
     public Note getNoteAt(int position) {
-        return mNotes.get(position-1);
+        return mNotes.get(position - HEADER_COUNT);
     }
 
     public void setNotes(List<Note> notes) {
@@ -101,7 +104,7 @@ public class IssueDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     public void addNote(Note note) {
-        mNotes.add(note);
+        mNotes.addFirst(note);
         notifyItemInserted(HEADER_COUNT);
     }
 

@@ -9,10 +9,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.afollestad.appthemeengine.ATE;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.transformation.CircleTransformation;
+import com.commit451.gitlab.util.AppThemeUtil;
 import com.commit451.gitlab.util.DateUtils;
 import com.commit451.gitlab.util.ImageUtil;
 import com.commit451.gitlab.util.PicassoImageGetter;
@@ -59,7 +61,7 @@ public class MergeRequestHeaderViewHolder extends RecyclerView.ViewHolder {
         if (mergeRequest.getAuthor() != null) {
             author += mergeRequest.getAuthor().getName() + " ";
         }
-        author += itemView.getResources().getString(R.string.created_issue);
+        author += itemView.getResources().getString(R.string.created_merge_request);
         if (mergeRequest.getCreatedAt() != null) {
             author += " " + DateUtils.getRelativeTimeSpanString(itemView.getContext(), mergeRequest.getCreatedAt());
         }

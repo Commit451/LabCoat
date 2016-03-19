@@ -2,6 +2,7 @@ package com.commit451.gitlab.fragment;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,7 +18,9 @@ import android.widget.TextView;
 import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ProjectActivity;
+import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.gitlab.adapter.MilestoneAdapter;
+import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.MilestoneChangedEvent;
 import com.commit451.gitlab.event.MilestoneCreatedEvent;
@@ -33,9 +36,6 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
 import timber.log.Timber;
 
 public class MilestonesFragment extends BaseFragment {
@@ -44,10 +44,16 @@ public class MilestonesFragment extends BaseFragment {
         return new MilestonesFragment();
     }
 
-    @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
-    @Bind(R.id.list) RecyclerView mRecyclerView;
-    @Bind(R.id.message_text) TextView mMessageView;
-    @Bind(R.id.state_spinner) Spinner mSpinner;
+    @Bind(R.id.root)
+    ViewGroup mRoot;
+    @Bind(R.id.swipe_layout)
+    SwipeRefreshLayout mSwipeRefreshLayout;
+    @Bind(R.id.list)
+    RecyclerView mRecyclerView;
+    @Bind(R.id.message_text)
+    TextView mMessageView;
+    @Bind(R.id.state_spinner)
+    Spinner mSpinner;
 
     private Project mProject;
     private EventReceiver mEventReceiver;
@@ -64,7 +70,7 @@ public class MilestonesFragment extends BaseFragment {
         if (mProject != null) {
             NavigationManager.navigateToAddMilestone(getActivity(), fab, mProject);
         } else {
-            Snackbar.make(getActivity().getWindow().getDecorView(), getString(R.string.wait_for_project_to_load), Snackbar.LENGTH_SHORT)
+            Snackbar.make(mRoot, getString(R.string.wait_for_project_to_load), Snackbar.LENGTH_SHORT)
                     .show();
         }
     }
@@ -77,7 +83,8 @@ public class MilestonesFragment extends BaseFragment {
         }
 
         @Override
-        public void onNothingSelected(AdapterView<?> parent) {}
+        public void onNothingSelected(AdapterView<?> parent) {
+        }
     };
 
     private final MilestoneAdapter.Listener mMilestoneListener = new MilestoneAdapter.Listener() {
@@ -100,71 +107,49 @@ public class MilestonesFragment extends BaseFragment {
         }
     };
 
-    private final Callback<List<Milestone>> mCallback = new Callback<List<Milestone>>() {
+    private final EasyCallback<List<Milestone>> mCallback = new EasyCallback<List<Milestone>>() {
         @Override
-        public void onResponse(Response<List<Milestone>> response, Retrofit retrofit) {
+        public void onResponse(@NonNull List<Milestone> response) {
             mLoading = false;
             if (getView() == null) {
                 return;
             }
-
-            if (!response.isSuccess()) {
-                Timber.e("Milestones requests response was not a success: %d", response.code());
-                mMessageView.setVisibility(View.VISIBLE);
-                mMessageView.setText(R.string.connection_error_milestones);
-                mMilestoneAdapter.setData(null);
-                mNextPageUrl = null;
-                return;
-            }
-
             mSwipeRefreshLayout.setRefreshing(false);
-
-            if (!response.body().isEmpty()) {
-                mMessageView.setVisibility(View.GONE);
-            } else if (mNextPageUrl == null) {
-                Timber.d("No milestones requests found");
+            if (response.isEmpty()) {
                 mMessageView.setVisibility(View.VISIBLE);
                 mMessageView.setText(R.string.no_milestones);
             }
-
-            mMilestoneAdapter.setData(response.body());
-
-            mNextPageUrl = PaginationUtil.parse(response).getNext();
+            mMilestoneAdapter.setData(response);
+            mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
             Timber.d("Next page url " + mNextPageUrl);
         }
 
         @Override
-        public void onFailure(Throwable t) {
+        public void onAllFailure(Throwable t) {
             mLoading = false;
             Timber.e(t, null);
-
             if (getView() == null) {
                 return;
             }
-
             mSwipeRefreshLayout.setRefreshing(false);
-
             mMessageView.setVisibility(View.VISIBLE);
-            mMessageView.setText(R.string.connection_error);
+            mMessageView.setText(R.string.connection_error_milestones);
             mMilestoneAdapter.setData(null);
             mNextPageUrl = null;
         }
     };
 
-    private final Callback<List<Milestone>> mMoreMilestonesCallback = new Callback<List<Milestone>>() {
+    private final EasyCallback<List<Milestone>> mMoreMilestonesCallback = new EasyCallback<List<Milestone>>() {
         @Override
-        public void onResponse(Response<List<Milestone>> response, Retrofit retrofit) {
-            if (!response.isSuccess()) {
-                return;
-            }
+        public void onResponse(@NonNull List<Milestone> response) {
             mLoading = false;
             mMilestoneAdapter.setLoading(false);
-            mNextPageUrl = PaginationUtil.parse(response).getNext();
-            mMilestoneAdapter.addData(response.body());
+            mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
+            mMilestoneAdapter.addData(response);
         }
 
         @Override
-        public void onFailure(Throwable t) {
+        public void onAllFailure(Throwable t) {
             Timber.e(t, null);
             mMilestoneAdapter.setLoading(false);
             mLoading = false;
@@ -194,6 +179,7 @@ public class MilestonesFragment extends BaseFragment {
         mMilestoneAdapter = new MilestoneAdapter(mMilestoneListener);
         mMilestoneLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mMilestoneLayoutManager);
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity()));
         mRecyclerView.setAdapter(mMilestoneAdapter);
         mRecyclerView.addOnScrollListener(mOnScrollListener);
 
@@ -227,12 +213,11 @@ public class MilestonesFragment extends BaseFragment {
         if (getView() == null) {
             return;
         }
-
         if (mProject == null) {
             mSwipeRefreshLayout.setRefreshing(false);
             return;
         }
-
+        mMessageView.setVisibility(View.GONE);
         mSwipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
@@ -241,10 +226,8 @@ public class MilestonesFragment extends BaseFragment {
                 }
             }
         });
-
         mNextPageUrl = null;
         mLoading = true;
-
         GitLabClient.instance().getMilestones(mProject.getId()).enqueue(mCallback);
     }
 

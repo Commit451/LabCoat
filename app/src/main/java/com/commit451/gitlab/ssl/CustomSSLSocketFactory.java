@@ -10,53 +10,61 @@ import java.util.Set;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 
+/**
+ * Custom SSL factory so that we can enforce using TLS 1.2 on Android 4.1-4.4
+ */
 public class CustomSSLSocketFactory extends SSLSocketFactory {
-    private final SSLSocketFactory mInternalFactory;
+    /**
+     * You may be wondering why this is named "delegate" which seems to break the convention
+     * of the rest of the project. See here for deets:
+     * https://github.com/square/okhttp/issues/2323
+     */
+    private final SSLSocketFactory delegate;
 
     public CustomSSLSocketFactory(SSLSocketFactory internalFactory) {
         super();
 
-        this.mInternalFactory = internalFactory;
+        this.delegate = internalFactory;
     }
 
     @Override
     public String[] getDefaultCipherSuites() {
-        return mInternalFactory.getDefaultCipherSuites();
+        return delegate.getDefaultCipherSuites();
     }
 
     @Override
     public String[] getSupportedCipherSuites() {
-        return mInternalFactory.getSupportedCipherSuites();
+        return delegate.getSupportedCipherSuites();
     }
 
     @Override
     public Socket createSocket() throws IOException {
-        return enableProtocols(mInternalFactory.createSocket());
+        return enableProtocols(delegate.createSocket());
     }
 
     @Override
     public Socket createSocket(Socket s, String host, int port, boolean autoClose) throws IOException {
-        return enableProtocols(mInternalFactory.createSocket(s, host, port, autoClose));
+        return enableProtocols(delegate.createSocket(s, host, port, autoClose));
     }
 
     @Override
     public Socket createSocket(String host, int port) throws IOException {
-        return enableProtocols(mInternalFactory.createSocket(host, port));
+        return enableProtocols(delegate.createSocket(host, port));
     }
 
     @Override
     public Socket createSocket(String host, int port, InetAddress localHost, int localPort) throws IOException {
-        return enableProtocols(mInternalFactory.createSocket(host, port, localHost, localPort));
+        return enableProtocols(delegate.createSocket(host, port, localHost, localPort));
     }
 
     @Override
     public Socket createSocket(InetAddress host, int port) throws IOException {
-        return enableProtocols(mInternalFactory.createSocket(host, port));
+        return enableProtocols(delegate.createSocket(host, port));
     }
 
     @Override
     public Socket createSocket(InetAddress address, int port, InetAddress localAddress, int localPort) throws IOException {
-        return enableProtocols(mInternalFactory.createSocket(address, port, localAddress, localPort));
+        return enableProtocols(delegate.createSocket(address, port, localAddress, localPort));
     }
 
     private static Socket enableProtocols(Socket socket) {

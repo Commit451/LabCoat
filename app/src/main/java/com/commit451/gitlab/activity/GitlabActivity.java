@@ -6,6 +6,8 @@ import android.os.Bundle;
 import com.commit451.gitlab.BuildConfig;
 import com.commit451.gitlab.data.Prefs;
 import com.commit451.gitlab.model.Account;
+import com.commit451.gitlab.util.AppThemeUtil;
+import com.commit451.gitlab.ssl.CustomKeyManager;
 import com.commit451.gitlab.util.NavigationManager;
 
 import java.util.List;
@@ -20,6 +22,7 @@ public class GitlabActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        AppThemeUtil.setupDefaultConfigs(this);
         super.onCreate(savedInstanceState);
 
         int savedVersion = Prefs.getSavedVersion(this);
@@ -32,11 +35,42 @@ public class GitlabActivity extends Activity {
         if(accounts.isEmpty()) {
             NavigationManager.navigateToLogin(this);
         } else {
-            NavigationManager.navigateToProjects(this);
+            loadPrivateKey(accounts, 0);
+            return;
         }
 
         // Always finish this activity
         finish();
+    }
+
+    private void loadPrivateKey(final List<Account> accounts, final int i) {
+        if (i >= accounts.size()) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    NavigationManager.navigateToProjects(GitlabActivity.this);
+                    finish();
+                }
+            });
+            return;
+        }
+
+        String alias = accounts.get(i).getPrivateKeyAlias();
+        if (alias != null && !CustomKeyManager.isCached(alias)) {
+            CustomKeyManager.cache(this, alias, new CustomKeyManager.KeyCallback() {
+                @Override
+                public void onSuccess(CustomKeyManager.KeyEntry entry) {
+                    loadPrivateKey(accounts, i + 1);
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    loadPrivateKey(accounts, i + 1);
+                }
+            });
+        } else {
+            loadPrivateKey(accounts, i + 1);
+        }
     }
 
     /**

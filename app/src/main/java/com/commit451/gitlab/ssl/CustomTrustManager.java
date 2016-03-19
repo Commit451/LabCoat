@@ -8,6 +8,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
@@ -39,7 +41,10 @@ public class CustomTrustManager implements X509TrustManager {
     }
 
     private String mTrustedCertificate;
+    private String mTrustedHostname;
+    private String mPrivateKeyAlias;
     private SSLSocketFactory mSSLSocketFactory;
+    private HostnameVerifier mHostnameVerifier;
 
     public CustomTrustManager() {}
 
@@ -49,6 +54,24 @@ public class CustomTrustManager implements X509TrustManager {
         }
 
         mTrustedCertificate = trustedCertificate;
+        mSSLSocketFactory = null;
+    }
+
+    public void setTrustedHostname(String trustedHostname) {
+        if ((mTrustedHostname == null && trustedHostname == null) || (mTrustedHostname != null && mTrustedHostname.equals(trustedHostname))) {
+            return;
+        }
+
+        mTrustedHostname = trustedHostname;
+        mHostnameVerifier = null;
+    }
+
+    public void setPrivateKeyAlias(String privateKeyAlias) {
+        if ((mPrivateKeyAlias == null && privateKeyAlias == null) || (mPrivateKeyAlias != null && mPrivateKeyAlias.equals(privateKeyAlias))) {
+            return;
+        }
+
+        mPrivateKeyAlias = privateKeyAlias;
         mSSLSocketFactory = null;
     }
 
@@ -96,14 +119,27 @@ public class CustomTrustManager implements X509TrustManager {
             return mSSLSocketFactory;
         }
 
+        KeyManager[] keyManagers = null;
+        if (mPrivateKeyAlias != null) {
+            keyManagers = new KeyManager[] { new CustomKeyManager(mPrivateKeyAlias) };
+        }
+
         try {
             SSLContext sslContext = SSLContext.getInstance("TLS");
-            sslContext.init(null, new TrustManager[]{this}, null);
+            sslContext.init(keyManagers, new TrustManager[]{this}, null);
             mSSLSocketFactory = new CustomSSLSocketFactory(sslContext.getSocketFactory());
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
 
         return mSSLSocketFactory;
+    }
+
+    public HostnameVerifier getHostnameVerifier() {
+        if (mHostnameVerifier == null) {
+            mHostnameVerifier = new CustomHostnameVerifier(mTrustedHostname);
+        }
+
+        return mHostnameVerifier;
     }
 }

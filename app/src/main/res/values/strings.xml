@@ -42,11 +42,11 @@
     </string-array>
 
     <string name="title_all">All</string>
-    <string name="title_mine">Mine</string>
+    <string name="title_yours">Yours</string>
     <string name="title_starred">Starred</string>
     <string-array name="projects_tabs">
         <item>@string/title_all</item>
-        <item>@string/title_mine</item>
+        <item>@string/title_yours</item>
         <item>@string/title_starred</item>
     </string-array>
 
@@ -70,6 +70,8 @@
     <string name="normal_link"><u>Login using username or email</u></string>
     <string name="certificate_title">Certificate not trusted</string>
     <string name="certificate_message">The certificate the server used was not issued by a trusted authority.\n\nThis could mean a hacker is trying to intercept your communications.\n\nIf you trust the certificate, press OK to continue.\n\nFingerprint (SHA-1):\n%1$s</string>
+    <string name="hostname_title">Hostname did not match</string>
+    <string name="hostname_message">The hostname in the certificate did not match the hostname you are connecting to.\n\nThis could mean a hacker is trying to intercept your communications.\n\nIf you trust the certificate, press OK to continue.</string>
     <string name="not_a_valid_url">Not a valid URL</string>
     <string name="not_a_valid_private_token">Not a valid private token</string>
     <string name="realm_message">A username and password are being requested by the server.\nThe server says: \"%1$s\"</string>
@@ -85,12 +87,13 @@
     <string name="connection_error_merge_requests">Failed to load merge requests</string>
     <string name="connection_error_milestones">Failed to load milestones</string>
     <string name="connection_error_readme">Failed to load readme</string>
-    <string name="connection_error_projects">Failed to projects</string>
+    <string name="connection_error_projects">Failed to load projects</string>
 
     <string name="login_unauthorized">Incorrect credentials. Try again</string>
     <string name="login_error">Login failed. Please check your login information</string>
     <string name="login_input_error">Please enter a valid url.</string>
     <string name="login_unsupported_authentication">Unsupported form of HTTP authentication.</string>
+    <string name="login_404_error">Server not found. Please double check your url</string>
 
     <string name="file_too_big">File too big to show</string>
     <string name="file_load_error">Failed to load file</string>
@@ -108,6 +111,7 @@
     <string name="error_no_browser">No browser on device. What are you doing?</string>
     <string name="error_user_conflict">There is a conflict in adding this user.</string>
     <string name="error_creating_account">Error creating account</string>
+    <string name="error_failed_to_add_user">Failed to add user</string>
 
     <string name="required_field">Required Field</string>
     <string name="wait_for_project_to_load">Wait for the project to load!</string>
@@ -123,7 +127,7 @@
     <string name="filter_projects">Filter projects</string>
     <string name="logout_title">Are you sure you want to log out?</string>
     <string name="failed_to_load">Failed to load</string>
-    <string name="just_now">Just now</string>
+    <string name="just_now">just now</string>
     <string name="failed_to_create_issue">Failed to create or modify issue</string>
 
     <!-- Overview -->
@@ -234,6 +238,12 @@
     <string name="add_account">Add account</string>
 
     <!-- Merge Requests -->
+    <string name="title_merge_discussion">discussion</string>
+    <string name="title_merge_commits">Commits</string>
+    <string-array name="merge_request_tabs">
+        <item>@string/title_merge_discussion</item>
+        <item>@string/title_merge_commits</item>
+    </string-array>
     <string name="no_merge_requests">No merge requests</string>
     <string name="merge_request_number">Merge Request #</string>
     <string name="merge_request_opened">Opened</string>
@@ -254,6 +264,7 @@
         <item>closed</item>
         <item>all</item>
     </string-array>
+    <string name="created_merge_request">created merge request</string>
 
     <!-- Milestones -->
     <string name="no_milestones">No milestones</string>
@@ -298,5 +309,12 @@
     <string name="failed_to_remove_member">Failed to remove member</string>
 
     <!-- Settings -->
-    <string name="trust_all_hosts">Trust all hosts</string>
+    <string name="settings">Settings</string>
+    <string name="preference_category_theme">Theme</string>
+    <string name="dark_theme">Dark Theme</string>
+    <string name="dark_theme_summary">Apply a dark theme throughout the app</string>
+    <string name="primary_color">Primary Color</string>
+    <string name="primary_color_summary">Change the primary theme color</string>
+    <string name="accent_color">Accent Color</string>
+    <string name="accent_color_summary">Change the accent theme color</string>
 </resources>

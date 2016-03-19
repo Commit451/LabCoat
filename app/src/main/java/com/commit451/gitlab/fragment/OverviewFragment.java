@@ -1,6 +1,7 @@
 package com.commit451.gitlab.fragment;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ProjectActivity;
+import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Project;
@@ -30,9 +32,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import in.uncod.android.bypass.Bypass;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
 import timber.log.Timber;
 
 public class OverviewFragment extends BaseFragment {
@@ -63,77 +62,53 @@ public class OverviewFragment extends BaseFragment {
         }
     }
 
-    private final Callback<List<RepositoryTreeObject>> mFilesCallback = new Callback<List<RepositoryTreeObject>>() {
+    private final EasyCallback<List<RepositoryTreeObject>> mFilesCallback = new EasyCallback<List<RepositoryTreeObject>>() {
         @Override
-        public void onResponse(Response<List<RepositoryTreeObject>> response, Retrofit retrofit) {
+        public void onResponse(@NonNull List<RepositoryTreeObject> response) {
             if (getView() == null) {
                 return;
             }
-
-            if (!response.isSuccess()) {
-                Timber.e("Files response was not a success: %d", response.code());
-                mSwipeRefreshLayout.setRefreshing(false);
-                mOverviewVew.setText(R.string.connection_error_readme);
-                return;
-            }
-
-            for (RepositoryTreeObject treeItem : response.body()) {
+            for (RepositoryTreeObject treeItem : response) {
                 if (treeItem.getName().equalsIgnoreCase("README.md")) {
                     GitLabClient.instance().getFile(mProject.getId(), treeItem.getName(), mBranchName).enqueue(mFileCallback);
                     return;
                 }
             }
-
             mSwipeRefreshLayout.setRefreshing(false);
             mOverviewVew.setText(R.string.no_readme_found);
         }
 
         @Override
-        public void onFailure(Throwable t) {
+        public void onAllFailure(Throwable t) {
             Timber.e(t, null);
-
             if (getView() == null) {
                 return;
             }
-
             mSwipeRefreshLayout.setRefreshing(false);
-
-            mOverviewVew.setText(R.string.connection_error);
+            mOverviewVew.setText(R.string.connection_error_readme);
         }
     };
 
-    private Callback<RepositoryFile> mFileCallback = new Callback<RepositoryFile>() {
+    private EasyCallback<RepositoryFile> mFileCallback = new EasyCallback<RepositoryFile>() {
         @Override
-        public void onResponse(Response<RepositoryFile> response, Retrofit retrofit) {
+        public void onResponse(@NonNull RepositoryFile response) {
             if (getView() == null) {
                 return;
             }
-
             mSwipeRefreshLayout.setRefreshing(false);
-
-            if (!response.isSuccess()) {
-                Timber.e("File response was not a success: %d", response.code());
-                mOverviewVew.setText(R.string.connection_error_readme);
-                return;
-            }
-
-            String text = new String(Base64.decode(response.body().getContent(), Base64.DEFAULT), Charset.forName("UTF-8"));
-
+            String text = new String(Base64.decode(response.getContent(), Base64.DEFAULT), Charset.forName("UTF-8"));
             mOverviewVew.setText(mBypass.markdownToSpannable(text,
                     new PicassoImageGetter(mOverviewVew, GitLabClient.getPicasso())));
         }
 
         @Override
-        public void onFailure(Throwable t) {
+        public void onAllFailure(Throwable t) {
             Timber.e(t, null);
-
             if (getView() == null) {
                 return;
             }
-
             mSwipeRefreshLayout.setRefreshing(false);
-
-            mOverviewVew.setText(R.string.connection_error);
+            mOverviewVew.setText(R.string.connection_error_readme);
         }
     };
 
@@ -207,6 +182,10 @@ public class OverviewFragment extends BaseFragment {
     }
 
     private void bindProject(Project project) {
+        if (project == null) {
+            return;
+        }
+
         if (project.belongsToGroup()) {
             mCreatorView.setText(String.format(getString(R.string.created_by), project.getNamespace().getName()));
         } else {

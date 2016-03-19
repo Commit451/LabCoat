@@ -5,18 +5,18 @@ import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.provider.GsonProvider;
 import com.commit451.gitlab.provider.OkHttpClientProvider;
 import com.commit451.gitlab.provider.SimpleXmlProvider;
-import com.squareup.picasso.OkHttpDownloader;
+import com.jakewharton.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-import retrofit.GsonConverterFactory;
-import retrofit.Retrofit;
-import retrofit.SimpleXmlConverterFactory;
+import okhttp3.OkHttpClient;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
 
 /**
  * Pulls all the GitLab stuff from the API
- * Created by Jawn on 7/28/2015.
  */
 public final class GitLabClient {
 
@@ -63,7 +63,6 @@ public final class GitLabClient {
     }
 
     public static GitLabRss rssInstance(Account account) {
-        checkAccountSet();
         Retrofit restAdapter = new Retrofit.Builder()
                 .baseUrl(account.getServerUrl().toString())
                 .client(OkHttpClientProvider.getInstance(account))
@@ -74,6 +73,7 @@ public final class GitLabClient {
 
     public static GitLabRss rssInstance() {
         if (sGitLabRss == null) {
+            checkAccountSet();
             sGitLabRss = rssInstance(sAccount);
         }
 
@@ -81,14 +81,15 @@ public final class GitLabClient {
     }
 
     public static Picasso getPicasso(Account account) {
-        checkAccountSet();
+        OkHttpClient client = OkHttpClientProvider.getInstance(account);
         return new Picasso.Builder(LabCoatApp.instance())
-                .downloader(new OkHttpDownloader(OkHttpClientProvider.getInstance(account)))
+                .downloader(new OkHttp3Downloader(client))
                 .build();
     }
 
     public static Picasso getPicasso() {
         if (sPicasso == null) {
+            checkAccountSet();
             sPicasso = getPicasso(sAccount);
         }
 
@@ -98,6 +99,10 @@ public final class GitLabClient {
     private static void checkAccountSet() {
         if (sAccount == null) {
             List<Account> accounts = Account.getAccounts(LabCoatApp.instance());
+            if (accounts.isEmpty()) {
+                throw new IllegalStateException("No accounts found");
+            }
+
             GitLabClient.setAccount(accounts.get(0));
         }
     }

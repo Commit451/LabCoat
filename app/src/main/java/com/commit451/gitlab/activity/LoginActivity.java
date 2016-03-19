@@ -1,6 +1,7 @@
 package com.commit451.gitlab.activity;
 
 import android.Manifest;
+import android.accounts.AccountManager;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -10,13 +11,19 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.security.KeyChain;
+import android.security.KeyChainAliasCallback;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.AppCompatAutoCompleteTextView;
+import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
+import android.util.Patterns;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.commit451.gitlab.LabCoatApp;
@@ -29,55 +36,81 @@ import com.commit451.gitlab.event.ReloadDataEvent;
 import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.model.api.UserFull;
 import com.commit451.gitlab.model.api.UserLogin;
+import com.commit451.gitlab.ssl.CustomHostnameVerifier;
+import com.commit451.gitlab.ssl.CustomKeyManager;
 import com.commit451.gitlab.ssl.X509CertificateException;
 import com.commit451.gitlab.ssl.X509Util;
 import com.commit451.gitlab.util.KeyboardUtil;
 import com.commit451.gitlab.util.NavigationManager;
-import com.commit451.gitlab.view.EmailAutoCompleteTextView;
-import com.squareup.okhttp.Credentials;
-import com.squareup.okhttp.HttpUrl;
 
+import java.net.ConnectException;
 import java.security.cert.CertificateEncodingException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import javax.net.ssl.SSLHandshakeException;
+import javax.net.ssl.SSLPeerUnverifiedException;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
+import okhttp3.Credentials;
+import okhttp3.HttpUrl;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import timber.log.Timber;
 
 public class LoginActivity extends BaseActivity {
+
+    private static final String EXTRA_SHOW_CLOSE = "show_close";
 
     private static final int PERMISSION_REQUEST_GET_ACCOUNTS = 1337;
     private static Pattern sTokenPattern = Pattern.compile("^[A-Za-z0-9-_]*$");
 
     public static Intent newInstance(Context context) {
+        return newInstance(context, false);
+    }
+
+    public static Intent newInstance(Context context, boolean showClose) {
         Intent intent = new Intent(context, LoginActivity.class);
+        intent.putExtra(EXTRA_SHOW_CLOSE, showClose);
         return intent;
     }
 
-    @Bind(R.id.root) View mRoot;
-    @Bind(R.id.url_hint) TextInputLayout mUrlHint;
-    @Bind(R.id.url_input) TextView mUrlInput;
-    @Bind(R.id.user_input_hint) TextInputLayout mUserHint;
-    @Bind(R.id.user_input) EmailAutoCompleteTextView mUserInput;
-    @Bind(R.id.password_hint) TextInputLayout mPasswordHint;
-    @Bind(R.id.password_input) TextView mPasswordInput;
-    @Bind(R.id.token_hint) TextInputLayout mTokenHint;
-    @Bind(R.id.token_input) TextView mTokenInput;
-    @Bind(R.id.normal_login) View mNormalLogin;
-    @Bind(R.id.token_login) View mTokenLogin;
-    @Bind(R.id.progress) View mProgress;
+    @Bind(R.id.root)
+    View mRoot;
+    @Bind(R.id.close)
+    View mClose;
+    @Bind(R.id.url_hint)
+    TextInputLayout mUrlHint;
+    @Bind(R.id.url_input)
+    TextView mUrlInput;
+    @Bind(R.id.user_input_hint)
+    TextInputLayout mUserHint;
+    @Bind(R.id.user_input)
+    AppCompatAutoCompleteTextView mUserInput;
+    @Bind(R.id.password_hint)
+    TextInputLayout mPasswordHint;
+    @Bind(R.id.password_input)
+    TextView mPasswordInput;
+    @Bind(R.id.token_hint)
+    TextInputLayout mTokenHint;
+    @Bind(R.id.token_input)
+    TextView mTokenInput;
+    @Bind(R.id.normal_login)
+    View mNormalLogin;
+    @Bind(R.id.token_login)
+    View mTokenLogin;
+    @Bind(R.id.progress)
+    View mProgress;
 
     private boolean mIsNormalLogin = true;
-    private String mTrustedCertificate;
-    private String mAuthorizationHeader;
     private Account mAccount;
 
     private final TextView.OnEditorActionListener onEditorActionListener = new TextView.OnEditorActionListener() {
@@ -87,6 +120,11 @@ public class LoginActivity extends BaseActivity {
             return true;
         }
     };
+
+    @OnClick(R.id.close)
+    public void onCloseClick() {
+        onBackPressed();
+    }
 
     @OnClick(R.id.show_normal_link)
     public void showNormalLogin(TextView loginTypeTextView) {
@@ -152,8 +190,21 @@ public class LoginActivity extends BaseActivity {
 
         mAccount = new Account();
         mAccount.setServerUrl(uri);
-        mAccount.setTrustedCertificate(mTrustedCertificate);
-        mAccount.setAuthorizationHeader(mAuthorizationHeader);
+
+        login();
+    }
+
+    private void login() {
+        // This seems useless - But believe me, it makes everything work! Don't remove it.
+        // (OkHttpClientProvider caches the clients and needs a new account to recreate them)
+
+        Account newAccount = new Account();
+        newAccount.setServerUrl(mAccount.getServerUrl());
+        newAccount.setTrustedCertificate(mAccount.getTrustedCertificate());
+        newAccount.setTrustedHostname(mAccount.getTrustedHostname());
+        newAccount.setPrivateKeyAlias(mAccount.getPrivateKeyAlias());
+        newAccount.setAuthorizationHeader(mAccount.getAuthorizationHeader());
+        mAccount = newAccount;
 
         if (mIsNormalLogin) {
             connect(true);
@@ -162,32 +213,70 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
+    private void loginWithPrivateToken() {
+        KeyChain.choosePrivateKeyAlias(this, new KeyChainAliasCallback() {
+            @Override
+            public void alias(String alias) {
+                mAccount.setPrivateKeyAlias(alias);
+
+                if (alias != null) {
+                    if (!CustomKeyManager.isCached(alias)) {
+                        CustomKeyManager.cache(LoginActivity.this, alias, new CustomKeyManager.KeyCallback() {
+                            @Override
+                            public void onSuccess(CustomKeyManager.KeyEntry entry) {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        login();
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onError(Exception e) {
+                                mAccount.setPrivateKeyAlias(null);
+                                Timber.e(e, "Failed to load private key");
+                            }
+                        });
+                    } else {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                login();
+                            }
+                        });
+                    }
+                }
+            }
+        }, null, null, mAccount.getServerUrl().getHost(), mAccount.getServerUrl().getPort(), null);
+    }
+
     private Callback<UserLogin> mLoginCallback = new Callback<UserLogin>() {
 
         @Override
-        public void onResponse(Response<UserLogin> response, Retrofit retrofit) {
-            mTrustedCertificate = null;
-            if (!response.isSuccess()) {
+        public void onResponse(Call<UserLogin> call, Response<UserLogin> response) {
+            if (!response.isSuccessful()) {
                 handleConnectionResponse(response);
                 return;
             }
+
             mAccount.setPrivateToken(response.body().getPrivateToken());
             loadUser();
         }
 
         @Override
-        public void onFailure(Throwable t) {
-            mTrustedCertificate = null;
+        public void onFailure(Call<UserLogin> call, Throwable t) {
             Timber.e(t, null);
             handleConnectionError(t);
         }
     };
 
     private Callback<UserFull> mTestUserCallback = new Callback<UserFull>() {
+
         @Override
-        public void onResponse(Response<UserFull> response, Retrofit retrofit) {
+        public void onResponse(Call<UserFull> call, Response<UserFull> response) {
             mProgress.setVisibility(View.GONE);
-            if (!response.isSuccess()) {
+            if (!response.isSuccessful()) {
                 handleConnectionResponse(response);
                 return;
             }
@@ -203,8 +292,7 @@ public class LoginActivity extends BaseActivity {
         }
 
         @Override
-        public void onFailure(Throwable t) {
-            mTrustedCertificate = null;
+        public void onFailure(Call<UserFull> call, Throwable t) {
             Timber.e(t, null);
             handleConnectionError(t);
         }
@@ -215,6 +303,10 @@ public class LoginActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
+
+        boolean showClose = getIntent().getBooleanExtra(EXTRA_SHOW_CLOSE, false);
+
+        mClose.setVisibility(showClose ? View.VISIBLE : View.GONE);
         mPasswordInput.setOnEditorActionListener(onEditorActionListener);
         mTokenInput.setOnEditorActionListener(onEditorActionListener);
         mUserInput.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -230,7 +322,7 @@ public class LoginActivity extends BaseActivity {
     @TargetApi(23)
     private void checkAccountPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.GET_ACCOUNTS) == PackageManager.PERMISSION_GRANTED) {
-            mUserInput.retrieveAccounts();
+            retrieveAccounts();
         } else {
             requestPermissions(new String[]{Manifest.permission.GET_ACCOUNTS}, PERMISSION_REQUEST_GET_ACCOUNTS);
         }
@@ -240,8 +332,8 @@ public class LoginActivity extends BaseActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         switch (requestCode) {
             case PERMISSION_REQUEST_GET_ACCOUNTS: {
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    mUserInput.retrieveAccounts();
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    retrieveAccounts();
                 }
             }
         }
@@ -252,19 +344,17 @@ public class LoginActivity extends BaseActivity {
         mProgress.setAlpha(0.0f);
         mProgress.animate().alpha(1.0f);
 
-        if(byAuth) {
+        if (byAuth) {
             connectByAuth();
-        }
-        else {
+        } else {
             connectByToken();
         }
     }
 
     private void connectByAuth() {
-        if(mUserInput.getText().toString().contains("@")) {
+        if (mUserInput.getText().toString().contains("@")) {
             GitLabClient.instance(mAccount).loginWithEmail(mUserInput.getText().toString(), mPasswordInput.getText().toString()).enqueue(mLoginCallback);
-        }
-        else {
+        } else {
             GitLabClient.instance(mAccount).loginWithUsername(mUserInput.getText().toString(), mPasswordInput.getText().toString()).enqueue(mLoginCallback);
         }
     }
@@ -281,7 +371,8 @@ public class LoginActivity extends BaseActivity {
     private void handleConnectionError(Throwable t) {
         mProgress.setVisibility(View.GONE);
 
-        if(t instanceof SSLHandshakeException && t.getCause() instanceof X509CertificateException) {
+        if (t instanceof SSLHandshakeException && t.getCause() instanceof X509CertificateException) {
+            mAccount.setTrustedCertificate(null);
             String fingerprint = null;
             try {
                 fingerprint = X509Util.getFingerPrint(((X509CertificateException) t.getCause()).getChain()[0]);
@@ -297,8 +388,8 @@ public class LoginActivity extends BaseActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             if (finalFingerprint != null) {
-                                mTrustedCertificate = finalFingerprint;
-                                onLoginClick();
+                                mAccount.setTrustedCertificate(finalFingerprint);
+                                login();
                             }
 
                             dialog.dismiss();
@@ -312,7 +403,36 @@ public class LoginActivity extends BaseActivity {
                     })
                     .show();
 
-            ((TextView)d.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
+            ((TextView) d.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
+        } else if (t instanceof SSLPeerUnverifiedException && t.getMessage().toLowerCase().contains("hostname")) {
+            mAccount.setTrustedHostname(null);
+            final String finalHostname = CustomHostnameVerifier.getLastFailedHostname();
+            Dialog d = new AlertDialog.Builder(this)
+                    .setTitle(R.string.hostname_title)
+                    .setMessage(R.string.hostname_message)
+                    .setPositiveButton(R.string.ok_button, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if (finalHostname != null) {
+                                mAccount.setTrustedHostname(finalHostname);
+                                login();
+                            }
+
+                            dialog.dismiss();
+                        }
+                    })
+                    .setNegativeButton(R.string.cancel_button, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .show();
+
+            ((TextView) d.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
+        } else if (t instanceof ConnectException) {
+            Snackbar.make(mRoot, t.getLocalizedMessage(), Snackbar.LENGTH_LONG)
+                    .show();
         } else {
             Snackbar.make(mRoot, getString(R.string.login_error), Snackbar.LENGTH_LONG)
                     .show();
@@ -323,6 +443,8 @@ public class LoginActivity extends BaseActivity {
         mProgress.setVisibility(View.GONE);
         switch (response.code()) {
             case 401:
+                mAccount.setAuthorizationHeader(null);
+
                 String header = response.headers().get("WWW-Authenticate");
                 if (header != null) {
                     handleBasicAuthentication(response);
@@ -331,6 +453,9 @@ public class LoginActivity extends BaseActivity {
                 Snackbar.make(mRoot, getString(R.string.login_unauthorized), Snackbar.LENGTH_LONG)
                         .show();
                 return;
+            case 404:
+                Snackbar.make(mRoot, getString(R.string.login_404_error), Snackbar.LENGTH_LONG)
+                        .show();
             default:
                 Snackbar.make(mRoot, getString(R.string.login_error), Snackbar.LENGTH_LONG)
                         .show();
@@ -355,13 +480,12 @@ public class LoginActivity extends BaseActivity {
         HttpLoginDialog dialog = new HttpLoginDialog(this, realm, new HttpLoginDialog.LoginListener() {
             @Override
             public void onLogin(String username, String password) {
-                mAuthorizationHeader = Credentials.basic(username, password);
-                onLoginClick();
+                mAccount.setAuthorizationHeader(Credentials.basic(username, password));
+                login();
             }
 
             @Override
             public void onCancel() {
-                mAuthorizationHeader = null;
             }
         });
         dialog.show();
@@ -379,5 +503,36 @@ public class LoginActivity extends BaseActivity {
             }
         }
         return false;
+    }
+
+    /**
+     * Manually retrieve the accounts, typically used for API 23+ after getting the permission. Called automatically
+     * on creation, but needs to be recalled if the permission is granted later
+     */
+    public void retrieveAccounts() {
+        Collection<String> accounts = getEmailAccounts();
+        if (accounts != null && !accounts.isEmpty()) {
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                    R.layout.support_simple_spinner_dropdown_item,
+                    new ArrayList<>(accounts));
+            mUserInput.setAdapter(adapter);
+        }
+    }
+
+    /**
+     * Get all the accounts that appear to be email accounts. HashSet so that we do not get duplicates
+     *
+     * @return list of email accounts
+     */
+    private Set<String> getEmailAccounts() {
+        HashSet<String> emailAccounts = new HashSet<>();
+        AccountManager manager = (AccountManager) getSystemService(Context.ACCOUNT_SERVICE);
+        final android.accounts.Account[] accounts = manager.getAccounts();
+        for (android.accounts.Account account : accounts) {
+            if (!TextUtils.isEmpty(account.name) && Patterns.EMAIL_ADDRESS.matcher(account.name).matches()) {
+                emailAccounts.add(account.name);
+            }
+        }
+        return emailAccounts;
     }
 }

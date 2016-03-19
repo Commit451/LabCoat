@@ -9,7 +9,7 @@ buildscript {
         classpath 'com.android.tools.build:gradle:1.5.0'
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
         //check with ./gradlew dependencyUpdates
-        classpath 'com.github.ben-manes:gradle-versions-plugin:0.11.3'
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.12.0'
     }
 }
 
@@ -18,4 +18,8 @@ allprojects {
         jcenter()
         maven { url "https://jitpack.io" }
     }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.11'
 }

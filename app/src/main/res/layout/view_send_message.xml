@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    android:id="@+id/root"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="bottom"
-    android:background="?attr/colorPrimary"
+    android:tag="background|primary_color"
+    android:elevation="4dp"
     android:minHeight="?attr/actionBarSize"
-    android:paddingTop="8dp"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:paddingTop="8dp">
 
     <EditText
         android:id="@+id/new_note_edit"
@@ -16,10 +19,11 @@
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="8dp"
         android:layout_weight="1"
+        android:tag="tint|primary_color_dependent,text_color|primary_color_dependent,text_color_hint|primary_color_dependent"
         android:hint="@string/new_note_hint"
         android:imeOptions="actionNone"
         android:inputType="textCapSentences|textAutoCorrect|textMultiLine"
-        android:maxLines="4" />
+        android:maxLines="4"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/new_note_button"
@@ -28,6 +32,6 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:src="@drawable/ic_send_24dp"
+        android:tag="tint_selector|accent_color"
         app:fabSize="mini" />
-
 </LinearLayout>

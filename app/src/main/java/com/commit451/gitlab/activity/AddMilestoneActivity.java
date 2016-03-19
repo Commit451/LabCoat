@@ -4,6 +4,8 @@ package com.commit451.gitlab.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.widget.Toolbar;
@@ -13,12 +15,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.afollestad.appthemeengine.customizers.ATEActivityThemeCustomizer;
+import com.commit451.elasticdragdismisslayout.ElasticDragDismissFrameLayout;
+import com.commit451.elasticdragdismisslayout.ElasticDragDismissListener;
 import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
+import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.MilestoneChangedEvent;
 import com.commit451.gitlab.event.MilestoneCreatedEvent;
 import com.commit451.gitlab.model.api.Milestone;
+import com.commit451.gitlab.util.AppThemeUtil;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import org.parceler.Parcels;
@@ -29,12 +36,16 @@ import java.util.Date;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
+import retrofit2.Callback;
 import timber.log.Timber;
 
-public class AddMilestoneActivity extends MorphActivity {
+public class AddMilestoneActivity extends MorphActivity implements ATEActivityThemeCustomizer {
+
+    @Override
+    public int getActivityTheme() {
+        return PreferenceManager.getDefaultSharedPreferences(this).getBoolean("dark_theme", true) ?
+                R.style.Activity_Translucent : R.style.ActivityLight_Translucent;
+    }
 
     private static final String KEY_PROJECT_ID = "project_id";
     private static final String KEY_MILESTONE = "milestone";
@@ -53,7 +64,7 @@ public class AddMilestoneActivity extends MorphActivity {
     }
 
     @Bind(R.id.root)
-    View mRoot;
+    ElasticDragDismissFrameLayout mRoot;
     @Bind(R.id.toolbar)
     Toolbar mToolbar;
     @Bind(R.id.title_text_input_layout)
@@ -79,6 +90,7 @@ public class AddMilestoneActivity extends MorphActivity {
                 now.get(Calendar.MONTH),
                 now.get(Calendar.DAY_OF_MONTH)
         );
+        dpd.setAccentColor(AppThemeUtil.resolveAccentColor(this));
         dpd.show(getFragmentManager(), "date_picker");
     }
 
@@ -105,25 +117,21 @@ public class AddMilestoneActivity extends MorphActivity {
         }
     };
 
-    private Callback<Milestone> mMilestoneCallback = new Callback<Milestone>() {
+    private Callback<Milestone> mMilestoneCallback = new EasyCallback<Milestone>() {
 
         @Override
-        public void onResponse(Response<Milestone> response, Retrofit retrofit) {
+        public void onResponse(@NonNull Milestone response) {
             mProgress.setVisibility(View.GONE);
-            if (!response.isSuccess()) {
-                showError();
-                return;
-            }
             if (mMilestone == null) {
-                LabCoatApp.bus().post(new MilestoneCreatedEvent(response.body()));
+                LabCoatApp.bus().post(new MilestoneCreatedEvent(response));
             } else {
-                LabCoatApp.bus().post(new MilestoneChangedEvent(response.body()));
+                LabCoatApp.bus().post(new MilestoneChangedEvent(response));
             }
             finish();
         }
 
         @Override
-        public void onFailure(Throwable t) {
+        public void onAllFailure(Throwable t) {
             Timber.e(t, null);
             mProgress.setVisibility(View.GONE);
             showError();
@@ -156,6 +164,15 @@ public class AddMilestoneActivity extends MorphActivity {
                         return true;
                 }
                 return false;
+            }
+        });
+        mRoot.addListener(new ElasticDragDismissListener() {
+            @Override
+            public void onDrag(float elasticOffset, float elasticOffsetPixels, float rawOffset, float rawOffsetPixels) {}
+
+            @Override
+            public void onDragDismissed() {
+                onBackPressed();
             }
         });
     }

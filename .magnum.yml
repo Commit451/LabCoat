@@ -6,7 +6,9 @@ before_script:
   - sudo apt-get -q -y install wget tar openjdk-7-jdk lib32stdc++6 lib32z1
   - wget -q http://dl.google.com/android/android-sdk_r24.4.1-linux.tgz
   - tar xzf android-sdk_r24.4.1-linux.tgz
-  - echo y | android-sdk-linux/tools/android -s update sdk --no-ui --all --filter tools,platform-tools,build-tools-23.0.2,android-23,extra-android-m2repository
+  - wget -q https://raw.githubusercontent.com/journeyapps/android-sdk-installer/master/accept-licenses
+  - chmod +x accept-licenses
+  - ./accept-licenses "android-sdk-linux/tools/android -s update sdk --no-ui --all --filter tools,platform-tools,build-tools-23.0.2,android-23,extra-android-m2repository" "android-sdk-license-5be876d5|android-sdk-license-ed0d0a5b"
   - export ANDROID_HOME=$PWD/android-sdk-linux
   - chmod +x gradlew
 

@@ -1,6 +1,7 @@
 package com.commit451.gitlab.viewHolder;
 
-import android.support.v4.content.ContextCompat;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,7 +9,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.afollestad.appthemeengine.Config;
+import com.afollestad.appthemeengine.util.ATEUtil;
 import com.commit451.gitlab.R;
+import com.commit451.gitlab.util.AppThemeUtil;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -27,18 +31,26 @@ public class BreadcrumbViewHolder extends RecyclerView.ViewHolder {
     @Bind(R.id.breadcrumb_text) TextView mTextView;
     @Bind(R.id.breadcrumb_arrow) ImageView mArrowView;
 
+    private int mPrimaryTextColor;
+    private int mSecondaryTextColor;
+
     public BreadcrumbViewHolder(View view) {
         super(view);
         ButterKnife.bind(this, view);
+        mPrimaryTextColor = ATEUtil.isColorLight(Config.primaryColor(view.getContext(),
+                AppThemeUtil.resolveThemeKey(view.getContext()))) ? Color.BLACK : Color.WHITE;
+        mSecondaryTextColor = ATEUtil.adjustAlpha(mPrimaryTextColor, 0.5f);
+        // We need to tint arrow based on text color
+        mArrowView.setColorFilter(mSecondaryTextColor, PorterDuff.Mode.SRC_IN);
     }
 
     public void bind(String breadcrumb, boolean showArrow) {
         mTextView.setText(breadcrumb);
         if (showArrow) {
-            mTextView.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.white_60));
+            mTextView.setTextColor(mSecondaryTextColor);
             mArrowView.setVisibility(View.VISIBLE);
         } else {
-            mTextView.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.white));
+            mTextView.setTextColor(mPrimaryTextColor);
             mArrowView.setVisibility(View.GONE);
         }
     }

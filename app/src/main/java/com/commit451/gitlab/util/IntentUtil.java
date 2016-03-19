@@ -9,6 +9,7 @@ import android.support.design.widget.Snackbar;
 import android.text.TextUtils;
 import android.view.View;
 
+import com.afollestad.appthemeengine.Config;
 import com.commit451.easel.Easel;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.customtabs.BrowserFallback;
@@ -26,7 +27,7 @@ public class IntentUtil {
         }
 
         CustomTabsIntent.Builder intentBuilder = new CustomTabsIntent.Builder();
-        intentBuilder.setToolbarColor(Easel.getThemeAttrColor(activity, R.attr.colorPrimary));
+        intentBuilder.setToolbarColor(Config.primaryColor(activity, AppThemeUtil.resolveThemeKey(activity)));
         intentBuilder.setStartAnimations(activity, R.anim.fade_in, R.anim.do_nothing);
         intentBuilder.setExitAnimations(activity, R.anim.do_nothing, R.anim.fade_out);
         CustomTabsActivityHelper.openCustomTab(activity, intentBuilder.build(), Uri.parse(url), new BrowserFallback());
