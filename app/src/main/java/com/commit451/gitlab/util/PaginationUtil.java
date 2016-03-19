@@ -2,7 +2,7 @@ package com.commit451.gitlab.util;
 
 import android.net.Uri;
 
-import retrofit.Response;
+import retrofit2.Response;
 import timber.log.Timber;
 
 /**

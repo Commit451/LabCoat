@@ -42,8 +42,6 @@ import com.commit451.gitlab.ssl.X509CertificateException;
 import com.commit451.gitlab.ssl.X509Util;
 import com.commit451.gitlab.util.KeyboardUtil;
 import com.commit451.gitlab.util.NavigationManager;
-import com.squareup.okhttp.Credentials;
-import com.squareup.okhttp.HttpUrl;
 
 import java.net.ConnectException;
 import java.security.cert.CertificateEncodingException;
@@ -61,9 +59,11 @@ import javax.net.ssl.SSLPeerUnverifiedException;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
+import okhttp3.Credentials;
+import okhttp3.HttpUrl;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import timber.log.Timber;
 
 public class LoginActivity extends BaseActivity {
@@ -254,8 +254,8 @@ public class LoginActivity extends BaseActivity {
     private Callback<UserLogin> mLoginCallback = new Callback<UserLogin>() {
 
         @Override
-        public void onResponse(Response<UserLogin> response, Retrofit retrofit) {
-            if (!response.isSuccess()) {
+        public void onResponse(Call<UserLogin> call, Response<UserLogin> response) {
+            if (!response.isSuccessful()) {
                 handleConnectionResponse(response);
                 return;
             }
@@ -265,17 +265,18 @@ public class LoginActivity extends BaseActivity {
         }
 
         @Override
-        public void onFailure(Throwable t) {
+        public void onFailure(Call<UserLogin> call, Throwable t) {
             Timber.e(t, null);
             handleConnectionError(t);
         }
     };
 
     private Callback<UserFull> mTestUserCallback = new Callback<UserFull>() {
+
         @Override
-        public void onResponse(Response<UserFull> response, Retrofit retrofit) {
+        public void onResponse(Call<UserFull> call, Response<UserFull> response) {
             mProgress.setVisibility(View.GONE);
-            if (!response.isSuccess()) {
+            if (!response.isSuccessful()) {
                 handleConnectionResponse(response);
                 return;
             }
@@ -291,7 +292,7 @@ public class LoginActivity extends BaseActivity {
         }
 
         @Override
-        public void onFailure(Throwable t) {
+        public void onFailure(Call<UserFull> call, Throwable t) {
             Timber.e(t, null);
             handleConnectionError(t);
         }

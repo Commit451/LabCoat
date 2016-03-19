@@ -36,7 +36,7 @@ import org.parceler.Parcels;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import retrofit.Callback;
+import retrofit2.Callback;
 import timber.log.Timber;
 
 /**

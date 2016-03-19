@@ -28,7 +28,6 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import retrofit.Callback;
 import timber.log.Timber;
 
 public class CommitsFragment extends BaseFragment {
@@ -62,7 +61,7 @@ public class CommitsFragment extends BaseFragment {
         }
     };
 
-    private final Callback<List<RepositoryCommit>> mCommitsCallback = new EasyCallback<List<RepositoryCommit>>() {
+    private final EasyCallback<List<RepositoryCommit>> mCommitsCallback = new EasyCallback<List<RepositoryCommit>>() {
         @Override
         public void onResponse(@NonNull List<RepositoryCommit> response) {
             mLoading = false;
@@ -97,7 +96,7 @@ public class CommitsFragment extends BaseFragment {
         }
     };
 
-    private final Callback<List<RepositoryCommit>> mMoreCommitsCallback = new EasyCallback<List<RepositoryCommit>>() {
+    private final EasyCallback<List<RepositoryCommit>> mMoreCommitsCallback = new EasyCallback<List<RepositoryCommit>>() {
         @Override
         public void onResponse(@NonNull List<RepositoryCommit> response) {
             mLoading = false;

@@ -40,7 +40,6 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import retrofit.Callback;
 import timber.log.Timber;
 
 /**
@@ -124,7 +123,7 @@ public class GitLabNavigationView extends NavigationView {
         }
     };
 
-    private final Callback<UserFull> mUserCallback = new EasyCallback<UserFull>() {
+    private final EasyCallback<UserFull> mUserCallback = new EasyCallback<UserFull>() {
 
         @Override
         public void onResponse(@NonNull UserFull response) {

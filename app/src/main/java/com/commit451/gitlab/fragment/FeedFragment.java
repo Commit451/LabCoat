@@ -23,7 +23,6 @@ import com.commit451.gitlab.util.NavigationManager;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import retrofit.Callback;
 import timber.log.Timber;
 
 public class FeedFragment extends BaseFragment {
@@ -50,7 +49,7 @@ public class FeedFragment extends BaseFragment {
     private EventReceiver mEventReceiver;
     private FeedAdapter mFeedAdapter;
 
-    private final Callback<Feed> mUserFeedCallback = new EasyCallback<Feed>() {
+    private final EasyCallback<Feed> mUserFeedCallback = new EasyCallback<Feed>() {
         @Override
         public void onResponse(@NonNull Feed response) {
             if (getView() == null) {

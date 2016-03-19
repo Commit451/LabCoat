@@ -31,7 +31,6 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import retrofit.Callback;
 import timber.log.Timber;
 
 public class GroupMembersFragment extends BaseFragment {
@@ -65,7 +64,7 @@ public class GroupMembersFragment extends BaseFragment {
         }
     };
 
-    private final Callback<List<Member>> mGroupMembersCallback = new EasyCallback<List<Member>>() {
+    private final EasyCallback<List<Member>> mGroupMembersCallback = new EasyCallback<List<Member>>() {
         @Override
         public void onResponse(@NonNull List<Member> response) {
             if (getView() == null) {
@@ -94,7 +93,7 @@ public class GroupMembersFragment extends BaseFragment {
         }
     };
 
-    private final Callback<Void> mRemoveMemberCallback = new EasyCallback<Void>() {
+    private final EasyCallback<Void> mRemoveMemberCallback = new EasyCallback<Void>() {
         @Override
         public void onResponse(@NonNull Void response) {
             if (getView() == null) {

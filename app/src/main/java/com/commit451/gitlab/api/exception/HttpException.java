@@ -1,8 +1,8 @@
 package com.commit451.gitlab.api.exception;
 
-import com.squareup.okhttp.ResponseBody;
-
 import java.io.IOException;
+
+import okhttp3.ResponseBody;
 
 /**
  * Represents an HTTP non 200 response from Retrofit

@@ -36,7 +36,7 @@ import java.util.Date;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import retrofit.Callback;
+import retrofit2.Callback;
 import timber.log.Timber;
 
 public class AddMilestoneActivity extends MorphActivity implements ATEActivityThemeCustomizer {

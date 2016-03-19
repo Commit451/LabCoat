@@ -32,7 +32,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import in.uncod.android.bypass.Bypass;
-import retrofit.Callback;
 import timber.log.Timber;
 
 public class OverviewFragment extends BaseFragment {
@@ -63,7 +62,7 @@ public class OverviewFragment extends BaseFragment {
         }
     }
 
-    private final Callback<List<RepositoryTreeObject>> mFilesCallback = new EasyCallback<List<RepositoryTreeObject>>() {
+    private final EasyCallback<List<RepositoryTreeObject>> mFilesCallback = new EasyCallback<List<RepositoryTreeObject>>() {
         @Override
         public void onResponse(@NonNull List<RepositoryTreeObject> response) {
             if (getView() == null) {
@@ -90,7 +89,7 @@ public class OverviewFragment extends BaseFragment {
         }
     };
 
-    private Callback<RepositoryFile> mFileCallback = new EasyCallback<RepositoryFile>() {
+    private EasyCallback<RepositoryFile> mFileCallback = new EasyCallback<RepositoryFile>() {
         @Override
         public void onResponse(@NonNull RepositoryFile response) {
             if (getView() == null) {

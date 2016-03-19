@@ -2,29 +2,20 @@ package com.commit451.gitlab.dialog;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatDialog;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Toast;
 
-import com.afollestad.appthemeengine.ATE;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.adapter.AccessAdapter;
 import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.model.api.Member;
-import com.commit451.gitlab.util.AppThemeUtil;
 
 import java.util.Arrays;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-import retrofit.Callback;
+import retrofit2.Callback;
 import timber.log.Timber;
 
 /**

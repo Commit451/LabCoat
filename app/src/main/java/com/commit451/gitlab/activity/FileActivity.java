@@ -36,7 +36,7 @@ import java.nio.charset.Charset;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import retrofit.Callback;
+import retrofit2.Callback;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;

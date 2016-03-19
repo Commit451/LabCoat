@@ -30,7 +30,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import retrofit.Callback;
+import retrofit2.Callback;
 import timber.log.Timber;
 
 /**

@@ -36,7 +36,6 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import retrofit.Callback;
 import timber.log.Timber;
 
 public class MilestonesFragment extends BaseFragment {
@@ -108,7 +107,7 @@ public class MilestonesFragment extends BaseFragment {
         }
     };
 
-    private final Callback<List<Milestone>> mCallback = new EasyCallback<List<Milestone>>() {
+    private final EasyCallback<List<Milestone>> mCallback = new EasyCallback<List<Milestone>>() {
         @Override
         public void onResponse(@NonNull List<Milestone> response) {
             mLoading = false;
@@ -140,7 +139,7 @@ public class MilestonesFragment extends BaseFragment {
         }
     };
 
-    private final Callback<List<Milestone>> mMoreMilestonesCallback = new EasyCallback<List<Milestone>>() {
+    private final EasyCallback<List<Milestone>> mMoreMilestonesCallback = new EasyCallback<List<Milestone>>() {
         @Override
         public void onResponse(@NonNull List<Milestone> response) {
             mLoading = false;

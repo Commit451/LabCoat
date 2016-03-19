@@ -1,13 +1,13 @@
 package com.commit451.gitlab.api;
 
 import com.commit451.gitlab.model.Account;
-import com.squareup.okhttp.HttpUrl;
-import com.squareup.okhttp.Interceptor;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
 
 import java.io.IOException;
 
+import okhttp3.HttpUrl;
+import okhttp3.Interceptor;
+import okhttp3.Request;
+import okhttp3.Response;
 import timber.log.Timber;
 
 /**
@@ -30,7 +30,7 @@ public class AuthenticationRequestInterceptor implements Interceptor {
     public Response intercept(Chain chain) throws IOException {
         Request request = chain.request();
 
-        HttpUrl url = request.httpUrl();
+        HttpUrl url = request.url();
 
         String cleanUrl = url.toString();
         cleanUrl = cleanUrl.substring(cleanUrl.indexOf(':'));

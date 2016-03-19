@@ -1,9 +1,9 @@
 package com.commit451.gitlab.ssl;
 
-import com.squareup.okhttp.internal.tls.OkHostnameVerifier;
-
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSession;
+
+import okhttp3.internal.tls.OkHostnameVerifier;
 
 public class CustomHostnameVerifier implements HostnameVerifier {
     private static final HostnameVerifier DEFAULT_HOSTNAME_VERIFIER = OkHostnameVerifier.INSTANCE;

@@ -5,9 +5,10 @@ import com.commit451.gitlab.api.AuthenticationRequestInterceptor;
 import com.commit451.gitlab.api.TimberRequestInterceptor;
 import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.ssl.CustomTrustManager;
-import com.squareup.okhttp.OkHttpClient;
 
 import java.util.concurrent.TimeUnit;
+
+import okhttp3.OkHttpClient;
 
 /**
  * Creates an OkHttpClient with the needed defaults
@@ -37,14 +38,14 @@ public final class OkHttpClientProvider {
         sCustomTrustManager.setTrustedHostname(account.getTrustedHostname());
         sCustomTrustManager.setPrivateKeyAlias(account.getPrivateKeyAlias());
 
-        OkHttpClient client = new OkHttpClient();
-        client.setConnectTimeout(30, TimeUnit.SECONDS);
-        client.setSslSocketFactory(sCustomTrustManager.getSSLSocketFactory());
-        client.setHostnameVerifier(sCustomTrustManager.getHostnameVerifier());
-        client.interceptors().add(new AuthenticationRequestInterceptor(account));
+        OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder()
+                .connectTimeout(30, TimeUnit.SECONDS)
+                .sslSocketFactory(sCustomTrustManager.getSSLSocketFactory())
+                .hostnameVerifier(sCustomTrustManager.getHostnameVerifier());
+        clientBuilder.addInterceptor(new AuthenticationRequestInterceptor(account));
         if (BuildConfig.DEBUG) {
-            client.networkInterceptors().add(new TimberRequestInterceptor());
+            clientBuilder.addInterceptor(new TimberRequestInterceptor());
         }
-        return client;
+        return clientBuilder.build();
     }
 }

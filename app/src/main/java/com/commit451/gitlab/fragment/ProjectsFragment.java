@@ -27,7 +27,6 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import retrofit.Callback;
 import timber.log.Timber;
 
 public class ProjectsFragment extends BaseFragment {
@@ -94,7 +93,7 @@ public class ProjectsFragment extends BaseFragment {
         }
     };
 
-    private final Callback<List<Project>> mProjectsCallback = new EasyCallback<List<Project>>() {
+    private final EasyCallback<List<Project>> mProjectsCallback = new EasyCallback<List<Project>>() {
         @Override
         public void onResponse(@NonNull List<Project> response) {
             mLoading = false;
@@ -126,7 +125,7 @@ public class ProjectsFragment extends BaseFragment {
         }
     };
 
-    private final Callback<List<Project>> mMoreProjectsCallback = new EasyCallback<List<Project>>() {
+    private final EasyCallback<List<Project>> mMoreProjectsCallback = new EasyCallback<List<Project>>() {
         @Override
         public void onResponse(@NonNull List<Project> response) {
             mLoading = false;

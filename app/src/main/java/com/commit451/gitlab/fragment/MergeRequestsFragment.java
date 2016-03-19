@@ -32,7 +32,6 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import retrofit.Callback;
 import timber.log.Timber;
 
 public class MergeRequestsFragment extends BaseFragment {
@@ -87,7 +86,7 @@ public class MergeRequestsFragment extends BaseFragment {
         }
     };
 
-    private final Callback<List<MergeRequest>> mCallback = new EasyCallback<List<MergeRequest>>() {
+    private final EasyCallback<List<MergeRequest>> mCallback = new EasyCallback<List<MergeRequest>>() {
         @Override
         public void onResponse(@NonNull List<MergeRequest> response) {
             mLoading = false;
@@ -119,7 +118,7 @@ public class MergeRequestsFragment extends BaseFragment {
         }
     };
 
-    private final Callback<List<MergeRequest>> mMoreIssuesCallback = new EasyCallback<List<MergeRequest>>() {
+    private final EasyCallback<List<MergeRequest>> mMoreIssuesCallback = new EasyCallback<List<MergeRequest>>() {
         @Override
         public void onResponse(@NonNull List<MergeRequest> response) {
             mLoading = false;

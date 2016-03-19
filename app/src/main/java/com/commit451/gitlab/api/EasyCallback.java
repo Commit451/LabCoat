@@ -6,14 +6,14 @@ import android.support.annotation.Nullable;
 import com.commit451.gitlab.api.exception.HttpException;
 import com.commit451.gitlab.api.exception.NullBodyException;
 
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * An easier version of a Retrofit callback that simplifies
  * the response block so that you do not have to check
- * {@link Response#isSuccess()}. You can still call {@link #getResponse()}
+ * {@link Response#isSuccessful()}. You can still call {@link #getResponse()}
  * if you need it. If there is a HTTP error, {@link #onAllFailure(Throwable)}
  * will be called with a {@link HttpException}
  */
@@ -21,18 +21,17 @@ public abstract class EasyCallback<T> implements Callback<T> {
 
     @Nullable
     private Response<T> mResponse;
-    @Nullable
-    private Retrofit mRetrofit;
+    private Call<T> mCall;
 
     public abstract void onResponse(@NonNull T response);
 
     public abstract void onAllFailure(Throwable t);
 
     @Override
-    public void onResponse(Response<T> response, Retrofit retrofit) {
-        mRetrofit = retrofit;
+    public void onResponse(Call<T> call, Response<T> response) {
+        mCall = call;
         mResponse = response;
-        if (!response.isSuccess()) {
+        if (!response.isSuccessful()) {
             onAllFailure(new HttpException(response.code(), response.errorBody()));
             return;
         }
@@ -44,7 +43,8 @@ public abstract class EasyCallback<T> implements Callback<T> {
     }
 
     @Override
-    public void onFailure(Throwable t) {
+    public void onFailure(Call<T> call, Throwable t) {
+        mCall = call;
         onAllFailure(t);
     }
 
@@ -54,7 +54,7 @@ public abstract class EasyCallback<T> implements Callback<T> {
     }
 
     @Nullable
-    public Retrofit getRetrofit() {
-        return mRetrofit;
+    public Call<T> getCall() {
+        return mCall;
     }
 }
