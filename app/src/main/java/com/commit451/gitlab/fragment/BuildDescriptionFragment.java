@@ -1,7 +1,10 @@
 package com.commit451.gitlab.fragment;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +12,8 @@ import android.widget.TextView;
 
 import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
+import com.commit451.gitlab.api.EasyCallback;
+import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.BuildChangedEvent;
 import com.commit451.gitlab.model.api.Build;
 import com.commit451.gitlab.model.api.Project;
@@ -23,6 +28,7 @@ import java.util.Date;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 
 /**
  * Shows the details of a build
@@ -43,6 +49,8 @@ public class BuildDescriptionFragment extends BaseFragment {
 
     @Bind(R.id.root)
     ViewGroup mRoot;
+    @Bind(R.id.swipe_layout)
+    SwipeRefreshLayout mSwipeRefreshLayout;
     @Bind(R.id.text_duration)
     TextView mTextDuration;
     @Bind(R.id.text_created)
@@ -61,6 +69,23 @@ public class BuildDescriptionFragment extends BaseFragment {
 
     EventReceiver mEventReceiver;
 
+    private final EasyCallback<Build> mLoadBuildCallback = new EasyCallback<Build>() {
+        @Override
+        public void onResponse(@NonNull Build response) {
+            mSwipeRefreshLayout.setRefreshing(false);
+            mBuild = response;
+            bindBuild(response);
+            LabCoatApp.bus().post(new BuildChangedEvent(response));
+        }
+
+        @Override
+        public void onAllFailure(Throwable t) {
+            Timber.e(t, null);
+            Snackbar.make(mRoot, R.string.unable_to_load_build, Snackbar.LENGTH_LONG)
+                    .show();
+        }
+    };
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,9 +103,19 @@ public class BuildDescriptionFragment extends BaseFragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
 
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                load();
+            }
+        });
         bindBuild(mBuild);
         mEventReceiver = new EventReceiver();
         LabCoatApp.bus().register(mEventReceiver);
+    }
+
+    private void load() {
+        GitLabClient.instance().getBuild(mProject.getId(), mBuild.getId()).enqueue(mLoadBuildCallback);
     }
 
     private void bindBuild(Build build) {

@@ -354,6 +354,7 @@
     <string name="unable_to_retry_build">Unable to retry build</string>
     <string name="unable_to_erase_build">Unable to erase build</string>
     <string name="unable_to_cancel_build">Unable to cancel build</string>
+    <string name="unable_to_load_build">Unable to load build</string>
     <string-array name="build_tabs">
         <item>Details</item>
         <item>Artifacts</item>

@@ -350,6 +350,10 @@ public interface GitLab {
     Call<List<Build>> getBuilds(@Url String url,
                                 @Query("scope") String state);
 
+    @GET(API_VERSION + "/projects/{id}/builds/{build_id}")
+    Call<Build> getBuild(@Path("id") long projectId,
+                         @Path("build_id") long buildId);
+
     @POST(API_VERSION + "/projects/{id}/builds/{build_id}/retry")
     Call<Build> retryBuild(@Path("id") long projectId,
                            @Path("build_id") long buildId);
@@ -360,7 +364,7 @@ public interface GitLab {
 
     @POST(API_VERSION + "/projects/{id}/builds/{build_id}/cancel")
     Call<Build> cancelBuild(@Path("id") long projectId,
-                           @Path("build_id") long buildId);
+                            @Path("build_id") long buildId);
 
     @GET(API_VERSION + "/projects/{id}/builds/{build_id}/artifacts")
     Call<List<Artifact>> getBuildArtifacts(@Path("id") long projectId,
