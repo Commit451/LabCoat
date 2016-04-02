@@ -4,17 +4,14 @@ import android.content.Context;
 
 import com.commit451.gitlab.R;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Our own DateUtils, which call forwards to {@link android.text.format.DateUtils} with some
  * nice defaults
  */
 public class DateUtils {
-
-    private static DateFormat FORMATTER = new SimpleDateFormat("HH:mm:ss");
 
     public static CharSequence getRelativeTimeSpanString(Context context, Date startTime) {
         Date now = new Date();
@@ -29,7 +26,6 @@ public class DateUtils {
     }
 
     public static String getTimeTaken(Date startTime, Date endTime) {
-        Date timeTaken = new Date(endTime.getTime() - startTime.getTime());
-        return FORMATTER.format(timeTaken);
+        return android.text.format.DateUtils.formatElapsedTime(TimeUnit.MILLISECONDS.toSeconds(endTime.getTime() - startTime.getTime()));
     }
 }
