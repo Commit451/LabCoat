@@ -93,8 +93,13 @@ public class BuildDescriptionFragment extends BaseFragment {
         mTextDuration.setText(duration);
         String created = String.format(getString(R.string.build_created), DateUtils.getRelativeTimeSpanString(getActivity(), build.getCreatedAt()));
         mTextCreated.setText(created);
-        String finished = String.format(getString(R.string.build_finished), DateUtils.getRelativeTimeSpanString(getActivity(), build.getFinishedAt()));
-        mTextFinished.setText(finished);
+        if (build.getFinishedAt() != null) {
+            String finished = String.format(getString(R.string.build_finished), DateUtils.getRelativeTimeSpanString(getActivity(), build.getFinishedAt()));
+            mTextFinished.setText(finished);
+            mTextFinished.setVisibility(View.VISIBLE);
+        } else {
+            mTextFinished.setVisibility(View.GONE);
+        }
         bindRunner(build.getRunner());
         bindCommit(build.getCommit());
     }
