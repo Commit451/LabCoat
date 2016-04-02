@@ -2,7 +2,9 @@ package com.commit451.gitlab.api;
 
 import android.support.annotation.Nullable;
 
+import com.commit451.gitlab.model.api.Artifact;
 import com.commit451.gitlab.model.api.Branch;
+import com.commit451.gitlab.model.api.Build;
 import com.commit451.gitlab.model.api.Contributor;
 import com.commit451.gitlab.model.api.Diff;
 import com.commit451.gitlab.model.api.Group;
@@ -225,7 +227,7 @@ public interface GitLab {
 
     @PUT(API_VERSION + "/projects/{id}/merge_requests/{merge_request_id}")
     Call<MergeRequest> acceptMergeRequest(@Path("id") long projectId,
-                                       @Path("merge_request_id") long mergeRequestId);
+                                          @Path("merge_request_id") long mergeRequestId);
 
     /* --- ISSUES --- */
 
@@ -338,4 +340,29 @@ public interface GitLab {
     Call<Label> deleteLabel(@Path("id") long projectId,
                             @Query("name") String name);
 
+
+    /* --- BUILDS --- */
+    @GET(API_VERSION + "/projects/{id}/builds")
+    Call<List<Build>> getBuilds(@Path("id") long projectId,
+                                @Query("scope") String scope);
+
+    @GET
+    Call<List<Build>> getBuilds(@Url String url,
+                                @Query("scope") String state);
+
+    @POST(API_VERSION + "/projects/{id}/builds/{build_id}/retry")
+    Call<Build> retryBuild(@Path("id") long projectId,
+                           @Path("build_id") long buildId);
+
+    @POST(API_VERSION + "/projects/{id}/builds/{build_id}/erase")
+    Call<Build> eraseBuild(@Path("id") long projectId,
+                           @Path("build_id") long buildId);
+
+    @POST(API_VERSION + "/projects/{id}/builds/{build_id}/cancel")
+    Call<Build> cancelBuild(@Path("id") long projectId,
+                           @Path("build_id") long buildId);
+
+    @GET(API_VERSION + "/projects/{id}/builds/{build_id}/artifacts")
+    Call<List<Artifact>> getBuildArtifacts(@Path("id") long projectId,
+                                           @Path("build_id") long buildId);
 }

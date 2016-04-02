@@ -4,6 +4,8 @@ import android.content.Context;
 
 import com.commit451.gitlab.R;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -11,6 +13,8 @@ import java.util.Date;
  * nice defaults
  */
 public class DateUtils {
+
+    private static DateFormat FORMATTER = new SimpleDateFormat("HH:mm:ss");
 
     public static CharSequence getRelativeTimeSpanString(Context context, Date startTime) {
         Date now = new Date();
@@ -22,5 +26,10 @@ public class DateUtils {
                 now.getTime(),
                 android.text.format.DateUtils.SECOND_IN_MILLIS)
                 .toString();
+    }
+
+    public static String getTimeTaken(Date startTime, Date endTime) {
+        Date timeTaken = new Date(endTime.getTime() - startTime.getTime());
+        return FORMATTER.format(timeTaken);
     }
 }

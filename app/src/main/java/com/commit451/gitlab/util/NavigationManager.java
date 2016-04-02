@@ -14,6 +14,7 @@ import com.commit451.gitlab.activity.AboutActivity;
 import com.commit451.gitlab.activity.AddIssueActivity;
 import com.commit451.gitlab.activity.AddMilestoneActivity;
 import com.commit451.gitlab.activity.AddUserActivity;
+import com.commit451.gitlab.activity.BuildActivity;
 import com.commit451.gitlab.activity.DiffActivity;
 import com.commit451.gitlab.activity.FileActivity;
 import com.commit451.gitlab.activity.GroupActivity;
@@ -170,6 +171,11 @@ public class NavigationManager {
     public static void navigateToEditMilestone(Activity activity, View fab, Project project, Milestone milestone) {
         Intent intent = AddMilestoneActivity.newInstance(activity, project.getId(), milestone);
         startMorphActivity(activity, fab, intent);
+    }
+
+    public static void navigateToBuild(Activity activity, Project project, com.commit451.gitlab.model.api.Build build) {
+        Intent intent = BuildActivity.newInstance(activity, project, build);
+        activity.startActivity(intent);
     }
 
     private static void startMorphActivity(Activity activity, View fab, Intent intent) {

@@ -20,9 +20,12 @@
     <string name="action_create">Create</string>
     <string name="action_edit">Edit</string>
     <string name="action_merge">Merge</string>
+    <string name="action_erase">Erase</string>
+    <string name="action_retry">Retry</string>
+    <string name="action_cancel">Cancel</string>
 
     <!-- Tabs -->
-    <string name="title_overview">Overview</string>
+    <string name="title_project">Project</string>
     <string name="title_activity">Activity</string>
     <string name="title_commits">Commits</string>
     <string name="title_milestones">Milestones</string>
@@ -30,12 +33,14 @@
     <string name="title_files">Files</string>
     <string name="title_merge_requests">Merge Requests</string>
     <string name="title_members">Members</string>
+    <string name="title_builds">Builds</string>
 
     <string-array name="main_tabs">
-        <item>@string/title_overview</item>
+        <item>@string/title_project</item>
         <item>@string/title_activity</item>
         <item>@string/title_files</item>
         <item>@string/title_commits</item>
+        <item>@string/title_builds</item>
         <item>@string/title_milestones</item>
         <item>@string/title_issues</item>
         <item>@string/title_merge_requests</item>
@@ -322,4 +327,44 @@
     <string name="primary_color_summary">Change the primary theme color</string>
     <string name="accent_color">Accent Color</string>
     <string name="accent_color_summary">Change the accent theme color</string>
+
+    <!-- Builds -->
+    <string name="no_builds">No builds</string>
+
+    <string-array name="build_scope_names">
+        <item>All</item>
+        <item>Pending</item>
+        <item>Running</item>
+        <item>Failed</item>
+        <item>Success</item>
+        <item>Canceled</item>
+    </string-array>
+    <string-array name="build_scope_values">
+        <item></item>
+        <item>pending</item>
+        <item>running</item>
+        <item>failed</item>
+        <item>success</item>
+        <item>canceled</item>
+    </string-array>
+    <string name="build_number">Build #</string>
+    <string name="build_started">Build started</string>
+    <string name="build_canceled">Build canceled</string>
+    <string name="unable_to_retry_build">Unable to retry build</string>
+    <string name="unable_to_delete_build">Unable to delete build</string>
+    <string name="unable_to_cancel_build">Unable to cancel build</string>
+    <string-array name="build_tabs">
+        <item>Details</item>
+        <item>Artifacts</item>
+    </string-array>
+    <string name="build_status">Status: %1$s</string>
+    <string name="build_duration">Duration: %1$s</string>
+    <string name="build_created">Created: %1$s</string>
+    <string name="build_finished">Finished: %1$s</string>
+    <string name="runner_number">Runner: #%1$s</string>
+    <string name="build_commit">Commit</string>
+    <string name="build_commit_branch">Branch: %1$s</string>
+    <string name="build_commit_author">Author: %1$s</string>
+    <string name="build_commit_message">Message: %1$s</string>
+    <string name="no_build_artifacts_found">No build artifacts found.</string>
 </resources>
