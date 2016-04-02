@@ -78,7 +78,7 @@ public class BuildActivity extends BaseActivity {
         @Override
         public void onResponse(@NonNull Build response) {
             mProgress.setVisibility(View.GONE);
-            Snackbar.make(mRoot, R.string.build_started, Snackbar.LENGTH_LONG)
+            Snackbar.make(mRoot, R.string.build_erased, Snackbar.LENGTH_LONG)
                     .show();
             LabCoatApp.bus().post(new BuildChangedEvent(response));
         }
@@ -87,7 +87,7 @@ public class BuildActivity extends BaseActivity {
         public void onAllFailure(Throwable t) {
             Timber.e(t, null);
             mProgress.setVisibility(View.GONE);
-            Snackbar.make(mRoot, R.string.unable_to_retry_build, Snackbar.LENGTH_LONG)
+            Snackbar.make(mRoot, R.string.unable_to_erase_build, Snackbar.LENGTH_LONG)
                     .show();
         }
     };
