@@ -11,15 +11,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.CommitsAdapter;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.event.MergeRequestChangedEvent;
 import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryCommit;
 import com.commit451.gitlab.util.NavigationManager;
+import com.squareup.otto.Subscribe;
 
 import org.parceler.Parcels;
 
@@ -56,6 +59,8 @@ public class MergeRequestCommitsFragment extends BaseFragment {
     private CommitsAdapter mCommitsAdapter;
     private int mPage = -1;
     private boolean mLoading = false;
+
+    EventReceiver mEventReceiver;
 
     private final RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
         @Override
@@ -163,11 +168,14 @@ public class MergeRequestCommitsFragment extends BaseFragment {
             }
         });
         loadData();
+        mEventReceiver = new EventReceiver();
+        LabCoatApp.bus().register(mEventReceiver);
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        LabCoatApp.bus().unregister(mEventReceiver);
         ButterKnife.unbind(this);
     }
 
@@ -203,5 +211,16 @@ public class MergeRequestCommitsFragment extends BaseFragment {
 
         Timber.d("loadMore called for %s", mPage);
         //TODO is this even a thing?
+    }
+
+    private class EventReceiver {
+
+        @Subscribe
+        public void onMergeRequestChangedEvent(MergeRequestChangedEvent event) {
+            if (mMergeRequest.getId() == event.mergeRequest.getId()) {
+                mMergeRequest = event.mergeRequest;
+                loadData();
+            }
+        }
     }
 }

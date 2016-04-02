@@ -163,29 +163,30 @@ public interface GitLab {
 
     @GET(API_VERSION + "/projects/{id}/milestones/{milestone_id}/issues")
     Call<List<Issue>> getMilestoneIssues(@Path("id") long projectId,
-                                        @Path("milestone_id") long milestoneId);
+                                         @Path("milestone_id") long milestoneId);
+
     @GET
     Call<List<Issue>> getMilestoneIssues(@Url String url);
 
     @FormUrlEncoded
     @POST(API_VERSION + "/projects/{id}/milestones")
     Call<Milestone> createMilestone(@Path("id") long projectId,
-                            @Field("title") String title,
-                            @Field("description") String description,
-                            @Field("due_date") String dueDate);
+                                    @Field("title") String title,
+                                    @Field("description") String description,
+                                    @Field("due_date") String dueDate);
 
     @FormUrlEncoded
     @PUT(API_VERSION + "/projects/{id}/milestones/{milestone_id}")
     Call<Milestone> editMilestone(@Path("id") long projectId,
-                            @Path("milestone_id") long milestoneId,
-                            @Field("title") String title,
-                            @Field("description") String description,
-                            @Field("due_date") String dueDate);
+                                  @Path("milestone_id") long milestoneId,
+                                  @Field("title") String title,
+                                  @Field("description") String description,
+                                  @Field("due_date") String dueDate);
 
     @PUT(API_VERSION + "/projects/{id}/milestones/{milestone_id}")
     Call<Milestone> updateMilestoneStatus(@Path("id") long projectId,
-                                  @Path("milestone_id") long milestoneId,
-                                  @Query("state_event") @Milestone.StateEvent String status);
+                                          @Path("milestone_id") long milestoneId,
+                                          @Query("state_event") @Milestone.StateEvent String status);
 
     /* --- MERGE REQUESTS --- */
 
@@ -207,11 +208,11 @@ public interface GitLab {
 
     @GET(API_VERSION + "/projects/{id}/merge_requests/{merge_request_id}/commits")
     Call<List<RepositoryCommit>> getMergeRequestCommits(@Path("id") long projectId,
-                                          @Path("merge_request_id") long mergeRequestId);
+                                                        @Path("merge_request_id") long mergeRequestId);
 
     @GET(API_VERSION + "/projects/{id}/merge_requests/{merge_request_id}/changes")
     Call<MergeRequest> getMergeRequestChanges(@Path("id") long projectId,
-                                                        @Path("merge_request_id") long mergeRequestId);
+                                              @Path("merge_request_id") long mergeRequestId);
 
     @GET
     Call<List<Note>> getMergeRequestNotes(@Url String url);
@@ -221,6 +222,10 @@ public interface GitLab {
     Call<Note> addMergeRequestNote(@Path("id") long projectId,
                                    @Path("merge_request_id") long mergeRequestId,
                                    @Field("body") String body);
+
+    @PUT(API_VERSION + "/projects/{id}/merge_requests/{merge_request_id}")
+    Call<MergeRequest> acceptMergeRequest(@Path("id") long projectId,
+                                       @Path("merge_request_id") long mergeRequestId);
 
     /* --- ISSUES --- */
 
@@ -241,7 +246,7 @@ public interface GitLab {
     Call<Issue> createIssue(@Path("id") long projectId,
                             @Field("title") String title,
                             @Field("description") String description,
-                            @Field("assignee_id") @Nullable  Long assigneeId,
+                            @Field("assignee_id") @Nullable Long assigneeId,
                             @Field("milestone_id") @Nullable Long milestoneId);
 
     @PUT(API_VERSION + "/projects/{id}/issues/{issue_id}")
@@ -300,8 +305,10 @@ public interface GitLab {
     @GET(API_VERSION + "/projects/{id}/repository/commits/{sha}/diff")
     Call<List<Diff>> getCommitDiff(@Path("id") long projectId,
                                    @Path("sha") String commitSHA);
+
     /**
      * Get the current labels for a project
+     *
      * @param projectId id
      * @return all the labels within a project
      */
@@ -310,9 +317,10 @@ public interface GitLab {
 
     /**
      * Create a new label
+     *
      * @param projectId id
-     * @param name the name of the label
-     * @param color the color, ex. #ff0000
+     * @param name      the name of the label
+     * @param color     the color, ex. #ff0000
      * @return call onSuccess the newly created label
      */
     @POST(API_VERSION + "/projects/{id}/labels")
@@ -322,11 +330,12 @@ public interface GitLab {
 
     /**
      * Delete the label by its name
+     *
      * @param projectId id
      * @return all the labels within a project
      */
     @DELETE(API_VERSION + "/projects/{id}/labels")
     Call<Label> deleteLabel(@Path("id") long projectId,
-                          @Query("name") String name);
+                            @Query("name") String name);
 
 }

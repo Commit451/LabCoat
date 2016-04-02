@@ -15,15 +15,18 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.MergeRequestDetailAdapter;
 import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.event.MergeRequestChangedEvent;
 import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.model.api.Note;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.util.KeyboardUtil;
 import com.commit451.gitlab.util.PaginationUtil;
+import com.squareup.otto.Subscribe;
 
 import org.parceler.Parcels;
 
@@ -69,6 +72,8 @@ public class MergeRequestDiscussionFragment extends BaseFragment {
     MergeRequest mMergeRequest;
     Uri mNextPageUrl;
     boolean mLoading;
+
+    EventReceiver mEventReceiver;
 
     @OnClick(R.id.new_note_button)
     public void onNewNoteClick() {
@@ -184,6 +189,16 @@ public class MergeRequestDiscussionFragment extends BaseFragment {
             }
         });
         loadNotes();
+
+        mEventReceiver = new EventReceiver();
+        LabCoatApp.bus().register(mEventReceiver);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
+        LabCoatApp.bus().unregister(mEventReceiver);
     }
 
     private void loadNotes() {
@@ -218,6 +233,17 @@ public class MergeRequestDiscussionFragment extends BaseFragment {
         mNewNoteEdit.setText("");
 
         GitLabClient.instance().addMergeRequestNote(mProject.getId(), mMergeRequest.getId(), body).enqueue(mPostNoteCallback);
+    }
+
+    private class EventReceiver {
+
+        @Subscribe
+        public void onMergeRequestChangedEvent(MergeRequestChangedEvent event) {
+            if (mMergeRequest.getId() == event.mergeRequest.getId()) {
+                mMergeRequest = event.mergeRequest;
+                loadNotes();
+            }
+        }
     }
 
 }

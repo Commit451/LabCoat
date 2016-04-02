@@ -19,6 +19,7 @@
     <string name="action_assign">Assign</string>
     <string name="action_create">Create</string>
     <string name="action_edit">Edit</string>
+    <string name="action_merge">Merge</string>
 
     <!-- Tabs -->
     <string name="title_overview">Overview</string>
@@ -267,6 +268,8 @@
         <item>all</item>
     </string-array>
     <string name="created_merge_request">created merge request</string>
+    <string name="unable_to_merge">Unable to merge</string>
+    <string name="merge_request_accepted">Merge request accepted</string>
 
     <!-- Milestones -->
     <string name="no_milestones">No milestones</string>

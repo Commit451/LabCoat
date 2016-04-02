@@ -42,7 +42,6 @@ import timber.log.Timber;
 
 /**
  * Thats what its all about
- * Created by Jawn on 8/25/2015.
  */
 public class AboutActivity extends BaseActivity {
     private static final long REPO_ID = 473568;
@@ -60,6 +59,8 @@ public class AboutActivity extends BaseActivity {
     TextView mContributors;
     @Bind(R.id.physics_layout)
     PhysicsFrameLayout mPhysicsLayout;
+    @Bind(R.id.progress)
+    View mProgress;
 
     @OnClick(R.id.sauce)
     void onSauceClick() {
@@ -92,12 +93,14 @@ public class AboutActivity extends BaseActivity {
     private Callback<List<Contributor>> mContributorResponseCallback = new EasyCallback<List<Contributor>>() {
         @Override
         public void onResponse(@NonNull List<Contributor> response) {
+            mProgress.setVisibility(View.GONE);
             addContributors(Contributor.groupContributors(response));
         }
 
         @Override
         public void onAllFailure(Throwable t) {
             Timber.e(t, null);
+            mProgress.setVisibility(View.GONE);
             Snackbar.make(mRoot, R.string.failed_to_load_contributors, Snackbar.LENGTH_SHORT)
                     .show();
         }
@@ -121,6 +124,7 @@ public class AboutActivity extends BaseActivity {
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         gravitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
         GitLabClient.instance().getContributors(REPO_ID).enqueue(mContributorResponseCallback);
+        mProgress.setVisibility(View.VISIBLE);
     }
 
     @Override
