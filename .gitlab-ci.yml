@@ -8,7 +8,7 @@ before_script:
   - tar xzf android-sdk_r24.4.1-linux.tgz
   - wget -q https://raw.githubusercontent.com/journeyapps/android-sdk-installer/master/accept-licenses
   - chmod +x accept-licenses
-  - ./accept-licenses "android-sdk-linux/tools/android -s update sdk --no-ui --all --filter tools,platform-tools,build-tools-23.0.2,android-23,extra-android-m2repository" "android-sdk-license-5be876d5|android-sdk-license-ed0d0a5b"
+  - ./accept-licenses "android-sdk-linux/tools/android -s update sdk --no-ui --all --filter tools,platform-tools,build-tools-23.0.3,android-23,extra-android-m2repository" "android-sdk-license-5be876d5|android-sdk-license-ed0d0a5b"
   - export ANDROID_HOME=$PWD/android-sdk-linux
   - chmod +x gradlew
 
