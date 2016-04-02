@@ -2,13 +2,13 @@ package com.commit451.gitlab.provider;
 
 import com.commit451.gitlab.BuildConfig;
 import com.commit451.gitlab.api.AuthenticationRequestInterceptor;
-import com.commit451.gitlab.api.TimberRequestInterceptor;
 import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.ssl.CustomTrustManager;
 
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 
 /**
  * Creates an OkHttpClient with the needed defaults
@@ -44,7 +44,7 @@ public final class OkHttpClientProvider {
                 .hostnameVerifier(sCustomTrustManager.getHostnameVerifier());
         clientBuilder.addInterceptor(new AuthenticationRequestInterceptor(account));
         if (BuildConfig.DEBUG) {
-            clientBuilder.addInterceptor(new TimberRequestInterceptor());
+            clientBuilder.addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
         }
         return clientBuilder.build();
     }
