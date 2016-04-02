@@ -14,10 +14,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 
 import com.afollestad.appthemeengine.customizers.ATEActivityThemeCustomizer;
-import com.commit451.elasticdragdismisslayout.ElasticDragDismissFrameLayout;
-import com.commit451.elasticdragdismisslayout.ElasticDragDismissListener;
 import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.EasyCallback;
@@ -64,7 +63,7 @@ public class AddMilestoneActivity extends MorphActivity implements ATEActivityTh
     }
 
     @Bind(R.id.root)
-    ElasticDragDismissFrameLayout mRoot;
+    FrameLayout mRoot;
     @Bind(R.id.toolbar)
     Toolbar mToolbar;
     @Bind(R.id.title_text_input_layout)
@@ -164,15 +163,6 @@ public class AddMilestoneActivity extends MorphActivity implements ATEActivityTh
                         return true;
                 }
                 return false;
-            }
-        });
-        mRoot.addListener(new ElasticDragDismissListener() {
-            @Override
-            public void onDrag(float elasticOffset, float elasticOffsetPixels, float rawOffset, float rawOffsetPixels) {}
-
-            @Override
-            public void onDragDismissed() {
-                onBackPressed();
             }
         });
     }

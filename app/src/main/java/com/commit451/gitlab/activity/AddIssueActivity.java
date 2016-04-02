@@ -12,12 +12,11 @@ import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.afollestad.appthemeengine.customizers.ATEActivityThemeCustomizer;
-import com.commit451.elasticdragdismisslayout.ElasticDragDismissFrameLayout;
-import com.commit451.elasticdragdismisslayout.ElasticDragDismissListener;
 import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.AddIssueLabelAdapter;
@@ -72,7 +71,7 @@ public class AddIssueActivity extends MorphActivity implements ATEActivityThemeC
     }
 
     @Bind(R.id.root)
-    ElasticDragDismissFrameLayout mRoot;
+    FrameLayout mRoot;
     @Bind(R.id.toolbar)
     Toolbar mToolbar;
     @Bind(R.id.title_text_input_layout)
@@ -246,17 +245,6 @@ public class AddIssueActivity extends MorphActivity implements ATEActivityThemeC
         } else {
             mToolbar.inflateMenu(R.menu.menu_add_milestone);
         }
-
-        mRoot.addListener(new ElasticDragDismissListener() {
-            @Override
-            public void onDrag(float elasticOffset, float elasticOffsetPixels, float rawOffset, float rawOffsetPixels) {
-            }
-
-            @Override
-            public void onDragDismissed() {
-                onBackPressed();
-            }
-        });
         load();
     }
 
@@ -292,7 +280,7 @@ public class AddIssueActivity extends MorphActivity implements ATEActivityThemeC
     }
 
     private void setLabels(List<Label> projectLabels) {
-        if (projectLabels != null && !projectLabels.isEmpty()) {
+        if (projectLabels != null && !projectLabels.isEmpty() && mIssue != null && mIssue.getLabels() != null) {
             ArrayList<Label> currentLabels = new ArrayList<>();
             for (Label label : projectLabels) {
                 for (String labelName : mIssue.getLabels()) {
