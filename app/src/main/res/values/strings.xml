@@ -6,6 +6,7 @@
     <!-- Drawer -->
     <string name="nav_projects">Projects</string>
     <string name="nav_groups">Groups</string>
+    <string name="nav_activity">Activity</string>
     <!-- Menu -->
     <string name="action_logout">Logout</string>
     <string name="action_save">Save</string>

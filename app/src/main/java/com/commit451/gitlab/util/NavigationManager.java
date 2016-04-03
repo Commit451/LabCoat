@@ -11,6 +11,7 @@ import android.widget.ImageView;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.AboutActivity;
+import com.commit451.gitlab.activity.ActivityActivity;
 import com.commit451.gitlab.activity.AddIssueActivity;
 import com.commit451.gitlab.activity.AddMilestoneActivity;
 import com.commit451.gitlab.activity.AddUserActivity;
@@ -66,6 +67,10 @@ public class NavigationManager {
 
     public static void navigateToGroups(Activity activity) {
         activity.startActivity(GroupsActivity.newInstance(activity));
+    }
+
+    public static void navigateToActivity(Activity activity) {
+        activity.startActivity(ActivityActivity.newInstance(activity));
     }
 
     public static void navigateToLogin(Activity activity) {

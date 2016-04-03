@@ -27,10 +27,10 @@
 
         <activity android:name=".activity.ProjectsActivity"
             android:launchMode="singleTask"/>
-
         <activity android:name=".activity.GroupsActivity"
             android:launchMode="singleTask"/>
-
+        <activity android:name=".activity.ActivityActivity"
+                  android:launchMode="singleTask"/>
         <activity android:name=".activity.ProjectActivity" />
         <activity android:name=".activity.LoginActivity" />
         <activity android:name=".activity.FileActivity"/>

@@ -19,6 +19,10 @@
         <!--Check v21 for the good bits-->
     </style>
 
+    <style name="Activity.Activity">
+        <!--Check v21 for the good bits-->
+    </style>
+
     <style name="Activity.User">
         <item name="colorPrimaryDark">@android:color/transparent</item>
         <item name="android:statusBarColor" tools:ignore="NewApi">@android:color/transparent</item>
@@ -53,6 +57,10 @@
     </style>
 
     <style name="ActivityLight.Groups">
+        <!--Check v21 for the good bits-->
+    </style>
+
+    <style name="ActivityLight.Activity">
         <!--Check v21 for the good bits-->
     </style>
 
