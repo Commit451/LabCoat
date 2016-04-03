@@ -123,8 +123,8 @@ public class NavigationManager {
         activity.startActivity(IssueActivity.newInstance(activity, project, issue));
     }
 
-    public static void navigateToIssue(Activity activity, String projectId, String issueId) {
-        activity.startActivity(IssueActivity.newInstance(activity, projectId, issueId));
+    public static void navigateToIssue(Activity activity, String namespace, String projectName, String issueId) {
+        activity.startActivity(IssueActivity.newInstance(activity, namespace, projectName, issueId));
     }
 
     public static void navigateToMergeRequest(Activity activity, Project project, MergeRequest mergeRequest) {

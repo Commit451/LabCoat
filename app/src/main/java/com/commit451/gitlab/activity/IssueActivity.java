@@ -50,7 +50,8 @@ public class IssueActivity extends BaseActivity {
 
     private static final String EXTRA_PROJECT = "extra_project";
     private static final String EXTRA_SELECTED_ISSUE = "extra_selected_issue";
-    private static final String EXTRA_PROJECT_ID = "extra_project_id";
+    private static final String EXTRA_PROJECT_NAMESPACE = "project_namespace";
+    private static final String EXTRA_PROJECT_NAME = "project_name";
     private static final String EXTRA_ISSUE_ID = "extra_issue_id";
 
     public static Intent newInstance(Context context, Project project, Issue issue) {
@@ -60,9 +61,10 @@ public class IssueActivity extends BaseActivity {
         return intent;
     }
 
-    public static Intent newInstance(Context context, String projectId, String issueId) {
+    public static Intent newInstance(Context context, String namespace, String projectName, String issueId) {
         Intent intent = new Intent(context, IssueActivity.class);
-        intent.putExtra(EXTRA_PROJECT_ID, projectId);
+        intent.putExtra(EXTRA_PROJECT_NAMESPACE, namespace);
+        intent.putExtra(EXTRA_PROJECT_NAME, projectName);
         intent.putExtra(EXTRA_ISSUE_ID, issueId);
         return intent;
     }
@@ -292,8 +294,9 @@ public class IssueActivity extends BaseActivity {
             loadNotes();
         } else if (getIntent().hasExtra(EXTRA_ISSUE_ID)) {
             mIssueId = getIntent().getStringExtra(EXTRA_ISSUE_ID);
-            String projectId = getIntent().getStringExtra(EXTRA_PROJECT_ID);
-            GitLabClient.instance().getProject(projectId).enqueue(mProjectCallback);
+            String projectNamespace = getIntent().getStringExtra(EXTRA_PROJECT_NAMESPACE);
+            String projectName = getIntent().getStringExtra(EXTRA_PROJECT_NAME);
+            GitLabClient.instance().getProject(projectNamespace, projectName).enqueue(mProjectCallback);
         }
     }
 

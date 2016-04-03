@@ -18,7 +18,7 @@ import timber.log.Timber;
  * This activity acts as switching platform for the application directing the user to the appropriate
  * activity based on their logged in state
  */
-public class GitlabActivity extends Activity {
+public class LaunchActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +48,7 @@ public class GitlabActivity extends Activity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    NavigationManager.navigateToProjects(GitlabActivity.this);
+                    NavigationManager.navigateToProjects(LaunchActivity.this);
                     finish();
                 }
             });

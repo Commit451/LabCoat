@@ -127,6 +127,11 @@ public interface GitLab {
     @GET(API_VERSION + "/projects/{id}")
     Call<Project> getProject(@Path("id") String projectId);
 
+    // see https://github.com/gitlabhq/gitlabhq/blob/master/doc/api/projects.md#get-single-project
+    @GET(API_VERSION + "/projects/{namespace}%2F{project_name}")
+    Call<Project> getProject(@Path("namespace") String namespace,
+                             @Path("project_name") String projectName);
+
     @GET
     Call<List<Project>> getProjects(@Url String url);
 

@@ -53,14 +53,15 @@ public class RoutingActivity extends Activity {
             } else if (link.getPathSegments().size() == 4) {
                 //this is good, it means it is a link to an actual issue
                 handled = true;
-                String projectId = link.getPathSegments().get(1);
+                String projectNamespace = link.getPathSegments().get(0);
+                String projectName = link.getPathSegments().get(1);
                 String lastSegment = link.getPathSegments().get(3);
                 //We have to do this cause there can be args on the url, such as
                 //https://gitlab.com/Commit451/LabCoat/issues/158#note_4560580
                 String[] stuff = lastSegment.split("#");
                 String issueId = stuff[0];
-                Timber.d("Navigating to project %s with issue number %s", projectId, issueId);
-                NavigationManager.navigateToIssue(this, projectId, issueId);
+                Timber.d("Navigating to project %s with issue number %s", projectName, issueId);
+                NavigationManager.navigateToIssue(this, projectNamespace, projectName, issueId);
             }
         }
 
@@ -71,6 +72,7 @@ public class RoutingActivity extends Activity {
                 showError();
             }
         }
+        finish();
     }
 
     private void launchProject(Uri uri) {
