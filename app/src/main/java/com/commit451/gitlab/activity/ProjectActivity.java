@@ -49,7 +49,7 @@ public class ProjectActivity extends BaseActivity {
         return intent;
     }
 
-    public static Intent newInstance(Context context, long projectId) {
+    public static Intent newInstance(Context context, String projectId) {
         Intent intent = new Intent(context, ProjectActivity.class);
         intent.putExtra(EXTRA_PROJECT_ID, projectId);
         return intent;
@@ -177,7 +177,7 @@ public class ProjectActivity extends BaseActivity {
         mToolbar.setOnMenuItemClickListener(mOnMenuItemClickListener);
 
         if (mProject == null) {
-            long projectId = getIntent().getLongExtra(EXTRA_PROJECT_ID, -1);
+            String projectId = getIntent().getStringExtra(EXTRA_PROJECT_ID);
             loadProject(projectId);
         } else {
             setupTabs();
@@ -185,7 +185,7 @@ public class ProjectActivity extends BaseActivity {
         }
     }
 
-    private void loadProject(long projectId) {
+    private void loadProject(String projectId) {
         mProgress.setAlpha(0.0f);
         mProgress.setVisibility(View.VISIBLE);
         mProgress.animate().alpha(1.0f);

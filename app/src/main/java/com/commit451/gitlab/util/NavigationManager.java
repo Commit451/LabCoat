@@ -57,7 +57,7 @@ public class NavigationManager {
         activity.startActivity(ProjectActivity.newInstance(activity, project));
     }
 
-    public static void navigateToProject(Activity activity, long projectId) {
+    public static void navigateToProject(Activity activity, String projectId) {
         activity.startActivity(ProjectActivity.newInstance(activity, projectId));
     }
 
@@ -121,6 +121,10 @@ public class NavigationManager {
 
     public static void navigateToIssue(Activity activity, Project project, Issue issue) {
         activity.startActivity(IssueActivity.newInstance(activity, project, issue));
+    }
+
+    public static void navigateToIssue(Activity activity, String projectId, String issueId) {
+        activity.startActivity(IssueActivity.newInstance(activity, projectId, issueId));
     }
 
     public static void navigateToMergeRequest(Activity activity, Project project, MergeRequest mergeRequest) {
@@ -197,38 +201,9 @@ public class NavigationManager {
     public static void navigateToUrl(Activity activity, Uri uri, Account account) {
         Timber.d("navigateToUrl: %s", uri);
         if (account.getServerUrl().getHost().equals(uri.getHost())) {
-            boolean handled = navigateToUrl(activity, uri);
-            if (!handled) {
-                IntentUtil.openPage(activity, uri.toString());
-            }
+            activity.startActivity(DeepLinker.generateDeeplinkIntentFromUri(activity, uri));
         } else {
             IntentUtil.openPage(activity, uri.toString());
         }
-    }
-
-    /**
-     * Attempts to map a url to an activity within the app
-     * @param activity the current activity
-     * @param uri the url we want to map
-     * @return true if we navigated somewhere, false otherwise
-     */
-    private static boolean navigateToUrl(Activity activity, Uri uri) {
-        //TODO figure out the url to activity mapping
-//        if (uri.getPath().contains("issues")) {
-//            List<String> pathSegments = uri.getPathSegments();
-//            for (int i=0; i<pathSegments.size(); i++) {
-//                //segment == issues, and there is one more segment in the path
-//                if (pathSegments.get(i).equals("issues") && i != pathSegments.size()-1) {
-//                    //TODO this would probably break if we had query params or anything else in the url
-//                    String issueId = pathSegments.get(i+1);
-//                    //TODO actually navigate to issue activity which will load the needed project and issue
-//                    //navigateToIssue(activity, null, issueId);
-//                    return true;
-//                }
-//            }
-//            navigateToProject(activity, -1);
-//            return true;
-//        }
-        return false;
     }
 }

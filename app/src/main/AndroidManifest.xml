@@ -47,6 +47,20 @@
         <activity android:name=".activity.AddMilestoneActivity"/>
         <activity android:name=".activity.SettingsActivity"/>
         <activity android:name=".activity.BuildActivity"/>
+
+        <activity android:name=".activity.RoutingActivity"
+            android:launchMode="singleTask">
+            <!-- Standard Url -->
+            <intent-filter android:label="@string/deeplink_text">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data
+                    android:scheme="@string/deeplink_scheme" />
+            </intent-filter>
+        </activity>
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="${fabric_key}" />

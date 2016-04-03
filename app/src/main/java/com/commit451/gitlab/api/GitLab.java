@@ -125,7 +125,7 @@ public interface GitLab {
     Call<List<Project>> getStarredProjects();
 
     @GET(API_VERSION + "/projects/{id}")
-    Call<Project> getProject(@Path("id") long projectId);
+    Call<Project> getProject(@Path("id") String projectId);
 
     @GET
     Call<List<Project>> getProjects(@Url String url);
@@ -241,7 +241,7 @@ public interface GitLab {
 
     @GET(API_VERSION + "/projects/{id}/issues/{issue_id}")
     Call<Issue> getIssue(@Path("id") long projectId,
-                         @Path("issue_id") long issueId);
+                         @Path("issue_id") String issueId);
 
     @FormUrlEncoded
     @POST(API_VERSION + "/projects/{id}/issues")
@@ -283,7 +283,7 @@ public interface GitLab {
     Call<List<Branch>> getBranches(@Path("id") long projectId);
 
     @GET(API_VERSION + "/projects/{id}/repository/contributors")
-    Call<List<Contributor>> getContributors(@Path("id") long projectId);
+    Call<List<Contributor>> getContributors(@Path("id") String projectId);
 
     @GET(API_VERSION + "/projects/{id}/repository/tree")
     Call<List<RepositoryTreeObject>> getTree(@Path("id") long projectId,
