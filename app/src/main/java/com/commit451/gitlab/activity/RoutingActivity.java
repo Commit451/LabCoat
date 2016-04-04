@@ -52,7 +52,6 @@ public class RoutingActivity extends Activity {
                 handled = true;
             } else if (link.getPathSegments().size() == 4) {
                 //this is good, it means it is a link to an actual issue
-                handled = true;
                 String projectNamespace = link.getPathSegments().get(0);
                 String projectName = link.getPathSegments().get(1);
                 String lastSegment = link.getPathSegments().get(3);
@@ -62,7 +61,24 @@ public class RoutingActivity extends Activity {
                 String issueIid = stuff[0];
                 Timber.d("Navigating to project %s with issue number %s", projectName, issueIid);
                 NavigationManager.navigateToIssue(this, projectNamespace, projectName, issueIid);
+                handled = true;
             }
+        } else if (link.getPath().contains("commit")) {
+            if (link.getPathSegments().size() == 4) {
+                String projectNamespace = link.getPathSegments().get(0);
+                String projectName = link.getPathSegments().get(1);
+                String commitSha = link.getPathSegments().get(3);
+                startActivity(LoadSomeInfoActivity.newInstance(this, projectNamespace, projectName, commitSha));
+                overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
+                handled = true;
+            }
+        } else if (link.getPath().contains("commits")) {
+            launchProject(link);
+            handled = true;
+        } else if (link.getPath().contains("compare")) {
+            //comparing two commit shas
+            String[] shas = link.getLastPathSegment().split("...");
+            //TODO do the rest
         }
 
         if (!handled) {
