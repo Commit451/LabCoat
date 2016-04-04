@@ -52,7 +52,7 @@ public class IssueActivity extends BaseActivity {
     private static final String EXTRA_SELECTED_ISSUE = "extra_selected_issue";
     private static final String EXTRA_PROJECT_NAMESPACE = "project_namespace";
     private static final String EXTRA_PROJECT_NAME = "project_name";
-    private static final String EXTRA_ISSUE_ID = "extra_issue_id";
+    private static final String EXTRA_ISSUE_IID = "extra_issue_iid";
 
     public static Intent newInstance(Context context, Project project, Issue issue) {
         Intent intent = new Intent(context, IssueActivity.class);
@@ -61,11 +61,11 @@ public class IssueActivity extends BaseActivity {
         return intent;
     }
 
-    public static Intent newInstance(Context context, String namespace, String projectName, String issueId) {
+    public static Intent newInstance(Context context, String namespace, String projectName, String issueIid) {
         Intent intent = new Intent(context, IssueActivity.class);
         intent.putExtra(EXTRA_PROJECT_NAMESPACE, namespace);
         intent.putExtra(EXTRA_PROJECT_NAME, projectName);
-        intent.putExtra(EXTRA_ISSUE_ID, issueId);
+        intent.putExtra(EXTRA_ISSUE_IID, issueIid);
         return intent;
     }
 
@@ -100,7 +100,7 @@ public class IssueActivity extends BaseActivity {
 
     private Project mProject;
     private Issue mIssue;
-    private String mIssueId;
+    private String mIssueIid;
     private boolean mLoading;
     private Uri mNextPageUrl;
 
@@ -138,7 +138,7 @@ public class IssueActivity extends BaseActivity {
         @Override
         public void onResponse(@NonNull Project response) {
             mProject = response;
-            GitLabClient.instance().getIssue(mProject.getId(), mIssueId).enqueue(mIssueCallback);
+            GitLabClient.instance().getIssuesByIid(mProject.getId(), mIssueIid).enqueue(mIssueCallback);
         }
 
         @Override
@@ -150,15 +150,22 @@ public class IssueActivity extends BaseActivity {
         }
     };
 
-    private Callback<Issue> mIssueCallback = new EasyCallback<Issue>() {
+    private Callback<List<Issue>> mIssueCallback = new EasyCallback<List<Issue>>() {
+
         @Override
-        public void onResponse(@NonNull Issue response) {
-            mIssue = response;
-            mIssueDetailsAdapter = new IssueDetailsAdapter(IssueActivity.this, mIssue);
-            mNotesRecyclerView.setAdapter(mIssueDetailsAdapter);
-            bindIssue();
-            bindProject();
-            loadNotes();
+        public void onResponse(@NonNull List<Issue> response) {
+            if (response.isEmpty()) {
+                mSwipeRefreshLayout.setRefreshing(false);
+                Snackbar.make(mRoot, getString(R.string.failed_to_load), Snackbar.LENGTH_SHORT)
+                        .show();
+            } else {
+                mIssue = response.get(0);
+                mIssueDetailsAdapter = new IssueDetailsAdapter(IssueActivity.this, mIssue);
+                mNotesRecyclerView.setAdapter(mIssueDetailsAdapter);
+                bindIssue();
+                bindProject();
+                loadNotes();
+            }
         }
 
         @Override
@@ -292,8 +299,8 @@ public class IssueActivity extends BaseActivity {
             bindIssue();
             bindProject();
             loadNotes();
-        } else if (getIntent().hasExtra(EXTRA_ISSUE_ID)) {
-            mIssueId = getIntent().getStringExtra(EXTRA_ISSUE_ID);
+        } else if (getIntent().hasExtra(EXTRA_ISSUE_IID)) {
+            mIssueIid = getIntent().getStringExtra(EXTRA_ISSUE_IID);
             String projectNamespace = getIntent().getStringExtra(EXTRA_PROJECT_NAMESPACE);
             String projectName = getIntent().getStringExtra(EXTRA_PROJECT_NAME);
             GitLabClient.instance().getProject(projectNamespace, projectName).enqueue(mProjectCallback);

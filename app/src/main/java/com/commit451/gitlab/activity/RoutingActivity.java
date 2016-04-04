@@ -59,9 +59,9 @@ public class RoutingActivity extends Activity {
                 //We have to do this cause there can be args on the url, such as
                 //https://gitlab.com/Commit451/LabCoat/issues/158#note_4560580
                 String[] stuff = lastSegment.split("#");
-                String issueId = stuff[0];
-                Timber.d("Navigating to project %s with issue number %s", projectName, issueId);
-                NavigationManager.navigateToIssue(this, projectNamespace, projectName, issueId);
+                String issueIid = stuff[0];
+                Timber.d("Navigating to project %s with issue number %s", projectName, issueIid);
+                NavigationManager.navigateToIssue(this, projectNamespace, projectName, issueIid);
             }
         }
 

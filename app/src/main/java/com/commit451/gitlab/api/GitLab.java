@@ -248,6 +248,10 @@ public interface GitLab {
     Call<Issue> getIssue(@Path("id") long projectId,
                          @Path("issue_id") String issueId);
 
+    @GET(API_VERSION + "/projects/{id}/issues")
+    Call<List<Issue>> getIssuesByIid(@Path("id") long projectId,
+                         @Query("iid") String internalIssueId);
+
     @FormUrlEncoded
     @POST(API_VERSION + "/projects/{id}/issues")
     Call<Issue> createIssue(@Path("id") long projectId,
