@@ -56,7 +56,7 @@ public class ApiTests {
         GitLabClient.setAccount(testAccount);
 
         Response<Project> projectResponse = GitLabClient.instance()
-                .getProject(FAKE_GROUP_PROJECT_ID)
+                .getProject(String.valueOf(FAKE_GROUP_PROJECT_ID))
                 .execute();
         assertTrue(projectResponse.isSuccessful());
         assertNotNull(projectResponse.body());
