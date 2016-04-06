@@ -19,6 +19,10 @@
         <!--Check v21 for the good bits-->
     </style>
 
+    <style name="Activity.Activity">
+        <!--Check v21 for the good bits-->
+    </style>
+
     <style name="Activity.User">
         <item name="colorPrimaryDark">@android:color/transparent</item>
         <item name="android:statusBarColor" tools:ignore="NewApi">@android:color/transparent</item>
@@ -32,10 +36,14 @@
     </style>
 
     <style name="Activity.Translucent">
+        <!-- using a semi-transparent window background for the drag-back gesture -->
         <item name="android:windowBackground">@color/scrim</item>
-        <item name="windowBackground">@color/background_material_dark</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowIsFloating">false</item>
         <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowAnimationStyle">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
     </style>
 
     <!-- Light theme -->
@@ -56,6 +64,10 @@
         <!--Check v21 for the good bits-->
     </style>
 
+    <style name="ActivityLight.Activity">
+        <!--Check v21 for the good bits-->
+    </style>
+
     <style name="ActivityLight.User">
         <item name="colorPrimaryDark">@android:color/transparent</item>
         <item name="android:statusBarColor" tools:ignore="NewApi">@android:color/transparent</item>
@@ -70,7 +82,7 @@
 
     <style name="ActivityLight.Translucent">
         <item name="android:windowBackground">@color/scrim</item>
-        <item name="windowBackground">@color/background_material_light</item>
+        <item name="windowBackground">@color/scrim</item>
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowAnimationStyle">@null</item>
     </style>

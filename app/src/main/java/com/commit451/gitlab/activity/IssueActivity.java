@@ -50,11 +50,22 @@ public class IssueActivity extends BaseActivity {
 
     private static final String EXTRA_PROJECT = "extra_project";
     private static final String EXTRA_SELECTED_ISSUE = "extra_selected_issue";
+    private static final String EXTRA_PROJECT_NAMESPACE = "project_namespace";
+    private static final String EXTRA_PROJECT_NAME = "project_name";
+    private static final String EXTRA_ISSUE_IID = "extra_issue_iid";
 
     public static Intent newInstance(Context context, Project project, Issue issue) {
         Intent intent = new Intent(context, IssueActivity.class);
         intent.putExtra(EXTRA_PROJECT, Parcels.wrap(project));
         intent.putExtra(EXTRA_SELECTED_ISSUE, Parcels.wrap(issue));
+        return intent;
+    }
+
+    public static Intent newInstance(Context context, String namespace, String projectName, String issueIid) {
+        Intent intent = new Intent(context, IssueActivity.class);
+        intent.putExtra(EXTRA_PROJECT_NAMESPACE, namespace);
+        intent.putExtra(EXTRA_PROJECT_NAME, projectName);
+        intent.putExtra(EXTRA_ISSUE_IID, issueIid);
         return intent;
     }
 
@@ -84,11 +95,12 @@ public class IssueActivity extends BaseActivity {
     }
 
     private MenuItem mOpenCloseMenuItem;
-
     private IssueDetailsAdapter mIssueDetailsAdapter;
     private LinearLayoutManager mNotesLayoutManager;
+
     private Project mProject;
     private Issue mIssue;
+    private String mIssueIid;
     private boolean mLoading;
     private Uri mNextPageUrl;
 
@@ -119,6 +131,49 @@ public class IssueActivity extends BaseActivity {
                     return true;
             }
             return false;
+        }
+    };
+
+    private Callback<Project> mProjectCallback = new EasyCallback<Project>() {
+        @Override
+        public void onResponse(@NonNull Project response) {
+            mProject = response;
+            GitLabClient.instance().getIssuesByIid(mProject.getId(), mIssueIid).enqueue(mIssueCallback);
+        }
+
+        @Override
+        public void onAllFailure(Throwable t) {
+            Timber.e(t, null);
+            mSwipeRefreshLayout.setRefreshing(false);
+            Snackbar.make(mRoot, getString(R.string.failed_to_load), Snackbar.LENGTH_SHORT)
+                    .show();
+        }
+    };
+
+    private Callback<List<Issue>> mIssueCallback = new EasyCallback<List<Issue>>() {
+
+        @Override
+        public void onResponse(@NonNull List<Issue> response) {
+            if (response.isEmpty()) {
+                mSwipeRefreshLayout.setRefreshing(false);
+                Snackbar.make(mRoot, getString(R.string.failed_to_load), Snackbar.LENGTH_SHORT)
+                        .show();
+            } else {
+                mIssue = response.get(0);
+                mIssueDetailsAdapter = new IssueDetailsAdapter(IssueActivity.this, mIssue);
+                mNotesRecyclerView.setAdapter(mIssueDetailsAdapter);
+                bindIssue();
+                bindProject();
+                loadNotes();
+            }
+        }
+
+        @Override
+        public void onAllFailure(Throwable t) {
+            Timber.e(t, null);
+            mSwipeRefreshLayout.setRefreshing(false);
+            Snackbar.make(mRoot, getString(R.string.failed_to_load), Snackbar.LENGTH_SHORT)
+                    .show();
         }
     };
 
@@ -206,9 +261,6 @@ public class IssueActivity extends BaseActivity {
         mEventReceiver = new EventReceiver();
         LabCoatApp.bus().register(mEventReceiver);
 
-        mProject = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_PROJECT));
-        mIssue = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_SELECTED_ISSUE));
-
         mToolbar.setNavigationIcon(R.drawable.ic_back_24dp);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -216,15 +268,12 @@ public class IssueActivity extends BaseActivity {
                 onBackPressed();
             }
         });
-        mToolbar.setSubtitle(mProject.getNameWithNamespace());
         mToolbar.inflateMenu(R.menu.menu_issue);
         mOpenCloseMenuItem = mToolbar.getMenu().findItem(R.id.action_close);
         mToolbar.setOnMenuItemClickListener(mOnMenuItemClickListener);
 
-        mIssueDetailsAdapter = new IssueDetailsAdapter(IssueActivity.this, mIssue);
         mNotesLayoutManager = new LinearLayoutManager(this);
         mNotesRecyclerView.setLayoutManager(mNotesLayoutManager);
-        mNotesRecyclerView.setAdapter(mIssueDetailsAdapter);
         mNotesRecyclerView.addOnScrollListener(mOnScrollListener);
 
         mNewNoteEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -241,14 +290,31 @@ public class IssueActivity extends BaseActivity {
                 loadNotes();
             }
         });
-        bindIssue();
-        loadNotes();
+
+        if (getIntent().hasExtra(EXTRA_SELECTED_ISSUE)) {
+            mProject = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_PROJECT));
+            mIssue = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_SELECTED_ISSUE));
+            mIssueDetailsAdapter = new IssueDetailsAdapter(IssueActivity.this, mIssue);
+            mNotesRecyclerView.setAdapter(mIssueDetailsAdapter);
+            bindIssue();
+            bindProject();
+            loadNotes();
+        } else if (getIntent().hasExtra(EXTRA_ISSUE_IID)) {
+            mIssueIid = getIntent().getStringExtra(EXTRA_ISSUE_IID);
+            String projectNamespace = getIntent().getStringExtra(EXTRA_PROJECT_NAMESPACE);
+            String projectName = getIntent().getStringExtra(EXTRA_PROJECT_NAME);
+            GitLabClient.instance().getProject(projectNamespace, projectName).enqueue(mProjectCallback);
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         LabCoatApp.bus().unregister(mEventReceiver);
+    }
+
+    private void bindProject() {
+        mToolbar.setSubtitle(mProject.getNameWithNamespace());
     }
 
     private void bindIssue() {

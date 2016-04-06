@@ -11,9 +11,11 @@ import android.widget.ImageView;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.AboutActivity;
+import com.commit451.gitlab.activity.ActivityActivity;
 import com.commit451.gitlab.activity.AddIssueActivity;
 import com.commit451.gitlab.activity.AddMilestoneActivity;
 import com.commit451.gitlab.activity.AddUserActivity;
+import com.commit451.gitlab.activity.BuildActivity;
 import com.commit451.gitlab.activity.DiffActivity;
 import com.commit451.gitlab.activity.FileActivity;
 import com.commit451.gitlab.activity.GroupActivity;
@@ -55,7 +57,7 @@ public class NavigationManager {
         activity.startActivity(ProjectActivity.newInstance(activity, project));
     }
 
-    public static void navigateToProject(Activity activity, long projectId) {
+    public static void navigateToProject(Activity activity, String projectId) {
         activity.startActivity(ProjectActivity.newInstance(activity, projectId));
     }
 
@@ -65,6 +67,10 @@ public class NavigationManager {
 
     public static void navigateToGroups(Activity activity) {
         activity.startActivity(GroupsActivity.newInstance(activity));
+    }
+
+    public static void navigateToActivity(Activity activity) {
+        activity.startActivity(ActivityActivity.newInstance(activity));
     }
 
     public static void navigateToLogin(Activity activity) {
@@ -115,6 +121,10 @@ public class NavigationManager {
 
     public static void navigateToIssue(Activity activity, Project project, Issue issue) {
         activity.startActivity(IssueActivity.newInstance(activity, project, issue));
+    }
+
+    public static void navigateToIssue(Activity activity, String namespace, String projectName, String issueIid) {
+        activity.startActivity(IssueActivity.newInstance(activity, namespace, projectName, issueIid));
     }
 
     public static void navigateToMergeRequest(Activity activity, Project project, MergeRequest mergeRequest) {
@@ -172,6 +182,11 @@ public class NavigationManager {
         startMorphActivity(activity, fab, intent);
     }
 
+    public static void navigateToBuild(Activity activity, Project project, com.commit451.gitlab.model.api.Build build) {
+        Intent intent = BuildActivity.newInstance(activity, project, build);
+        activity.startActivity(intent);
+    }
+
     private static void startMorphActivity(Activity activity, View fab, Intent intent) {
         if (Build.VERSION.SDK_INT >= 21 && fab != null) {
             ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation
@@ -186,38 +201,9 @@ public class NavigationManager {
     public static void navigateToUrl(Activity activity, Uri uri, Account account) {
         Timber.d("navigateToUrl: %s", uri);
         if (account.getServerUrl().getHost().equals(uri.getHost())) {
-            boolean handled = navigateToUrl(activity, uri);
-            if (!handled) {
-                IntentUtil.openPage(activity, uri.toString());
-            }
+            activity.startActivity(DeepLinker.generateDeeplinkIntentFromUri(activity, uri));
         } else {
             IntentUtil.openPage(activity, uri.toString());
         }
-    }
-
-    /**
-     * Attempts to map a url to an activity within the app
-     * @param activity the current activity
-     * @param uri the url we want to map
-     * @return true if we navigated somewhere, false otherwise
-     */
-    private static boolean navigateToUrl(Activity activity, Uri uri) {
-        //TODO figure out the url to activity mapping
-//        if (uri.getPath().contains("issues")) {
-//            List<String> pathSegments = uri.getPathSegments();
-//            for (int i=0; i<pathSegments.size(); i++) {
-//                //segment == issues, and there is one more segment in the path
-//                if (pathSegments.get(i).equals("issues") && i != pathSegments.size()-1) {
-//                    //TODO this would probably break if we had query params or anything else in the url
-//                    String issueId = pathSegments.get(i+1);
-//                    //TODO actually navigate to issue activity which will load the needed project and issue
-//                    //navigateToIssue(activity, null, issueId);
-//                    return true;
-//                }
-//            }
-//            navigateToProject(activity, -1);
-//            return true;
-//        }
-        return false;
     }
 }

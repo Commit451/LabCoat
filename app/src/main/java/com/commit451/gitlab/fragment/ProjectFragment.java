@@ -35,10 +35,10 @@ import butterknife.OnClick;
 import in.uncod.android.bypass.Bypass;
 import timber.log.Timber;
 
-public class OverviewFragment extends BaseFragment {
+public class ProjectFragment extends BaseFragment {
 
-    public static OverviewFragment newInstance() {
-        return new OverviewFragment();
+    public static ProjectFragment newInstance() {
+        return new ProjectFragment();
     }
 
     @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
@@ -149,7 +149,7 @@ public class OverviewFragment extends BaseFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_overview, container, false);
+        return inflater.inflate(R.layout.fragment_project, container, false);
     }
 
     @Override
