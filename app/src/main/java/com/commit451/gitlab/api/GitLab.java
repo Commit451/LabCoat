@@ -153,6 +153,9 @@ public interface GitLab {
     Call<Void> removeProjectMember(@Path("id") long projectId,
                                    @Path("user_id") long userId);
 
+    @POST(API_VERSION + "/projects/fork/{id}")
+    Call<Void> forkProject(@Path("id") long projectId);
+
     /* --- MILESTONES --- */
 
     @GET(API_VERSION + "/projects/{id}/milestones")

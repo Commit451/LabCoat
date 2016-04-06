@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.commit451.gitlab.view.GitLabSwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<com.commit451.gitlab.view.GitLabSwipeRefreshLayout
     android:id="@+id/swipe_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -31,7 +32,7 @@
                     android:paddingRight="@dimen/activity_horizontal_margin"
                     android:tag="text_color|primary_text"
                     android:textSize="14sp"
-                    tools:text="Created by Commit451" />
+                    tools:text="Created by Commit451"/>
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -39,7 +40,7 @@
                     android:layout_gravity="center_vertical"
                     android:contentDescription="@null"
                     android:src="@drawable/ic_star_24dp"
-                    android:tag="tint|primary_text" />
+                    android:tag="tint|primary_text"/>
 
                 <TextView
                     android:id="@+id/star_count"
@@ -50,26 +51,34 @@
                     android:layout_marginRight="8dp"
                     android:paddingRight="@dimen/activity_horizontal_margin"
                     android:tag="text_color|primary_text"
-                    tools:text="100" />
+                    tools:text="100"/>
 
-                <ImageView
+                <LinearLayout
+                    android:id="@+id/root_fork"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:contentDescription="@null"
-                    android:src="@drawable/ic_fork"
-                    android:tag="tint|primary_text" />
+                    android:orientation="horizontal"
+                    android:background="?attr/selectableItemBackgroundBorderless">
 
-                <TextView
-                    android:id="@+id/forks_count"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginStart="8dp"
-                    android:paddingRight="@dimen/activity_horizontal_margin"
-                    android:tag="text_color|primary_text"
-                    tools:text="100" />
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_fork"
+                        android:tag="tint|primary_text"/>
+
+                    <TextView
+                        android:id="@+id/forks_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginStart="8dp"
+                        android:paddingRight="@dimen/activity_horizontal_margin"
+                        android:tag="text_color|primary_text"
+                        tools:text="100"/>
+                </LinearLayout>
 
             </LinearLayout>
 
@@ -78,7 +87,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="16dp"
-                android:tag="text_color|primary_text" />
+                android:tag="text_color|primary_text"/>
         </LinearLayout>
 
     </ScrollView>
