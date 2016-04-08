@@ -57,6 +57,7 @@
                     android:id="@+id/root_fork"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:orientation="horizontal"
                     android:background="?attr/selectableItemBackgroundBorderless">
 
