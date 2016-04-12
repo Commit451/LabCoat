@@ -74,6 +74,7 @@ dependencies {
     compile 'com.commit451:foregroundviews:1.0.0'
     compile 'com.commit451:elasticdragdismisslayout:1.0.2'
     compile 'com.commit451:adapterlayout:1.0.1'
+    compile 'com.github.Commit451:Gimbal:0.0.1'
     compile 'com.pnikosis:materialish-progress:1.7'
     compile 'com.jawnnypoo:physicslayout:1.0.1'
     compile 'com.github.ivbaranov:materiallettericon:0.2.1'

@@ -17,6 +17,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.commit451.gitbal.Gimbal;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
@@ -25,7 +26,6 @@ import com.commit451.gitlab.transformation.CircleTransformation;
 import com.commit451.gitlab.util.ImageUtil;
 import com.commit451.gitlab.util.IntentUtil;
 import com.commit451.gitlab.util.NavigationManager;
-import com.commit451.gitlab.util.WindowUtil;
 import com.jawnnypoo.physicslayout.Physics;
 import com.jawnnypoo.physicslayout.PhysicsConfig;
 import com.jawnnypoo.physicslayout.PhysicsFrameLayout;
@@ -73,13 +73,14 @@ public class AboutActivity extends BaseActivity {
 
     SensorManager sensorManager;
     Sensor gravitySensor;
+    Gimbal mGimbal;
 
     private final SensorEventListener sensorEventListener = new SensorEventListener() {
         @Override
         public void onSensorChanged(SensorEvent event) {
             if (event.sensor.getType() == Sensor.TYPE_GRAVITY) {
                 if (mPhysicsLayout.getPhysics().getWorld() != null) {
-                    WindowUtil.normalizeForOrientation(getWindow(), event);
+                    mGimbal.normalizeGravityEvent(event);
                     mPhysicsLayout.getPhysics().getWorld().setGravity(new Vec2(-event.values[0], event.values[1]));
                 }
             }
@@ -109,7 +110,8 @@ public class AboutActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        WindowUtil.lockToCurrentOrientation(this);
+        mGimbal = new Gimbal(this);
+        mGimbal.lock();
         setContentView(R.layout.activity_about);
         ButterKnife.bind(this);
         mToolbar.setNavigationIcon(R.drawable.ic_back_24dp);
