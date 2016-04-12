@@ -3,6 +3,7 @@ package com.commit451.gitlab.fragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
@@ -62,6 +63,13 @@ public class ProjectFragment extends BaseFragment {
         }
     }
 
+    @OnClick(R.id.root_fork)
+    void onForkClicked() {
+        if (mProject != null) {
+            GitLabClient.instance().forkProject(mProject.getId()).enqueue(mForkCallback);
+        }
+    }
+
     private final EasyCallback<List<RepositoryTreeObject>> mFilesCallback = new EasyCallback<List<RepositoryTreeObject>>() {
         @Override
         public void onResponse(@NonNull List<RepositoryTreeObject> response) {
@@ -109,6 +117,26 @@ public class ProjectFragment extends BaseFragment {
             }
             mSwipeRefreshLayout.setRefreshing(false);
             mOverviewVew.setText(R.string.connection_error_readme);
+        }
+    };
+
+    private EasyCallback<Void> mForkCallback = new EasyCallback<Void>() {
+        @Override
+        public void onResponse(@NonNull Void response) {
+            if (getView() == null) {
+                return;
+            }
+            Snackbar.make(mSwipeRefreshLayout, R.string.project_forked, Snackbar.LENGTH_SHORT)
+                    .show();
+        }
+
+        @Override
+        public void onAllFailure(Throwable t) {
+            if (getView() == null) {
+                return;
+            }
+            Snackbar.make(mSwipeRefreshLayout, R.string.fork_failed, Snackbar.LENGTH_SHORT)
+                    .show();
         }
     };
 
