@@ -79,6 +79,24 @@ public class RoutingActivity extends Activity {
             //comparing two commit shas
             String[] shas = link.getLastPathSegment().split("...");
             //TODO do the rest
+        } else if (link.getPath().contains("merge_requests")) {
+            for (int i=0; i<link.getPathSegments().size(); i++) {
+                if (link.getPathSegments().get(i).equals("merge_requests")) {
+                    if (i < link.getPathSegments().size() - 1) {
+                        String projectNamespace = link.getPathSegments().get(i-2);
+                        String projectName = link.getPathSegments().get(i-1);
+                        String mergeRequestId = link.getPathSegments().get(i+1);
+                        startActivity(LoadSomeInfoActivity.newMergeRequestInstance(this, projectNamespace, projectName, mergeRequestId));
+                        overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
+                        handled = true;
+                        break;
+                    } else {
+                        launchProject(link);
+                        handled = true;
+                        break;
+                    }
+                }
+            }
         }
 
         if (!handled) {
