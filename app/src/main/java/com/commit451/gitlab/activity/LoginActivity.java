@@ -149,9 +149,9 @@ public class LoginActivity extends BaseActivity {
             return;
         }
 
+        String url = mUrlInput.getText().toString();
         Uri uri = null;
         try {
-            String url = mUrlInput.getText().toString();
             if (HttpUrl.parse(url) != null) {
                 uri = Uri.parse(url);
             }
@@ -161,6 +161,12 @@ public class LoginActivity extends BaseActivity {
 
         if (uri == null) {
             mUrlHint.setError(getString(R.string.not_a_valid_url));
+            return;
+        } else {
+            mUrlHint.setError(null);
+        }
+        if (url.charAt(url.length()-1) != '/') {
+            mUrlHint.setError(getString(R.string.please_end_your_url_with_a_slash));
             return;
         } else {
             mUrlHint.setError(null);

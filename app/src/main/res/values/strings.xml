@@ -66,8 +66,8 @@
 
     <!-- Login -->
     <string name="login_button">Login</string>
-    <string name="url_hint">URL (e.g. https://gitlab.com)</string>
-    <string name="url_gitlab">https://gitlab.com</string>
+    <string name="url_hint">URL (e.g. https://gitlab.com/)</string>
+    <string name="url_gitlab">https://gitlab.com/</string>
     <string name="user_hint">Username or Email</string>
     <string name="password_hint">Password</string>
     <string name="token_hint">Private token</string>
@@ -80,6 +80,7 @@
     <string name="hostname_title">Hostname did not match</string>
     <string name="hostname_message">The hostname in the certificate did not match the hostname you are connecting to.\n\nThis could mean a hacker is trying to intercept your communications.\n\nIf you trust the certificate, press OK to continue.</string>
     <string name="not_a_valid_url">Not a valid URL</string>
+    <string name="please_end_your_url_with_a_slash">Please end your url with a "/"</string>
     <string name="not_a_valid_private_token">Not a valid private token</string>
     <string name="realm_message">A username and password are being requested by the server.\nThe server says: \"%1$s\"</string>
     <string name="already_logged_in">This account is already logged in</string>
