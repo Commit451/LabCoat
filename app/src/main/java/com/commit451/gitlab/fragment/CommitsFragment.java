@@ -100,6 +100,9 @@ public class CommitsFragment extends BaseFragment {
         @Override
         public void onResponse(@NonNull List<RepositoryCommit> response) {
             mLoading = false;
+            if (getView() == null) {
+                return;
+            }
             mCommitsAdapter.setLoading(false);
             if (response.isEmpty()) {
                 mPage = -1;
@@ -112,6 +115,9 @@ public class CommitsFragment extends BaseFragment {
         public void onAllFailure(Throwable t) {
             mLoading = false;
             Timber.e(t, null);
+            if (getView() == null) {
+                return;
+            }
             mCommitsAdapter.setLoading(false);
         }
     };

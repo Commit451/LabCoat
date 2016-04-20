@@ -98,6 +98,9 @@ public class MergeRequestDiscussionFragment extends BaseFragment {
 
         @Override
         public void onResponse(@NonNull List<Note> response) {
+            if (getView() == null) {
+                return;
+            }
             mSwipeRefreshLayout.setRefreshing(false);
             mLoading = false;
             mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
@@ -108,6 +111,9 @@ public class MergeRequestDiscussionFragment extends BaseFragment {
         public void onAllFailure(Throwable t) {
             mLoading = false;
             Timber.e(t, null);
+            if (getView() == null) {
+                return;
+            }
             mSwipeRefreshLayout.setRefreshing(false);
             Snackbar.make(mRoot, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
                     .show();
@@ -118,6 +124,9 @@ public class MergeRequestDiscussionFragment extends BaseFragment {
 
         @Override
         public void onResponse(@NonNull List<Note> response) {
+            if (getView() == null) {
+                return;
+            }
             mMergeRequestDetailAdapter.setLoading(false);
             mLoading = false;
             mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
@@ -126,6 +135,9 @@ public class MergeRequestDiscussionFragment extends BaseFragment {
 
         @Override
         public void onAllFailure(Throwable t) {
+            if (getView() == null) {
+                return;
+            }
             mLoading = false;
             Timber.e(t, null);
             mMergeRequestDetailAdapter.setLoading(false);
@@ -138,6 +150,9 @@ public class MergeRequestDiscussionFragment extends BaseFragment {
 
         @Override
         public void onResponse(@NonNull Note response) {
+            if (getView() == null) {
+                return;
+            }
             mProgress.setVisibility(View.GONE);
             mMergeRequestDetailAdapter.addNote(response);
             mNotesRecyclerView.smoothScrollToPosition(MergeRequestDetailAdapter.getHeaderCount());
@@ -145,6 +160,9 @@ public class MergeRequestDiscussionFragment extends BaseFragment {
 
         @Override
         public void onAllFailure(Throwable t) {
+            if (getView() == null) {
+                return;
+            }
             Timber.e(t, null);
             mProgress.setVisibility(View.GONE);
             Snackbar.make(mRoot, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
