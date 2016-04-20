@@ -3,15 +3,13 @@ package com.commit451.gitlab.util;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.customtabs.CustomTabsIntent;
 import android.support.design.widget.Snackbar;
 import android.text.TextUtils;
 import android.view.View;
 
 import com.afollestad.appthemeengine.Config;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.customtabs.BrowserFallback;
-import com.commit451.gitlab.customtabs.CustomTabsActivityHelper;
+import com.novoda.simplechromecustomtabs.SimpleChromeCustomTabs;
 
 /**
  * All the things to do with intents
@@ -24,11 +22,11 @@ public class IntentUtil {
             return;
         }
 
-        CustomTabsIntent.Builder intentBuilder = new CustomTabsIntent.Builder();
-        intentBuilder.setToolbarColor(Config.primaryColor(activity, AppThemeUtil.resolveThemeKey(activity)));
-        intentBuilder.setStartAnimations(activity, R.anim.fade_in, R.anim.do_nothing);
-        intentBuilder.setExitAnimations(activity, R.anim.do_nothing, R.anim.fade_out);
-        CustomTabsActivityHelper.openCustomTab(activity, intentBuilder.build(), Uri.parse(url), new BrowserFallback());
+        int primaryColor = Config.primaryColor(activity, AppThemeUtil.resolveThemeKey(activity));
+        SimpleChromeCustomTabs.getInstance()
+                .withFallback(new com.commit451.gitlab.util.BrowserFallback(activity))
+                .withIntentCustomizer(new LabCoatIntentCustomizer(activity, primaryColor))
+                .navigateTo(Uri.parse(url), activity);
     }
 
     public static void share(View root, Uri url) {
