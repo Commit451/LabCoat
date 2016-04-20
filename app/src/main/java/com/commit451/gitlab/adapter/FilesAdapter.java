@@ -15,7 +15,6 @@ import java.util.Collection;
 
 /**
  * Shows the files
- * Created by Jawnnypoo on 11/22/2015.
  */
 public class FilesAdapter extends RecyclerView.Adapter<FileViewHolder> {
 

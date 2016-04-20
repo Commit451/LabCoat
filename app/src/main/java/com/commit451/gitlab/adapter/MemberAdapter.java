@@ -18,7 +18,6 @@ import java.util.Collection;
 
 /**
  * Shows a projects members and a groups members
- * Created by Jawn on 7/28/2015.
  */
 public class MemberAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
