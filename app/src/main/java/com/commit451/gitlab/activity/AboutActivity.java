@@ -64,7 +64,7 @@ public class AboutActivity extends BaseActivity {
 
     @OnClick(R.id.sauce)
     void onSauceClick() {
-        if ("https://gitlab.com".equals(GitLabClient.getAccount().getServerUrl().toString())) {
+        if (getString(R.string.url_gitlab).equals(GitLabClient.getAccount().getServerUrl().toString())) {
             NavigationManager.navigateToProject(AboutActivity.this, REPO_ID);
         } else {
             IntentUtil.openPage(AboutActivity.this, getString(R.string.source_url));

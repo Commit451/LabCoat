@@ -1,7 +1,6 @@
 package com.commit451.gitlab.util;
 
 import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.customtabs.CustomTabsIntent;
@@ -10,7 +9,6 @@ import android.text.TextUtils;
 import android.view.View;
 
 import com.afollestad.appthemeengine.Config;
-import com.commit451.easel.Easel;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.customtabs.BrowserFallback;
 import com.commit451.gitlab.customtabs.CustomTabsActivityHelper;
@@ -39,7 +37,7 @@ public class IntentUtil {
         shareIntent.putExtra(Intent.EXTRA_TEXT, url.toString());
         try {
             root.getContext().startActivity(shareIntent);
-        } catch (ActivityNotFoundException e) {
+        } catch (Exception e) {
             Snackbar.make(root, R.string.error_could_not_share, Snackbar.LENGTH_SHORT)
                     .show();
         }

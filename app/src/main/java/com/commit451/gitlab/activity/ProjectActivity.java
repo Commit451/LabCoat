@@ -152,7 +152,9 @@ public class ProjectActivity extends BaseActivity {
         public boolean onMenuItemClick(MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.action_share:
-                    IntentUtil.share(mRoot, mProject.getWebUrl());
+                    if (mProject != null) {
+                        IntentUtil.share(mRoot, mProject.getWebUrl());
+                    }
                     return true;
             }
             return false;
