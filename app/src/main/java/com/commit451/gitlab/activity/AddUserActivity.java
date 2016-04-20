@@ -31,9 +31,9 @@ import com.commit451.gitlab.event.MemberAddedEvent;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.model.api.Member;
 import com.commit451.gitlab.model.api.UserBasic;
-import com.commit451.gitlab.util.KeyboardUtil;
 import com.commit451.gitlab.util.PaginationUtil;
 import com.commit451.gitlab.viewHolder.UserViewHolder;
+import com.commit451.teleprinter.Teleprinter;
 
 import org.parceler.Parcels;
 
@@ -86,7 +86,7 @@ public class AddUserActivity extends MorphActivity {
             public void run() {
                 mClearView.setVisibility(View.GONE);
                 mUserSearch.getText().clear();
-                KeyboardUtil.showKeyboard(AddUserActivity.this, mUserSearch);
+                mTeleprinter.showKeyboard(mUserSearch);
             }
         });
     }
@@ -99,6 +99,8 @@ public class AddUserActivity extends MorphActivity {
     String mSearchQuery;
     Uri mNextPageUrl;
     boolean mLoading = false;
+    Teleprinter mTeleprinter;
+
 
     private final View.OnClickListener mOnBackPressed = new View.OnClickListener() {
         @Override
@@ -246,6 +248,7 @@ public class AddUserActivity extends MorphActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_user);
         ButterKnife.bind(this);
+        mTeleprinter = new Teleprinter(this);
         mProjectId = getIntent().getLongExtra(KEY_PROJECT_ID, -1);
         mGroup = Parcels.unwrap(getIntent().getParcelableExtra(KEY_GROUP));
         mAccessDialog = new AccessDialog(this, mOnAccessAppliedListener);
@@ -264,7 +267,7 @@ public class AddUserActivity extends MorphActivity {
     }
 
     private void loadData() {
-        KeyboardUtil.hideKeyboard(AddUserActivity.this);
+        mTeleprinter.hideKeyboard();
         mSwipeRefreshLayout.setRefreshing(true);
         mLoading = true;
         GitLabClient.instance().searchUsers(mSearchQuery).enqueue(mUserCallback);

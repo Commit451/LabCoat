@@ -24,8 +24,8 @@ import com.commit451.gitlab.event.MergeRequestChangedEvent;
 import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.model.api.Note;
 import com.commit451.gitlab.model.api.Project;
-import com.commit451.gitlab.util.KeyboardUtil;
 import com.commit451.gitlab.util.PaginationUtil;
+import com.commit451.teleprinter.Teleprinter;
 import com.squareup.otto.Subscribe;
 
 import org.parceler.Parcels;
@@ -72,6 +72,7 @@ public class MergeRequestDiscussionFragment extends BaseFragment {
     MergeRequest mMergeRequest;
     Uri mNextPageUrl;
     boolean mLoading;
+    Teleprinter mTeleprinter;
 
     EventReceiver mEventReceiver;
 
@@ -167,6 +168,7 @@ public class MergeRequestDiscussionFragment extends BaseFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
+        mTeleprinter = new Teleprinter(getActivity());
 
         mMergeRequestDetailAdapter = new MergeRequestDetailAdapter(getActivity(), mMergeRequest);
         mNotesLinearLayoutManager = new LinearLayoutManager(getActivity());
@@ -229,7 +231,7 @@ public class MergeRequestDiscussionFragment extends BaseFragment {
         mProgress.setAlpha(0.0f);
         mProgress.animate().alpha(1.0f);
         // Clear text & collapse keyboard
-        KeyboardUtil.hideKeyboard(getActivity());
+        mTeleprinter.hideKeyboard();
         mNewNoteEdit.setText("");
 
         GitLabClient.instance().addMergeRequestNote(mProject.getId(), mMergeRequest.getId(), body).enqueue(mPostNoteCallback);

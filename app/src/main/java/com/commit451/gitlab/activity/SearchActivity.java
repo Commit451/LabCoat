@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.SearchPagerAdapter;
-import com.commit451.gitlab.util.KeyboardUtil;
+import com.commit451.teleprinter.Teleprinter;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -48,12 +48,13 @@ public class SearchActivity extends BaseActivity {
             public void run() {
                 mClearView.setVisibility(View.GONE);
                 mSearchView.getText().clear();
-                KeyboardUtil.showKeyboard(SearchActivity.this, mSearchView);
+                mTeleprinter.showKeyboard(mSearchView);
             }
         });
     }
 
     private SearchDebouncer mSearchDebouncer;
+    private Teleprinter mTeleprinter;
 
     private final TextView.OnEditorActionListener mOnSearchEditorActionListener = new TextView.OnEditorActionListener() {
         @Override
@@ -62,7 +63,7 @@ public class SearchActivity extends BaseActivity {
                 mSearchView.setText("unicorns");
             }
             search();
-            KeyboardUtil.hideKeyboard(SearchActivity.this);
+            mTeleprinter.hideKeyboard();
             mRoot.removeCallbacks(mSearchDebouncer);
             return false;
         }
@@ -106,6 +107,7 @@ public class SearchActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
         ButterKnife.bind(this);
+        mTeleprinter = new Teleprinter(this);
         mToolbar.setNavigationIcon(R.drawable.ic_back_24dp);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override

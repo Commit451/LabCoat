@@ -40,8 +40,8 @@ import com.commit451.gitlab.ssl.CustomHostnameVerifier;
 import com.commit451.gitlab.ssl.CustomKeyManager;
 import com.commit451.gitlab.ssl.X509CertificateException;
 import com.commit451.gitlab.ssl.X509Util;
-import com.commit451.gitlab.util.KeyboardUtil;
 import com.commit451.gitlab.util.NavigationManager;
+import com.commit451.teleprinter.Teleprinter;
 
 import java.net.ConnectException;
 import java.security.cert.CertificateEncodingException;
@@ -112,6 +112,7 @@ public class LoginActivity extends BaseActivity {
 
     private boolean mIsNormalLogin = true;
     private Account mAccount;
+    private Teleprinter mTeleprinter;
 
     private final TextView.OnEditorActionListener onEditorActionListener = new TextView.OnEditorActionListener() {
         @Override
@@ -143,7 +144,7 @@ public class LoginActivity extends BaseActivity {
 
     @OnClick(R.id.login_button)
     public void onLoginClick() {
-        KeyboardUtil.hideKeyboard(this);
+        mTeleprinter.hideKeyboard();
 
         if (hasEmptyFields(mUrlHint)) {
             return;
@@ -310,6 +311,7 @@ public class LoginActivity extends BaseActivity {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
 
+        mTeleprinter = new Teleprinter(this);
         boolean showClose = getIntent().getBooleanExtra(EXTRA_SHOW_CLOSE, false);
 
         mClose.setVisibility(showClose ? View.VISIBLE : View.GONE);

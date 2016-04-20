@@ -28,9 +28,9 @@ import com.commit451.gitlab.model.api.Issue;
 import com.commit451.gitlab.model.api.Note;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.util.IntentUtil;
-import com.commit451.gitlab.util.KeyboardUtil;
 import com.commit451.gitlab.util.NavigationManager;
 import com.commit451.gitlab.util.PaginationUtil;
+import com.commit451.teleprinter.Teleprinter;
 import com.squareup.otto.Subscribe;
 
 import org.parceler.Parcels;
@@ -103,6 +103,7 @@ public class IssueActivity extends BaseActivity {
     private String mIssueIid;
     private boolean mLoading;
     private Uri mNextPageUrl;
+    private Teleprinter mTeleprinter;
 
     private EventReceiver mEventReceiver;
 
@@ -258,6 +259,7 @@ public class IssueActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_issue);
         ButterKnife.bind(this);
+        mTeleprinter = new Teleprinter(this);
         mEventReceiver = new EventReceiver();
         LabCoatApp.bus().register(mEventReceiver);
 
@@ -354,7 +356,7 @@ public class IssueActivity extends BaseActivity {
         mProgress.setAlpha(0.0f);
         mProgress.animate().alpha(1.0f);
         // Clear text & collapse keyboard
-        KeyboardUtil.hideKeyboard(this);
+        mTeleprinter.hideKeyboard();
         mNewNoteEdit.setText("");
 
         GitLabClient.instance().addIssueNote(mProject.getId(), mIssue.getId(), body).enqueue(mPostNoteCallback);
