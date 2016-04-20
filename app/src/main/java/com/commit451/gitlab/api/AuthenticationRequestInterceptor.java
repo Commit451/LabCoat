@@ -12,7 +12,6 @@ import timber.log.Timber;
 
 /**
  * Adds the private token to all requests
- * Created by Jawn on 9/15/2015.
  */
 public class AuthenticationRequestInterceptor implements Interceptor {
 

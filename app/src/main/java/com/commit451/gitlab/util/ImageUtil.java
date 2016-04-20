@@ -7,7 +7,6 @@ import com.commit451.gitlab.model.api.UserFull;
 
 /**
  * Utility for doing various image related things
- * Created by Jawn on 9/20/2015.
  */
 public class ImageUtil {
     public static Uri getAvatarUrl(UserBasic user, int size) {

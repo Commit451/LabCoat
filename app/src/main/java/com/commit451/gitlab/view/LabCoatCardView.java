@@ -5,22 +5,21 @@ import android.graphics.Rect;
 import android.os.Build;
 import android.support.v7.widget.CardView;
 import android.util.AttributeSet;
-import android.widget.LinearLayout;
 
-public class GitLabCardView extends CardView {
+public class LabCoatCardView extends CardView {
 
     private boolean mAreMarginsAdjusted = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     private Rect mShadowPadding;
 
-    public GitLabCardView(Context context) {
+    public LabCoatCardView(Context context) {
         super(context);
     }
 
-    public GitLabCardView(Context context, AttributeSet attrs) {
+    public LabCoatCardView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public GitLabCardView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public LabCoatCardView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 

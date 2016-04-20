@@ -8,10 +8,6 @@ import com.novoda.simplechromecustomtabs.navigation.SimpleChromeCustomTabsIntent
 
 /**
  * Customize custom intents
- * <br>
- * Copyright 2016 <a href="http://www.ovenbits.com">Oven Bits</a>
- *
- * @author Jawn.
  */
 public class LabCoatIntentCustomizer implements IntentCustomizer {
 

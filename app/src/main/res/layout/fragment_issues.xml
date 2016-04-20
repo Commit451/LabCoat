@@ -18,7 +18,7 @@
         android:layout_marginRight="16dp"
         android:tag="tint|primary_text"/>
 
-    <com.commit451.gitlab.view.GitLabSwipeRefreshLayout
+    <com.commit451.gitlab.view.LabCoatSwipeRefreshLayout
         android:id="@+id/swipe_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
@@ -35,7 +35,7 @@
             android:clipToPadding="false"
             />
 
-    </com.commit451.gitlab.view.GitLabSwipeRefreshLayout>
+    </com.commit451.gitlab.view.LabCoatSwipeRefreshLayout>
 
     </LinearLayout>
 

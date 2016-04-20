@@ -13,7 +13,6 @@ import com.novoda.simplechromecustomtabs.SimpleChromeCustomTabs;
 
 /**
  * All the things to do with intents
- * Created by Jawn on 8/25/2015.
  */
 public class IntentUtil {
 

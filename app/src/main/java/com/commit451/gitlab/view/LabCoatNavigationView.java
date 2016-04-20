@@ -45,9 +45,8 @@ import timber.log.Timber;
 
 /**
  * Our very own navigation view
- * Created by Jawn on 7/28/2015.
  */
-public class GitLabNavigationView extends NavigationView {
+public class LabCoatNavigationView extends NavigationView {
 
     @Bind(R.id.profile_image) ImageView mProfileImage;
     @Bind(R.id.profile_user) TextView mUserName;
@@ -162,17 +161,17 @@ public class GitLabNavigationView extends NavigationView {
         toggleAccounts();
     }
 
-    public GitLabNavigationView(Context context) {
+    public LabCoatNavigationView(Context context) {
         super(context);
         init();
     }
 
-    public GitLabNavigationView(Context context, AttributeSet attrs) {
+    public LabCoatNavigationView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public GitLabNavigationView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public LabCoatNavigationView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }

@@ -26,7 +26,6 @@ import butterknife.ButterKnife;
 
 /**
  * Shows the projects
- * Created by Jawn on 9/21/2015.
  */
 public class ProjectsActivity extends BaseActivity implements ATEActivityThemeCustomizer {
 
