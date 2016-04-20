@@ -24,6 +24,8 @@
     <string name="action_erase">Erase</string>
     <string name="action_retry">Retry</string>
     <string name="action_cancel">Cancel</string>
+    <string name="action_copy_git_https">Copy git https link</string>
+    <string name="action_copy_git_ssh">Copy git ssh link</string>
 
     <!-- Tabs -->
     <string name="title_project">Project</string>
@@ -153,6 +155,7 @@
     <string name="file_saved">File saved successfully to Download folder</string>
     <string name="no_files_found">No files found.</string>
     <string name="copied_to_clipboard">Copied to clipboard</string>
+    <string name="failed_to_copy_to_clipboard">Failed to copy to clipboard</string>
     <string name="root">ROOT</string>
 
     <!-- Issues -->

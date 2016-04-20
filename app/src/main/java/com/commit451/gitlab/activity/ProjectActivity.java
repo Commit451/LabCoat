@@ -1,5 +1,7 @@
 package com.commit451.gitlab.activity;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
@@ -156,6 +159,22 @@ public class ProjectActivity extends BaseActivity {
                         IntentUtil.share(mRoot, mProject.getWebUrl());
                     }
                     return true;
+                case R.id.action_copy_git_https:
+                    if (mProject == null || mProject.getHttpUrlToRepo() == null) {
+                        Toast.makeText(ProjectActivity.this, R.string.failed_to_copy_to_clipboard, Toast.LENGTH_SHORT)
+                                .show();
+                    } else {
+                        copyToClipboard(mProject.getHttpUrlToRepo());
+                    }
+                    return true;
+                case R.id.action_copy_git_ssh:
+                    if (mProject == null || mProject.getHttpUrlToRepo() == null) {
+                        Toast.makeText(ProjectActivity.this, R.string.failed_to_copy_to_clipboard, Toast.LENGTH_SHORT)
+                                .show();
+                    } else {
+                        copyToClipboard(mProject.getSshUrlToRepo());
+                    }
+                    return true;
             }
             return false;
         }
@@ -175,7 +194,7 @@ public class ProjectActivity extends BaseActivity {
                 finish();
             }
         });
-        mToolbar.inflateMenu(R.menu.menu_repository);
+        mToolbar.inflateMenu(R.menu.menu_project);
         mToolbar.setOnMenuItemClickListener(mOnMenuItemClickListener);
 
         if (mProject == null) {
@@ -230,5 +249,15 @@ public class ProjectActivity extends BaseActivity {
 
         mViewPager.setAdapter(sectionsPagerAdapter);
         mTabLayout.setupWithViewPager(mViewPager);
+    }
+
+    private void copyToClipboard(String url) {
+        ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+
+        // Creates a new text clip to put on the clipboard
+        ClipData clip = ClipData.newPlainText(mProject.getName(), url);
+        clipboard.setPrimaryClip(clip);
+        Snackbar.make(mRoot, R.string.copied_to_clipboard, Snackbar.LENGTH_SHORT)
+                .show();
     }
 }
