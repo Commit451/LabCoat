@@ -45,12 +45,19 @@ public class RoutingActivity extends Activity {
         boolean handled = false;
         if (link.getPath().contains("issues")) {
             Timber.d("Parsing as issue uri");
-            if (link.getPathSegments().size() == 3) {
+            if (link.getLastPathSegment().equals("issues")) {
                 //this means it was just a link to something like
                 //gitlab.com/Commit451/LabCoat/issues
                 launchProject(link);
                 handled = true;
-            } else if (link.getPathSegments().size() == 4) {
+            } else {
+                int indexOfIssuesPathSegment = -1;
+                for (int i=0; i<link.getPathSegments().size(); i++) {
+                    if (link.getPathSegments().get(i).equals("issues")) {
+                        indexOfIssuesPathSegment = i;
+                        break;
+                    }
+                }
                 //this is good, it means it is a link to an actual issue
                 String projectNamespace = link.getPathSegments().get(0);
                 String projectName = link.getPathSegments().get(1);

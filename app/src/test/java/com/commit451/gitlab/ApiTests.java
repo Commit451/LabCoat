@@ -43,17 +43,7 @@ public class ApiTests {
     public static void setUp() throws Exception {
         //for logging
         ShadowLog.stream = System.out;
-        //log in
-        Account testAccount = getTestAccount();
 
-        Response<UserLogin> loginResponse = GitLabClient.instance(testAccount)
-                .loginWithUsername("TestAllTheThings", "testing123")
-                .execute();
-        assertTrue(loginResponse.isSuccessful());
-        assertNotNull(loginResponse.body().getPrivateToken());
-        //attach the newly retrieved private token
-        testAccount.setPrivateToken(loginResponse.body().getPrivateToken());
-        GitLabClient.setAccount(testAccount);
 
         Response<Project> projectResponse = GitLabClient.instance()
                 .getProject(String.valueOf(FAKE_GROUP_PROJECT_ID))
