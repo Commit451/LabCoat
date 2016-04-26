@@ -140,7 +140,7 @@
     <string name="just_now">just now</string>
     <string name="failed_to_create_issue">Failed to create or modify issue</string>
 
-    <!-- Overview -->
+    <!-- Project -->
     <string name="no_readme_found">No README found for project</string>
     <string name="created_by">Created by %1$s</string>
     <string name="project_forked">Project forked into user namespace</string>

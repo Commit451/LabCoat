@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.text.Html;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.Base64;
@@ -35,7 +36,16 @@ import butterknife.OnClick;
 import in.uncod.android.bypass.Bypass;
 import timber.log.Timber;
 
+/**
+ * Shows the overview of the project
+ */
 public class ProjectFragment extends BaseFragment {
+
+    private static final int README_TYPE_UNKNOWN = -1;
+    private static final int README_TYPE_MARKDOWN = 0;
+    private static final int README_TYPE_TEXT = 1;
+    private static final int README_TYPE_HTML = 2;
+    private static final int README_TYPE_NO_EXTENSION = 3;
 
     public static ProjectFragment newInstance() {
         return new ProjectFragment();
@@ -77,7 +87,7 @@ public class ProjectFragment extends BaseFragment {
                 return;
             }
             for (RepositoryTreeObject treeItem : response) {
-                if (treeItem.getName().equalsIgnoreCase("README.md")) {
+                if (getReadmeType(treeItem.getName()) != README_TYPE_UNKNOWN) {
                     GitLabClient.instance().getFile(mProject.getId(), treeItem.getName(), mBranchName).enqueue(mFileCallback);
                     return;
                 }
@@ -104,9 +114,23 @@ public class ProjectFragment extends BaseFragment {
                 return;
             }
             mSwipeRefreshLayout.setRefreshing(false);
+            //TODO maybe make this async?
             String text = new String(Base64.decode(response.getContent(), Base64.DEFAULT), Charset.forName("UTF-8"));
-            mOverviewVew.setText(mBypass.markdownToSpannable(text,
-                    new PicassoImageGetter(mOverviewVew, GitLabClient.getPicasso())));
+            switch (getReadmeType(response.getFileName())) {
+                case README_TYPE_MARKDOWN:
+                    mOverviewVew.setText(mBypass.markdownToSpannable(text,
+                            new PicassoImageGetter(mOverviewVew, GitLabClient.getPicasso())));
+                    break;
+                case README_TYPE_HTML:
+                    mOverviewVew.setText(Html.fromHtml(text));
+                    break;
+                case README_TYPE_TEXT:
+                    mOverviewVew.setText(text);
+                    break;
+                case README_TYPE_NO_EXTENSION:
+                    mOverviewVew.setText(text);
+                    break;
+            }
         }
 
         @Override
@@ -221,6 +245,21 @@ public class ProjectFragment extends BaseFragment {
         }
         mStarCountView.setText(String.valueOf(project.getStarCount()));
         mForksCountView.setText(String.valueOf(project.getForksCount()));
+    }
+
+    private int getReadmeType(String filename) {
+        switch (filename.toLowerCase()) {
+            case "readme.md":
+                return README_TYPE_MARKDOWN;
+            case "readme.html":
+            case "readme.htm":
+                return README_TYPE_HTML;
+            case "readme.txt":
+                return README_TYPE_TEXT;
+            case "readme":
+                return README_TYPE_NO_EXTENSION;
+        }
+        return README_TYPE_UNKNOWN;
     }
 
     private class EventReceiver {
