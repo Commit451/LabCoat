@@ -8,7 +8,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Html;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
-import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,16 +23,19 @@ import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryFile;
 import com.commit451.gitlab.model.api.RepositoryTreeObject;
-import com.commit451.gitlab.util.NavigationManager;
+import com.commit451.gitlab.navigation.NavigationManager;
+import com.commit451.gitlab.observable.DecodeObservableFactory;
 import com.squareup.otto.Subscribe;
 
-import java.nio.charset.Charset;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import in.uncod.android.bypass.Bypass;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -109,28 +111,44 @@ public class ProjectFragment extends BaseFragment {
 
     private EasyCallback<RepositoryFile> mFileCallback = new EasyCallback<RepositoryFile>() {
         @Override
-        public void onResponse(@NonNull RepositoryFile response) {
+        public void onResponse(@NonNull final RepositoryFile response) {
             if (getView() == null) {
                 return;
             }
             mSwipeRefreshLayout.setRefreshing(false);
-            //TODO maybe make this async?
-            String text = new String(Base64.decode(response.getContent(), Base64.DEFAULT), Charset.forName("UTF-8"));
-            switch (getReadmeType(response.getFileName())) {
-                case README_TYPE_MARKDOWN:
-                    mOverviewVew.setText(mBypass.markdownToSpannable(text,
-                            new BypassPicassoImageGetter(mOverviewVew, GitLabClient.getPicasso())));
-                    break;
-                case README_TYPE_HTML:
-                    mOverviewVew.setText(Html.fromHtml(text));
-                    break;
-                case README_TYPE_TEXT:
-                    mOverviewVew.setText(text);
-                    break;
-                case README_TYPE_NO_EXTENSION:
-                    mOverviewVew.setText(text);
-                    break;
-            }
+            DecodeObservableFactory.newDecode(response.getContent())
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Subscriber<byte[]>() {
+                        @Override
+                        public void onCompleted() {}
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Snackbar.make(mSwipeRefreshLayout, R.string.failed_to_load, Snackbar.LENGTH_SHORT)
+                                    .show();
+                        }
+
+                        @Override
+                        public void onNext(byte[] bytes) {
+                            String text = new String(bytes);
+                            switch (getReadmeType(response.getFileName())) {
+                                case README_TYPE_MARKDOWN:
+                                    mOverviewVew.setText(mBypass.markdownToSpannable(text,
+                                            new BypassPicassoImageGetter(mOverviewVew, GitLabClient.getPicasso())));
+                                    break;
+                                case README_TYPE_HTML:
+                                    mOverviewVew.setText(Html.fromHtml(text));
+                                    break;
+                                case README_TYPE_TEXT:
+                                    mOverviewVew.setText(text);
+                                    break;
+                                case README_TYPE_NO_EXTENSION:
+                                    mOverviewVew.setText(text);
+                                    break;
+                            }
+                        }
+                    });
         }
 
         @Override

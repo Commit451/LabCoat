@@ -8,7 +8,7 @@ import com.commit451.gitlab.data.Prefs;
 import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.util.AppThemeUtil;
 import com.commit451.gitlab.ssl.CustomKeyManager;
-import com.commit451.gitlab.util.NavigationManager;
+import com.commit451.gitlab.navigation.NavigationManager;
 
 import java.util.List;
 

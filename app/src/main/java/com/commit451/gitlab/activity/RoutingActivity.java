@@ -7,9 +7,9 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.util.DeepLinker;
+import com.commit451.gitlab.navigation.DeepLinker;
 import com.commit451.gitlab.util.IntentUtil;
-import com.commit451.gitlab.util.NavigationManager;
+import com.commit451.gitlab.navigation.NavigationManager;
 
 import timber.log.Timber;
 

@@ -18,7 +18,7 @@ import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.ProjectsPagerAdapter;
 import com.commit451.gitlab.event.CloseDrawerEvent;
-import com.commit451.gitlab.util.NavigationManager;
+import com.commit451.gitlab.navigation.NavigationManager;
 import com.squareup.otto.Subscribe;
 
 import butterknife.Bind;

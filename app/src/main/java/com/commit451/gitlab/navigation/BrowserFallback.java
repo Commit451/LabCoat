@@ -1,4 +1,4 @@
-package com.commit451.gitlab.util;
+package com.commit451.gitlab.navigation;
 
 import android.content.Context;
 import android.content.Intent;

@@ -9,6 +9,8 @@ import android.view.View;
 
 import com.afollestad.appthemeengine.Config;
 import com.commit451.gitlab.R;
+import com.commit451.gitlab.navigation.BrowserFallback;
+import com.commit451.gitlab.navigation.LabCoatIntentCustomizer;
 import com.novoda.simplechromecustomtabs.SimpleChromeCustomTabs;
 
 /**
@@ -23,7 +25,7 @@ public class IntentUtil {
 
         int primaryColor = Config.primaryColor(activity, AppThemeUtil.resolveThemeKey(activity));
         SimpleChromeCustomTabs.getInstance()
-                .withFallback(new com.commit451.gitlab.util.BrowserFallback(activity))
+                .withFallback(new BrowserFallback(activity))
                 .withIntentCustomizer(new LabCoatIntentCustomizer(activity, primaryColor))
                 .navigateTo(Uri.parse(url), activity);
     }

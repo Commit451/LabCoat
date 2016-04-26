@@ -19,7 +19,7 @@ import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.rss.Entry;
 import com.commit451.gitlab.model.rss.Feed;
-import com.commit451.gitlab.util.NavigationManager;
+import com.commit451.gitlab.navigation.NavigationManager;
 import com.novoda.simplechromecustomtabs.SimpleChromeCustomTabs;
 
 import butterknife.Bind;
@@ -132,7 +132,9 @@ public class FeedFragment extends BaseFragment {
 
     @Override
     public void onPause() {
-        SimpleChromeCustomTabs.getInstance().disconnectFrom(getActivity());
+        if (SimpleChromeCustomTabs.getInstance().isConnected()) {
+            SimpleChromeCustomTabs.getInstance().disconnectFrom(getActivity());
+        }
         super.onPause();
     }
 
