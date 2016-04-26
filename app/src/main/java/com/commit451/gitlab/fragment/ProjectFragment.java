@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.commit451.bypasspicassoimagegetter.BypassPicassoImageGetter;
 import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ProjectActivity;
@@ -24,7 +25,6 @@ import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryFile;
 import com.commit451.gitlab.model.api.RepositoryTreeObject;
 import com.commit451.gitlab.util.NavigationManager;
-import com.commit451.gitlab.util.PicassoImageGetter;
 import com.squareup.otto.Subscribe;
 
 import java.nio.charset.Charset;
@@ -119,7 +119,7 @@ public class ProjectFragment extends BaseFragment {
             switch (getReadmeType(response.getFileName())) {
                 case README_TYPE_MARKDOWN:
                     mOverviewVew.setText(mBypass.markdownToSpannable(text,
-                            new PicassoImageGetter(mOverviewVew, GitLabClient.getPicasso())));
+                            new BypassPicassoImageGetter(mOverviewVew, GitLabClient.getPicasso())));
                     break;
                 case README_TYPE_HTML:
                     mOverviewVew.setText(Html.fromHtml(text));
