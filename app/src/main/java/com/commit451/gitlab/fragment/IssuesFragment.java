@@ -34,26 +34,25 @@ import com.squareup.otto.Subscribe;
 
 import java.util.List;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
+import butterknife.BindView;
 import butterknife.OnClick;
 import timber.log.Timber;
 
-public class IssuesFragment extends BaseFragment {
+public class IssuesFragment extends ButterKnifeFragment {
 
     public static IssuesFragment newInstance() {
         return new IssuesFragment();
     }
 
-    @Bind(R.id.root)
+    @BindView(R.id.root)
     ViewGroup mRoot;
-    @Bind(R.id.swipe_layout)
+    @BindView(R.id.swipe_layout)
     SwipeRefreshLayout mSwipeRefreshLayout;
-    @Bind(R.id.list)
+    @BindView(R.id.list)
     RecyclerView mIssueListView;
-    @Bind(R.id.message_text)
+    @BindView(R.id.message_text)
     TextView mMessageView;
-    @Bind(R.id.issue_spinner)
+    @BindView(R.id.issue_spinner)
     Spinner mSpinner;
 
     private Project mProject;
@@ -167,7 +166,6 @@ public class IssuesFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
 
         mEventReceiver = new EventReceiver();
         LabCoatApp.bus().register(mEventReceiver);
@@ -200,7 +198,6 @@ public class IssuesFragment extends BaseFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.unbind(this);
         LabCoatApp.bus().unregister(mEventReceiver);
     }
 

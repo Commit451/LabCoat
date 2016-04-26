@@ -29,8 +29,7 @@ import com.squareup.otto.Subscribe;
 
 import java.util.List;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
+import butterknife.BindView;
 import butterknife.OnClick;
 import in.uncod.android.bypass.Bypass;
 import rx.Subscriber;
@@ -41,7 +40,7 @@ import timber.log.Timber;
 /**
  * Shows the overview of the project
  */
-public class ProjectFragment extends BaseFragment {
+public class ProjectFragment extends ButterKnifeFragment {
 
     private static final int README_TYPE_UNKNOWN = -1;
     private static final int README_TYPE_MARKDOWN = 0;
@@ -53,11 +52,11 @@ public class ProjectFragment extends BaseFragment {
         return new ProjectFragment();
     }
 
-    @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
-    @Bind(R.id.creator) TextView mCreatorView;
-    @Bind(R.id.star_count) TextView mStarCountView;
-    @Bind(R.id.forks_count) TextView mForksCountView;
-    @Bind(R.id.overview_text) TextView mOverviewVew;
+    @BindView(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
+    @BindView(R.id.creator) TextView mCreatorView;
+    @BindView(R.id.star_count) TextView mStarCountView;
+    @BindView(R.id.forks_count) TextView mForksCountView;
+    @BindView(R.id.overview_text) TextView mOverviewVew;
 
     private Project mProject;
     private String mBranchName;
@@ -197,7 +196,6 @@ public class ProjectFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
 
         mEventReceiver = new EventReceiver();
         LabCoatApp.bus().register(mEventReceiver);
@@ -224,7 +222,6 @@ public class ProjectFragment extends BaseFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.unbind(this);
         LabCoatApp.bus().unregister(mEventReceiver);
     }
 

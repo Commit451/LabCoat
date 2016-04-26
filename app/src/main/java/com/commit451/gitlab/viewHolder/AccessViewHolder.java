@@ -12,7 +12,7 @@ import com.afollestad.appthemeengine.ATE;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.util.AppThemeUtil;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -26,7 +26,7 @@ public class AccessViewHolder extends RecyclerView.ViewHolder {
         return new AccessViewHolder(view);
     }
 
-    @Bind(R.id.access) TextView mTitleView;
+    @BindView(R.id.access) TextView mTitleView;
 
     public AccessViewHolder(View view) {
         super(view);

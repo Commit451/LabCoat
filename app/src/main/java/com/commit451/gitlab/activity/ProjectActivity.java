@@ -36,7 +36,7 @@ import org.parceler.Parcels;
 
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Callback;
 import timber.log.Timber;
@@ -58,17 +58,17 @@ public class ProjectActivity extends BaseActivity {
         return intent;
     }
 
-    @Bind(R.id.root)
+    @BindView(R.id.root)
     ViewGroup mRoot;
-    @Bind(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar mToolbar;
-    @Bind(R.id.tabs)
+    @BindView(R.id.tabs)
     TabLayout mTabLayout;
-    @Bind(R.id.branch_spinner)
+    @BindView(R.id.branch_spinner)
     Spinner mBranchSpinner;
-    @Bind(R.id.progress)
+    @BindView(R.id.progress)
     View mProgress;
-    @Bind(R.id.pager)
+    @BindView(R.id.pager)
     ViewPager mViewPager;
 
     private final AdapterView.OnItemSelectedListener mSpinnerItemSelectedListener = new AdapterView.OnItemSelectedListener() {

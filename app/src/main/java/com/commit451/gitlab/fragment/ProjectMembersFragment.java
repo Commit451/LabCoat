@@ -31,22 +31,21 @@ import com.squareup.otto.Subscribe;
 
 import java.util.List;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
+import butterknife.BindView;
 import butterknife.OnClick;
 import timber.log.Timber;
 
-public class ProjectMembersFragment extends BaseFragment {
+public class ProjectMembersFragment extends ButterKnifeFragment {
 
     public static ProjectMembersFragment newInstance() {
         return new ProjectMembersFragment();
     }
 
-    @Bind(R.id.root) View mRoot;
-    @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
-    @Bind(R.id.list) RecyclerView mMembersListView;
-    @Bind(R.id.message_text) TextView mMessageView;
-    @Bind(R.id.add_user_button) FloatingActionButton mAddUserButton;
+    @BindView(R.id.root) View mRoot;
+    @BindView(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
+    @BindView(R.id.list) RecyclerView mMembersListView;
+    @BindView(R.id.message_text) TextView mMessageView;
+    @BindView(R.id.add_user_button) FloatingActionButton mAddUserButton;
 
     private Project mProject;
     private EventReceiver mEventReceiver;
@@ -173,7 +172,6 @@ public class ProjectMembersFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
 
         mEventReceiver = new EventReceiver();
         LabCoatApp.bus().register(mEventReceiver);
@@ -204,7 +202,6 @@ public class ProjectMembersFragment extends BaseFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.unbind(this);
         LabCoatApp.bus().unregister(mEventReceiver);
     }
 

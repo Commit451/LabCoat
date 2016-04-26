@@ -14,7 +14,7 @@ import com.commit451.gitlab.transformation.CircleTransformation;
 import com.commit451.gitlab.util.DateUtils;
 import com.commit451.gitlab.util.ImageUtil;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -28,11 +28,11 @@ public class DiffHeaderViewHolder extends RecyclerView.ViewHolder {
         return new DiffHeaderViewHolder(view);
     }
 
-    @Bind(R.id.commit_author_image) ImageView mImageView;
-    @Bind(R.id.commit_author) TextView mAuthorView;
-    @Bind(R.id.commit_time) TextView mTimeView;
-    @Bind(R.id.commit_title) TextView mTitleView;
-    @Bind(R.id.commit_message) TextView mMessageView;
+    @BindView(R.id.commit_author_image) ImageView mImageView;
+    @BindView(R.id.commit_author) TextView mAuthorView;
+    @BindView(R.id.commit_time) TextView mTimeView;
+    @BindView(R.id.commit_title) TextView mTitleView;
+    @BindView(R.id.commit_message) TextView mMessageView;
 
     public DiffHeaderViewHolder(View view) {
         super(view);

@@ -34,7 +34,7 @@ import com.commit451.gitlab.util.AppThemeUtil;
 
 import org.parceler.Parcels;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Callback;
 import timber.log.Timber;
@@ -65,13 +65,13 @@ public class GroupActivity extends BaseActivity implements ATEActivityThemeCusto
         return intent;
     }
 
-    @Bind(R.id.root) View mRoot;
-    @Bind(R.id.toolbar) Toolbar mToolbar;
-    @Bind(R.id.collapsing_toolbar) CollapsingToolbarLayout mCollapsingToolbarLayout;
-    @Bind(R.id.viewpager) ViewPager mViewPager;
-    @Bind(R.id.tabs) TabLayout mTabLayout;
-    @Bind(R.id.backdrop) ImageView mBackdrop;
-    @Bind(R.id.progress) View mProgress;
+    @BindView(R.id.root) View mRoot;
+    @BindView(R.id.toolbar) Toolbar mToolbar;
+    @BindView(R.id.collapsing_toolbar) CollapsingToolbarLayout mCollapsingToolbarLayout;
+    @BindView(R.id.viewpager) ViewPager mViewPager;
+    @BindView(R.id.tabs) TabLayout mTabLayout;
+    @BindView(R.id.backdrop) ImageView mBackdrop;
+    @BindView(R.id.progress) View mProgress;
 
     private final Callback<GroupDetail> mGroupCallback = new EasyCallback<GroupDetail>() {
         @Override

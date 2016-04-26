@@ -23,7 +23,7 @@ import com.commit451.gitlab.model.api.Project;
 
 import org.parceler.Parcels;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 
@@ -42,15 +42,15 @@ public class MergeRequestActivity extends BaseActivity {
         return intent;
     }
 
-    @Bind(R.id.root)
+    @BindView(R.id.root)
     ViewGroup mRoot;
-    @Bind(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar mToolbar;
-    @Bind(R.id.tabs)
+    @BindView(R.id.tabs)
     TabLayout mTabLayout;
-    @Bind(R.id.pager)
+    @BindView(R.id.pager)
     ViewPager mViewPager;
-    @Bind(R.id.progress)
+    @BindView(R.id.progress)
     View mProgress;
 
     Project mProject;

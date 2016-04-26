@@ -32,15 +32,14 @@ import org.parceler.Parcels;
 
 import java.util.List;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
+import butterknife.BindView;
 import butterknife.OnClick;
 import timber.log.Timber;
 
 /**
  * Shows the discussion of a merge request
  */
-public class MergeRequestDiscussionFragment extends BaseFragment {
+public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
 
     private static final String KEY_PROJECT = "project";
     private static final String KEY_MERGE_REQUEST = "merge_request";
@@ -54,15 +53,15 @@ public class MergeRequestDiscussionFragment extends BaseFragment {
         return fragment;
     }
 
-    @Bind(R.id.root)
+    @BindView(R.id.root)
     ViewGroup mRoot;
-    @Bind(R.id.swipe_layout)
+    @BindView(R.id.swipe_layout)
     SwipeRefreshLayout mSwipeRefreshLayout;
-    @Bind(R.id.list)
+    @BindView(R.id.list)
     RecyclerView mNotesRecyclerView;
-    @Bind(R.id.new_note_edit)
+    @BindView(R.id.new_note_edit)
     EditText mNewNoteEdit;
-    @Bind(R.id.progress)
+    @BindView(R.id.progress)
     View mProgress;
 
     MergeRequestDetailAdapter mMergeRequestDetailAdapter;
@@ -185,7 +184,6 @@ public class MergeRequestDiscussionFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
         mTeleprinter = new Teleprinter(getActivity());
 
         mMergeRequestDetailAdapter = new MergeRequestDetailAdapter(getActivity(), mMergeRequest);
@@ -217,7 +215,6 @@ public class MergeRequestDiscussionFragment extends BaseFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.unbind(this);
         LabCoatApp.bus().unregister(mEventReceiver);
     }
 

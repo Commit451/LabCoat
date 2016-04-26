@@ -32,7 +32,7 @@ import org.parceler.Parcels;
 import java.util.Calendar;
 import java.util.Date;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import retrofit2.Callback;
@@ -62,19 +62,19 @@ public class AddMilestoneActivity extends MorphActivity implements ATEActivityTh
         return intent;
     }
 
-    @Bind(R.id.root)
+    @BindView(R.id.root)
     FrameLayout mRoot;
-    @Bind(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar mToolbar;
-    @Bind(R.id.title_text_input_layout)
+    @BindView(R.id.title_text_input_layout)
     TextInputLayout mTitleTextInputLayout;
-    @Bind(R.id.title)
+    @BindView(R.id.title)
     EditText mTitle;
-    @Bind(R.id.description)
+    @BindView(R.id.description)
     EditText mDescription;
-    @Bind(R.id.due_date)
+    @BindView(R.id.due_date)
     Button mDueDate;
-    @Bind(R.id.progress)
+    @BindView(R.id.progress)
     View mProgress;
 
     @OnClick(R.id.due_date)

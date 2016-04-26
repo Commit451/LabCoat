@@ -31,7 +31,7 @@ import com.squareup.otto.Subscribe;
 
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Callback;
 import timber.log.Timber;
@@ -52,11 +52,11 @@ public class GroupsActivity extends BaseActivity implements ATEActivityThemeCust
         return intent;
     }
 
-    @Bind(R.id.drawer_layout) DrawerLayout mDrawerLayout;
-    @Bind(R.id.toolbar) Toolbar mToolbar;
-    @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
-    @Bind(R.id.list) RecyclerView mGroupRecyclerView;
-    @Bind(R.id.message_text) TextView mMessageText;
+    @BindView(R.id.drawer_layout) DrawerLayout mDrawerLayout;
+    @BindView(R.id.toolbar) Toolbar mToolbar;
+    @BindView(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
+    @BindView(R.id.list) RecyclerView mGroupRecyclerView;
+    @BindView(R.id.message_text) TextView mMessageText;
     GroupAdapter mGroupAdapter;
     LinearLayoutManager mGroupLayoutManager;
 

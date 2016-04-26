@@ -18,7 +18,7 @@ import com.commit451.gitlab.transformation.CircleTransformation;
 import com.commit451.gitlab.util.AppThemeUtil;
 import com.commit451.gitlab.util.ImageUtil;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -32,9 +32,9 @@ public class AssigneeSpinnerViewHolder extends RecyclerView.ViewHolder {
         return new AssigneeSpinnerViewHolder(view);
     }
 
-    @Bind(R.id.user_image)
+    @BindView(R.id.user_image)
     ImageView mImageView;
-    @Bind(R.id.user_username)
+    @BindView(R.id.user_username)
     TextView mUsernameView;
 
     public AssigneeSpinnerViewHolder(View view) {

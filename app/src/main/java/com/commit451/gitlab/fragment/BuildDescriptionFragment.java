@@ -26,14 +26,13 @@ import org.parceler.Parcels;
 
 import java.util.Date;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
+import butterknife.BindView;
 import timber.log.Timber;
 
 /**
  * Shows the details of a build
  */
-public class BuildDescriptionFragment extends BaseFragment {
+public class BuildDescriptionFragment extends ButterKnifeFragment {
 
     private static final String KEY_PROJECT = "project";
     private static final String KEY_BUILD = "build";
@@ -47,21 +46,21 @@ public class BuildDescriptionFragment extends BaseFragment {
         return fragment;
     }
 
-    @Bind(R.id.root)
+    @BindView(R.id.root)
     ViewGroup mRoot;
-    @Bind(R.id.swipe_layout)
+    @BindView(R.id.swipe_layout)
     SwipeRefreshLayout mSwipeRefreshLayout;
-    @Bind(R.id.text_duration)
+    @BindView(R.id.text_duration)
     TextView mTextDuration;
-    @Bind(R.id.text_created)
+    @BindView(R.id.text_created)
     TextView mTextCreated;
-    @Bind(R.id.text_finished)
+    @BindView(R.id.text_finished)
     TextView mTextFinished;
-    @Bind(R.id.text_runner)
+    @BindView(R.id.text_runner)
     TextView mTextRunner;
-    @Bind(R.id.text_author)
+    @BindView(R.id.text_author)
     TextView mTextAuthor;
-    @Bind(R.id.text_message)
+    @BindView(R.id.text_message)
     TextView mTextMessage;
 
     Project mProject;
@@ -101,7 +100,6 @@ public class BuildDescriptionFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -154,7 +152,6 @@ public class BuildDescriptionFragment extends BaseFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.unbind(this);
         LabCoatApp.bus().unregister(mEventReceiver);
     }
 

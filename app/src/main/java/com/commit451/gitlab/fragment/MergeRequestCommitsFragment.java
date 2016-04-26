@@ -28,14 +28,13 @@ import org.parceler.Parcels;
 
 import java.util.List;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
+import butterknife.BindView;
 import timber.log.Timber;
 
 /**
  * Like {@link CommitsFragment} but showing commits for a merge request
  */
-public class MergeRequestCommitsFragment extends BaseFragment {
+public class MergeRequestCommitsFragment extends ButterKnifeFragment {
 
     private static final String KEY_PROJECT = "project";
     private static final String KEY_MERGE_REQUEST = "merge_request";
@@ -49,9 +48,9 @@ public class MergeRequestCommitsFragment extends BaseFragment {
         return fragment;
     }
 
-    @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
-    @Bind(R.id.list) RecyclerView mCommitsListView;
-    @Bind(R.id.message_text) TextView mMessageView;
+    @BindView(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
+    @BindView(R.id.list) RecyclerView mCommitsListView;
+    @BindView(R.id.message_text) TextView mMessageView;
 
     private Project mProject;
     private MergeRequest mMergeRequest;
@@ -152,7 +151,6 @@ public class MergeRequestCommitsFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
 
         mCommitsAdapter = new CommitsAdapter(mCommitsAdapterListener);
         mCommitsLayoutManager = new LinearLayoutManager(getActivity());
@@ -176,7 +174,6 @@ public class MergeRequestCommitsFragment extends BaseFragment {
     public void onDestroyView() {
         super.onDestroyView();
         LabCoatApp.bus().unregister(mEventReceiver);
-        ButterKnife.unbind(this);
     }
 
     @Override

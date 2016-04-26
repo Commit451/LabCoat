@@ -31,7 +31,7 @@ import com.commit451.gitlab.util.ImageUtil;
 
 import org.parceler.Parcels;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -53,9 +53,9 @@ public class UserActivity extends BaseActivity implements ATEActivityThemeCustom
         return intent;
     }
 
-    @Bind(R.id.toolbar) Toolbar mToolbar;
-    @Bind(R.id.collapsing_toolbar) CollapsingToolbarLayout mCollapsingToolbarLayout;
-    @Bind(R.id.backdrop) ImageView mBackdrop;
+    @BindView(R.id.toolbar) Toolbar mToolbar;
+    @BindView(R.id.collapsing_toolbar) CollapsingToolbarLayout mCollapsingToolbarLayout;
+    @BindView(R.id.backdrop) ImageView mBackdrop;
 
     UserBasic mUser;
 

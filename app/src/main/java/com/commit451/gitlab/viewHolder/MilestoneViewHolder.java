@@ -12,7 +12,7 @@ import com.commit451.gitlab.model.api.Milestone;
 import com.commit451.gitlab.util.AppThemeUtil;
 import com.commit451.gitlab.util.DateUtils;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -26,8 +26,8 @@ public class MilestoneViewHolder extends RecyclerView.ViewHolder {
         return new MilestoneViewHolder(view);
     }
 
-    @Bind(R.id.title) TextView mTitleView;
-    @Bind(R.id.due_date) TextView mDueDateView;
+    @BindView(R.id.title) TextView mTitleView;
+    @BindView(R.id.due_date) TextView mDueDateView;
 
     public MilestoneViewHolder(View view) {
         super(view);

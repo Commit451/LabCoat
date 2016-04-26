@@ -16,7 +16,7 @@ import com.commit451.gitlab.transformation.CircleTransformation;
 import com.commit451.gitlab.util.DateUtils;
 import com.commit451.gitlab.util.ImageUtil;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import in.uncod.android.bypass.Bypass;
 
@@ -31,10 +31,10 @@ public class NoteViewHolder extends RecyclerView.ViewHolder {
         return new NoteViewHolder(view);
     }
 
-    @Bind(R.id.title) TextView mTitleView;
-    @Bind(R.id.summary) TextView mSummaryView;
-    @Bind(R.id.creation_date) TextView mCreationDateView;
-    @Bind(R.id.icon) ImageView mIconView;
+    @BindView(R.id.title) TextView mTitleView;
+    @BindView(R.id.summary) TextView mSummaryView;
+    @BindView(R.id.creation_date) TextView mCreationDateView;
+    @BindView(R.id.icon) ImageView mIconView;
 
     public NoteViewHolder(View view) {
         super(view);

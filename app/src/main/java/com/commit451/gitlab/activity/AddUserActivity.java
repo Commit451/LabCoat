@@ -39,7 +39,7 @@ import org.parceler.Parcels;
 
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import retrofit2.Callback;
@@ -65,17 +65,17 @@ public class AddUserActivity extends MorphActivity {
         return intent;
     }
 
-    @Bind(R.id.root)
+    @BindView(R.id.root)
     ViewGroup mRoot;
-    @Bind(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar mToolbar;
-    @Bind(R.id.search)
+    @BindView(R.id.search)
     EditText mUserSearch;
-    @Bind(R.id.swipe_layout)
+    @BindView(R.id.swipe_layout)
     SwipeRefreshLayout mSwipeRefreshLayout;
-    @Bind(R.id.list)
+    @BindView(R.id.list)
     RecyclerView mRecyclerView;
-    @Bind(R.id.clear)
+    @BindView(R.id.clear)
     View mClearView;
     GridLayoutManager mUserLinearLayoutManager;
 

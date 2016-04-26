@@ -14,7 +14,7 @@ import com.commit451.gitlab.model.api.UserBasic;
 import com.commit451.gitlab.util.AppThemeUtil;
 import com.commit451.gitlab.util.ImageUtil;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -28,8 +28,8 @@ public class UserViewHolder extends RecyclerView.ViewHolder {
         return new UserViewHolder(view);
     }
 
-    @Bind(R.id.name) public TextView mUsernameView;
-    @Bind(R.id.image) public ImageView mImageView;
+    @BindView(R.id.name) public TextView mUsernameView;
+    @BindView(R.id.image) public ImageView mImageView;
 
     public UserViewHolder(View view) {
         super(view);

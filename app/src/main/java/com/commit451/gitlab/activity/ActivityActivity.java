@@ -18,7 +18,7 @@ import com.commit451.gitlab.event.CloseDrawerEvent;
 import com.commit451.gitlab.fragment.FeedFragment;
 import com.squareup.otto.Subscribe;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 
@@ -40,8 +40,8 @@ public class ActivityActivity extends BaseActivity implements ATEActivityThemeCu
         return intent;
     }
 
-    @Bind(R.id.drawer_layout) DrawerLayout mDrawerLayout;
-    @Bind(R.id.toolbar) Toolbar mToolbar;
+    @BindView(R.id.drawer_layout) DrawerLayout mDrawerLayout;
+    @BindView(R.id.toolbar) Toolbar mToolbar;
 
     EventReceiver mEventReceiver;
 

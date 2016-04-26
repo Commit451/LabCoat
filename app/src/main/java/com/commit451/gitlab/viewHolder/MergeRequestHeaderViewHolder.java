@@ -17,7 +17,7 @@ import com.commit451.gitlab.transformation.CircleTransformation;
 import com.commit451.gitlab.util.DateUtils;
 import com.commit451.gitlab.util.ImageUtil;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import in.uncod.android.bypass.Bypass;
 
@@ -32,9 +32,9 @@ public class MergeRequestHeaderViewHolder extends RecyclerView.ViewHolder {
         return new MergeRequestHeaderViewHolder(view);
     }
 
-    @Bind(R.id.description) TextView mDescriptionView;
-    @Bind(R.id.author_image) ImageView mAuthorImageView;
-    @Bind(R.id.author) TextView mAuthorView;
+    @BindView(R.id.description) TextView mDescriptionView;
+    @BindView(R.id.author_image) ImageView mAuthorImageView;
+    @BindView(R.id.author) TextView mAuthorView;
 
     public MergeRequestHeaderViewHolder(View view) {
         super(view);

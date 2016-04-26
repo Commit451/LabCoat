@@ -12,7 +12,7 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.api.Diff;
 import com.commit451.gitlab.util.AppThemeUtil;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -26,8 +26,8 @@ public class DiffViewHolder extends RecyclerView.ViewHolder {
         return new DiffViewHolder(view);
     }
 
-    @Bind(R.id.file_title) TextView mFileTitle;
-    @Bind(R.id.diff) DiffTextView mDiffTextView;
+    @BindView(R.id.file_title) TextView mFileTitle;
+    @BindView(R.id.diff) DiffTextView mDiffTextView;
 
     public DiffViewHolder(View view) {
         super(view);

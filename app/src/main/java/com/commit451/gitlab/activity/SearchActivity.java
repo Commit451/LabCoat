@@ -18,7 +18,7 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.SearchPagerAdapter;
 import com.commit451.teleprinter.Teleprinter;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import timber.log.Timber;
@@ -33,13 +33,13 @@ public class SearchActivity extends BaseActivity {
         return intent;
     }
 
-    @Bind(R.id.root) View mRoot;
-    @Bind(R.id.tabs) TabLayout mTabLayout;
-    @Bind(R.id.pager) ViewPager mViewPager;
+    @BindView(R.id.root) View mRoot;
+    @BindView(R.id.tabs) TabLayout mTabLayout;
+    @BindView(R.id.pager) ViewPager mViewPager;
     SearchPagerAdapter mSearchPagerAdapter;
-    @Bind(R.id.toolbar) Toolbar mToolbar;
-    @Bind(R.id.search) EditText mSearchView;
-    @Bind(R.id.clear) View mClearView;
+    @BindView(R.id.toolbar) Toolbar mToolbar;
+    @BindView(R.id.search) EditText mSearchView;
+    @BindView(R.id.clear) View mClearView;
 
     @OnClick(R.id.clear)
     void onClearClick() {

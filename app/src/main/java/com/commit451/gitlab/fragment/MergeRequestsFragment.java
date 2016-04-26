@@ -30,20 +30,19 @@ import com.squareup.otto.Subscribe;
 
 import java.util.List;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
+import butterknife.BindView;
 import timber.log.Timber;
 
-public class MergeRequestsFragment extends BaseFragment {
+public class MergeRequestsFragment extends ButterKnifeFragment {
 
     public static MergeRequestsFragment newInstance() {
         return new MergeRequestsFragment();
     }
 
-    @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
-    @Bind(R.id.list) RecyclerView mRecyclerView;
-    @Bind(R.id.message_text) TextView mMessageView;
-    @Bind(R.id.state_spinner) Spinner mSpinner;
+    @BindView(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
+    @BindView(R.id.list) RecyclerView mRecyclerView;
+    @BindView(R.id.message_text) TextView mMessageView;
+    @BindView(R.id.state_spinner) Spinner mSpinner;
 
     private Project mProject;
     private EventReceiver mEventReceiver;
@@ -150,7 +149,6 @@ public class MergeRequestsFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
 
         mEventReceiver = new EventReceiver();
         LabCoatApp.bus().register(mEventReceiver);
@@ -183,7 +181,6 @@ public class MergeRequestsFragment extends BaseFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.unbind(this);
         LabCoatApp.bus().unregister(mEventReceiver);
     }
 

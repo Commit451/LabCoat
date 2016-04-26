@@ -9,7 +9,7 @@ import android.widget.TextView;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.api.Label;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -23,7 +23,7 @@ public class AddLabelViewHolder extends RecyclerView.ViewHolder {
         return new AddLabelViewHolder(view);
     }
 
-    @Bind(R.id.title)
+    @BindView(R.id.title)
     TextView mTitleView;
 
     public AddLabelViewHolder(View view) {

@@ -14,7 +14,7 @@ import com.afollestad.appthemeengine.util.ATEUtil;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.util.AppThemeUtil;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -28,8 +28,8 @@ public class BreadcrumbViewHolder extends RecyclerView.ViewHolder {
         return new BreadcrumbViewHolder(view);
     }
 
-    @Bind(R.id.breadcrumb_text) TextView mTextView;
-    @Bind(R.id.breadcrumb_arrow) ImageView mArrowView;
+    @BindView(R.id.breadcrumb_text) TextView mTextView;
+    @BindView(R.id.breadcrumb_arrow) ImageView mArrowView;
 
     private int mPrimaryTextColor;
     private int mSecondaryTextColor;

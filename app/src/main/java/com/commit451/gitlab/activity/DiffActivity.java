@@ -24,7 +24,7 @@ import org.parceler.Parcels;
 
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Callback;
 import timber.log.Timber;
@@ -44,12 +44,12 @@ public class DiffActivity extends BaseActivity {
         return intent;
     }
 
-    @Bind(R.id.root) ViewGroup mRoot;
-    @Bind(R.id.toolbar) Toolbar mToolbar;
-    @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
-    @Bind(R.id.list) RecyclerView mDiffRecyclerView;
+    @BindView(R.id.root) ViewGroup mRoot;
+    @BindView(R.id.toolbar) Toolbar mToolbar;
+    @BindView(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
+    @BindView(R.id.list) RecyclerView mDiffRecyclerView;
     DiffAdapter mDiffAdapter;
-    @Bind(R.id.message_text) TextView mMessageText;
+    @BindView(R.id.message_text) TextView mMessageText;
 
     private Project mProject;
     private RepositoryCommit mCommit;

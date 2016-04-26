@@ -15,7 +15,7 @@ import com.commit451.gitlab.transformation.CircleTransformation;
 import com.commit451.gitlab.util.AppThemeUtil;
 import com.commit451.gitlab.util.ImageUtil;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -29,9 +29,9 @@ public class MergeRequestViewHolder extends RecyclerView.ViewHolder {
         return new MergeRequestViewHolder(view);
     }
 
-    @Bind(R.id.request_image) ImageView mImageView;
-    @Bind(R.id.request_title) TextView mTitleView;
-    @Bind(R.id.request_author) TextView mAuthorView;
+    @BindView(R.id.request_image) ImageView mImageView;
+    @BindView(R.id.request_title) TextView mTitleView;
+    @BindView(R.id.request_author) TextView mAuthorView;
 
     public MergeRequestViewHolder(View view) {
         super(view);

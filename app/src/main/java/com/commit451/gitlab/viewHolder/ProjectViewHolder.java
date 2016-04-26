@@ -18,7 +18,7 @@ import com.commit451.gitlab.transformation.CircleTransformation;
 import com.commit451.gitlab.util.AppThemeUtil;
 import com.github.ivbaranov.mli.MaterialLetterIcon;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -32,11 +32,11 @@ public class ProjectViewHolder extends RecyclerView.ViewHolder {
         return new ProjectViewHolder(view);
     }
 
-    @Bind(R.id.project_image) ImageView mImageView;
-    @Bind(R.id.project_letter) MaterialLetterIcon mLetterView;
-    @Bind(R.id.project_title) TextView mTitleView;
-    @Bind(R.id.project_description) TextView mDescriptionView;
-    @Bind(R.id.project_visibility) ImageView mVisibilityView;
+    @BindView(R.id.project_image) ImageView mImageView;
+    @BindView(R.id.project_letter) MaterialLetterIcon mLetterView;
+    @BindView(R.id.project_title) TextView mTitleView;
+    @BindView(R.id.project_description) TextView mDescriptionView;
+    @BindView(R.id.project_visibility) ImageView mVisibilityView;
 
     public ProjectViewHolder(View view) {
         super(view);

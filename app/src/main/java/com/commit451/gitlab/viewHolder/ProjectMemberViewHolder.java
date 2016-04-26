@@ -15,7 +15,7 @@ import com.commit451.gitlab.model.api.Member;
 import com.commit451.gitlab.util.AppThemeUtil;
 import com.commit451.gitlab.util.ImageUtil;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -29,10 +29,10 @@ public class ProjectMemberViewHolder extends RecyclerView.ViewHolder{
         return new ProjectMemberViewHolder(view);
     }
 
-    @Bind(R.id.overflow) View mOverflowView;
-    @Bind(R.id.name) TextView mUsernameView;
-    @Bind(R.id.access) TextView mAccessView;
-    @Bind(R.id.image) public ImageView mImageView;
+    @BindView(R.id.overflow) View mOverflowView;
+    @BindView(R.id.name) TextView mUsernameView;
+    @BindView(R.id.access) TextView mAccessView;
+    @BindView(R.id.image) public ImageView mImageView;
 
     public final PopupMenu mPopupMenu;
 

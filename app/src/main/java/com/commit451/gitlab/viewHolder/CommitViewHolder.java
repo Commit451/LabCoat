@@ -16,7 +16,7 @@ import com.commit451.gitlab.util.AppThemeUtil;
 import com.commit451.gitlab.util.DateUtils;
 import com.commit451.gitlab.util.ImageUtil;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -30,10 +30,10 @@ public class CommitViewHolder extends RecyclerView.ViewHolder {
         return new CommitViewHolder(view);
     }
 
-    @Bind(R.id.commit_image) ImageView mImageView;
-    @Bind(R.id.commit_message) TextView mMessageView;
-    @Bind(R.id.commit_author) TextView mAuthorView;
-    @Bind(R.id.commit_time) TextView mTimeView;
+    @BindView(R.id.commit_image) ImageView mImageView;
+    @BindView(R.id.commit_message) TextView mMessageView;
+    @BindView(R.id.commit_author) TextView mAuthorView;
+    @BindView(R.id.commit_time) TextView mTimeView;
 
     public CommitViewHolder(View view) {
         super(view);

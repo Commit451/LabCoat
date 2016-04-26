@@ -16,7 +16,7 @@ import com.commit451.gitlab.transformation.CircleTransformation;
 import com.commit451.gitlab.util.AppThemeUtil;
 import com.commit451.gitlab.util.ImageUtil;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -30,10 +30,10 @@ public class AccountViewHolder extends RecyclerView.ViewHolder{
         return new AccountViewHolder(view);
     }
 
-    @Bind(R.id.account_image) ImageView mImageView;
-    @Bind(R.id.account_username) TextView mUsernameView;
-    @Bind(R.id.account_server) TextView mServerView;
-    @Bind(R.id.account_more) View mMoreView;
+    @BindView(R.id.account_image) ImageView mImageView;
+    @BindView(R.id.account_username) TextView mUsernameView;
+    @BindView(R.id.account_server) TextView mServerView;
+    @BindView(R.id.account_more) View mMoreView;
 
     public final PopupMenu mPopupMenu;
 

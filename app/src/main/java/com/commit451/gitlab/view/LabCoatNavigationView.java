@@ -38,7 +38,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import timber.log.Timber;
@@ -48,10 +48,10 @@ import timber.log.Timber;
  */
 public class LabCoatNavigationView extends NavigationView {
 
-    @Bind(R.id.profile_image) ImageView mProfileImage;
-    @Bind(R.id.profile_user) TextView mUserName;
-    @Bind(R.id.profile_email) TextView mUserEmail;
-    @Bind(R.id.arrow) View mArrow;
+    @BindView(R.id.profile_image) ImageView mProfileImage;
+    @BindView(R.id.profile_user) TextView mUserName;
+    @BindView(R.id.profile_email) TextView mUserEmail;
+    @BindView(R.id.arrow) View mArrow;
 
     RecyclerView mAccountList;
     AccountsAdapter mAccountAdapter;

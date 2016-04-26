@@ -11,7 +11,7 @@ import android.widget.TextView;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.api.Artifact;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -25,9 +25,9 @@ public class BuildArtifactViewHolder extends RecyclerView.ViewHolder {
         return new BuildArtifactViewHolder(view);
     }
 
-    @Bind(R.id.file_title) TextView mTitleView;
-    @Bind(R.id.file_image) ImageView mImageView;
-    @Bind(R.id.file_more) ImageView mMoreView;
+    @BindView(R.id.file_title) TextView mTitleView;
+    @BindView(R.id.file_image) ImageView mImageView;
+    @BindView(R.id.file_more) ImageView mMoreView;
 
     public final PopupMenu popupMenu;
 

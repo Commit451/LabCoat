@@ -56,7 +56,7 @@ import java.util.regex.Pattern;
 import javax.net.ssl.SSLHandshakeException;
 import javax.net.ssl.SSLPeerUnverifiedException;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import okhttp3.Credentials;
@@ -83,31 +83,31 @@ public class LoginActivity extends BaseActivity {
         return intent;
     }
 
-    @Bind(R.id.root)
+    @BindView(R.id.root)
     View mRoot;
-    @Bind(R.id.close)
+    @BindView(R.id.close)
     View mClose;
-    @Bind(R.id.url_hint)
+    @BindView(R.id.url_hint)
     TextInputLayout mUrlHint;
-    @Bind(R.id.url_input)
+    @BindView(R.id.url_input)
     TextView mUrlInput;
-    @Bind(R.id.user_input_hint)
+    @BindView(R.id.user_input_hint)
     TextInputLayout mUserHint;
-    @Bind(R.id.user_input)
+    @BindView(R.id.user_input)
     AppCompatAutoCompleteTextView mUserInput;
-    @Bind(R.id.password_hint)
+    @BindView(R.id.password_hint)
     TextInputLayout mPasswordHint;
-    @Bind(R.id.password_input)
+    @BindView(R.id.password_input)
     TextView mPasswordInput;
-    @Bind(R.id.token_hint)
+    @BindView(R.id.token_hint)
     TextInputLayout mTokenHint;
-    @Bind(R.id.token_input)
+    @BindView(R.id.token_input)
     TextView mTokenInput;
-    @Bind(R.id.normal_login)
+    @BindView(R.id.normal_login)
     View mNormalLogin;
-    @Bind(R.id.token_login)
+    @BindView(R.id.token_login)
     View mTokenLogin;
-    @Bind(R.id.progress)
+    @BindView(R.id.progress)
     View mProgress;
 
     private boolean mIsNormalLogin = true;

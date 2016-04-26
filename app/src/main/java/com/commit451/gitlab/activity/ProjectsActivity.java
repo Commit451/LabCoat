@@ -21,7 +21,7 @@ import com.commit451.gitlab.event.CloseDrawerEvent;
 import com.commit451.gitlab.navigation.NavigationManager;
 import com.squareup.otto.Subscribe;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -40,11 +40,11 @@ public class ProjectsActivity extends BaseActivity implements ATEActivityThemeCu
         return intent;
     }
 
-    @Bind(R.id.toolbar) Toolbar mToolbar;
-    @Bind(R.id.tabs) TabLayout mTabLayout;
-    @Bind(R.id.pager) ViewPager mViewPager;
-    @Bind(R.id.navigation_view) NavigationView mNavigationView;
-    @Bind(R.id.drawer_layout) DrawerLayout mDrawerLayout;
+    @BindView(R.id.toolbar) Toolbar mToolbar;
+    @BindView(R.id.tabs) TabLayout mTabLayout;
+    @BindView(R.id.pager) ViewPager mViewPager;
+    @BindView(R.id.navigation_view) NavigationView mNavigationView;
+    @BindView(R.id.drawer_layout) DrawerLayout mDrawerLayout;
 
     EventReceiver mEventReceiver;
 

@@ -16,7 +16,7 @@ import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryCommit;
 import com.commit451.gitlab.navigation.NavigationManager;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import timber.log.Timber;
@@ -53,7 +53,7 @@ public class LoadSomeInfoActivity extends AppCompatActivity {
         return intent;
     }
 
-    @Bind(R.id.progress)
+    @BindView(R.id.progress)
     View mProgress;
 
     private int mLoadType;

@@ -26,28 +26,27 @@ import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryTreeObject;
-import com.commit451.gitlab.util.IntentUtil;
 import com.commit451.gitlab.navigation.NavigationManager;
+import com.commit451.gitlab.util.IntentUtil;
 import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
+import butterknife.BindView;
 import timber.log.Timber;
 
-public class FilesFragment extends BaseFragment {
+public class FilesFragment extends ButterKnifeFragment {
 
     public static FilesFragment newInstance() {
         return new FilesFragment();
     }
 
-    @Bind(R.id.root) View mRoot;
-    @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
-    @Bind(R.id.list) RecyclerView mFilesListView;
-    @Bind(R.id.breadcrumb) RecyclerView mBreadcrumbListView;
-    @Bind(R.id.message_text) TextView mMessageView;
+    @BindView(R.id.root) View mRoot;
+    @BindView(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
+    @BindView(R.id.list) RecyclerView mFilesListView;
+    @BindView(R.id.breadcrumb) RecyclerView mBreadcrumbListView;
+    @BindView(R.id.message_text) TextView mMessageView;
 
     private Project mProject;
     private String mBranchName;
@@ -140,7 +139,6 @@ public class FilesFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
 
         mEventReceiver = new EventReceiver();
         LabCoatApp.bus().register(mEventReceiver);
@@ -173,7 +171,6 @@ public class FilesFragment extends BaseFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.unbind(this);
         LabCoatApp.bus().unregister(mEventReceiver);
     }
 

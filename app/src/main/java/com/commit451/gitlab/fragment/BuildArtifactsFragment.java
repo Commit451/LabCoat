@@ -27,14 +27,13 @@ import org.parceler.Parcels;
 
 import java.util.List;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
+import butterknife.BindView;
 import timber.log.Timber;
 
 /**
  * Shows the build artifacts
  */
-public class BuildArtifactsFragment extends BaseFragment {
+public class BuildArtifactsFragment extends ButterKnifeFragment {
 
     private static final String KEY_PROJECT = "project";
     private static final String KEY_BUILD = "build";
@@ -48,9 +47,9 @@ public class BuildArtifactsFragment extends BaseFragment {
         return fragment;
     }
 
-    @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
-    @Bind(R.id.list) RecyclerView mCommitsListView;
-    @Bind(R.id.message_text) TextView mMessageView;
+    @BindView(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
+    @BindView(R.id.list) RecyclerView mCommitsListView;
+    @BindView(R.id.message_text) TextView mMessageView;
 
     private Project mProject;
     private Build mBuild;
@@ -129,8 +128,6 @@ public class BuildArtifactsFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
-
         mArtifactsAdapter = new BuildArtifactsAdapter(mAdapterListener);
         mCommitsListView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mCommitsListView.addItemDecoration(new DividerItemDecoration(getActivity()));
@@ -151,7 +148,6 @@ public class BuildArtifactsFragment extends BaseFragment {
     public void onDestroyView() {
         super.onDestroyView();
         LabCoatApp.bus().unregister(mEventReceiver);
-        ButterKnife.unbind(this);
     }
 
     @Override

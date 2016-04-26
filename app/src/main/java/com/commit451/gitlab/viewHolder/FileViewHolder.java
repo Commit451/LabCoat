@@ -13,7 +13,7 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.api.RepositoryTreeObject;
 import com.commit451.gitlab.util.AppThemeUtil;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -27,9 +27,9 @@ public class FileViewHolder extends RecyclerView.ViewHolder {
         return new FileViewHolder(view);
     }
 
-    @Bind(R.id.file_title) TextView mTitleView;
-    @Bind(R.id.file_image) ImageView mImageView;
-    @Bind(R.id.file_more) ImageView mMoreView;
+    @BindView(R.id.file_title) TextView mTitleView;
+    @BindView(R.id.file_image) ImageView mImageView;
+    @BindView(R.id.file_more) ImageView mMoreView;
 
     public final PopupMenu popupMenu;
 

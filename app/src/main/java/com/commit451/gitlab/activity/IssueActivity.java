@@ -37,7 +37,7 @@ import org.parceler.Parcels;
 
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import retrofit2.Callback;
@@ -69,19 +69,19 @@ public class IssueActivity extends BaseActivity {
         return intent;
     }
 
-    @Bind(R.id.root)
+    @BindView(R.id.root)
     ViewGroup mRoot;
-    @Bind(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar mToolbar;
-    @Bind(R.id.issue_title)
+    @BindView(R.id.issue_title)
     TextView mIssueTitle;
-    @Bind(R.id.swipe_layout)
+    @BindView(R.id.swipe_layout)
     SwipeRefreshLayout mSwipeRefreshLayout;
-    @Bind(R.id.list)
+    @BindView(R.id.list)
     RecyclerView mNotesRecyclerView;
-    @Bind(R.id.new_note_edit)
+    @BindView(R.id.new_note_edit)
     EditText mNewNoteEdit;
-    @Bind(R.id.progress)
+    @BindView(R.id.progress)
     View mProgress;
 
     @OnClick(R.id.new_note_button)

@@ -14,7 +14,7 @@ import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.util.AppThemeUtil;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -28,8 +28,8 @@ public class GroupViewHolder extends RecyclerView.ViewHolder{
         return new GroupViewHolder(view);
     }
 
-    @Bind(R.id.image) public ImageView mImageView;
-    @Bind(R.id.name) public TextView mNameView;
+    @BindView(R.id.image) public ImageView mImageView;
+    @BindView(R.id.name) public TextView mNameView;
 
     public GroupViewHolder(View view) {
         super(view);

@@ -25,11 +25,10 @@ import org.parceler.Parcels;
 
 import java.util.List;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
+import butterknife.BindView;
 import timber.log.Timber;
 
-public class ProjectsFragment extends BaseFragment {
+public class ProjectsFragment extends ButterKnifeFragment {
 
     private static final String EXTRA_MODE = "extra_mode";
     private static final String EXTRA_QUERY = "extra_query";
@@ -68,9 +67,9 @@ public class ProjectsFragment extends BaseFragment {
         return fragment;
     }
 
-    @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
-    @Bind(R.id.list) RecyclerView mProjectsListView;
-    @Bind(R.id.message_text) TextView mMessageView;
+    @BindView(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
+    @BindView(R.id.list) RecyclerView mProjectsListView;
+    @BindView(R.id.message_text) TextView mMessageView;
 
     private LinearLayoutManager mLayoutManager;
     private ProjectsAdapter mProjectsAdapter;
@@ -172,7 +171,6 @@ public class ProjectsFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
 
         mProjectsAdapter = new ProjectsAdapter(getActivity(), mProjectsListener);
         mLayoutManager = new LinearLayoutManager(getActivity());
@@ -189,12 +187,6 @@ public class ProjectsFragment extends BaseFragment {
         });
 
         loadData();
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        ButterKnife.unbind(this);
     }
 
     @Override

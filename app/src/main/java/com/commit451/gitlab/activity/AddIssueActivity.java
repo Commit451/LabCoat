@@ -41,7 +41,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import retrofit2.Callback;
@@ -70,33 +70,33 @@ public class AddIssueActivity extends MorphActivity implements ATEActivityThemeC
         return intent;
     }
 
-    @Bind(R.id.root)
+    @BindView(R.id.root)
     FrameLayout mRoot;
-    @Bind(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar mToolbar;
-    @Bind(R.id.title_text_input_layout)
+    @BindView(R.id.title_text_input_layout)
     TextInputLayout mTitleInputLayout;
-    @Bind(R.id.title)
+    @BindView(R.id.title)
     EditText mTitleInput;
-    @Bind(R.id.description)
+    @BindView(R.id.description)
     EditText mDescriptionInput;
-    @Bind(R.id.progress)
+    @BindView(R.id.progress)
     View mProgress;
-    @Bind(R.id.assignee_progress)
+    @BindView(R.id.assignee_progress)
     View mAssigneeProgress;
-    @Bind(R.id.assignee_spinner)
+    @BindView(R.id.assignee_spinner)
     Spinner mAssigneeSpinner;
-    @Bind(R.id.milestone_progress)
+    @BindView(R.id.milestone_progress)
     View mMilestoneProgress;
-    @Bind(R.id.milestone_spinner)
+    @BindView(R.id.milestone_spinner)
     Spinner mMilestoneSpinner;
-    @Bind(R.id.label_label)
+    @BindView(R.id.label_label)
     TextView mLabelLabel;
-    @Bind(R.id.labels_progress)
+    @BindView(R.id.labels_progress)
     View mLabelsProgress;
-    @Bind(R.id.list_labels)
+    @BindView(R.id.list_labels)
     AdapterFlowLayout mListLabels;
-    @Bind(R.id.text_add_labels)
+    @BindView(R.id.text_add_labels)
     TextView mTextAddLabels;
 
     private Project mProject;

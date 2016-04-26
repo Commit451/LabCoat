@@ -22,10 +22,10 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Contributor;
+import com.commit451.gitlab.navigation.NavigationManager;
 import com.commit451.gitlab.transformation.CircleTransformation;
 import com.commit451.gitlab.util.ImageUtil;
 import com.commit451.gitlab.util.IntentUtil;
-import com.commit451.gitlab.navigation.NavigationManager;
 import com.jawnnypoo.physicslayout.Physics;
 import com.jawnnypoo.physicslayout.PhysicsConfig;
 import com.jawnnypoo.physicslayout.PhysicsFrameLayout;
@@ -34,7 +34,7 @@ import org.jbox2d.common.Vec2;
 
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import retrofit2.Callback;
@@ -51,15 +51,15 @@ public class AboutActivity extends BaseActivity {
         return intent;
     }
 
-    @Bind(R.id.root)
+    @BindView(R.id.root)
     ViewGroup mRoot;
-    @Bind(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar mToolbar;
-    @Bind(R.id.contributors)
+    @BindView(R.id.contributors)
     TextView mContributors;
-    @Bind(R.id.physics_layout)
+    @BindView(R.id.physics_layout)
     PhysicsFrameLayout mPhysicsLayout;
-    @Bind(R.id.progress)
+    @BindView(R.id.progress)
     View mProgress;
 
     @OnClick(R.id.sauce)
