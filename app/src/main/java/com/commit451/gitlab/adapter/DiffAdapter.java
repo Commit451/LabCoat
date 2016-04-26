@@ -44,8 +44,6 @@ public class DiffAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         mValues.clear();
         if (diffs != null) {
             mValues.addAll(diffs);
-            notifyItemRangeInserted(HEADER_COUNT, diffs.size());
-            return;
         }
         notifyDataSetChanged();
     }

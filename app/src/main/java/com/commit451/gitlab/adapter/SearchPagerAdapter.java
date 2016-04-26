@@ -11,7 +11,6 @@ import com.commit451.gitlab.fragment.UsersFragment;
 
 /**
  * The pager that controls the fragments when on the search activity
- * Created by Jawn on 9/21/2015.
  */
 public class SearchPagerAdapter extends FragmentPagerAdapter {
 

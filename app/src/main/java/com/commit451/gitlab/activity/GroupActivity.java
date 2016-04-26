@@ -71,16 +71,19 @@ public class GroupActivity extends BaseActivity implements ATEActivityThemeCusto
     @Bind(R.id.viewpager) ViewPager mViewPager;
     @Bind(R.id.tabs) TabLayout mTabLayout;
     @Bind(R.id.backdrop) ImageView mBackdrop;
+    @Bind(R.id.progress) View mProgress;
 
     private final Callback<GroupDetail> mGroupCallback = new EasyCallback<GroupDetail>() {
         @Override
         public void onResponse(@NonNull GroupDetail response) {
+            mProgress.setVisibility(View.GONE);
             bind(response);
         }
 
         @Override
         public void onAllFailure(Throwable t) {
             Timber.e(t, null);
+            mProgress.setVisibility(View.GONE);
             showError();
         }
     };
@@ -109,6 +112,7 @@ public class GroupActivity extends BaseActivity implements ATEActivityThemeCusto
             Group group = Parcels.unwrap(getIntent().getParcelableExtra(KEY_GROUP));
             bind(group);
         } else {
+            mProgress.setVisibility(View.VISIBLE);
             long groupId = getIntent().getLongExtra(KEY_GROUP_ID, -1);
             GitLabClient.instance().getGroup(groupId).enqueue(mGroupCallback);
         }

@@ -7,6 +7,7 @@ import android.support.annotation.VisibleForTesting;
 
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.core.CrashlyticsCore;
+import com.novoda.simplechromecustomtabs.SimpleChromeCustomTabs;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.otto.Bus;
 
@@ -49,6 +50,7 @@ public class LabCoatApp extends Application {
         }
 
         JodaTimeAndroid.init(this);
+        SimpleChromeCustomTabs.initialize(this);
     }
 
     @VisibleForTesting

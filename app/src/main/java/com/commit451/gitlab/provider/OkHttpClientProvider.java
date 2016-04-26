@@ -12,7 +12,6 @@ import okhttp3.logging.HttpLoggingInterceptor;
 
 /**
  * Creates an OkHttpClient with the needed defaults
- * Created by Jawn on 12/4/2015.
  */
 public final class OkHttpClientProvider {
     private static Account sAccount;

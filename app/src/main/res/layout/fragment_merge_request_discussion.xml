@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.commit451.gitlab.view.GitLabSwipeRefreshLayout
+    <com.commit451.gitlab.view.LabCoatSwipeRefreshLayout
         android:id="@+id/swipe_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-    </com.commit451.gitlab.view.GitLabSwipeRefreshLayout>
+    </com.commit451.gitlab.view.LabCoatSwipeRefreshLayout>
 
     <include layout="@layout/view_send_message" />
 

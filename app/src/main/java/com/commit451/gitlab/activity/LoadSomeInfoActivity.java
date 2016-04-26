@@ -14,7 +14,7 @@ import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryCommit;
-import com.commit451.gitlab.util.NavigationManager;
+import com.commit451.gitlab.navigation.NavigationManager;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;

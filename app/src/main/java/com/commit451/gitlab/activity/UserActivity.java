@@ -36,7 +36,6 @@ import butterknife.ButterKnife;
 
 /**
  * User activity, which shows the user!
- * Created by Jawn on 9/21/2015.
  */
 public class UserActivity extends BaseActivity implements ATEActivityThemeCustomizer {
 

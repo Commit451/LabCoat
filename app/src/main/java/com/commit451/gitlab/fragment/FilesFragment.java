@@ -27,7 +27,7 @@ import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryTreeObject;
 import com.commit451.gitlab.util.IntentUtil;
-import com.commit451.gitlab.util.NavigationManager;
+import com.commit451.gitlab.navigation.NavigationManager;
 import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;

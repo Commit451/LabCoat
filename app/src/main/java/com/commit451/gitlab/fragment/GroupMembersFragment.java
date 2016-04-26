@@ -20,7 +20,7 @@ import com.commit451.gitlab.dialog.AccessDialog;
 import com.commit451.gitlab.event.MemberAddedEvent;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.model.api.Member;
-import com.commit451.gitlab.util.NavigationManager;
+import com.commit451.gitlab.navigation.NavigationManager;
 import com.commit451.gitlab.viewHolder.ProjectMemberViewHolder;
 import com.squareup.otto.Subscribe;
 

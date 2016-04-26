@@ -21,7 +21,7 @@ import com.commit451.gitlab.event.MergeRequestChangedEvent;
 import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryCommit;
-import com.commit451.gitlab.util.NavigationManager;
+import com.commit451.gitlab.navigation.NavigationManager;
 import com.squareup.otto.Subscribe;
 
 import org.parceler.Parcels;

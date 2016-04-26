@@ -1,4 +1,4 @@
-package com.commit451.gitlab.util;
+package com.commit451.gitlab.navigation;
 
 import android.app.Activity;
 import android.app.ActivityOptions;
@@ -37,6 +37,7 @@ import com.commit451.gitlab.model.api.Milestone;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryCommit;
 import com.commit451.gitlab.model.api.UserBasic;
+import com.commit451.gitlab.util.IntentUtil;
 
 import timber.log.Timber;
 

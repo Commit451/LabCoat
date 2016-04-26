@@ -1,7 +1,6 @@
 package com.commit451.gitlab.view;
 
 import android.content.Context;
-import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 
 import com.afollestad.appthemeengine.Config;
@@ -11,14 +10,14 @@ import com.pnikosis.materialishprogress.ProgressWheel;
 /**
  * A subclass of ProgressWheel that automagically themes itself to the accent color
  */
-public class GitLabProgressView extends ProgressWheel {
+public class LabCoatProgressView extends ProgressWheel {
 
-    public GitLabProgressView(Context context) {
+    public LabCoatProgressView(Context context) {
         super(context);
         init();
     }
 
-    public GitLabProgressView(Context context, AttributeSet attrs) {
+    public LabCoatProgressView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }

@@ -17,7 +17,6 @@ import in.uncod.android.bypass.Bypass;
 
 /**
  * Shows the comments and details of a merge request
- * Created by John on 11/16/15.
  */
 public class MergeRequestDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 

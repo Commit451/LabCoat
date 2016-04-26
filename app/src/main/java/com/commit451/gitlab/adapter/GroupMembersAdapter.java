@@ -15,7 +15,6 @@ import java.util.Collection;
 
 /**
  * Adapter for a list of users
- * Created by John on 9/28/15.
  */
 public class GroupMembersAdapter extends RecyclerView.Adapter<ProjectMemberViewHolder>  {
 

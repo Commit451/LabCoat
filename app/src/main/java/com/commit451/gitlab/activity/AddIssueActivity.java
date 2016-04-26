@@ -32,7 +32,7 @@ import com.commit451.gitlab.model.api.Label;
 import com.commit451.gitlab.model.api.Member;
 import com.commit451.gitlab.model.api.Milestone;
 import com.commit451.gitlab.model.api.Project;
-import com.commit451.gitlab.util.NavigationManager;
+import com.commit451.gitlab.navigation.NavigationManager;
 import com.commit451.gitlab.view.AdapterFlowLayout;
 
 import org.parceler.Parcels;

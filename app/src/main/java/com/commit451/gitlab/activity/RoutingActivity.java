@@ -7,9 +7,9 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.util.DeepLinker;
+import com.commit451.gitlab.navigation.DeepLinker;
 import com.commit451.gitlab.util.IntentUtil;
-import com.commit451.gitlab.util.NavigationManager;
+import com.commit451.gitlab.navigation.NavigationManager;
 
 import timber.log.Timber;
 
@@ -45,12 +45,19 @@ public class RoutingActivity extends Activity {
         boolean handled = false;
         if (link.getPath().contains("issues")) {
             Timber.d("Parsing as issue uri");
-            if (link.getPathSegments().size() == 3) {
+            if (link.getLastPathSegment().equals("issues")) {
                 //this means it was just a link to something like
                 //gitlab.com/Commit451/LabCoat/issues
                 launchProject(link);
                 handled = true;
-            } else if (link.getPathSegments().size() == 4) {
+            } else {
+                int indexOfIssuesPathSegment = -1;
+                for (int i=0; i<link.getPathSegments().size(); i++) {
+                    if (link.getPathSegments().get(i).equals("issues")) {
+                        indexOfIssuesPathSegment = i;
+                        break;
+                    }
+                }
                 //this is good, it means it is a link to an actual issue
                 String projectNamespace = link.getPathSegments().get(0);
                 String projectName = link.getPathSegments().get(1);

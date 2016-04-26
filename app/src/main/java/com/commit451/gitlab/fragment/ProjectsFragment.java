@@ -18,7 +18,7 @@ import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.model.api.Project;
-import com.commit451.gitlab.util.NavigationManager;
+import com.commit451.gitlab.navigation.NavigationManager;
 import com.commit451.gitlab.util.PaginationUtil;
 
 import org.parceler.Parcels;

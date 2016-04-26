@@ -18,7 +18,6 @@ import java.util.Set;
 
 /**
  * Automagically fills in email accounts
- * Created by John on 8/13/15.
  */
 public class EmailAutoCompleteTextView extends AppCompatAutoCompleteTextView {
 

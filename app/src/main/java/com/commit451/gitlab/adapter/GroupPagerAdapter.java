@@ -16,7 +16,6 @@ import java.util.Set;
 
 /**
  * Group pager adapter
- * Created by Jawn on 9/21/2015.
  */
 public class GroupPagerAdapter extends FragmentPagerAdapter {
 

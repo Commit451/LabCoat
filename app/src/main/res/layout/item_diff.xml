@@ -18,7 +18,7 @@
         app:typeface="roboto_medium"
         tools:text="NewFile.java" />
 
-    <com.commit451.gitlab.view.GitLabCardView
+    <com.commit451.gitlab.view.LabCoatCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
@@ -42,6 +42,6 @@
             app:diff_show_diff_info="true"
             tools:text="+blah blah blah" />
 
-    </com.commit451.gitlab.view.GitLabCardView>
+    </com.commit451.gitlab.view.LabCoatCardView>
 
 </LinearLayout>
