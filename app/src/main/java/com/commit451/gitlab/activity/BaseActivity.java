@@ -3,22 +3,15 @@ package com.commit451.gitlab.activity;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 
-import com.afollestad.appthemeengine.ATEActivity;
 import com.commit451.gitlab.R;
 
 /**
  * Base activity for others to derive from
  */
-public class BaseActivity extends ATEActivity {
-
-    @Nullable
-    @Override
-    public final String getATEKey() {
-        return PreferenceManager.getDefaultSharedPreferences(this).getBoolean("dark_theme", true) ?
-                "dark_theme" : "light_theme";
-    }
+public class BaseActivity extends AppCompatActivity {
 
     public boolean hasEmptyFields(TextInputLayout... textInputLayouts) {
         boolean hasEmptyField = false;

@@ -17,8 +17,7 @@
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:paddingRight="@dimen/activity_horizontal_margin"
             android:clipToPadding="false"
-            android:clipChildren="false"
-            android:tag="background|primary_color_dark"/>
+            android:clipChildren="false"/>
 
         <com.commit451.gitlab.view.LabCoatSwipeRefreshLayout
             android:id="@+id/swipe_layout"

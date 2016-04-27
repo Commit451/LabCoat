@@ -42,7 +42,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingBottom="2dp"
-                    android:tag="text_color|primary_text"
                     android:textSize="14sp"
                     tools:text="Jawnnypoo" />
 
@@ -50,7 +49,6 @@
                     android:id="@+id/commit_time"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:tag="text_color|secondary_text"
                     android:textSize="14sp"
                     tools:text="May 25, 2019" />
             </LinearLayout>
@@ -61,7 +59,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="2dp"
-            android:tag="text_color|primary_text"
             android:textSize="16sp"
             tools:text="I commited all the code at once cause I am cool. So sorry, the message is so long that..." />
 
@@ -69,7 +66,6 @@
             android:id="@+id/commit_message"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:tag="text_color|secondary_text"
             android:textSize="14sp"
             tools:text="... it doesn't even fit in the title." />
     </LinearLayout>

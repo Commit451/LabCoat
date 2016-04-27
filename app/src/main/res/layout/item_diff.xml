@@ -13,7 +13,6 @@
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
         android:paddingTop="8dp"
-        android:tag="text_color|accent_color"
         android:textSize="16sp"
         app:typeface="roboto_medium"
         tools:text="NewFile.java" />

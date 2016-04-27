@@ -16,7 +16,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_margin="8dp"
-        android:tag="text_color|primary_text"
         android:textSize="@dimen/text_size_small"
         tools:text="Build: #123"/>
 
@@ -27,7 +26,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_margin="8dp"
-        android:tag="text_color|primary_text"
         android:textSize="@dimen/text_size_small"
         tools:text="Status: running"/>
 
@@ -38,7 +36,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_margin="8dp"
-        android:tag="text_color|primary_text"
         android:textSize="@dimen/text_size_small"
         tools:text="Duration: 12 seconds"/>
 

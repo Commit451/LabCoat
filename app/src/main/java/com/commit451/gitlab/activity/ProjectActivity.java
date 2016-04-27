@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,7 +23,6 @@ import android.widget.Toast;
 import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.SectionsPagerAdapter;
-import com.commit451.gitlab.adapter.ThemedArrayAdapter;
 import com.commit451.gitlab.animation.HideRunnable;
 import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
@@ -124,7 +124,7 @@ public class ProjectActivity extends BaseActivity {
                 mBranchSpinner.setAlpha(0.0f);
                 mBranchSpinner.animate().alpha(1.0f);
                 // Set up the dropdown list navigation in the action bar.
-                mBranchSpinner.setAdapter(new ThemedArrayAdapter<>(ProjectActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, response));
+                mBranchSpinner.setAdapter(new ArrayAdapter<>(ProjectActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, response));
             }
             for (int i = 0; i < response.size(); i++) {
                 if (response.get(i).getName().equals(mProject.getDefaultBranch())) {

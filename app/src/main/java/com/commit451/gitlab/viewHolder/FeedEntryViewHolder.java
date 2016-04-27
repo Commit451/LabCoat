@@ -8,12 +8,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.afollestad.appthemeengine.ATE;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.rss.Entry;
 import com.commit451.gitlab.transformation.CircleTransformation;
-import com.commit451.gitlab.util.AppThemeUtil;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

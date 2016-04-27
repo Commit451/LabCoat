@@ -16,7 +16,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
 
-import com.afollestad.appthemeengine.customizers.ATEActivityThemeCustomizer;
 import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.GroupAdapter;
@@ -39,13 +38,7 @@ import timber.log.Timber;
 /**
  * Displays the groups of the current user
  */
-public class GroupsActivity extends BaseActivity implements ATEActivityThemeCustomizer {
-
-    @Override
-    public int getActivityTheme() {
-        return PreferenceManager.getDefaultSharedPreferences(this).getBoolean("dark_theme", true) ?
-                R.style.Activity_Groups : R.style.ActivityLight_Groups;
-    }
+public class GroupsActivity extends BaseActivity {
 
     public static Intent newInstance(Context context) {
         Intent intent = new Intent(context, GroupsActivity.class);

@@ -18,7 +18,6 @@
             android:layout_width="match_parent"
             android:layout_height="256dp"
             android:fitsSystemWindows="true"
-            android:tag="ate_ignore"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <ImageView
@@ -37,7 +36,6 @@
                 android:layout_height="104dp"
                 android:gravity="top"
                 android:minHeight="?attr/actionBarSize"
-                android:tag="ate_ignore"
                 app:layout_collapseMode="pin"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
                 app:titleMarginTop="13dp"/>

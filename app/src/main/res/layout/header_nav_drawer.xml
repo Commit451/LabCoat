@@ -13,8 +13,7 @@
         android:contentDescription="@null"
         android:fitsSystemWindows="false"
         android:scaleType="centerCrop"
-        android:src="@drawable/header"
-        android:tag="background|primary_color"/>
+        android:src="@drawable/header"/>
 
     <com.commit451.foregroundimageview.ForegroundImageView
         android:id="@+id/profile_image"

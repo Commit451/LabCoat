@@ -13,7 +13,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.afollestad.appthemeengine.customizers.ATEActivityThemeCustomizer;
 import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.ProjectsPagerAdapter;
@@ -27,13 +26,7 @@ import butterknife.ButterKnife;
 /**
  * Shows the projects
  */
-public class ProjectsActivity extends BaseActivity implements ATEActivityThemeCustomizer {
-
-    @Override
-    public int getActivityTheme() {
-        return PreferenceManager.getDefaultSharedPreferences(this).getBoolean("dark_theme", true) ?
-                R.style.Activity_Projects : R.style.ActivityLight_Projects;
-    }
+public class ProjectsActivity extends BaseActivity {
 
     public static Intent newInstance(Context context) {
         Intent intent = new Intent(context, ProjectsActivity.class);

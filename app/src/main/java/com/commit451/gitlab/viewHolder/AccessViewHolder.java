@@ -8,9 +8,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.afollestad.appthemeengine.ATE;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.util.AppThemeUtil;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

@@ -8,12 +8,9 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.TextView;
 
 import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
@@ -25,6 +22,7 @@ import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.model.api.Note;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.util.PaginationUtil;
+import com.commit451.gitlab.view.SendMessageView;
 import com.commit451.teleprinter.Teleprinter;
 import com.squareup.otto.Subscribe;
 
@@ -33,7 +31,6 @@ import org.parceler.Parcels;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.OnClick;
 import timber.log.Timber;
 
 /**
@@ -59,8 +56,8 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
     SwipeRefreshLayout mSwipeRefreshLayout;
     @BindView(R.id.list)
     RecyclerView mNotesRecyclerView;
-    @BindView(R.id.new_note_edit)
-    EditText mNewNoteEdit;
+    @BindView(R.id.send_message_view)
+    SendMessageView mSendMessageView;
     @BindView(R.id.progress)
     View mProgress;
 
@@ -74,11 +71,6 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
     Teleprinter mTeleprinter;
 
     EventReceiver mEventReceiver;
-
-    @OnClick(R.id.new_note_button)
-    public void onNewNoteClick() {
-        postNote();
-    }
 
     private final RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
         @Override
@@ -192,11 +184,10 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
         mNotesRecyclerView.setAdapter(mMergeRequestDetailAdapter);
         mNotesRecyclerView.addOnScrollListener(mOnScrollListener);
 
-        mNewNoteEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        mSendMessageView.setCallbacks(new SendMessageView.Callbacks() {
             @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                postNote();
-                return true;
+            public void onSendClicked(String message) {
+                postNote(message);
             }
         });
 
@@ -235,10 +226,9 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
         GitLabClient.instance().getMergeRequestNotes(mNextPageUrl.toString()).enqueue(mMoreNotesCallback);
     }
 
-    private void postNote() {
-        String body = mNewNoteEdit.getText().toString();
+    private void postNote(String message) {
 
-        if (body.length() < 1) {
+        if (message.length() < 1) {
             return;
         }
 
@@ -247,9 +237,9 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
         mProgress.animate().alpha(1.0f);
         // Clear text & collapse keyboard
         mTeleprinter.hideKeyboard();
-        mNewNoteEdit.setText("");
+        mSendMessageView.clearText();
 
-        GitLabClient.instance().addMergeRequestNote(mProject.getId(), mMergeRequest.getId(), body).enqueue(mPostNoteCallback);
+        GitLabClient.instance().addMergeRequestNote(mProject.getId(), mMergeRequest.getId(), message).enqueue(mPostNoteCallback);
     }
 
     private class EventReceiver {

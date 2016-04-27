@@ -9,7 +9,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.graphics.Palette;
@@ -17,15 +16,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.afollestad.appthemeengine.Config;
-import com.afollestad.appthemeengine.customizers.ATEActivityThemeCustomizer;
-import com.afollestad.appthemeengine.util.ATEUtil;
 import com.commit451.easel.Easel;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.fragment.FeedFragment;
 import com.commit451.gitlab.model.api.UserBasic;
-import com.commit451.gitlab.util.AppThemeUtil;
 import com.commit451.gitlab.transformation.PaletteTransformation;
 import com.commit451.gitlab.util.ImageUtil;
 
@@ -37,13 +32,7 @@ import butterknife.ButterKnife;
 /**
  * User activity, which shows the user!
  */
-public class UserActivity extends BaseActivity implements ATEActivityThemeCustomizer {
-
-    @Override
-    public int getActivityTheme() {
-        return PreferenceManager.getDefaultSharedPreferences(this).getBoolean("dark_theme", true) ?
-                R.style.Activity_User : R.style.ActivityLight_User;
-    }
+public class UserActivity extends BaseActivity {
 
     private static final String KEY_USER = "user";
 
@@ -67,10 +56,6 @@ public class UserActivity extends BaseActivity implements ATEActivityThemeCustom
         mUser = Parcels.unwrap(getIntent().getParcelableExtra(KEY_USER));
 
         // Default content and scrim colors
-        mCollapsingToolbarLayout.setContentScrimColor(
-                Config.primaryColor(this, AppThemeUtil.resolveThemeKey(this)));
-        mCollapsingToolbarLayout.setStatusBarScrimColor(
-                Config.primaryColorDark(this, AppThemeUtil.resolveThemeKey(this)));
         mCollapsingToolbarLayout.setCollapsedTitleTextColor(Color.WHITE);
         mCollapsingToolbarLayout.setExpandedTitleColor(Color.WHITE);
 
@@ -110,8 +95,8 @@ public class UserActivity extends BaseActivity implements ATEActivityThemeCustom
 
     private void bindPalette(Palette palette) {
         int animationTime = 1000;
-        int vibrantColor = palette.getVibrantColor(AppThemeUtil.resolvePrimaryColor(this));
-        int darkerColor = ATEUtil.darkenColor(vibrantColor);
+        int vibrantColor = palette.getVibrantColor(Easel.getThemeAttrColor(this, R.attr.colorPrimary));
+        int darkerColor = Easel.getDarkerColor(vibrantColor);
 
         if (Build.VERSION.SDK_INT >= 21) {
             Easel.getNavigationBarColorAnimator(getWindow(), darkerColor)

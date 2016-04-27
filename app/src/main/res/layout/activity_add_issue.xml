@@ -82,7 +82,6 @@
                     android:id="@+id/assignee_spinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:tag="tint|primary_text"
                     android:visibility="gone"/>
 
             </FrameLayout>
@@ -109,7 +108,6 @@
                     android:id="@+id/milestone_spinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:tag="tint|primary_text"
                     android:visibility="gone"/>
 
             </FrameLayout>

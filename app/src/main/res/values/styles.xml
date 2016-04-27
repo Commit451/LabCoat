@@ -3,10 +3,11 @@
 
     <!-- Dark theme (default) -->
     <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">@color/primary_default</item>
+        <item name="colorAccent">@color/accent_default</item>
         <item name="cardBackgroundColor">#424242</item>
         <item name="android:windowContentTransitions" tools:ignore="NewApi">true</item>
         <item name="dialogTheme">@style/AppDialogTheme</item>
-        <item name="ate_key">dark_theme</item>
     </style>
 
     <style name="Activity" parent="AppTheme"/>

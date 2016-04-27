@@ -39,7 +39,6 @@
                             android:layout_marginLeft="16dp"
                             android:layout_marginRight="16dp"
                             android:layout_marginTop="16dp"
-                            android:tag="text_color|primary_text"
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             tools:text="Duration: 46 minutes"/>
 
@@ -50,7 +49,6 @@
                             android:layout_marginLeft="16dp"
                             android:layout_marginRight="16dp"
                             android:layout_marginTop="16dp"
-                            android:tag="text_color|primary_text"
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             tools:text="Created: 46 minutes ago"/>
 
@@ -61,7 +59,6 @@
                             android:layout_marginLeft="16dp"
                             android:layout_marginRight="16dp"
                             android:layout_marginTop="16dp"
-                            android:tag="text_color|primary_text"
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             tools:text="Finished: 46 minutes ago"/>
 
@@ -72,7 +69,6 @@
                             android:layout_marginLeft="16dp"
                             android:layout_marginRight="16dp"
                             android:layout_marginTop="16dp"
-                            android:tag="text_color|primary_text"
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             tools:text="Runner: 123"/>
 
@@ -98,7 +94,6 @@
                             android:layout_marginLeft="16dp"
                             android:layout_marginRight="16dp"
                             android:layout_marginTop="16dp"
-                            android:tag="text_color|primary_text"
                             android:text="@string/build_commit"
                             android:textAppearance="?android:attr/textAppearanceLarge"/>
 
@@ -109,7 +104,6 @@
                             android:layout_marginLeft="16dp"
                             android:layout_marginRight="16dp"
                             android:layout_marginTop="16dp"
-                            android:tag="text_color|primary_text"
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             tools:text="Finished: 46 minutes ago"/>
 
@@ -120,7 +114,6 @@
                             android:layout_marginLeft="16dp"
                             android:layout_marginRight="16dp"
                             android:layout_marginTop="16dp"
-                            android:tag="text_color|primary_text"
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             tools:text="Runner: 123"/>
 

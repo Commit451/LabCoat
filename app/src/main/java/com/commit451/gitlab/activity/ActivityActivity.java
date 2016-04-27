@@ -10,7 +10,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
-import com.afollestad.appthemeengine.customizers.ATEActivityThemeCustomizer;
 import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
@@ -25,15 +24,9 @@ import timber.log.Timber;
 /**
  * Displays the current users projects feed
  */
-public class ActivityActivity extends BaseActivity implements ATEActivityThemeCustomizer {
+public class ActivityActivity extends BaseActivity {
 
     private static final String TAG_FEED_FRAGMENT = "feed_fragment";
-
-    @Override
-    public int getActivityTheme() {
-        return PreferenceManager.getDefaultSharedPreferences(this).getBoolean("dark_theme", true) ?
-                R.style.Activity_Activity : R.style.ActivityLight_Activity;
-    }
 
     public static Intent newInstance(Context context) {
         Intent intent = new Intent(context, ActivityActivity.class);

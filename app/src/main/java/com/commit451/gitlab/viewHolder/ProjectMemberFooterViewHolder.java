@@ -6,10 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.afollestad.appthemeengine.ATE;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.api.ProjectNamespace;
-import com.commit451.gitlab.util.AppThemeUtil;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
