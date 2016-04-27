@@ -19,6 +19,7 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.api.exception.HttpException;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryFile;
@@ -78,6 +79,13 @@ public class ProjectFragment extends ButterKnifeFragment {
     void onForkClicked() {
         if (mProject != null) {
             GitLabClient.instance().forkProject(mProject.getId()).enqueue(mForkCallback);
+        }
+    }
+
+    @OnClick(R.id.root_star)
+    void onStarClicked() {
+        if (mProject != null) {
+            GitLabClient.instance().starProject(mProject.getId()).enqueue(mStarCallback);
         }
     }
 
@@ -177,6 +185,35 @@ public class ProjectFragment extends ButterKnifeFragment {
                 return;
             }
             Snackbar.make(mSwipeRefreshLayout, R.string.fork_failed, Snackbar.LENGTH_SHORT)
+                    .show();
+        }
+    };
+
+    private EasyCallback<Project> mStarCallback = new EasyCallback<Project>() {
+        @Override
+        public void onResponse(@NonNull Project response) {
+            if (getView() == null) {
+                return;
+            }
+            Snackbar.make(mSwipeRefreshLayout, R.string.project_starred, Snackbar.LENGTH_SHORT)
+                    .show();
+        }
+
+        @Override
+        public void onAllFailure(Throwable t) {
+            if (getView() == null) {
+                return;
+            }
+            String message = null;
+            if (t instanceof HttpException) {
+                if (((HttpException) t).getCode() == 304) {
+                    message = getString(R.string.project_already_starred);
+                }
+            }
+            if (message == null) {
+                message = getString(R.string.project_star_failed);
+            }
+            Snackbar.make(mSwipeRefreshLayout, message, Snackbar.LENGTH_SHORT)
                     .show();
         }
     };

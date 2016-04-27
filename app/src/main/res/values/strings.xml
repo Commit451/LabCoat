@@ -144,6 +144,9 @@
     <string name="no_readme_found">No README found for project</string>
     <string name="created_by">Created by %1$s</string>
     <string name="project_forked">Project forked into user namespace</string>
+    <string name="project_starred">Project starred</string>
+    <string name="project_already_starred">Project already starred</string>
+    <string name="project_star_failed">Failed to star project</string>
     <string name="fork_failed">Failed to fork project</string>
     <!-- Commits -->
     <string name="no_commits_found">No commits found.</string>

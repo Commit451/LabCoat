@@ -163,6 +163,9 @@ public interface GitLab {
     @POST(API_VERSION + "/projects/fork/{id}")
     Call<Void> forkProject(@Path("id") long projectId);
 
+    @POST(API_VERSION + "/projects/{id}/star")
+    Call<Project> starProject(@Path("id") long projectId);
+
     /* --- MILESTONES --- */
 
     @GET(API_VERSION + "/projects/{id}/milestones")
