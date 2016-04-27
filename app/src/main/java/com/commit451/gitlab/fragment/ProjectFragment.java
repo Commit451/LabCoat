@@ -204,16 +204,40 @@ public class ProjectFragment extends ButterKnifeFragment {
             if (getView() == null) {
                 return;
             }
-            String message = null;
             if (t instanceof HttpException) {
                 if (((HttpException) t).getCode() == 304) {
-                    message = getString(R.string.project_already_starred);
+                    Snackbar.make(mSwipeRefreshLayout, R.string.project_already_starred, Snackbar.LENGTH_SHORT)
+                            .setAction(R.string.project_unstar, new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    GitLabClient.instance().unstarProject(mProject.getId()).enqueue(mUnstarProjectCallback);
+                                }
+                            })
+                            .show();
+                    return;
                 }
             }
-            if (message == null) {
-                message = getString(R.string.project_star_failed);
+            Snackbar.make(mSwipeRefreshLayout, R.string.project_star_failed, Snackbar.LENGTH_SHORT)
+                    .show();
+        }
+    };
+
+    private EasyCallback<Project> mUnstarProjectCallback = new EasyCallback<Project>() {
+        @Override
+        public void onResponse(@NonNull Project response) {
+            if (getView() == null) {
+                return;
             }
-            Snackbar.make(mSwipeRefreshLayout, message, Snackbar.LENGTH_SHORT)
+            Snackbar.make(mSwipeRefreshLayout, R.string.project_unstarred, Snackbar.LENGTH_SHORT)
+                    .show();
+        }
+
+        @Override
+        public void onAllFailure(Throwable t) {
+            if (getView() == null) {
+                return;
+            }
+            Snackbar.make(mSwipeRefreshLayout, R.string.unstar_failed, Snackbar.LENGTH_SHORT)
                     .show();
         }
     };
