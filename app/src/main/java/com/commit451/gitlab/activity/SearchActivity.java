@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.SearchPagerAdapter;
+import com.commit451.jounce.Debouncer;
 import com.commit451.teleprinter.Teleprinter;
 
 import butterknife.BindView;
@@ -47,14 +48,22 @@ public class SearchActivity extends BaseActivity {
             @Override
             public void run() {
                 mClearView.setVisibility(View.GONE);
-                mSearchView.getText().clear();
-                mTeleprinter.showKeyboard(mSearchView);
+
             }
         });
+        mSearchView.getText().clear();
+        mTeleprinter.showKeyboard(mSearchView);
+        mSearchDebouncer.cancel();
     }
 
-    private SearchDebouncer mSearchDebouncer;
     private Teleprinter mTeleprinter;
+
+    private Debouncer<CharSequence> mSearchDebouncer = new Debouncer<CharSequence>() {
+        @Override
+        public void onValueSet(CharSequence value) {
+            search();
+        }
+    };
 
     private final TextView.OnEditorActionListener mOnSearchEditorActionListener = new TextView.OnEditorActionListener() {
         @Override
@@ -64,7 +73,6 @@ public class SearchActivity extends BaseActivity {
             }
             search();
             mTeleprinter.hideKeyboard();
-            mRoot.removeCallbacks(mSearchDebouncer);
             return false;
         }
     };
@@ -88,13 +96,12 @@ public class SearchActivity extends BaseActivity {
             }
             if (s != null &&  s.length() > 3) {
                 Timber.d("Posting new future search");
-                mRoot.removeCallbacks(mSearchDebouncer);
-                mRoot.postDelayed(mSearchDebouncer, 500);
+                mSearchDebouncer.setValue(s);
             }
             //This means they are backspacing
             if (before > count) {
                 Timber.d("Removing future search");
-                mRoot.removeCallbacks(mSearchDebouncer);
+                mSearchDebouncer.cancel();
             }
         }
 
@@ -120,18 +127,10 @@ public class SearchActivity extends BaseActivity {
         mTabLayout.setupWithViewPager(mViewPager);
         mSearchView.setOnEditorActionListener(mOnSearchEditorActionListener);
         mSearchView.addTextChangedListener(mTextWatcher);
-        mSearchDebouncer = new SearchDebouncer();
     }
 
     private void search() {
         Timber.d("Searching");
         mSearchPagerAdapter.searchQuery(mSearchView.getText().toString());
-    }
-
-    private class SearchDebouncer implements Runnable{
-        @Override
-        public void run() {
-            search();
-        }
     }
 }
