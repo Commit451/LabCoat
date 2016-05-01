@@ -333,6 +333,14 @@ public class IssueActivity extends BaseActivity {
             mIssueIid = getIntent().getStringExtra(EXTRA_ISSUE_IID);
             String projectNamespace = getIntent().getStringExtra(EXTRA_PROJECT_NAMESPACE);
             String projectName = getIntent().getStringExtra(EXTRA_PROJECT_NAME);
+            mSwipeRefreshLayout.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (mSwipeRefreshLayout != null) {
+                        mSwipeRefreshLayout.setRefreshing(true);
+                    }
+                }
+            });
             GitLabClient.instance().getProject(projectNamespace, projectName).enqueue(mProjectCallback);
         }
     }
