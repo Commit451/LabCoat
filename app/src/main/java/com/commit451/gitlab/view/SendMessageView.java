@@ -2,6 +2,7 @@ package com.commit451.gitlab.view;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.widget.EditText;
@@ -30,6 +31,20 @@ public class SendMessageView extends LinearLayout {
         }
     }
 
+    @OnClick(R.id.icon_gallery)
+    void onGalleryClicked() {
+        if (mCallbacks != null) {
+            mCallbacks.onGalleryClicked();
+        }
+    }
+
+    @OnClick(R.id.icon_camera)
+    void onCameraClicked() {
+        if (mCallbacks != null) {
+            mCallbacks.onCameraClicked();
+        }
+    }
+
     private Callbacks mCallbacks;
 
     public SendMessageView(Context context) {
@@ -55,8 +70,12 @@ public class SendMessageView extends LinearLayout {
 
     private void init() {
         inflate(getContext(), R.layout.view_send_message, this);
+        setOrientation(VERTICAL);
         ButterKnife.bind(this);
         setBackgroundColor(Easel.getThemeAttrColor(getContext(), R.attr.colorPrimary));
+        if (Build.VERSION.SDK_INT >= 21) {
+            setElevation(getResources().getDimensionPixelSize(R.dimen.toolbar_elevation));
+        }
 
         mTextNote.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -75,7 +94,13 @@ public class SendMessageView extends LinearLayout {
         mTextNote.setText("");
     }
 
+    public void appendText(CharSequence text) {
+        mTextNote.append(text);
+    }
+
     public interface Callbacks {
         void onSendClicked(String message);
+        void onGalleryClicked();
+        void onCameraClicked();
     }
 }

@@ -183,6 +183,12 @@ public class NavigationManager {
         activity.startActivity(intent);
     }
 
+    public static void navigateToChoosePhoto(Activity activity, int requestCode) {
+        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+        photoPickerIntent.setType("image/*");
+        activity.startActivityForResult(photoPickerIntent, requestCode);
+    }
+
     private static void startMorphActivity(Activity activity, View fab, Intent intent) {
         if (Build.VERSION.SDK_INT >= 21 && fab != null) {
             ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation

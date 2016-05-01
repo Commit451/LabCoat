@@ -2,8 +2,10 @@ package com.commit451.gitlab.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -22,6 +24,7 @@ import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.IssueChangedEvent;
 import com.commit451.gitlab.event.IssueReloadEvent;
+import com.commit451.gitlab.model.api.FileUploadResponse;
 import com.commit451.gitlab.model.api.Issue;
 import com.commit451.gitlab.model.api.Note;
 import com.commit451.gitlab.model.api.Project;
@@ -34,11 +37,15 @@ import com.squareup.otto.Subscribe;
 
 import org.parceler.Parcels;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 import retrofit2.Callback;
 import timber.log.Timber;
 
@@ -52,6 +59,8 @@ public class IssueActivity extends BaseActivity {
     private static final String EXTRA_PROJECT_NAMESPACE = "project_namespace";
     private static final String EXTRA_PROJECT_NAME = "project_name";
     private static final String EXTRA_ISSUE_IID = "extra_issue_iid";
+
+    private static final int REQUEST_IMAGE = 1;
 
     public static Intent newInstance(Context context, Project project, Issue issue) {
         Intent intent = new Intent(context, IssueActivity.class);
@@ -248,6 +257,22 @@ public class IssueActivity extends BaseActivity {
         }
     };
 
+    private Callback<FileUploadResponse> mUploadImageCallback = new EasyCallback<FileUploadResponse>() {
+        @Override
+        public void onResponse(@NonNull FileUploadResponse response) {
+            mProgress.setVisibility(View.GONE);
+            mSendMessageView.appendText(response.getMarkdown());
+        }
+
+        @Override
+        public void onAllFailure(Throwable t) {
+            Timber.e(t, null);
+            mProgress.setVisibility(View.GONE);
+            Snackbar.make(mRoot, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
+                    .show();
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -277,6 +302,16 @@ public class IssueActivity extends BaseActivity {
             public void onSendClicked(String message) {
                 postNote(message);
             }
+
+            @Override
+            public void onGalleryClicked() {
+                NavigationManager.navigateToChoosePhoto(IssueActivity.this, REQUEST_IMAGE);
+            }
+
+            @Override
+            public void onCameraClicked() {
+
+            }
         });
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -299,6 +334,28 @@ public class IssueActivity extends BaseActivity {
             String projectNamespace = getIntent().getStringExtra(EXTRA_PROJECT_NAMESPACE);
             String projectName = getIntent().getStringExtra(EXTRA_PROJECT_NAME);
             GitLabClient.instance().getProject(projectNamespace, projectName).enqueue(mProjectCallback);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_IMAGE:
+                //Not checking result code because apps are dumb and don't use it
+                Uri selectedImage = data.getData();
+                if (selectedImage != null) {
+                    try {
+                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
+                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                        RequestBody requestBody = RequestBody.create(MediaType.parse("image/jpeg"), stream.toByteArray());
+                        GitLabClient.instance().uploadFile(mProject.getId(), requestBody).enqueue(mUploadImageCallback);
+                    } catch (IOException e) {
+                        Timber.e(e, null);
+                    }
+                }
+                break;
         }
     }
 

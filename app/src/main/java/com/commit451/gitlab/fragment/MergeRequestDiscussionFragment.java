@@ -189,6 +189,16 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
             public void onSendClicked(String message) {
                 postNote(message);
             }
+
+            @Override
+            public void onGalleryClicked() {
+
+            }
+
+            @Override
+            public void onCameraClicked() {
+
+            }
         });
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {

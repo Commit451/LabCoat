@@ -7,6 +7,7 @@ import com.commit451.gitlab.model.api.Branch;
 import com.commit451.gitlab.model.api.Build;
 import com.commit451.gitlab.model.api.Contributor;
 import com.commit451.gitlab.model.api.Diff;
+import com.commit451.gitlab.model.api.FileUploadResponse;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.model.api.GroupDetail;
 import com.commit451.gitlab.model.api.Issue;
@@ -26,7 +27,9 @@ import com.commit451.gitlab.model.api.UserLogin;
 
 import java.util.List;
 
+import okhttp3.RequestBody;
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -168,6 +171,11 @@ public interface GitLab {
 
     @DELETE(API_VERSION + "/projects/{id}/star")
     Call<Project> unstarProject(@Path("id") long projectId);
+
+    //@Multipart
+    @POST(API_VERSION + "/projects/{id}/uploads")
+    Call<FileUploadResponse> uploadFile(@Path("id") long projectId,
+                                        @Body RequestBody file);
 
     /* --- MILESTONES --- */
 
