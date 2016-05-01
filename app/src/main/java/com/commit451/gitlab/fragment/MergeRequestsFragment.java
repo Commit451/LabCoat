@@ -33,7 +33,7 @@ import java.util.List;
 import butterknife.BindView;
 import timber.log.Timber;
 
-public class MergeRequestsFragment extends ButtFragment {
+public class MergeRequestsFragment extends ButterKnifeFragment {
 
     public static MergeRequestsFragment newInstance() {
         return new MergeRequestsFragment();

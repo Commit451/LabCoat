@@ -36,7 +36,7 @@ import java.util.List;
 import butterknife.BindView;
 import timber.log.Timber;
 
-public class FilesFragment extends ButtFragment {
+public class FilesFragment extends ButterKnifeFragment {
 
     public static FilesFragment newInstance() {
         return new FilesFragment();

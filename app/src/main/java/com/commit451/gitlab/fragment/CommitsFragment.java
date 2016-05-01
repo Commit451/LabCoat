@@ -29,7 +29,7 @@ import java.util.List;
 import butterknife.BindView;
 import timber.log.Timber;
 
-public class CommitsFragment extends ButtFragment {
+public class CommitsFragment extends ButterKnifeFragment {
 
     public static CommitsFragment newInstance() {
         return new CommitsFragment();

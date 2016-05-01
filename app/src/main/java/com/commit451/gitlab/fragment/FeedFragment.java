@@ -28,7 +28,7 @@ import timber.log.Timber;
 /**
  * Takes an RSS feed url and shows the feed
  */
-public class FeedFragment extends ButtFragment {
+public class FeedFragment extends ButterKnifeFragment {
 
     private static final String EXTRA_FEED_URL = "extra_feed_url";
 

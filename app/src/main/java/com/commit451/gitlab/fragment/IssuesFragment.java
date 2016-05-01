@@ -38,7 +38,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import timber.log.Timber;
 
-public class IssuesFragment extends ButtFragment {
+public class IssuesFragment extends ButterKnifeFragment {
 
     public static IssuesFragment newInstance() {
         return new IssuesFragment();
