@@ -36,7 +36,7 @@ import timber.log.Timber;
 /**
  * Shows the discussion of a merge request
  */
-public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
+public class MergeRequestDiscussionFragment extends ButtFragment {
 
     private static final String KEY_PROJECT = "project";
     private static final String KEY_MERGE_REQUEST = "merge_request";

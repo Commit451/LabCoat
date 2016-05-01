@@ -32,7 +32,7 @@ import timber.log.Timber;
 /**
  * Shows the details of a build
  */
-public class BuildDescriptionFragment extends ButterKnifeFragment {
+public class BuildDescriptionFragment extends ButtFragment {
 
     private static final String KEY_PROJECT = "project";
     private static final String KEY_BUILD = "build";

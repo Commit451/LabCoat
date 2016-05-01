@@ -38,7 +38,7 @@ import timber.log.Timber;
 /**
  * Shows the builds of a project
  */
-public class BuildsFragment extends ButterKnifeFragment {
+public class BuildsFragment extends ButtFragment {
 
     public static BuildsFragment newInstance() {
         return new BuildsFragment();

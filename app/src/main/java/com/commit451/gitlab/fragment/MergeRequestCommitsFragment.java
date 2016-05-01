@@ -34,7 +34,7 @@ import timber.log.Timber;
 /**
  * Like {@link CommitsFragment} but showing commits for a merge request
  */
-public class MergeRequestCommitsFragment extends ButterKnifeFragment {
+public class MergeRequestCommitsFragment extends ButtFragment {
 
     private static final String KEY_PROJECT = "project";
     private static final String KEY_MERGE_REQUEST = "merge_request";

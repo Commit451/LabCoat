@@ -41,7 +41,7 @@ import timber.log.Timber;
 /**
  * Shows the overview of the project
  */
-public class ProjectFragment extends ButterKnifeFragment {
+public class ProjectFragment extends ButtFragment {
 
     private static final int README_TYPE_UNKNOWN = -1;
     private static final int README_TYPE_MARKDOWN = 0;

@@ -32,7 +32,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import timber.log.Timber;
 
-public class GroupMembersFragment extends ButterKnifeFragment {
+public class GroupMembersFragment extends ButtFragment {
 
     private static final String KEY_GROUP = "group";
 

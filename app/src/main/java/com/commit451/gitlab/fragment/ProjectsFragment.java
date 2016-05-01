@@ -28,7 +28,7 @@ import java.util.List;
 import butterknife.BindView;
 import timber.log.Timber;
 
-public class ProjectsFragment extends ButterKnifeFragment {
+public class ProjectsFragment extends ButtFragment {
 
     private static final String EXTRA_MODE = "extra_mode";
     private static final String EXTRA_QUERY = "extra_query";

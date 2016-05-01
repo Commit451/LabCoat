@@ -9,7 +9,7 @@ import butterknife.Unbinder;
 /**
  * Takes care of binding and unbinding
  */
-public class ButterKnifeFragment extends BaseFragment {
+public class ButtFragment extends BaseFragment {
 
     private Unbinder mUnbinder;
 
