@@ -11,7 +11,6 @@ import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryCommit;
 import com.commit451.gitlab.model.api.RepositoryTreeObject;
 import com.commit451.gitlab.model.api.UserFull;
-import com.commit451.gitlab.model.api.UserLogin;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -44,6 +43,7 @@ public class ApiTests {
         //for logging
         ShadowLog.stream = System.out;
 
+        TestUtil.login();
 
         Response<Project> projectResponse = GitLabClient.instance()
                 .getProject(String.valueOf(FAKE_GROUP_PROJECT_ID))
