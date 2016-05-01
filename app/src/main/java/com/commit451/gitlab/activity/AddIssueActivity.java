@@ -32,6 +32,7 @@ import com.commit451.gitlab.model.api.Milestone;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.navigation.NavigationManager;
 import com.commit451.gitlab.view.AdapterFlowLayout;
+import com.commit451.teleprinter.Teleprinter;
 
 import org.parceler.Parcels;
 
@@ -95,6 +96,7 @@ public class AddIssueActivity extends MorphActivity {
     private Issue mIssue;
     private HashSet<Member> mMembers;
     private AddIssueLabelAdapter mLabelsAdapter;
+    private Teleprinter mTeleprinter;
 
     @OnClick({R.id.text_add_labels, R.id.list_labels})
     void onAddLabelsClick() {
@@ -204,6 +206,7 @@ public class AddIssueActivity extends MorphActivity {
         setContentView(R.layout.activity_add_issue);
         ButterKnife.bind(this);
         morph(mRoot);
+        mTeleprinter = new Teleprinter(this);
 
         mProject = Parcels.unwrap(getIntent().getParcelableExtra(KEY_PROJECT));
         mIssue = Parcels.unwrap(getIntent().getParcelableExtra(KEY_ISSUE));
@@ -291,6 +294,7 @@ public class AddIssueActivity extends MorphActivity {
 
     private void save() {
         if (!TextUtils.isEmpty(mTitleInput.getText())) {
+            mTeleprinter.hideKeyboard();
             mTitleInputLayout.setError(null);
             showLoading();
             Long assigneeId = null;
