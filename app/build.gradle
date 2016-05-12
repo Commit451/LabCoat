@@ -14,21 +14,20 @@ android {
         minSdkVersion 16
         targetSdkVersion 23
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        versionCode 225
-        versionName "2.2.5"
+        versionCode 226
+        versionName "2.2.6"
+        manifestPlaceholders = [fabric_key: project.ext.LABCOAT_FABRIC_KEY]
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             ext.enableCrashlytics = true
-            manifestPlaceholders = [fabric_key: project.ext.LABCOAT_FABRIC_KEY]
         }
         debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             ext.enableCrashlytics = false
-            manifestPlaceholders = [fabric_key: ""]
         }
     }
     lintOptions {

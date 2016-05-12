@@ -30,6 +30,7 @@
             android:layout_gravity="center_vertical"
             android:padding="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
+            android:visibility="gone"
             android:contentDescription="@null"/>
 
         <ImageView
@@ -40,6 +41,7 @@
             android:layout_gravity="center_vertical"
             android:padding="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
+            android:visibility="gone"
             android:contentDescription="@null"/>
 
         <Space
