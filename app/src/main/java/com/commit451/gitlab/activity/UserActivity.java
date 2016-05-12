@@ -5,7 +5,6 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -106,12 +105,12 @@ public class UserActivity extends BaseActivity {
         }
 
         ObjectAnimator.ofObject(mCollapsingToolbarLayout, "contentScrimColor", new ArgbEvaluator(),
-                ((ColorDrawable)mCollapsingToolbarLayout.getContentScrim()).getColor(), vibrantColor)
+                Easel.getThemeAttrColor(this, R.attr.colorPrimary), vibrantColor)
                 .setDuration(animationTime)
                 .start();
 
         ObjectAnimator.ofObject(mCollapsingToolbarLayout, "statusBarScrimColor", new ArgbEvaluator(),
-                ((ColorDrawable) mCollapsingToolbarLayout.getStatusBarScrim()).getColor(), darkerColor)
+                Easel.getThemeAttrColor(this, R.attr.colorPrimaryDark), darkerColor)
                 .setDuration(animationTime)
                 .start();
 
