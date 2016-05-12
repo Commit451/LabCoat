@@ -7,7 +7,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 
 /**
- * Created by Jawn on 8/25/2015.
+ * WebView with nice defaults
  */
 public class BetterWebView extends WebView {
 

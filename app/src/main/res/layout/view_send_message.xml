@@ -1,37 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    android:id="@+id/root"
+<merge
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_gravity="bottom"
-    android:tag="background|primary_color"
-    android:elevation="4dp"
-    android:minHeight="?attr/actionBarSize"
-    android:orientation="horizontal"
-    android:paddingTop="8dp">
+    android:layout_height="wrap_content">
 
     <EditText
-        android:id="@+id/new_note_edit"
-        android:layout_width="0dp"
+        android:id="@+id/text_note"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
         android:layout_marginLeft="8dp"
-        android:layout_weight="1"
-        android:tag="tint|primary_color_dependent,text_color|primary_color_dependent,text_color_hint|primary_color_dependent"
+        android:layout_marginRight="8dp"
         android:hint="@string/new_note_hint"
         android:imeOptions="actionNone"
         android:inputType="textCapSentences|textAutoCorrect|textMultiLine"
         android:maxLines="4"/>
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/new_note_button"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:src="@drawable/ic_send_24dp"
-        android:tag="tint_selector|accent_color"
-        app:fabSize="mini" />
-</LinearLayout>
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/icon_gallery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_gallery_24dp"
+            android:layout_gravity="center_vertical"
+            android:padding="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:visibility="gone"
+            android:contentDescription="@null"/>
+
+        <ImageView
+            android:id="@+id/icon_camera"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_camera_24dp"
+            android:layout_gravity="center_vertical"
+            android:padding="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:visibility="gone"
+            android:contentDescription="@null"/>
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/button_send"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:src="@drawable/ic_send_24dp"
+            app:fabSize="mini"/>
+
+    </LinearLayout>
+</merge>

@@ -17,15 +17,15 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.commit451.gitbal.Gimbal;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Contributor;
+import com.commit451.gitlab.navigation.NavigationManager;
 import com.commit451.gitlab.transformation.CircleTransformation;
 import com.commit451.gitlab.util.ImageUtil;
 import com.commit451.gitlab.util.IntentUtil;
-import com.commit451.gitlab.util.NavigationManager;
-import com.commit451.gitlab.util.WindowUtil;
 import com.jawnnypoo.physicslayout.Physics;
 import com.jawnnypoo.physicslayout.PhysicsConfig;
 import com.jawnnypoo.physicslayout.PhysicsFrameLayout;
@@ -34,7 +34,7 @@ import org.jbox2d.common.Vec2;
 
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import retrofit2.Callback;
@@ -42,28 +42,29 @@ import timber.log.Timber;
 
 /**
  * Thats what its all about
- * Created by Jawn on 8/25/2015.
  */
 public class AboutActivity extends BaseActivity {
-    private static final long REPO_ID = 473568;
+    private static final String REPO_ID = "473568";
 
-    public static Intent newInstance(Context context) {
+    public static Intent newIntent(Context context) {
         Intent intent = new Intent(context, AboutActivity.class);
         return intent;
     }
 
-    @Bind(R.id.root)
+    @BindView(R.id.root)
     ViewGroup mRoot;
-    @Bind(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar mToolbar;
-    @Bind(R.id.contributors)
+    @BindView(R.id.contributors)
     TextView mContributors;
-    @Bind(R.id.physics_layout)
+    @BindView(R.id.physics_layout)
     PhysicsFrameLayout mPhysicsLayout;
+    @BindView(R.id.progress)
+    View mProgress;
 
     @OnClick(R.id.sauce)
     void onSauceClick() {
-        if ("https://gitlab.com".equals(GitLabClient.getAccount().getServerUrl().toString())) {
+        if (getString(R.string.url_gitlab).equals(GitLabClient.getAccount().getServerUrl().toString())) {
             NavigationManager.navigateToProject(AboutActivity.this, REPO_ID);
         } else {
             IntentUtil.openPage(AboutActivity.this, getString(R.string.source_url));
@@ -72,13 +73,14 @@ public class AboutActivity extends BaseActivity {
 
     SensorManager sensorManager;
     Sensor gravitySensor;
+    Gimbal mGimbal;
 
     private final SensorEventListener sensorEventListener = new SensorEventListener() {
         @Override
         public void onSensorChanged(SensorEvent event) {
             if (event.sensor.getType() == Sensor.TYPE_GRAVITY) {
                 if (mPhysicsLayout.getPhysics().getWorld() != null) {
-                    WindowUtil.normalizeForOrientation(getWindow(), event);
+                    mGimbal.normalizeGravityEvent(event);
                     mPhysicsLayout.getPhysics().getWorld().setGravity(new Vec2(-event.values[0], event.values[1]));
                 }
             }
@@ -92,12 +94,14 @@ public class AboutActivity extends BaseActivity {
     private Callback<List<Contributor>> mContributorResponseCallback = new EasyCallback<List<Contributor>>() {
         @Override
         public void onResponse(@NonNull List<Contributor> response) {
+            mProgress.setVisibility(View.GONE);
             addContributors(Contributor.groupContributors(response));
         }
 
         @Override
         public void onAllFailure(Throwable t) {
             Timber.e(t, null);
+            mProgress.setVisibility(View.GONE);
             Snackbar.make(mRoot, R.string.failed_to_load_contributors, Snackbar.LENGTH_SHORT)
                     .show();
         }
@@ -106,7 +110,8 @@ public class AboutActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        WindowUtil.lockToCurrentOrientation(this);
+        mGimbal = new Gimbal(this);
+        mGimbal.lock();
         setContentView(R.layout.activity_about);
         ButterKnife.bind(this);
         mToolbar.setNavigationIcon(R.drawable.ic_back_24dp);
@@ -121,6 +126,7 @@ public class AboutActivity extends BaseActivity {
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         gravitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
         GitLabClient.instance().getContributors(REPO_ID).enqueue(mContributorResponseCallback);
+        mProgress.setVisibility(View.VISIBLE);
     }
 
     @Override

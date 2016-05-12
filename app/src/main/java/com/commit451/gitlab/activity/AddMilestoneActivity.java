@@ -4,7 +4,6 @@ package com.commit451.gitlab.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
@@ -14,10 +13,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 
-import com.afollestad.appthemeengine.customizers.ATEActivityThemeCustomizer;
-import com.commit451.elasticdragdismisslayout.ElasticDragDismissFrameLayout;
-import com.commit451.elasticdragdismisslayout.ElasticDragDismissListener;
+import com.commit451.easel.Easel;
 import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.EasyCallback;
@@ -25,7 +23,6 @@ import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.MilestoneChangedEvent;
 import com.commit451.gitlab.event.MilestoneCreatedEvent;
 import com.commit451.gitlab.model.api.Milestone;
-import com.commit451.gitlab.util.AppThemeUtil;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import org.parceler.Parcels;
@@ -33,28 +30,22 @@ import org.parceler.Parcels;
 import java.util.Calendar;
 import java.util.Date;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import retrofit2.Callback;
 import timber.log.Timber;
 
-public class AddMilestoneActivity extends MorphActivity implements ATEActivityThemeCustomizer {
-
-    @Override
-    public int getActivityTheme() {
-        return PreferenceManager.getDefaultSharedPreferences(this).getBoolean("dark_theme", true) ?
-                R.style.Activity_Translucent : R.style.ActivityLight_Translucent;
-    }
+public class AddMilestoneActivity extends MorphActivity {
 
     private static final String KEY_PROJECT_ID = "project_id";
     private static final String KEY_MILESTONE = "milestone";
 
-    public static Intent newInstance(Context context, long projectId) {
-        return newInstance(context, projectId, null);
+    public static Intent newIntent(Context context, long projectId) {
+        return newIntent(context, projectId, null);
     }
 
-    public static Intent newInstance(Context context, long projectId, Milestone milestone) {
+    public static Intent newIntent(Context context, long projectId, Milestone milestone) {
         Intent intent = new Intent(context, AddMilestoneActivity.class);
         intent.putExtra(KEY_PROJECT_ID, projectId);
         if (milestone != null) {
@@ -63,19 +54,19 @@ public class AddMilestoneActivity extends MorphActivity implements ATEActivityTh
         return intent;
     }
 
-    @Bind(R.id.root)
-    ElasticDragDismissFrameLayout mRoot;
-    @Bind(R.id.toolbar)
+    @BindView(R.id.root)
+    FrameLayout mRoot;
+    @BindView(R.id.toolbar)
     Toolbar mToolbar;
-    @Bind(R.id.title_text_input_layout)
+    @BindView(R.id.title_text_input_layout)
     TextInputLayout mTitleTextInputLayout;
-    @Bind(R.id.title)
+    @BindView(R.id.title)
     EditText mTitle;
-    @Bind(R.id.description)
+    @BindView(R.id.description)
     EditText mDescription;
-    @Bind(R.id.due_date)
+    @BindView(R.id.due_date)
     Button mDueDate;
-    @Bind(R.id.progress)
+    @BindView(R.id.progress)
     View mProgress;
 
     @OnClick(R.id.due_date)
@@ -90,7 +81,7 @@ public class AddMilestoneActivity extends MorphActivity implements ATEActivityTh
                 now.get(Calendar.MONTH),
                 now.get(Calendar.DAY_OF_MONTH)
         );
-        dpd.setAccentColor(AppThemeUtil.resolveAccentColor(this));
+        dpd.setAccentColor(Easel.getThemeAttrColor(this, R.attr.colorAccent));
         dpd.show(getFragmentManager(), "date_picker");
     }
 
@@ -164,15 +155,6 @@ public class AddMilestoneActivity extends MorphActivity implements ATEActivityTh
                         return true;
                 }
                 return false;
-            }
-        });
-        mRoot.addListener(new ElasticDragDismissListener() {
-            @Override
-            public void onDrag(float elasticOffset, float elasticOffsetPixels, float rawOffset, float rawOffsetPixels) {}
-
-            @Override
-            public void onDragDismissed() {
-                onBackPressed();
             }
         });
     }

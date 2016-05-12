@@ -15,7 +15,6 @@ import java.util.List;
 
 /**
  * Merge request adapter!
- * Created by Jawn on 9/20/2015.
  */
 public class MergeRequestAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 

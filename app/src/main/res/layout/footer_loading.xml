@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="40dp">
 
-    <com.commit451.gitlab.view.GitLabProgressView
+    <com.commit451.gitlab.view.LabCoatProgressView
         android:id="@+id/progress"
         android:layout_width="30dp"
         android:layout_height="30dp"

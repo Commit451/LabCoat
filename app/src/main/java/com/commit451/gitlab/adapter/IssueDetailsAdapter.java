@@ -18,7 +18,6 @@ import in.uncod.android.bypass.Bypass;
 
 /**
  * Nice notes
- * Created by Jawn on 8/6/2015.
  */
 public class IssueDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 

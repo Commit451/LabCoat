@@ -16,9 +16,10 @@ import android.widget.TextView;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.SearchPagerAdapter;
-import com.commit451.gitlab.util.KeyboardUtil;
+import com.commit451.jounce.Debouncer;
+import com.commit451.teleprinter.Teleprinter;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import timber.log.Timber;
@@ -28,18 +29,18 @@ import timber.log.Timber;
  */
 public class SearchActivity extends BaseActivity {
 
-    public static Intent newInstance(Context context) {
+    public static Intent newIntent(Context context) {
         Intent intent = new Intent(context, SearchActivity.class);
         return intent;
     }
 
-    @Bind(R.id.root) View mRoot;
-    @Bind(R.id.tabs) TabLayout mTabLayout;
-    @Bind(R.id.pager) ViewPager mViewPager;
+    @BindView(R.id.root) View mRoot;
+    @BindView(R.id.tabs) TabLayout mTabLayout;
+    @BindView(R.id.pager) ViewPager mViewPager;
     SearchPagerAdapter mSearchPagerAdapter;
-    @Bind(R.id.toolbar) Toolbar mToolbar;
-    @Bind(R.id.search) EditText mSearchView;
-    @Bind(R.id.clear) View mClearView;
+    @BindView(R.id.toolbar) Toolbar mToolbar;
+    @BindView(R.id.search) EditText mSearchView;
+    @BindView(R.id.clear) View mClearView;
 
     @OnClick(R.id.clear)
     void onClearClick() {
@@ -47,13 +48,22 @@ public class SearchActivity extends BaseActivity {
             @Override
             public void run() {
                 mClearView.setVisibility(View.GONE);
-                mSearchView.getText().clear();
-                KeyboardUtil.showKeyboard(SearchActivity.this, mSearchView);
+
             }
         });
+        mSearchView.getText().clear();
+        mTeleprinter.showKeyboard(mSearchView);
+        mSearchDebouncer.cancel();
     }
 
-    private SearchDebouncer mSearchDebouncer;
+    private Teleprinter mTeleprinter;
+
+    private Debouncer<CharSequence> mSearchDebouncer = new Debouncer<CharSequence>() {
+        @Override
+        public void onValueSet(CharSequence value) {
+            search();
+        }
+    };
 
     private final TextView.OnEditorActionListener mOnSearchEditorActionListener = new TextView.OnEditorActionListener() {
         @Override
@@ -62,8 +72,7 @@ public class SearchActivity extends BaseActivity {
                 mSearchView.setText("unicorns");
             }
             search();
-            KeyboardUtil.hideKeyboard(SearchActivity.this);
-            mRoot.removeCallbacks(mSearchDebouncer);
+            mTeleprinter.hideKeyboard();
             return false;
         }
     };
@@ -87,13 +96,12 @@ public class SearchActivity extends BaseActivity {
             }
             if (s != null &&  s.length() > 3) {
                 Timber.d("Posting new future search");
-                mRoot.removeCallbacks(mSearchDebouncer);
-                mRoot.postDelayed(mSearchDebouncer, 500);
+                mSearchDebouncer.setValue(s);
             }
             //This means they are backspacing
             if (before > count) {
                 Timber.d("Removing future search");
-                mRoot.removeCallbacks(mSearchDebouncer);
+                mSearchDebouncer.cancel();
             }
         }
 
@@ -106,6 +114,7 @@ public class SearchActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
         ButterKnife.bind(this);
+        mTeleprinter = new Teleprinter(this);
         mToolbar.setNavigationIcon(R.drawable.ic_back_24dp);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -118,18 +127,10 @@ public class SearchActivity extends BaseActivity {
         mTabLayout.setupWithViewPager(mViewPager);
         mSearchView.setOnEditorActionListener(mOnSearchEditorActionListener);
         mSearchView.addTextChangedListener(mTextWatcher);
-        mSearchDebouncer = new SearchDebouncer();
     }
 
     private void search() {
         Timber.d("Searching");
         mSearchPagerAdapter.searchQuery(mSearchView.getText().toString());
-    }
-
-    private class SearchDebouncer implements Runnable{
-        @Override
-        public void run() {
-            search();
-        }
     }
 }

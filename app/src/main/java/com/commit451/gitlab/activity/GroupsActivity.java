@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -16,50 +15,46 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
 
-import com.afollestad.appthemeengine.customizers.ATEActivityThemeCustomizer;
+import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.GroupAdapter;
 import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.event.CloseDrawerEvent;
 import com.commit451.gitlab.model.api.Group;
-import com.commit451.gitlab.util.NavigationManager;
+import com.commit451.gitlab.navigation.NavigationManager;
 import com.commit451.gitlab.util.PaginationUtil;
 import com.commit451.gitlab.viewHolder.GroupViewHolder;
+import com.squareup.otto.Subscribe;
 
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Callback;
 import timber.log.Timber;
 
 /**
  * Displays the groups of the current user
- * Created by Jawn on 10/4/2015.
  */
-public class GroupsActivity extends BaseActivity implements ATEActivityThemeCustomizer {
+public class GroupsActivity extends BaseActivity {
 
-    @Override
-    public int getActivityTheme() {
-        return PreferenceManager.getDefaultSharedPreferences(this).getBoolean("dark_theme", true) ?
-                R.style.Activity_Groups : R.style.ActivityLight_Groups;
-    }
-
-    public static Intent newInstance(Context context) {
+    public static Intent newIntent(Context context) {
         Intent intent = new Intent(context, GroupsActivity.class);
         return intent;
     }
 
-    @Bind(R.id.drawer_layout) DrawerLayout mDrawerLayout;
-    @Bind(R.id.toolbar) Toolbar mToolbar;
-    @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
-    @Bind(R.id.list) RecyclerView mGroupRecyclerView;
-    @Bind(R.id.message_text) TextView mMessageText;
+    @BindView(R.id.drawer_layout) DrawerLayout mDrawerLayout;
+    @BindView(R.id.toolbar) Toolbar mToolbar;
+    @BindView(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
+    @BindView(R.id.list) RecyclerView mGroupRecyclerView;
+    @BindView(R.id.message_text) TextView mMessageText;
     GroupAdapter mGroupAdapter;
     LinearLayoutManager mGroupLayoutManager;
 
     private Uri mNextPageUrl;
     private boolean mLoading = false;
+    EventReceiver mEventReceiver;
 
     private final RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
         @Override
@@ -127,6 +122,9 @@ public class GroupsActivity extends BaseActivity implements ATEActivityThemeCust
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_groups);
         ButterKnife.bind(this);
+        mEventReceiver = new EventReceiver();
+        LabCoatApp.bus().register(mEventReceiver);
+
         mToolbar.setTitle(R.string.nav_groups);
         mToolbar.setNavigationIcon(R.drawable.ic_menu_24dp);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -153,6 +151,12 @@ public class GroupsActivity extends BaseActivity implements ATEActivityThemeCust
         mGroupRecyclerView.setAdapter(mGroupAdapter);
         mGroupRecyclerView.addOnScrollListener(mOnScrollListener);
         load();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        LabCoatApp.bus().unregister(mEventReceiver);
     }
 
     private void load() {
@@ -188,7 +192,15 @@ public class GroupsActivity extends BaseActivity implements ATEActivityThemeCust
 
         mLoading = true;
 
-        Timber.d("loadMore called for " + mNextPageUrl);
+        Timber.d("loadMore called for %s", mNextPageUrl);
         GitLabClient.instance().getGroups(mNextPageUrl.toString()).enqueue(mMoreGroupsCallback);
+    }
+
+    private class EventReceiver {
+
+        @Subscribe
+        public void onCloseDrawerEvent(CloseDrawerEvent event) {
+            mDrawerLayout.closeDrawers();
+        }
     }
 }

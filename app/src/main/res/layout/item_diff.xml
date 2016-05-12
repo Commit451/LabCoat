@@ -13,12 +13,11 @@
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
         android:paddingTop="8dp"
-        android:tag="text_color|accent_color"
         android:textSize="16sp"
         app:typeface="roboto_medium"
         tools:text="NewFile.java" />
 
-    <com.commit451.gitlab.view.GitLabCardView
+    <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
@@ -42,6 +41,6 @@
             app:diff_show_diff_info="true"
             tools:text="+blah blah blah" />
 
-    </com.commit451.gitlab.view.GitLabCardView>
+    </android.support.v7.widget.CardView>
 
 </LinearLayout>

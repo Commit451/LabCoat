@@ -11,6 +11,11 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 
+    <style name="Activity.Activity">
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+
     <!-- Light theme -->
     <style name="ActivityLight.Projects">
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
@@ -18,6 +23,11 @@
     </style>
 
     <style name="ActivityLight.Groups">
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+
+    <style name="ActivityLight.Activity">
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>

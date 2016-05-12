@@ -17,7 +17,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:contentDescription="@null"
-        android:tag="tint|primary_text"
         tools:src="@drawable/ic_folder_24dp" />
 
     <TextView
@@ -30,7 +29,6 @@
         android:layout_weight="1"
         android:ellipsize="end"
         android:maxLines="2"
-        android:tag="text_color|primary_text"
         android:textSize="@dimen/text_size_small"
         tools:text="build.gradle some really long file name that will overflow or something" />
 
@@ -42,7 +40,6 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@null"
         android:padding="2dp"
-        android:src="@drawable/ic_overflow_24dp"
-        android:tag="tint|primary_text" />
+        android:src="@drawable/ic_overflow_24dp" />
 
 </LinearLayout>

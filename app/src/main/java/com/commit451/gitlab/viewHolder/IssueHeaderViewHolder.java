@@ -9,16 +9,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.afollestad.appthemeengine.ATE;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Issue;
 import com.commit451.gitlab.transformation.CircleTransformation;
-import com.commit451.gitlab.util.AppThemeUtil;
 import com.commit451.gitlab.util.DateUtils;
 import com.commit451.gitlab.util.ImageUtil;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import in.uncod.android.bypass.Bypass;
 
@@ -33,11 +31,11 @@ public class IssueHeaderViewHolder extends RecyclerView.ViewHolder {
         return new IssueHeaderViewHolder(view);
     }
 
-    @Bind(R.id.description) TextView mDescriptionView;
-    @Bind(R.id.author_image) ImageView mAuthorImageView;
-    @Bind(R.id.author) TextView mAuthorView;
-    @Bind(R.id.milestone_root) ViewGroup mMilestoneRoot;
-    @Bind(R.id.milestone_text) TextView mMilestoneText;
+    @BindView(R.id.description) TextView mDescriptionView;
+    @BindView(R.id.author_image) ImageView mAuthorImageView;
+    @BindView(R.id.author) TextView mAuthorView;
+    @BindView(R.id.milestone_root) ViewGroup mMilestoneRoot;
+    @BindView(R.id.milestone_text) TextView mMilestoneText;
 
     private final Bypass mBypass;
 

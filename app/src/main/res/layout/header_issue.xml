@@ -13,7 +13,6 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginTop="16dp"
-        android:tag="text_color|primary_text"
         tools:text="Description"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -36,7 +35,6 @@
             android:layout_marginLeft="@dimen/padding_normal"
             android:layout_marginRight="@dimen/padding_normal"
             android:layout_gravity="center_vertical"
-            android:tag="text_color|secondary_text"
             tools:text="Jawnnypoo created issue 8 hours ago"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -54,7 +52,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_milestone_24dp"
-            android:tag="tint|primary_text"
             android:contentDescription="@null"/>
 
         <TextView
@@ -64,7 +61,6 @@
             android:layout_marginLeft="@dimen/padding_normal"
             android:layout_marginRight="@dimen/padding_normal"
             android:layout_gravity="center_vertical"
-            android:tag="text_color|primary_text"
             tools:text="2.0.0"/>
 
     </LinearLayout>

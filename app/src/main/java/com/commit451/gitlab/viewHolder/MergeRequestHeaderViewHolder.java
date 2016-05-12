@@ -9,17 +9,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.afollestad.appthemeengine.ATE;
+import com.commit451.bypasspicassoimagegetter.BypassPicassoImageGetter;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.transformation.CircleTransformation;
-import com.commit451.gitlab.util.AppThemeUtil;
 import com.commit451.gitlab.util.DateUtils;
 import com.commit451.gitlab.util.ImageUtil;
-import com.commit451.gitlab.util.PicassoImageGetter;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import in.uncod.android.bypass.Bypass;
 
@@ -34,9 +32,9 @@ public class MergeRequestHeaderViewHolder extends RecyclerView.ViewHolder {
         return new MergeRequestHeaderViewHolder(view);
     }
 
-    @Bind(R.id.description) TextView mDescriptionView;
-    @Bind(R.id.author_image) ImageView mAuthorImageView;
-    @Bind(R.id.author) TextView mAuthorView;
+    @BindView(R.id.description) TextView mDescriptionView;
+    @BindView(R.id.author_image) ImageView mAuthorImageView;
+    @BindView(R.id.author) TextView mAuthorView;
 
     public MergeRequestHeaderViewHolder(View view) {
         super(view);
@@ -48,7 +46,7 @@ public class MergeRequestHeaderViewHolder extends RecyclerView.ViewHolder {
             mDescriptionView.setVisibility(View.GONE);
         } else {
             mDescriptionView.setVisibility(View.VISIBLE);
-            mDescriptionView.setText(bypass.markdownToSpannable(mergeRequest.getDescription(), new PicassoImageGetter(mDescriptionView, GitLabClient.getPicasso())));
+            mDescriptionView.setText(bypass.markdownToSpannable(mergeRequest.getDescription(), new BypassPicassoImageGetter(mDescriptionView, GitLabClient.getPicasso())));
             mDescriptionView.setMovementMethod(LinkMovementMethod.getInstance());
         }
 

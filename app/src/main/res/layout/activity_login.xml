@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:tag="background|primary_color">
+    android:layout_height="match_parent">
 
     <ImageView
         android:layout_width="wrap_content"
@@ -45,7 +44,6 @@
                 android:layout_centerHorizontal="true"
                 android:hint="@string/url_hint"
                 android:inputType="textUri"
-                android:tag="tint|primary_color_dependent,text_color|primary_color_dependent,text_color_hint|primary_color_dependent"
                 android:text="@string/url_gitlab">
 
             </EditText>
@@ -71,8 +69,7 @@
                     android:ems="10"
                     android:hint="@string/user_hint"
                     android:inputType="textEmailAddress"
-                    android:imeOptions="actionNext"
-                    android:tag="tint|primary_color_dependent,text_color|primary_color_dependent,text_color_hint|primary_color_dependent" />
+                    android:imeOptions="actionNext"/>
 
             </android.support.design.widget.TextInputLayout>
 
@@ -88,8 +85,7 @@
                     android:layout_below="@+id/user_input"
                     android:layout_centerHorizontal="true"
                     android:hint="@string/password_hint"
-                    android:inputType="textPassword"
-                    android:tag="tint|primary_color_dependent,text_color|primary_color_dependent,text_color_hint|primary_color_dependent" />
+                    android:inputType="textPassword" />
 
             </android.support.design.widget.TextInputLayout>
         </LinearLayout>
@@ -113,8 +109,7 @@
                     android:layout_alignParentTop="true"
                     android:layout_centerHorizontal="true"
                     android:hint="@string/token_hint"
-                    android:inputType="textVisiblePassword"
-                    android:tag="tint|primary_color_dependent,text_color|primary_color_dependent,text_color_hint|primary_color_dependent" />
+                    android:inputType="textVisiblePassword"/>
             </android.support.design.widget.TextInputLayout>
         </LinearLayout>
 
@@ -125,7 +120,6 @@
             android:background="?attr/selectableItemBackground"
             android:gravity="center_horizontal"
             android:padding="20dp"
-            android:tag="text_color|accent_color"
             android:text="@string/token_link"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -139,7 +133,6 @@
         android:background="?attr/selectableItemBackground"
         android:gravity="center_horizontal"
         android:padding="@dimen/padding_normal"
-        android:tag="text_color|accent_color"
         android:text="@string/login_button"
         android:textAllCaps="true"
         app:typeface="roboto_medium" />

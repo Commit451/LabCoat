@@ -20,7 +20,7 @@ import com.commit451.gitlab.dialog.AccessDialog;
 import com.commit451.gitlab.event.MemberAddedEvent;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.model.api.Member;
-import com.commit451.gitlab.util.NavigationManager;
+import com.commit451.gitlab.navigation.NavigationManager;
 import com.commit451.gitlab.viewHolder.ProjectMemberViewHolder;
 import com.squareup.otto.Subscribe;
 
@@ -28,12 +28,11 @@ import org.parceler.Parcels;
 
 import java.util.List;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
+import butterknife.BindView;
 import butterknife.OnClick;
 import timber.log.Timber;
 
-public class GroupMembersFragment extends BaseFragment {
+public class GroupMembersFragment extends ButterKnifeFragment {
 
     private static final String KEY_GROUP = "group";
 
@@ -46,11 +45,11 @@ public class GroupMembersFragment extends BaseFragment {
         return fragment;
     }
 
-    @Bind(R.id.root) View mRoot;
-    @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
-    @Bind(R.id.list) RecyclerView mRecyclerView;
-    @Bind(R.id.message_text) TextView mMessageView;
-    @Bind(R.id.add_user_button) View mAddUserButton;
+    @BindView(R.id.root) View mRoot;
+    @BindView(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
+    @BindView(R.id.list) RecyclerView mRecyclerView;
+    @BindView(R.id.message_text) TextView mMessageView;
+    @BindView(R.id.add_user_button) View mAddUserButton;
 
     private Group mGroup;
     private EventReceiver mEventReceiver;
@@ -147,7 +146,6 @@ public class GroupMembersFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
 
         mEventReceiver = new EventReceiver();
         LabCoatApp.bus().register(mEventReceiver);
@@ -169,7 +167,6 @@ public class GroupMembersFragment extends BaseFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.unbind(this);
         LabCoatApp.bus().unregister(mEventReceiver);
     }
 

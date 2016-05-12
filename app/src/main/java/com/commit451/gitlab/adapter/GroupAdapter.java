@@ -13,7 +13,6 @@ import java.util.Collection;
 
 /**
  * All the groups
- * Created by John on 10/8/15.
  */
 public class GroupAdapter extends RecyclerView.Adapter<GroupViewHolder> {
 

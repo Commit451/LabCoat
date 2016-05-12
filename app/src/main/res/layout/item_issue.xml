@@ -23,7 +23,6 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="2"
-            android:tag="text_color|primary_text"
             android:textSize="@dimen/text_size_small"
             tools:text="I commited all the code at once cause I am cool. So sorry" />
 
@@ -31,7 +30,6 @@
             android:id="@+id/issue_creator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:tag="text_color|secondary_text"
             android:textSize="@dimen/text_size_tiny"
             tools:text="Created 45 days ago by Jawnnypoo" />
 

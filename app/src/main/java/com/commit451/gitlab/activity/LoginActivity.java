@@ -40,8 +40,8 @@ import com.commit451.gitlab.ssl.CustomHostnameVerifier;
 import com.commit451.gitlab.ssl.CustomKeyManager;
 import com.commit451.gitlab.ssl.X509CertificateException;
 import com.commit451.gitlab.ssl.X509Util;
-import com.commit451.gitlab.util.KeyboardUtil;
-import com.commit451.gitlab.util.NavigationManager;
+import com.commit451.gitlab.navigation.NavigationManager;
+import com.commit451.teleprinter.Teleprinter;
 
 import java.net.ConnectException;
 import java.security.cert.CertificateEncodingException;
@@ -56,7 +56,7 @@ import java.util.regex.Pattern;
 import javax.net.ssl.SSLHandshakeException;
 import javax.net.ssl.SSLPeerUnverifiedException;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import okhttp3.Credentials;
@@ -73,45 +73,46 @@ public class LoginActivity extends BaseActivity {
     private static final int PERMISSION_REQUEST_GET_ACCOUNTS = 1337;
     private static Pattern sTokenPattern = Pattern.compile("^[A-Za-z0-9-_]*$");
 
-    public static Intent newInstance(Context context) {
-        return newInstance(context, false);
+    public static Intent newIntent(Context context) {
+        return newIntent(context, false);
     }
 
-    public static Intent newInstance(Context context, boolean showClose) {
+    public static Intent newIntent(Context context, boolean showClose) {
         Intent intent = new Intent(context, LoginActivity.class);
         intent.putExtra(EXTRA_SHOW_CLOSE, showClose);
         return intent;
     }
 
-    @Bind(R.id.root)
+    @BindView(R.id.root)
     View mRoot;
-    @Bind(R.id.close)
+    @BindView(R.id.close)
     View mClose;
-    @Bind(R.id.url_hint)
+    @BindView(R.id.url_hint)
     TextInputLayout mUrlHint;
-    @Bind(R.id.url_input)
+    @BindView(R.id.url_input)
     TextView mUrlInput;
-    @Bind(R.id.user_input_hint)
+    @BindView(R.id.user_input_hint)
     TextInputLayout mUserHint;
-    @Bind(R.id.user_input)
+    @BindView(R.id.user_input)
     AppCompatAutoCompleteTextView mUserInput;
-    @Bind(R.id.password_hint)
+    @BindView(R.id.password_hint)
     TextInputLayout mPasswordHint;
-    @Bind(R.id.password_input)
+    @BindView(R.id.password_input)
     TextView mPasswordInput;
-    @Bind(R.id.token_hint)
+    @BindView(R.id.token_hint)
     TextInputLayout mTokenHint;
-    @Bind(R.id.token_input)
+    @BindView(R.id.token_input)
     TextView mTokenInput;
-    @Bind(R.id.normal_login)
+    @BindView(R.id.normal_login)
     View mNormalLogin;
-    @Bind(R.id.token_login)
+    @BindView(R.id.token_login)
     View mTokenLogin;
-    @Bind(R.id.progress)
+    @BindView(R.id.progress)
     View mProgress;
 
     private boolean mIsNormalLogin = true;
     private Account mAccount;
+    private Teleprinter mTeleprinter;
 
     private final TextView.OnEditorActionListener onEditorActionListener = new TextView.OnEditorActionListener() {
         @Override
@@ -143,15 +144,15 @@ public class LoginActivity extends BaseActivity {
 
     @OnClick(R.id.login_button)
     public void onLoginClick() {
-        KeyboardUtil.hideKeyboard(this);
+        mTeleprinter.hideKeyboard();
 
         if (hasEmptyFields(mUrlHint)) {
             return;
         }
 
+        String url = mUrlInput.getText().toString();
         Uri uri = null;
         try {
-            String url = mUrlInput.getText().toString();
             if (HttpUrl.parse(url) != null) {
                 uri = Uri.parse(url);
             }
@@ -161,6 +162,12 @@ public class LoginActivity extends BaseActivity {
 
         if (uri == null) {
             mUrlHint.setError(getString(R.string.not_a_valid_url));
+            return;
+        } else {
+            mUrlHint.setError(null);
+        }
+        if (url.charAt(url.length()-1) != '/') {
+            mUrlHint.setError(getString(R.string.please_end_your_url_with_a_slash));
             return;
         } else {
             mUrlHint.setError(null);
@@ -255,7 +262,7 @@ public class LoginActivity extends BaseActivity {
 
         @Override
         public void onResponse(Call<UserLogin> call, Response<UserLogin> response) {
-            if (!response.isSuccessful()) {
+            if (!response.isSuccessful() || response.body() == null) {
                 handleConnectionResponse(response);
                 return;
             }
@@ -276,7 +283,7 @@ public class LoginActivity extends BaseActivity {
         @Override
         public void onResponse(Call<UserFull> call, Response<UserFull> response) {
             mProgress.setVisibility(View.GONE);
-            if (!response.isSuccessful()) {
+            if (!response.isSuccessful() || response.body() == null) {
                 handleConnectionResponse(response);
                 return;
             }
@@ -287,7 +294,7 @@ public class LoginActivity extends BaseActivity {
             LabCoatApp.bus().post(new LoginEvent(mAccount));
             //This is mostly for if projects already exists, then we will reload the data
             LabCoatApp.bus().post(new ReloadDataEvent());
-            NavigationManager.navigateToProjects(LoginActivity.this);
+            NavigationManager.navigateToStartingActivity(LoginActivity.this);
             finish();
         }
 
@@ -304,6 +311,7 @@ public class LoginActivity extends BaseActivity {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
 
+        mTeleprinter = new Teleprinter(this);
         boolean showClose = getIntent().getBooleanExtra(EXTRA_SHOW_CLOSE, false);
 
         mClose.setVisibility(showClose ? View.VISIBLE : View.GONE);

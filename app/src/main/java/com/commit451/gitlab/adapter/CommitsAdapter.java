@@ -14,7 +14,6 @@ import java.util.Collection;
 
 /**
  * Shows a list of commits to a project, seen in a project overview
- * Created by Jawn on 7/28/2015.
  */
 public class CommitsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 

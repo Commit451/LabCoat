@@ -21,24 +21,23 @@ import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryCommit;
-import com.commit451.gitlab.util.NavigationManager;
+import com.commit451.gitlab.navigation.NavigationManager;
 import com.squareup.otto.Subscribe;
 
 import java.util.List;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
+import butterknife.BindView;
 import timber.log.Timber;
 
-public class CommitsFragment extends BaseFragment {
+public class CommitsFragment extends ButterKnifeFragment {
 
     public static CommitsFragment newInstance() {
         return new CommitsFragment();
     }
 
-    @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
-    @Bind(R.id.list) RecyclerView mCommitsListView;
-    @Bind(R.id.message_text) TextView mMessageView;
+    @BindView(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
+    @BindView(R.id.list) RecyclerView mCommitsListView;
+    @BindView(R.id.message_text) TextView mMessageView;
 
     private Project mProject;
     private String mBranchName;
@@ -100,6 +99,9 @@ public class CommitsFragment extends BaseFragment {
         @Override
         public void onResponse(@NonNull List<RepositoryCommit> response) {
             mLoading = false;
+            if (getView() == null) {
+                return;
+            }
             mCommitsAdapter.setLoading(false);
             if (response.isEmpty()) {
                 mPage = -1;
@@ -112,6 +114,9 @@ public class CommitsFragment extends BaseFragment {
         public void onAllFailure(Throwable t) {
             mLoading = false;
             Timber.e(t, null);
+            if (getView() == null) {
+                return;
+            }
             mCommitsAdapter.setLoading(false);
         }
     };
@@ -131,7 +136,6 @@ public class CommitsFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
 
         mEventReceiver = new EventReceiver();
         LabCoatApp.bus().register(mEventReceiver);
@@ -162,7 +166,6 @@ public class CommitsFragment extends BaseFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.unbind(this);
         LabCoatApp.bus().unregister(mEventReceiver);
     }
 

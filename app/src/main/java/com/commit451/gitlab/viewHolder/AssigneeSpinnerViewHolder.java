@@ -1,6 +1,5 @@
 package com.commit451.gitlab.viewHolder;
 
-import android.graphics.PorterDuff;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,16 +8,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.afollestad.appthemeengine.ATE;
-import com.afollestad.appthemeengine.Config;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Member;
 import com.commit451.gitlab.transformation.CircleTransformation;
-import com.commit451.gitlab.util.AppThemeUtil;
 import com.commit451.gitlab.util.ImageUtil;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -32,9 +28,9 @@ public class AssigneeSpinnerViewHolder extends RecyclerView.ViewHolder {
         return new AssigneeSpinnerViewHolder(view);
     }
 
-    @Bind(R.id.user_image)
+    @BindView(R.id.user_image)
     ImageView mImageView;
-    @Bind(R.id.user_username)
+    @BindView(R.id.user_username)
     TextView mUsernameView;
 
     public AssigneeSpinnerViewHolder(View view) {
@@ -46,9 +42,6 @@ public class AssigneeSpinnerViewHolder extends RecyclerView.ViewHolder {
         if (user == null) {
             mUsernameView.setText(R.string.no_assignee);
             mImageView.setImageResource(R.drawable.ic_assign_24dp);
-            mImageView.getDrawable().setColorFilter(Config.textColorPrimary(
-                    mImageView.getContext(), AppThemeUtil.resolveThemeKey(mImageView.getContext())),
-                    PorterDuff.Mode.SRC_IN);
         } else {
             mUsernameView.setText(user.getUsername());
             GitLabClient.getPicasso()

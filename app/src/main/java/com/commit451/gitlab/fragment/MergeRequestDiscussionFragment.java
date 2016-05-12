@@ -8,36 +8,35 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.TextView;
 
+import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.MergeRequestDetailAdapter;
 import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.event.MergeRequestChangedEvent;
 import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.model.api.Note;
 import com.commit451.gitlab.model.api.Project;
-import com.commit451.gitlab.util.KeyboardUtil;
 import com.commit451.gitlab.util.PaginationUtil;
+import com.commit451.gitlab.view.SendMessageView;
+import com.commit451.teleprinter.Teleprinter;
+import com.squareup.otto.Subscribe;
 
 import org.parceler.Parcels;
 
 import java.util.List;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
+import butterknife.BindView;
 import timber.log.Timber;
 
 /**
  * Shows the discussion of a merge request
  */
-public class MergeRequestDiscussionFragment extends BaseFragment {
+public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
 
     private static final String KEY_PROJECT = "project";
     private static final String KEY_MERGE_REQUEST = "merge_request";
@@ -51,15 +50,15 @@ public class MergeRequestDiscussionFragment extends BaseFragment {
         return fragment;
     }
 
-    @Bind(R.id.root)
+    @BindView(R.id.root)
     ViewGroup mRoot;
-    @Bind(R.id.swipe_layout)
+    @BindView(R.id.swipe_layout)
     SwipeRefreshLayout mSwipeRefreshLayout;
-    @Bind(R.id.list)
+    @BindView(R.id.list)
     RecyclerView mNotesRecyclerView;
-    @Bind(R.id.new_note_edit)
-    EditText mNewNoteEdit;
-    @Bind(R.id.progress)
+    @BindView(R.id.send_message_view)
+    SendMessageView mSendMessageView;
+    @BindView(R.id.progress)
     View mProgress;
 
     MergeRequestDetailAdapter mMergeRequestDetailAdapter;
@@ -69,11 +68,9 @@ public class MergeRequestDiscussionFragment extends BaseFragment {
     MergeRequest mMergeRequest;
     Uri mNextPageUrl;
     boolean mLoading;
+    Teleprinter mTeleprinter;
 
-    @OnClick(R.id.new_note_button)
-    public void onNewNoteClick() {
-        postNote();
-    }
+    EventReceiver mEventReceiver;
 
     private final RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
         @Override
@@ -92,6 +89,9 @@ public class MergeRequestDiscussionFragment extends BaseFragment {
 
         @Override
         public void onResponse(@NonNull List<Note> response) {
+            if (getView() == null) {
+                return;
+            }
             mSwipeRefreshLayout.setRefreshing(false);
             mLoading = false;
             mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
@@ -102,6 +102,9 @@ public class MergeRequestDiscussionFragment extends BaseFragment {
         public void onAllFailure(Throwable t) {
             mLoading = false;
             Timber.e(t, null);
+            if (getView() == null) {
+                return;
+            }
             mSwipeRefreshLayout.setRefreshing(false);
             Snackbar.make(mRoot, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
                     .show();
@@ -112,6 +115,9 @@ public class MergeRequestDiscussionFragment extends BaseFragment {
 
         @Override
         public void onResponse(@NonNull List<Note> response) {
+            if (getView() == null) {
+                return;
+            }
             mMergeRequestDetailAdapter.setLoading(false);
             mLoading = false;
             mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
@@ -120,6 +126,9 @@ public class MergeRequestDiscussionFragment extends BaseFragment {
 
         @Override
         public void onAllFailure(Throwable t) {
+            if (getView() == null) {
+                return;
+            }
             mLoading = false;
             Timber.e(t, null);
             mMergeRequestDetailAdapter.setLoading(false);
@@ -132,6 +141,9 @@ public class MergeRequestDiscussionFragment extends BaseFragment {
 
         @Override
         public void onResponse(@NonNull Note response) {
+            if (getView() == null) {
+                return;
+            }
             mProgress.setVisibility(View.GONE);
             mMergeRequestDetailAdapter.addNote(response);
             mNotesRecyclerView.smoothScrollToPosition(MergeRequestDetailAdapter.getHeaderCount());
@@ -139,6 +151,9 @@ public class MergeRequestDiscussionFragment extends BaseFragment {
 
         @Override
         public void onAllFailure(Throwable t) {
+            if (getView() == null) {
+                return;
+            }
             Timber.e(t, null);
             mProgress.setVisibility(View.GONE);
             Snackbar.make(mRoot, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
@@ -161,7 +176,7 @@ public class MergeRequestDiscussionFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
+        mTeleprinter = new Teleprinter(getActivity());
 
         mMergeRequestDetailAdapter = new MergeRequestDetailAdapter(getActivity(), mMergeRequest);
         mNotesLinearLayoutManager = new LinearLayoutManager(getActivity());
@@ -169,11 +184,20 @@ public class MergeRequestDiscussionFragment extends BaseFragment {
         mNotesRecyclerView.setAdapter(mMergeRequestDetailAdapter);
         mNotesRecyclerView.addOnScrollListener(mOnScrollListener);
 
-        mNewNoteEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        mSendMessageView.setCallbacks(new SendMessageView.Callbacks() {
             @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                postNote();
-                return true;
+            public void onSendClicked(String message) {
+                postNote(message);
+            }
+
+            @Override
+            public void onGalleryClicked() {
+
+            }
+
+            @Override
+            public void onCameraClicked() {
+
             }
         });
 
@@ -184,6 +208,15 @@ public class MergeRequestDiscussionFragment extends BaseFragment {
             }
         });
         loadNotes();
+
+        mEventReceiver = new EventReceiver();
+        LabCoatApp.bus().register(mEventReceiver);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        LabCoatApp.bus().unregister(mEventReceiver);
     }
 
     private void loadNotes() {
@@ -203,10 +236,9 @@ public class MergeRequestDiscussionFragment extends BaseFragment {
         GitLabClient.instance().getMergeRequestNotes(mNextPageUrl.toString()).enqueue(mMoreNotesCallback);
     }
 
-    private void postNote() {
-        String body = mNewNoteEdit.getText().toString();
+    private void postNote(String message) {
 
-        if (body.length() < 1) {
+        if (message.length() < 1) {
             return;
         }
 
@@ -214,10 +246,21 @@ public class MergeRequestDiscussionFragment extends BaseFragment {
         mProgress.setAlpha(0.0f);
         mProgress.animate().alpha(1.0f);
         // Clear text & collapse keyboard
-        KeyboardUtil.hideKeyboard(getActivity());
-        mNewNoteEdit.setText("");
+        mTeleprinter.hideKeyboard();
+        mSendMessageView.clearText();
 
-        GitLabClient.instance().addMergeRequestNote(mProject.getId(), mMergeRequest.getId(), body).enqueue(mPostNoteCallback);
+        GitLabClient.instance().addMergeRequestNote(mProject.getId(), mMergeRequest.getId(), message).enqueue(mPostNoteCallback);
+    }
+
+    private class EventReceiver {
+
+        @Subscribe
+        public void onMergeRequestChangedEvent(MergeRequestChangedEvent event) {
+            if (mMergeRequest.getId() == event.mergeRequest.getId()) {
+                mMergeRequest = event.mergeRequest;
+                loadNotes();
+            }
+        }
     }
 
 }

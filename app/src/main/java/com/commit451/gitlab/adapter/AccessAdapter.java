@@ -12,7 +12,6 @@ import com.commit451.gitlab.viewHolder.AccessViewHolder;
 
 /**
  * Adapter to show the access levels
- * Created by Jawn on 9/16/2015.
  */
 public class AccessAdapter extends RecyclerView.Adapter<AccessViewHolder> {
 

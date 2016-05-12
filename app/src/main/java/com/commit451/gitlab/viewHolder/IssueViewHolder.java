@@ -7,16 +7,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.afollestad.appthemeengine.ATE;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Issue;
 import com.commit451.gitlab.transformation.CircleTransformation;
-import com.commit451.gitlab.util.AppThemeUtil;
 import com.commit451.gitlab.util.DateUtils;
 import com.commit451.gitlab.util.ImageUtil;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -30,9 +28,9 @@ public class IssueViewHolder extends RecyclerView.ViewHolder {
         return new IssueViewHolder(view);
     }
 
-    @Bind(R.id.issue_image) ImageView mImageView;
-    @Bind(R.id.issue_message) TextView mMessageView;
-    @Bind(R.id.issue_creator) TextView mCreatorView;
+    @BindView(R.id.issue_image) ImageView mImageView;
+    @BindView(R.id.issue_message) TextView mMessageView;
+    @BindView(R.id.issue_creator) TextView mCreatorView;
 
     public IssueViewHolder(View view) {
         super(view);
