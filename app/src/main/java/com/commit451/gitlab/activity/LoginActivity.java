@@ -73,11 +73,11 @@ public class LoginActivity extends BaseActivity {
     private static final int PERMISSION_REQUEST_GET_ACCOUNTS = 1337;
     private static Pattern sTokenPattern = Pattern.compile("^[A-Za-z0-9-_]*$");
 
-    public static Intent newInstance(Context context) {
-        return newInstance(context, false);
+    public static Intent newIntent(Context context) {
+        return newIntent(context, false);
     }
 
-    public static Intent newInstance(Context context, boolean showClose) {
+    public static Intent newIntent(Context context, boolean showClose) {
         Intent intent = new Intent(context, LoginActivity.class);
         intent.putExtra(EXTRA_SHOW_CLOSE, showClose);
         return intent;
@@ -294,7 +294,7 @@ public class LoginActivity extends BaseActivity {
             LabCoatApp.bus().post(new LoginEvent(mAccount));
             //This is mostly for if projects already exists, then we will reload the data
             LabCoatApp.bus().post(new ReloadDataEvent());
-            NavigationManager.navigateToProjects(LoginActivity.this);
+            NavigationManager.navigateToStartingActivity(LoginActivity.this);
             finish();
         }
 

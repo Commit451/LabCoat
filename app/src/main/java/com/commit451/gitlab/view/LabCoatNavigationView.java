@@ -95,6 +95,10 @@ public class LabCoatNavigationView extends NavigationView {
                     LabCoatApp.bus().post(new CloseDrawerEvent());
                     NavigationManager.navigateToAbout((Activity) getContext());
                     return true;
+                case R.id.nav_settings:
+                    LabCoatApp.bus().post(new CloseDrawerEvent());
+                    NavigationManager.navigateToSettings((Activity) getContext());
+                    return true;
             }
             return false;
         }

@@ -35,7 +35,7 @@ public class BuildActivity extends BaseActivity {
     private static final String KEY_PROJECT = "key_project";
     private static final String KEY_BUILD = "key_merge_request";
 
-    public static Intent newInstance(Context context, Project project, Build build) {
+    public static Intent newIntent(Context context, Project project, Build build) {
         Intent intent = new Intent(context, BuildActivity.class);
         intent.putExtra(KEY_PROJECT, Parcels.wrap(project));
         intent.putExtra(KEY_BUILD, Parcels.wrap(build));

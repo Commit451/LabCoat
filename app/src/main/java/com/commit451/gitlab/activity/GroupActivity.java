@@ -41,13 +41,13 @@ public class GroupActivity extends BaseActivity {
     private static final String KEY_GROUP = "key_group";
     private static final String KEY_GROUP_ID = "key_group_id";
 
-    public static Intent newInstance(Context context, Group group) {
+    public static Intent newIntent(Context context, Group group) {
         Intent intent = new Intent(context, GroupActivity.class);
         intent.putExtra(KEY_GROUP, Parcels.wrap(group));
         return intent;
     }
 
-    public static Intent newInstance(Context context, long groupId) {
+    public static Intent newIntent(Context context, long groupId) {
         Intent intent = new Intent(context, GroupActivity.class);
         intent.putExtra(KEY_GROUP_ID, groupId);
         return intent;

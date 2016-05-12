@@ -75,7 +75,7 @@ public class RoutingActivity extends Activity {
                 String projectNamespace = link.getPathSegments().get(0);
                 String projectName = link.getPathSegments().get(1);
                 String commitSha = link.getPathSegments().get(3);
-                startActivity(LoadSomeInfoActivity.newInstance(this, projectNamespace, projectName, commitSha));
+                startActivity(LoadSomeInfoActivity.newIntent(this, projectNamespace, projectName, commitSha));
                 overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
                 handled = true;
             }
@@ -93,7 +93,7 @@ public class RoutingActivity extends Activity {
                         String projectNamespace = link.getPathSegments().get(i-2);
                         String projectName = link.getPathSegments().get(i-1);
                         String mergeRequestId = link.getPathSegments().get(i+1);
-                        startActivity(LoadSomeInfoActivity.newMergeRequestInstance(this, projectNamespace, projectName, mergeRequestId));
+                        startActivity(LoadSomeInfoActivity.newMergeRequestIntent(this, projectNamespace, projectName, mergeRequestId));
                         overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
                         handled = true;
                         break;

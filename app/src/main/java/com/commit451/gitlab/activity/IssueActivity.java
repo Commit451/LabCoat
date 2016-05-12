@@ -62,14 +62,14 @@ public class IssueActivity extends BaseActivity {
 
     private static final int REQUEST_IMAGE = 1;
 
-    public static Intent newInstance(Context context, Project project, Issue issue) {
+    public static Intent newIntent(Context context, Project project, Issue issue) {
         Intent intent = new Intent(context, IssueActivity.class);
         intent.putExtra(EXTRA_PROJECT, Parcels.wrap(project));
         intent.putExtra(EXTRA_SELECTED_ISSUE, Parcels.wrap(issue));
         return intent;
     }
 
-    public static Intent newInstance(Context context, String namespace, String projectName, String issueIid) {
+    public static Intent newIntent(Context context, String namespace, String projectName, String issueIid) {
         Intent intent = new Intent(context, IssueActivity.class);
         intent.putExtra(EXTRA_PROJECT_NAMESPACE, namespace);
         intent.putExtra(EXTRA_PROJECT_NAME, projectName);

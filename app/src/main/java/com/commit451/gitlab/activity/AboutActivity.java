@@ -46,7 +46,7 @@ import timber.log.Timber;
 public class AboutActivity extends BaseActivity {
     private static final String REPO_ID = "473568";
 
-    public static Intent newInstance(Context context) {
+    public static Intent newIntent(Context context) {
         Intent intent = new Intent(context, AboutActivity.class);
         return intent;
     }

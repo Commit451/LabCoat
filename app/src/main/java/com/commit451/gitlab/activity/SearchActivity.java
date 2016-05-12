@@ -29,7 +29,7 @@ import timber.log.Timber;
  */
 public class SearchActivity extends BaseActivity {
 
-    public static Intent newInstance(Context context) {
+    public static Intent newIntent(Context context) {
         Intent intent = new Intent(context, SearchActivity.class);
         return intent;
     }

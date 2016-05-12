@@ -46,13 +46,13 @@ public class ProjectActivity extends BaseActivity {
     private static final String EXTRA_PROJECT = "extra_project";
     private static final String EXTRA_PROJECT_ID = "extra_project_id";
 
-    public static Intent newInstance(Context context, Project project) {
+    public static Intent newIntent(Context context, Project project) {
         Intent intent = new Intent(context, ProjectActivity.class);
         intent.putExtra(EXTRA_PROJECT, Parcels.wrap(project));
         return intent;
     }
 
-    public static Intent newInstance(Context context, String projectId) {
+    public static Intent newIntent(Context context, String projectId) {
         Intent intent = new Intent(context, ProjectActivity.class);
         intent.putExtra(EXTRA_PROJECT_ID, projectId);
         return intent;

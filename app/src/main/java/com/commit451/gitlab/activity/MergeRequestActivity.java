@@ -35,7 +35,7 @@ public class MergeRequestActivity extends BaseActivity {
     private static final String KEY_PROJECT = "key_project";
     private static final String KEY_MERGE_REQUEST = "key_merge_request";
 
-    public static Intent newInstance(Context context, Project project, MergeRequest mergeRequest) {
+    public static Intent newIntent(Context context, Project project, MergeRequest mergeRequest) {
         Intent intent = new Intent(context, MergeRequestActivity.class);
         intent.putExtra(KEY_PROJECT, Parcels.wrap(project));
         intent.putExtra(KEY_MERGE_REQUEST, Parcels.wrap(mergeRequest));

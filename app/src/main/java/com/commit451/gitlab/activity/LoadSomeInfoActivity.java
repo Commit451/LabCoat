@@ -35,7 +35,7 @@ public class LoadSomeInfoActivity extends AppCompatActivity {
     private static final int LOAD_TYPE_DIFF = 0;
     private static final int LOAD_TYPE_MERGE_REQUEST = 1;
 
-    public static Intent newInstance(Context context, String namespace, String projectName, String commitSha) {
+    public static Intent newIntent(Context context, String namespace, String projectName, String commitSha) {
         Intent intent = new Intent(context, LoadSomeInfoActivity.class);
         intent.putExtra(EXTRA_PROJECT_NAMESPACE, namespace);
         intent.putExtra(EXTRA_PROJECT_NAME, projectName);
@@ -44,7 +44,7 @@ public class LoadSomeInfoActivity extends AppCompatActivity {
         return intent;
     }
 
-    public static Intent newMergeRequestInstance(Context context, String namespace, String projectName, String mergeRequestId) {
+    public static Intent newMergeRequestIntent(Context context, String namespace, String projectName, String mergeRequestId) {
         Intent intent = new Intent(context, LoadSomeInfoActivity.class);
         intent.putExtra(EXTRA_PROJECT_NAMESPACE, namespace);
         intent.putExtra(EXTRA_PROJECT_NAME, projectName);

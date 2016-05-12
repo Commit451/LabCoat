@@ -37,7 +37,7 @@ public class DiffActivity extends BaseActivity {
     private static final String EXTRA_PROJECT = "extra_project";
     private static final String EXTRA_COMMIT = "extra_commit";
 
-    public static Intent newInstance(Context context, Project project, RepositoryCommit commit) {
+    public static Intent newIntent(Context context, Project project, RepositoryCommit commit) {
         Intent intent = new Intent(context, DiffActivity.class);
         intent.putExtra(EXTRA_PROJECT, Parcels.wrap(project));
         intent.putExtra(EXTRA_COMMIT, Parcels.wrap(commit));

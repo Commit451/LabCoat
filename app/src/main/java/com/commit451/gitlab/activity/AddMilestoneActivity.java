@@ -41,11 +41,11 @@ public class AddMilestoneActivity extends MorphActivity {
     private static final String KEY_PROJECT_ID = "project_id";
     private static final String KEY_MILESTONE = "milestone";
 
-    public static Intent newInstance(Context context, long projectId) {
-        return newInstance(context, projectId, null);
+    public static Intent newIntent(Context context, long projectId) {
+        return newIntent(context, projectId, null);
     }
 
-    public static Intent newInstance(Context context, long projectId, Milestone milestone) {
+    public static Intent newIntent(Context context, long projectId, Milestone milestone) {
         Intent intent = new Intent(context, AddMilestoneActivity.class);
         intent.putExtra(KEY_PROJECT_ID, projectId);
         if (milestone != null) {

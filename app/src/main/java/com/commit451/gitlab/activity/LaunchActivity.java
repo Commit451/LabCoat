@@ -46,7 +46,7 @@ public class LaunchActivity extends Activity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    NavigationManager.navigateToProjects(LaunchActivity.this);
+                    NavigationManager.navigateToStartingActivity(LaunchActivity.this);
                     finish();
                 }
             });

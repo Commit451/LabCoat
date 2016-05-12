@@ -383,6 +383,17 @@
     <string name="build_commit_message">Message: %1$s</string>
     <string name="no_build_artifacts_found">No build artifacts found.</string>
 
+    <!-- Settings -->
+    <string name="setting_starting_view">Starting View</string>
+    <string name="setting_starting_view_projects">Projects</string>
+    <string name="setting_starting_view_groups">Groups</string>
+    <string name="setting_starting_view_activity">Activity</string>
+    <string-array name="setting_starting_view_choices">
+        <item>@string/setting_starting_view_projects</item>
+        <item>@string/setting_starting_view_groups</item>
+        <item>@string/setting_starting_view_activity</item>
+    </string-array>
+
     <!-- Deep link scheme -->
     <string name="deeplink_scheme">labcoat</string>
     <!-- Deep link host -->

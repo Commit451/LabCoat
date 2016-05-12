@@ -35,7 +35,7 @@ public class UserActivity extends BaseActivity {
 
     private static final String KEY_USER = "user";
 
-    public static Intent newInstance(Context context, UserBasic user) {
+    public static Intent newIntent(Context context, UserBasic user) {
         Intent intent = new Intent(context, UserActivity.class);
         intent.putExtra(KEY_USER, Parcels.wrap(user));
         return intent;
