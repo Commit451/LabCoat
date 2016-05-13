@@ -28,7 +28,6 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:tag="text_color|primary_color_dependent,text_color_hint|primary_color_dependent"
                     android:hint="@string/action_search"
                     android:layout_marginRight="32dp"
                     android:inputType="text"
@@ -48,7 +47,7 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <com.commit451.gitlab.view.GitLabSwipeRefreshLayout
+    <com.commit451.gitlab.view.LabCoatSwipeRefreshLayout
         android:id="@+id/swipe_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -58,6 +57,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 
-    </com.commit451.gitlab.view.GitLabSwipeRefreshLayout>
+    </com.commit451.gitlab.view.LabCoatSwipeRefreshLayout>
 
 </LinearLayout>

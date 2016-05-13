@@ -23,7 +23,7 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <com.commit451.gitlab.view.GitLabSwipeRefreshLayout
+    <com.commit451.gitlab.view.LabCoatSwipeRefreshLayout
         android:id="@+id/swipe_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -33,7 +33,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 
-    </com.commit451.gitlab.view.GitLabSwipeRefreshLayout>
+    </com.commit451.gitlab.view.LabCoatSwipeRefreshLayout>
     </LinearLayout>
 
     <TextView
@@ -52,7 +52,6 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:src="@drawable/ic_edit_24dp"
-        android:tag="tint_selector|accent_color"
         app:fabSize="mini"
         app:layout_anchor="@id/appbar"
         app:layout_anchorGravity="bottom|right|end"/>
@@ -63,8 +62,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         android:layout_margin="@dimen/padding_normal"
-        android:src="@drawable/ic_add_24dp"
-        android:tag="tint_selector|accent_color" />
+        android:src="@drawable/ic_add_24dp" />
 
     <include layout="@layout/progress_fullscreen"/>
 

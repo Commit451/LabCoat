@@ -19,13 +19,16 @@ import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.rss.Entry;
 import com.commit451.gitlab.model.rss.Feed;
-import com.commit451.gitlab.util.NavigationManager;
+import com.commit451.gitlab.navigation.NavigationManager;
+import com.novoda.simplechromecustomtabs.SimpleChromeCustomTabs;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
+import butterknife.BindView;
 import timber.log.Timber;
 
-public class FeedFragment extends BaseFragment {
+/**
+ * Takes an RSS feed url and shows the feed
+ */
+public class FeedFragment extends ButterKnifeFragment {
 
     private static final String EXTRA_FEED_URL = "extra_feed_url";
 
@@ -38,11 +41,11 @@ public class FeedFragment extends BaseFragment {
         return fragment;
     }
 
-    @Bind(R.id.swipe_layout)
+    @BindView(R.id.swipe_layout)
     SwipeRefreshLayout mSwipeRefreshLayout;
-    @Bind(R.id.list)
+    @BindView(R.id.list)
     RecyclerView mEntryListView;
-    @Bind(R.id.message_text)
+    @BindView(R.id.message_text)
     TextView mMessageView;
 
     private Uri mFeedUrl;
@@ -100,7 +103,6 @@ public class FeedFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
 
         mEventReceiver = new EventReceiver();
         LabCoatApp.bus().register(mEventReceiver);
@@ -121,9 +123,22 @@ public class FeedFragment extends BaseFragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        SimpleChromeCustomTabs.getInstance().connectTo(getActivity());
+    }
+
+    @Override
+    public void onPause() {
+        if (SimpleChromeCustomTabs.getInstance().isConnected()) {
+            SimpleChromeCustomTabs.getInstance().disconnectFrom(getActivity());
+        }
+        super.onPause();
+    }
+
+    @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.unbind(this);
         LabCoatApp.bus().unregister(mEventReceiver);
     }
 

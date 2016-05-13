@@ -3,10 +3,9 @@ apply plugin: 'com.github.ben-manes.versions'
 buildscript {
     repositories {
         jcenter()
-        maven { url "https://jitpack.io" }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.5.0'
+        classpath 'com.android.tools.build:gradle:2.1.0'
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
         //check with ./gradlew dependencyUpdates
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.12.0'
@@ -17,6 +16,7 @@ allprojects {
     repositories {
         jcenter()
         maven { url "https://jitpack.io" }
+        maven { url  "http://dl.bintray.com/novoda/maven" }
     }
 }
 

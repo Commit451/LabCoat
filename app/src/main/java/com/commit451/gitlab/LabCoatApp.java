@@ -5,6 +5,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.support.annotation.VisibleForTesting;
 
+import com.novoda.simplechromecustomtabs.SimpleChromeCustomTabs;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.otto.Bus;
 
@@ -45,6 +46,7 @@ public class LabCoatApp extends Application {
         }
 
         JodaTimeAndroid.init(this);
+        SimpleChromeCustomTabs.initialize(this);
     }
 
     @VisibleForTesting

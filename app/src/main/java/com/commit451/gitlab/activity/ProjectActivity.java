@@ -1,5 +1,7 @@
 package com.commit451.gitlab.activity;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,13 +15,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.SectionsPagerAdapter;
-import com.commit451.gitlab.adapter.ThemedArrayAdapter;
 import com.commit451.gitlab.animation.HideRunnable;
 import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
@@ -33,7 +36,7 @@ import org.parceler.Parcels;
 
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Callback;
 import timber.log.Timber;
@@ -43,29 +46,29 @@ public class ProjectActivity extends BaseActivity {
     private static final String EXTRA_PROJECT = "extra_project";
     private static final String EXTRA_PROJECT_ID = "extra_project_id";
 
-    public static Intent newInstance(Context context, Project project) {
+    public static Intent newIntent(Context context, Project project) {
         Intent intent = new Intent(context, ProjectActivity.class);
         intent.putExtra(EXTRA_PROJECT, Parcels.wrap(project));
         return intent;
     }
 
-    public static Intent newInstance(Context context, long projectId) {
+    public static Intent newIntent(Context context, String projectId) {
         Intent intent = new Intent(context, ProjectActivity.class);
         intent.putExtra(EXTRA_PROJECT_ID, projectId);
         return intent;
     }
 
-    @Bind(R.id.root)
+    @BindView(R.id.root)
     ViewGroup mRoot;
-    @Bind(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar mToolbar;
-    @Bind(R.id.tabs)
+    @BindView(R.id.tabs)
     TabLayout mTabLayout;
-    @Bind(R.id.branch_spinner)
+    @BindView(R.id.branch_spinner)
     Spinner mBranchSpinner;
-    @Bind(R.id.progress)
+    @BindView(R.id.progress)
     View mProgress;
-    @Bind(R.id.pager)
+    @BindView(R.id.pager)
     ViewPager mViewPager;
 
     private final AdapterView.OnItemSelectedListener mSpinnerItemSelectedListener = new AdapterView.OnItemSelectedListener() {
@@ -121,7 +124,7 @@ public class ProjectActivity extends BaseActivity {
                 mBranchSpinner.setAlpha(0.0f);
                 mBranchSpinner.animate().alpha(1.0f);
                 // Set up the dropdown list navigation in the action bar.
-                mBranchSpinner.setAdapter(new ThemedArrayAdapter<>(ProjectActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, response));
+                mBranchSpinner.setAdapter(new ArrayAdapter<>(ProjectActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, response));
             }
             for (int i = 0; i < response.size(); i++) {
                 if (response.get(i).getName().equals(mProject.getDefaultBranch())) {
@@ -152,7 +155,25 @@ public class ProjectActivity extends BaseActivity {
         public boolean onMenuItemClick(MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.action_share:
-                    IntentUtil.share(mRoot, mProject.getWebUrl());
+                    if (mProject != null) {
+                        IntentUtil.share(mRoot, mProject.getWebUrl());
+                    }
+                    return true;
+                case R.id.action_copy_git_https:
+                    if (mProject == null || mProject.getHttpUrlToRepo() == null) {
+                        Toast.makeText(ProjectActivity.this, R.string.failed_to_copy_to_clipboard, Toast.LENGTH_SHORT)
+                                .show();
+                    } else {
+                        copyToClipboard(mProject.getHttpUrlToRepo());
+                    }
+                    return true;
+                case R.id.action_copy_git_ssh:
+                    if (mProject == null || mProject.getHttpUrlToRepo() == null) {
+                        Toast.makeText(ProjectActivity.this, R.string.failed_to_copy_to_clipboard, Toast.LENGTH_SHORT)
+                                .show();
+                    } else {
+                        copyToClipboard(mProject.getSshUrlToRepo());
+                    }
                     return true;
             }
             return false;
@@ -173,11 +194,11 @@ public class ProjectActivity extends BaseActivity {
                 finish();
             }
         });
-        mToolbar.inflateMenu(R.menu.menu_repository);
+        mToolbar.inflateMenu(R.menu.menu_project);
         mToolbar.setOnMenuItemClickListener(mOnMenuItemClickListener);
 
         if (mProject == null) {
-            long projectId = getIntent().getLongExtra(EXTRA_PROJECT_ID, -1);
+            String projectId = getIntent().getStringExtra(EXTRA_PROJECT_ID);
             loadProject(projectId);
         } else {
             setupTabs();
@@ -185,7 +206,7 @@ public class ProjectActivity extends BaseActivity {
         }
     }
 
-    private void loadProject(long projectId) {
+    private void loadProject(String projectId) {
         mProgress.setAlpha(0.0f);
         mProgress.setVisibility(View.VISIBLE);
         mProgress.animate().alpha(1.0f);
@@ -228,5 +249,15 @@ public class ProjectActivity extends BaseActivity {
 
         mViewPager.setAdapter(sectionsPagerAdapter);
         mTabLayout.setupWithViewPager(mViewPager);
+    }
+
+    private void copyToClipboard(String url) {
+        ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+
+        // Creates a new text clip to put on the clipboard
+        ClipData clip = ClipData.newPlainText(mProject.getName(), url);
+        clipboard.setPrimaryClip(clip);
+        Snackbar.make(mRoot, R.string.copied_to_clipboard, Snackbar.LENGTH_SHORT)
+                .show();
     }
 }

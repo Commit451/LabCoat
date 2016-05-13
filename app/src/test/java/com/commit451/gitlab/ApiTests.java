@@ -11,7 +11,6 @@ import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryCommit;
 import com.commit451.gitlab.model.api.RepositoryTreeObject;
 import com.commit451.gitlab.model.api.UserFull;
-import com.commit451.gitlab.model.api.UserLogin;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -43,20 +42,11 @@ public class ApiTests {
     public static void setUp() throws Exception {
         //for logging
         ShadowLog.stream = System.out;
-        //log in
-        Account testAccount = getTestAccount();
 
-        Response<UserLogin> loginResponse = GitLabClient.instance(testAccount)
-                .loginWithUsername("TestAllTheThings", "testing123")
-                .execute();
-        assertTrue(loginResponse.isSuccessful());
-        assertNotNull(loginResponse.body().getPrivateToken());
-        //attach the newly retrieved private token
-        testAccount.setPrivateToken(loginResponse.body().getPrivateToken());
-        GitLabClient.setAccount(testAccount);
+        TestUtil.login();
 
         Response<Project> projectResponse = GitLabClient.instance()
-                .getProject(FAKE_GROUP_PROJECT_ID)
+                .getProject(String.valueOf(FAKE_GROUP_PROJECT_ID))
                 .execute();
         assertTrue(projectResponse.isSuccessful());
         assertNotNull(projectResponse.body());

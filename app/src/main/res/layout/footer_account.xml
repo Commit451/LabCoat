@@ -14,14 +14,12 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="16dp"
         android:src="@drawable/ic_add_24dp"
-        android:tag="tint|primary_text"
         android:layout_gravity="center_vertical"
         android:contentDescription="@null"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:tag="text_color|primary_text"
         android:text="@string/add_account"
         android:layout_gravity="center_vertical"/>
 

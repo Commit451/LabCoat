@@ -6,6 +6,7 @@
     <!-- Drawer -->
     <string name="nav_projects">Projects</string>
     <string name="nav_groups">Groups</string>
+    <string name="nav_activity">Activity</string>
     <!-- Menu -->
     <string name="action_logout">Logout</string>
     <string name="action_save">Save</string>
@@ -19,9 +20,15 @@
     <string name="action_assign">Assign</string>
     <string name="action_create">Create</string>
     <string name="action_edit">Edit</string>
+    <string name="action_merge">Merge</string>
+    <string name="action_erase">Erase</string>
+    <string name="action_retry">Retry</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_copy_git_https">Copy git https link</string>
+    <string name="action_copy_git_ssh">Copy git ssh link</string>
 
     <!-- Tabs -->
-    <string name="title_overview">Overview</string>
+    <string name="title_project">Project</string>
     <string name="title_activity">Activity</string>
     <string name="title_commits">Commits</string>
     <string name="title_milestones">Milestones</string>
@@ -29,12 +36,14 @@
     <string name="title_files">Files</string>
     <string name="title_merge_requests">Merge Requests</string>
     <string name="title_members">Members</string>
+    <string name="title_builds">Builds</string>
 
     <string-array name="main_tabs">
-        <item>@string/title_overview</item>
+        <item>@string/title_project</item>
         <item>@string/title_activity</item>
         <item>@string/title_files</item>
         <item>@string/title_commits</item>
+        <item>@string/title_builds</item>
         <item>@string/title_milestones</item>
         <item>@string/title_issues</item>
         <item>@string/title_merge_requests</item>
@@ -59,8 +68,8 @@
 
     <!-- Login -->
     <string name="login_button">Login</string>
-    <string name="url_hint">URL (e.g. https://gitlab.com)</string>
-    <string name="url_gitlab">https://gitlab.com</string>
+    <string name="url_hint">URL (e.g. https://gitlab.com/)</string>
+    <string name="url_gitlab">https://gitlab.com/</string>
     <string name="user_hint">Username or Email</string>
     <string name="password_hint">Password</string>
     <string name="token_hint">Private token</string>
@@ -73,6 +82,7 @@
     <string name="hostname_title">Hostname did not match</string>
     <string name="hostname_message">The hostname in the certificate did not match the hostname you are connecting to.\n\nThis could mean a hacker is trying to intercept your communications.\n\nIf you trust the certificate, press OK to continue.</string>
     <string name="not_a_valid_url">Not a valid URL</string>
+    <string name="please_end_your_url_with_a_slash">Please end your url with a "/"</string>
     <string name="not_a_valid_private_token">Not a valid private token</string>
     <string name="realm_message">A username and password are being requested by the server.\nThe server says: \"%1$s\"</string>
     <string name="already_logged_in">This account is already logged in</string>
@@ -130,9 +140,17 @@
     <string name="just_now">just now</string>
     <string name="failed_to_create_issue">Failed to create or modify issue</string>
 
-    <!-- Overview -->
+    <!-- Project -->
     <string name="no_readme_found">No README found for project</string>
     <string name="created_by">Created by %1$s</string>
+    <string name="project_forked">Project forked into user namespace</string>
+    <string name="project_starred">Project starred</string>
+    <string name="project_already_starred">Project already starred</string>
+    <string name="project_star_failed">Failed to star project</string>
+    <string name="project_unstar">Unstar</string>
+    <string name="fork_failed">Failed to fork project</string>
+    <string name="project_unstarred">Project unstarred</string>
+    <string name="unstar_failed">Failed to unstar project</string>
     <!-- Commits -->
     <string name="no_commits_found">No commits found.</string>
 
@@ -143,6 +161,7 @@
     <string name="file_saved">File saved successfully to Download folder</string>
     <string name="no_files_found">No files found.</string>
     <string name="copied_to_clipboard">Copied to clipboard</string>
+    <string name="failed_to_copy_to_clipboard">Failed to copy to clipboard</string>
     <string name="root">ROOT</string>
 
     <!-- Issues -->
@@ -177,6 +196,8 @@
     <string name="assignee">Assignee</string>
     <string name="milestone">Milestone</string>
     <string name="no_milestone">No Milestone</string>
+    <string name="labels">Labels</string>
+    <string name="add_labels">+ Add Labels</string>
 
     <!-- User -->
     <string name="remove_user_dialog_title">Remove user?</string>
@@ -265,6 +286,8 @@
         <item>all</item>
     </string-array>
     <string name="created_merge_request">created merge request</string>
+    <string name="unable_to_merge">Unable to merge</string>
+    <string name="merge_request_accepted">Merge request accepted</string>
 
     <!-- Milestones -->
     <string name="no_milestones">No milestones</string>
@@ -317,4 +340,68 @@
     <string name="primary_color_summary">Change the primary theme color</string>
     <string name="accent_color">Accent Color</string>
     <string name="accent_color_summary">Change the accent theme color</string>
+
+    <!-- Builds -->
+    <string name="no_builds">No builds</string>
+
+    <string-array name="build_scope_names">
+        <item>All</item>
+        <item>Pending</item>
+        <item>Running</item>
+        <item>Failed</item>
+        <item>Success</item>
+        <item>Canceled</item>
+    </string-array>
+    <string-array name="build_scope_values">
+        <item></item>
+        <item>pending</item>
+        <item>running</item>
+        <item>failed</item>
+        <item>success</item>
+        <item>canceled</item>
+    </string-array>
+    <string name="build_number">Build #</string>
+    <string name="build_started">Build started</string>
+    <string name="build_erased">Build erased</string>
+    <string name="build_canceled">Build canceled</string>
+    <string name="unable_to_retry_build">Unable to retry build</string>
+    <string name="unable_to_erase_build">Unable to erase build</string>
+    <string name="unable_to_cancel_build">Unable to cancel build</string>
+    <string name="unable_to_load_build">Unable to load build</string>
+    <string-array name="build_tabs">
+        <item>Details</item>
+        <item>Artifacts</item>
+    </string-array>
+    <string name="build_status">Status: %1$s</string>
+    <string name="build_duration">Duration: %1$s</string>
+    <string name="build_created">Created: %1$s</string>
+    <string name="build_finished">Finished: %1$s</string>
+    <string name="runner_number">Runner: #%1$s</string>
+    <string name="build_commit">Commit</string>
+    <string name="build_commit_branch">Branch: %1$s</string>
+    <string name="build_commit_author">Author: %1$s</string>
+    <string name="build_commit_message">Message: %1$s</string>
+    <string name="no_build_artifacts_found">No build artifacts found.</string>
+
+    <!-- Settings -->
+    <string name="setting_starting_view">Starting View</string>
+    <string name="setting_starting_view_projects">Projects</string>
+    <string name="setting_starting_view_groups">Groups</string>
+    <string name="setting_starting_view_activity">Activity</string>
+    <string-array name="setting_starting_view_choices">
+        <item>@string/setting_starting_view_projects</item>
+        <item>@string/setting_starting_view_groups</item>
+        <item>@string/setting_starting_view_activity</item>
+    </string-array>
+
+    <!-- Deep link scheme -->
+    <string name="deeplink_scheme">labcoat</string>
+    <!-- Deep link host -->
+    <string name="deeplink_host">app</string>
+    <!-- Deep link titles -->
+    <string name="deeplink_text">Open with LabCoat</string>
+    <!-- Deep link paths -->
+    <string name="deeplink_path_issue">issue</string>
+
+    <string name="deeplink_navigate_error">No idea where to navigate to</string>
 </resources>

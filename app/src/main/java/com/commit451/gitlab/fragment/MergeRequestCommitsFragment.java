@@ -11,28 +11,30 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.CommitsAdapter;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.event.MergeRequestChangedEvent;
 import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryCommit;
-import com.commit451.gitlab.util.NavigationManager;
+import com.commit451.gitlab.navigation.NavigationManager;
+import com.squareup.otto.Subscribe;
 
 import org.parceler.Parcels;
 
 import java.util.List;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
+import butterknife.BindView;
 import timber.log.Timber;
 
 /**
  * Like {@link CommitsFragment} but showing commits for a merge request
  */
-public class MergeRequestCommitsFragment extends BaseFragment {
+public class MergeRequestCommitsFragment extends ButterKnifeFragment {
 
     private static final String KEY_PROJECT = "project";
     private static final String KEY_MERGE_REQUEST = "merge_request";
@@ -46,9 +48,9 @@ public class MergeRequestCommitsFragment extends BaseFragment {
         return fragment;
     }
 
-    @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
-    @Bind(R.id.list) RecyclerView mCommitsListView;
-    @Bind(R.id.message_text) TextView mMessageView;
+    @BindView(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
+    @BindView(R.id.list) RecyclerView mCommitsListView;
+    @BindView(R.id.message_text) TextView mMessageView;
 
     private Project mProject;
     private MergeRequest mMergeRequest;
@@ -56,6 +58,8 @@ public class MergeRequestCommitsFragment extends BaseFragment {
     private CommitsAdapter mCommitsAdapter;
     private int mPage = -1;
     private boolean mLoading = false;
+
+    EventReceiver mEventReceiver;
 
     private final RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
         @Override
@@ -147,7 +151,6 @@ public class MergeRequestCommitsFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
 
         mCommitsAdapter = new CommitsAdapter(mCommitsAdapterListener);
         mCommitsLayoutManager = new LinearLayoutManager(getActivity());
@@ -163,12 +166,14 @@ public class MergeRequestCommitsFragment extends BaseFragment {
             }
         });
         loadData();
+        mEventReceiver = new EventReceiver();
+        LabCoatApp.bus().register(mEventReceiver);
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.unbind(this);
+        LabCoatApp.bus().unregister(mEventReceiver);
     }
 
     @Override
@@ -203,5 +208,16 @@ public class MergeRequestCommitsFragment extends BaseFragment {
 
         Timber.d("loadMore called for %s", mPage);
         //TODO is this even a thing?
+    }
+
+    private class EventReceiver {
+
+        @Subscribe
+        public void onMergeRequestChangedEvent(MergeRequestChangedEvent event) {
+            if (mMergeRequest.getId() == event.mergeRequest.getId()) {
+                mMergeRequest = event.mergeRequest;
+                loadData();
+            }
+        }
     }
 }

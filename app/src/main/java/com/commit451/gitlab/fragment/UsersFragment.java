@@ -19,17 +19,16 @@ import com.commit451.gitlab.adapter.UsersAdapter;
 import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.UserBasic;
-import com.commit451.gitlab.util.NavigationManager;
+import com.commit451.gitlab.navigation.NavigationManager;
 import com.commit451.gitlab.util.PaginationUtil;
 import com.commit451.gitlab.viewHolder.UserViewHolder;
 
 import java.util.List;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
+import butterknife.BindView;
 import timber.log.Timber;
 
-public class UsersFragment extends BaseFragment {
+public class UsersFragment extends ButterKnifeFragment {
 
     private static final String EXTRA_QUERY = "extra_query";
 
@@ -50,11 +49,11 @@ public class UsersFragment extends BaseFragment {
         return fragment;
     }
 
-    @Bind(R.id.swipe_layout)
+    @BindView(R.id.swipe_layout)
     SwipeRefreshLayout mSwipeRefreshLayout;
-    @Bind(R.id.list)
+    @BindView(R.id.list)
     RecyclerView mUsersListView;
-    @Bind(R.id.message_text)
+    @BindView(R.id.message_text)
     TextView mMessageView;
     private GridLayoutManager mUserLinearLayoutManager;
 
@@ -152,7 +151,6 @@ public class UsersFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
 
         mEventReceiver = new EventReceiver();
         LabCoatApp.bus().register(mEventReceiver);
@@ -177,7 +175,6 @@ public class UsersFragment extends BaseFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.unbind(this);
         LabCoatApp.bus().unregister(mEventReceiver);
     }
 
@@ -214,9 +211,12 @@ public class UsersFragment extends BaseFragment {
     }
 
     public void searchQuery(String query) {
-        mUsersAdapter.clearData();
         mQuery = query;
-        loadData();
+
+        if (mUsersAdapter != null) {
+            mUsersAdapter.clearData();
+            loadData();
+        }
     }
 
     private class EventReceiver {

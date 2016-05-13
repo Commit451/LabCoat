@@ -3,12 +3,10 @@
 
 [![build status](https://gitlab.com/ci/projects/7701/status.png?ref=master)](https://gitlab.com/ci/projects/7701?ref=master)
 
-This is the source code for the unofficial GitLab Android app.
-
 ![Image](https://gitlab.com/Commit451/LabCoat/raw/master/art/screenshot-1.png)
 
-Please see the [issues](https://gitlab.com/Commit451/LabCoat/issues) section to
-report any bugs or feature requests and to see the list of known issues.
+## Issues
+Please see the [issues](https://gitlab.com/Commit451/LabCoat/issues) section to report any bugs or feature requests and to see the list of known issues.
 
 
 ## Libraries
@@ -23,19 +21,31 @@ The following 3rd party libraries and resources are the reason this app works. R
 - Retrofit (http://square.github.io/retrofit/)
 - OkHttp (http://square.github.io/okhttp/)
 - Otto (http://square.github.io/otto/)
+- RxJava (https://github.com/ReactiveX/RxJava)
+- RxAndroid (https://github.com/ReactiveX/RxAndroid)
 - Butter Knife (http://jakewharton.github.io/butterknife/)
 - Timber (https://github.com/JakeWharton/timber)
-- GSON (https://github.com/google/gson)
+- Gson (https://github.com/google/gson)
 - Joda Time Android (https://github.com/dlew/joda-time-android)
 - Parceler (https://github.com/johncarl81/parceler)
 - Bypasses (https://github.com/Commit451/bypasses)
 - Easel (https://github.com/Commit451/Easel)
+- ForegroundViews (https://github.com/Commit451/ForegroundViews)
+- ElasticDragDismissLayout (https://github.com/Commit451/ElasticDragDismissLayout)
+- AdapterLayout (https://github.com/Commit451/AdapterLayout)
+- Gimbal (https://github.com/Commit451/Gimbal)
+- Teleprinter (https://github.com/Commit451/Teleprinter)
+- BypassPicassoImageGetter (https://github.com/Commit451/BypassPicassoImageGetter)
+- Jounce (https://github.com/Commit451/Jounce)
 - Material-ish Progress (https://github.com/pnikosis/materialish-progress)
 - PhysicsLayout (https://github.com/Jawnnypoo/PhysicsLayout)
 - Material Letter Icon (https://github.com/IvBaranov/MaterialLetterIcon)
 - RobotoTextView (https://github.com/johnkil/Android-RobotoTextView)
 - GitDiffTextView (https://github.com/alorma/GitDiffTextView)
 - MaterialDateTimePicker (https://github.com/wdullaer/MaterialDateTimePicker)
+- FlowLayout (https://github.com/blazsolar/FlowLayout)
+- SimpleChromeCustomTabs (https://github.com/novoda/simple-chrome-custom-tabs)
+- Material Dialogs (https://github.com/afollestad/material-dialogs)
 - highlight.js (https://highlightjs.org/)
 
 ## Contributing

@@ -6,20 +6,12 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 
-import com.afollestad.appthemeengine.ATEActivity;
 import com.commit451.gitlab.R;
 
 /**
- * Created by Jawn on 7/27/2015.
+ * Base activity for others to derive from
  */
-public class BaseActivity extends ATEActivity {
-
-    @Nullable
-    @Override
-    public final String getATEKey() {
-        return PreferenceManager.getDefaultSharedPreferences(this).getBoolean("dark_theme", true) ?
-                "dark_theme" : "light_theme";
-    }
+public class BaseActivity extends AppCompatActivity {
 
     public boolean hasEmptyFields(TextInputLayout... textInputLayouts) {
         boolean hasEmptyField = false;

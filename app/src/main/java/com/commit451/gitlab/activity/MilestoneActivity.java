@@ -25,7 +25,7 @@ import com.commit451.gitlab.event.MilestoneChangedEvent;
 import com.commit451.gitlab.model.api.Issue;
 import com.commit451.gitlab.model.api.Milestone;
 import com.commit451.gitlab.model.api.Project;
-import com.commit451.gitlab.util.NavigationManager;
+import com.commit451.gitlab.navigation.NavigationManager;
 import com.commit451.gitlab.util.PaginationUtil;
 import com.squareup.otto.Subscribe;
 
@@ -33,7 +33,7 @@ import org.parceler.Parcels;
 
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import retrofit2.Callback;
@@ -44,26 +44,26 @@ public class MilestoneActivity extends BaseActivity {
     private static final String EXTRA_PROJECT = "extra_project";
     private static final String EXTRA_MILESTONE = "extra_milestone";
 
-    public static Intent newInstance(Context context, Project project, Milestone milestone) {
+    public static Intent newIntent(Context context, Project project, Milestone milestone) {
         Intent intent = new Intent(context, MilestoneActivity.class);
         intent.putExtra(EXTRA_PROJECT, Parcels.wrap(project));
         intent.putExtra(EXTRA_MILESTONE, Parcels.wrap(milestone));
         return intent;
     }
 
-    @Bind(R.id.root)
+    @BindView(R.id.root)
     View mRoot;
-    @Bind(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar mToolbar;
-    @Bind(R.id.swipe_layout)
+    @BindView(R.id.swipe_layout)
     SwipeRefreshLayout mSwipeRefreshLayout;
-    @Bind(R.id.list)
+    @BindView(R.id.list)
     RecyclerView mIssuesRecyclerView;
     MilestoneIssuesAdapter mMilestoneIssuesAdapter;
     LinearLayoutManager mIssuesLayoutManager;
-    @Bind(R.id.message_text)
+    @BindView(R.id.message_text)
     TextView mMessageText;
-    @Bind(R.id.progress)
+    @BindView(R.id.progress)
     View mProgress;
 
     MenuItem mOpenCloseMenuItem;

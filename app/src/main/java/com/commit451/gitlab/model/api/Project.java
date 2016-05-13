@@ -48,7 +48,7 @@ public class Project {
     boolean mMergeRequestsEnabled;
     @SerializedName("wiki_enabled")
     boolean mWikiEnabled;
-    @SerializedName("build_enabled")
+    @SerializedName("builds_enabled")
     boolean mBuildEnabled;
     @SerializedName("snippets_enabled")
     boolean mSnippetsEnabled;

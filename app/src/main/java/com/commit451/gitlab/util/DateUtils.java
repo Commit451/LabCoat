@@ -5,6 +5,7 @@ import android.content.Context;
 import com.commit451.gitlab.R;
 
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Our own DateUtils, which call forwards to {@link android.text.format.DateUtils} with some
@@ -22,5 +23,9 @@ public class DateUtils {
                 now.getTime(),
                 android.text.format.DateUtils.SECOND_IN_MILLIS)
                 .toString();
+    }
+
+    public static String getTimeTaken(Date startTime, Date endTime) {
+        return android.text.format.DateUtils.formatElapsedTime(TimeUnit.MILLISECONDS.toSeconds(endTime.getTime() - startTime.getTime()));
     }
 }

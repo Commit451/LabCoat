@@ -34,7 +34,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.nio.charset.Charset;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Callback;
 import rx.Subscriber;
@@ -65,10 +65,10 @@ public class FileActivity extends BaseActivity {
         return intent;
     }
 
-    @Bind(R.id.root) ViewGroup mRoot;
-    @Bind(R.id.toolbar) Toolbar mToolbar;
-    @Bind(R.id.file_blob) WebView mFileBlobView;
-    @Bind(R.id.progress) View mProgressView;
+    @BindView(R.id.root) ViewGroup mRoot;
+    @BindView(R.id.toolbar) Toolbar mToolbar;
+    @BindView(R.id.file_blob) WebView mFileBlobView;
+    @BindView(R.id.progress) View mProgressView;
 
     private long mProjectId;
     private String mPath;

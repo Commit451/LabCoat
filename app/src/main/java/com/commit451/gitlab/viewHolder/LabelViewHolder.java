@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import com.commit451.gitlab.R;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -22,7 +22,7 @@ public class LabelViewHolder extends RecyclerView.ViewHolder {
         return new LabelViewHolder(view);
     }
 
-    @Bind(R.id.title)
+    @BindView(R.id.title)
     TextView mTitleView;
 
     public LabelViewHolder(View view) {

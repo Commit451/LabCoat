@@ -19,7 +19,6 @@ import java.util.Collection;
 
 /**
  * Adapter to show all the accounts
- * Created by Jawn on 12/6/2015.
  */
 public class AccountsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int TYPE_ACCOUNT = 0;

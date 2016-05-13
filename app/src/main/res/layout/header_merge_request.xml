@@ -13,7 +13,6 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginTop="16dp"
-        android:tag="text_color|primary_text"
         tools:text="Description"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -36,7 +35,6 @@
             android:layout_marginLeft="@dimen/padding_normal"
             android:layout_marginRight="@dimen/padding_normal"
             android:layout_gravity="center_vertical"
-            android:tag="text_color|secondary_text"
             tools:text="Jawnnypoo created issue 8 hours ago"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 

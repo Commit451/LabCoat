@@ -13,7 +13,6 @@ import java.util.List;
 
 /**
  * Shows the current file path
- * Created by Jawnnypoo on 11/22/2015.
  */
 public class BreadcrumbAdapter extends RecyclerView.Adapter<BreadcrumbViewHolder> {
     private List<Breadcrumb> mValues;

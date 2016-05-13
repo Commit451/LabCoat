@@ -3,7 +3,6 @@ package com.commit451.gitlab.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
@@ -12,23 +11,28 @@ import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 
-import com.afollestad.appthemeengine.customizers.ATEActivityThemeCustomizer;
-import com.commit451.elasticdragdismisslayout.ElasticDragDismissFrameLayout;
-import com.commit451.elasticdragdismisslayout.ElasticDragDismissListener;
 import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
+import com.commit451.gitlab.adapter.AddIssueLabelAdapter;
 import com.commit451.gitlab.adapter.AssigneeSpinnerAdapter;
 import com.commit451.gitlab.adapter.MilestoneSpinnerAdapter;
 import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.api.exception.NullBodyException;
 import com.commit451.gitlab.event.IssueChangedEvent;
 import com.commit451.gitlab.event.IssueCreatedEvent;
 import com.commit451.gitlab.model.api.Issue;
+import com.commit451.gitlab.model.api.Label;
 import com.commit451.gitlab.model.api.Member;
 import com.commit451.gitlab.model.api.Milestone;
 import com.commit451.gitlab.model.api.Project;
+import com.commit451.gitlab.navigation.NavigationManager;
+import com.commit451.gitlab.view.AdapterFlowLayout;
+import com.commit451.teleprinter.Teleprinter;
 
 import org.parceler.Parcels;
 
@@ -36,21 +40,16 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import retrofit2.Callback;
 import timber.log.Timber;
 
 /**
  * Activity to input new issues, but not really a dialog at all wink wink
  */
-public class AddIssueActivity extends MorphActivity implements ATEActivityThemeCustomizer {
-
-    @Override
-    public int getActivityTheme() {
-        return PreferenceManager.getDefaultSharedPreferences(this).getBoolean("dark_theme", true) ?
-                R.style.Activity_Translucent : R.style.ActivityLight_Translucent;
-    }
+public class AddIssueActivity extends MorphActivity {
 
     private static final String KEY_PROJECT = "project";
     private static final String KEY_ISSUE = "issue";
@@ -64,30 +63,45 @@ public class AddIssueActivity extends MorphActivity implements ATEActivityThemeC
         return intent;
     }
 
-    @Bind(R.id.root)
-    ElasticDragDismissFrameLayout mRoot;
-    @Bind(R.id.toolbar)
+    @BindView(R.id.root)
+    FrameLayout mRoot;
+    @BindView(R.id.toolbar)
     Toolbar mToolbar;
-    @Bind(R.id.title_text_input_layout)
+    @BindView(R.id.title_text_input_layout)
     TextInputLayout mTitleInputLayout;
-    @Bind(R.id.title)
+    @BindView(R.id.title)
     EditText mTitleInput;
-    @Bind(R.id.description)
+    @BindView(R.id.description)
     EditText mDescriptionInput;
-    @Bind(R.id.progress)
+    @BindView(R.id.progress)
     View mProgress;
-    @Bind(R.id.assignee_progress)
+    @BindView(R.id.assignee_progress)
     View mAssigneeProgress;
-    @Bind(R.id.assignee_spinner)
+    @BindView(R.id.assignee_spinner)
     Spinner mAssigneeSpinner;
-    @Bind(R.id.milestone_progress)
+    @BindView(R.id.milestone_progress)
     View mMilestoneProgress;
-    @Bind(R.id.milestone_spinner)
+    @BindView(R.id.milestone_spinner)
     Spinner mMilestoneSpinner;
+    @BindView(R.id.label_label)
+    TextView mLabelLabel;
+    @BindView(R.id.labels_progress)
+    View mLabelsProgress;
+    @BindView(R.id.list_labels)
+    AdapterFlowLayout mListLabels;
+    @BindView(R.id.text_add_labels)
+    TextView mTextAddLabels;
 
     private Project mProject;
     private Issue mIssue;
     private HashSet<Member> mMembers;
+    private AddIssueLabelAdapter mLabelsAdapter;
+    private Teleprinter mTeleprinter;
+
+    @OnClick({R.id.text_add_labels, R.id.list_labels})
+    void onAddLabelsClick() {
+        NavigationManager.navigateToAddLabels(AddIssueActivity.this, mProject, mIssue);
+    }
 
     private final Callback<List<Milestone>> mMilestonesCallback = new EasyCallback<List<Milestone>>() {
         @Override
@@ -144,6 +158,28 @@ public class AddIssueActivity extends MorphActivity implements ATEActivityThemeC
         }
     };
 
+    private final Callback<List<Label>> mLabelCallback = new EasyCallback<List<Label>>() {
+        @Override
+        public void onResponse(@NonNull List<Label> response) {
+            mLabelsProgress.setVisibility(View.GONE);
+            mListLabels.setVisibility(View.VISIBLE);
+            setLabels(response);
+        }
+
+        @Override
+        public void onAllFailure(Throwable t) {
+            Timber.e(t, null);
+            //null body could just mean no labels have been created for this project
+            if (t instanceof NullBodyException) {
+                setLabels(new ArrayList<Label>());
+            } else {
+                mListLabels.setVisibility(View.GONE);
+                mLabelsProgress.setVisibility(View.GONE);
+                mLabelLabel.setVisibility(View.GONE);
+            }
+        }
+    };
+
     private final Callback<Issue> mIssueCreatedCallback = new EasyCallback<Issue>() {
 
         @Override
@@ -170,10 +206,13 @@ public class AddIssueActivity extends MorphActivity implements ATEActivityThemeC
         setContentView(R.layout.activity_add_issue);
         ButterKnife.bind(this);
         morph(mRoot);
+        mTeleprinter = new Teleprinter(this);
 
         mProject = Parcels.unwrap(getIntent().getParcelableExtra(KEY_PROJECT));
         mIssue = Parcels.unwrap(getIntent().getParcelableExtra(KEY_ISSUE));
         mMembers = new HashSet<>();
+        mLabelsAdapter = new AddIssueLabelAdapter();
+        mListLabels.setAdapter(mLabelsAdapter);
 
         mToolbar.setNavigationIcon(R.drawable.ic_back_24dp);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -201,23 +240,13 @@ public class AddIssueActivity extends MorphActivity implements ATEActivityThemeC
         } else {
             mToolbar.inflateMenu(R.menu.menu_add_milestone);
         }
-
-        mRoot.addListener(new ElasticDragDismissListener() {
-            @Override
-            public void onDrag(float elasticOffset, float elasticOffsetPixels, float rawOffset, float rawOffsetPixels) {
-            }
-
-            @Override
-            public void onDragDismissed() {
-                onBackPressed();
-            }
-        });
         load();
     }
 
     private void load() {
         GitLabClient.instance().getMilestones(mProject.getId()).enqueue(mMilestonesCallback);
         GitLabClient.instance().getProjectMembers(mProject.getId()).enqueue(mAssigneeCallback);
+        GitLabClient.instance().getLabels(mProject.getId()).enqueue(mLabelCallback);
     }
 
     private void showLoading() {
@@ -245,8 +274,27 @@ public class AddIssueActivity extends MorphActivity implements ATEActivityThemeC
         }
     }
 
+    private void setLabels(List<Label> projectLabels) {
+        if (projectLabels != null && !projectLabels.isEmpty() && mIssue != null && mIssue.getLabels() != null) {
+            ArrayList<Label> currentLabels = new ArrayList<>();
+            for (Label label : projectLabels) {
+                for (String labelName : mIssue.getLabels()) {
+                    if (labelName.equals(label.getName())) {
+                        currentLabels.add(label);
+                    }
+                }
+            }
+            if (!currentLabels.isEmpty()) {
+                mLabelsAdapter.setLabels(currentLabels);
+            }
+        } else {
+            mTextAddLabels.setVisibility(View.VISIBLE);
+        }
+    }
+
     private void save() {
         if (!TextUtils.isEmpty(mTitleInput.getText())) {
+            mTeleprinter.hideKeyboard();
             mTitleInputLayout.setError(null);
             showLoading();
             Long assigneeId = null;
