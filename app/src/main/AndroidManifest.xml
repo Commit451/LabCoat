@@ -27,12 +27,15 @@
 
         <activity
             android:name=".activity.ProjectsActivity"
+            android:theme="@style/Activity.Projects"
             android:launchMode="singleTask"/>
         <activity
             android:name=".activity.GroupsActivity"
+            android:theme="@style/Activity.Groups"
             android:launchMode="singleTask"/>
         <activity
             android:name=".activity.ActivityActivity"
+            android:theme="@style/Activity.Activity"
             android:launchMode="singleTask"/>
         <activity android:name=".activity.ProjectActivity"/>
         <activity android:name=".activity.LoginActivity"/>
@@ -41,9 +44,11 @@
         <activity android:name=".activity.DiffActivity"/>
         <activity android:name=".activity.AboutActivity"/>
         <activity android:name=".activity.AddUserActivity"/>
-        <activity android:name=".activity.UserActivity"/>
+        <activity android:name=".activity.UserActivity"
+            android:theme="@style/Activity.User"/>
         <activity android:name=".activity.SearchActivity"/>
-        <activity android:name=".activity.GroupActivity"/>
+        <activity android:name=".activity.GroupActivity"
+            android:theme="@style/Activity.Group"/>
         <activity android:name=".activity.MergeRequestActivity"/>
         <activity android:name=".activity.AddIssueActivity"/>
         <activity android:name=".activity.MilestoneActivity"/>
