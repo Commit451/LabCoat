@@ -128,31 +128,36 @@ public class ProjectFragment extends ButterKnifeFragment {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Subscriber<byte[]>() {
                         @Override
-                        public void onCompleted() {}
+                        public void onCompleted() {
+                        }
 
                         @Override
                         public void onError(Throwable e) {
-                            Snackbar.make(mSwipeRefreshLayout, R.string.failed_to_load, Snackbar.LENGTH_SHORT)
-                                    .show();
+                            if (getView() != null) {
+                                Snackbar.make(mSwipeRefreshLayout, R.string.failed_to_load, Snackbar.LENGTH_SHORT)
+                                        .show();
+                            }
                         }
 
                         @Override
                         public void onNext(byte[] bytes) {
-                            String text = new String(bytes);
-                            switch (getReadmeType(response.getFileName())) {
-                                case README_TYPE_MARKDOWN:
-                                    mOverviewVew.setText(mBypass.markdownToSpannable(text,
-                                            new BypassPicassoImageGetter(mOverviewVew, GitLabClient.getPicasso())));
-                                    break;
-                                case README_TYPE_HTML:
-                                    mOverviewVew.setText(Html.fromHtml(text));
-                                    break;
-                                case README_TYPE_TEXT:
-                                    mOverviewVew.setText(text);
-                                    break;
-                                case README_TYPE_NO_EXTENSION:
-                                    mOverviewVew.setText(text);
-                                    break;
+                            if (getView() != null) {
+                                String text = new String(bytes);
+                                switch (getReadmeType(response.getFileName())) {
+                                    case README_TYPE_MARKDOWN:
+                                        mOverviewVew.setText(mBypass.markdownToSpannable(text,
+                                                new BypassPicassoImageGetter(mOverviewVew, GitLabClient.getPicasso())));
+                                        break;
+                                    case README_TYPE_HTML:
+                                        mOverviewVew.setText(Html.fromHtml(text));
+                                        break;
+                                    case README_TYPE_TEXT:
+                                        mOverviewVew.setText(text);
+                                        break;
+                                    case README_TYPE_NO_EXTENSION:
+                                        mOverviewVew.setText(text);
+                                        break;
+                                }
                             }
                         }
                     });
