@@ -3,9 +3,11 @@
 
     <!-- Dark theme (default) -->
     <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
-        <item name="colorPrimary">@color/primary_default</item>
-        <item name="colorAccent">@color/accent_default</item>
-        <item name="cardBackgroundColor">#424242</item>
+        <item name="colorPrimary">@color/main_blue</item>
+        <item name="colorAccent">@color/yellow</item>
+        <item name="colorPrimaryDark">@color/main_blue_darker</item>
+        <item name="cardBackgroundColor">@color/card_background</item>
+        <item name="android:navigationBarColor" tools:targetApi="lollipop">@color/main_blue_darker</item>
         <item name="android:windowContentTransitions" tools:ignore="NewApi">true</item>
         <item name="dialogTheme">@style/AppDialogTheme</item>
     </style>
@@ -25,15 +27,11 @@
     </style>
 
     <style name="Activity.User">
-        <item name="colorPrimaryDark">@android:color/transparent</item>
-        <item name="android:statusBarColor" tools:ignore="NewApi">@android:color/transparent</item>
-        <item name="android:windowTranslucentStatus" tools:ignore="NewApi">true</item>
+        <!--Check v21 for the good bits-->
     </style>
 
     <style name="Activity.Group">
-        <item name="colorPrimaryDark">@android:color/transparent</item>
-        <item name="android:statusBarColor" tools:ignore="NewApi">@android:color/transparent</item>
-        <item name="android:windowTranslucentStatus" tools:ignore="NewApi">true</item>
+        <!--Check v21 for the good bits-->
     </style>
 
     <style name="Activity.Translucent">
