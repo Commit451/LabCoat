@@ -1,17 +1,26 @@
 before_script:
+  # Make sure that we are not trying to print anything to the console
   - unset DISPLAY
   - export TERM=dumb
   - export _JAVA_OPTIONS="-Djava.awt.headless=true"
+  # Make sure apt-get is up to date
   - apt-get -q -y update
+  # Install JDK
   - apt-get -q -y install wget tar expect openjdk-7-jdk lib32stdc++6 lib32z1
+  # Download the Android SDK installer
   - wget -q http://dl.google.com/android/android-sdk_r24.4.1-linux.tgz
   - tar xzf android-sdk_r24.4.1-linux.tgz
+  # Fetch a tool that helps to accept licenses
   - wget -q https://raw.githubusercontent.com/journeyapps/android-sdk-installer/master/accept-licenses
   - chmod +x accept-licenses
+  # Install Platform tools, build tools, SDK, and Support lib,
   - ./accept-licenses "android-sdk-linux/tools/android -s update sdk --no-ui --all --filter tools,platform-tools,build-tools-23.0.3,android-23,extra-android-m2repository" "android-sdk-license-5be876d5|android-sdk-license-c81a61d9"
+  # Set the ANDROID_HOME variable required to build
   - export ANDROID_HOME=$PWD/android-sdk-linux
+  # Make Gradle executable
   - chmod +x gradlew
 
 build:
   script:
+    # Run the build script, excluding the fabric tasks since they will fail with no proper API key
     - ./gradlew build -x fabricGenerateResourcesRelease --stacktrace
