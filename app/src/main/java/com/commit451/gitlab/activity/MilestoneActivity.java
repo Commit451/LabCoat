@@ -44,7 +44,7 @@ public class MilestoneActivity extends BaseActivity {
     private static final String EXTRA_PROJECT = "extra_project";
     private static final String EXTRA_MILESTONE = "extra_milestone";
 
-    public static Intent newInstance(Context context, Project project, Milestone milestone) {
+    public static Intent newIntent(Context context, Project project, Milestone milestone) {
         Intent intent = new Intent(context, MilestoneActivity.class);
         intent.putExtra(EXTRA_PROJECT, Parcels.wrap(project));
         intent.putExtra(EXTRA_MILESTONE, Parcels.wrap(milestone));

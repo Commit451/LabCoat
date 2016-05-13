@@ -3,7 +3,6 @@ package com.commit451.gitlab.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
@@ -28,7 +27,7 @@ import butterknife.ButterKnife;
  */
 public class ProjectsActivity extends BaseActivity {
 
-    public static Intent newInstance(Context context) {
+    public static Intent newIntent(Context context) {
         Intent intent = new Intent(context, ProjectsActivity.class);
         return intent;
     }

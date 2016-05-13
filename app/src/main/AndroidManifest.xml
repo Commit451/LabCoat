@@ -56,6 +56,7 @@
         <activity android:name=".activity.BuildActivity"/>
         <activity android:name=".activity.LoadSomeInfoActivity"
             android:theme="@style/Activity.Translucent"/>
+        <activity android:name=".activity.SettingsActivity"/>
 
         <activity
             android:name=".activity.RoutingActivity"

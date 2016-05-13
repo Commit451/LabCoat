@@ -5,7 +5,6 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -42,13 +41,13 @@ public class GroupActivity extends BaseActivity {
     private static final String KEY_GROUP = "key_group";
     private static final String KEY_GROUP_ID = "key_group_id";
 
-    public static Intent newInstance(Context context, Group group) {
+    public static Intent newIntent(Context context, Group group) {
         Intent intent = new Intent(context, GroupActivity.class);
         intent.putExtra(KEY_GROUP, Parcels.wrap(group));
         return intent;
     }
 
-    public static Intent newInstance(Context context, long groupId) {
+    public static Intent newIntent(Context context, long groupId) {
         Intent intent = new Intent(context, GroupActivity.class);
         intent.putExtra(KEY_GROUP_ID, groupId);
         return intent;
@@ -138,12 +137,12 @@ public class GroupActivity extends BaseActivity {
         }
 
         ObjectAnimator.ofObject(mCollapsingToolbarLayout, "contentScrimColor", new ArgbEvaluator(),
-                ((ColorDrawable) mCollapsingToolbarLayout.getContentScrim()).getColor(), vibrantColor)
+                Easel.getThemeAttrColor(this, R.attr.colorPrimary), vibrantColor)
                 .setDuration(animationTime)
                 .start();
 
         ObjectAnimator.ofObject(mCollapsingToolbarLayout, "statusBarScrimColor", new ArgbEvaluator(),
-                ((ColorDrawable) mCollapsingToolbarLayout.getStatusBarScrim()).getColor(), darkerColor)
+                Easel.getThemeAttrColor(this, R.attr.colorPrimaryDark), darkerColor)
                 .setDuration(animationTime)
                 .start();
 

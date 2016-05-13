@@ -27,7 +27,9 @@ import com.commit451.gitlab.activity.MilestoneActivity;
 import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.activity.ProjectsActivity;
 import com.commit451.gitlab.activity.SearchActivity;
+import com.commit451.gitlab.activity.SettingsActivity;
 import com.commit451.gitlab.activity.UserActivity;
+import com.commit451.gitlab.data.Prefs;
 import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.model.api.Issue;
@@ -46,39 +48,57 @@ import timber.log.Timber;
 public class NavigationManager {
 
     public static void navigateToAbout(Activity activity) {
-        activity.startActivity(AboutActivity.newInstance(activity));
+        activity.startActivity(AboutActivity.newIntent(activity));
+    }
+
+    public static void navigateToSettings(Activity activity) {
+        activity.startActivity(SettingsActivity.newIntent(activity));
     }
 
     public static void navigateToProject(Activity activity, Project project) {
-        activity.startActivity(ProjectActivity.newInstance(activity, project));
+        activity.startActivity(ProjectActivity.newIntent(activity, project));
     }
 
     public static void navigateToProject(Activity activity, String projectId) {
-        activity.startActivity(ProjectActivity.newInstance(activity, projectId));
+        activity.startActivity(ProjectActivity.newIntent(activity, projectId));
     }
 
+    public static void navigateToStartingActivity(Activity activity) {
+        int startingActivity = Prefs.getStartingView(activity);
+        switch (startingActivity) {
+            case Prefs.STARTING_VIEW_PROJECTS:
+                navigateToProjects(activity);
+                break;
+            case Prefs.STARTING_VIEW_GROUPS:
+                navigateToGroups(activity);
+                break;
+            case Prefs.STARTING_VIEW_ACTIVITY:
+                navigateToActivity(activity);
+                break;
+        }
+    }
     public static void navigateToProjects(Activity activity) {
-        activity.startActivity(ProjectsActivity.newInstance(activity));
+        activity.startActivity(ProjectsActivity.newIntent(activity));
     }
 
     public static void navigateToGroups(Activity activity) {
-        activity.startActivity(GroupsActivity.newInstance(activity));
+        activity.startActivity(GroupsActivity.newIntent(activity));
     }
 
     public static void navigateToActivity(Activity activity) {
-        activity.startActivity(ActivityActivity.newInstance(activity));
+        activity.startActivity(ActivityActivity.newIntent(activity));
     }
 
     public static void navigateToLogin(Activity activity) {
-        activity.startActivity(LoginActivity.newInstance(activity));
+        activity.startActivity(LoginActivity.newIntent(activity));
     }
 
     public static void navigateToLogin(Activity activity, boolean showClose) {
-        activity.startActivity(LoginActivity.newInstance(activity, showClose));
+        activity.startActivity(LoginActivity.newIntent(activity, showClose));
     }
 
     public static void navigateToSearch(Activity activity) {
-        activity.startActivity(SearchActivity.newInstance(activity));
+        activity.startActivity(SearchActivity.newIntent(activity));
     }
 
     public static void navigateToUser(Activity activity, UserBasic user) {
@@ -86,7 +106,7 @@ public class NavigationManager {
     }
 
     public static void navigateToUser(Activity activity, ImageView profileImage, UserBasic user) {
-        Intent intent = UserActivity.newInstance(activity, user);
+        Intent intent = UserActivity.newIntent(activity, user);
         if (Build.VERSION.SDK_INT >= 21 && profileImage != null) {
             ActivityOptionsCompat options = ActivityOptionsCompat.
                     makeSceneTransitionAnimation(activity, profileImage, activity.getString(R.string.transition_user));
@@ -97,7 +117,7 @@ public class NavigationManager {
     }
 
     public static void navigateToGroup(Activity activity, ImageView profileImage, Group group) {
-        Intent intent = GroupActivity.newInstance(activity, group);
+        Intent intent = GroupActivity.newIntent(activity, group);
         if (Build.VERSION.SDK_INT >= 21) {
             ActivityOptionsCompat options = ActivityOptionsCompat.
                     makeSceneTransitionAnimation(activity, profileImage, activity.getString(R.string.transition_user));
@@ -108,23 +128,23 @@ public class NavigationManager {
     }
 
     public static void navigateToGroup(Activity activity, long groupId) {
-        activity.startActivity(GroupActivity.newInstance(activity, groupId));
+        activity.startActivity(GroupActivity.newIntent(activity, groupId));
     }
 
     public static void navigateToMilestone(Activity activity, Project project, Milestone milestone) {
-        activity.startActivity(MilestoneActivity.newInstance(activity, project, milestone));
+        activity.startActivity(MilestoneActivity.newIntent(activity, project, milestone));
     }
 
     public static void navigateToIssue(Activity activity, Project project, Issue issue) {
-        activity.startActivity(IssueActivity.newInstance(activity, project, issue));
+        activity.startActivity(IssueActivity.newIntent(activity, project, issue));
     }
 
     public static void navigateToIssue(Activity activity, String namespace, String projectName, String issueIid) {
-        activity.startActivity(IssueActivity.newInstance(activity, namespace, projectName, issueIid));
+        activity.startActivity(IssueActivity.newIntent(activity, namespace, projectName, issueIid));
     }
 
     public static void navigateToMergeRequest(Activity activity, Project project, MergeRequest mergeRequest) {
-        Intent intent = MergeRequestActivity.newInstance(activity, project, mergeRequest);
+        Intent intent = MergeRequestActivity.newIntent(activity, project, mergeRequest);
         activity.startActivity(intent);
     }
 
@@ -133,7 +153,7 @@ public class NavigationManager {
     }
 
     public static void navigateToDiffActivity(Activity activity, Project project, RepositoryCommit commit) {
-        activity.startActivity(DiffActivity.newInstance(activity, project, commit));
+        activity.startActivity(DiffActivity.newIntent(activity, project, commit));
     }
 
     public static void navigateToAddProjectMember(Activity activity, View fab, long projectId) {
@@ -164,22 +184,22 @@ public class NavigationManager {
     }
 
     public static void navigateToCreateLabels(Activity activity, View fab, Project project) {
-        Intent intent = AddMilestoneActivity.newInstance(activity, project.getId());
+        Intent intent = AddMilestoneActivity.newIntent(activity, project.getId());
         startMorphActivity(activity, fab, intent);
     }
 
     public static void navigateToAddMilestone(Activity activity, View fab, Project project) {
-        Intent intent = AddMilestoneActivity.newInstance(activity, project.getId());
+        Intent intent = AddMilestoneActivity.newIntent(activity, project.getId());
         startMorphActivity(activity, fab, intent);
     }
 
     public static void navigateToEditMilestone(Activity activity, View fab, Project project, Milestone milestone) {
-        Intent intent = AddMilestoneActivity.newInstance(activity, project.getId(), milestone);
+        Intent intent = AddMilestoneActivity.newIntent(activity, project.getId(), milestone);
         startMorphActivity(activity, fab, intent);
     }
 
     public static void navigateToBuild(Activity activity, Project project, com.commit451.gitlab.model.api.Build build) {
-        Intent intent = BuildActivity.newInstance(activity, project, build);
+        Intent intent = BuildActivity.newIntent(activity, project, build);
         activity.startActivity(intent);
     }
 

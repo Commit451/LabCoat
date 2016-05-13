@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
@@ -28,7 +27,7 @@ public class ActivityActivity extends BaseActivity {
 
     private static final String TAG_FEED_FRAGMENT = "feed_fragment";
 
-    public static Intent newInstance(Context context) {
+    public static Intent newIntent(Context context) {
         Intent intent = new Intent(context, ActivityActivity.class);
         return intent;
     }
