@@ -71,6 +71,9 @@ public class BuildDescriptionFragment extends ButterKnifeFragment {
     private final EasyCallback<Build> mLoadBuildCallback = new EasyCallback<Build>() {
         @Override
         public void onResponse(@NonNull Build response) {
+            if (getView() == null) {
+                return;
+            }
             mSwipeRefreshLayout.setRefreshing(false);
             mBuild = response;
             bindBuild(response);
@@ -80,6 +83,9 @@ public class BuildDescriptionFragment extends ButterKnifeFragment {
         @Override
         public void onAllFailure(Throwable t) {
             Timber.e(t, null);
+            if (getView() == null) {
+                return;
+            }
             Snackbar.make(mRoot, R.string.unable_to_load_build, Snackbar.LENGTH_LONG)
                     .show();
         }
