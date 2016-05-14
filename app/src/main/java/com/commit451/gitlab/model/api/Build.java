@@ -1,6 +1,7 @@
 package com.commit451.gitlab.model.api;
 
 import com.bluelinelabs.logansquare.annotation.JsonField;
+import com.bluelinelabs.logansquare.annotation.JsonObject;
 
 import org.parceler.Parcel;
 
@@ -10,6 +11,7 @@ import java.util.Date;
  * Represents a build
  */
 @Parcel
+@JsonObject
 public class Build {
 
     @JsonField(name = "commit")

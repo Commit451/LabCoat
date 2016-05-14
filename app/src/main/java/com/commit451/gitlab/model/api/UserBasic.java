@@ -2,17 +2,32 @@ package com.commit451.gitlab.model.api;
 
 import android.net.Uri;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringDef;
 
 import com.bluelinelabs.logansquare.annotation.JsonField;
+import com.bluelinelabs.logansquare.annotation.JsonObject;
 
 import org.parceler.Parcel;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 @Parcel
+@JsonObject
 public class UserBasic extends UserSafe {
+
+    public static final String STATE_ACTIVE = "active";
+    public static final String STATE_BLOCKED = "blocked";
+
+    @StringDef({STATE_ACTIVE, STATE_BLOCKED})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface State {}
+
     @JsonField(name = "id")
     long mId;
     @JsonField(name = "state")
-    State mState;
+    @State
+    String mState;
     @JsonField(name = "avatar_url")
     Uri mAvatarUrl;
     @JsonField(name = "web_url")
@@ -24,7 +39,7 @@ public class UserBasic extends UserSafe {
         return mId;
     }
 
-    public State getState() {
+    public @State String getState() {
         return mState;
     }
 
@@ -57,12 +72,5 @@ public class UserBasic extends UserSafe {
     @Override
     public int hashCode() {
         return (int) (mId ^ (mId >>> 32));
-    }
-
-    public enum State {
-        @JsonField(name = "active")
-        ACTIVE,
-        @JsonField(name = "blocked")
-        BLOCKED
     }
 }

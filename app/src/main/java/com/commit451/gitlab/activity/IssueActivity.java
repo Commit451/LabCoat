@@ -421,7 +421,7 @@ public class IssueActivity extends BaseActivity {
 
     private void closeOrOpenIssue() {
         mProgress.setVisibility(View.VISIBLE);
-        if (mIssue.getState() == Issue.State.CLOSED) {
+        if (mIssue.getState().equals(Issue.STATE_CLOSED)) {
             GitLabClient.instance().updateIssueStatus(mProject.getId(), mIssue.getId(), Issue.STATE_REOPEN)
                     .enqueue(mOpenCloseCallback);
         } else {
@@ -431,7 +431,7 @@ public class IssueActivity extends BaseActivity {
     }
 
     private void setOpenCloseMenuStatus() {
-        mOpenCloseMenuItem.setTitle(mIssue.getState() == Issue.State.CLOSED ? R.string.reopen : R.string.close);
+        mOpenCloseMenuItem.setTitle(mIssue.getState().equals(Issue.STATE_CLOSED) ? R.string.reopen : R.string.close);
     }
 
     private class EventReceiver {

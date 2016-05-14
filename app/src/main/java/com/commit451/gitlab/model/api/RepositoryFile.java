@@ -1,10 +1,12 @@
 package com.commit451.gitlab.model.api;
 
 import com.bluelinelabs.logansquare.annotation.JsonField;
+import com.bluelinelabs.logansquare.annotation.JsonObject;
 
 import org.parceler.Parcel;
 
 @Parcel
+@JsonObject
 public class RepositoryFile {
     @JsonField(name = "file_name")
     String mFileName;

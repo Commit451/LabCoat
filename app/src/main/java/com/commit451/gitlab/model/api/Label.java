@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.support.annotation.ColorInt;
 
 import com.bluelinelabs.logansquare.annotation.JsonField;
+import com.bluelinelabs.logansquare.annotation.JsonObject;
 
 import org.parceler.Parcel;
 
@@ -11,6 +12,7 @@ import org.parceler.Parcel;
  * A label
  */
 @Parcel
+@JsonObject
 public class Label {
 
     @JsonField(name = "color")

@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.support.annotation.Nullable;
 
 import com.bluelinelabs.logansquare.annotation.JsonField;
+import com.bluelinelabs.logansquare.annotation.JsonObject;
 
 import org.parceler.Parcel;
 
@@ -11,6 +12,7 @@ import java.util.Date;
 import java.util.List;
 
 @Parcel
+@JsonObject
 public class Project {
     @JsonField(name = "id")
     long mId;

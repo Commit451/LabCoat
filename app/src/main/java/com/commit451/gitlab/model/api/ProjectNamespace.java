@@ -3,12 +3,14 @@ package com.commit451.gitlab.model.api;
 import android.net.Uri;
 
 import com.bluelinelabs.logansquare.annotation.JsonField;
+import com.bluelinelabs.logansquare.annotation.JsonObject;
 
 import org.parceler.Parcel;
 
 import java.util.Date;
 
 @Parcel
+@JsonObject
 public class ProjectNamespace {
     @JsonField(name = "id")
     long mId;
@@ -29,7 +31,8 @@ public class ProjectNamespace {
     @JsonField(name = "public")
     boolean mPublic;
 
-    public ProjectNamespace() {}
+    public ProjectNamespace() {
+    }
 
     public long getId() {
         return mId;
@@ -83,11 +86,13 @@ public class ProjectNamespace {
     }
 
     @Parcel
+    @JsonObject
     public static class Avatar {
         @JsonField(name = "url")
         Uri mUrl;
 
-        public Avatar() {}
+        public Avatar() {
+        }
 
         public Uri getUrl() {
             return mUrl;

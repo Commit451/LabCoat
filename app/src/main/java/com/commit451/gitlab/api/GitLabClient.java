@@ -2,9 +2,9 @@ package com.commit451.gitlab.api;
 
 import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.model.Account;
-import com.commit451.gitlab.provider.GsonProvider;
 import com.commit451.gitlab.provider.OkHttpClientProvider;
 import com.commit451.gitlab.provider.SimpleXmlProvider;
+import com.github.aurae.retrofit2.LoganSquareConverterFactory;
 import com.jakewharton.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 
@@ -12,7 +12,6 @@ import java.util.List;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
 
 /**
@@ -48,7 +47,8 @@ public final class GitLabClient {
         Retrofit restAdapter = new Retrofit.Builder()
                 .baseUrl(account.getServerUrl().toString())
                 .client(OkHttpClientProvider.getInstance(account))
-                .addConverterFactory(GsonConverterFactory.create(GsonProvider.createInstance(account)))
+                .addConverterFactory(LoganSquareConverterFactory.create())
+                //.addConverterFactory(GsonConverterFactory.create(GsonProvider.createInstance(account)))
                 .build();
         return restAdapter.create(GitLab.class);
     }

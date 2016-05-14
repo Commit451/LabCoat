@@ -1,11 +1,12 @@
 package com.commit451.gitlab.model.api;
 
-import com.google.gson.annotations.SerializedName;
-
-import org.parceler.Parcel;
-
 import android.net.Uri;
 import android.support.annotation.StringDef;
+
+import com.bluelinelabs.logansquare.annotation.JsonField;
+import com.bluelinelabs.logansquare.annotation.JsonObject;
+
+import org.parceler.Parcel;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -13,13 +14,24 @@ import java.util.Date;
 import java.util.List;
 
 @Parcel
+@JsonObject
 public class Issue {
     public static final String STATE_REOPEN = "reopen";
     public static final String STATE_CLOSE = "close";
 
     @StringDef({STATE_REOPEN, STATE_CLOSE})
     @Retention(RetentionPolicy.SOURCE)
-    public @interface EditState {}
+    public @interface EditState {
+    }
+
+    public static final String STATE_OPENED = "opened";
+    public static final String STATE_REOPENED = "reopened";
+    public static final String STATE_CLOSED = "closed";
+
+    @StringDef({STATE_OPENED, STATE_REOPENED, STATE_CLOSED})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface State {
+    }
 
     @JsonField(name = "id")
     long mId;
@@ -32,7 +44,8 @@ public class Issue {
     @JsonField(name = "description")
     String mDescription;
     @JsonField(name = "state")
-    State mState;
+    @State
+    String mState;
     @JsonField(name = "created_at")
     Date mCreatedAt;
     @JsonField(name = "updated_at")
@@ -46,7 +59,8 @@ public class Issue {
     @JsonField(name = "author")
     UserBasic mAuthor;
 
-    public Issue() {}
+    public Issue() {
+    }
 
     public long getId() {
         return mId;
@@ -68,7 +82,7 @@ public class Issue {
         return mDescription;
     }
 
-    public State getState() {
+    public @State String getState() {
         return mState;
     }
 
@@ -116,14 +130,5 @@ public class Issue {
     @Override
     public int hashCode() {
         return (int) (mId ^ (mId >>> 32));
-    }
-
-    public enum State {
-        @JsonField(name = "opened")
-        OPENED,
-        @JsonField(name = "reopened")
-        REOPENED,
-        @JsonField(name = "closed")
-        CLOSED
     }
 }

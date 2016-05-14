@@ -1,13 +1,27 @@
 package com.commit451.gitlab.model.api;
 
+import android.support.annotation.StringDef;
+
 import com.bluelinelabs.logansquare.annotation.JsonField;
+import com.bluelinelabs.logansquare.annotation.JsonObject;
 
 import org.parceler.Parcel;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.Date;
 
 @Parcel
+@JsonObject
 public class Note {
+
+    public static final String TYPE_ISSUE = "Issue";
+    public static final String TYPE_MERGE_REQUEST = "MergeRequest";
+
+    @StringDef({TYPE_ISSUE, TYPE_MERGE_REQUEST})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface Type {}
+
     @JsonField(name = "id")
     long mId;
     @JsonField(name = "body")
@@ -21,7 +35,8 @@ public class Note {
     @JsonField(name = "noteable_id")
     long mNoteableId;
     @JsonField(name = "noteable_type")
-    Type mNoteableType;
+    @Type
+    String mNoteableType;
     @JsonField(name = "upvote")
     boolean mUpvote;
     @JsonField(name = "downvote")
@@ -53,7 +68,7 @@ public class Note {
         return mNoteableId;
     }
 
-    public Type getNoteableType() {
+    public @Type String getNoteableType() {
         return mNoteableType;
     }
 
@@ -78,12 +93,5 @@ public class Note {
     @Override
     public int hashCode() {
         return (int) (mId ^ (mId >>> 32));
-    }
-
-    public enum Type {
-        @JsonField(name = "Issue")
-        ISSUE,
-        @JsonField(name = "MergeRequest")
-        MERGE_REQUEST
     }
 }

@@ -3,12 +3,14 @@ package com.commit451.gitlab.model.api;
 import android.net.Uri;
 
 import com.bluelinelabs.logansquare.annotation.JsonField;
+import com.bluelinelabs.logansquare.annotation.JsonObject;
 
 import org.parceler.Parcel;
 
 import java.util.Date;
 
 @Parcel
+@JsonObject
 public class User extends UserBasic {
     @JsonField(name = "created_at")
     Date mCreatedAt;

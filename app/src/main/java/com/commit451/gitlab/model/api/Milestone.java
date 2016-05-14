@@ -5,6 +5,7 @@ import android.support.annotation.StringDef;
 import android.text.TextUtils;
 
 import com.bluelinelabs.logansquare.annotation.JsonField;
+import com.bluelinelabs.logansquare.annotation.JsonObject;
 
 import org.parceler.Parcel;
 
@@ -18,6 +19,7 @@ import java.util.Locale;
 import timber.log.Timber;
 
 @Parcel
+@JsonObject
 public class Milestone {
     public static final String STATE_ACTIVE = "active";
     public static final String STATE_CLOSED = "closed";

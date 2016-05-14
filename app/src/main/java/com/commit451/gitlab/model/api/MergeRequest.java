@@ -1,16 +1,30 @@
 package com.commit451.gitlab.model.api;
 
 import android.support.annotation.Nullable;
+import android.support.annotation.StringDef;
 
 import com.bluelinelabs.logansquare.annotation.JsonField;
+import com.bluelinelabs.logansquare.annotation.JsonObject;
 
 import org.parceler.Parcel;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.Date;
 import java.util.List;
 
 @Parcel
+@JsonObject
 public class MergeRequest {
+
+    public static final String STATE_OPENED = "opened";
+    public static final String STATE_MERGED = "merged";
+    public static final String STATE_CLOSED = "closed";
+
+    @StringDef({STATE_OPENED, STATE_MERGED, STATE_CLOSED})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface State {}
+
     @JsonField(name = "id")
     long mId;
     @JsonField(name = "iid")
@@ -22,7 +36,8 @@ public class MergeRequest {
     @JsonField(name = "description")
     String mDescription;
     @JsonField(name = "state")
-    State mState;
+    @State
+    String mState;
     @JsonField(name = "updated_at")
     Date mUpdatedAt;
     @JsonField(name = "created_at")
@@ -79,7 +94,7 @@ public class MergeRequest {
         return mDescription;
     }
 
-    public State getState() {
+    public @State String getState() {
         return mState;
     }
 
@@ -165,14 +180,5 @@ public class MergeRequest {
     @Override
     public int hashCode() {
         return (int) (mId ^ (mId >>> 32));
-    }
-
-    public enum State {
-        @JsonField(name = "opened")
-        OPENED,
-        @JsonField(name = "merged")
-        MERGED,
-        @JsonField(name = "closed")
-        CLOSED
     }
 }

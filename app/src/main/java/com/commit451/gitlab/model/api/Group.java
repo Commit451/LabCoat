@@ -4,10 +4,12 @@ import android.net.Uri;
 import android.support.annotation.Nullable;
 
 import com.bluelinelabs.logansquare.annotation.JsonField;
+import com.bluelinelabs.logansquare.annotation.JsonObject;
 
 import org.parceler.Parcel;
 
 @Parcel
+@JsonObject
 public class Group {
     @JsonField(name = "id")
     long mId;

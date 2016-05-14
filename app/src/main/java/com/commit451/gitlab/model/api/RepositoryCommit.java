@@ -1,6 +1,7 @@
 package com.commit451.gitlab.model.api;
 
 import com.bluelinelabs.logansquare.annotation.JsonField;
+import com.bluelinelabs.logansquare.annotation.JsonObject;
 import com.commit451.gitlab.util.ObjectUtil;
 
 import org.parceler.Parcel;
@@ -8,6 +9,7 @@ import org.parceler.Parcel;
 import java.util.Date;
 
 @Parcel
+@JsonObject
 public class RepositoryCommit {
     @JsonField(name = "id")
     String mId;

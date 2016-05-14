@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 
 import com.bluelinelabs.logansquare.annotation.JsonField;
+import com.bluelinelabs.logansquare.annotation.JsonObject;
 import com.commit451.gitlab.data.Prefs;
 import com.commit451.gitlab.model.api.UserFull;
 import com.commit451.gitlab.util.ObjectUtil;
@@ -17,6 +18,7 @@ import java.util.Date;
 import java.util.List;
 
 @Parcel
+@JsonObject
 public class Account implements Comparable<Account>{
 
     public static List<Account> getAccounts(Context context) {

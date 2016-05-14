@@ -6,11 +6,11 @@ import android.preference.PreferenceManager;
 import android.support.annotation.IntDef;
 import android.text.TextUtils;
 
+import com.bluelinelabs.logansquare.LoganSquare;
 import com.commit451.gitlab.BuildConfig;
 import com.commit451.gitlab.model.Account;
-import com.commit451.gitlab.provider.GsonProvider;
-import com.google.gson.reflect.TypeToken;
 
+import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
@@ -40,7 +40,12 @@ public class Prefs {
     public static List<Account> getAccounts(Context context) {
         String accountsJson = getSharedPrefs(context).getString(KEY_ACCOUNTS, null);
         if (!TextUtils.isEmpty(accountsJson)) {
-            return GsonProvider.getInstance().fromJson(accountsJson, new TypeToken<List<Account>>(){}.getType());
+            try {
+                return LoganSquare.parseList(accountsJson, Account.class);
+            } catch (IOException e) {
+                //why would this ever happen?!?!?1
+            }
+            return new ArrayList<>();
         } else {
             return new ArrayList<>();
         }
@@ -66,10 +71,15 @@ public class Prefs {
     }
 
     private static void setAccounts(Context context, List<Account> accounts) {
-        getSharedPrefs(context)
-                .edit()
-                .putString(KEY_ACCOUNTS, GsonProvider.getInstance().toJson(accounts))
-                .commit();
+        try {
+            String json = LoganSquare.serialize(accounts);
+            getSharedPrefs(context)
+                    .edit()
+                    .putString(KEY_ACCOUNTS, json)
+                    .commit();
+        } catch (IOException e) {
+            //this wont happen! Right?!?!?!
+        }
     }
 
     public static int getSavedVersion(Context context) {
