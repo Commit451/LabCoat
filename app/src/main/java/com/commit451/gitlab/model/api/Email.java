@@ -1,14 +1,14 @@
 package com.commit451.gitlab.model.api;
 
-import com.google.gson.annotations.SerializedName;
+import com.bluelinelabs.logansquare.annotation.JsonField;
 
 import org.parceler.Parcel;
 
 @Parcel
 public class Email {
-    @SerializedName("id")
+    @JsonField(name = "id")
     long mId;
-    @SerializedName("email")
+    @JsonField(name = "email")
     String mEmail;
 
     public Email() {}

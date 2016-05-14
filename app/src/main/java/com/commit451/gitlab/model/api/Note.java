@@ -1,6 +1,6 @@
 package com.commit451.gitlab.model.api;
 
-import com.google.gson.annotations.SerializedName;
+import com.bluelinelabs.logansquare.annotation.JsonField;
 
 import org.parceler.Parcel;
 
@@ -8,23 +8,23 @@ import java.util.Date;
 
 @Parcel
 public class Note {
-    @SerializedName("id")
+    @JsonField(name = "id")
     long mId;
-    @SerializedName("body")
+    @JsonField(name = "body")
     String mBody;
-    @SerializedName("author")
+    @JsonField(name = "author")
     UserBasic mAuthor;
-    @SerializedName("created_at")
+    @JsonField(name = "created_at")
     Date mCreatedAt;
-    @SerializedName("system")
+    @JsonField(name = "system")
     boolean mSystem;
-    @SerializedName("noteable_id")
+    @JsonField(name = "noteable_id")
     long mNoteableId;
-    @SerializedName("noteable_type")
+    @JsonField(name = "noteable_type")
     Type mNoteableType;
-    @SerializedName("upvote")
+    @JsonField(name = "upvote")
     boolean mUpvote;
-    @SerializedName("downvote")
+    @JsonField(name = "downvote")
     boolean mDownvote;
 
     public Note() {}
@@ -81,9 +81,9 @@ public class Note {
     }
 
     public enum Type {
-        @SerializedName("Issue")
+        @JsonField(name = "Issue")
         ISSUE,
-        @SerializedName("MergeRequest")
+        @JsonField(name = "MergeRequest")
         MERGE_REQUEST
     }
 }

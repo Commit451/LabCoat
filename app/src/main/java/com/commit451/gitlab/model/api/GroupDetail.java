@@ -1,6 +1,6 @@
 package com.commit451.gitlab.model.api;
 
-import com.google.gson.annotations.SerializedName;
+import com.bluelinelabs.logansquare.annotation.JsonField;
 
 import org.parceler.Parcel;
 
@@ -8,7 +8,7 @@ import java.util.List;
 
 @Parcel
 public class GroupDetail extends Group {
-    @SerializedName("projects")
+    @JsonField(name = "projects")
     List<Project> mProjects;
 
     public GroupDetail() {}

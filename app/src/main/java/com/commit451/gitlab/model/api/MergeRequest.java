@@ -2,7 +2,7 @@ package com.commit451.gitlab.model.api;
 
 import android.support.annotation.Nullable;
 
-import com.google.gson.annotations.SerializedName;
+import com.bluelinelabs.logansquare.annotation.JsonField;
 
 import org.parceler.Parcel;
 
@@ -11,49 +11,49 @@ import java.util.List;
 
 @Parcel
 public class MergeRequest {
-    @SerializedName("id")
+    @JsonField(name = "id")
     long mId;
-    @SerializedName("iid")
+    @JsonField(name = "iid")
     long mIid;
-    @SerializedName("project_id")
+    @JsonField(name = "project_id")
     long mProjectId;
-    @SerializedName("title")
+    @JsonField(name = "title")
     String mTitle;
-    @SerializedName("description")
+    @JsonField(name = "description")
     String mDescription;
-    @SerializedName("state")
+    @JsonField(name = "state")
     State mState;
-    @SerializedName("updated_at")
+    @JsonField(name = "updated_at")
     Date mUpdatedAt;
-    @SerializedName("created_at")
+    @JsonField(name = "created_at")
     Date mCreatedAt;
-    @SerializedName("target_branch")
+    @JsonField(name = "target_branch")
     String mTargetBranch;
-    @SerializedName("source_branch")
+    @JsonField(name = "source_branch")
     String mSourceBranch;
-    @SerializedName("upvotes")
+    @JsonField(name = "upvotes")
     long mUpvotes;
-    @SerializedName("downvotes")
+    @JsonField(name = "downvotes")
     long mDownvotes;
-    @SerializedName("author")
+    @JsonField(name = "author")
     UserBasic mAuthor;
-    @SerializedName("assignee")
+    @JsonField(name = "assignee")
     UserBasic mAssignee;
-    @SerializedName("source_project_id")
+    @JsonField(name = "source_project_id")
     long mSourceProjectId;
-    @SerializedName("target_project_id")
+    @JsonField(name = "target_project_id")
     long mTargetProjectId;
-    @SerializedName("labels")
+    @JsonField(name = "labels")
     List<String> mLabels;
-    @SerializedName("work_in_progress")
+    @JsonField(name = "work_in_progress")
     boolean mWorkInProgress;
-    @SerializedName("milestone")
+    @JsonField(name = "milestone")
     Milestone mMilestone;
-    @SerializedName("merge_when_build_succeeds")
+    @JsonField(name = "merge_when_build_succeeds")
     boolean mMergeWhenBuildSucceeds;
-    @SerializedName("merge_status")
+    @JsonField(name = "merge_status")
     String mMergeStatus;
-    @SerializedName("changes")
+    @JsonField(name = "changes")
     @Nullable
     List<Diff> mChanges;
 
@@ -168,11 +168,11 @@ public class MergeRequest {
     }
 
     public enum State {
-        @SerializedName("opened")
+        @JsonField(name = "opened")
         OPENED,
-        @SerializedName("merged")
+        @JsonField(name = "merged")
         MERGED,
-        @SerializedName("closed")
+        @JsonField(name = "closed")
         CLOSED
     }
 }

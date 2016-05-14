@@ -3,7 +3,7 @@ package com.commit451.gitlab.model.api;
 import android.graphics.Color;
 import android.support.annotation.ColorInt;
 
-import com.google.gson.annotations.SerializedName;
+import com.bluelinelabs.logansquare.annotation.JsonField;
 
 import org.parceler.Parcel;
 
@@ -13,9 +13,9 @@ import org.parceler.Parcel;
 @Parcel
 public class Label {
 
-    @SerializedName("color")
+    @JsonField(name = "color")
     String mColor;
-    @SerializedName("name")
+    @JsonField(name = "name")
     String mName;
 
     protected Label() {

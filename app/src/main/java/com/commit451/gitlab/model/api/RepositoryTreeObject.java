@@ -9,13 +9,13 @@ import org.parceler.Parcel;
 
 @Parcel
 public class RepositoryTreeObject {
-    @SerializedName("id")
+    @JsonField(name = "id")
     String mId;
-    @SerializedName("name")
+    @JsonField(name = "name")
     String mName;
-    @SerializedName("type")
+    @JsonField(name = "type")
     Type mType;
-    @SerializedName("mode")
+    @JsonField(name = "mode")
     String mMode;
 
     public RepositoryTreeObject() {}
@@ -62,11 +62,11 @@ public class RepositoryTreeObject {
     }
 
     public enum Type {
-        @SerializedName("tree")
+        @JsonField(name = "tree")
         FOLDER,
-        @SerializedName("submodule")
+        @JsonField(name = "submodule")
         REPO,
-        @SerializedName("blob")
+        @JsonField(name = "blob")
         FILE
     }
 }

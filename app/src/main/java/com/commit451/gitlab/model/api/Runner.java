@@ -1,6 +1,6 @@
 package com.commit451.gitlab.model.api;
 
-import com.google.gson.annotations.SerializedName;
+import com.bluelinelabs.logansquare.annotation.JsonField;
 
 import org.parceler.Parcel;
 
@@ -10,15 +10,15 @@ import org.parceler.Parcel;
 @Parcel
 public class Runner {
 
-    @SerializedName("id")
+    @JsonField(name = "id")
     long mId;
-    @SerializedName("description")
+    @JsonField(name = "description")
     String mDescription;
-    @SerializedName("active")
+    @JsonField(name = "active")
     boolean mActive;
-    @SerializedName("is_shared")
+    @JsonField(name = "is_shared")
     boolean mIsShared;
-    @SerializedName("name")
+    @JsonField(name = "name")
     String mName;
 
     public long getId() {

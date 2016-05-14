@@ -1,6 +1,6 @@
 package com.commit451.gitlab.model.api;
 
-import com.google.gson.annotations.SerializedName;
+import com.bluelinelabs.logansquare.annotation.JsonField;
 
 import org.parceler.Parcel;
 
@@ -9,7 +9,7 @@ import org.parceler.Parcel;
  */
 @Parcel
 public class Artifact {
-    @SerializedName("name")
+    @JsonField(name = "name")
     String mName;
 
     public String getName() {

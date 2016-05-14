@@ -4,7 +4,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StringDef;
 import android.text.TextUtils;
 
-import com.google.gson.annotations.SerializedName;
+import com.bluelinelabs.logansquare.annotation.JsonField;
 
 import org.parceler.Parcel;
 
@@ -35,23 +35,23 @@ public class Milestone {
 
     public static final SimpleDateFormat DUE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-d", Locale.US);
 
-    @SerializedName("id")
+    @JsonField(name = "id")
     long mId;
-    @SerializedName("iid")
+    @JsonField(name = "iid")
     long mIid;
-    @SerializedName("project_id")
+    @JsonField(name = "project_id")
     long mProjectId;
-    @SerializedName("title")
+    @JsonField(name = "title")
     String mTitle;
-    @SerializedName("description")
+    @JsonField(name = "description")
     String mDescription;
-    @SerializedName("state")
+    @JsonField(name = "state")
     String mState;
-    @SerializedName("created_at")
+    @JsonField(name = "created_at")
     Date mCreatedAt;
-    @SerializedName("updated_at")
+    @JsonField(name = "updated_at")
     Date mUpdatedAt;
-    @SerializedName("due_date")
+    @JsonField(name = "due_date")
     String mDueDate;
 
     public Milestone() {}

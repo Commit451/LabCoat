@@ -3,19 +3,19 @@ package com.commit451.gitlab.model.api;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 
-import com.google.gson.annotations.SerializedName;
+import com.bluelinelabs.logansquare.annotation.JsonField;
 
 import org.parceler.Parcel;
 
 @Parcel
 public class UserBasic extends UserSafe {
-    @SerializedName("id")
+    @JsonField(name = "id")
     long mId;
-    @SerializedName("state")
+    @JsonField(name = "state")
     State mState;
-    @SerializedName("avatar_url")
+    @JsonField(name = "avatar_url")
     Uri mAvatarUrl;
-    @SerializedName("web_url")
+    @JsonField(name = "web_url")
     Uri mWebUrl;
 
     public UserBasic() {}
@@ -60,9 +60,9 @@ public class UserBasic extends UserSafe {
     }
 
     public enum State {
-        @SerializedName("active")
+        @JsonField(name = "active")
         ACTIVE,
-        @SerializedName("blocked")
+        @JsonField(name = "blocked")
         BLOCKED
     }
 }

@@ -21,29 +21,29 @@ public class Issue {
     @Retention(RetentionPolicy.SOURCE)
     public @interface EditState {}
 
-    @SerializedName("id")
+    @JsonField(name = "id")
     long mId;
-    @SerializedName("iid")
+    @JsonField(name = "iid")
     long mIid;
-    @SerializedName("project_id")
+    @JsonField(name = "project_id")
     long mProjectId;
-    @SerializedName("title")
+    @JsonField(name = "title")
     String mTitle;
-    @SerializedName("description")
+    @JsonField(name = "description")
     String mDescription;
-    @SerializedName("state")
+    @JsonField(name = "state")
     State mState;
-    @SerializedName("created_at")
+    @JsonField(name = "created_at")
     Date mCreatedAt;
-    @SerializedName("updated_at")
+    @JsonField(name = "updated_at")
     Date mUpdatedAt;
-    @SerializedName("labels")
+    @JsonField(name = "labels")
     List<String> mLabels;
-    @SerializedName("milestone")
+    @JsonField(name = "milestone")
     Milestone mMilestone;
-    @SerializedName("assignee")
+    @JsonField(name = "assignee")
     UserBasic mAssignee;
-    @SerializedName("author")
+    @JsonField(name = "author")
     UserBasic mAuthor;
 
     public Issue() {}
@@ -119,11 +119,11 @@ public class Issue {
     }
 
     public enum State {
-        @SerializedName("opened")
+        @JsonField(name = "opened")
         OPENED,
-        @SerializedName("reopened")
+        @JsonField(name = "reopened")
         REOPENED,
-        @SerializedName("closed")
+        @JsonField(name = "closed")
         CLOSED
     }
 }

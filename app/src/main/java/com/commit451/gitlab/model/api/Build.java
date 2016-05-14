@@ -1,6 +1,6 @@
 package com.commit451.gitlab.model.api;
 
-import com.google.gson.annotations.SerializedName;
+import com.bluelinelabs.logansquare.annotation.JsonField;
 
 import org.parceler.Parcel;
 
@@ -12,33 +12,33 @@ import java.util.Date;
 @Parcel
 public class Build {
 
-    @SerializedName("commit")
+    @JsonField(name = "commit")
     RepositoryCommit mCommit;
-    @SerializedName("coverage")
+    @JsonField(name = "coverage")
     String mCoverage;
-    @SerializedName("created_at")
+    @JsonField(name = "created_at")
     Date mCreatedAt;
-    @SerializedName("artifacts_file")
+    @JsonField(name = "artifacts_file")
     String mArtifactsFile;
-    @SerializedName("finished_at")
+    @JsonField(name = "finished_at")
     Date mFinishedAt;
-    @SerializedName("id")
+    @JsonField(name = "id")
     long mId;
-    @SerializedName("name")
+    @JsonField(name = "name")
     String mName;
-    @SerializedName("ref")
+    @JsonField(name = "ref")
     String mRef;
-    @SerializedName("runner")
+    @JsonField(name = "runner")
     Runner mRunner;
-    @SerializedName("stage")
+    @JsonField(name = "stage")
     String mStage;
-    @SerializedName("started_at")
+    @JsonField(name = "started_at")
     Date mStartedAt;
-    @SerializedName("status")
+    @JsonField(name = "status")
     String mStatus;
-    @SerializedName("tag")
+    @JsonField(name = "tag")
     boolean mTag;
-    @SerializedName("user")
+    @JsonField(name = "user")
     User mUser;
 
     public RepositoryCommit getCommit() {

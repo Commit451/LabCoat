@@ -9,23 +9,23 @@ import java.util.List;
 
 @Parcel
 public class UserFull extends User {
-    @SerializedName("email")
+    @JsonField(name = "email")
     String mEmail;
-    @SerializedName("theme_id")
+    @JsonField(name = "theme_id")
     int mThemeId;
-    @SerializedName("color_scheme_id")
+    @JsonField(name = "color_scheme_id")
     int mColorSchemeId;
-    @SerializedName("projects_limit")
+    @JsonField(name = "projects_limit")
     int mProjectsLimit;
-    @SerializedName("current_sign_in_at")
+    @JsonField(name = "current_sign_in_at")
     Date mCurrentSignInAt;
-    @SerializedName("identities")
+    @JsonField(name = "identities")
     List<Identity> mIdentities;
-    @SerializedName("can_create_group")
+    @JsonField(name = "can_create_group")
     boolean mCanCreateGroup;
-    @SerializedName("can_create_project")
+    @JsonField(name = "can_create_project")
     boolean mCanCreateProject;
-    @SerializedName("two_factor_enabled")
+    @JsonField(name = "two_factor_enabled")
     boolean mTwoFactorEnabled;
 
     public UserFull() {}

@@ -1,7 +1,6 @@
 package com.commit451.gitlab.model.api;
 
-import com.google.gson.annotations.SerializedName;
-
+import com.bluelinelabs.logansquare.annotation.JsonField;
 import com.commit451.gitlab.util.ObjectUtil;
 
 import org.parceler.Parcel;
@@ -13,15 +12,15 @@ import java.util.Set;
 
 @Parcel
 public class Contributor {
-    @SerializedName("name")
+    @JsonField(name = "name")
     String mName;
-    @SerializedName("email")
+    @JsonField(name = "email")
     String mEmail;
-    @SerializedName("commits")
+    @JsonField(name = "commits")
     int mCommits;
-    @SerializedName("additions")
+    @JsonField(name = "additions")
     int mAdditions;
-    @SerializedName("deletions")
+    @JsonField(name = "deletions")
     int mDeletions;
 
     public Contributor() {}

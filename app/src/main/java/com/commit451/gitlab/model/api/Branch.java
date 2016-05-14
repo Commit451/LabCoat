@@ -1,16 +1,15 @@
 package com.commit451.gitlab.model.api;
 
-import com.google.gson.annotations.SerializedName;
-
+import com.bluelinelabs.logansquare.annotation.JsonField;
 import com.commit451.gitlab.util.ObjectUtil;
 
 import org.parceler.Parcel;
 
 @Parcel
 public class Branch {
-    @SerializedName("name")
+    @JsonField(name = "name")
     String mName;
-    @SerializedName("protected")
+    @JsonField(name = "protected")
     boolean mProtected;
 
     public Branch() {}

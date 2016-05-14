@@ -1,14 +1,14 @@
 package com.commit451.gitlab.model.api;
 
-import com.google.gson.annotations.SerializedName;
+import com.bluelinelabs.logansquare.annotation.JsonField;
 
 import org.parceler.Parcel;
 
 @Parcel
 public class UserSafe {
-    @SerializedName("name")
+    @JsonField(name = "name")
     String mName;
-    @SerializedName("username")
+    @JsonField(name = "username")
     String mUsername;
 
     public UserSafe() {}

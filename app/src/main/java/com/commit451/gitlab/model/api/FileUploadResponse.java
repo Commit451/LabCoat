@@ -1,6 +1,6 @@
 package com.commit451.gitlab.model.api;
 
-import com.google.gson.annotations.SerializedName;
+import com.bluelinelabs.logansquare.annotation.JsonField;
 
 import org.parceler.Parcel;
 
@@ -10,13 +10,13 @@ import org.parceler.Parcel;
 @Parcel
 public class FileUploadResponse {
 
-    @SerializedName("alt")
+    @JsonField(name = "alt")
     protected String mAlt;
-    @SerializedName("url")
+    @JsonField(name = "url")
     protected String mUrl;
-    @SerializedName("is_image")
+    @JsonField(name = "is_image")
     protected boolean mIsImage;
-    @SerializedName("markdown")
+    @JsonField(name = "markdown")
     protected String mMarkdown;
 
     protected FileUploadResponse() {
