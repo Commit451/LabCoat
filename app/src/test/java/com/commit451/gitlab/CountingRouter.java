@@ -5,11 +5,7 @@ import android.net.Uri;
 import com.commit451.gitlab.navigation.RoutingNavigator;
 
 /**
- * //TODO add description
- * <br>
- * Copyright 2016 <a href="http://www.ovenbits.com">Oven Bits</a>
- *
- * @author Jawn.
+ * Checks counting
  */
 public class CountingRouter implements RoutingNavigator {
 

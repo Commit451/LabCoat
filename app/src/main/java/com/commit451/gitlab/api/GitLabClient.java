@@ -48,7 +48,6 @@ public final class GitLabClient {
                 .baseUrl(account.getServerUrl().toString())
                 .client(OkHttpClientProvider.getInstance(account))
                 .addConverterFactory(LoganSquareConverterFactory.create())
-                //.addConverterFactory(GsonConverterFactory.create(GsonProvider.createInstance(account)))
                 .build();
         return restAdapter.create(GitLab.class);
     }
