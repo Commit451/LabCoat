@@ -185,6 +185,10 @@ public interface GitLab {
     @GET
     Call<List<Milestone>> getMilestones(@Url String url);
 
+    @GET(API_VERSION + "/projects/{id}/issues")
+    Call<List<Milestone>> getMilestonesByIid(@Path("id") long projectId,
+                                     @Query("iid") String internalMilestoneId);
+
     @GET(API_VERSION + "/projects/{id}/milestones/{milestone_id}/issues")
     Call<List<Issue>> getMilestoneIssues(@Path("id") long projectId,
                                          @Path("milestone_id") long milestoneId);

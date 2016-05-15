@@ -55,6 +55,12 @@ public class RoutingActivity extends Activity {
         }
 
         @Override
+        public void onRouteToMilestone(String projectNamespace, String projectName, String milestoneNumber) {
+            startActivity(LoadSomeInfoActivity.newMilestoneIntent(RoutingActivity.this, projectNamespace, projectName, milestoneNumber));
+            overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
+        }
+
+        @Override
         public void onRouteUnknown(Uri uri) {
             if (mOriginalUri != null) {
                 IntentUtil.openPage(RoutingActivity.this, uri.toString());

@@ -11,5 +11,6 @@ public interface RoutingNavigator {
     void onRouteToMergeRequest(String projectNamespace, String projectName, String mergeRequestId);
     void onRouteToProject(String namespace, String projectId);
     void onRouteToBuild(String projectNamespace, String projectName, String buildNumber);
+    void onRouteToMilestone(String projectNamespace, String projectName, String milestoneNumber);
     void onRouteUnknown(Uri uri);
 }
