@@ -3,8 +3,11 @@ package com.commit451.gitlab;
 import android.app.Application;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.support.annotation.VisibleForTesting;
 
+import com.bluelinelabs.logansquare.LoganSquare;
+import com.commit451.gitlab.api.converter.UriTypeConverter;
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.core.CrashlyticsCore;
 import com.novoda.simplechromecustomtabs.SimpleChromeCustomTabs;
@@ -22,6 +25,13 @@ import timber.log.Timber;
  * App for one time init things and to house singletons
  */
 public class LabCoatApp extends Application {
+
+    /**
+     * Register our type converters on our singleton LoganSquare instance
+     */
+    static {
+        LoganSquare.registerTypeConverter(Uri.class, new UriTypeConverter());
+    }
 
     private static Bus sBus;
     public static Bus bus() {
