@@ -21,6 +21,7 @@ import java.util.List;
 @JsonObject
 public class Account implements Comparable<Account>{
 
+    @NonNull
     public static List<Account> getAccounts(Context context) {
         List<Account> accounts = new ArrayList<>(Prefs.getAccounts(context));
         Collections.sort(accounts);

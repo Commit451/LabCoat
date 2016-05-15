@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.IntDef;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.bluelinelabs.logansquare.LoganSquare;
@@ -37,6 +38,7 @@ public class Prefs {
         return PreferenceManager.getDefaultSharedPreferences(context);
     }
 
+    @NonNull
     public static List<Account> getAccounts(Context context) {
         String accountsJson = getSharedPrefs(context).getString(KEY_ACCOUNTS, null);
         if (!TextUtils.isEmpty(accountsJson)) {

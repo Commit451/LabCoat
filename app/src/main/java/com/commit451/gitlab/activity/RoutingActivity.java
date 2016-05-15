@@ -47,7 +47,7 @@ public class RoutingActivity extends Activity {
 
         //okay so last thing, if the user has followed a link, but the user
         //is not actually signed in, we want to direct them to signin
-        if (GitLabClient.getAccount() == null && Account.getAccounts(this) == null) {
+        if (GitLabClient.getAccount() == null && Account.getAccounts(this).isEmpty()) {
             NavigationManager.navigateToLogin(this);
             finish();
             return;
