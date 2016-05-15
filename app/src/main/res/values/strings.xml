@@ -298,8 +298,8 @@
     <string name="failed_to_create_milestone">Failed to create or modify milestone</string>
     <string name="milestone_opened">Opened</string>
     <string name="milestone_closed">Closed</string>
-    <string name="milestone_all">Closed</string>
-    <string name="milestone_state_value_default">opened</string>
+    <string name="milestone_all">All</string>
+    <string name="milestone_state_value_default">active</string>
     <string-array name="milestone_state_names">
         <item>@string/milestone_opened</item>
         <item>@string/milestone_closed</item>
@@ -307,9 +307,9 @@
     </string-array>
 
     <string-array name="milestone_state_values">
-        <item>opened</item>
+        <item>active</item>
         <item>closed</item>
-        <item>all</item>
+        <item>@null</item>
     </string-array>
 
     <!-- Members -->

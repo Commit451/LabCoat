@@ -180,7 +180,8 @@ public interface GitLab {
     /* --- MILESTONES --- */
 
     @GET(API_VERSION + "/projects/{id}/milestones")
-    Call<List<Milestone>> getMilestones(@Path("id") long projectId);
+    Call<List<Milestone>> getMilestones(@Path("id") long projectId,
+                                        @Query("state") String state);
 
     @GET
     Call<List<Milestone>> getMilestones(@Url String url);
@@ -262,8 +263,7 @@ public interface GitLab {
                                 @Query("state") String state);
 
     @GET
-    Call<List<Issue>> getIssues(@Url String url,
-                                @Query("state") String state);
+    Call<List<Issue>> getIssues(@Url String url);
 
     @GET(API_VERSION + "/projects/{id}/issues/{issue_id}")
     Call<Issue> getIssue(@Path("id") long projectId,

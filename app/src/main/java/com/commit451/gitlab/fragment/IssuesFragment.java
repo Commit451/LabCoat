@@ -247,7 +247,7 @@ public class IssuesFragment extends ButterKnifeFragment {
         mLoading = true;
 
         Timber.d("loadMore called for " + mNextPageUrl);
-        GitLabClient.instance().getIssues(mNextPageUrl.toString(), mState).enqueue(mMoreIssuesCallback);
+        GitLabClient.instance().getIssues(mNextPageUrl.toString()).enqueue(mMoreIssuesCallback);
     }
 
     private class EventReceiver {

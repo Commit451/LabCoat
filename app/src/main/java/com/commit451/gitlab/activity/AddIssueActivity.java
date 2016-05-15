@@ -244,7 +244,7 @@ public class AddIssueActivity extends MorphActivity {
     }
 
     private void load() {
-        GitLabClient.instance().getMilestones(mProject.getId()).enqueue(mMilestonesCallback);
+        GitLabClient.instance().getMilestones(mProject.getId(), getString(R.string.milestone_state_value_default)).enqueue(mMilestonesCallback);
         GitLabClient.instance().getProjectMembers(mProject.getId()).enqueue(mAssigneeCallback);
         GitLabClient.instance().getLabels(mProject.getId()).enqueue(mLabelCallback);
     }

@@ -181,7 +181,7 @@ public class MilestonesFragment extends ButterKnifeFragment {
         mRecyclerView.setAdapter(mMilestoneAdapter);
         mRecyclerView.addOnScrollListener(mOnScrollListener);
 
-        mSpinner.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, getResources().getStringArray(R.array.merge_request_state_names)));
+        mSpinner.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, getResources().getStringArray(R.array.milestone_state_names)));
         mSpinner.setOnItemSelectedListener(mSpinnerItemSelectedListener);
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -225,7 +225,7 @@ public class MilestonesFragment extends ButterKnifeFragment {
         });
         mNextPageUrl = null;
         mLoading = true;
-        GitLabClient.instance().getMilestones(mProject.getId()).enqueue(mCallback);
+        GitLabClient.instance().getMilestones(mProject.getId(), mState).enqueue(mCallback);
     }
 
     private void loadMore() {
