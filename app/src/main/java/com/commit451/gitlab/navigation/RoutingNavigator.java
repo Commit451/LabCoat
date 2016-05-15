@@ -10,5 +10,6 @@ public interface RoutingNavigator {
     void onRouteToCommit(String projectNamespace, String projectName, String commitSha);
     void onRouteToMergeRequest(String projectNamespace, String projectName, String mergeRequestId);
     void onRouteToProject(String namespace, String projectId);
+    void onRouteToBuild(String projectNamespace, String projectName, String buildNumber);
     void onRouteUnknown(Uri uri);
 }

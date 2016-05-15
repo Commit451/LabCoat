@@ -11,6 +11,7 @@ import android.widget.Toast;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.model.api.Build;
 import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryCommit;
@@ -31,9 +32,11 @@ public class LoadSomeInfoActivity extends AppCompatActivity {
     private static final String EXTRA_PROJECT_NAME = "project_name";
     private static final String EXTRA_COMMIT_SHA = "extra_commit_sha";
     private static final String EXTRA_MERGE_REQUEST = "merge_request";
+    private static final String EXTRA_BUILD_ID = "build_id";
 
     private static final int LOAD_TYPE_DIFF = 0;
     private static final int LOAD_TYPE_MERGE_REQUEST = 1;
+    private static final int LOAD_TYPE_BUILD = 2;
 
     public static Intent newIntent(Context context, String namespace, String projectName, String commitSha) {
         Intent intent = new Intent(context, LoadSomeInfoActivity.class);
@@ -50,6 +53,15 @@ public class LoadSomeInfoActivity extends AppCompatActivity {
         intent.putExtra(EXTRA_PROJECT_NAME, projectName);
         intent.putExtra(EXTRA_MERGE_REQUEST, mergeRequestId);
         intent.putExtra(EXTRA_LOAD_TYPE, LOAD_TYPE_MERGE_REQUEST);
+        return intent;
+    }
+
+    public static Intent newBuildIntent(Context context, String namespace, String projectName, long buildId) {
+        Intent intent = new Intent(context, LoadSomeInfoActivity.class);
+        intent.putExtra(EXTRA_PROJECT_NAMESPACE, namespace);
+        intent.putExtra(EXTRA_PROJECT_NAME, projectName);
+        intent.putExtra(EXTRA_BUILD_ID, buildId);
+        intent.putExtra(EXTRA_LOAD_TYPE, LOAD_TYPE_BUILD);
         return intent;
     }
 
@@ -77,6 +89,10 @@ public class LoadSomeInfoActivity extends AppCompatActivity {
                 case LOAD_TYPE_MERGE_REQUEST:
                     String mergeRequestId = getIntent().getStringExtra(EXTRA_MERGE_REQUEST);
                     GitLabClient.instance().getMergeRequest(response.getId(), Long.valueOf(mergeRequestId)).enqueue(mMergeRequestCallback);
+                    return;
+                case LOAD_TYPE_BUILD:
+                    long buildId = getIntent().getLongExtra(EXTRA_BUILD_ID, -1);
+                    GitLabClient.instance().getBuild(response.getId(), buildId).enqueue(mBuildCallback);
             }
 
         }
@@ -116,6 +132,20 @@ public class LoadSomeInfoActivity extends AppCompatActivity {
         }
     };
 
+    private final EasyCallback<Build> mBuildCallback = new EasyCallback<Build>() {
+        @Override
+        public void onResponse(@NonNull Build response) {
+            NavigationManager.navigateToBuild(LoadSomeInfoActivity.this, mProject, response);
+            finish();
+        }
+
+        @Override
+        public void onAllFailure(Throwable t) {
+            Timber.e(t, null);
+            onError();
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -128,6 +158,7 @@ public class LoadSomeInfoActivity extends AppCompatActivity {
         switch (mLoadType) {
             case LOAD_TYPE_DIFF:
             case LOAD_TYPE_MERGE_REQUEST:
+            case LOAD_TYPE_BUILD:
                 String namespace = getIntent().getStringExtra(EXTRA_PROJECT_NAMESPACE);
                 String project = getIntent().getStringExtra(EXTRA_PROJECT_NAME);
                 GitLabClient.instance().getProject(namespace, project).enqueue(mProjectCallback);

@@ -13,6 +13,7 @@ public class CountingRouter implements RoutingNavigator {
     public int commitRouteCount = 0;
     public int mergeRequestRouteCount = 0;
     public int projectRouteCount = 0;
+    public int buildRoutCount = 0;
     public int unknownRountCount = 0;
 
     @Override
@@ -33,6 +34,11 @@ public class CountingRouter implements RoutingNavigator {
     @Override
     public void onRouteToProject(String namespace, String projectId) {
         projectRouteCount++;
+    }
+
+    @Override
+    public void onRouteToBuild(String projectNamespace, String projectName, String buildNumber) {
+        buildRoutCount++;
     }
 
     @Override

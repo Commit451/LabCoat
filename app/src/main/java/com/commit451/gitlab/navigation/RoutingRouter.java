@@ -3,7 +3,7 @@ package com.commit451.gitlab.navigation;
 import android.net.Uri;
 
 /**
- * Routes things
+ * Routes things. Could probably be better if it used regex. Maybe one day
  */
 public class RoutingRouter {
 
@@ -78,6 +78,15 @@ public class RoutingRouter {
                 String projectName = link.getPathSegments().get(index-1);
                 String mergeRequestId = link.getPathSegments().get(index+1);
                 mNavigator.onRouteToMergeRequest(projectNamespace, projectName, mergeRequestId);
+                return;
+            }
+        } else if (link.getPath().contains("builds")) {
+            int index = link.getPathSegments().indexOf("builds");
+            if (index > 1 && index < link.getPathSegments().size()) {
+                String projectNamespace = link.getPathSegments().get(index-2);
+                String projectName = link.getPathSegments().get(index-1);
+                String buildId = link.getPathSegments().get(index+1);
+                mNavigator.onRouteToBuild(projectNamespace, projectName, buildId);
                 return;
             }
         }
