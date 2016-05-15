@@ -7,9 +7,11 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.commit451.gitlab.R;
+import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.navigation.DeepLinker;
-import com.commit451.gitlab.util.IntentUtil;
 import com.commit451.gitlab.navigation.NavigationManager;
+import com.commit451.gitlab.util.IntentUtil;
 
 import timber.log.Timber;
 
@@ -42,6 +44,14 @@ public class RoutingActivity extends Activity {
         Uri link = intent.getData();
         Timber.d("Received deep link %s", link);
         Timber.d("Original link was %s", originalUri);
+
+        //okay so last thing, if the user has followed a link, but the user
+        //is not actually signed in, we want to direct them to signin
+        if (GitLabClient.getAccount() == null && Account.getAccounts(this) == null) {
+            NavigationManager.navigateToLogin(this);
+            finish();
+            return;
+        }
         boolean handled = false;
         if (link.getPath().contains("issues")) {
             Timber.d("Parsing as issue uri");
@@ -58,23 +68,32 @@ public class RoutingActivity extends Activity {
                         break;
                     }
                 }
-                //this is good, it means it is a link to an actual issue
-                String projectNamespace = link.getPathSegments().get(0);
-                String projectName = link.getPathSegments().get(1);
-                String lastSegment = link.getPathSegments().get(3);
-                //We have to do this cause there can be args on the url, such as
-                //https://gitlab.com/Commit451/LabCoat/issues/158#note_4560580
-                String[] stuff = lastSegment.split("#");
-                String issueIid = stuff[0];
-                Timber.d("Navigating to project %s with issue number %s", projectName, issueIid);
-                NavigationManager.navigateToIssue(this, projectNamespace, projectName, issueIid);
-                handled = true;
+                if (indexOfIssuesPathSegment != -1) {
+                    //this is good, it means it is a link to an actual issue
+                    String projectNamespace = link.getPathSegments().get(indexOfIssuesPathSegment - 2);
+                    String projectName = link.getPathSegments().get(indexOfIssuesPathSegment - 1);
+                    String lastSegment = link.getPathSegments().get(indexOfIssuesPathSegment + 1);
+                    //We have to do this cause there can be args on the url, such as
+                    //https://gitlab.com/Commit451/LabCoat/issues/158#note_4560580
+                    String[] stuff = lastSegment.split("#");
+                    String issueIid = stuff[0];
+                    Timber.d("Navigating to project %s with issue number %s", projectName, issueIid);
+                    NavigationManager.navigateToIssue(this, projectNamespace, projectName, issueIid);
+                    handled = true;
+                }
             }
         } else if (link.getPath().contains("commit")) {
-            if (link.getPathSegments().size() == 4) {
-                String projectNamespace = link.getPathSegments().get(0);
-                String projectName = link.getPathSegments().get(1);
-                String commitSha = link.getPathSegments().get(3);
+            int indexOfCommitPathSegment = -1;
+            for (int i=0; i<link.getPathSegments().size(); i++) {
+                if (link.getPathSegments().get(i).equals("commit")) {
+                    indexOfCommitPathSegment = i;
+                    break;
+                }
+            }
+            if (indexOfCommitPathSegment != -1 && link.getPathSegments().size() > indexOfCommitPathSegment) {
+                String projectNamespace = link.getPathSegments().get(indexOfCommitPathSegment-2);
+                String projectName = link.getPathSegments().get(indexOfCommitPathSegment-1);
+                String commitSha = link.getPathSegments().get(indexOfCommitPathSegment+1);
                 startActivity(LoadSomeInfoActivity.newIntent(this, projectNamespace, projectName, commitSha));
                 overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
                 handled = true;
