@@ -16,6 +16,10 @@ public class UriTypeConverter extends StringBasedTypeConverter<Uri> {
 
     @Override
     public Uri getFromString(String string) {
-        return Uri.parse(string);
+        if (string != null) {
+            return Uri.parse(string);
+        } else {
+            return null;
+        }
     }
 }
