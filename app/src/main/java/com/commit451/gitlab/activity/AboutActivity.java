@@ -145,7 +145,6 @@ public class AboutActivity extends BaseActivity {
         PhysicsConfig config = new PhysicsConfig.Builder()
                 .setShapeType(PhysicsConfig.ShapeType.CIRCLE)
                 .setDensity(1.0f)
-                .setFriction(0.0f)
                 .setRestitution(0.0f)
                 .build();
         int x = 0;
