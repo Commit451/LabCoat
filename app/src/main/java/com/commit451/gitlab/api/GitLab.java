@@ -20,6 +20,7 @@ import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryCommit;
 import com.commit451.gitlab.model.api.RepositoryFile;
 import com.commit451.gitlab.model.api.RepositoryTreeObject;
+import com.commit451.gitlab.model.api.Snippet;
 import com.commit451.gitlab.model.api.User;
 import com.commit451.gitlab.model.api.UserBasic;
 import com.commit451.gitlab.model.api.UserFull;
@@ -399,4 +400,11 @@ public interface GitLab {
     @GET(API_VERSION + "/projects/{id}/builds/{build_id}/artifacts")
     Call<List<Artifact>> getBuildArtifacts(@Path("id") long projectId,
                                            @Path("build_id") long buildId);
+
+    /* --- SNIPPETS --- */
+    @GET(API_VERSION + "/projects/{id}/snippets")
+    Call<List<Snippet>> getSnippets(@Path("id") long projectId);
+
+    @GET
+    Call<List<Snippet>> getSnippets(@Url String url);
 }

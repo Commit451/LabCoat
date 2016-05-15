@@ -19,14 +19,12 @@ import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
-import com.commit451.gitlab.adapter.MilestoneAdapter;
+import com.commit451.gitlab.adapter.SnippetAdapter;
 import com.commit451.gitlab.api.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.event.MilestoneChangedEvent;
-import com.commit451.gitlab.event.MilestoneCreatedEvent;
 import com.commit451.gitlab.event.ProjectReloadEvent;
-import com.commit451.gitlab.model.api.Milestone;
 import com.commit451.gitlab.model.api.Project;
+import com.commit451.gitlab.model.api.Snippet;
 import com.commit451.gitlab.navigation.NavigationManager;
 import com.commit451.gitlab.util.PaginationUtil;
 import com.squareup.otto.Subscribe;
@@ -37,10 +35,10 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import timber.log.Timber;
 
-public class MilestonesFragment extends ButterKnifeFragment {
+public class SnippetsFragment extends ButterKnifeFragment {
 
-    public static MilestonesFragment newInstance() {
-        return new MilestonesFragment();
+    public static SnippetsFragment newInstance() {
+        return new SnippetsFragment();
     }
 
     @BindView(R.id.root)
@@ -56,7 +54,7 @@ public class MilestonesFragment extends ButterKnifeFragment {
 
     private Project mProject;
     private EventReceiver mEventReceiver;
-    private MilestoneAdapter mMilestoneAdapter;
+    private SnippetAdapter mSnippetAdapter;
     private LinearLayoutManager mMilestoneLayoutManager;
 
     private String mState;
@@ -86,10 +84,11 @@ public class MilestonesFragment extends ButterKnifeFragment {
         }
     };
 
-    private final MilestoneAdapter.Listener mMilestoneListener = new MilestoneAdapter.Listener() {
+    private final SnippetAdapter.Listener mMilestoneListener = new SnippetAdapter.Listener() {
+
         @Override
-        public void onMilestoneClicked(Milestone milestone) {
-            NavigationManager.navigateToMilestone(getActivity(), mProject, milestone);
+        public void onSnippetClicked(Snippet snippet) {
+
         }
     };
 
@@ -106,9 +105,9 @@ public class MilestonesFragment extends ButterKnifeFragment {
         }
     };
 
-    private final EasyCallback<List<Milestone>> mCallback = new EasyCallback<List<Milestone>>() {
+    private final EasyCallback<List<Snippet>> mCallback = new EasyCallback<List<Snippet>>() {
         @Override
-        public void onResponse(@NonNull List<Milestone> response) {
+        public void onResponse(@NonNull List<Snippet> response) {
             mLoading = false;
             if (getView() == null) {
                 return;
@@ -118,9 +117,9 @@ public class MilestonesFragment extends ButterKnifeFragment {
                 mMessageView.setVisibility(View.VISIBLE);
                 mMessageView.setText(R.string.no_milestones);
             }
-            mMilestoneAdapter.setData(response);
+            mSnippetAdapter.setData(response);
             mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
-            Timber.d("Next page url " + mNextPageUrl);
+            Timber.d("Next page url %s", mNextPageUrl);
         }
 
         @Override
@@ -133,24 +132,24 @@ public class MilestonesFragment extends ButterKnifeFragment {
             mSwipeRefreshLayout.setRefreshing(false);
             mMessageView.setVisibility(View.VISIBLE);
             mMessageView.setText(R.string.connection_error_milestones);
-            mMilestoneAdapter.setData(null);
+            mSnippetAdapter.setData(null);
             mNextPageUrl = null;
         }
     };
 
-    private final EasyCallback<List<Milestone>> mMoreMilestonesCallback = new EasyCallback<List<Milestone>>() {
+    private final EasyCallback<List<Snippet>> mMoreMilestonesCallback = new EasyCallback<List<Snippet>>() {
         @Override
-        public void onResponse(@NonNull List<Milestone> response) {
+        public void onResponse(@NonNull List<Snippet> response) {
             mLoading = false;
-            mMilestoneAdapter.setLoading(false);
+            mSnippetAdapter.setLoading(false);
             mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
-            mMilestoneAdapter.addData(response);
+            mSnippetAdapter.addData(response);
         }
 
         @Override
         public void onAllFailure(Throwable t) {
             Timber.e(t, null);
-            mMilestoneAdapter.setLoading(false);
+            mSnippetAdapter.setLoading(false);
             mLoading = false;
         }
     };
@@ -164,7 +163,7 @@ public class MilestonesFragment extends ButterKnifeFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_milestones, container, false);
+        return inflater.inflate(R.layout.fragment_snippets, container, false);
     }
 
     @Override
@@ -174,11 +173,11 @@ public class MilestonesFragment extends ButterKnifeFragment {
         mEventReceiver = new EventReceiver();
         LabCoatApp.bus().register(mEventReceiver);
 
-        mMilestoneAdapter = new MilestoneAdapter(mMilestoneListener);
+        mSnippetAdapter = new SnippetAdapter(mMilestoneListener);
         mMilestoneLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mMilestoneLayoutManager);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity()));
-        mRecyclerView.setAdapter(mMilestoneAdapter);
+        mRecyclerView.setAdapter(mSnippetAdapter);
         mRecyclerView.addOnScrollListener(mOnScrollListener);
 
         mSpinner.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, getResources().getStringArray(R.array.milestone_state_names)));
@@ -225,7 +224,7 @@ public class MilestonesFragment extends ButterKnifeFragment {
         });
         mNextPageUrl = null;
         mLoading = true;
-        GitLabClient.instance().getMilestones(mProject.getId(), mState).enqueue(mCallback);
+        GitLabClient.instance().getSnippets(mProject.getId()).enqueue(mCallback);
     }
 
     private void loadMore() {
@@ -238,10 +237,10 @@ public class MilestonesFragment extends ButterKnifeFragment {
         }
 
         mLoading = true;
-        mMilestoneAdapter.setLoading(true);
+        mSnippetAdapter.setLoading(true);
 
-        Timber.d("loadMore called for " + mNextPageUrl);
-        GitLabClient.instance().getMilestones(mNextPageUrl.toString()).enqueue(mMoreMilestonesCallback);
+        Timber.d("loadMore called for %s", mNextPageUrl);
+        GitLabClient.instance().getSnippets(mNextPageUrl.toString()).enqueue(mMoreMilestonesCallback);
     }
 
     private class EventReceiver {
@@ -249,20 +248,6 @@ public class MilestonesFragment extends ButterKnifeFragment {
         public void onProjectReload(ProjectReloadEvent event) {
             mProject = event.mProject;
             loadData();
-        }
-
-        @Subscribe
-        public void onMilestoneCreated(MilestoneCreatedEvent event) {
-            mMilestoneAdapter.addMilestone(event.mMilestone);
-            if (getView() != null) {
-                mMessageView.setVisibility(View.GONE);
-                mRecyclerView.smoothScrollToPosition(0);
-            }
-        }
-
-        @Subscribe
-        public void onMilestoneChanged(MilestoneChangedEvent event) {
-            mMilestoneAdapter.updateIssue(event.mMilestone);
         }
     }
 }

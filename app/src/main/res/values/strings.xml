@@ -37,6 +37,7 @@
     <string name="title_merge_requests">Merge Requests</string>
     <string name="title_members">Members</string>
     <string name="title_builds">Builds</string>
+    <string name="title_snippets">Snippets</string>
 
     <string-array name="main_tabs">
         <item>@string/title_project</item>
@@ -48,6 +49,7 @@
         <item>@string/title_issues</item>
         <item>@string/title_merge_requests</item>
         <item>@string/title_members</item>
+        <item>@string/title_snippets</item>
     </string-array>
 
     <string name="title_all">All</string>
