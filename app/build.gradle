@@ -65,11 +65,11 @@ dependencies {
     compile 'com.jakewharton:butterknife:8.0.1'
     apt 'com.jakewharton:butterknife-compiler:8.0.1'
     compile 'com.jakewharton.timber:timber:4.1.2'
-    apt 'com.bluelinelabs:logansquare-compiler:1.3.6'
-    compile 'com.bluelinelabs:logansquare:1.3.6'
+    apt 'com.bluelinelabs:logansquare-compiler:1.3.7'
+    compile 'com.bluelinelabs:logansquare:1.3.7'
     compile 'net.danlew:android.joda:2.9.3'
-    compile "org.parceler:parceler-api:1.0.4"
-    apt "org.parceler:parceler:1.0.4"
+    compile 'org.parceler:parceler-api:1.0.4'
+    apt 'org.parceler:parceler:1.0.4'
     compile 'com.commit451:bypasses:1.0.1'
     compile 'com.commit451:easel:0.0.5'
     compile 'com.commit451:foregroundviews:1.0.0'
@@ -85,7 +85,7 @@ dependencies {
     compile 'com.github.johnkil.android-robototextview:robototextview:2.5.0'
     compile 'com.github.alorma:diff-textview:1.3.0'
     compile 'com.wdullaer:materialdatetimepicker:2.3.0'
-    compile "com.wefika:flowlayout:0.4.1"
+    compile 'com.wefika:flowlayout:0.4.1'
     compile 'com.github.novoda:simple-chrome-custom-tabs:0.1.3-rc1'
     compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
         transitive = true;
