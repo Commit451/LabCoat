@@ -6,7 +6,7 @@ before_script:
   - export TERM=dumb
   - export _JAVA_OPTIONS="-Djava.awt.headless=true"
   # Increase the heap size to 3 GB for faster builds
-  - echo "org.gradle.jvmargs=-Xmx3G" >> gradle.properties
+  - export JAVA_OPTS="-Xmx3G"
   # Make Gradle executable
   - chmod +x gradlew
 
