@@ -1,4 +1,4 @@
-image: webratio/android-sdk:r24.4.1
+image: commit451/android-config:latest
 
 before_script:
   # Make sure that we are not trying to print anything to the console
