@@ -189,7 +189,7 @@ public interface GitLab {
 
     @GET(API_VERSION + "/projects/{id}/issues")
     Call<List<Milestone>> getMilestonesByIid(@Path("id") long projectId,
-                                     @Query("iid") String internalMilestoneId);
+                                             @Query("iid") String internalMilestoneId);
 
     @GET(API_VERSION + "/projects/{id}/milestones/{milestone_id}/issues")
     Call<List<Issue>> getMilestoneIssues(@Path("id") long projectId,
@@ -227,6 +227,10 @@ public interface GitLab {
     @GET
     Call<List<MergeRequest>> getMergeRequests(@Url String url,
                                               @Query("state") String state);
+
+    @GET(API_VERSION + "/projects/{id}/merge_requests")
+    Call<List<MergeRequest>> getMergeRequestsByIid(@Path("id") long projectId,
+                                                   @Query("iid") String internalMergeRequestId);
 
     @GET(API_VERSION + "/projects/{id}/merge_request/{merge_request_id}")
     Call<MergeRequest> getMergeRequest(@Path("id") long projectId,
@@ -272,7 +276,7 @@ public interface GitLab {
 
     @GET(API_VERSION + "/projects/{id}/issues")
     Call<List<Issue>> getIssuesByIid(@Path("id") long projectId,
-                         @Query("iid") String internalIssueId);
+                                     @Query("iid") String internalIssueId);
 
     @FormUrlEncoded
     @POST(API_VERSION + "/projects/{id}/issues")

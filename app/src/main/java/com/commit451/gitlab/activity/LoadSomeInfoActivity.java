@@ -102,7 +102,7 @@ public class LoadSomeInfoActivity extends AppCompatActivity {
                     return;
                 case LOAD_TYPE_MERGE_REQUEST:
                     String mergeRequestId = getIntent().getStringExtra(EXTRA_MERGE_REQUEST);
-                    GitLabClient.instance().getMergeRequest(response.getId(), Long.valueOf(mergeRequestId)).enqueue(mMergeRequestCallback);
+                    GitLabClient.instance().getMergeRequestsByIid(response.getId(), mergeRequestId).enqueue(mMergeRequestCallback);
                     return;
                 case LOAD_TYPE_BUILD:
                     long buildId = getIntent().getLongExtra(EXTRA_BUILD_ID, -1);
@@ -137,11 +137,15 @@ public class LoadSomeInfoActivity extends AppCompatActivity {
         }
     };
 
-    private final EasyCallback<MergeRequest> mMergeRequestCallback = new EasyCallback<MergeRequest>() {
+    private final EasyCallback<List<MergeRequest>> mMergeRequestCallback = new EasyCallback<List<MergeRequest>>() {
         @Override
-        public void onResponse(@NonNull MergeRequest response) {
-            NavigationManager.navigateToMergeRequest(LoadSomeInfoActivity.this, mProject, response);
-            finish();
+        public void onResponse(@NonNull List<MergeRequest> response) {
+            if (!response.isEmpty()) {
+                NavigationManager.navigateToMergeRequest(LoadSomeInfoActivity.this, mProject, response.get(0));
+                finish();
+            } else {
+                onError();
+            }
         }
 
         @Override
