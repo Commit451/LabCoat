@@ -32,7 +32,7 @@ public final class OkHttpClientProvider {
         return sOkHttpClient;
     }
 
-    private static OkHttpClient createInstance(Account account) {
+    public static OkHttpClient createInstance(Account account) {
         sCustomTrustManager.setTrustedCertificate(account.getTrustedCertificate());
         sCustomTrustManager.setTrustedHostname(account.getTrustedHostname());
         sCustomTrustManager.setPrivateKeyAlias(account.getPrivateKeyAlias());

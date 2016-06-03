@@ -27,7 +27,7 @@ import timber.log.Timber;
 public class LabCoatApp extends Application {
 
     /**
-     * Register our type converters on our singleton LoganSquare instance
+     * Register our type converters on our singleton LoganSquare create
      */
     static {
         LoganSquare.registerTypeConverter(Uri.class, new UriTypeConverter());

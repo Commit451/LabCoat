@@ -25,8 +25,6 @@ public final class GitLabClient {
     private static GitLabRss sGitLabRss;
     private static Picasso sPicasso;
 
-    private GitLabClient() {}
-
     public static void setAccount(Account account) {
         sAccount = account;
         sGitLab = null;
@@ -39,14 +37,14 @@ public final class GitLabClient {
     }
 
     /**
-     * Get a GitLab instance with the current account passed. Used for login only
+     * Create a GitLab instance with the current account passed.
      * @param account the account to try and log in with
      * @return the GitLab instance
      */
-    public static GitLab instance(Account account) {
+    public static GitLab create(Account account) {
         Retrofit restAdapter = new Retrofit.Builder()
                 .baseUrl(account.getServerUrl().toString())
-                .client(OkHttpClientProvider.getInstance(account))
+                .client(OkHttpClientProvider.createInstance(account))
                 .addConverterFactory(LoganSquareConverterFactory.create())
                 .build();
         return restAdapter.create(GitLab.class);
@@ -55,7 +53,7 @@ public final class GitLabClient {
     public static GitLab instance() {
         if (sGitLab == null) {
             checkAccountSet();
-            sGitLab = instance(sAccount);
+            sGitLab = create(sAccount);
         }
 
         return sGitLab;
@@ -105,4 +103,6 @@ public final class GitLabClient {
             GitLabClient.setAccount(accounts.get(0));
         }
     }
+
+    private GitLabClient() {}
 }
