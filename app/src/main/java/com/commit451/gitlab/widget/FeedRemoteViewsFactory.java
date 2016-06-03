@@ -3,8 +3,7 @@ package com.commit451.gitlab.widget;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
-import android.os.Bundle;
+import android.graphics.Bitmap;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
@@ -14,6 +13,8 @@ import com.commit451.gitlab.api.GitLabRss;
 import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.model.rss.Entry;
 import com.commit451.gitlab.model.rss.Feed;
+import com.commit451.gitlab.transformation.CircleTransformation;
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,15 +24,14 @@ import retrofit2.Response;
 /**
  * Remote all the views
  */
-public class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
+public class FeedRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
     private static final int mCount = 10;
     private Context mContext;
     private int mAppWidgetId;
-    private GitLabRss mApi;
     private ArrayList<Entry> mEntries;
 
-    public StackRemoteViewsFactory(Context context, Intent intent) {
+    public FeedRemoteViewsFactory(Context context, Intent intent) {
         mContext = context;
         mAppWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
                 AppWidgetManager.INVALID_APPWIDGET_ID);
@@ -40,11 +40,6 @@ public class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFa
     @Override
     public void onCreate() {
         mEntries = new ArrayList<>();
-        //TODO remove, remove, remove
-        Account account = new Account();
-        account.setServerUrl(Uri.parse("https://gitlab.com/"));
-        account.setPrivateToken("yyvWMKRW6DHxLVK6nzeF");
-        mApi = GitLabClient.rssInstance(account);
     }
 
     @Override
@@ -70,25 +65,21 @@ public class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFa
         rv.setTextViewText(R.id.summary, entry.getSummary());
 
         // Next, we set a fill-intent which will be used to fill-in the pending intent template
-        // which is set on the collection view in StackWidgetProvider.
-        Bundle extras = new Bundle();
-        extras.putInt(StackWidgetProvider.EXTRA_ITEM, position);
+        // which is set on the collection view in FeedWidgetProvider.
         Intent fillInIntent = new Intent();
-        fillInIntent.putExtras(extras);
+        fillInIntent.putExtra(FeedWidgetProvider.EXTRA_LINK, entry.getLink().getHref().toString());
         rv.setOnClickFillInIntent(R.id.root, fillInIntent);
 
-        //Does not like that these do not come from the main thread
-//        Picasso.with(mContext)
-//                .load(entry.getThumbnail().getUrl())
-//                .into(rv, R.id.image, new int[] { mAppWidgetId });
+        try {
+            Bitmap image = Picasso.with(mContext)
+                    .load(entry.getThumbnail().getUrl())
+                    .transform(new CircleTransformation())
+                    .get();
+            rv.setImageViewBitmap(R.id.image, image);
+        } catch (IOException e) {
+            //well, thats too bad
+        }
 
-        // You can do heaving lifting in here, synchronously. For example, if you need to
-        // process an image, fetch something from the network, etc., it is ok to do it here,
-        // synchronously. A loading view will show up in lieu of the actual contents in the
-        // interim.
-
-
-        // Return the remote views object.
         return rv;
     }
 
@@ -122,9 +113,14 @@ public class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFa
         // from the network, etc., it is ok to do it here, synchronously. The widget will remain
         // in its current state while work is being done here, so you don't need to worry about
         // locking up the widget.
-        //TODO unhardcode this
+        Account account = FeedWidgetPrefs.getAccount(mContext, mAppWidgetId);
+        if (account == null || account.getUser() == null || account.getUser().getFeedUrl() == null) {
+            //TODO show error state?
+            return;
+        }
+        GitLabRss rssClient = GitLabClient.rssInstance(account);
         try {
-            Response<Feed> feedResponse = mApi.getFeed("https://gitlab.com/Commit451/LabCoat.atom").execute();
+            Response<Feed> feedResponse = rssClient.getFeed(account.getUser().getFeedUrl().toString()).execute();
             if (feedResponse.isSuccessful()) {
                 if (feedResponse.body().getEntries() != null) {
                     mEntries.addAll(feedResponse.body().getEntries());

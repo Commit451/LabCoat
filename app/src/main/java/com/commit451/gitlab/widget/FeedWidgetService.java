@@ -22,9 +22,9 @@ import android.widget.RemoteViewsService;
 /**
  * Service that basically just defers everything to a Factory. Yay!
  */
-public class StackWidgetService extends RemoteViewsService {
+public class FeedWidgetService extends RemoteViewsService {
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
-        return new StackRemoteViewsFactory(getApplicationContext(), intent);
+        return new FeedRemoteViewsFactory(getApplicationContext(), intent);
     }
 }

@@ -407,4 +407,10 @@
     <string name="deeplink_path_issue">issue</string>
 
     <string name="deeplink_navigate_error">No idea where to navigate to</string>
+
+    <!-- Widget -->
+    <string name="widget_feed">Feed</string>
+    <string name="widget_loading">Loading&#8230;</string>
+    <string name="widget_config_no_accounts">No accounts</string>
+    <string name="widget_choose_account">Choose Account</string>
 </resources>

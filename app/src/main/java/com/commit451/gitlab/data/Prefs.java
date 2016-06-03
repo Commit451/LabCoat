@@ -46,6 +46,7 @@ public class Prefs {
                 return LoganSquare.parseList(accountsJson, Account.class);
             } catch (IOException e) {
                 //why would this ever happen?!?!?1
+                getSharedPrefs(context).edit().remove(KEY_ACCOUNTS).commit();
             }
             return new ArrayList<>();
         } else {

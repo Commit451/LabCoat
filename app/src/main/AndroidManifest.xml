@@ -81,7 +81,13 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".widget.StackWidgetProvider"
+        <activity android:name=".widget.FeedWidgetConfigureActivity">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
+
+        <receiver android:name=".widget.FeedWidgetProvider"
             android:label="GitLab Feed">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -91,7 +97,7 @@
         </receiver>
 
         <service
-            android:name=".widget.StackWidgetService"
+            android:name=".widget.FeedWidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
 
     </application>
