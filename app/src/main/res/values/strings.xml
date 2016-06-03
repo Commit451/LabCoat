@@ -345,6 +345,7 @@
 
     <!-- Builds -->
     <string name="no_builds">No builds</string>
+    <string name="failed_to_load_builds">Failed to load builds</string>
 
     <string-array name="build_scope_names">
         <item>All</item>

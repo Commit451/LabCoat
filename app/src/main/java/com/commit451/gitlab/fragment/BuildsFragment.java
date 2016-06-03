@@ -128,7 +128,7 @@ public class BuildsFragment extends ButterKnifeFragment {
             }
             mSwipeRefreshLayout.setRefreshing(false);
             mMessageView.setVisibility(View.VISIBLE);
-            mMessageView.setText(R.string.connection_error_issues);
+            mMessageView.setText(R.string.failed_to_load_builds);
             mBuildsAdapter.setValues(null);
             mNextPageUrl = null;
         }
