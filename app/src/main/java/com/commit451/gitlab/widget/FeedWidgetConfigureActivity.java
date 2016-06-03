@@ -9,9 +9,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
 
+import com.alexgwyn.recyclerviewsquire.ClickableArrayAdapter;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.BaseActivity;
-import com.commit451.gitlab.adapter.AccountsAdapter;
 import com.commit451.gitlab.data.Prefs;
 import com.commit451.gitlab.model.Account;
 
@@ -58,20 +58,11 @@ public class FeedWidgetConfigureActivity extends BaseActivity {
 
         mToolbar.setTitle(R.string.widget_choose_account);
 
-        mAccountAdapter = new AccountsAdapter(this, new AccountsAdapter.Listener() {
+        mAccountAdapter = new AccountsAdapter();
+        mAccountAdapter.setOnItemClickListener(new ClickableArrayAdapter.OnItemClickListener<Account>() {
             @Override
-            public void onAccountClicked(Account account) {
-                saveWidgetConfig(account);
-            }
-
-            @Override
-            public void onAddAccountClicked() {
-
-            }
-
-            @Override
-            public void onAccountLogoutClicked(Account account) {
-
+            public void onItemClicked(ClickableArrayAdapter<Account, ?> adapter, View view, int position) {
+                saveWidgetConfig(adapter.get(position));
             }
         });
         mList.setLayoutManager(new LinearLayoutManager(this));
@@ -89,7 +80,7 @@ public class FeedWidgetConfigureActivity extends BaseActivity {
             mTextMessage.setVisibility(View.VISIBLE);
         } else {
             mTextMessage.setVisibility(View.GONE);
-            mAccountAdapter.setAccounts(accounts);
+            mAccountAdapter.clearAndFill(accounts);
         }
     }
 
