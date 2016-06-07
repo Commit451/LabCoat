@@ -21,7 +21,7 @@ import com.commit451.gitlab.activity.ActivityActivity;
 import com.commit451.gitlab.activity.GroupsActivity;
 import com.commit451.gitlab.activity.ProjectsActivity;
 import com.commit451.gitlab.adapter.AccountsAdapter;
-import com.commit451.gitlab.api.EasyCallback;
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.data.Prefs;
 import com.commit451.gitlab.event.CloseDrawerEvent;
@@ -136,7 +136,7 @@ public class LabCoatNavigationView extends NavigationView {
     private final EasyCallback<UserFull> mUserCallback = new EasyCallback<UserFull>() {
 
         @Override
-        public void onResponse(@NonNull UserFull response) {
+        public void success(@NonNull UserFull response) {
             //Store the newly retrieved user to the account so that it stays up to date
             // in local storage
             Account account = GitLabClient.getAccount();
@@ -146,7 +146,7 @@ public class LabCoatNavigationView extends NavigationView {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
         }
     };

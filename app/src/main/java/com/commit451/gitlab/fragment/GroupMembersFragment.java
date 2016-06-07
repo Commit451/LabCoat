@@ -14,7 +14,7 @@ import android.widget.TextView;
 import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.GroupMembersAdapter;
-import com.commit451.gitlab.api.EasyCallback;
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.dialog.AccessDialog;
 import com.commit451.gitlab.event.MemberAddedEvent;
@@ -65,7 +65,7 @@ public class GroupMembersFragment extends ButterKnifeFragment {
 
     private final EasyCallback<List<Member>> mGroupMembersCallback = new EasyCallback<List<Member>>() {
         @Override
-        public void onResponse(@NonNull List<Member> response) {
+        public void success(@NonNull List<Member> response) {
             if (getView() == null) {
                 return;
             }
@@ -79,7 +79,7 @@ public class GroupMembersFragment extends ButterKnifeFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             if (getView() == null) {
                 return;
@@ -94,7 +94,7 @@ public class GroupMembersFragment extends ButterKnifeFragment {
 
     private final EasyCallback<Void> mRemoveMemberCallback = new EasyCallback<Void>() {
         @Override
-        public void onResponse(@NonNull Void response) {
+        public void success(@NonNull Void response) {
             if (getView() == null) {
                 return;
             }
@@ -102,7 +102,7 @@ public class GroupMembersFragment extends ButterKnifeFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             if (getView() == null) {
                 return;

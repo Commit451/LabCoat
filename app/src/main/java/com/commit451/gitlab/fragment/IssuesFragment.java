@@ -20,7 +20,7 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.gitlab.adapter.IssuesAdapter;
-import com.commit451.gitlab.api.EasyCallback;
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.IssueChangedEvent;
 import com.commit451.gitlab.event.IssueCreatedEvent;
@@ -104,7 +104,7 @@ public class IssuesFragment extends ButterKnifeFragment {
 
     private final EasyCallback<List<Issue>> mIssuesCallback = new EasyCallback<List<Issue>>() {
         @Override
-        public void onResponse(@NonNull List<Issue> response) {
+        public void success(@NonNull List<Issue> response) {
             mLoading = false;
             if (getView() == null) {
                 return;
@@ -120,7 +120,7 @@ public class IssuesFragment extends ButterKnifeFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             mLoading = false;
             Timber.e(t, null);
             if (getView() == null) {
@@ -136,7 +136,7 @@ public class IssuesFragment extends ButterKnifeFragment {
 
     private final EasyCallback<List<Issue>> mMoreIssuesCallback = new EasyCallback<List<Issue>>() {
         @Override
-        public void onResponse(@NonNull List<Issue> response) {
+        public void success(@NonNull List<Issue> response) {
             mLoading = false;
             mIssuesAdapter.setLoading(false);
             mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
@@ -144,7 +144,7 @@ public class IssuesFragment extends ButterKnifeFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mLoading = false;
             mIssuesAdapter.setLoading(false);

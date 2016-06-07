@@ -19,7 +19,7 @@ import android.widget.TextView;
 
 import com.commit451.gitbal.Gimbal;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.api.EasyCallback;
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Contributor;
 import com.commit451.gitlab.navigation.NavigationManager;
@@ -93,13 +93,13 @@ public class AboutActivity extends BaseActivity {
 
     private Callback<List<Contributor>> mContributorResponseCallback = new EasyCallback<List<Contributor>>() {
         @Override
-        public void onResponse(@NonNull List<Contributor> response) {
+        public void success(@NonNull List<Contributor> response) {
             mProgress.setVisibility(View.GONE);
             addContributors(Contributor.groupContributors(response));
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mProgress.setVisibility(View.GONE);
             Snackbar.make(mRoot, R.string.failed_to_load_contributors, Snackbar.LENGTH_SHORT)

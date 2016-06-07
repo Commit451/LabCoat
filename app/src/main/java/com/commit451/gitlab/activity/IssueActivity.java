@@ -20,7 +20,7 @@ import android.widget.TextView;
 import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.IssueDetailsAdapter;
-import com.commit451.gitlab.api.EasyCallback;
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.IssueChangedEvent;
 import com.commit451.gitlab.event.IssueReloadEvent;
@@ -140,13 +140,13 @@ public class IssueActivity extends BaseActivity {
 
     private Callback<Project> mProjectCallback = new EasyCallback<Project>() {
         @Override
-        public void onResponse(@NonNull Project response) {
+        public void success(@NonNull Project response) {
             mProject = response;
             GitLabClient.instance().getIssuesByIid(mProject.getId(), mIssueIid).enqueue(mIssueCallback);
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mSwipeRefreshLayout.setRefreshing(false);
             Snackbar.make(mRoot, getString(R.string.failed_to_load), Snackbar.LENGTH_SHORT)
@@ -157,7 +157,7 @@ public class IssueActivity extends BaseActivity {
     private Callback<List<Issue>> mIssueCallback = new EasyCallback<List<Issue>>() {
 
         @Override
-        public void onResponse(@NonNull List<Issue> response) {
+        public void success(@NonNull List<Issue> response) {
             if (response.isEmpty()) {
                 mSwipeRefreshLayout.setRefreshing(false);
                 Snackbar.make(mRoot, getString(R.string.failed_to_load), Snackbar.LENGTH_SHORT)
@@ -173,7 +173,7 @@ public class IssueActivity extends BaseActivity {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mSwipeRefreshLayout.setRefreshing(false);
             Snackbar.make(mRoot, getString(R.string.failed_to_load), Snackbar.LENGTH_SHORT)
@@ -184,7 +184,7 @@ public class IssueActivity extends BaseActivity {
     private Callback<List<Note>> mNotesCallback = new EasyCallback<List<Note>>() {
 
         @Override
-        public void onResponse(@NonNull List<Note> response) {
+        public void success(@NonNull List<Note> response) {
             mLoading = false;
             mSwipeRefreshLayout.setRefreshing(false);
             mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
@@ -192,7 +192,7 @@ public class IssueActivity extends BaseActivity {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             mLoading = false;
             Timber.e(t, null);
             mSwipeRefreshLayout.setRefreshing(false);
@@ -204,7 +204,7 @@ public class IssueActivity extends BaseActivity {
     private Callback<List<Note>> mMoreNotesCallback = new EasyCallback<List<Note>>() {
 
         @Override
-        public void onResponse(@NonNull List<Note> response) {
+        public void success(@NonNull List<Note> response) {
             mLoading = false;
             mIssueDetailsAdapter.setLoading(false);
             mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
@@ -212,7 +212,7 @@ public class IssueActivity extends BaseActivity {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             mLoading = false;
             Timber.e(t, null);
             mIssueDetailsAdapter.setLoading(false);
@@ -221,7 +221,7 @@ public class IssueActivity extends BaseActivity {
 
     private final Callback<Issue> mOpenCloseCallback = new EasyCallback<Issue>() {
         @Override
-        public void onResponse(@NonNull Issue response) {
+        public void success(@NonNull Issue response) {
             mProgress.setVisibility(View.GONE);
             mIssue = response;
             LabCoatApp.bus().post(new IssueChangedEvent(mIssue));
@@ -231,7 +231,7 @@ public class IssueActivity extends BaseActivity {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mProgress.setVisibility(View.GONE);
             Snackbar.make(mRoot, getString(R.string.error_changing_issue), Snackbar.LENGTH_SHORT)
@@ -242,14 +242,14 @@ public class IssueActivity extends BaseActivity {
     private Callback<Note> mPostNoteCallback = new EasyCallback<Note>() {
 
         @Override
-        public void onResponse(@NonNull Note response) {
+        public void success(@NonNull Note response) {
             mProgress.setVisibility(View.GONE);
             mIssueDetailsAdapter.addNote(response);
             mNotesRecyclerView.smoothScrollToPosition(IssueDetailsAdapter.getHeaderCount());
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mProgress.setVisibility(View.GONE);
             Snackbar.make(mRoot, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
@@ -259,13 +259,13 @@ public class IssueActivity extends BaseActivity {
 
     private Callback<FileUploadResponse> mUploadImageCallback = new EasyCallback<FileUploadResponse>() {
         @Override
-        public void onResponse(@NonNull FileUploadResponse response) {
+        public void success(@NonNull FileUploadResponse response) {
             mProgress.setVisibility(View.GONE);
             mSendMessageView.appendText(response.getMarkdown());
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mProgress.setVisibility(View.GONE);
             Snackbar.make(mRoot, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)

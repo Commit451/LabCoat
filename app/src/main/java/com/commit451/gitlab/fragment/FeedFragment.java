@@ -15,7 +15,7 @@ import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.gitlab.adapter.FeedAdapter;
-import com.commit451.gitlab.api.EasyCallback;
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.rss.Entry;
 import com.commit451.gitlab.model.rss.Feed;
@@ -54,7 +54,7 @@ public class FeedFragment extends ButterKnifeFragment {
 
     private final EasyCallback<Feed> mUserFeedCallback = new EasyCallback<Feed>() {
         @Override
-        public void onResponse(@NonNull Feed response) {
+        public void success(@NonNull Feed response) {
             if (getView() == null) {
                 return;
             }
@@ -70,7 +70,7 @@ public class FeedFragment extends ButterKnifeFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             if (getView() == null) {
                 return;

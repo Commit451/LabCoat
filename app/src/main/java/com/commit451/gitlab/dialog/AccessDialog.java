@@ -8,7 +8,7 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.api.EasyCallback;
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.model.api.Member;
@@ -47,7 +47,7 @@ public class AccessDialog extends MaterialDialog {
 
     private final Callback<Member> mEditUserCallback = new EasyCallback<Member>() {
         @Override
-        public void onResponse(@NonNull Member response) {
+        public void success(@NonNull Member response) {
             if (mAccessChangedListener != null) {
                 mAccessChangedListener.onAccessChanged(mMember, mRoleNames[getSelectedIndex()]);
             }
@@ -55,7 +55,7 @@ public class AccessDialog extends MaterialDialog {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             onError();
         }

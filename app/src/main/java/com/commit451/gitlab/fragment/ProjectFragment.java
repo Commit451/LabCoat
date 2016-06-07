@@ -17,7 +17,7 @@ import com.commit451.bypasspicassoimagegetter.BypassPicassoImageGetter;
 import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ProjectActivity;
-import com.commit451.gitlab.api.EasyCallback;
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.api.exception.HttpException;
 import com.commit451.gitlab.event.ProjectReloadEvent;
@@ -91,7 +91,7 @@ public class ProjectFragment extends ButterKnifeFragment {
 
     private final EasyCallback<List<RepositoryTreeObject>> mFilesCallback = new EasyCallback<List<RepositoryTreeObject>>() {
         @Override
-        public void onResponse(@NonNull List<RepositoryTreeObject> response) {
+        public void success(@NonNull List<RepositoryTreeObject> response) {
             if (getView() == null) {
                 return;
             }
@@ -106,7 +106,7 @@ public class ProjectFragment extends ButterKnifeFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             if (getView() == null) {
                 return;
@@ -118,7 +118,7 @@ public class ProjectFragment extends ButterKnifeFragment {
 
     private EasyCallback<RepositoryFile> mFileCallback = new EasyCallback<RepositoryFile>() {
         @Override
-        public void onResponse(@NonNull final RepositoryFile response) {
+        public void success(@NonNull final RepositoryFile response) {
             if (getView() == null) {
                 return;
             }
@@ -164,7 +164,7 @@ public class ProjectFragment extends ButterKnifeFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             if (getView() == null) {
                 return;
@@ -176,7 +176,7 @@ public class ProjectFragment extends ButterKnifeFragment {
 
     private EasyCallback<Void> mForkCallback = new EasyCallback<Void>() {
         @Override
-        public void onResponse(@NonNull Void response) {
+        public void success(@NonNull Void response) {
             if (getView() == null) {
                 return;
             }
@@ -185,7 +185,7 @@ public class ProjectFragment extends ButterKnifeFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             if (getView() == null) {
                 return;
             }
@@ -196,7 +196,7 @@ public class ProjectFragment extends ButterKnifeFragment {
 
     private EasyCallback<Project> mStarCallback = new EasyCallback<Project>() {
         @Override
-        public void onResponse(@NonNull Project response) {
+        public void success(@NonNull Project response) {
             if (getView() == null) {
                 return;
             }
@@ -205,7 +205,7 @@ public class ProjectFragment extends ButterKnifeFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             if (getView() == null) {
                 return;
             }
@@ -229,7 +229,7 @@ public class ProjectFragment extends ButterKnifeFragment {
 
     private EasyCallback<Project> mUnstarProjectCallback = new EasyCallback<Project>() {
         @Override
-        public void onResponse(@NonNull Project response) {
+        public void success(@NonNull Project response) {
             if (getView() == null) {
                 return;
             }
@@ -238,7 +238,7 @@ public class ProjectFragment extends ButterKnifeFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             if (getView() == null) {
                 return;
             }

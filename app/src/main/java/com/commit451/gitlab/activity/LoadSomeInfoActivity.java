@@ -9,7 +9,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.api.EasyCallback;
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Build;
 import com.commit451.gitlab.model.api.MergeRequest;
@@ -93,7 +93,7 @@ public class LoadSomeInfoActivity extends AppCompatActivity {
 
     private final EasyCallback<Project> mProjectCallback = new EasyCallback<Project>() {
         @Override
-        public void onResponse(@NonNull Project response) {
+        public void success(@NonNull Project response) {
             mProject = response;
             switch (mLoadType) {
                 case LOAD_TYPE_DIFF:
@@ -117,7 +117,7 @@ public class LoadSomeInfoActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             onError();
         }
@@ -125,13 +125,13 @@ public class LoadSomeInfoActivity extends AppCompatActivity {
 
     private final EasyCallback<RepositoryCommit> mCommitCallback = new EasyCallback<RepositoryCommit>() {
         @Override
-        public void onResponse(@NonNull RepositoryCommit response) {
+        public void success(@NonNull RepositoryCommit response) {
             NavigationManager.navigateToDiffActivity(LoadSomeInfoActivity.this, mProject, response);
             finish();
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             onError();
         }
@@ -139,7 +139,7 @@ public class LoadSomeInfoActivity extends AppCompatActivity {
 
     private final EasyCallback<List<MergeRequest>> mMergeRequestCallback = new EasyCallback<List<MergeRequest>>() {
         @Override
-        public void onResponse(@NonNull List<MergeRequest> response) {
+        public void success(@NonNull List<MergeRequest> response) {
             if (!response.isEmpty()) {
                 NavigationManager.navigateToMergeRequest(LoadSomeInfoActivity.this, mProject, response.get(0));
                 finish();
@@ -149,7 +149,7 @@ public class LoadSomeInfoActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             onError();
         }
@@ -157,13 +157,13 @@ public class LoadSomeInfoActivity extends AppCompatActivity {
 
     private final EasyCallback<Build> mBuildCallback = new EasyCallback<Build>() {
         @Override
-        public void onResponse(@NonNull Build response) {
+        public void success(@NonNull Build response) {
             NavigationManager.navigateToBuild(LoadSomeInfoActivity.this, mProject, response);
             finish();
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             onError();
         }
@@ -171,7 +171,7 @@ public class LoadSomeInfoActivity extends AppCompatActivity {
 
     private final EasyCallback<List<Milestone>> mMilestoneCallback = new EasyCallback<List<Milestone>>() {
         @Override
-        public void onResponse(@NonNull List<Milestone> response) {
+        public void success(@NonNull List<Milestone> response) {
             if (!response.isEmpty()) {
                 NavigationManager.navigateToMilestone(LoadSomeInfoActivity.this, mProject, response.get(0));
                 finish();
@@ -181,7 +181,7 @@ public class LoadSomeInfoActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             onError();
         }

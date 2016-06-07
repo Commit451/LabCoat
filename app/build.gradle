@@ -79,6 +79,7 @@ dependencies {
     compile 'com.github.Commit451:Teleprinter:1.0.1'
     compile 'com.github.Commit451:BypassPicassoImageGetter:1.0.0'
     compile 'com.github.Commit451:Jounce:1.0.1'
+    compile 'com.github.Commit451:EasyCallback:1.0.0'
     compile 'com.pnikosis:materialish-progress:1.7'
     compile 'com.jawnnypoo:physicslayout:1.0.1'
     compile 'com.alexgwyn.recyclerviewsquire:recyclerviewsquire:0.0.5'

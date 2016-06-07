@@ -18,7 +18,7 @@ import android.widget.FrameLayout;
 import com.commit451.easel.Easel;
 import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.api.EasyCallback;
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.MilestoneChangedEvent;
 import com.commit451.gitlab.event.MilestoneCreatedEvent;
@@ -111,7 +111,7 @@ public class AddMilestoneActivity extends MorphActivity {
     private Callback<Milestone> mMilestoneCallback = new EasyCallback<Milestone>() {
 
         @Override
-        public void onResponse(@NonNull Milestone response) {
+        public void success(@NonNull Milestone response) {
             mProgress.setVisibility(View.GONE);
             if (mMilestone == null) {
                 LabCoatApp.bus().post(new MilestoneCreatedEvent(response));
@@ -122,7 +122,7 @@ public class AddMilestoneActivity extends MorphActivity {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mProgress.setVisibility(View.GONE);
             showError();

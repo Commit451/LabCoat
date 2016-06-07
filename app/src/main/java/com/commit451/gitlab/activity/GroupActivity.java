@@ -20,7 +20,7 @@ import android.widget.ImageView;
 import com.commit451.easel.Easel;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.GroupPagerAdapter;
-import com.commit451.gitlab.api.EasyCallback;
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.model.api.GroupDetail;
@@ -63,13 +63,13 @@ public class GroupActivity extends BaseActivity {
 
     private final Callback<GroupDetail> mGroupCallback = new EasyCallback<GroupDetail>() {
         @Override
-        public void onResponse(@NonNull GroupDetail response) {
+        public void success(@NonNull GroupDetail response) {
             mProgress.setVisibility(View.GONE);
             bind(response);
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mProgress.setVisibility(View.GONE);
             showError();

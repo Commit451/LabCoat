@@ -18,7 +18,7 @@ import android.widget.TextView;
 import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.GroupAdapter;
-import com.commit451.gitlab.api.EasyCallback;
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.CloseDrawerEvent;
 import com.commit451.gitlab.model.api.Group;
@@ -71,7 +71,7 @@ public class GroupsActivity extends BaseActivity {
 
     private final Callback<List<Group>> mGroupsCallback = new EasyCallback<List<Group>>() {
         @Override
-        public void onResponse(@NonNull List<Group> response) {
+        public void success(@NonNull List<Group> response) {
             mLoading = false;
             mSwipeRefreshLayout.setRefreshing(false);
             if (response.isEmpty()) {
@@ -86,7 +86,7 @@ public class GroupsActivity extends BaseActivity {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mSwipeRefreshLayout.setRefreshing(false);
             mLoading = false;
@@ -97,14 +97,14 @@ public class GroupsActivity extends BaseActivity {
 
     private final Callback<List<Group>> mMoreGroupsCallback = new EasyCallback<List<Group>>() {
         @Override
-        public void onResponse(@NonNull List<Group> response) {
+        public void success(@NonNull List<Group> response) {
             mLoading = false;
             mGroupAdapter.addGroups(response);
             mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mLoading = false;
         }

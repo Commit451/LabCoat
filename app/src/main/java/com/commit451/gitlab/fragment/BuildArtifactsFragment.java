@@ -15,7 +15,7 @@ import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.BuildArtifactsAdapter;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
-import com.commit451.gitlab.api.EasyCallback;
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.BuildChangedEvent;
 import com.commit451.gitlab.model.api.Artifact;
@@ -59,7 +59,7 @@ public class BuildArtifactsFragment extends ButterKnifeFragment {
 
     private final EasyCallback<List<Artifact>> mCommitsCallback = new EasyCallback<List<Artifact>>() {
         @Override
-        public void onResponse(@NonNull List<Artifact> response) {
+        public void success(@NonNull List<Artifact> response) {
             if (getView() == null) {
                 return;
             }
@@ -74,7 +74,7 @@ public class BuildArtifactsFragment extends ButterKnifeFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             if (getView() == null) {
                 return;

@@ -20,7 +20,7 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.AddIssueLabelAdapter;
 import com.commit451.gitlab.adapter.AssigneeSpinnerAdapter;
 import com.commit451.gitlab.adapter.MilestoneSpinnerAdapter;
-import com.commit451.gitlab.api.EasyCallback;
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.api.exception.NullBodyException;
 import com.commit451.gitlab.event.IssueChangedEvent;
@@ -105,7 +105,7 @@ public class AddIssueActivity extends MorphActivity {
 
     private final Callback<List<Milestone>> mMilestonesCallback = new EasyCallback<List<Milestone>>() {
         @Override
-        public void onResponse(@NonNull List<Milestone> response) {
+        public void success(@NonNull List<Milestone> response) {
             mMilestoneProgress.setVisibility(View.GONE);
             mMilestoneSpinner.setVisibility(View.VISIBLE);
             MilestoneSpinnerAdapter milestoneSpinnerAdapter = new MilestoneSpinnerAdapter(AddIssueActivity.this, response);
@@ -116,7 +116,7 @@ public class AddIssueActivity extends MorphActivity {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mMilestoneProgress.setVisibility(View.GONE);
             mMilestoneSpinner.setVisibility(View.GONE);
@@ -125,7 +125,7 @@ public class AddIssueActivity extends MorphActivity {
 
     private final Callback<List<Member>> mAssigneeCallback = new EasyCallback<List<Member>>() {
         @Override
-        public void onResponse(@NonNull List<Member> response) {
+        public void success(@NonNull List<Member> response) {
             mMembers.addAll(response);
             if (mProject.belongsToGroup()) {
                 Timber.d("Project belongs to a group, loading those users too");
@@ -136,7 +136,7 @@ public class AddIssueActivity extends MorphActivity {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mAssigneeSpinner.setVisibility(View.GONE);
             mAssigneeProgress.setVisibility(View.GONE);
@@ -145,13 +145,13 @@ public class AddIssueActivity extends MorphActivity {
 
     private final Callback<List<Member>> mGroupMembersCallback = new EasyCallback<List<Member>>() {
         @Override
-        public void onResponse(@NonNull List<Member> response) {
+        public void success(@NonNull List<Member> response) {
             mMembers.addAll(response);
             setAssignees();
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mAssigneeSpinner.setVisibility(View.GONE);
             mAssigneeProgress.setVisibility(View.GONE);
@@ -160,14 +160,14 @@ public class AddIssueActivity extends MorphActivity {
 
     private final Callback<List<Label>> mLabelCallback = new EasyCallback<List<Label>>() {
         @Override
-        public void onResponse(@NonNull List<Label> response) {
+        public void success(@NonNull List<Label> response) {
             mLabelsProgress.setVisibility(View.GONE);
             mListLabels.setVisibility(View.VISIBLE);
             setLabels(response);
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             //null body could just mean no labels have been created for this project
             if (t instanceof NullBodyException) {
@@ -183,7 +183,7 @@ public class AddIssueActivity extends MorphActivity {
     private final Callback<Issue> mIssueCreatedCallback = new EasyCallback<Issue>() {
 
         @Override
-        public void onResponse(@NonNull Issue response) {
+        public void success(@NonNull Issue response) {
             if (mIssue == null) {
                 LabCoatApp.bus().post(new IssueCreatedEvent(response));
             } else {
@@ -193,7 +193,7 @@ public class AddIssueActivity extends MorphActivity {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             Snackbar.make(mRoot, getString(R.string.failed_to_create_issue), Snackbar.LENGTH_SHORT)
                     .show();

@@ -19,7 +19,7 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.gitlab.adapter.MergeRequestAdapter;
-import com.commit451.gitlab.api.EasyCallback;
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.MergeRequest;
@@ -87,7 +87,7 @@ public class MergeRequestsFragment extends ButterKnifeFragment {
 
     private final EasyCallback<List<MergeRequest>> mCallback = new EasyCallback<List<MergeRequest>>() {
         @Override
-        public void onResponse(@NonNull List<MergeRequest> response) {
+        public void success(@NonNull List<MergeRequest> response) {
             mLoading = false;
             if (getView() == null) {
                 return;
@@ -103,7 +103,7 @@ public class MergeRequestsFragment extends ButterKnifeFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             mLoading = false;
             Timber.e(t, null);
             if (getView() == null) {
@@ -119,7 +119,7 @@ public class MergeRequestsFragment extends ButterKnifeFragment {
 
     private final EasyCallback<List<MergeRequest>> mMoreIssuesCallback = new EasyCallback<List<MergeRequest>>() {
         @Override
-        public void onResponse(@NonNull List<MergeRequest> response) {
+        public void success(@NonNull List<MergeRequest> response) {
             mLoading = false;
             mMergeRequestAdapter.setLoading(false);
             mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
@@ -127,7 +127,7 @@ public class MergeRequestsFragment extends ButterKnifeFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mMergeRequestAdapter.setLoading(false);
             mLoading = false;

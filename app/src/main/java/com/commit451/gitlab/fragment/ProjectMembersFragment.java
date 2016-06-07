@@ -17,7 +17,7 @@ import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.adapter.MemberAdapter;
-import com.commit451.gitlab.api.EasyCallback;
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.dialog.AccessDialog;
 import com.commit451.gitlab.event.MemberAddedEvent;
@@ -102,7 +102,7 @@ public class ProjectMembersFragment extends ButterKnifeFragment {
 
     private final EasyCallback<List<Member>> mProjectMembersCallback = new EasyCallback<List<Member>>() {
         @Override
-        public void onResponse(@NonNull List<Member> response) {
+        public void success(@NonNull List<Member> response) {
             mLoading = false;
             if (getView() == null) {
                 return;
@@ -129,7 +129,7 @@ public class ProjectMembersFragment extends ButterKnifeFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             mLoading = false;
             Timber.e(t, null);
             if (getView() == null) {
@@ -146,7 +146,7 @@ public class ProjectMembersFragment extends ButterKnifeFragment {
 
     private final EasyCallback<Void> mRemoveMemberCallback = new EasyCallback<Void>() {
         @Override
-        public void onResponse(@NonNull Void response) {
+        public void success(@NonNull Void response) {
             if (getView() == null) {
                 return;
             }
@@ -154,7 +154,7 @@ public class ProjectMembersFragment extends ButterKnifeFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             if (getView() == null) {
                 return;

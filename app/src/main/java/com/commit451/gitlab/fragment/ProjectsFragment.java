@@ -14,7 +14,7 @@ import android.widget.TextView;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.gitlab.adapter.ProjectsAdapter;
-import com.commit451.gitlab.api.EasyCallback;
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.model.api.Project;
@@ -94,7 +94,7 @@ public class ProjectsFragment extends ButterKnifeFragment {
 
     private final EasyCallback<List<Project>> mProjectsCallback = new EasyCallback<List<Project>>() {
         @Override
-        public void onResponse(@NonNull List<Project> response) {
+        public void success(@NonNull List<Project> response) {
             mLoading = false;
             if (getView() == null) {
                 return;
@@ -110,7 +110,7 @@ public class ProjectsFragment extends ButterKnifeFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             mLoading = false;
             Timber.e(t, null);
             if (getView() == null) {
@@ -126,7 +126,7 @@ public class ProjectsFragment extends ButterKnifeFragment {
 
     private final EasyCallback<List<Project>> mMoreProjectsCallback = new EasyCallback<List<Project>>() {
         @Override
-        public void onResponse(@NonNull List<Project> response) {
+        public void success(@NonNull List<Project> response) {
             mLoading = false;
             if (getView() == null) {
                 return;
@@ -138,7 +138,7 @@ public class ProjectsFragment extends ButterKnifeFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             mLoading = false;
             Timber.e(t, null);
 

@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.api.EasyCallback;
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.BuildChangedEvent;
 import com.commit451.gitlab.model.api.Build;
@@ -70,7 +70,7 @@ public class BuildDescriptionFragment extends ButterKnifeFragment {
 
     private final EasyCallback<Build> mLoadBuildCallback = new EasyCallback<Build>() {
         @Override
-        public void onResponse(@NonNull Build response) {
+        public void success(@NonNull Build response) {
             if (getView() == null) {
                 return;
             }
@@ -81,7 +81,7 @@ public class BuildDescriptionFragment extends ButterKnifeFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             if (getView() == null) {
                 return;

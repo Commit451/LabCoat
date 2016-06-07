@@ -21,7 +21,7 @@ import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.adapter.BreadcrumbAdapter;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.gitlab.adapter.FilesAdapter;
-import com.commit451.gitlab.api.EasyCallback;
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Project;
@@ -63,7 +63,7 @@ public class FilesFragment extends ButterKnifeFragment {
         }
 
         @Override
-        public void onResponse(@NonNull List<RepositoryTreeObject> response) {
+        public void success(@NonNull List<RepositoryTreeObject> response) {
             if (getView() == null) {
                 return;
             }
@@ -83,7 +83,7 @@ public class FilesFragment extends ButterKnifeFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             if (getView() == null) {
                 return;

@@ -19,7 +19,7 @@ import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.gitlab.adapter.MilestoneIssuesAdapter;
-import com.commit451.gitlab.api.EasyCallback;
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.MilestoneChangedEvent;
 import com.commit451.gitlab.model.api.Issue;
@@ -87,7 +87,7 @@ public class MilestoneActivity extends BaseActivity {
 
     private final Callback<List<Issue>> mIssuesCallback = new EasyCallback<List<Issue>>() {
         @Override
-        public void onResponse(@NonNull List<Issue> response) {
+        public void success(@NonNull List<Issue> response) {
             mSwipeRefreshLayout.setRefreshing(false);
             mLoading = false;
 
@@ -104,7 +104,7 @@ public class MilestoneActivity extends BaseActivity {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mLoading = false;
             mSwipeRefreshLayout.setRefreshing(false);
@@ -116,14 +116,14 @@ public class MilestoneActivity extends BaseActivity {
 
     private final Callback<List<Issue>> mMoreIssuesCallback = new EasyCallback<List<Issue>>() {
         @Override
-        public void onResponse(@NonNull List<Issue> response) {
+        public void success(@NonNull List<Issue> response) {
             mLoading = false;
             mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
             mMilestoneIssuesAdapter.addIssues(response);
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mLoading = false;
         }
@@ -131,7 +131,7 @@ public class MilestoneActivity extends BaseActivity {
 
     private final Callback<Milestone> mOpenCloseCallback = new EasyCallback<Milestone>() {
         @Override
-        public void onResponse(@NonNull Milestone response) {
+        public void success(@NonNull Milestone response) {
             mProgress.setVisibility(View.GONE);
             mMilestone = response;
             LabCoatApp.bus().post(new MilestoneChangedEvent(mMilestone));
@@ -139,7 +139,7 @@ public class MilestoneActivity extends BaseActivity {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mProgress.setVisibility(View.GONE);
             Snackbar.make(mRoot, getString(R.string.failed_to_create_milestone), Snackbar.LENGTH_SHORT)

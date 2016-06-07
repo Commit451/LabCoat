@@ -20,7 +20,7 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.gitlab.adapter.SnippetAdapter;
-import com.commit451.gitlab.api.EasyCallback;
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Project;
@@ -107,7 +107,7 @@ public class SnippetsFragment extends ButterKnifeFragment {
 
     private final EasyCallback<List<Snippet>> mCallback = new EasyCallback<List<Snippet>>() {
         @Override
-        public void onResponse(@NonNull List<Snippet> response) {
+        public void success(@NonNull List<Snippet> response) {
             mLoading = false;
             if (getView() == null) {
                 return;
@@ -123,7 +123,7 @@ public class SnippetsFragment extends ButterKnifeFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             mLoading = false;
             Timber.e(t, null);
             if (getView() == null) {
@@ -139,7 +139,7 @@ public class SnippetsFragment extends ButterKnifeFragment {
 
     private final EasyCallback<List<Snippet>> mMoreMilestonesCallback = new EasyCallback<List<Snippet>>() {
         @Override
-        public void onResponse(@NonNull List<Snippet> response) {
+        public void success(@NonNull List<Snippet> response) {
             mLoading = false;
             mSnippetAdapter.setLoading(false);
             mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
@@ -147,7 +147,7 @@ public class SnippetsFragment extends ButterKnifeFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mSnippetAdapter.setLoading(false);
             mLoading = false;

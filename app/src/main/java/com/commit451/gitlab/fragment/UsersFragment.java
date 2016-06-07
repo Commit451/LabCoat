@@ -16,7 +16,7 @@ import android.widget.TextView;
 import com.commit451.gitlab.LabCoatApp;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.UsersAdapter;
-import com.commit451.gitlab.api.EasyCallback;
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.UserBasic;
 import com.commit451.gitlab.navigation.NavigationManager;
@@ -85,7 +85,7 @@ public class UsersFragment extends ButterKnifeFragment {
 
     public EasyCallback<List<UserBasic>> mSearchCallback = new EasyCallback<List<UserBasic>>() {
         @Override
-        public void onResponse(@NonNull List<UserBasic> response) {
+        public void success(@NonNull List<UserBasic> response) {
             if (getView() == null) {
                 return;
             }
@@ -100,7 +100,7 @@ public class UsersFragment extends ButterKnifeFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mLoading = false;
             if (getView() == null) {
@@ -115,7 +115,7 @@ public class UsersFragment extends ButterKnifeFragment {
 
     public EasyCallback<List<UserBasic>> mMoreUsersCallback = new EasyCallback<List<UserBasic>>() {
         @Override
-        public void onResponse(@NonNull List<UserBasic> response) {
+        public void success(@NonNull List<UserBasic> response) {
             mLoading = false;
             if (getView() == null) {
                 return;
@@ -126,7 +126,7 @@ public class UsersFragment extends ButterKnifeFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mLoading = false;
             if (getView() == null) {

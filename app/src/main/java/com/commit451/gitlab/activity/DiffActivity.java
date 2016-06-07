@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.DiffAdapter;
-import com.commit451.gitlab.api.EasyCallback;
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Diff;
 import com.commit451.gitlab.model.api.Project;
@@ -56,13 +56,13 @@ public class DiffActivity extends BaseActivity {
 
     private Callback<List<Diff>> mDiffCallback = new EasyCallback<List<Diff>>() {
         @Override
-        public void onResponse(@NonNull List<Diff> response) {
+        public void success(@NonNull List<Diff> response) {
             mSwipeRefreshLayout.setRefreshing(false);
             mDiffAdapter.setData(response);
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             mSwipeRefreshLayout.setRefreshing(false);
             Timber.e(t, null);
             mMessageText.setText(R.string.connection_error);
