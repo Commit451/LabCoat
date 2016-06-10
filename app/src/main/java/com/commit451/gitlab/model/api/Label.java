@@ -33,10 +33,11 @@ public class Label {
         return mName;
     }
 
-    public @ColorInt int getColor() {
+    @ColorInt
+    public int getColor() {
         try {
             return Color.parseColor(mColor);
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             return Color.TRANSPARENT;
         }
     }

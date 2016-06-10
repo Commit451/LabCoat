@@ -139,8 +139,12 @@ public class BuildDescriptionFragment extends ButterKnifeFragment {
         } else {
             mTextFinished.setVisibility(View.GONE);
         }
-        bindRunner(build.getRunner());
-        bindCommit(build.getCommit());
+        if (build.getRunner() != null) {
+            bindRunner(build.getRunner());
+        }
+        if(build.getCommit() != null) {
+            bindCommit(build.getCommit());
+        }
     }
 
     private void bindRunner(Runner runner) {

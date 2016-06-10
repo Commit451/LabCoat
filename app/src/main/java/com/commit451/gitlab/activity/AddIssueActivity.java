@@ -98,8 +98,13 @@ public class AddIssueActivity extends MorphActivity {
     private AddIssueLabelAdapter mLabelsAdapter;
     private Teleprinter mTeleprinter;
 
-    @OnClick({R.id.text_add_labels, R.id.list_labels})
+    @OnClick(R.id.text_add_labels)
     void onAddLabelsClick() {
+        NavigationManager.navigateToAddLabels(AddIssueActivity.this, mProject, mIssue);
+    }
+
+    @OnClick(R.id.list_labels)
+    void onLabelsClicked() {
         NavigationManager.navigateToAddLabels(AddIssueActivity.this, mProject, mIssue);
     }
 
