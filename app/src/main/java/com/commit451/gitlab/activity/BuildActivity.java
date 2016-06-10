@@ -12,7 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.commit451.gitlab.LabCoatApp;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.BuildSectionsPagerAdapter;
 import com.commit451.easycallback.EasyCallback;
@@ -62,7 +62,7 @@ public class BuildActivity extends BaseActivity {
             mProgress.setVisibility(View.GONE);
             Snackbar.make(mRoot, R.string.build_started, Snackbar.LENGTH_LONG)
                     .show();
-            LabCoatApp.bus().post(new BuildChangedEvent(response));
+            App.bus().post(new BuildChangedEvent(response));
         }
 
         @Override
@@ -80,7 +80,7 @@ public class BuildActivity extends BaseActivity {
             mProgress.setVisibility(View.GONE);
             Snackbar.make(mRoot, R.string.build_erased, Snackbar.LENGTH_LONG)
                     .show();
-            LabCoatApp.bus().post(new BuildChangedEvent(response));
+            App.bus().post(new BuildChangedEvent(response));
         }
 
         @Override
@@ -98,7 +98,7 @@ public class BuildActivity extends BaseActivity {
             mProgress.setVisibility(View.GONE);
             Snackbar.make(mRoot, R.string.build_canceled, Snackbar.LENGTH_LONG)
                     .show();
-            LabCoatApp.bus().post(new BuildChangedEvent(response));
+            App.bus().post(new BuildChangedEvent(response));
         }
 
         @Override

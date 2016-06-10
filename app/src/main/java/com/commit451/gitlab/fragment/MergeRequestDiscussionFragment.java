@@ -12,7 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.commit451.gitlab.LabCoatApp;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.MergeRequestDetailAdapter;
 import com.commit451.easycallback.EasyCallback;
@@ -210,13 +210,13 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
         loadNotes();
 
         mEventReceiver = new EventReceiver();
-        LabCoatApp.bus().register(mEventReceiver);
+        App.bus().register(mEventReceiver);
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        LabCoatApp.bus().unregister(mEventReceiver);
+        App.bus().unregister(mEventReceiver);
     }
 
     private void loadNotes() {

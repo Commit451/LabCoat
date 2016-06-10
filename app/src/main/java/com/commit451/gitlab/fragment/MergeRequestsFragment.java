@@ -14,7 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.commit451.gitlab.LabCoatApp;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
@@ -151,7 +151,7 @@ public class MergeRequestsFragment extends ButterKnifeFragment {
         super.onViewCreated(view, savedInstanceState);
 
         mEventReceiver = new EventReceiver();
-        LabCoatApp.bus().register(mEventReceiver);
+        App.bus().register(mEventReceiver);
 
         mMergeRequestAdapter = new MergeRequestAdapter(mMergeRequestAdapterListener);
         mMergeLayoutManager = new LinearLayoutManager(getActivity());
@@ -181,7 +181,7 @@ public class MergeRequestsFragment extends ButterKnifeFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        LabCoatApp.bus().unregister(mEventReceiver);
+        App.bus().unregister(mEventReceiver);
     }
 
     @Override

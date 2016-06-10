@@ -15,7 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.commit451.gitlab.LabCoatApp;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
@@ -168,7 +168,7 @@ public class IssuesFragment extends ButterKnifeFragment {
         super.onViewCreated(view, savedInstanceState);
 
         mEventReceiver = new EventReceiver();
-        LabCoatApp.bus().register(mEventReceiver);
+        App.bus().register(mEventReceiver);
 
         mIssuesAdapter = new IssuesAdapter(mIssuesAdapterListener);
         mIssuesLayoutManager = new LinearLayoutManager(getActivity());
@@ -198,7 +198,7 @@ public class IssuesFragment extends ButterKnifeFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        LabCoatApp.bus().unregister(mEventReceiver);
+        App.bus().unregister(mEventReceiver);
     }
 
     @OnClick(R.id.add_issue_button)

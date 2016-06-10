@@ -15,7 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
 
-import com.commit451.gitlab.LabCoatApp;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.GroupAdapter;
 import com.commit451.easycallback.EasyCallback;
@@ -123,7 +123,7 @@ public class GroupsActivity extends BaseActivity {
         setContentView(R.layout.activity_groups);
         ButterKnife.bind(this);
         mEventReceiver = new EventReceiver();
-        LabCoatApp.bus().register(mEventReceiver);
+        App.bus().register(mEventReceiver);
 
         mToolbar.setTitle(R.string.nav_groups);
         mToolbar.setNavigationIcon(R.drawable.ic_menu_24dp);
@@ -156,7 +156,7 @@ public class GroupsActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        LabCoatApp.bus().unregister(mEventReceiver);
+        App.bus().unregister(mEventReceiver);
     }
 
     private void load() {

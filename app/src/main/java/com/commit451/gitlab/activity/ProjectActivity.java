@@ -20,7 +20,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.commit451.gitlab.LabCoatApp;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.SectionsPagerAdapter;
 import com.commit451.gitlab.animation.HideRunnable;
@@ -221,7 +221,7 @@ public class ProjectActivity extends BaseActivity {
     }
 
     private void broadcastLoad() {
-        LabCoatApp.bus().post(new ProjectReloadEvent(mProject, mBranchName));
+        App.bus().post(new ProjectReloadEvent(mProject, mBranchName));
     }
 
     @Override

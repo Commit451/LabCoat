@@ -17,7 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.commit451.gitlab.LabCoatApp;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.IssueDetailsAdapter;
 import com.commit451.easycallback.EasyCallback;
@@ -224,8 +224,8 @@ public class IssueActivity extends BaseActivity {
         public void success(@NonNull Issue response) {
             mProgress.setVisibility(View.GONE);
             mIssue = response;
-            LabCoatApp.bus().post(new IssueChangedEvent(mIssue));
-            LabCoatApp.bus().post(new IssueReloadEvent());
+            App.bus().post(new IssueChangedEvent(mIssue));
+            App.bus().post(new IssueReloadEvent());
             setOpenCloseMenuStatus();
             loadNotes();
         }
@@ -280,7 +280,7 @@ public class IssueActivity extends BaseActivity {
         ButterKnife.bind(this);
         mTeleprinter = new Teleprinter(this);
         mEventReceiver = new EventReceiver();
-        LabCoatApp.bus().register(mEventReceiver);
+        App.bus().register(mEventReceiver);
 
         mToolbar.setNavigationIcon(R.drawable.ic_back_24dp);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -370,7 +370,7 @@ public class IssueActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        LabCoatApp.bus().unregister(mEventReceiver);
+        App.bus().unregister(mEventReceiver);
     }
 
     private void bindProject() {

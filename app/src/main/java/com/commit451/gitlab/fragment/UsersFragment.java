@@ -13,7 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.commit451.gitlab.LabCoatApp;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.UsersAdapter;
 import com.commit451.easycallback.EasyCallback;
@@ -153,7 +153,7 @@ public class UsersFragment extends ButterKnifeFragment {
         super.onViewCreated(view, savedInstanceState);
 
         mEventReceiver = new EventReceiver();
-        LabCoatApp.bus().register(mEventReceiver);
+        App.bus().register(mEventReceiver);
 
         mUsersAdapter = new UsersAdapter(mUsersAdapterListener);
         mUserLinearLayoutManager = new GridLayoutManager(getActivity(), 2);
@@ -175,7 +175,7 @@ public class UsersFragment extends ButterKnifeFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        LabCoatApp.bus().unregister(mEventReceiver);
+        App.bus().unregister(mEventReceiver);
     }
 
     @Override

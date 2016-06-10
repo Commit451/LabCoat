@@ -1,6 +1,6 @@
 package com.commit451.gitlab.api;
 
-import com.commit451.gitlab.LabCoatApp;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.provider.OkHttpClientProvider;
 import com.commit451.gitlab.provider.SimpleXmlProvider;
@@ -79,7 +79,7 @@ public final class GitLabClient {
 
     public static Picasso getPicasso(Account account) {
         OkHttpClient client = OkHttpClientProvider.getInstance(account);
-        return new Picasso.Builder(LabCoatApp.instance())
+        return new Picasso.Builder(App.instance())
                 .downloader(new OkHttp3Downloader(client))
                 .build();
     }
@@ -95,7 +95,7 @@ public final class GitLabClient {
 
     private static void checkAccountSet() {
         if (sAccount == null) {
-            List<Account> accounts = Account.getAccounts(LabCoatApp.instance());
+            List<Account> accounts = Account.getAccounts(App.instance());
             if (accounts.isEmpty()) {
                 throw new IllegalStateException("No accounts found");
             }

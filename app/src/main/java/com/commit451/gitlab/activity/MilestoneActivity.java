@@ -15,7 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.commit451.gitlab.LabCoatApp;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.gitlab.adapter.MilestoneIssuesAdapter;
@@ -134,7 +134,7 @@ public class MilestoneActivity extends BaseActivity {
         public void success(@NonNull Milestone response) {
             mProgress.setVisibility(View.GONE);
             mMilestone = response;
-            LabCoatApp.bus().post(new MilestoneChangedEvent(mMilestone));
+            App.bus().post(new MilestoneChangedEvent(mMilestone));
             setOpenCloseMenuStatus();
         }
 
@@ -166,7 +166,7 @@ public class MilestoneActivity extends BaseActivity {
         setContentView(R.layout.activity_milestone);
         ButterKnife.bind(this);
         mEventReceiver = new EventReceiver();
-        LabCoatApp.bus().register(mEventReceiver);
+        App.bus().register(mEventReceiver);
 
         mProject = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_PROJECT));
         mMilestone = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_MILESTONE));
@@ -217,7 +217,7 @@ public class MilestoneActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        LabCoatApp.bus().unregister(mEventReceiver);
+        App.bus().unregister(mEventReceiver);
     }
 
     private void bind(Milestone milestone) {

@@ -15,7 +15,7 @@ import android.widget.FrameLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.commit451.gitlab.LabCoatApp;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.AddIssueLabelAdapter;
 import com.commit451.gitlab.adapter.AssigneeSpinnerAdapter;
@@ -185,9 +185,9 @@ public class AddIssueActivity extends MorphActivity {
         @Override
         public void success(@NonNull Issue response) {
             if (mIssue == null) {
-                LabCoatApp.bus().post(new IssueCreatedEvent(response));
+                App.bus().post(new IssueCreatedEvent(response));
             } else {
-                LabCoatApp.bus().post(new IssueChangedEvent(response));
+                App.bus().post(new IssueChangedEvent(response));
             }
             dismiss();
         }

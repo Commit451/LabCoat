@@ -15,7 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.commit451.easel.Easel;
-import com.commit451.gitlab.LabCoatApp;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ActivityActivity;
 import com.commit451.gitlab.activity.GroupsActivity;
@@ -69,7 +69,7 @@ public class LabCoatNavigationView extends NavigationView {
                         ((Activity) getContext()).finish();
                         ((Activity)getContext()).overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
                     }
-                    LabCoatApp.bus().post(new CloseDrawerEvent());
+                    App.bus().post(new CloseDrawerEvent());
                     return true;
                 case R.id.nav_groups:
                     if (getContext() instanceof GroupsActivity) {
@@ -79,7 +79,7 @@ public class LabCoatNavigationView extends NavigationView {
                         ((Activity) getContext()).finish();
                         ((Activity)getContext()).overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
                     }
-                    LabCoatApp.bus().post(new CloseDrawerEvent());
+                    App.bus().post(new CloseDrawerEvent());
                     return true;
                 case R.id.nav_activity:
                     if (getContext() instanceof ActivityActivity) {
@@ -89,14 +89,14 @@ public class LabCoatNavigationView extends NavigationView {
                         ((Activity) getContext()).finish();
                         ((Activity)getContext()).overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
                     }
-                    LabCoatApp.bus().post(new CloseDrawerEvent());
+                    App.bus().post(new CloseDrawerEvent());
                     return true;
                 case R.id.nav_about:
-                    LabCoatApp.bus().post(new CloseDrawerEvent());
+                    App.bus().post(new CloseDrawerEvent());
                     NavigationManager.navigateToAbout((Activity) getContext());
                     return true;
                 case R.id.nav_settings:
-                    LabCoatApp.bus().post(new CloseDrawerEvent());
+                    App.bus().post(new CloseDrawerEvent());
                     NavigationManager.navigateToSettings((Activity) getContext());
                     return true;
             }
@@ -114,7 +114,7 @@ public class LabCoatNavigationView extends NavigationView {
         public void onAddAccountClicked() {
             NavigationManager.navigateToLogin((Activity) getContext(), true);
             toggleAccounts();
-            LabCoatApp.bus().post(new CloseDrawerEvent());
+            App.bus().post(new CloseDrawerEvent());
         }
 
         @Override
@@ -178,7 +178,7 @@ public class LabCoatNavigationView extends NavigationView {
 
     private void init() {
         mEventReceiver = new EventReceiver();
-        LabCoatApp.bus().register(mEventReceiver);
+        App.bus().register(mEventReceiver);
         int colorPrimary = Easel.getThemeAttrColor(getContext(), R.attr.colorPrimary);
 
         setNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -203,7 +203,7 @@ public class LabCoatNavigationView extends NavigationView {
 
     @Override
     protected void onDetachedFromWindow() {
-        LabCoatApp.bus().unregister(mEventReceiver);
+        App.bus().unregister(mEventReceiver);
         super.onDetachedFromWindow();
     }
 
@@ -284,8 +284,8 @@ public class LabCoatNavigationView extends NavigationView {
         Prefs.updateAccount(getContext(), account);
         bindUser(account.getUser());
         toggleAccounts();
-        LabCoatApp.bus().post(new ReloadDataEvent());
-        LabCoatApp.bus().post(new CloseDrawerEvent());
+        App.bus().post(new ReloadDataEvent());
+        App.bus().post(new CloseDrawerEvent());
         // Trigger a reload in the adapter so that we will place the accounts
         // in the correct order from most recently used
         mAccountAdapter.notifyDataSetChanged();

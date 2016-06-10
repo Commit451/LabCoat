@@ -24,7 +24,7 @@ import timber.log.Timber;
 /**
  * App for one time init things and to house singletons
  */
-public class LabCoatApp extends Application {
+public class App extends Application {
 
     /**
      * Register our type converters on our singleton LoganSquare create
@@ -41,8 +41,8 @@ public class LabCoatApp extends Application {
         return sBus;
     }
 
-    private static LabCoatApp sInstance;
-    public static LabCoatApp instance() {
+    private static App sInstance;
+    public static App instance() {
         return sInstance;
     }
 
