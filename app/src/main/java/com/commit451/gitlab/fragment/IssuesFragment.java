@@ -28,7 +28,7 @@ import com.commit451.gitlab.event.IssueReloadEvent;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Issue;
 import com.commit451.gitlab.model.api.Project;
-import com.commit451.gitlab.navigation.NavigationManager;
+import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.PaginationUtil;
 import com.squareup.otto.Subscribe;
 
@@ -82,7 +82,7 @@ public class IssuesFragment extends ButterKnifeFragment {
         @Override
         public void onIssueClicked(Issue issue) {
             if (mProject != null) {
-                NavigationManager.navigateToIssue(getActivity(), mProject, issue);
+                Navigator.navigateToIssue(getActivity(), mProject, issue);
             } else {
                 Snackbar.make(mRoot, getString(R.string.wait_for_project_to_load), Snackbar.LENGTH_SHORT)
                         .show();
@@ -204,7 +204,7 @@ public class IssuesFragment extends ButterKnifeFragment {
     @OnClick(R.id.add_issue_button)
     public void onAddIssueClick(View fab) {
         if (mProject != null) {
-            NavigationManager.navigateToAddIssue(getActivity(), fab, mProject);
+            Navigator.navigateToAddIssue(getActivity(), fab, mProject);
         } else {
             Snackbar.make(mRoot, getString(R.string.wait_for_project_to_load), Snackbar.LENGTH_SHORT)
                     .show();

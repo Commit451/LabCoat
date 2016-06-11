@@ -28,7 +28,7 @@ import com.commit451.gitlab.model.api.FileUploadResponse;
 import com.commit451.gitlab.model.api.Issue;
 import com.commit451.gitlab.model.api.Note;
 import com.commit451.gitlab.model.api.Project;
-import com.commit451.gitlab.navigation.NavigationManager;
+import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.IntentUtil;
 import com.commit451.gitlab.util.PaginationUtil;
 import com.commit451.gitlab.view.SendMessageView;
@@ -94,7 +94,7 @@ public class IssueActivity extends BaseActivity {
 
     @OnClick(R.id.fab_edit_issue)
     public void onEditIssueClick(View fab) {
-        NavigationManager.navigateToEditIssue(IssueActivity.this, fab, mProject, mIssue);
+        Navigator.navigateToEditIssue(IssueActivity.this, fab, mProject, mIssue);
     }
 
     private MenuItem mOpenCloseMenuItem;
@@ -305,7 +305,7 @@ public class IssueActivity extends BaseActivity {
 
             @Override
             public void onGalleryClicked() {
-                NavigationManager.navigateToChoosePhoto(IssueActivity.this, REQUEST_IMAGE);
+                Navigator.navigateToChoosePhoto(IssueActivity.this, REQUEST_IMAGE);
             }
 
             @Override

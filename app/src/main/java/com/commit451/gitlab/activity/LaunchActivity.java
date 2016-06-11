@@ -7,7 +7,7 @@ import com.commit451.gitlab.BuildConfig;
 import com.commit451.gitlab.data.Prefs;
 import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.ssl.CustomKeyManager;
-import com.commit451.gitlab.navigation.NavigationManager;
+import com.commit451.gitlab.navigation.Navigator;
 
 import java.util.List;
 
@@ -31,7 +31,7 @@ public class LaunchActivity extends Activity {
         }
         List<Account> accounts = Account.getAccounts(this);
         if(accounts.isEmpty()) {
-            NavigationManager.navigateToLogin(this);
+            Navigator.navigateToLogin(this);
         } else {
             loadPrivateKey(accounts, 0);
             return;
@@ -46,7 +46,7 @@ public class LaunchActivity extends Activity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    NavigationManager.navigateToStartingActivity(LaunchActivity.this);
+                    Navigator.navigateToStartingActivity(LaunchActivity.this);
                     finish();
                 }
             });

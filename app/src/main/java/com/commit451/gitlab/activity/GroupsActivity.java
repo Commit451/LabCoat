@@ -22,7 +22,7 @@ import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.CloseDrawerEvent;
 import com.commit451.gitlab.model.api.Group;
-import com.commit451.gitlab.navigation.NavigationManager;
+import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.PaginationUtil;
 import com.commit451.gitlab.viewHolder.GroupViewHolder;
 import com.squareup.otto.Subscribe;
@@ -113,7 +113,7 @@ public class GroupsActivity extends BaseActivity {
     private final GroupAdapter.Listener mGroupAdapterListener = new GroupAdapter.Listener() {
         @Override
         public void onGroupClicked(Group group, GroupViewHolder groupViewHolder) {
-            NavigationManager.navigateToGroup(GroupsActivity.this, groupViewHolder.mImageView, group);
+            Navigator.navigateToGroup(GroupsActivity.this, groupViewHolder.mImageView, group);
         }
     };
 

@@ -16,7 +16,7 @@ import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.ProjectsPagerAdapter;
 import com.commit451.gitlab.event.CloseDrawerEvent;
-import com.commit451.gitlab.navigation.NavigationManager;
+import com.commit451.gitlab.navigation.Navigator;
 import com.squareup.otto.Subscribe;
 
 import butterknife.BindView;
@@ -45,7 +45,7 @@ public class ProjectsActivity extends BaseActivity {
         public boolean onMenuItemClick(MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.action_search:
-                    NavigationManager.navigateToSearch(ProjectsActivity.this);
+                    Navigator.navigateToSearch(ProjectsActivity.this);
                     return true;
             }
             return false;

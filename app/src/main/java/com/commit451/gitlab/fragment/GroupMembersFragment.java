@@ -20,7 +20,7 @@ import com.commit451.gitlab.dialog.AccessDialog;
 import com.commit451.gitlab.event.MemberAddedEvent;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.model.api.Member;
-import com.commit451.gitlab.navigation.NavigationManager;
+import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.viewHolder.ProjectMemberViewHolder;
 import com.squareup.otto.Subscribe;
 
@@ -115,7 +115,7 @@ public class GroupMembersFragment extends ButterKnifeFragment {
     private final GroupMembersAdapter.Listener mListener = new GroupMembersAdapter.Listener() {
         @Override
         public void onUserClicked(Member member, ProjectMemberViewHolder holder) {
-            NavigationManager.navigateToUser(getActivity(), holder.mImageView, member);
+            Navigator.navigateToUser(getActivity(), holder.mImageView, member);
         }
 
         @Override
@@ -172,7 +172,7 @@ public class GroupMembersFragment extends ButterKnifeFragment {
 
     @OnClick(R.id.add_user_button)
     public void onAddUserClick(View fab) {
-        NavigationManager.navigateToAddGroupMember(getActivity(), fab, mGroup);
+        Navigator.navigateToAddGroupMember(getActivity(), fab, mGroup);
     }
 
     public void loadData() {

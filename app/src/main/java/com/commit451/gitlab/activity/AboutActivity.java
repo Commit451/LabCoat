@@ -22,7 +22,7 @@ import com.commit451.gitlab.R;
 import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Contributor;
-import com.commit451.gitlab.navigation.NavigationManager;
+import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.transformation.CircleTransformation;
 import com.commit451.gitlab.util.ImageUtil;
 import com.commit451.gitlab.util.IntentUtil;
@@ -65,7 +65,7 @@ public class AboutActivity extends BaseActivity {
     @OnClick(R.id.sauce)
     void onSauceClick() {
         if (getString(R.string.url_gitlab).equals(GitLabClient.getAccount().getServerUrl().toString())) {
-            NavigationManager.navigateToProject(AboutActivity.this, REPO_ID);
+            Navigator.navigateToProject(AboutActivity.this, REPO_ID);
         } else {
             IntentUtil.openPage(AboutActivity.this, getString(R.string.source_url));
         }

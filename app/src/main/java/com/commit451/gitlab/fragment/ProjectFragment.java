@@ -24,7 +24,7 @@ import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryFile;
 import com.commit451.gitlab.model.api.RepositoryTreeObject;
-import com.commit451.gitlab.navigation.NavigationManager;
+import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.observable.DecodeObservableFactory;
 import com.squareup.otto.Subscribe;
 
@@ -68,9 +68,9 @@ public class ProjectFragment extends ButterKnifeFragment {
     void onCreatorClick() {
         if (mProject != null) {
             if (mProject.belongsToGroup()) {
-                NavigationManager.navigateToGroup(getActivity(), mProject.getNamespace().getId());
+                Navigator.navigateToGroup(getActivity(), mProject.getNamespace().getId());
             } else {
-                NavigationManager.navigateToUser(getActivity(), mProject.getOwner());
+                Navigator.navigateToUser(getActivity(), mProject.getOwner());
             }
         }
     }

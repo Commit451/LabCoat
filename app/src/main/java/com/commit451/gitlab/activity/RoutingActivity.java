@@ -10,7 +10,7 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.navigation.DeepLinker;
-import com.commit451.gitlab.navigation.NavigationManager;
+import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.navigation.RoutingNavigator;
 import com.commit451.gitlab.navigation.RoutingRouter;
 import com.commit451.gitlab.util.IntentUtil;
@@ -28,7 +28,7 @@ public class RoutingActivity extends Activity {
     private final RoutingNavigator mNavigator = new RoutingNavigator() {
         @Override
         public void onRouteToIssue(String projectNamespace, String projectName, String issueIid) {
-            NavigationManager.navigateToIssue(RoutingActivity.this, projectNamespace, projectName, issueIid);
+            Navigator.navigateToIssue(RoutingActivity.this, projectNamespace, projectName, issueIid);
         }
 
         @Override
@@ -45,7 +45,7 @@ public class RoutingActivity extends Activity {
 
         @Override
         public void onRouteToProject(String namespace, String projectId) {
-            NavigationManager.navigateToProject(RoutingActivity.this, projectId);
+            Navigator.navigateToProject(RoutingActivity.this, projectId);
         }
 
         @Override
@@ -115,7 +115,7 @@ public class RoutingActivity extends Activity {
         //okay so last thing, if the user has followed a link, but the user
         //is not actually signed in, we want to direct them to signin
         if (GitLabClient.getAccount() == null && Account.getAccounts(this).isEmpty()) {
-            NavigationManager.navigateToLogin(this);
+            Navigator.navigateToLogin(this);
             finish();
             return;
         }

@@ -13,6 +13,7 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.AboutActivity;
 import com.commit451.gitlab.activity.ActivityActivity;
 import com.commit451.gitlab.activity.AddIssueActivity;
+import com.commit451.gitlab.activity.AddLabelActivity;
 import com.commit451.gitlab.activity.AddMilestoneActivity;
 import com.commit451.gitlab.activity.AddUserActivity;
 import com.commit451.gitlab.activity.BuildActivity;
@@ -45,7 +46,7 @@ import timber.log.Timber;
 /**
  * Manages navigation so that we can override things as needed
  */
-public class NavigationManager {
+public class Navigator {
 
     public static void navigateToAbout(Activity activity) {
         activity.startActivity(AboutActivity.newIntent(activity));
@@ -179,13 +180,9 @@ public class NavigationManager {
         startMorphActivity(activity, fab, intent);
     }
 
-    public static void navigateToAddLabels(Activity activity, Project project, Issue issue) {
-        //TODO
-    }
-
-    public static void navigateToCreateLabels(Activity activity, View fab, Project project) {
-        Intent intent = AddMilestoneActivity.newIntent(activity, project.getId());
-        startMorphActivity(activity, fab, intent);
+    public static void navigateToAddLabels(Activity activity, Project project, int requestCode) {
+        Intent intent = AddLabelActivity.newIntent(activity, project.getId());
+        activity.startActivityForResult(intent, requestCode);
     }
 
     public static void navigateToAddMilestone(Activity activity, View fab, Project project) {

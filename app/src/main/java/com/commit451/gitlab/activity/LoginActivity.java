@@ -40,7 +40,7 @@ import com.commit451.gitlab.ssl.CustomHostnameVerifier;
 import com.commit451.gitlab.ssl.CustomKeyManager;
 import com.commit451.gitlab.ssl.X509CertificateException;
 import com.commit451.gitlab.ssl.X509Util;
-import com.commit451.gitlab.navigation.NavigationManager;
+import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.teleprinter.Teleprinter;
 
 import java.net.ConnectException;
@@ -294,7 +294,7 @@ public class LoginActivity extends BaseActivity {
             App.bus().post(new LoginEvent(mAccount));
             //This is mostly for if projects already exists, then we will reload the data
             App.bus().post(new ReloadDataEvent());
-            NavigationManager.navigateToStartingActivity(LoginActivity.this);
+            Navigator.navigateToStartingActivity(LoginActivity.this);
             finish();
         }
 

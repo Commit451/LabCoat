@@ -27,7 +27,7 @@ import com.commit451.gitlab.event.MilestoneCreatedEvent;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Milestone;
 import com.commit451.gitlab.model.api.Project;
-import com.commit451.gitlab.navigation.NavigationManager;
+import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.PaginationUtil;
 import com.squareup.otto.Subscribe;
 
@@ -67,7 +67,7 @@ public class MilestonesFragment extends ButterKnifeFragment {
     @OnClick(R.id.add)
     public void onAddClicked(View fab) {
         if (mProject != null) {
-            NavigationManager.navigateToAddMilestone(getActivity(), fab, mProject);
+            Navigator.navigateToAddMilestone(getActivity(), fab, mProject);
         } else {
             Snackbar.make(mRoot, getString(R.string.wait_for_project_to_load), Snackbar.LENGTH_SHORT)
                     .show();
@@ -89,7 +89,7 @@ public class MilestonesFragment extends ButterKnifeFragment {
     private final MilestoneAdapter.Listener mMilestoneListener = new MilestoneAdapter.Listener() {
         @Override
         public void onMilestoneClicked(Milestone milestone) {
-            NavigationManager.navigateToMilestone(getActivity(), mProject, milestone);
+            Navigator.navigateToMilestone(getActivity(), mProject, milestone);
         }
     };
 

@@ -21,7 +21,7 @@ import com.commit451.gitlab.event.MergeRequestChangedEvent;
 import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryCommit;
-import com.commit451.gitlab.navigation.NavigationManager;
+import com.commit451.gitlab.navigation.Navigator;
 import com.squareup.otto.Subscribe;
 
 import org.parceler.Parcels;
@@ -132,7 +132,7 @@ public class MergeRequestCommitsFragment extends ButterKnifeFragment {
     private final CommitsAdapter.Listener mCommitsAdapterListener = new CommitsAdapter.Listener() {
         @Override
         public void onCommitClicked(RepositoryCommit commit) {
-            NavigationManager.navigateToDiffActivity(getActivity(), mProject, commit);
+            Navigator.navigateToDiffActivity(getActivity(), mProject, commit);
         }
     };
 

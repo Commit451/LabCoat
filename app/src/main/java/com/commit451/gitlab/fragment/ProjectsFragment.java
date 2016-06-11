@@ -18,7 +18,7 @@ import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.model.api.Project;
-import com.commit451.gitlab.navigation.NavigationManager;
+import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.PaginationUtil;
 
 import org.parceler.Parcels;
@@ -152,7 +152,7 @@ public class ProjectsFragment extends ButterKnifeFragment {
     private final ProjectsAdapter.Listener mProjectsListener = new ProjectsAdapter.Listener() {
         @Override
         public void onProjectClicked(Project project) {
-            NavigationManager.navigateToProject(getActivity(), project);
+            Navigator.navigateToProject(getActivity(), project);
         }
     };
 

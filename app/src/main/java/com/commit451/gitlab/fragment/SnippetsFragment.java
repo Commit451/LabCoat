@@ -25,7 +25,7 @@ import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.Snippet;
-import com.commit451.gitlab.navigation.NavigationManager;
+import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.PaginationUtil;
 import com.squareup.otto.Subscribe;
 
@@ -65,7 +65,7 @@ public class SnippetsFragment extends ButterKnifeFragment {
     @OnClick(R.id.add)
     public void onAddClicked(View fab) {
         if (mProject != null) {
-            NavigationManager.navigateToAddMilestone(getActivity(), fab, mProject);
+            Navigator.navigateToAddMilestone(getActivity(), fab, mProject);
         } else {
             Snackbar.make(mRoot, getString(R.string.wait_for_project_to_load), Snackbar.LENGTH_SHORT)
                     .show();

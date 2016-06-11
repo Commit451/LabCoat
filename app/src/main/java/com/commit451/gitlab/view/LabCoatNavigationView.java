@@ -31,7 +31,7 @@ import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.model.api.UserFull;
 import com.commit451.gitlab.transformation.CircleTransformation;
 import com.commit451.gitlab.util.ImageUtil;
-import com.commit451.gitlab.navigation.NavigationManager;
+import com.commit451.gitlab.navigation.Navigator;
 import com.squareup.otto.Subscribe;
 
 import java.util.Collections;
@@ -65,7 +65,7 @@ public class LabCoatNavigationView extends NavigationView {
                     if (getContext() instanceof ProjectsActivity) {
 
                     } else {
-                        NavigationManager.navigateToProjects((Activity) getContext());
+                        Navigator.navigateToProjects((Activity) getContext());
                         ((Activity) getContext()).finish();
                         ((Activity)getContext()).overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
                     }
@@ -75,7 +75,7 @@ public class LabCoatNavigationView extends NavigationView {
                     if (getContext() instanceof GroupsActivity) {
 
                     } else {
-                        NavigationManager.navigateToGroups((Activity) getContext());
+                        Navigator.navigateToGroups((Activity) getContext());
                         ((Activity) getContext()).finish();
                         ((Activity)getContext()).overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
                     }
@@ -85,7 +85,7 @@ public class LabCoatNavigationView extends NavigationView {
                     if (getContext() instanceof ActivityActivity) {
 
                     } else {
-                        NavigationManager.navigateToActivity((Activity) getContext());
+                        Navigator.navigateToActivity((Activity) getContext());
                         ((Activity) getContext()).finish();
                         ((Activity)getContext()).overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
                     }
@@ -93,11 +93,11 @@ public class LabCoatNavigationView extends NavigationView {
                     return true;
                 case R.id.nav_about:
                     App.bus().post(new CloseDrawerEvent());
-                    NavigationManager.navigateToAbout((Activity) getContext());
+                    Navigator.navigateToAbout((Activity) getContext());
                     return true;
                 case R.id.nav_settings:
                     App.bus().post(new CloseDrawerEvent());
-                    NavigationManager.navigateToSettings((Activity) getContext());
+                    Navigator.navigateToSettings((Activity) getContext());
                     return true;
             }
             return false;
@@ -112,7 +112,7 @@ public class LabCoatNavigationView extends NavigationView {
 
         @Override
         public void onAddAccountClicked() {
-            NavigationManager.navigateToLogin((Activity) getContext(), true);
+            Navigator.navigateToLogin((Activity) getContext(), true);
             toggleAccounts();
             App.bus().post(new CloseDrawerEvent());
         }
@@ -123,7 +123,7 @@ public class LabCoatNavigationView extends NavigationView {
             List<Account> accounts = Account.getAccounts(getContext());
 
             if (accounts.isEmpty()) {
-                NavigationManager.navigateToLogin((Activity) getContext());
+                Navigator.navigateToLogin((Activity) getContext());
                 ((Activity) getContext()).finish();
             } else {
                 if (account.equals(GitLabClient.getAccount())) {
@@ -153,7 +153,7 @@ public class LabCoatNavigationView extends NavigationView {
 
     @OnClick(R.id.profile_image)
     public void onUserImageClick(ImageView imageView) {
-        NavigationManager.navigateToUser((Activity) getContext(), imageView, GitLabClient.getAccount().getUser());
+        Navigator.navigateToUser((Activity) getContext(), imageView, GitLabClient.getAccount().getUser());
     }
 
     @OnClick(R.id.drawer_header)

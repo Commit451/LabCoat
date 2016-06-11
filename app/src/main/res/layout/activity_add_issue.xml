@@ -141,7 +141,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/add_labels"
-                    android:visibility="gone"/>
+                    android:visibility="gone"
+                    android:padding="16dp"
+                    android:background="?attr/selectableItemBackground"/>
 
             </FrameLayout>
         </LinearLayout>

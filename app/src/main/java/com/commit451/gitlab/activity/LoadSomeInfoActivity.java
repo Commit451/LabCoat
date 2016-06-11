@@ -16,7 +16,7 @@ import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.model.api.Milestone;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryCommit;
-import com.commit451.gitlab.navigation.NavigationManager;
+import com.commit451.gitlab.navigation.Navigator;
 
 import java.util.List;
 
@@ -126,7 +126,7 @@ public class LoadSomeInfoActivity extends AppCompatActivity {
     private final EasyCallback<RepositoryCommit> mCommitCallback = new EasyCallback<RepositoryCommit>() {
         @Override
         public void success(@NonNull RepositoryCommit response) {
-            NavigationManager.navigateToDiffActivity(LoadSomeInfoActivity.this, mProject, response);
+            Navigator.navigateToDiffActivity(LoadSomeInfoActivity.this, mProject, response);
             finish();
         }
 
@@ -141,7 +141,7 @@ public class LoadSomeInfoActivity extends AppCompatActivity {
         @Override
         public void success(@NonNull List<MergeRequest> response) {
             if (!response.isEmpty()) {
-                NavigationManager.navigateToMergeRequest(LoadSomeInfoActivity.this, mProject, response.get(0));
+                Navigator.navigateToMergeRequest(LoadSomeInfoActivity.this, mProject, response.get(0));
                 finish();
             } else {
                 onError();
@@ -158,7 +158,7 @@ public class LoadSomeInfoActivity extends AppCompatActivity {
     private final EasyCallback<Build> mBuildCallback = new EasyCallback<Build>() {
         @Override
         public void success(@NonNull Build response) {
-            NavigationManager.navigateToBuild(LoadSomeInfoActivity.this, mProject, response);
+            Navigator.navigateToBuild(LoadSomeInfoActivity.this, mProject, response);
             finish();
         }
 
@@ -173,7 +173,7 @@ public class LoadSomeInfoActivity extends AppCompatActivity {
         @Override
         public void success(@NonNull List<Milestone> response) {
             if (!response.isEmpty()) {
-                NavigationManager.navigateToMilestone(LoadSomeInfoActivity.this, mProject, response.get(0));
+                Navigator.navigateToMilestone(LoadSomeInfoActivity.this, mProject, response.get(0));
                 finish();
             } else {
                 onError();

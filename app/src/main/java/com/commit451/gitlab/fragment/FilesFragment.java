@@ -26,7 +26,7 @@ import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryTreeObject;
-import com.commit451.gitlab.navigation.NavigationManager;
+import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.IntentUtil;
 import com.squareup.otto.Subscribe;
 
@@ -106,7 +106,7 @@ public class FilesFragment extends ButterKnifeFragment {
         @Override
         public void onFileClicked(RepositoryTreeObject treeItem) {
             String path = mCurrentPath + treeItem.getName();
-            NavigationManager.navigateToFile(getActivity(), mProject.getId(), path, mBranchName);
+            Navigator.navigateToFile(getActivity(), mProject.getId(), path, mBranchName);
         }
 
         @Override

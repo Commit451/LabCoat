@@ -30,7 +30,7 @@ import com.commit451.gitlab.model.api.Label;
 import com.commit451.gitlab.model.api.Member;
 import com.commit451.gitlab.model.api.Milestone;
 import com.commit451.gitlab.model.api.Project;
-import com.commit451.gitlab.navigation.NavigationManager;
+import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.view.AdapterFlowLayout;
 import com.commit451.teleprinter.Teleprinter;
 
@@ -51,6 +51,7 @@ import timber.log.Timber;
  */
 public class AddIssueActivity extends MorphActivity {
 
+    private static final int REQUEST_LABEL = 1;
     private static final String KEY_PROJECT = "project";
     private static final String KEY_ISSUE = "issue";
 
@@ -100,12 +101,12 @@ public class AddIssueActivity extends MorphActivity {
 
     @OnClick(R.id.text_add_labels)
     void onAddLabelsClick() {
-        NavigationManager.navigateToAddLabels(AddIssueActivity.this, mProject, mIssue);
+        Navigator.navigateToAddLabels(AddIssueActivity.this, mProject, REQUEST_LABEL);
     }
 
     @OnClick(R.id.list_labels)
     void onLabelsClicked() {
-        NavigationManager.navigateToAddLabels(AddIssueActivity.this, mProject, mIssue);
+        Navigator.navigateToAddLabels(AddIssueActivity.this, mProject, REQUEST_LABEL);
     }
 
     private final Callback<List<Milestone>> mMilestonesCallback = new EasyCallback<List<Milestone>>() {

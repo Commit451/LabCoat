@@ -25,7 +25,7 @@ import com.commit451.gitlab.event.MilestoneChangedEvent;
 import com.commit451.gitlab.model.api.Issue;
 import com.commit451.gitlab.model.api.Milestone;
 import com.commit451.gitlab.model.api.Project;
-import com.commit451.gitlab.navigation.NavigationManager;
+import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.PaginationUtil;
 import com.squareup.otto.Subscribe;
 
@@ -77,12 +77,12 @@ public class MilestoneActivity extends BaseActivity {
 
     @OnClick(R.id.add)
     void onAddClick() {
-        NavigationManager.navigateToAddIssue(MilestoneActivity.this, null, mProject);
+        Navigator.navigateToAddIssue(MilestoneActivity.this, null, mProject);
     }
 
     @OnClick(R.id.edit)
     void onEditClicked(View fab) {
-        NavigationManager.navigateToEditMilestone(MilestoneActivity.this, fab, mProject, mMilestone);
+        Navigator.navigateToEditMilestone(MilestoneActivity.this, fab, mProject, mMilestone);
     }
 
     private final Callback<List<Issue>> mIssuesCallback = new EasyCallback<List<Issue>>() {
@@ -195,7 +195,7 @@ public class MilestoneActivity extends BaseActivity {
         mMilestoneIssuesAdapter = new MilestoneIssuesAdapter(new MilestoneIssuesAdapter.Listener() {
             @Override
             public void onIssueClicked(Issue issue) {
-                NavigationManager.navigateToIssue(MilestoneActivity.this, mProject, issue);
+                Navigator.navigateToIssue(MilestoneActivity.this, mProject, issue);
             }
         });
         bind(mMilestone);

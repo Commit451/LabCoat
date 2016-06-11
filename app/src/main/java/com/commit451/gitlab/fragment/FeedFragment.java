@@ -19,7 +19,7 @@ import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.rss.Entry;
 import com.commit451.gitlab.model.rss.Feed;
-import com.commit451.gitlab.navigation.NavigationManager;
+import com.commit451.gitlab.navigation.Navigator;
 import com.novoda.simplechromecustomtabs.SimpleChromeCustomTabs;
 
 import butterknife.BindView;
@@ -85,7 +85,7 @@ public class FeedFragment extends ButterKnifeFragment {
     private final FeedAdapter.Listener mFeedAdapterListener = new FeedAdapter.Listener() {
         @Override
         public void onFeedEntryClicked(Entry entry) {
-            NavigationManager.navigateToUrl(getActivity(), entry.getLink().getHref(), GitLabClient.getAccount());
+            Navigator.navigateToUrl(getActivity(), entry.getLink().getHref(), GitLabClient.getAccount());
         }
     };
 

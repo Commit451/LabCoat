@@ -26,7 +26,7 @@ import com.commit451.gitlab.event.BuildChangedEvent;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Build;
 import com.commit451.gitlab.model.api.Project;
-import com.commit451.gitlab.navigation.NavigationManager;
+import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.PaginationUtil;
 import com.squareup.otto.Subscribe;
 
@@ -82,7 +82,7 @@ public class BuildsFragment extends ButterKnifeFragment {
         @Override
         public void onBuildClicked(Build build) {
             if (mProject != null) {
-                NavigationManager.navigateToBuild(getActivity(), mProject, build);
+                Navigator.navigateToBuild(getActivity(), mProject, build);
             } else {
                 Snackbar.make(mRoot, getString(R.string.wait_for_project_to_load), Snackbar.LENGTH_SHORT)
                         .show();

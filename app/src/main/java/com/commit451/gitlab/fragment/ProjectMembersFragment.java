@@ -24,7 +24,7 @@ import com.commit451.gitlab.event.MemberAddedEvent;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Member;
 import com.commit451.gitlab.model.api.Project;
-import com.commit451.gitlab.navigation.NavigationManager;
+import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.PaginationUtil;
 import com.commit451.gitlab.viewHolder.ProjectMemberViewHolder;
 import com.squareup.otto.Subscribe;
@@ -78,7 +78,7 @@ public class ProjectMembersFragment extends ButterKnifeFragment {
     private final MemberAdapter.Listener mMemberAdapterListener = new MemberAdapter.Listener() {
         @Override
         public void onProjectMemberClicked(Member member, ProjectMemberViewHolder memberGroupViewHolder) {
-            NavigationManager.navigateToUser(getActivity(), memberGroupViewHolder.mImageView, member);
+            Navigator.navigateToUser(getActivity(), memberGroupViewHolder.mImageView, member);
         }
 
         @Override
@@ -96,7 +96,7 @@ public class ProjectMembersFragment extends ButterKnifeFragment {
 
         @Override
         public void onSeeGroupClicked() {
-            NavigationManager.navigateToGroup(getActivity(), mProject.getNamespace().getId());
+            Navigator.navigateToGroup(getActivity(), mProject.getNamespace().getId());
         }
     };
 
@@ -207,7 +207,7 @@ public class ProjectMembersFragment extends ButterKnifeFragment {
 
     @OnClick(R.id.add_user_button)
     public void onAddUserClick(View fab) {
-        NavigationManager.navigateToAddProjectMember(getActivity(), fab, mProject.getId());
+        Navigator.navigateToAddProjectMember(getActivity(), fab, mProject.getId());
     }
 
     @Override
