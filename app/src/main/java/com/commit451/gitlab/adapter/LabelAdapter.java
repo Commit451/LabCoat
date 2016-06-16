@@ -20,7 +20,8 @@ public class LabelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private static final int TYPE_ITEM = 0;
     private static final int TYPE_FOOTER = 1;
 
-    private static final int FOOTER_COUNT = 1;
+    //TODO bring this back maybe?
+    private static final int FOOTER_COUNT = 0;
 
     private Listener mListener;
 

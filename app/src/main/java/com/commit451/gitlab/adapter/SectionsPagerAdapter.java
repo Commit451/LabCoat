@@ -66,7 +66,8 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
             Timber.d("Milestones are disabled");
             mDisabledSections.add(MILESTONES_POS);
         }
-        if (!project.isSnippetsEnabled()) {
+        //TODO change this back when we do snippets
+        if (true){//!project.isSnippetsEnabled()) {
             Timber.d("Snippets are disabled");
             mDisabledSections.add(SNIPPETS_POS);
         }
