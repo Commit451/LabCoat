@@ -21,7 +21,7 @@ public class TestUtil {
         Account account = new Account();
         account.setServerUrl(Uri.parse("https://gitlab.com/"));
 
-        Response<UserLogin> loginResponse = GitLabClient.instance(account)
+        Response<UserLogin> loginResponse = GitLabClient.create(account)
                 .loginWithUsername("TestAllTheThings", "testing123")
                 .execute();
         assertTrue(loginResponse.isSuccessful());

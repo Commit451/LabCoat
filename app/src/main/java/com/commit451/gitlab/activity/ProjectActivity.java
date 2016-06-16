@@ -20,11 +20,11 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.commit451.gitlab.LabCoatApp;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.SectionsPagerAdapter;
 import com.commit451.gitlab.animation.HideRunnable;
-import com.commit451.gitlab.api.EasyCallback;
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.fragment.BaseFragment;
@@ -92,14 +92,14 @@ public class ProjectActivity extends BaseActivity {
 
     private final Callback<Project> mProjectCallback = new EasyCallback<Project>() {
         @Override
-        public void onResponse(@NonNull Project response) {
+        public void success(@NonNull Project response) {
             mProject = response;
             setupTabs();
             loadBranches();
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mProgress.animate()
                     .alpha(0.0f)
@@ -112,7 +112,7 @@ public class ProjectActivity extends BaseActivity {
     private final Callback<List<Branch>> mBranchesCallback = new EasyCallback<List<Branch>>() {
 
         @Override
-        public void onResponse(@NonNull List<Branch> response) {
+        public void success(@NonNull List<Branch> response) {
             mProgress.animate()
                     .alpha(0.0f)
                     .withEndAction(new HideRunnable(mProgress));
@@ -140,7 +140,7 @@ public class ProjectActivity extends BaseActivity {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mProgress.animate()
                     .alpha(0.0f)
@@ -221,7 +221,7 @@ public class ProjectActivity extends BaseActivity {
     }
 
     private void broadcastLoad() {
-        LabCoatApp.bus().post(new ProjectReloadEvent(mProject, mBranchName));
+        App.bus().post(new ProjectReloadEvent(mProject, mBranchName));
     }
 
     @Override

@@ -11,15 +11,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.commit451.gitlab.LabCoatApp;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.gitlab.adapter.FeedAdapter;
-import com.commit451.gitlab.api.EasyCallback;
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.rss.Entry;
 import com.commit451.gitlab.model.rss.Feed;
-import com.commit451.gitlab.navigation.NavigationManager;
+import com.commit451.gitlab.navigation.Navigator;
 import com.novoda.simplechromecustomtabs.SimpleChromeCustomTabs;
 
 import butterknife.BindView;
@@ -54,7 +54,7 @@ public class FeedFragment extends ButterKnifeFragment {
 
     private final EasyCallback<Feed> mUserFeedCallback = new EasyCallback<Feed>() {
         @Override
-        public void onResponse(@NonNull Feed response) {
+        public void success(@NonNull Feed response) {
             if (getView() == null) {
                 return;
             }
@@ -70,7 +70,7 @@ public class FeedFragment extends ButterKnifeFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             if (getView() == null) {
                 return;
@@ -85,7 +85,7 @@ public class FeedFragment extends ButterKnifeFragment {
     private final FeedAdapter.Listener mFeedAdapterListener = new FeedAdapter.Listener() {
         @Override
         public void onFeedEntryClicked(Entry entry) {
-            NavigationManager.navigateToUrl(getActivity(), entry.getLink().getHref(), GitLabClient.getAccount());
+            Navigator.navigateToUrl(getActivity(), entry.getLink().getHref(), GitLabClient.getAccount());
         }
     };
 
@@ -105,7 +105,7 @@ public class FeedFragment extends ButterKnifeFragment {
         super.onViewCreated(view, savedInstanceState);
 
         mEventReceiver = new EventReceiver();
-        LabCoatApp.bus().register(mEventReceiver);
+        App.bus().register(mEventReceiver);
 
         mFeedAdapter = new FeedAdapter(mFeedAdapterListener);
         mEntryListView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -139,7 +139,7 @@ public class FeedFragment extends ButterKnifeFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        LabCoatApp.bus().unregister(mEventReceiver);
+        App.bus().unregister(mEventReceiver);
     }
 
     @Override

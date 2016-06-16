@@ -1,10 +1,10 @@
 package com.commit451.gitlab.api;
 
-import com.commit451.gitlab.LabCoatApp;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.model.Account;
-import com.commit451.gitlab.provider.GsonProvider;
 import com.commit451.gitlab.provider.OkHttpClientProvider;
 import com.commit451.gitlab.provider.SimpleXmlProvider;
+import com.github.aurae.retrofit2.LoganSquareConverterFactory;
 import com.jakewharton.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 
@@ -12,7 +12,6 @@ import java.util.List;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
 
 /**
@@ -26,8 +25,6 @@ public final class GitLabClient {
     private static GitLabRss sGitLabRss;
     private static Picasso sPicasso;
 
-    private GitLabClient() {}
-
     public static void setAccount(Account account) {
         sAccount = account;
         sGitLab = null;
@@ -40,15 +37,15 @@ public final class GitLabClient {
     }
 
     /**
-     * Get a GitLab instance with the current account passed. Used for login only
+     * Create a GitLab instance with the current account passed.
      * @param account the account to try and log in with
      * @return the GitLab instance
      */
-    public static GitLab instance(Account account) {
+    public static GitLab create(Account account) {
         Retrofit restAdapter = new Retrofit.Builder()
                 .baseUrl(account.getServerUrl().toString())
-                .client(OkHttpClientProvider.getInstance(account))
-                .addConverterFactory(GsonConverterFactory.create(GsonProvider.createInstance(account)))
+                .client(OkHttpClientProvider.createInstance(account))
+                .addConverterFactory(LoganSquareConverterFactory.create())
                 .build();
         return restAdapter.create(GitLab.class);
     }
@@ -56,7 +53,7 @@ public final class GitLabClient {
     public static GitLab instance() {
         if (sGitLab == null) {
             checkAccountSet();
-            sGitLab = instance(sAccount);
+            sGitLab = create(sAccount);
         }
 
         return sGitLab;
@@ -82,7 +79,7 @@ public final class GitLabClient {
 
     public static Picasso getPicasso(Account account) {
         OkHttpClient client = OkHttpClientProvider.getInstance(account);
-        return new Picasso.Builder(LabCoatApp.instance())
+        return new Picasso.Builder(App.instance())
                 .downloader(new OkHttp3Downloader(client))
                 .build();
     }
@@ -98,7 +95,7 @@ public final class GitLabClient {
 
     private static void checkAccountSet() {
         if (sAccount == null) {
-            List<Account> accounts = Account.getAccounts(LabCoatApp.instance());
+            List<Account> accounts = Account.getAccounts(App.instance());
             if (accounts.isEmpty()) {
                 throw new IllegalStateException("No accounts found");
             }
@@ -106,4 +103,6 @@ public final class GitLabClient {
             GitLabClient.setAccount(accounts.get(0));
         }
     }
+
+    private GitLabClient() {}
 }

@@ -2,6 +2,7 @@ package com.commit451.gitlab.provider;
 
 import com.commit451.gitlab.BuildConfig;
 import com.commit451.gitlab.api.AuthenticationRequestInterceptor;
+import com.commit451.gitlab.api.OpenSignInAuthenticator;
 import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.ssl.CustomTrustManager;
 
@@ -32,15 +33,18 @@ public final class OkHttpClientProvider {
         return sOkHttpClient;
     }
 
-    private static OkHttpClient createInstance(Account account) {
+    public static OkHttpClient createInstance(Account account) {
         sCustomTrustManager.setTrustedCertificate(account.getTrustedCertificate());
         sCustomTrustManager.setTrustedHostname(account.getTrustedHostname());
         sCustomTrustManager.setPrivateKeyAlias(account.getPrivateKeyAlias());
 
+        OpenSignInAuthenticator authenticator = new OpenSignInAuthenticator(account);
         OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder()
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .sslSocketFactory(sCustomTrustManager.getSSLSocketFactory())
-                .hostnameVerifier(sCustomTrustManager.getHostnameVerifier());
+                .hostnameVerifier(sCustomTrustManager.getHostnameVerifier())
+                .authenticator(authenticator)
+                .proxyAuthenticator(authenticator);
         clientBuilder.addInterceptor(new AuthenticationRequestInterceptor(account));
         if (BuildConfig.DEBUG) {
             clientBuilder.addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));

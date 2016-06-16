@@ -15,14 +15,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
 
-import com.commit451.gitlab.LabCoatApp;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.GroupAdapter;
-import com.commit451.gitlab.api.EasyCallback;
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.CloseDrawerEvent;
 import com.commit451.gitlab.model.api.Group;
-import com.commit451.gitlab.navigation.NavigationManager;
+import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.PaginationUtil;
 import com.commit451.gitlab.viewHolder.GroupViewHolder;
 import com.squareup.otto.Subscribe;
@@ -71,7 +71,7 @@ public class GroupsActivity extends BaseActivity {
 
     private final Callback<List<Group>> mGroupsCallback = new EasyCallback<List<Group>>() {
         @Override
-        public void onResponse(@NonNull List<Group> response) {
+        public void success(@NonNull List<Group> response) {
             mLoading = false;
             mSwipeRefreshLayout.setRefreshing(false);
             if (response.isEmpty()) {
@@ -86,7 +86,7 @@ public class GroupsActivity extends BaseActivity {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mSwipeRefreshLayout.setRefreshing(false);
             mLoading = false;
@@ -97,14 +97,14 @@ public class GroupsActivity extends BaseActivity {
 
     private final Callback<List<Group>> mMoreGroupsCallback = new EasyCallback<List<Group>>() {
         @Override
-        public void onResponse(@NonNull List<Group> response) {
+        public void success(@NonNull List<Group> response) {
             mLoading = false;
             mGroupAdapter.addGroups(response);
             mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mLoading = false;
         }
@@ -113,7 +113,7 @@ public class GroupsActivity extends BaseActivity {
     private final GroupAdapter.Listener mGroupAdapterListener = new GroupAdapter.Listener() {
         @Override
         public void onGroupClicked(Group group, GroupViewHolder groupViewHolder) {
-            NavigationManager.navigateToGroup(GroupsActivity.this, groupViewHolder.mImageView, group);
+            Navigator.navigateToGroup(GroupsActivity.this, groupViewHolder.mImageView, group);
         }
     };
 
@@ -123,7 +123,7 @@ public class GroupsActivity extends BaseActivity {
         setContentView(R.layout.activity_groups);
         ButterKnife.bind(this);
         mEventReceiver = new EventReceiver();
-        LabCoatApp.bus().register(mEventReceiver);
+        App.bus().register(mEventReceiver);
 
         mToolbar.setTitle(R.string.nav_groups);
         mToolbar.setNavigationIcon(R.drawable.ic_menu_24dp);
@@ -156,7 +156,7 @@ public class GroupsActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        LabCoatApp.bus().unregister(mEventReceiver);
+        App.bus().unregister(mEventReceiver);
     }
 
     private void load() {

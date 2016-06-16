@@ -1,10 +1,10 @@
 package com.commit451.gitlab.model.rss;
 
+import android.net.Uri;
+
 import org.parceler.Parcel;
 import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Root;
-
-import android.net.Uri;
 
 @Parcel
 @Root(strict = false)

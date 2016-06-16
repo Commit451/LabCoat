@@ -1,12 +1,14 @@
 package com.commit451.gitlab.model.api;
 
-import com.google.gson.annotations.SerializedName;
+import com.bluelinelabs.logansquare.annotation.JsonField;
+import com.bluelinelabs.logansquare.annotation.JsonObject;
 
 import org.parceler.Parcel;
 
 @Parcel
+@JsonObject
 public class UserLogin extends UserFull {
-    @SerializedName("private_token")
+    @JsonField(name = "private_token")
     String mPrivateToken;
 
     public UserLogin() {}

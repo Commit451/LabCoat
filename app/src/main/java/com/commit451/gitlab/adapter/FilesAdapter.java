@@ -34,9 +34,9 @@ public class FilesAdapter extends RecyclerView.Adapter<FileViewHolder> {
             int position = (int) v.getTag(R.id.list_position);
             RepositoryTreeObject treeItem = getValueAt(position);
 
-            if (treeItem.getType() == RepositoryTreeObject.Type.FOLDER) {
+            if (treeItem.getType().equals(RepositoryTreeObject.TYPE_FOLDER)) {
                 mListener.onFolderClicked(treeItem);
-            } else if (treeItem.getType() == RepositoryTreeObject.Type.FILE) {
+            } else if (treeItem.getType().equals(RepositoryTreeObject.TYPE_FILE)) {
                 mListener.onFileClicked(treeItem);
             }
         }

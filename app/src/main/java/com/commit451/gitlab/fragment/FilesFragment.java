@@ -15,18 +15,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.commit451.gitlab.LabCoatApp;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.adapter.BreadcrumbAdapter;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.gitlab.adapter.FilesAdapter;
-import com.commit451.gitlab.api.EasyCallback;
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryTreeObject;
-import com.commit451.gitlab.navigation.NavigationManager;
+import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.IntentUtil;
 import com.squareup.otto.Subscribe;
 
@@ -63,7 +63,7 @@ public class FilesFragment extends ButterKnifeFragment {
         }
 
         @Override
-        public void onResponse(@NonNull List<RepositoryTreeObject> response) {
+        public void success(@NonNull List<RepositoryTreeObject> response) {
             if (getView() == null) {
                 return;
             }
@@ -83,7 +83,7 @@ public class FilesFragment extends ButterKnifeFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             if (getView() == null) {
                 return;
@@ -106,7 +106,7 @@ public class FilesFragment extends ButterKnifeFragment {
         @Override
         public void onFileClicked(RepositoryTreeObject treeItem) {
             String path = mCurrentPath + treeItem.getName();
-            NavigationManager.navigateToFile(getActivity(), mProject.getId(), path, mBranchName);
+            Navigator.navigateToFile(getActivity(), mProject.getId(), path, mBranchName);
         }
 
         @Override
@@ -141,7 +141,7 @@ public class FilesFragment extends ButterKnifeFragment {
         super.onViewCreated(view, savedInstanceState);
 
         mEventReceiver = new EventReceiver();
-        LabCoatApp.bus().register(mEventReceiver);
+        App.bus().register(mEventReceiver);
 
         mFilesAdapter = new FilesAdapter(mFilesAdapterListener);
         mFilesListView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -171,7 +171,7 @@ public class FilesFragment extends ButterKnifeFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        LabCoatApp.bus().unregister(mEventReceiver);
+        App.bus().unregister(mEventReceiver);
     }
 
     @Override

@@ -12,10 +12,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.commit451.gitlab.LabCoatApp;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.MergeRequestSectionsPagerAdapter;
-import com.commit451.gitlab.api.EasyCallback;
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.MergeRequestChangedEvent;
 import com.commit451.gitlab.model.api.MergeRequest;
@@ -58,15 +58,15 @@ public class MergeRequestActivity extends BaseActivity {
 
     private final EasyCallback<MergeRequest> mMergeRequestCallback = new EasyCallback<MergeRequest>() {
         @Override
-        public void onResponse(@NonNull MergeRequest response) {
+        public void success(@NonNull MergeRequest response) {
             mProgress.setVisibility(View.GONE);
             Snackbar.make(mRoot, R.string.merge_request_accepted, Snackbar.LENGTH_LONG)
                     .show();
-            LabCoatApp.bus().post(new MergeRequestChangedEvent(response));
+            App.bus().post(new MergeRequestChangedEvent(response));
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mProgress.setVisibility(View.GONE);
             Snackbar.make(mRoot, R.string.unable_to_merge, Snackbar.LENGTH_LONG)

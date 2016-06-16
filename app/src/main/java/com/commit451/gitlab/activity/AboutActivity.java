@@ -19,10 +19,10 @@ import android.widget.TextView;
 
 import com.commit451.gitbal.Gimbal;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.api.EasyCallback;
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Contributor;
-import com.commit451.gitlab.navigation.NavigationManager;
+import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.transformation.CircleTransformation;
 import com.commit451.gitlab.util.ImageUtil;
 import com.commit451.gitlab.util.IntentUtil;
@@ -65,7 +65,7 @@ public class AboutActivity extends BaseActivity {
     @OnClick(R.id.sauce)
     void onSauceClick() {
         if (getString(R.string.url_gitlab).equals(GitLabClient.getAccount().getServerUrl().toString())) {
-            NavigationManager.navigateToProject(AboutActivity.this, REPO_ID);
+            Navigator.navigateToProject(AboutActivity.this, REPO_ID);
         } else {
             IntentUtil.openPage(AboutActivity.this, getString(R.string.source_url));
         }
@@ -93,13 +93,13 @@ public class AboutActivity extends BaseActivity {
 
     private Callback<List<Contributor>> mContributorResponseCallback = new EasyCallback<List<Contributor>>() {
         @Override
-        public void onResponse(@NonNull List<Contributor> response) {
+        public void success(@NonNull List<Contributor> response) {
             mProgress.setVisibility(View.GONE);
             addContributors(Contributor.groupContributors(response));
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mProgress.setVisibility(View.GONE);
             Snackbar.make(mRoot, R.string.failed_to_load_contributors, Snackbar.LENGTH_SHORT)
@@ -145,7 +145,6 @@ public class AboutActivity extends BaseActivity {
         PhysicsConfig config = new PhysicsConfig.Builder()
                 .setShapeType(PhysicsConfig.ShapeType.CIRCLE)
                 .setDensity(1.0f)
-                .setFriction(0.0f)
                 .setRestitution(0.0f)
                 .build();
         int x = 0;

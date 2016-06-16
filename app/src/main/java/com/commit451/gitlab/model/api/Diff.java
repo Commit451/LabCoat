@@ -1,26 +1,28 @@
 package com.commit451.gitlab.model.api;
 
-import com.google.gson.annotations.SerializedName;
+import com.bluelinelabs.logansquare.annotation.JsonField;
+import com.bluelinelabs.logansquare.annotation.JsonObject;
 
 import org.parceler.Parcel;
 
 @Parcel
+@JsonObject
 public class Diff {
-    @SerializedName("old_path")
+    @JsonField(name = "old_path")
     String mOldPath;
-    @SerializedName("new_path")
+    @JsonField(name = "new_path")
     String mNewPath;
-    @SerializedName("a_mode")
+    @JsonField(name = "a_mode")
     int mAMode;
-    @SerializedName("b_mode")
+    @JsonField(name = "b_mode")
     int mBMode;
-    @SerializedName("diff")
+    @JsonField(name = "diff")
     String mDiff;
-    @SerializedName("new_file")
+    @JsonField(name = "new_file")
     boolean mNewFile;
-    @SerializedName("renamed_file")
+    @JsonField(name = "renamed_file")
     boolean mRenamedFile;
-    @SerializedName("deleted_file")
+    @JsonField(name = "deleted_file")
     boolean mDeletedFile;
 
     public Diff() {}

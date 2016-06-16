@@ -5,7 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.viewHolder.LabelViewHolder;
+import com.commit451.gitlab.viewHolder.IssueLabelViewHolder;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,10 +13,10 @@ import java.util.Collection;
 /**
  * So many labels
  */
-public class IssueLabelsAdapter extends RecyclerView.Adapter<LabelViewHolder> {
+public class IssueLabelsAdapter extends RecyclerView.Adapter<IssueLabelViewHolder> {
 
     public interface Listener {
-        void onLabelClicked(String label, LabelViewHolder viewHolder);
+        void onLabelClicked(String label, IssueLabelViewHolder viewHolder);
     }
     private Listener mListener;
 
@@ -31,7 +31,7 @@ public class IssueLabelsAdapter extends RecyclerView.Adapter<LabelViewHolder> {
         @Override
         public void onClick(View v) {
             int position = (int) v.getTag(R.id.list_position);
-            LabelViewHolder holder = (LabelViewHolder) v.getTag(R.id.list_view_holder);
+            IssueLabelViewHolder holder = (IssueLabelViewHolder) v.getTag(R.id.list_view_holder);
             mListener.onLabelClicked(getEntry(position), holder);
         }
     };
@@ -49,14 +49,14 @@ public class IssueLabelsAdapter extends RecyclerView.Adapter<LabelViewHolder> {
     }
 
     @Override
-    public LabelViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        LabelViewHolder holder = LabelViewHolder.inflate(parent);
+    public IssueLabelViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        IssueLabelViewHolder holder = IssueLabelViewHolder.inflate(parent);
         holder.itemView.setOnClickListener(mOnItemClickListener);
         return holder;
     }
 
     @Override
-    public void onBindViewHolder(final LabelViewHolder holder, int position) {
+    public void onBindViewHolder(final IssueLabelViewHolder holder, int position) {
         holder.itemView.setTag(R.id.list_position, position);
         holder.itemView.setTag(R.id.list_view_holder, holder);
         holder.bind(getEntry(position));

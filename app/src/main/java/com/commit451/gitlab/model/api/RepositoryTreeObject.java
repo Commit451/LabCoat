@@ -1,21 +1,38 @@
 package com.commit451.gitlab.model.api;
 
 import android.net.Uri;
+import android.support.annotation.StringDef;
 
+import com.bluelinelabs.logansquare.annotation.JsonField;
+import com.bluelinelabs.logansquare.annotation.JsonObject;
 import com.commit451.gitlab.R;
-import com.google.gson.annotations.SerializedName;
 
 import org.parceler.Parcel;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 @Parcel
+@JsonObject
 public class RepositoryTreeObject {
-    @SerializedName("id")
+
+    public static final String TYPE_FOLDER = "tree";
+    public static final String TYPE_REPO = "submodule";
+    public static final String TYPE_FILE = "blob";
+
+    @StringDef({TYPE_FOLDER, TYPE_REPO, TYPE_FILE})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface Type {
+    }
+
+    @JsonField(name = "id")
     String mId;
-    @SerializedName("name")
+    @JsonField(name = "name")
     String mName;
-    @SerializedName("type")
-    Type mType;
-    @SerializedName("mode")
+    @JsonField(name = "type")
+    @Type
+    String mType;
+    @JsonField(name = "mode")
     String mMode;
 
     public RepositoryTreeObject() {}
@@ -28,7 +45,7 @@ public class RepositoryTreeObject {
         return mName;
     }
 
-    public Type getType() {
+    public @Type String getType() {
         return mType;
     }
 
@@ -41,11 +58,11 @@ public class RepositoryTreeObject {
             return R.drawable.ic_unknown_24dp;
         }
         switch (mType) {
-            case FILE:
+            case TYPE_FILE:
                 return R.drawable.ic_file_24dp;
-            case FOLDER:
+            case TYPE_FOLDER:
                 return R.drawable.ic_folder_24dp;
-            case REPO:
+            case TYPE_REPO:
                 return R.drawable.ic_repo_24dp;
         }
 
@@ -59,14 +76,5 @@ public class RepositoryTreeObject {
                 .appendEncodedPath(currentPath)
                 .appendPath(mName)
                 .build();
-    }
-
-    public enum Type {
-        @SerializedName("tree")
-        FOLDER,
-        @SerializedName("submodule")
-        REPO,
-        @SerializedName("blob")
-        FILE
     }
 }

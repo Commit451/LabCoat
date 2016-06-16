@@ -19,11 +19,11 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.commit451.gitlab.LabCoatApp;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.UsersAdapter;
 import com.commit451.gitlab.animation.HideRunnable;
-import com.commit451.gitlab.api.EasyCallback;
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.api.exception.HttpException;
 import com.commit451.gitlab.dialog.AccessDialog;
@@ -183,7 +183,7 @@ public class AddUserActivity extends MorphActivity {
 
     private final Callback<List<UserBasic>> mUserCallback = new EasyCallback<List<UserBasic>>() {
         @Override
-        public void onResponse(@NonNull List<UserBasic> response) {
+        public void success(@NonNull List<UserBasic> response) {
             mSwipeRefreshLayout.setRefreshing(false);
             mLoading = false;
             mAdapter.setData(response);
@@ -192,7 +192,7 @@ public class AddUserActivity extends MorphActivity {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mSwipeRefreshLayout.setRefreshing(false);
             mLoading = false;
@@ -203,7 +203,7 @@ public class AddUserActivity extends MorphActivity {
 
     private final Callback<List<UserBasic>> mMoreUsersCallback = new EasyCallback<List<UserBasic>>() {
         @Override
-        public void onResponse(@NonNull List<UserBasic> response) {
+        public void success(@NonNull List<UserBasic> response) {
             mLoading = false;
             mAdapter.setLoading(false);
             mAdapter.addData(response);
@@ -211,7 +211,7 @@ public class AddUserActivity extends MorphActivity {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mAdapter.setLoading(false);
         }
@@ -219,16 +219,16 @@ public class AddUserActivity extends MorphActivity {
 
     private final Callback<Member> mAddGroupMemeberCallback = new EasyCallback<Member>() {
         @Override
-        public void onResponse(@NonNull Member response) {
+        public void success(@NonNull Member response) {
             Snackbar.make(mRoot, R.string.user_added_successfully, Snackbar.LENGTH_SHORT)
                     .show();
             mAccessDialog.dismiss();
             dismiss();
-            LabCoatApp.bus().post(new MemberAddedEvent(response));
+            App.bus().post(new MemberAddedEvent(response));
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             if (t instanceof HttpException) {
                 //Conflict

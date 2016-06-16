@@ -43,7 +43,11 @@ public class BuildViewHolder extends RecyclerView.ViewHolder {
         if (finishedTime == null) {
             finishedTime = new Date();
         }
-        String timeTaken = DateUtils.getTimeTaken(build.getStartedAt(), finishedTime);
+        Date startedAt = build.getStartedAt();
+        if (startedAt == null) {
+            startedAt = new Date();
+        }
+        String timeTaken = DateUtils.getTimeTaken(startedAt, finishedTime);
         String durationStr = String.format(itemView.getResources().getString(R.string.build_duration), timeTaken);
         duration.setText(durationStr);
     }
