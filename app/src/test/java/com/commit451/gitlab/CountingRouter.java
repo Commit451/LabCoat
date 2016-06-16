@@ -5,11 +5,7 @@ import android.net.Uri;
 import com.commit451.gitlab.navigation.RoutingNavigator;
 
 /**
- * //TODO add description
- * <br>
- * Copyright 2016 <a href="http://www.ovenbits.com">Oven Bits</a>
- *
- * @author Jawn.
+ * Checks counting
  */
 public class CountingRouter implements RoutingNavigator {
 
@@ -17,6 +13,8 @@ public class CountingRouter implements RoutingNavigator {
     public int commitRouteCount = 0;
     public int mergeRequestRouteCount = 0;
     public int projectRouteCount = 0;
+    public int buildRouteCount = 0;
+    public int milestoneRouteCount;
     public int unknownRountCount = 0;
 
     @Override
@@ -37,6 +35,16 @@ public class CountingRouter implements RoutingNavigator {
     @Override
     public void onRouteToProject(String namespace, String projectId) {
         projectRouteCount++;
+    }
+
+    @Override
+    public void onRouteToBuild(String projectNamespace, String projectName, String buildNumber) {
+        buildRouteCount++;
+    }
+
+    @Override
+    public void onRouteToMilestone(String projectNamespace, String projectName, String milestoneNumber) {
+        milestoneRouteCount++;
     }
 
     @Override

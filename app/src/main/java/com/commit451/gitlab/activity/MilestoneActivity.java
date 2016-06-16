@@ -15,17 +15,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.commit451.gitlab.LabCoatApp;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.gitlab.adapter.MilestoneIssuesAdapter;
-import com.commit451.gitlab.api.EasyCallback;
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.MilestoneChangedEvent;
 import com.commit451.gitlab.model.api.Issue;
 import com.commit451.gitlab.model.api.Milestone;
 import com.commit451.gitlab.model.api.Project;
-import com.commit451.gitlab.navigation.NavigationManager;
+import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.PaginationUtil;
 import com.squareup.otto.Subscribe;
 
@@ -77,17 +77,17 @@ public class MilestoneActivity extends BaseActivity {
 
     @OnClick(R.id.add)
     void onAddClick() {
-        NavigationManager.navigateToAddIssue(MilestoneActivity.this, null, mProject);
+        Navigator.navigateToAddIssue(MilestoneActivity.this, null, mProject);
     }
 
     @OnClick(R.id.edit)
     void onEditClicked(View fab) {
-        NavigationManager.navigateToEditMilestone(MilestoneActivity.this, fab, mProject, mMilestone);
+        Navigator.navigateToEditMilestone(MilestoneActivity.this, fab, mProject, mMilestone);
     }
 
     private final Callback<List<Issue>> mIssuesCallback = new EasyCallback<List<Issue>>() {
         @Override
-        public void onResponse(@NonNull List<Issue> response) {
+        public void success(@NonNull List<Issue> response) {
             mSwipeRefreshLayout.setRefreshing(false);
             mLoading = false;
 
@@ -104,7 +104,7 @@ public class MilestoneActivity extends BaseActivity {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mLoading = false;
             mSwipeRefreshLayout.setRefreshing(false);
@@ -116,14 +116,14 @@ public class MilestoneActivity extends BaseActivity {
 
     private final Callback<List<Issue>> mMoreIssuesCallback = new EasyCallback<List<Issue>>() {
         @Override
-        public void onResponse(@NonNull List<Issue> response) {
+        public void success(@NonNull List<Issue> response) {
             mLoading = false;
             mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
             mMilestoneIssuesAdapter.addIssues(response);
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mLoading = false;
         }
@@ -131,15 +131,15 @@ public class MilestoneActivity extends BaseActivity {
 
     private final Callback<Milestone> mOpenCloseCallback = new EasyCallback<Milestone>() {
         @Override
-        public void onResponse(@NonNull Milestone response) {
+        public void success(@NonNull Milestone response) {
             mProgress.setVisibility(View.GONE);
             mMilestone = response;
-            LabCoatApp.bus().post(new MilestoneChangedEvent(mMilestone));
+            App.bus().post(new MilestoneChangedEvent(mMilestone));
             setOpenCloseMenuStatus();
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mProgress.setVisibility(View.GONE);
             Snackbar.make(mRoot, getString(R.string.failed_to_create_milestone), Snackbar.LENGTH_SHORT)
@@ -166,7 +166,7 @@ public class MilestoneActivity extends BaseActivity {
         setContentView(R.layout.activity_milestone);
         ButterKnife.bind(this);
         mEventReceiver = new EventReceiver();
-        LabCoatApp.bus().register(mEventReceiver);
+        App.bus().register(mEventReceiver);
 
         mProject = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_PROJECT));
         mMilestone = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_MILESTONE));
@@ -195,7 +195,7 @@ public class MilestoneActivity extends BaseActivity {
         mMilestoneIssuesAdapter = new MilestoneIssuesAdapter(new MilestoneIssuesAdapter.Listener() {
             @Override
             public void onIssueClicked(Issue issue) {
-                NavigationManager.navigateToIssue(MilestoneActivity.this, mProject, issue);
+                Navigator.navigateToIssue(MilestoneActivity.this, mProject, issue);
             }
         });
         bind(mMilestone);
@@ -217,7 +217,7 @@ public class MilestoneActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        LabCoatApp.bus().unregister(mEventReceiver);
+        App.bus().unregister(mEventReceiver);
     }
 
     private void bind(Milestone milestone) {

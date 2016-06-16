@@ -20,6 +20,7 @@ import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryCommit;
 import com.commit451.gitlab.model.api.RepositoryFile;
 import com.commit451.gitlab.model.api.RepositoryTreeObject;
+import com.commit451.gitlab.model.api.Snippet;
 import com.commit451.gitlab.model.api.User;
 import com.commit451.gitlab.model.api.UserBasic;
 import com.commit451.gitlab.model.api.UserFull;
@@ -180,10 +181,15 @@ public interface GitLab {
     /* --- MILESTONES --- */
 
     @GET(API_VERSION + "/projects/{id}/milestones")
-    Call<List<Milestone>> getMilestones(@Path("id") long projectId);
+    Call<List<Milestone>> getMilestones(@Path("id") long projectId,
+                                        @Query("state") String state);
 
     @GET
     Call<List<Milestone>> getMilestones(@Url String url);
+
+    @GET(API_VERSION + "/projects/{id}/issues")
+    Call<List<Milestone>> getMilestonesByIid(@Path("id") long projectId,
+                                             @Query("iid") String internalMilestoneId);
 
     @GET(API_VERSION + "/projects/{id}/milestones/{milestone_id}/issues")
     Call<List<Issue>> getMilestoneIssues(@Path("id") long projectId,
@@ -222,6 +228,10 @@ public interface GitLab {
     Call<List<MergeRequest>> getMergeRequests(@Url String url,
                                               @Query("state") String state);
 
+    @GET(API_VERSION + "/projects/{id}/merge_requests")
+    Call<List<MergeRequest>> getMergeRequestsByIid(@Path("id") long projectId,
+                                                   @Query("iid") String internalMergeRequestId);
+
     @GET(API_VERSION + "/projects/{id}/merge_request/{merge_request_id}")
     Call<MergeRequest> getMergeRequest(@Path("id") long projectId,
                                        @Path("merge_request_id") long mergeRequestId);
@@ -258,8 +268,7 @@ public interface GitLab {
                                 @Query("state") String state);
 
     @GET
-    Call<List<Issue>> getIssues(@Url String url,
-                                @Query("state") String state);
+    Call<List<Issue>> getIssues(@Url String url);
 
     @GET(API_VERSION + "/projects/{id}/issues/{issue_id}")
     Call<Issue> getIssue(@Path("id") long projectId,
@@ -267,7 +276,7 @@ public interface GitLab {
 
     @GET(API_VERSION + "/projects/{id}/issues")
     Call<List<Issue>> getIssuesByIid(@Path("id") long projectId,
-                         @Query("iid") String internalIssueId);
+                                     @Query("iid") String internalIssueId);
 
     @FormUrlEncoded
     @POST(API_VERSION + "/projects/{id}/issues")
@@ -395,4 +404,11 @@ public interface GitLab {
     @GET(API_VERSION + "/projects/{id}/builds/{build_id}/artifacts")
     Call<List<Artifact>> getBuildArtifacts(@Path("id") long projectId,
                                            @Path("build_id") long buildId);
+
+    /* --- SNIPPETS --- */
+    @GET(API_VERSION + "/projects/{id}/snippets")
+    Call<List<Snippet>> getSnippets(@Path("id") long projectId);
+
+    @GET
+    Call<List<Snippet>> getSnippets(@Url String url);
 }

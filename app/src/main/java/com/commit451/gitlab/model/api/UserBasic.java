@@ -2,20 +2,35 @@ package com.commit451.gitlab.model.api;
 
 import android.net.Uri;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringDef;
 
-import com.google.gson.annotations.SerializedName;
+import com.bluelinelabs.logansquare.annotation.JsonField;
+import com.bluelinelabs.logansquare.annotation.JsonObject;
 
 import org.parceler.Parcel;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 @Parcel
+@JsonObject
 public class UserBasic extends UserSafe {
-    @SerializedName("id")
+
+    public static final String STATE_ACTIVE = "active";
+    public static final String STATE_BLOCKED = "blocked";
+
+    @StringDef({STATE_ACTIVE, STATE_BLOCKED})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface State {}
+
+    @JsonField(name = "id")
     long mId;
-    @SerializedName("state")
-    State mState;
-    @SerializedName("avatar_url")
+    @JsonField(name = "state")
+    @State
+    String mState;
+    @JsonField(name = "avatar_url")
     Uri mAvatarUrl;
-    @SerializedName("web_url")
+    @JsonField(name = "web_url")
     Uri mWebUrl;
 
     public UserBasic() {}
@@ -24,7 +39,7 @@ public class UserBasic extends UserSafe {
         return mId;
     }
 
-    public State getState() {
+    public @State String getState() {
         return mState;
     }
 
@@ -57,12 +72,5 @@ public class UserBasic extends UserSafe {
     @Override
     public int hashCode() {
         return (int) (mId ^ (mId >>> 32));
-    }
-
-    public enum State {
-        @SerializedName("active")
-        ACTIVE,
-        @SerializedName("blocked")
-        BLOCKED
     }
 }

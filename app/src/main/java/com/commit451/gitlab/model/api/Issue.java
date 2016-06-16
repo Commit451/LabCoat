@@ -1,11 +1,12 @@
 package com.commit451.gitlab.model.api;
 
-import com.google.gson.annotations.SerializedName;
-
-import org.parceler.Parcel;
-
 import android.net.Uri;
 import android.support.annotation.StringDef;
+
+import com.bluelinelabs.logansquare.annotation.JsonField;
+import com.bluelinelabs.logansquare.annotation.JsonObject;
+
+import org.parceler.Parcel;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -13,40 +14,53 @@ import java.util.Date;
 import java.util.List;
 
 @Parcel
+@JsonObject
 public class Issue {
     public static final String STATE_REOPEN = "reopen";
     public static final String STATE_CLOSE = "close";
 
     @StringDef({STATE_REOPEN, STATE_CLOSE})
     @Retention(RetentionPolicy.SOURCE)
-    public @interface EditState {}
+    public @interface EditState {
+    }
 
-    @SerializedName("id")
+    public static final String STATE_OPENED = "opened";
+    public static final String STATE_REOPENED = "reopened";
+    public static final String STATE_CLOSED = "closed";
+
+    @StringDef({STATE_OPENED, STATE_REOPENED, STATE_CLOSED})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface State {
+    }
+
+    @JsonField(name = "id")
     long mId;
-    @SerializedName("iid")
+    @JsonField(name = "iid")
     long mIid;
-    @SerializedName("project_id")
+    @JsonField(name = "project_id")
     long mProjectId;
-    @SerializedName("title")
+    @JsonField(name = "title")
     String mTitle;
-    @SerializedName("description")
+    @JsonField(name = "description")
     String mDescription;
-    @SerializedName("state")
-    State mState;
-    @SerializedName("created_at")
+    @JsonField(name = "state")
+    @State
+    String mState;
+    @JsonField(name = "created_at")
     Date mCreatedAt;
-    @SerializedName("updated_at")
+    @JsonField(name = "updated_at")
     Date mUpdatedAt;
-    @SerializedName("labels")
+    @JsonField(name = "labels")
     List<String> mLabels;
-    @SerializedName("milestone")
+    @JsonField(name = "milestone")
     Milestone mMilestone;
-    @SerializedName("assignee")
+    @JsonField(name = "assignee")
     UserBasic mAssignee;
-    @SerializedName("author")
+    @JsonField(name = "author")
     UserBasic mAuthor;
 
-    public Issue() {}
+    public Issue() {
+    }
 
     public long getId() {
         return mId;
@@ -68,7 +82,7 @@ public class Issue {
         return mDescription;
     }
 
-    public State getState() {
+    public @State String getState() {
         return mState;
     }
 
@@ -116,14 +130,5 @@ public class Issue {
     @Override
     public int hashCode() {
         return (int) (mId ^ (mId >>> 32));
-    }
-
-    public enum State {
-        @SerializedName("opened")
-        OPENED,
-        @SerializedName("reopened")
-        REOPENED,
-        @SerializedName("closed")
-        CLOSED
     }
 }

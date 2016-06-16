@@ -22,7 +22,7 @@ import android.webkit.MimeTypeMap;
 import android.webkit.WebView;
 
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.api.EasyCallback;
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.RepositoryFile;
 import com.commit451.gitlab.observable.DecodeObservableFactory;
@@ -80,13 +80,13 @@ public class FileActivity extends BaseActivity {
 
     private final Callback<RepositoryFile> mRepositoryFileCallback = new EasyCallback<RepositoryFile>() {
         @Override
-        public void onResponse(@NonNull RepositoryFile response) {
+        public void success(@NonNull RepositoryFile response) {
             mProgressView.setVisibility(View.GONE);
             bindFile(response);
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mProgressView.setVisibility(View.GONE);
             Snackbar.make(mRoot, R.string.file_load_error, Snackbar.LENGTH_SHORT)

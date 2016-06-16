@@ -3,23 +3,25 @@ package com.commit451.gitlab.model.api;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 
-import com.google.gson.annotations.SerializedName;
+import com.bluelinelabs.logansquare.annotation.JsonField;
+import com.bluelinelabs.logansquare.annotation.JsonObject;
 
 import org.parceler.Parcel;
 
 @Parcel
+@JsonObject
 public class Group {
-    @SerializedName("id")
+    @JsonField(name = "id")
     long mId;
-    @SerializedName("name")
+    @JsonField(name = "name")
     String mName;
-    @SerializedName("path")
+    @JsonField(name = "path")
     String mPath;
-    @SerializedName("description")
+    @JsonField(name = "description")
     String mDescription;
-    @SerializedName("avatar_url")
+    @JsonField(name = "avatar_url")
     Uri mAvatarUrl;
-    @SerializedName("web_url")
+    @JsonField(name = "web_url")
     Uri mWebUrl;
 
     public Group() {}

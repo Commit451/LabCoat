@@ -17,10 +17,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.commit451.gitlab.LabCoatApp;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.IssueDetailsAdapter;
-import com.commit451.gitlab.api.EasyCallback;
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.IssueChangedEvent;
 import com.commit451.gitlab.event.IssueReloadEvent;
@@ -28,7 +28,7 @@ import com.commit451.gitlab.model.api.FileUploadResponse;
 import com.commit451.gitlab.model.api.Issue;
 import com.commit451.gitlab.model.api.Note;
 import com.commit451.gitlab.model.api.Project;
-import com.commit451.gitlab.navigation.NavigationManager;
+import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.IntentUtil;
 import com.commit451.gitlab.util.PaginationUtil;
 import com.commit451.gitlab.view.SendMessageView;
@@ -94,7 +94,7 @@ public class IssueActivity extends BaseActivity {
 
     @OnClick(R.id.fab_edit_issue)
     public void onEditIssueClick(View fab) {
-        NavigationManager.navigateToEditIssue(IssueActivity.this, fab, mProject, mIssue);
+        Navigator.navigateToEditIssue(IssueActivity.this, fab, mProject, mIssue);
     }
 
     private MenuItem mOpenCloseMenuItem;
@@ -140,13 +140,13 @@ public class IssueActivity extends BaseActivity {
 
     private Callback<Project> mProjectCallback = new EasyCallback<Project>() {
         @Override
-        public void onResponse(@NonNull Project response) {
+        public void success(@NonNull Project response) {
             mProject = response;
             GitLabClient.instance().getIssuesByIid(mProject.getId(), mIssueIid).enqueue(mIssueCallback);
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mSwipeRefreshLayout.setRefreshing(false);
             Snackbar.make(mRoot, getString(R.string.failed_to_load), Snackbar.LENGTH_SHORT)
@@ -157,7 +157,7 @@ public class IssueActivity extends BaseActivity {
     private Callback<List<Issue>> mIssueCallback = new EasyCallback<List<Issue>>() {
 
         @Override
-        public void onResponse(@NonNull List<Issue> response) {
+        public void success(@NonNull List<Issue> response) {
             if (response.isEmpty()) {
                 mSwipeRefreshLayout.setRefreshing(false);
                 Snackbar.make(mRoot, getString(R.string.failed_to_load), Snackbar.LENGTH_SHORT)
@@ -173,7 +173,7 @@ public class IssueActivity extends BaseActivity {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mSwipeRefreshLayout.setRefreshing(false);
             Snackbar.make(mRoot, getString(R.string.failed_to_load), Snackbar.LENGTH_SHORT)
@@ -184,7 +184,7 @@ public class IssueActivity extends BaseActivity {
     private Callback<List<Note>> mNotesCallback = new EasyCallback<List<Note>>() {
 
         @Override
-        public void onResponse(@NonNull List<Note> response) {
+        public void success(@NonNull List<Note> response) {
             mLoading = false;
             mSwipeRefreshLayout.setRefreshing(false);
             mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
@@ -192,7 +192,7 @@ public class IssueActivity extends BaseActivity {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             mLoading = false;
             Timber.e(t, null);
             mSwipeRefreshLayout.setRefreshing(false);
@@ -204,7 +204,7 @@ public class IssueActivity extends BaseActivity {
     private Callback<List<Note>> mMoreNotesCallback = new EasyCallback<List<Note>>() {
 
         @Override
-        public void onResponse(@NonNull List<Note> response) {
+        public void success(@NonNull List<Note> response) {
             mLoading = false;
             mIssueDetailsAdapter.setLoading(false);
             mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
@@ -212,7 +212,7 @@ public class IssueActivity extends BaseActivity {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             mLoading = false;
             Timber.e(t, null);
             mIssueDetailsAdapter.setLoading(false);
@@ -221,17 +221,17 @@ public class IssueActivity extends BaseActivity {
 
     private final Callback<Issue> mOpenCloseCallback = new EasyCallback<Issue>() {
         @Override
-        public void onResponse(@NonNull Issue response) {
+        public void success(@NonNull Issue response) {
             mProgress.setVisibility(View.GONE);
             mIssue = response;
-            LabCoatApp.bus().post(new IssueChangedEvent(mIssue));
-            LabCoatApp.bus().post(new IssueReloadEvent());
+            App.bus().post(new IssueChangedEvent(mIssue));
+            App.bus().post(new IssueReloadEvent());
             setOpenCloseMenuStatus();
             loadNotes();
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mProgress.setVisibility(View.GONE);
             Snackbar.make(mRoot, getString(R.string.error_changing_issue), Snackbar.LENGTH_SHORT)
@@ -242,14 +242,14 @@ public class IssueActivity extends BaseActivity {
     private Callback<Note> mPostNoteCallback = new EasyCallback<Note>() {
 
         @Override
-        public void onResponse(@NonNull Note response) {
+        public void success(@NonNull Note response) {
             mProgress.setVisibility(View.GONE);
             mIssueDetailsAdapter.addNote(response);
             mNotesRecyclerView.smoothScrollToPosition(IssueDetailsAdapter.getHeaderCount());
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mProgress.setVisibility(View.GONE);
             Snackbar.make(mRoot, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
@@ -259,13 +259,13 @@ public class IssueActivity extends BaseActivity {
 
     private Callback<FileUploadResponse> mUploadImageCallback = new EasyCallback<FileUploadResponse>() {
         @Override
-        public void onResponse(@NonNull FileUploadResponse response) {
+        public void success(@NonNull FileUploadResponse response) {
             mProgress.setVisibility(View.GONE);
             mSendMessageView.appendText(response.getMarkdown());
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mProgress.setVisibility(View.GONE);
             Snackbar.make(mRoot, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
@@ -280,7 +280,7 @@ public class IssueActivity extends BaseActivity {
         ButterKnife.bind(this);
         mTeleprinter = new Teleprinter(this);
         mEventReceiver = new EventReceiver();
-        LabCoatApp.bus().register(mEventReceiver);
+        App.bus().register(mEventReceiver);
 
         mToolbar.setNavigationIcon(R.drawable.ic_back_24dp);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -305,7 +305,7 @@ public class IssueActivity extends BaseActivity {
 
             @Override
             public void onGalleryClicked() {
-                NavigationManager.navigateToChoosePhoto(IssueActivity.this, REQUEST_IMAGE);
+                Navigator.navigateToChoosePhoto(IssueActivity.this, REQUEST_IMAGE);
             }
 
             @Override
@@ -370,7 +370,7 @@ public class IssueActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        LabCoatApp.bus().unregister(mEventReceiver);
+        App.bus().unregister(mEventReceiver);
     }
 
     private void bindProject() {
@@ -421,7 +421,7 @@ public class IssueActivity extends BaseActivity {
 
     private void closeOrOpenIssue() {
         mProgress.setVisibility(View.VISIBLE);
-        if (mIssue.getState() == Issue.State.CLOSED) {
+        if (mIssue.getState().equals(Issue.STATE_CLOSED)) {
             GitLabClient.instance().updateIssueStatus(mProject.getId(), mIssue.getId(), Issue.STATE_REOPEN)
                     .enqueue(mOpenCloseCallback);
         } else {
@@ -431,7 +431,7 @@ public class IssueActivity extends BaseActivity {
     }
 
     private void setOpenCloseMenuStatus() {
-        mOpenCloseMenuItem.setTitle(mIssue.getState() == Issue.State.CLOSED ? R.string.reopen : R.string.close);
+        mOpenCloseMenuItem.setTitle(mIssue.getState().equals(Issue.STATE_CLOSED) ? R.string.reopen : R.string.close);
     }
 
     private class EventReceiver {

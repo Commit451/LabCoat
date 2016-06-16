@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.View;
 
-import com.commit451.gitlab.LabCoatApp;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.event.ReloadDataEvent;
 import com.squareup.otto.Subscribe;
 
@@ -18,13 +18,13 @@ public class BaseFragment extends Fragment{
         super.onViewCreated(view, savedInstanceState);
 
         mBaseEventReceiever = new EventReceiver();
-        LabCoatApp.bus().register(mBaseEventReceiever);
+        App.bus().register(mBaseEventReceiever);
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        LabCoatApp.bus().unregister(mBaseEventReceiever);
+        App.bus().unregister(mBaseEventReceiever);
     }
 
     protected void loadData() {

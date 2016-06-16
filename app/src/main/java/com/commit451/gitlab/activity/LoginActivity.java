@@ -26,7 +26,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.commit451.gitlab.LabCoatApp;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.data.Prefs;
@@ -40,7 +40,7 @@ import com.commit451.gitlab.ssl.CustomHostnameVerifier;
 import com.commit451.gitlab.ssl.CustomKeyManager;
 import com.commit451.gitlab.ssl.X509CertificateException;
 import com.commit451.gitlab.ssl.X509Util;
-import com.commit451.gitlab.navigation.NavigationManager;
+import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.teleprinter.Teleprinter;
 
 import java.net.ConnectException;
@@ -291,10 +291,10 @@ public class LoginActivity extends BaseActivity {
             mAccount.setLastUsed(new Date());
             Prefs.addAccount(LoginActivity.this, mAccount);
             GitLabClient.setAccount(mAccount);
-            LabCoatApp.bus().post(new LoginEvent(mAccount));
+            App.bus().post(new LoginEvent(mAccount));
             //This is mostly for if projects already exists, then we will reload the data
-            LabCoatApp.bus().post(new ReloadDataEvent());
-            NavigationManager.navigateToStartingActivity(LoginActivity.this);
+            App.bus().post(new ReloadDataEvent());
+            Navigator.navigateToStartingActivity(LoginActivity.this);
             finish();
         }
 
@@ -361,9 +361,9 @@ public class LoginActivity extends BaseActivity {
 
     private void connectByAuth() {
         if (mUserInput.getText().toString().contains("@")) {
-            GitLabClient.instance(mAccount).loginWithEmail(mUserInput.getText().toString(), mPasswordInput.getText().toString()).enqueue(mLoginCallback);
+            GitLabClient.create(mAccount).loginWithEmail(mUserInput.getText().toString(), mPasswordInput.getText().toString()).enqueue(mLoginCallback);
         } else {
-            GitLabClient.instance(mAccount).loginWithUsername(mUserInput.getText().toString(), mPasswordInput.getText().toString()).enqueue(mLoginCallback);
+            GitLabClient.create(mAccount).loginWithUsername(mUserInput.getText().toString(), mPasswordInput.getText().toString()).enqueue(mLoginCallback);
         }
     }
 
@@ -373,7 +373,7 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void loadUser() {
-        GitLabClient.instance(mAccount).getThisUser().enqueue(mTestUserCallback);
+        GitLabClient.create(mAccount).getThisUser().enqueue(mTestUserCallback);
     }
 
     private void handleConnectionError(Throwable t) {

@@ -11,16 +11,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.commit451.gitlab.LabCoatApp;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.GroupMembersAdapter;
-import com.commit451.gitlab.api.EasyCallback;
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.dialog.AccessDialog;
 import com.commit451.gitlab.event.MemberAddedEvent;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.model.api.Member;
-import com.commit451.gitlab.navigation.NavigationManager;
+import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.viewHolder.ProjectMemberViewHolder;
 import com.squareup.otto.Subscribe;
 
@@ -65,7 +65,7 @@ public class GroupMembersFragment extends ButterKnifeFragment {
 
     private final EasyCallback<List<Member>> mGroupMembersCallback = new EasyCallback<List<Member>>() {
         @Override
-        public void onResponse(@NonNull List<Member> response) {
+        public void success(@NonNull List<Member> response) {
             if (getView() == null) {
                 return;
             }
@@ -79,7 +79,7 @@ public class GroupMembersFragment extends ButterKnifeFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             if (getView() == null) {
                 return;
@@ -94,7 +94,7 @@ public class GroupMembersFragment extends ButterKnifeFragment {
 
     private final EasyCallback<Void> mRemoveMemberCallback = new EasyCallback<Void>() {
         @Override
-        public void onResponse(@NonNull Void response) {
+        public void success(@NonNull Void response) {
             if (getView() == null) {
                 return;
             }
@@ -102,7 +102,7 @@ public class GroupMembersFragment extends ButterKnifeFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             if (getView() == null) {
                 return;
@@ -115,7 +115,7 @@ public class GroupMembersFragment extends ButterKnifeFragment {
     private final GroupMembersAdapter.Listener mListener = new GroupMembersAdapter.Listener() {
         @Override
         public void onUserClicked(Member member, ProjectMemberViewHolder holder) {
-            NavigationManager.navigateToUser(getActivity(), holder.mImageView, member);
+            Navigator.navigateToUser(getActivity(), holder.mImageView, member);
         }
 
         @Override
@@ -148,7 +148,7 @@ public class GroupMembersFragment extends ButterKnifeFragment {
         super.onViewCreated(view, savedInstanceState);
 
         mEventReceiver = new EventReceiver();
-        LabCoatApp.bus().register(mEventReceiver);
+        App.bus().register(mEventReceiver);
 
         mGroupMembersAdapter = new GroupMembersAdapter(mListener);
         mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
@@ -167,12 +167,12 @@ public class GroupMembersFragment extends ButterKnifeFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        LabCoatApp.bus().unregister(mEventReceiver);
+        App.bus().unregister(mEventReceiver);
     }
 
     @OnClick(R.id.add_user_button)
     public void onAddUserClick(View fab) {
-        NavigationManager.navigateToAddGroupMember(getActivity(), fab, mGroup);
+        Navigator.navigateToAddGroupMember(getActivity(), fab, mGroup);
     }
 
     public void loadData() {

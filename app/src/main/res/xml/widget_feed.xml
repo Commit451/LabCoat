@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appwidget-provider
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="256dp"
+    android:minHeight="128dp"
+    android:updatePeriodMillis="5400000"
+    android:previewImage="@mipmap/ic_launcher"
+    android:initialLayout="@layout/widget_layout_entry"
+    android:resizeMode="horizontal|vertical"
+    android:configure="com.commit451.gitlab.widget.FeedWidgetConfigureActivity"
+    android:widgetCategory="home_screen"/>

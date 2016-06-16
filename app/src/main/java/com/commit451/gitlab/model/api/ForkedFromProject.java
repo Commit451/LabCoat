@@ -1,20 +1,22 @@
 package com.commit451.gitlab.model.api;
 
-import com.google.gson.annotations.SerializedName;
+import com.bluelinelabs.logansquare.annotation.JsonField;
+import com.bluelinelabs.logansquare.annotation.JsonObject;
 
 import org.parceler.Parcel;
 
 @Parcel
+@JsonObject
 public class ForkedFromProject {
-    @SerializedName("id")
+    @JsonField(name = "id")
     long mId;
-    @SerializedName("name")
+    @JsonField(name = "name")
     String mName;
-    @SerializedName("name_with_namespace")
+    @JsonField(name = "name_with_namespace")
     String mNameWithNamespace;
-    @SerializedName("path")
+    @JsonField(name = "path")
     String mPath;
-    @SerializedName("path_with_namespace")
+    @JsonField(name = "path_with_namespace")
     String mPathWithNamespace;
 
     public ForkedFromProject() {}

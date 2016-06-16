@@ -15,12 +15,12 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.commit451.gitlab.LabCoatApp;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.gitlab.adapter.IssuesAdapter;
-import com.commit451.gitlab.api.EasyCallback;
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.IssueChangedEvent;
 import com.commit451.gitlab.event.IssueCreatedEvent;
@@ -28,7 +28,7 @@ import com.commit451.gitlab.event.IssueReloadEvent;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Issue;
 import com.commit451.gitlab.model.api.Project;
-import com.commit451.gitlab.navigation.NavigationManager;
+import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.PaginationUtil;
 import com.squareup.otto.Subscribe;
 
@@ -82,7 +82,7 @@ public class IssuesFragment extends ButterKnifeFragment {
         @Override
         public void onIssueClicked(Issue issue) {
             if (mProject != null) {
-                NavigationManager.navigateToIssue(getActivity(), mProject, issue);
+                Navigator.navigateToIssue(getActivity(), mProject, issue);
             } else {
                 Snackbar.make(mRoot, getString(R.string.wait_for_project_to_load), Snackbar.LENGTH_SHORT)
                         .show();
@@ -104,7 +104,7 @@ public class IssuesFragment extends ButterKnifeFragment {
 
     private final EasyCallback<List<Issue>> mIssuesCallback = new EasyCallback<List<Issue>>() {
         @Override
-        public void onResponse(@NonNull List<Issue> response) {
+        public void success(@NonNull List<Issue> response) {
             mLoading = false;
             if (getView() == null) {
                 return;
@@ -120,7 +120,7 @@ public class IssuesFragment extends ButterKnifeFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             mLoading = false;
             Timber.e(t, null);
             if (getView() == null) {
@@ -136,7 +136,7 @@ public class IssuesFragment extends ButterKnifeFragment {
 
     private final EasyCallback<List<Issue>> mMoreIssuesCallback = new EasyCallback<List<Issue>>() {
         @Override
-        public void onResponse(@NonNull List<Issue> response) {
+        public void success(@NonNull List<Issue> response) {
             mLoading = false;
             mIssuesAdapter.setLoading(false);
             mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
@@ -144,7 +144,7 @@ public class IssuesFragment extends ButterKnifeFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mLoading = false;
             mIssuesAdapter.setLoading(false);
@@ -168,7 +168,7 @@ public class IssuesFragment extends ButterKnifeFragment {
         super.onViewCreated(view, savedInstanceState);
 
         mEventReceiver = new EventReceiver();
-        LabCoatApp.bus().register(mEventReceiver);
+        App.bus().register(mEventReceiver);
 
         mIssuesAdapter = new IssuesAdapter(mIssuesAdapterListener);
         mIssuesLayoutManager = new LinearLayoutManager(getActivity());
@@ -198,13 +198,13 @@ public class IssuesFragment extends ButterKnifeFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        LabCoatApp.bus().unregister(mEventReceiver);
+        App.bus().unregister(mEventReceiver);
     }
 
     @OnClick(R.id.add_issue_button)
     public void onAddIssueClick(View fab) {
         if (mProject != null) {
-            NavigationManager.navigateToAddIssue(getActivity(), fab, mProject);
+            Navigator.navigateToAddIssue(getActivity(), fab, mProject);
         } else {
             Snackbar.make(mRoot, getString(R.string.wait_for_project_to_load), Snackbar.LENGTH_SHORT)
                     .show();
@@ -247,7 +247,7 @@ public class IssuesFragment extends ButterKnifeFragment {
         mLoading = true;
 
         Timber.d("loadMore called for " + mNextPageUrl);
-        GitLabClient.instance().getIssues(mNextPageUrl.toString(), mState).enqueue(mMoreIssuesCallback);
+        GitLabClient.instance().getIssues(mNextPageUrl.toString()).enqueue(mMoreIssuesCallback);
     }
 
     private class EventReceiver {

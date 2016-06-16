@@ -1,30 +1,45 @@
 package com.commit451.gitlab.model.api;
 
-import com.google.gson.annotations.SerializedName;
+import android.support.annotation.StringDef;
+
+import com.bluelinelabs.logansquare.annotation.JsonField;
+import com.bluelinelabs.logansquare.annotation.JsonObject;
 
 import org.parceler.Parcel;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.Date;
 
 @Parcel
+@JsonObject
 public class Note {
-    @SerializedName("id")
+
+    public static final String TYPE_ISSUE = "Issue";
+    public static final String TYPE_MERGE_REQUEST = "MergeRequest";
+
+    @StringDef({TYPE_ISSUE, TYPE_MERGE_REQUEST})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface Type {}
+
+    @JsonField(name = "id")
     long mId;
-    @SerializedName("body")
+    @JsonField(name = "body")
     String mBody;
-    @SerializedName("author")
+    @JsonField(name = "author")
     UserBasic mAuthor;
-    @SerializedName("created_at")
+    @JsonField(name = "created_at")
     Date mCreatedAt;
-    @SerializedName("system")
+    @JsonField(name = "system")
     boolean mSystem;
-    @SerializedName("noteable_id")
+    @JsonField(name = "noteable_id")
     long mNoteableId;
-    @SerializedName("noteable_type")
-    Type mNoteableType;
-    @SerializedName("upvote")
+    @JsonField(name = "noteable_type")
+    @Type
+    String mNoteableType;
+    @JsonField(name = "upvote")
     boolean mUpvote;
-    @SerializedName("downvote")
+    @JsonField(name = "downvote")
     boolean mDownvote;
 
     public Note() {}
@@ -53,7 +68,7 @@ public class Note {
         return mNoteableId;
     }
 
-    public Type getNoteableType() {
+    public @Type String getNoteableType() {
         return mNoteableType;
     }
 
@@ -78,12 +93,5 @@ public class Note {
     @Override
     public int hashCode() {
         return (int) (mId ^ (mId >>> 32));
-    }
-
-    public enum Type {
-        @SerializedName("Issue")
-        ISSUE,
-        @SerializedName("MergeRequest")
-        MERGE_REQUEST
     }
 }

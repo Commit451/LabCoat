@@ -37,6 +37,7 @@
     <string name="title_merge_requests">Merge Requests</string>
     <string name="title_members">Members</string>
     <string name="title_builds">Builds</string>
+    <string name="title_snippets">Snippets</string>
 
     <string-array name="main_tabs">
         <item>@string/title_project</item>
@@ -48,6 +49,7 @@
         <item>@string/title_issues</item>
         <item>@string/title_merge_requests</item>
         <item>@string/title_members</item>
+        <item>@string/title_snippets</item>
     </string-array>
 
     <string name="title_all">All</string>
@@ -125,6 +127,7 @@
 
     <string name="required_field">Required Field</string>
     <string name="wait_for_project_to_load">Wait for the project to load!</string>
+    <string name="error_401">Account credentials no longer valid. Please sign in again</string>
     <!-- General -->
     <string name="projects">Projects</string>
     <string name="no_projects">No projects.</string>
@@ -196,8 +199,11 @@
     <string name="assignee">Assignee</string>
     <string name="milestone">Milestone</string>
     <string name="no_milestone">No Milestone</string>
-    <string name="labels">Labels</string>
     <string name="add_labels">+ Add Labels</string>
+
+    <!-- Labels -->
+    <string name="labels">Labels</string>
+    <string name="no_labels">No labels</string>
 
     <!-- User -->
     <string name="remove_user_dialog_title">Remove user?</string>
@@ -298,8 +304,8 @@
     <string name="failed_to_create_milestone">Failed to create or modify milestone</string>
     <string name="milestone_opened">Opened</string>
     <string name="milestone_closed">Closed</string>
-    <string name="milestone_all">Closed</string>
-    <string name="milestone_state_value_default">opened</string>
+    <string name="milestone_all">All</string>
+    <string name="milestone_state_value_default">active</string>
     <string-array name="milestone_state_names">
         <item>@string/milestone_opened</item>
         <item>@string/milestone_closed</item>
@@ -307,9 +313,9 @@
     </string-array>
 
     <string-array name="milestone_state_values">
-        <item>opened</item>
+        <item>active</item>
         <item>closed</item>
-        <item>all</item>
+        <item>@null</item>
     </string-array>
 
     <!-- Members -->
@@ -343,6 +349,7 @@
 
     <!-- Builds -->
     <string name="no_builds">No builds</string>
+    <string name="failed_to_load_builds">Failed to load builds</string>
 
     <string-array name="build_scope_names">
         <item>All</item>
@@ -404,4 +411,10 @@
     <string name="deeplink_path_issue">issue</string>
 
     <string name="deeplink_navigate_error">No idea where to navigate to</string>
+
+    <!-- Widget -->
+    <string name="widget_feed">Feed</string>
+    <string name="widget_loading">Loading&#8230;</string>
+    <string name="widget_config_no_accounts">No accounts</string>
+    <string name="widget_choose_account">Choose Account</string>
 </resources>

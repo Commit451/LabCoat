@@ -15,6 +15,7 @@ import com.commit451.gitlab.fragment.MilestonesFragment;
 import com.commit451.gitlab.fragment.ProjectMembersFragment;
 import com.commit451.gitlab.fragment.MergeRequestsFragment;
 import com.commit451.gitlab.fragment.ProjectFragment;
+import com.commit451.gitlab.fragment.SnippetsFragment;
 import com.commit451.gitlab.model.api.Project;
 
 import java.util.HashSet;
@@ -27,7 +28,6 @@ import timber.log.Timber;
  */
 public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-    private static final int SECTION_COUNT = 9;
     private static final int PROJECT_POS = 0;
     private static final int ACTIVITY_POS = 1;
     private static final int FILES_POS = 2;
@@ -37,6 +37,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     private static final int ISSUES_POS = 6;
     private static final int MERGE_REQUESTS_POS = 7;
     private static final int PROJECT_MEMBERS_POS = 8;
+    private static final int SNIPPETS_POS = 9;
 
     private final Project mProject;
     private final String[] mTitles;
@@ -65,11 +66,16 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
             Timber.d("Milestones are disabled");
             mDisabledSections.add(MILESTONES_POS);
         }
+        //TODO change this back when we do snippets
+        if (true){//!project.isSnippetsEnabled()) {
+            Timber.d("Snippets are disabled");
+            mDisabledSections.add(SNIPPETS_POS);
+        }
     }
 
     @Override
     public int getCount() {
-        return SECTION_COUNT - mDisabledSections.size();
+        return mTitles.length - mDisabledSections.size();
     }
 
     @Override
@@ -102,6 +108,8 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
                 return MergeRequestsFragment.newInstance();
             case PROJECT_MEMBERS_POS:
                 return ProjectMembersFragment.newInstance();
+            case SNIPPETS_POS:
+                return SnippetsFragment.newInstance();
         }
 
         throw new IllegalStateException("Position exceeded on view pager");

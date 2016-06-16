@@ -12,10 +12,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.commit451.gitlab.LabCoatApp;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.BuildSectionsPagerAdapter;
-import com.commit451.gitlab.api.EasyCallback;
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.BuildChangedEvent;
 import com.commit451.gitlab.model.api.Build;
@@ -58,15 +58,15 @@ public class BuildActivity extends BaseActivity {
 
     private final EasyCallback<Build> mRetryCallback = new EasyCallback<Build>() {
         @Override
-        public void onResponse(@NonNull Build response) {
+        public void success(@NonNull Build response) {
             mProgress.setVisibility(View.GONE);
             Snackbar.make(mRoot, R.string.build_started, Snackbar.LENGTH_LONG)
                     .show();
-            LabCoatApp.bus().post(new BuildChangedEvent(response));
+            App.bus().post(new BuildChangedEvent(response));
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mProgress.setVisibility(View.GONE);
             Snackbar.make(mRoot, R.string.unable_to_retry_build, Snackbar.LENGTH_LONG)
@@ -76,15 +76,15 @@ public class BuildActivity extends BaseActivity {
 
     private final EasyCallback<Build> mEraseCallback = new EasyCallback<Build>() {
         @Override
-        public void onResponse(@NonNull Build response) {
+        public void success(@NonNull Build response) {
             mProgress.setVisibility(View.GONE);
             Snackbar.make(mRoot, R.string.build_erased, Snackbar.LENGTH_LONG)
                     .show();
-            LabCoatApp.bus().post(new BuildChangedEvent(response));
+            App.bus().post(new BuildChangedEvent(response));
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mProgress.setVisibility(View.GONE);
             Snackbar.make(mRoot, R.string.unable_to_erase_build, Snackbar.LENGTH_LONG)
@@ -94,15 +94,15 @@ public class BuildActivity extends BaseActivity {
 
     private final EasyCallback<Build> mCancelCallback = new EasyCallback<Build>() {
         @Override
-        public void onResponse(@NonNull Build response) {
+        public void success(@NonNull Build response) {
             mProgress.setVisibility(View.GONE);
             Snackbar.make(mRoot, R.string.build_canceled, Snackbar.LENGTH_LONG)
                     .show();
-            LabCoatApp.bus().post(new BuildChangedEvent(response));
+            App.bus().post(new BuildChangedEvent(response));
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mProgress.setVisibility(View.GONE);
             Snackbar.make(mRoot, R.string.unable_to_cancel_build, Snackbar.LENGTH_LONG)

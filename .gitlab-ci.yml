@@ -1,17 +1,16 @@
+image: commit451/android-config:latest
+
 before_script:
+  # Make sure that we are not trying to print anything to the console
   - unset DISPLAY
   - export TERM=dumb
   - export _JAVA_OPTIONS="-Djava.awt.headless=true"
-  - apt-get -q -y update
-  - apt-get -q -y install wget tar expect openjdk-7-jdk lib32stdc++6 lib32z1
-  - wget -q http://dl.google.com/android/android-sdk_r24.4.1-linux.tgz
-  - tar xzf android-sdk_r24.4.1-linux.tgz
-  - wget -q https://raw.githubusercontent.com/journeyapps/android-sdk-installer/master/accept-licenses
-  - chmod +x accept-licenses
-  - ./accept-licenses "android-sdk-linux/tools/android -s update sdk --no-ui --all --filter tools,platform-tools,build-tools-23.0.3,android-23,extra-android-m2repository" "android-sdk-license-5be876d5|android-sdk-license-c81a61d9"
-  - export ANDROID_HOME=$PWD/android-sdk-linux
+  # Increase the heap size to 3 GB for faster builds
+  - export JAVA_OPTS="-Xmx3G"
+  # Make Gradle executable
   - chmod +x gradlew
 
 build:
   script:
+    # Run the build script, excluding the fabric tasks since they will fail with no proper API key
     - ./gradlew build -x fabricGenerateResourcesRelease --stacktrace

@@ -1,14 +1,16 @@
 package com.commit451.gitlab.model.api;
 
-import com.google.gson.annotations.SerializedName;
+import com.bluelinelabs.logansquare.annotation.JsonField;
+import com.bluelinelabs.logansquare.annotation.JsonObject;
 
 import org.parceler.Parcel;
 
 @Parcel
+@JsonObject
 public class Identity {
-    @SerializedName("provider")
+    @JsonField(name = "provider")
     String mProvider;
-    @SerializedName("extern_uid")
+    @JsonField(name = "extern_uid")
     String mExternUid;
 
     public Identity() {}

@@ -10,9 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.commit451.gitlab.LabCoatApp;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.api.EasyCallback;
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.BuildChangedEvent;
 import com.commit451.gitlab.model.api.Build;
@@ -70,16 +70,22 @@ public class BuildDescriptionFragment extends ButterKnifeFragment {
 
     private final EasyCallback<Build> mLoadBuildCallback = new EasyCallback<Build>() {
         @Override
-        public void onResponse(@NonNull Build response) {
+        public void success(@NonNull Build response) {
+            if (getView() == null) {
+                return;
+            }
             mSwipeRefreshLayout.setRefreshing(false);
             mBuild = response;
             bindBuild(response);
-            LabCoatApp.bus().post(new BuildChangedEvent(response));
+            App.bus().post(new BuildChangedEvent(response));
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
+            if (getView() == null) {
+                return;
+            }
             Snackbar.make(mRoot, R.string.unable_to_load_build, Snackbar.LENGTH_LONG)
                     .show();
         }
@@ -109,7 +115,7 @@ public class BuildDescriptionFragment extends ButterKnifeFragment {
         });
         bindBuild(mBuild);
         mEventReceiver = new EventReceiver();
-        LabCoatApp.bus().register(mEventReceiver);
+        App.bus().register(mEventReceiver);
     }
 
     private void load() {
@@ -133,8 +139,12 @@ public class BuildDescriptionFragment extends ButterKnifeFragment {
         } else {
             mTextFinished.setVisibility(View.GONE);
         }
-        bindRunner(build.getRunner());
-        bindCommit(build.getCommit());
+        if (build.getRunner() != null) {
+            bindRunner(build.getRunner());
+        }
+        if(build.getCommit() != null) {
+            bindCommit(build.getCommit());
+        }
     }
 
     private void bindRunner(Runner runner) {
@@ -152,7 +162,7 @@ public class BuildDescriptionFragment extends ButterKnifeFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        LabCoatApp.bus().unregister(mEventReceiver);
+        App.bus().unregister(mEventReceiver);
     }
 
     private class EventReceiver {

@@ -12,10 +12,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.commit451.gitlab.LabCoatApp;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.MergeRequestDetailAdapter;
-import com.commit451.gitlab.api.EasyCallback;
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.MergeRequestChangedEvent;
 import com.commit451.gitlab.model.api.MergeRequest;
@@ -88,7 +88,7 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
     private EasyCallback<List<Note>> mNotesCallback = new EasyCallback<List<Note>>() {
 
         @Override
-        public void onResponse(@NonNull List<Note> response) {
+        public void success(@NonNull List<Note> response) {
             if (getView() == null) {
                 return;
             }
@@ -99,7 +99,7 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             mLoading = false;
             Timber.e(t, null);
             if (getView() == null) {
@@ -114,7 +114,7 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
     private EasyCallback<List<Note>> mMoreNotesCallback = new EasyCallback<List<Note>>() {
 
         @Override
-        public void onResponse(@NonNull List<Note> response) {
+        public void success(@NonNull List<Note> response) {
             if (getView() == null) {
                 return;
             }
@@ -125,7 +125,7 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             if (getView() == null) {
                 return;
             }
@@ -140,7 +140,7 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
     private EasyCallback<Note> mPostNoteCallback = new EasyCallback<Note>() {
 
         @Override
-        public void onResponse(@NonNull Note response) {
+        public void success(@NonNull Note response) {
             if (getView() == null) {
                 return;
             }
@@ -150,7 +150,7 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             if (getView() == null) {
                 return;
             }
@@ -210,13 +210,13 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
         loadNotes();
 
         mEventReceiver = new EventReceiver();
-        LabCoatApp.bus().register(mEventReceiver);
+        App.bus().register(mEventReceiver);
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        LabCoatApp.bus().unregister(mEventReceiver);
+        App.bus().unregister(mEventReceiver);
     }
 
     private void loadNotes() {

@@ -13,18 +13,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.commit451.gitlab.LabCoatApp;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.adapter.MemberAdapter;
-import com.commit451.gitlab.api.EasyCallback;
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.dialog.AccessDialog;
 import com.commit451.gitlab.event.MemberAddedEvent;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Member;
 import com.commit451.gitlab.model.api.Project;
-import com.commit451.gitlab.navigation.NavigationManager;
+import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.PaginationUtil;
 import com.commit451.gitlab.viewHolder.ProjectMemberViewHolder;
 import com.squareup.otto.Subscribe;
@@ -78,7 +78,7 @@ public class ProjectMembersFragment extends ButterKnifeFragment {
     private final MemberAdapter.Listener mMemberAdapterListener = new MemberAdapter.Listener() {
         @Override
         public void onProjectMemberClicked(Member member, ProjectMemberViewHolder memberGroupViewHolder) {
-            NavigationManager.navigateToUser(getActivity(), memberGroupViewHolder.mImageView, member);
+            Navigator.navigateToUser(getActivity(), memberGroupViewHolder.mImageView, member);
         }
 
         @Override
@@ -96,13 +96,13 @@ public class ProjectMembersFragment extends ButterKnifeFragment {
 
         @Override
         public void onSeeGroupClicked() {
-            NavigationManager.navigateToGroup(getActivity(), mProject.getNamespace().getId());
+            Navigator.navigateToGroup(getActivity(), mProject.getNamespace().getId());
         }
     };
 
     private final EasyCallback<List<Member>> mProjectMembersCallback = new EasyCallback<List<Member>>() {
         @Override
-        public void onResponse(@NonNull List<Member> response) {
+        public void success(@NonNull List<Member> response) {
             mLoading = false;
             if (getView() == null) {
                 return;
@@ -129,7 +129,7 @@ public class ProjectMembersFragment extends ButterKnifeFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             mLoading = false;
             Timber.e(t, null);
             if (getView() == null) {
@@ -146,7 +146,7 @@ public class ProjectMembersFragment extends ButterKnifeFragment {
 
     private final EasyCallback<Void> mRemoveMemberCallback = new EasyCallback<Void>() {
         @Override
-        public void onResponse(@NonNull Void response) {
+        public void success(@NonNull Void response) {
             if (getView() == null) {
                 return;
             }
@@ -154,7 +154,7 @@ public class ProjectMembersFragment extends ButterKnifeFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             if (getView() == null) {
                 return;
@@ -174,7 +174,7 @@ public class ProjectMembersFragment extends ButterKnifeFragment {
         super.onViewCreated(view, savedInstanceState);
 
         mEventReceiver = new EventReceiver();
-        LabCoatApp.bus().register(mEventReceiver);
+        App.bus().register(mEventReceiver);
 
         mAdapter = new MemberAdapter(mMemberAdapterListener);
         mProjectLayoutManager = new GridLayoutManager(getActivity(), 2);
@@ -202,12 +202,12 @@ public class ProjectMembersFragment extends ButterKnifeFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        LabCoatApp.bus().unregister(mEventReceiver);
+        App.bus().unregister(mEventReceiver);
     }
 
     @OnClick(R.id.add_user_button)
     public void onAddUserClick(View fab) {
-        NavigationManager.navigateToAddProjectMember(getActivity(), fab, mProject.getId());
+        Navigator.navigateToAddProjectMember(getActivity(), fab, mProject.getId());
     }
 
     @Override

@@ -2,8 +2,8 @@ package com.commit451.gitlab;
 
 import android.net.Uri;
 
+import com.bluelinelabs.logansquare.LoganSquare;
 import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.model.api.Issue;
 import com.commit451.gitlab.model.api.MergeRequest;
@@ -43,6 +43,8 @@ public class ApiTests {
         //for logging
         ShadowLog.stream = System.out;
 
+        LoganSquare.registerTypeConverter(Uri.class, new NullTypeConverter());
+
         TestUtil.login();
 
         Response<Project> projectResponse = GitLabClient.instance()
@@ -52,12 +54,6 @@ public class ApiTests {
         assertNotNull(projectResponse.body());
 
         sFakeProject = projectResponse.body();
-    }
-
-    private static Account getTestAccount() {
-        Account account = new Account();
-        account.setServerUrl(Uri.parse("https://gitlab.com"));
-        return account;
     }
 
     @Test
