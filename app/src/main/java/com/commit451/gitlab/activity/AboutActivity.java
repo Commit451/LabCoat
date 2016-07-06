@@ -144,8 +144,6 @@ public class AboutActivity extends BaseActivity {
     private void addContributors(List<Contributor> contributors) {
         PhysicsConfig config = PhysicsConfig.create();
         config.shapeType = PhysicsConfig.SHAPE_TYPE_CIRCLE;
-        config.fixtureDef.density = 1.0f;
-        config.fixtureDef.restitution = 1.0f;
         int x = 0;
         int y = 0;
         int imageSize = getResources().getDimensionPixelSize(R.dimen.circle_size);
