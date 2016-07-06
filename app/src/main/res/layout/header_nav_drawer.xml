@@ -15,7 +15,7 @@
         android:scaleType="centerCrop"
         android:src="@drawable/header"/>
 
-    <com.commit451.foregroundimageview.ForegroundImageView
+    <com.commit451.foregroundviews.ForegroundImageView
         android:id="@+id/profile_image"
         android:layout_width="@dimen/larger_image_size"
         android:layout_height="@dimen/larger_image_size"

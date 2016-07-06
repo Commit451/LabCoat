@@ -10,7 +10,7 @@ buildscript {
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
         //check with ./gradlew dependencyUpdates
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.12.0'
-        classpath 'io.fabric.tools:gradle:1.21.6'
+        classpath 'io.fabric.tools:gradle:1.21.7'
     }
 }
 
