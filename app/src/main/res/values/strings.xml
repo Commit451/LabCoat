@@ -154,6 +154,8 @@
     <string name="fork_failed">Failed to fork project</string>
     <string name="project_unstarred">Project unstarred</string>
     <string name="unstar_failed">Failed to unstar project</string>
+    <string name="project_fork_title">Fork Project</string>
+    <string name="project_fork_message">Do you want to fork this project?</string>
     <!-- Commits -->
     <string name="no_commits_found">No commits found.</string>
 

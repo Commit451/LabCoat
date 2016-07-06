@@ -1,10 +1,12 @@
 package com.commit451.gitlab.fragment;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.text.Html;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
@@ -33,6 +35,9 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import in.uncod.android.bypass.Bypass;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -78,7 +83,17 @@ public class ProjectFragment extends ButterKnifeFragment {
     @OnClick(R.id.root_fork)
     void onForkClicked() {
         if (mProject != null) {
-            GitLabClient.instance().forkProject(mProject.getId()).enqueue(mForkCallback);
+            new AlertDialog.Builder(getActivity())
+                    .setTitle(R.string.project_fork_title)
+                    .setMessage(R.string.project_fork_message)
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            GitLabClient.instance().forkProject(mProject.getId()).enqueue(mForkCallback);
+                        }
+                    })
+                    .show();
         }
     }
 
@@ -174,9 +189,9 @@ public class ProjectFragment extends ButterKnifeFragment {
         }
     };
 
-    private EasyCallback<Void> mForkCallback = new EasyCallback<Void>() {
+    private Callback<Void> mForkCallback = new Callback<Void>() {
         @Override
-        public void success(@NonNull Void response) {
+        public void onResponse(Call<Void> call, Response<Void> response) {
             if (getView() == null) {
                 return;
             }
@@ -185,7 +200,7 @@ public class ProjectFragment extends ButterKnifeFragment {
         }
 
         @Override
-        public void failure(Throwable t) {
+        public void onFailure(Call<Void> call, Throwable t) {
             if (getView() == null) {
                 return;
             }
