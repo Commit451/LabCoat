@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- General -->
     <string name="app_name">LabCoat</string>
+    <string name="unknown">Unknown</string>
 
     <!-- Drawer -->
     <string name="nav_projects">Projects</string>
