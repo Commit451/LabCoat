@@ -142,11 +142,8 @@ public class AboutActivity extends BaseActivity {
     }
 
     private void addContributors(List<Contributor> contributors) {
-        PhysicsConfig config = new PhysicsConfig.Builder()
-                .setShapeType(PhysicsConfig.ShapeType.CIRCLE)
-                .setDensity(1.0f)
-                .setRestitution(0.0f)
-                .build();
+        PhysicsConfig config = PhysicsConfig.create();
+        config.shapeType = PhysicsConfig.SHAPE_TYPE_CIRCLE;
         int x = 0;
         int y = 0;
         int imageSize = getResources().getDimensionPixelSize(R.dimen.circle_size);

@@ -58,6 +58,9 @@ public class FeedRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
     public RemoteViews getViewAt(int position) {
         // position will always range from 0 to getCount() - 1.
 
+        if (position >= mEntries.size()) {
+            return null;
+        }
         Entry entry = mEntries.get(position);
 
         RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.widget_item_entry);

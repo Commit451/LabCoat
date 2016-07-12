@@ -46,6 +46,10 @@ public class CommitViewHolder extends RecyclerView.ViewHolder {
 
         mMessageView.setText(commit.getTitle());
         mAuthorView.setText(commit.getAuthorName());
-        mTimeView.setText(DateUtils.getRelativeTimeSpanString(itemView.getContext(), commit.getCreatedAt()));
+        if (commit.getCreatedAt() != null) {
+            mTimeView.setText(DateUtils.getRelativeTimeSpanString(itemView.getContext(), commit.getCreatedAt()));
+        } else {
+            mTimeView.setText(R.string.unknown);
+        }
     }
 }

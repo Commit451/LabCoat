@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.Theme;
 import com.commit451.gitlab.R;
 import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.api.GitLabClient;
@@ -24,6 +25,11 @@ import timber.log.Timber;
 public class AccessDialog extends MaterialDialog {
 
     void onApply() {
+        if (getSelectedIndex() == -1) {
+            Toast.makeText(getContext(), R.string.please_select_access_level, Toast.LENGTH_LONG)
+                    .show();
+            return;
+        }
         String accessLevel = mRoleNames[getSelectedIndex()];
         if (accessLevel == null) {
             Toast.makeText(getContext(), R.string.please_select_access_level, Toast.LENGTH_LONG)
@@ -83,6 +89,7 @@ public class AccessDialog extends MaterialDialog {
                         return true;
                     }
                 })
+                .theme(Theme.DARK)
                 .progress(true, 0) // So we can later show loading progress
                 .positiveText(R.string.action_apply)
                 .negativeText(R.string.md_cancel_label));

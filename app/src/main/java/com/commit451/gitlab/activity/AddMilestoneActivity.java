@@ -23,6 +23,7 @@ import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.MilestoneChangedEvent;
 import com.commit451.gitlab.event.MilestoneCreatedEvent;
 import com.commit451.gitlab.model.api.Milestone;
+import com.commit451.teleprinter.Teleprinter;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import org.parceler.Parcels;
@@ -88,6 +89,7 @@ public class AddMilestoneActivity extends MorphActivity {
     long mProjectId;
     Milestone mMilestone;
     Date mCurrentDate;
+    Teleprinter mTeleprinter;
 
     private final DatePickerDialog.OnDateSetListener mOnDateSetListener = new DatePickerDialog.OnDateSetListener() {
         @Override
@@ -135,6 +137,7 @@ public class AddMilestoneActivity extends MorphActivity {
         setContentView(R.layout.activity_add_milestone);
         ButterKnife.bind(this);
         morph(mRoot);
+        mTeleprinter = new Teleprinter(this);
         mProjectId = getIntent().getLongExtra(KEY_PROJECT_ID, -1);
         mMilestone = Parcels.unwrap(getIntent().getParcelableExtra(KEY_MILESTONE));
         if (mMilestone != null) {
@@ -160,6 +163,7 @@ public class AddMilestoneActivity extends MorphActivity {
     }
 
     private void createMilestone() {
+        mTeleprinter.hideKeyboard();
         if (TextUtils.isEmpty(mTitle.getText())) {
             mTitleTextInputLayout.setError(getString(R.string.required_field));
             return;
