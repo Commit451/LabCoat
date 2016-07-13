@@ -42,7 +42,8 @@
             android:launchMode="singleTask"
             android:theme="@style/Activity.Activity"/>
         <activity android:name=".activity.ProjectActivity"/>
-        <activity android:name=".activity.LoginActivity"/>
+        <activity android:name=".activity.LoginActivity"
+            android:theme="@style/Activity.Login"/>
         <activity android:name=".activity.FileActivity"/>
         <activity android:name=".activity.IssueActivity"/>
         <activity android:name=".activity.DiffActivity"/>

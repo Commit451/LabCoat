@@ -14,6 +14,10 @@
 
     <style name="Activity" parent="AppTheme"/>
 
+    <style name="Activity.Login">
+        <item name="android:windowBackground">?attr/colorPrimary</item>
+    </style>
+
     <style name="Activity.Projects">
         <!--Check v21 for the good bits-->
     </style>
