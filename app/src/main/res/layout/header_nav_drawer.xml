@@ -13,7 +13,7 @@
         android:contentDescription="@null"
         android:fitsSystemWindows="false"
         android:scaleType="centerCrop"
-        android:src="@drawable/header"/>
+        app:srcCompat="@drawable/header"/>
 
     <com.commit451.foregroundviews.ForegroundImageView
         android:id="@+id/profile_image"
@@ -72,7 +72,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="right|center_vertical"
             android:contentDescription="@null"
-            android:src="@drawable/ic_arrow_down_24dp" />
+            app:srcCompat="@drawable/ic_arrow_down_24dp" />
     </FrameLayout>
 
 

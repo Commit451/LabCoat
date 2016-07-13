@@ -51,7 +51,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:src="@drawable/ic_edit_24dp"
+        app:srcCompat="@drawable/ic_edit_24dp"
         app:fabSize="mini"
         app:layout_anchor="@id/appbar"
         app:layout_anchorGravity="bottom|right|end"/>
@@ -62,7 +62,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         android:layout_margin="@dimen/padding_normal"
-        android:src="@drawable/ic_add_24dp" />
+        app:srcCompat="@drawable/ic_add_24dp" />
 
     <include layout="@layout/progress_fullscreen"/>
 

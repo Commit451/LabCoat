@@ -11,13 +11,13 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="32dp"
         android:contentDescription="@string/app_name"
-        android:src="@drawable/ic_logo" />
+        app:srcCompat="@drawable/ic_logo" />
 
     <ImageView
         android:id="@+id/close"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_close_24dp"
+        app:srcCompat="@drawable/ic_close_24dp"
         android:padding="8dp"
         android:layout_margin="8dp"
         android:contentDescription="@null"
@@ -125,17 +125,13 @@
 
     </LinearLayout>
 
-    <com.devspark.robototextview.widget.RobotoTextView
+    <Button
         android:id="@+id/login_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:background="?attr/selectableItemBackground"
-        android:gravity="center_horizontal"
-        android:padding="@dimen/padding_normal"
-        android:text="@string/login_button"
-        android:textAllCaps="true"
-        app:typeface="roboto_medium" />
+        android:layout_margin="16dp"
+        android:text="@string/login_button" />
 
     <include layout="@layout/progress_fullscreen" />
 

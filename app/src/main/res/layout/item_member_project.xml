@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/user_list_image_size"
@@ -20,7 +22,7 @@
         android:layout_gravity="right"
         android:padding="8dp"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:src="@drawable/ic_overflow_24dp"
+        app:srcCompat="@drawable/ic_overflow_24dp"
         android:contentDescription="@null"/>
 
     <LinearLayout

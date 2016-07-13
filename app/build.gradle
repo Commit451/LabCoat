@@ -22,6 +22,7 @@ android {
         versionCode versionMajor * 1000000 + versionMinor * 10000 + versionPatch * 100 + versionBuild
         versionName "${versionMajor}.${versionMinor}.${versionPatch}"
         manifestPlaceholders = [fabric_key: project.ext.LABCOAT_FABRIC_KEY]
+        vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         release {

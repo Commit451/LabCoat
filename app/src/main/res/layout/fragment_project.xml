@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.commit451.gitlab.view.LabCoatSwipeRefreshLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/swipe_layout"
     android:layout_width="match_parent"
@@ -46,7 +47,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:contentDescription="@null"
-                        android:src="@drawable/ic_star_24dp"/>
+                        app:srcCompat="@drawable/ic_star_24dp"/>
 
                     <TextView
                         android:id="@+id/star_count"
@@ -73,7 +74,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:contentDescription="@null"
-                        android:src="@drawable/ic_fork"/>
+                        app:srcCompat="@drawable/ic_fork"/>
 
                     <TextView
                         android:id="@+id/forks_count"
