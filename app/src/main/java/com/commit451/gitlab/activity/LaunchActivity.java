@@ -35,6 +35,7 @@ public class LaunchActivity extends Activity {
         List<Account> accounts = Account.getAccounts(this);
         if(accounts.isEmpty()) {
             Navigator.navigateToLogin(this);
+            finish();
         } else {
             if (PRIVATE_KEY_ENABLED) {
                 loadPrivateKey(accounts, 0);
