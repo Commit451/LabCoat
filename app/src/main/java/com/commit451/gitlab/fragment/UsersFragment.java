@@ -13,11 +13,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.UsersAdapter;
-import com.commit451.easycallback.EasyCallback;
-import com.commit451.gitlab.api.GitLabFactory;
 import com.commit451.gitlab.model.api.UserBasic;
 import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.PaginationUtil;
@@ -120,6 +119,7 @@ public class UsersFragment extends ButterKnifeFragment {
             if (getView() == null) {
                 return;
             }
+            mSwipeRefreshLayout.setRefreshing(false);
             mUsersAdapter.addData(response);
             mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
             mUsersAdapter.setLoading(false);
@@ -132,6 +132,7 @@ public class UsersFragment extends ButterKnifeFragment {
             if (getView() == null) {
                 return;
             }
+            mSwipeRefreshLayout.setRefreshing(false);
             mUsersAdapter.setLoading(false);
         }
     };

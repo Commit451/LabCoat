@@ -256,6 +256,12 @@ public class AddUserActivity extends MorphActivity {
         mUserSearch.setOnEditorActionListener(mSearchEditorActionListener);
         mUserSearch.addTextChangedListener(mTextWatcher);
         mAdapter = new UsersAdapter(mUserClickListener);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadData();
+            }
+        });
         mRecyclerView.setAdapter(mAdapter);
         mUserLinearLayoutManager = new GridLayoutManager(this, 2);
         mUserLinearLayoutManager.setSpanSizeLookup(mAdapter.getSpanSizeLookup());
