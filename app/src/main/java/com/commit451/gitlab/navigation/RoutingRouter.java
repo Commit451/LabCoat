@@ -1,6 +1,7 @@
 package com.commit451.gitlab.navigation;
 
 import android.net.Uri;
+import android.support.annotation.Nullable;
 
 /**
  * Routes things. Could probably be better if it used regex. Maybe one day
@@ -13,7 +14,11 @@ public class RoutingRouter {
         mNavigator = routingNavigator;
     }
 
-    public void route(Uri link) {
+    public void route(@Nullable Uri link) {
+        if (link == null) {
+            mNavigator.onRouteUnknown(null);
+            return;
+        }
         if (link.getPath().contains("issues")) {
             if (link.getLastPathSegment().equals("issues")) {
                 //this means it was just a link to something like
