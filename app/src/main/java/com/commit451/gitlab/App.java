@@ -38,7 +38,8 @@ import timber.log.Timber;
 public class App extends Application {
 
     /**
-     * Register our type converters on our singleton LoganSquare create
+     * Register our type converters on our singleton LoganSquare instance. Needs to be set here
+     * since we are fetching accounts immediately with LoganSquare
      */
     static {
         LoganSquare.registerTypeConverter(Uri.class, new UriTypeConverter());
@@ -134,29 +135,32 @@ public class App extends Application {
 
     public void setAccount(Account account) {
         mAccount = account;
-        initGitLab(account);
-        initGitLabRss(account);
-        initPicasso(account);
-    }
-
-    private void initGitLab(Account account) {
-        OkHttpClient.Builder gitlabClientBuilder = OkHttpClientFactory.create(account);
-        if (BuildConfig.DEBUG) {
-            gitlabClientBuilder.addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
-        }
-        mGitLab = GitLabFactory.create(account, gitlabClientBuilder.build());
-    }
-
-    private void initGitLabRss(Account account) {
-        OkHttpClient.Builder gitlabRssClientBuilder = OkHttpClientFactory.create(account);
-        if (BuildConfig.DEBUG) {
-            gitlabRssClientBuilder.addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
-        }
-        mGitLabRss = GitLabRssFactory.create(account, gitlabRssClientBuilder.build());
-    }
-
-    private void initPicasso(Account account) {
         OkHttpClient.Builder clientBuilder = OkHttpClientFactory.create(account);
-        mPicasso = PicassoFactory.createPicasso(clientBuilder.build());
+        if (BuildConfig.DEBUG) {
+            clientBuilder.addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
+        }
+        OkHttpClient client = clientBuilder.build();
+        initGitLab(account, client);
+        initGitLabRss(account, client);
+        //This is kinda weird, but basically, I don't want to see all the annoying logs from bitmap
+        //decoding since the Okhttpclient is going to log everything, but it does not matter in release
+        //builds, and will actually speed up the init time to share the same client between all these
+        if (BuildConfig.DEBUG) {
+            initPicasso(OkHttpClientFactory.create(account).build());
+        } else {
+            initPicasso(client);
+        }
+    }
+
+    private void initGitLab(Account account, OkHttpClient client) {
+        mGitLab = GitLabFactory.create(account, client);
+    }
+
+    private void initGitLabRss(Account account, OkHttpClient client) {
+        mGitLabRss = GitLabRssFactory.create(account, client);
+    }
+
+    private void initPicasso(OkHttpClient client) {
+        mPicasso = PicassoFactory.createPicasso(client);
     }
 }

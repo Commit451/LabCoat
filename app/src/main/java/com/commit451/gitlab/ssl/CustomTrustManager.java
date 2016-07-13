@@ -1,10 +1,7 @@
 package com.commit451.gitlab.ssl;
 
-import timber.log.Timber;
+import com.commit451.gitlab.api.X509TrustManagerProvider;
 
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
@@ -13,32 +10,13 @@ import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
-import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
+/**
+ * Allows for custom configurations, such as custom trusted hostnames, custom trusted certificates,
+ * and private keys
+ */
 public class CustomTrustManager implements X509TrustManager {
-    private static X509TrustManager sDefaultTrustManager;
-
-    static {
-        try {
-            TrustManagerFactory factory = TrustManagerFactory.getInstance("X509");
-            factory.init((KeyStore) null);
-
-            TrustManager[] trustManagers = factory.getTrustManagers();
-            if (trustManagers != null) {
-                for (TrustManager trustManager : trustManagers) {
-                    if (trustManager instanceof X509TrustManager) {
-                        sDefaultTrustManager = (X509TrustManager) trustManager;
-                        break;
-                    }
-                }
-            }
-        } catch (NoSuchAlgorithmException e) {
-            Timber.e(e, "Unable to get X509 TrustManager");
-        } catch (KeyStoreException e) {
-            Timber.e(e, "Exception while initializing CustomTrustManager");
-        }
-    }
 
     private String mTrustedCertificate;
     private String mTrustedHostname;
@@ -77,22 +55,22 @@ public class CustomTrustManager implements X509TrustManager {
 
     @Override
     public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-        if (sDefaultTrustManager == null) {
+        if (X509TrustManagerProvider.get() == null) {
             throw new IllegalStateException("No default TrustManager available");
         }
 
-        sDefaultTrustManager.checkClientTrusted(chain, authType);
+        X509TrustManagerProvider.get().checkClientTrusted(chain, authType);
     }
 
     @Override
     public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-        if (sDefaultTrustManager == null) {
+        if (X509TrustManagerProvider.get() == null) {
             throw new IllegalStateException("No default TrustManager available");
         }
 
         CertificateException cause;
         try {
-            sDefaultTrustManager.checkServerTrusted(chain, authType);
+            X509TrustManagerProvider.get().checkServerTrusted(chain, authType);
             return;
         } catch (CertificateException e) {
             cause = e;
@@ -107,11 +85,11 @@ public class CustomTrustManager implements X509TrustManager {
 
     @Override
     public X509Certificate[] getAcceptedIssuers() {
-        if (sDefaultTrustManager == null) {
+        if (X509TrustManagerProvider.get() == null) {
             throw new IllegalStateException("No default TrustManager available");
         }
 
-        return sDefaultTrustManager.getAcceptedIssuers();
+        return X509TrustManagerProvider.get().getAcceptedIssuers();
     }
 
     public SSLSocketFactory getSSLSocketFactory() {

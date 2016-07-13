@@ -14,23 +14,34 @@ public final class OkHttpClientFactory {
 
     /**
      * Creates an {@link OkHttpClient} configured with the account configuration
+     *
      * @param account the account
-     * @return a configured okhttpclient
+     * @return a configured {@link okhttp3.OkHttpClient.Builder}
      */
     public static OkHttpClient.Builder create(Account account) {
-        CustomTrustManager customTrustManager = new CustomTrustManager();
-        customTrustManager.setTrustedCertificate(account.getTrustedCertificate());
-        customTrustManager.setTrustedHostname(account.getTrustedHostname());
-        customTrustManager.setPrivateKeyAlias(account.getPrivateKeyAlias());
-
+        CustomTrustManager customTrustManager = null;
+        //Do we even need a custom trust manager?
+        if (account.getTrustedCertificate() != null
+                || account.getTrustedHostname() != null
+                || account.getPrivateKeyAlias() != null) {
+            customTrustManager = new CustomTrustManager();
+            customTrustManager.setTrustedCertificate(account.getTrustedCertificate());
+            customTrustManager.setTrustedHostname(account.getTrustedHostname());
+            customTrustManager.setPrivateKeyAlias(account.getPrivateKeyAlias());
+        }
         OpenSignInAuthenticator authenticator = new OpenSignInAuthenticator(account);
         OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder()
                 .connectTimeout(30, TimeUnit.SECONDS)
-                .sslSocketFactory(customTrustManager.getSSLSocketFactory())
-                .hostnameVerifier(customTrustManager.getHostnameVerifier())
                 .authenticator(authenticator)
-                .proxyAuthenticator(authenticator);
-        clientBuilder.addInterceptor(new AuthenticationRequestInterceptor(account));
+                .proxyAuthenticator(authenticator)
+                .addInterceptor(new AuthenticationRequestInterceptor(account));
+        //Only apply these custom things when needed, since they slow down the init
+        if (customTrustManager != null && customTrustManager.getSSLSocketFactory() != null) {
+            clientBuilder.sslSocketFactory(customTrustManager.getSSLSocketFactory(), X509TrustManagerProvider.get());
+        }
+        if (customTrustManager != null && customTrustManager.getHostnameVerifier() != null) {
+            clientBuilder.hostnameVerifier(customTrustManager.getHostnameVerifier());
+        }
         return clientBuilder;
     }
 }

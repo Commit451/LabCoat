@@ -11,9 +11,11 @@ import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 
 /**
- * Custom SSL factory so that we can enforce using TLS 1.2 on Android 4.1-4.4
+ * Custom SSL factory so that we can enforce using TLS 1.2 on Android 4.1-4.4 where it is not
+ * enabled by default and also have custom trusted https servers
  */
 public class CustomSSLSocketFactory extends SSLSocketFactory {
+
     /**
      * You may be wondering why this is named "delegate" which seems to break the convention
      * of the rest of the project. See here for deets:
@@ -23,7 +25,6 @@ public class CustomSSLSocketFactory extends SSLSocketFactory {
 
     public CustomSSLSocketFactory(SSLSocketFactory internalFactory) {
         super();
-
         this.delegate = internalFactory;
     }
 
