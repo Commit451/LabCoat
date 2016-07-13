@@ -24,6 +24,7 @@ import com.squareup.picasso.Picasso;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
+import java.util.List;
 import java.util.Locale;
 
 import io.fabric.sdk.android.Fabric;
@@ -77,6 +78,11 @@ public class App extends Application {
 
         JodaTimeAndroid.init(this);
         SimpleChromeCustomTabs.initialize(this);
+
+        List<Account> accounts = Account.getAccounts(this);
+        if(!accounts.isEmpty()) {
+            setAccount(accounts.get(0));
+        }
     }
 
     @VisibleForTesting
