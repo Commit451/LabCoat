@@ -12,6 +12,7 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLabRss;
 import com.commit451.gitlab.api.GitLabRssFactory;
 import com.commit451.gitlab.api.OkHttpClientFactory;
+import com.commit451.gitlab.api.PicassoFactory;
 import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.model.rss.Entry;
 import com.commit451.gitlab.model.rss.Feed;
@@ -34,6 +35,7 @@ public class FeedRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
     private Context mContext;
     private int mAppWidgetId;
     private ArrayList<Entry> mEntries;
+    private Picasso mPicasso;
 
     public FeedRemoteViewsFactory(Context context, Intent intent) {
         mContext = context;
@@ -78,7 +80,7 @@ public class FeedRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
         rv.setOnClickFillInIntent(R.id.root, fillInIntent);
 
         try {
-            Bitmap image = Picasso.with(mContext)
+            Bitmap image = mPicasso
                     .load(entry.getThumbnail().getUrl())
                     .transform(new CircleTransformation())
                     .get();
@@ -130,6 +132,8 @@ public class FeedRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
             gitlabRssClientBuilder.addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
         }
         GitLabRss rssClient = GitLabRssFactory.create(account, gitlabRssClientBuilder.build());
+        OkHttpClient.Builder picassoClientBuilder = OkHttpClientFactory.create(account);
+        mPicasso = PicassoFactory.createPicasso(picassoClientBuilder.build());
         try {
             Response<Feed> feedResponse = rssClient.getFeed(account.getUser().getFeedUrl().toString()).execute();
             if (feedResponse.isSuccessful()) {
