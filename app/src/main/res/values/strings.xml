@@ -79,8 +79,8 @@
     <string name="token_hint">Private token</string>
     <string name="login_activity">Login</string>
     <string name="login_progress_dialog">Logging in. Please wait</string>
-    <string name="token_link"><u>Login using private token</u></string>
-    <string name="normal_link"><u>Login using username or email</u></string>
+    <string name="token_link">Login using private token</string>
+    <string name="normal_link">Login using username or email</string>
     <string name="certificate_title">Certificate not trusted</string>
     <string name="certificate_message">The certificate the server used was not issued by a trusted authority.\n\nThis could mean a hacker is trying to intercept your communications.\n\nIf you trust the certificate, press OK to continue.\n\nFingerprint (SHA-1):\n%1$s</string>
     <string name="hostname_title">Hostname did not match</string>

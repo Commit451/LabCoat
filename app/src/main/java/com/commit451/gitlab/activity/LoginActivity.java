@@ -18,10 +18,12 @@ import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatAutoCompleteTextView;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.Patterns;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
@@ -90,8 +92,8 @@ public class LoginActivity extends BaseActivity {
 
     @BindView(R.id.root)
     View mRoot;
-    @BindView(R.id.close)
-    View mClose;
+    @BindView(R.id.toolbar)
+    Toolbar mToolbar;
     @BindView(R.id.url_hint)
     TextInputLayout mUrlHint;
     @BindView(R.id.url_input)
@@ -126,26 +128,6 @@ public class LoginActivity extends BaseActivity {
             return true;
         }
     };
-
-    @OnClick(R.id.close)
-    public void onCloseClick() {
-        onBackPressed();
-    }
-
-    @OnClick(R.id.show_normal_link)
-    public void showNormalLogin(TextView loginTypeTextView) {
-        if (mNormalLogin.getVisibility() == View.VISIBLE) {
-            mNormalLogin.setVisibility(View.GONE);
-            mTokenLogin.setVisibility(View.VISIBLE);
-            loginTypeTextView.setText(R.string.normal_link);
-            mIsNormalLogin = false;
-        } else {
-            mNormalLogin.setVisibility(View.VISIBLE);
-            mTokenLogin.setVisibility(View.GONE);
-            loginTypeTextView.setText(R.string.token_link);
-            mIsNormalLogin = true;
-        }
-    }
 
     @OnClick(R.id.login_button)
     public void onLoginClick() {
@@ -319,7 +301,38 @@ public class LoginActivity extends BaseActivity {
         mTeleprinter = new Teleprinter(this);
         boolean showClose = getIntent().getBooleanExtra(EXTRA_SHOW_CLOSE, false);
 
-        mClose.setVisibility(showClose ? View.VISIBLE : View.GONE);
+        mToolbar.inflateMenu(R.menu.menu_login);
+        mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.action_private_token:
+                        boolean isNormalLogin = mNormalLogin.getVisibility() == View.VISIBLE;
+                        if (isNormalLogin) {
+                            mNormalLogin.setVisibility(View.GONE);
+                            mTokenLogin.setVisibility(View.VISIBLE);
+                            item.setTitle(R.string.normal_link);
+                            mIsNormalLogin = false;
+                        } else {
+                            mNormalLogin.setVisibility(View.VISIBLE);
+                            mTokenLogin.setVisibility(View.GONE);
+                            item.setTitle(R.string.token_link);
+                            mIsNormalLogin = true;
+                        }
+                        return true;
+                }
+                return false;
+            }
+        });
+        if (showClose) {
+            mToolbar.setNavigationIcon(R.drawable.ic_close_24dp);
+            mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onBackPressed();
+                }
+            });
+        }
         mPasswordInput.setOnEditorActionListener(onEditorActionListener);
         mTokenInput.setOnEditorActionListener(onEditorActionListener);
         mUserInput.setOnFocusChangeListener(new View.OnFocusChangeListener() {
