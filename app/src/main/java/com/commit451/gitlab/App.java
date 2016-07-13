@@ -7,18 +7,28 @@ import android.net.Uri;
 import android.support.annotation.VisibleForTesting;
 
 import com.bluelinelabs.logansquare.LoganSquare;
+import com.commit451.gitlab.api.GitLab;
+import com.commit451.gitlab.api.GitLabFactory;
+import com.commit451.gitlab.api.GitLabRss;
+import com.commit451.gitlab.api.GitLabRssFactory;
+import com.commit451.gitlab.api.OkHttpClientFactory;
+import com.commit451.gitlab.api.PicassoFactory;
 import com.commit451.gitlab.api.converter.UriTypeConverter;
+import com.commit451.gitlab.model.Account;
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.core.CrashlyticsCore;
 import com.novoda.simplechromecustomtabs.SimpleChromeCustomTabs;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.otto.Bus;
+import com.squareup.picasso.Picasso;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
 import java.util.Locale;
 
 import io.fabric.sdk.android.Fabric;
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import timber.log.Timber;
 
 /**
@@ -34,6 +44,8 @@ public class App extends Application {
     }
 
     private static Bus sBus;
+    private static App sInstance;
+
     public static Bus bus() {
         if (sBus == null) {
             sBus = new Bus();
@@ -41,10 +53,14 @@ public class App extends Application {
         return sBus;
     }
 
-    private static App sInstance;
     public static App instance() {
         return sInstance;
     }
+
+    private Account mAccount;
+    private GitLab mGitLab;
+    private GitLabRss mGitLabRss;
+    private Picasso mPicasso;
 
     @Override
     public void onCreate() {
@@ -92,5 +108,49 @@ public class App extends Application {
         } catch (Exception e) {
             Timber.e(e, null);
         }
+    }
+
+    public GitLab getGitLab() {
+        return mGitLab;
+    }
+
+    public GitLabRss getGitLabRss() {
+        return mGitLabRss;
+    }
+
+    public Picasso getPicasso() {
+        return mPicasso;
+    }
+
+    public Account getAccount() {
+        return mAccount;
+    }
+
+    public void setAccount(Account account) {
+        mAccount = account;
+        initGitLab(account);
+        initGitLabRss(account);
+        initPicasso(account);
+    }
+
+    private void initGitLab(Account account) {
+        OkHttpClient.Builder gitlabClientBuilder = OkHttpClientFactory.create(account);
+        if (BuildConfig.DEBUG) {
+            gitlabClientBuilder.addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
+        }
+        mGitLab = GitLabFactory.create(account, gitlabClientBuilder.build());
+    }
+
+    private void initGitLabRss(Account account) {
+        OkHttpClient.Builder gitlabRssClientBuilder = OkHttpClientFactory.create(account);
+        if (BuildConfig.DEBUG) {
+            gitlabRssClientBuilder.addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
+        }
+        mGitLabRss = GitLabRssFactory.create(account, gitlabRssClientBuilder.build());
+    }
+
+    private void initPicasso(Account account) {
+        OkHttpClient.Builder clientBuilder = OkHttpClientFactory.create(account);
+        mPicasso = PicassoFactory.createPicasso(clientBuilder.build());
     }
 }

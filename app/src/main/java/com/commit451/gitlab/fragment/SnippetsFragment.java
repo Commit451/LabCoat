@@ -21,7 +21,7 @@ import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.gitlab.adapter.SnippetAdapter;
 import com.commit451.easycallback.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.api.GitLabFactory;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.Snippet;
@@ -224,7 +224,7 @@ public class SnippetsFragment extends ButterKnifeFragment {
         });
         mNextPageUrl = null;
         mLoading = true;
-        GitLabClient.instance().getSnippets(mProject.getId()).enqueue(mCallback);
+        App.instance().getGitLab().getSnippets(mProject.getId()).enqueue(mCallback);
     }
 
     private void loadMore() {
@@ -240,7 +240,7 @@ public class SnippetsFragment extends ButterKnifeFragment {
         mSnippetAdapter.setLoading(true);
 
         Timber.d("loadMore called for %s", mNextPageUrl);
-        GitLabClient.instance().getSnippets(mNextPageUrl.toString()).enqueue(mMoreMilestonesCallback);
+        App.instance().getGitLab().getSnippets(mNextPageUrl.toString()).enqueue(mMoreMilestonesCallback);
     }
 
     private class EventReceiver {

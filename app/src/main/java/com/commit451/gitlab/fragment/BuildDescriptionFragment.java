@@ -13,7 +13,7 @@ import android.widget.TextView;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.easycallback.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.api.GitLabFactory;
 import com.commit451.gitlab.event.BuildChangedEvent;
 import com.commit451.gitlab.model.api.Build;
 import com.commit451.gitlab.model.api.Project;
@@ -119,7 +119,7 @@ public class BuildDescriptionFragment extends ButterKnifeFragment {
     }
 
     private void load() {
-        GitLabClient.instance().getBuild(mProject.getId(), mBuild.getId()).enqueue(mLoadBuildCallback);
+        App.instance().getGitLab().getBuild(mProject.getId(), mBuild.getId()).enqueue(mLoadBuildCallback);
     }
 
     private void bindBuild(Build build) {

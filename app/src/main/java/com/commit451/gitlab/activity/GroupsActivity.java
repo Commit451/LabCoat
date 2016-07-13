@@ -19,7 +19,7 @@ import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.GroupAdapter;
 import com.commit451.easycallback.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.api.GitLabFactory;
 import com.commit451.gitlab.event.CloseDrawerEvent;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.navigation.Navigator;
@@ -173,7 +173,7 @@ public class GroupsActivity extends BaseActivity {
         mNextPageUrl = null;
         mLoading = true;
 
-        GitLabClient.instance().getGroups().enqueue(mGroupsCallback);
+        App.instance().getGitLab().getGroups().enqueue(mGroupsCallback);
     }
 
     private void loadMore() {
@@ -193,7 +193,7 @@ public class GroupsActivity extends BaseActivity {
         mLoading = true;
 
         Timber.d("loadMore called for %s", mNextPageUrl);
-        GitLabClient.instance().getGroups(mNextPageUrl.toString()).enqueue(mMoreGroupsCallback);
+        App.instance().getGitLab().getGroups(mNextPageUrl.toString()).enqueue(mMoreGroupsCallback);
     }
 
     private class EventReceiver {

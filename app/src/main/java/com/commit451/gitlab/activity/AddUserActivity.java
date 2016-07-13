@@ -24,7 +24,7 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.UsersAdapter;
 import com.commit451.gitlab.animation.HideRunnable;
 import com.commit451.easycallback.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.api.GitLabFactory;
 import com.commit451.gitlab.api.exception.HttpException;
 import com.commit451.gitlab.dialog.AccessDialog;
 import com.commit451.gitlab.event.MemberAddedEvent;
@@ -169,12 +169,12 @@ public class AddUserActivity extends MorphActivity {
         public void onAccessApplied(int accessLevel) {
             mAccessDialog.showLoading();
             if (mGroup == null) {
-                GitLabClient.instance().addProjectMember(
+                App.instance().getGitLab().addProjectMember(
                         mProjectId,
                         mSelectedUser.getId(),
                         accessLevel).enqueue(mAddGroupMemeberCallback);
             } else {
-                GitLabClient.instance().addGroupMember(mGroup.getId(),
+                App.instance().getGitLab().addGroupMember(mGroup.getId(),
                         mSelectedUser.getId(),
                         accessLevel).enqueue(mAddGroupMemeberCallback);
             }
@@ -270,13 +270,13 @@ public class AddUserActivity extends MorphActivity {
         mTeleprinter.hideKeyboard();
         mSwipeRefreshLayout.setRefreshing(true);
         mLoading = true;
-        GitLabClient.instance().searchUsers(mSearchQuery).enqueue(mUserCallback);
+        App.instance().getGitLab().searchUsers(mSearchQuery).enqueue(mUserCallback);
     }
 
     private void loadMore() {
         mLoading = true;
         mAdapter.setLoading(true);
         Timber.d("loadMore " + mNextPageUrl.toString() + " " + mSearchQuery);
-        GitLabClient.instance().searchUsers(mNextPageUrl.toString(), mSearchQuery).enqueue(mMoreUsersCallback);
+        App.instance().getGitLab().searchUsers(mNextPageUrl.toString(), mSearchQuery).enqueue(mMoreUsersCallback);
     }
 }

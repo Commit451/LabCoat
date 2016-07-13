@@ -17,7 +17,7 @@ import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.UsersAdapter;
 import com.commit451.easycallback.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.api.GitLabFactory;
 import com.commit451.gitlab.model.api.UserBasic;
 import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.PaginationUtil;
@@ -200,14 +200,14 @@ public class UsersFragment extends ButterKnifeFragment {
             }
         });
 
-        GitLabClient.instance().searchUsers(mQuery).enqueue(mSearchCallback);
+        App.instance().getGitLab().searchUsers(mQuery).enqueue(mSearchCallback);
     }
 
     private void loadMore() {
         mLoading = true;
         mUsersAdapter.setLoading(true);
         Timber.d("loadMore called for %s %s", mNextPageUrl.toString(), mQuery);
-        GitLabClient.instance().searchUsers(mNextPageUrl.toString(), mQuery).enqueue(mMoreUsersCallback);
+        App.instance().getGitLab().searchUsers(mNextPageUrl.toString(), mQuery).enqueue(mMoreUsersCallback);
     }
 
     public void searchQuery(String query) {

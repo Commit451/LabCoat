@@ -10,8 +10,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.commit451.bypasspicassoimagegetter.BypassPicassoImageGetter;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.transformation.CircleTransformation;
 import com.commit451.gitlab.util.DateUtils;
@@ -46,11 +46,11 @@ public class MergeRequestHeaderViewHolder extends RecyclerView.ViewHolder {
             mDescriptionView.setVisibility(View.GONE);
         } else {
             mDescriptionView.setVisibility(View.VISIBLE);
-            mDescriptionView.setText(bypass.markdownToSpannable(mergeRequest.getDescription(), new BypassPicassoImageGetter(mDescriptionView, GitLabClient.getPicasso())));
+            mDescriptionView.setText(bypass.markdownToSpannable(mergeRequest.getDescription(), new BypassPicassoImageGetter(mDescriptionView, App.instance().getPicasso())));
             mDescriptionView.setMovementMethod(LinkMovementMethod.getInstance());
         }
 
-        GitLabClient.getPicasso()
+        App.instance().getPicasso()
                 .load(ImageUtil.getAvatarUrl(mergeRequest.getAuthor(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size)))
                 .transform(new CircleTransformation())
                 .into(mAuthorImageView);

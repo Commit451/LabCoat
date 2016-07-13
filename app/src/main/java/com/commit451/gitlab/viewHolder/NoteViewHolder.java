@@ -9,8 +9,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.commit451.bypasspicassoimagegetter.BypassPicassoImageGetter;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Note;
 import com.commit451.gitlab.transformation.CircleTransformation;
 import com.commit451.gitlab.util.DateUtils;
@@ -55,10 +55,10 @@ public class NoteViewHolder extends RecyclerView.ViewHolder {
             summary = note.getBody();
         }
 
-        mSummaryView.setText(bypass.markdownToSpannable(summary, new BypassPicassoImageGetter(mSummaryView, GitLabClient.getPicasso())));
+        mSummaryView.setText(bypass.markdownToSpannable(summary, new BypassPicassoImageGetter(mSummaryView, App.instance().getPicasso())));
         mSummaryView.setMovementMethod(LinkMovementMethod.getInstance());
 
-        GitLabClient.getPicasso()
+        App.instance().getPicasso()
                 .load(ImageUtil.getAvatarUrl(note.getAuthor(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size)))
                 .transform(new CircleTransformation())
                 .into(mIconView);

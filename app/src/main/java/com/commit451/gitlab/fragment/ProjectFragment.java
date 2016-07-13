@@ -20,7 +20,7 @@ import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.easycallback.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.api.GitLabFactory;
 import com.commit451.gitlab.api.exception.HttpException;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Project;
@@ -90,7 +90,7 @@ public class ProjectFragment extends ButterKnifeFragment {
                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            GitLabClient.instance().forkProject(mProject.getId()).enqueue(mForkCallback);
+                            App.instance().getGitLab().forkProject(mProject.getId()).enqueue(mForkCallback);
                         }
                     })
                     .show();
@@ -100,7 +100,7 @@ public class ProjectFragment extends ButterKnifeFragment {
     @OnClick(R.id.root_star)
     void onStarClicked() {
         if (mProject != null) {
-            GitLabClient.instance().starProject(mProject.getId()).enqueue(mStarCallback);
+            App.instance().getGitLab().starProject(mProject.getId()).enqueue(mStarCallback);
         }
     }
 
@@ -112,7 +112,7 @@ public class ProjectFragment extends ButterKnifeFragment {
             }
             for (RepositoryTreeObject treeItem : response) {
                 if (getReadmeType(treeItem.getName()) != README_TYPE_UNKNOWN) {
-                    GitLabClient.instance().getFile(mProject.getId(), treeItem.getName(), mBranchName).enqueue(mFileCallback);
+                    App.instance().getGitLab().getFile(mProject.getId(), treeItem.getName(), mBranchName).enqueue(mFileCallback);
                     return;
                 }
             }
@@ -161,7 +161,7 @@ public class ProjectFragment extends ButterKnifeFragment {
                                 switch (getReadmeType(response.getFileName())) {
                                     case README_TYPE_MARKDOWN:
                                         mOverviewVew.setText(mBypass.markdownToSpannable(text,
-                                                new BypassPicassoImageGetter(mOverviewVew, GitLabClient.getPicasso())));
+                                                new BypassPicassoImageGetter(mOverviewVew, App.instance().getPicasso())));
                                         break;
                                     case README_TYPE_HTML:
                                         mOverviewVew.setText(Html.fromHtml(text));
@@ -230,7 +230,7 @@ public class ProjectFragment extends ButterKnifeFragment {
                             .setAction(R.string.project_unstar, new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    GitLabClient.instance().unstarProject(mProject.getId()).enqueue(mUnstarProjectCallback);
+                                    App.instance().getGitLab().unstarProject(mProject.getId()).enqueue(mUnstarProjectCallback);
                                 }
                             })
                             .show();
@@ -326,7 +326,7 @@ public class ProjectFragment extends ButterKnifeFragment {
             }
         });
 
-        GitLabClient.instance().getTree(mProject.getId(), mBranchName, null).enqueue(mFilesCallback);
+        App.instance().getGitLab().getTree(mProject.getId(), mBranchName, null).enqueue(mFilesCallback);
     }
 
     private void bindProject(Project project) {

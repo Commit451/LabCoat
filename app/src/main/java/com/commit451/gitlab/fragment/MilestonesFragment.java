@@ -21,7 +21,7 @@ import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.gitlab.adapter.MilestoneAdapter;
 import com.commit451.easycallback.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.api.GitLabFactory;
 import com.commit451.gitlab.event.MilestoneChangedEvent;
 import com.commit451.gitlab.event.MilestoneCreatedEvent;
 import com.commit451.gitlab.event.ProjectReloadEvent;
@@ -225,7 +225,7 @@ public class MilestonesFragment extends ButterKnifeFragment {
         });
         mNextPageUrl = null;
         mLoading = true;
-        GitLabClient.instance().getMilestones(mProject.getId(), mState).enqueue(mCallback);
+        App.instance().getGitLab().getMilestones(mProject.getId(), mState).enqueue(mCallback);
     }
 
     private void loadMore() {
@@ -241,7 +241,7 @@ public class MilestonesFragment extends ButterKnifeFragment {
         mMilestoneAdapter.setLoading(true);
 
         Timber.d("loadMore called for " + mNextPageUrl);
-        GitLabClient.instance().getMilestones(mNextPageUrl.toString()).enqueue(mMoreMilestonesCallback);
+        App.instance().getGitLab().getMilestones(mNextPageUrl.toString()).enqueue(mMoreMilestonesCallback);
     }
 
     private class EventReceiver {

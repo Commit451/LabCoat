@@ -8,8 +8,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Member;
 import com.commit451.gitlab.transformation.CircleTransformation;
 import com.commit451.gitlab.util.ImageUtil;
@@ -44,7 +44,7 @@ public class AssigneeSpinnerViewHolder extends RecyclerView.ViewHolder {
             mImageView.setImageResource(R.drawable.ic_assign_24dp);
         } else {
             mUsernameView.setText(user.getUsername());
-            GitLabClient.getPicasso()
+            App.instance().getPicasso()
                     .load(ImageUtil.getAvatarUrl(user, itemView.getResources().getDimensionPixelSize(R.dimen.user_list_image_size)))
                     .transform(new CircleTransformation())
                     .into(mImageView);

@@ -20,7 +20,7 @@ import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.gitlab.adapter.MergeRequestAdapter;
 import com.commit451.easycallback.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.api.GitLabFactory;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.model.api.Project;
@@ -204,7 +204,7 @@ public class MergeRequestsFragment extends ButterKnifeFragment {
         });
         mNextPageUrl = null;
         mLoading = true;
-        GitLabClient.instance().getMergeRequests(mProject.getId(), mState).enqueue(mCallback);
+        App.instance().getGitLab().getMergeRequests(mProject.getId(), mState).enqueue(mCallback);
     }
 
     private void loadMore() {
@@ -217,7 +217,7 @@ public class MergeRequestsFragment extends ButterKnifeFragment {
         mMergeRequestAdapter.setLoading(true);
         mLoading = true;
         Timber.d("loadMore called for " + mNextPageUrl);
-        GitLabClient.instance().getMergeRequests(mNextPageUrl.toString(), mState).enqueue(mMoreIssuesCallback);
+        App.instance().getGitLab().getMergeRequests(mNextPageUrl.toString(), mState).enqueue(mMoreIssuesCallback);
     }
 
     private class EventReceiver {

@@ -16,7 +16,7 @@ import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.BuildSectionsPagerAdapter;
 import com.commit451.easycallback.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.api.GitLabFactory;
 import com.commit451.gitlab.event.BuildChangedEvent;
 import com.commit451.gitlab.model.api.Build;
 import com.commit451.gitlab.model.api.Project;
@@ -116,15 +116,15 @@ public class BuildActivity extends BaseActivity {
             switch (item.getItemId()) {
                 case R.id.action_retry:
                     mProgress.setVisibility(View.VISIBLE);
-                    GitLabClient.instance().retryBuild(mProject.getId(), mBuild.getId()).enqueue(mRetryCallback);
+                    App.instance().getGitLab().retryBuild(mProject.getId(), mBuild.getId()).enqueue(mRetryCallback);
                     return true;
                 case R.id.action_erase:
                     mProgress.setVisibility(View.VISIBLE);
-                    GitLabClient.instance().eraseBuild(mProject.getId(), mBuild.getId()).enqueue(mEraseCallback);
+                    App.instance().getGitLab().eraseBuild(mProject.getId(), mBuild.getId()).enqueue(mEraseCallback);
                     return true;
                 case R.id.action_cancel:
                     mProgress.setVisibility(View.VISIBLE);
-                    GitLabClient.instance().cancelBuild(mProject.getId(), mBuild.getId()).enqueue(mCancelCallback);
+                    App.instance().getGitLab().cancelBuild(mProject.getId(), mBuild.getId()).enqueue(mCancelCallback);
                     return true;
             }
             return false;

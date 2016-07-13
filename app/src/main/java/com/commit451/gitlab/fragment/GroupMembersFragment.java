@@ -15,7 +15,7 @@ import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.GroupMembersAdapter;
 import com.commit451.easycallback.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.api.GitLabFactory;
 import com.commit451.gitlab.dialog.AccessDialog;
 import com.commit451.gitlab.event.MemberAddedEvent;
 import com.commit451.gitlab.model.api.Group;
@@ -121,7 +121,7 @@ public class GroupMembersFragment extends ButterKnifeFragment {
         @Override
         public void onUserRemoveClicked(Member member) {
             mMember = member;
-            GitLabClient.instance().removeGroupMember(mGroup.getId(), member.getId()).enqueue(mRemoveMemberCallback);
+            App.instance().getGitLab().removeGroupMember(mGroup.getId(), member.getId()).enqueue(mRemoveMemberCallback);
         }
 
         @Override
@@ -192,7 +192,7 @@ public class GroupMembersFragment extends ButterKnifeFragment {
                 }
             }
         });
-        GitLabClient.instance().getGroupMembers(mGroup.getId()).enqueue(mGroupMembersCallback);
+        App.instance().getGitLab().getGroupMembers(mGroup.getId()).enqueue(mGroupMembersCallback);
     }
 
     private class EventReceiver {

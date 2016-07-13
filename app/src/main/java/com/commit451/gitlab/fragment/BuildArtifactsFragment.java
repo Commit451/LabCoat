@@ -16,7 +16,7 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.BuildArtifactsAdapter;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.easycallback.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.api.GitLabFactory;
 import com.commit451.gitlab.event.BuildChangedEvent;
 import com.commit451.gitlab.model.api.Artifact;
 import com.commit451.gitlab.model.api.Build;
@@ -165,7 +165,7 @@ public class BuildArtifactsFragment extends ButterKnifeFragment {
             }
         });
 
-        GitLabClient.instance().getBuildArtifacts(mProject.getId(), mBuild.getId()).enqueue(mCommitsCallback);
+        App.instance().getGitLab().getBuildArtifacts(mProject.getId(), mBuild.getId()).enqueue(mCommitsCallback);
     }
 
     private class EventReceiver {

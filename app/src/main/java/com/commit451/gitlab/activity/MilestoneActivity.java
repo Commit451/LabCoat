@@ -20,7 +20,7 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.gitlab.adapter.MilestoneIssuesAdapter;
 import com.commit451.easycallback.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.api.GitLabFactory;
 import com.commit451.gitlab.event.MilestoneChangedEvent;
 import com.commit451.gitlab.model.api.Issue;
 import com.commit451.gitlab.model.api.Milestone;
@@ -237,7 +237,7 @@ public class MilestoneActivity extends BaseActivity {
                 }
             }
         });
-        GitLabClient.instance().getMilestoneIssues(mProject.getId(), mMilestone.getId()).enqueue(mIssuesCallback);
+        App.instance().getGitLab().getMilestoneIssues(mProject.getId(), mMilestone.getId()).enqueue(mIssuesCallback);
     }
 
     private void loadMore() {
@@ -249,16 +249,16 @@ public class MilestoneActivity extends BaseActivity {
         mLoading = true;
 
         Timber.d("loadMore called for %s", mNextPageUrl);
-        GitLabClient.instance().getMilestoneIssues(mNextPageUrl.toString()).enqueue(mMoreIssuesCallback);
+        App.instance().getGitLab().getMilestoneIssues(mNextPageUrl.toString()).enqueue(mMoreIssuesCallback);
     }
 
     private void closeOrOpenIssue() {
         mProgress.setVisibility(View.VISIBLE);
         if (mMilestone.getState().equals(Milestone.STATE_ACTIVE)) {
-            GitLabClient.instance().updateMilestoneStatus(mProject.getId(), mMilestone.getId(), Milestone.STATE_EVENT_CLOSE)
+            App.instance().getGitLab().updateMilestoneStatus(mProject.getId(), mMilestone.getId(), Milestone.STATE_EVENT_CLOSE)
                     .enqueue(mOpenCloseCallback);
         } else {
-            GitLabClient.instance().updateMilestoneStatus(mProject.getId(), mMilestone.getId(), Milestone.STATE_EVENT_ACTIVATE)
+            App.instance().getGitLab().updateMilestoneStatus(mProject.getId(), mMilestone.getId(), Milestone.STATE_EVENT_ACTIVATE)
                     .enqueue(mOpenCloseCallback);
         }
     }

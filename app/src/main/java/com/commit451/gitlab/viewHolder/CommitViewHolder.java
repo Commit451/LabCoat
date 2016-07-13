@@ -7,8 +7,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.RepositoryCommit;
 import com.commit451.gitlab.transformation.CircleTransformation;
 import com.commit451.gitlab.util.DateUtils;
@@ -39,7 +39,7 @@ public class CommitViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(RepositoryCommit commit) {
-        GitLabClient.getPicasso()
+        App.instance().getPicasso()
                 .load(ImageUtil.getAvatarUrl(commit.getAuthorEmail(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size)))
                 .transform(new CircleTransformation())
                 .into(mImageView);

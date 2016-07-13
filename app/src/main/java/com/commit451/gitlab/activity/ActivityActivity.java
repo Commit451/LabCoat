@@ -11,7 +11,6 @@ import android.view.View;
 
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.CloseDrawerEvent;
 import com.commit451.gitlab.fragment.FeedFragment;
 import com.squareup.otto.Subscribe;
@@ -57,7 +56,7 @@ public class ActivityActivity extends BaseActivity {
 
         FeedFragment feedFragment = (FeedFragment) getSupportFragmentManager().findFragmentByTag(TAG_FEED_FRAGMENT);
         if (feedFragment == null) {
-            Uri feedUri = GitLabClient.getAccount().getServerUrl();
+            Uri feedUri = App.instance().getAccount().getServerUrl();
 
             feedUri = feedUri.buildUpon()
                     .appendPath("dashboard")

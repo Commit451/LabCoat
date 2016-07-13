@@ -16,7 +16,7 @@ import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.MergeRequestDetailAdapter;
 import com.commit451.easycallback.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.api.GitLabFactory;
 import com.commit451.gitlab.event.MergeRequestChangedEvent;
 import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.model.api.Note;
@@ -228,12 +228,12 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
                 }
             }
         });
-        GitLabClient.instance().getMergeRequestNotes(mProject.getId(), mMergeRequest.getId()).enqueue(mNotesCallback);
+        App.instance().getGitLab().getMergeRequestNotes(mProject.getId(), mMergeRequest.getId()).enqueue(mNotesCallback);
     }
 
     private void loadMoreNotes() {
         mMergeRequestDetailAdapter.setLoading(true);
-        GitLabClient.instance().getMergeRequestNotes(mNextPageUrl.toString()).enqueue(mMoreNotesCallback);
+        App.instance().getGitLab().getMergeRequestNotes(mNextPageUrl.toString()).enqueue(mMoreNotesCallback);
     }
 
     private void postNote(String message) {
@@ -249,7 +249,7 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
         mTeleprinter.hideKeyboard();
         mSendMessageView.clearText();
 
-        GitLabClient.instance().addMergeRequestNote(mProject.getId(), mMergeRequest.getId(), message).enqueue(mPostNoteCallback);
+        App.instance().getGitLab().addMergeRequestNote(mProject.getId(), mMergeRequest.getId(), message).enqueue(mPostNoteCallback);
     }
 
     private class EventReceiver {

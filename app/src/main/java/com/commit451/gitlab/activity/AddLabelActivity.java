@@ -13,9 +13,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.commit451.easycallback.EasyCallback;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.LabelAdapter;
-import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Label;
 import com.commit451.gitlab.viewHolder.LabelViewHolder;
 
@@ -101,7 +101,7 @@ public class AddLabelActivity extends BaseActivity {
                 }
             }
         });
-        GitLabClient.instance().getLabels(mProjectId).enqueue(new EasyCallback<List<Label>>() {
+        App.instance().getGitLab().getLabels(mProjectId).enqueue(new EasyCallback<List<Label>>() {
             @Override
             public void success(@NonNull List<Label> response) {
                 mSwipeRefreshLayout.setRefreshing(false);

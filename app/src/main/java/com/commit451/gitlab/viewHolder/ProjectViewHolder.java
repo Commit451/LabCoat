@@ -10,8 +10,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.transformation.CircleTransformation;
 import com.github.ivbaranov.mli.MaterialLetterIcon;
@@ -46,7 +46,7 @@ public class ProjectViewHolder extends RecyclerView.ViewHolder {
             mLetterView.setVisibility(View.GONE);
 
             mImageView.setVisibility(View.VISIBLE);
-            GitLabClient.getPicasso()
+            App.instance().getPicasso()
                     .load(project.getAvatarUrl())
                     .transform(new CircleTransformation())
                     .into(mImageView);

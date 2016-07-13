@@ -21,9 +21,9 @@ import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 import android.webkit.WebView;
 
-import com.commit451.gitlab.R;
 import com.commit451.easycallback.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.App;
+import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.api.RepositoryFile;
 import com.commit451.gitlab.observable.DecodeObservableFactory;
 
@@ -133,7 +133,7 @@ public class FileActivity extends BaseActivity {
 
     private void loadData() {
         mProgressView.setVisibility(View.VISIBLE);
-        GitLabClient.instance().getFile(mProjectId, mPath, mRef).enqueue(mRepositoryFileCallback);
+        App.instance().getGitLab().getFile(mProjectId, mPath, mRef).enqueue(mRepositoryFileCallback);
     }
 
     private void bindFile(RepositoryFile repositoryFile) {

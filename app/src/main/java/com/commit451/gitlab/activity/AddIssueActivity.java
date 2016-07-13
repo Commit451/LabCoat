@@ -15,13 +15,12 @@ import android.widget.FrameLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.AddIssueLabelAdapter;
 import com.commit451.gitlab.adapter.AssigneeSpinnerAdapter;
 import com.commit451.gitlab.adapter.MilestoneSpinnerAdapter;
-import com.commit451.easycallback.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.api.exception.NullBodyException;
 import com.commit451.gitlab.event.IssueChangedEvent;
 import com.commit451.gitlab.event.IssueCreatedEvent;
@@ -135,7 +134,7 @@ public class AddIssueActivity extends MorphActivity {
             mMembers.addAll(response);
             if (mProject.belongsToGroup()) {
                 Timber.d("Project belongs to a group, loading those users too");
-                GitLabClient.instance().getGroupMembers(mProject.getNamespace().getId()).enqueue(mGroupMembersCallback);
+                App.instance().getGitLab().getGroupMembers(mProject.getNamespace().getId()).enqueue(mGroupMembersCallback);
             } else {
                 setAssignees();
             }
@@ -250,9 +249,9 @@ public class AddIssueActivity extends MorphActivity {
     }
 
     private void load() {
-        GitLabClient.instance().getMilestones(mProject.getId(), getString(R.string.milestone_state_value_default)).enqueue(mMilestonesCallback);
-        GitLabClient.instance().getProjectMembers(mProject.getId()).enqueue(mAssigneeCallback);
-        GitLabClient.instance().getLabels(mProject.getId()).enqueue(mLabelCallback);
+        App.instance().getGitLab().getMilestones(mProject.getId(), getString(R.string.milestone_state_value_default)).enqueue(mMilestonesCallback);
+        App.instance().getGitLab().getProjectMembers(mProject.getId()).enqueue(mAssigneeCallback);
+        App.instance().getGitLab().getLabels(mProject.getId()).enqueue(mLabelCallback);
     }
 
     private void showLoading() {
@@ -337,14 +336,14 @@ public class AddIssueActivity extends MorphActivity {
 
     private void createOrSaveIssue(String title, String description, Long assigneeId, Long milestoneId) {
         if (mIssue == null) {
-            GitLabClient.instance().createIssue(
+            App.instance().getGitLab().createIssue(
                     mProject.getId(),
                     title,
                     description,
                     assigneeId,
                     milestoneId).enqueue(mIssueCreatedCallback);
         } else {
-            GitLabClient.instance().updateIssue(mProject.getId(),
+            App.instance().getGitLab().updateIssue(mProject.getId(),
                     mIssue.getId(),
                     title,
                     description,

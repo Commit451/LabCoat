@@ -19,7 +19,7 @@ import com.commit451.easel.Easel;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.easycallback.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.api.GitLabFactory;
 import com.commit451.gitlab.event.MilestoneChangedEvent;
 import com.commit451.gitlab.event.MilestoneCreatedEvent;
 import com.commit451.gitlab.model.api.Milestone;
@@ -176,12 +176,12 @@ public class AddMilestoneActivity extends MorphActivity {
         }
 
         if (mMilestone == null) {
-            GitLabClient.instance().createMilestone(mProjectId,
+            App.instance().getGitLab().createMilestone(mProjectId,
                     mTitle.getText().toString(),
                     mDescription.getText().toString(),
                     dueDate).enqueue(mMilestoneCallback);
         } else {
-            GitLabClient.instance().editMilestone(mProjectId,
+            App.instance().getGitLab().editMilestone(mProjectId,
                     mMilestone.getId(),
                     mTitle.getText().toString(),
                     mDescription.getText().toString(),

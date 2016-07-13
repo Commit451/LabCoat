@@ -11,11 +11,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.commit451.easycallback.EasyCallback;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.gitlab.adapter.ProjectsAdapter;
-import com.commit451.easycallback.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.navigation.Navigator;
@@ -201,20 +201,20 @@ public class ProjectsFragment extends ButterKnifeFragment {
         switch (mMode) {
             case MODE_ALL:
                 showLoading();
-                GitLabClient.instance().getAllProjects().enqueue(mProjectsCallback);
+                App.instance().getGitLab().getAllProjects().enqueue(mProjectsCallback);
                 break;
             case MODE_MINE:
                 showLoading();
-                GitLabClient.instance().getMyProjects().enqueue(mProjectsCallback);
+                App.instance().getGitLab().getMyProjects().enqueue(mProjectsCallback);
                 break;
             case MODE_STARRED:
                 showLoading();
-                GitLabClient.instance().getStarredProjects().enqueue(mProjectsCallback);
+                App.instance().getGitLab().getStarredProjects().enqueue(mProjectsCallback);
                 break;
             case MODE_SEARCH:
                 if (mQuery != null) {
                     showLoading();
-                    GitLabClient.instance().searchAllProjects(mQuery).enqueue(mProjectsCallback);
+                    App.instance().getGitLab().searchAllProjects(mQuery).enqueue(mProjectsCallback);
                 }
                 break;
             case MODE_GROUP:
@@ -223,7 +223,7 @@ public class ProjectsFragment extends ButterKnifeFragment {
                 if (group == null) {
                     throw new IllegalStateException("You must also pass a group if you want to show a groups projects");
                 }
-                GitLabClient.instance().getGroupProjects(group.getId()).enqueue(mProjectsCallback);
+                App.instance().getGitLab().getGroupProjects(group.getId()).enqueue(mProjectsCallback);
                 break;
             default:
                 throw new IllegalStateException(mMode + " is not defined");
@@ -241,7 +241,7 @@ public class ProjectsFragment extends ButterKnifeFragment {
         mLoading = true;
         mProjectsAdapter.setLoading(true);
         Timber.d("loadMore called for " + mNextPageUrl);
-        GitLabClient.instance().getProjects(mNextPageUrl.toString()).enqueue(mMoreProjectsCallback);
+        App.instance().getGitLab().getProjects(mNextPageUrl.toString()).enqueue(mMoreProjectsCallback);
     }
 
     private void showLoading() {

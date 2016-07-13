@@ -16,7 +16,7 @@ import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.MergeRequestSectionsPagerAdapter;
 import com.commit451.easycallback.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.api.GitLabFactory;
 import com.commit451.gitlab.event.MergeRequestChangedEvent;
 import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.model.api.Project;
@@ -80,7 +80,7 @@ public class MergeRequestActivity extends BaseActivity {
             switch (item.getItemId()) {
                 case R.id.action_merge:
                     mProgress.setVisibility(View.VISIBLE);
-                    GitLabClient.instance().acceptMergeRequest(mProject.getId(), mMergeRequest.getId()).enqueue(mMergeRequestCallback);
+                    App.instance().getGitLab().acceptMergeRequest(mProject.getId(), mMergeRequest.getId()).enqueue(mMergeRequestCallback);
                     return true;
             }
             return false;

@@ -8,8 +8,8 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.transformation.CircleTransformation;
 import com.commit451.gitlab.util.ImageUtil;
@@ -60,7 +60,7 @@ public class AccountViewHolder extends RecyclerView.ViewHolder{
             itemView.setBackground(null);
         }
 
-        GitLabClient.getPicasso()
+        App.instance().getPicasso()
                 .load(ImageUtil.getAvatarUrl(account.getUser(), itemView.getResources().getDimensionPixelSize(R.dimen.user_list_image_size)))
                 .transform(new CircleTransformation())
                 .into(mImageView);

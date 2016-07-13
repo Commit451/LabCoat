@@ -8,8 +8,8 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Member;
 import com.commit451.gitlab.util.ImageUtil;
 
@@ -53,7 +53,7 @@ public class ProjectMemberViewHolder extends RecyclerView.ViewHolder{
         mUsernameView.setText(member.getUsername());
         mAccessView.setText(Member.getAccessLevel(member.getAccessLevel()));
 
-        GitLabClient.getPicasso()
+        App.instance().getPicasso()
                 .load(ImageUtil.getAvatarUrl(member, itemView.getResources().getDimensionPixelSize(R.dimen.user_header_image_size)))
                 .into(mImageView);
     }

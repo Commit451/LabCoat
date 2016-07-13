@@ -7,8 +7,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.alexgwyn.recyclerviewsquire.TypedViewHolder;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.transformation.CircleTransformation;
 import com.commit451.gitlab.util.ImageUtil;
@@ -41,7 +41,7 @@ public class AccountViewHolder extends TypedViewHolder<Account> {
         mServerView.setText(item.getServerUrl().toString());
         mUsernameView.setText(item.getUser().getUsername());
 
-        GitLabClient.getPicasso()
+        App.instance().getPicasso()
                 .load(ImageUtil.getAvatarUrl(item.getUser(), itemView.getResources().getDimensionPixelSize(R.dimen.user_list_image_size)))
                 .transform(new CircleTransformation())
                 .into(mImageView);

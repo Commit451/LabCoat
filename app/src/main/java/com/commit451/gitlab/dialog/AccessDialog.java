@@ -8,9 +8,9 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
-import com.commit451.gitlab.R;
 import com.commit451.easycallback.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.App;
+import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.model.api.Member;
 
@@ -121,10 +121,10 @@ public class AccessDialog extends MaterialDialog {
 
         if (mGroup != null) {
             showLoading();
-            GitLabClient.instance().editGroupMember(mGroup.getId(), mMember.getId(), accessLevel).enqueue(mEditUserCallback);
+            App.instance().getGitLab().editGroupMember(mGroup.getId(), mMember.getId(), accessLevel).enqueue(mEditUserCallback);
         } else if (mProjectId != -1) {
             showLoading();
-            GitLabClient.instance().editProjectMember(mProjectId, mMember.getId(), accessLevel).enqueue(mEditUserCallback);
+            App.instance().getGitLab().editProjectMember(mProjectId, mMember.getId(), accessLevel).enqueue(mEditUserCallback);
         } else if (mAccessAppliedListener != null) {
             mAccessAppliedListener.onAccessApplied(accessLevel);
         } else {

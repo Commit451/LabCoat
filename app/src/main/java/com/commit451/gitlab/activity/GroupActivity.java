@@ -18,10 +18,10 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.commit451.easel.Easel;
+import com.commit451.easycallback.EasyCallback;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.GroupPagerAdapter;
-import com.commit451.easycallback.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.model.api.GroupDetail;
 import com.commit451.gitlab.transformation.PaletteTransformation;
@@ -98,7 +98,7 @@ public class GroupActivity extends BaseActivity {
         } else {
             mProgress.setVisibility(View.VISIBLE);
             long groupId = getIntent().getLongExtra(KEY_GROUP_ID, -1);
-            GitLabClient.instance().getGroup(groupId).enqueue(mGroupCallback);
+            App.instance().getGitLab().getGroup(groupId).enqueue(mGroupCallback);
         }
     }
 
@@ -108,7 +108,7 @@ public class GroupActivity extends BaseActivity {
     }
 
     private void bind(Group group) {
-        GitLabClient.getPicasso()
+        App.instance().getPicasso()
                 .load(group.getAvatarUrl())
                 .transform(PaletteTransformation.instance())
                 .into(mBackdrop, new PaletteTransformation.PaletteCallback(mBackdrop) {

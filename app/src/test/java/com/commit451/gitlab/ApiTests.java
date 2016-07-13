@@ -3,7 +3,7 @@ package com.commit451.gitlab;
 import android.net.Uri;
 
 import com.bluelinelabs.logansquare.LoganSquare;
-import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.api.GitLab;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.model.api.Issue;
 import com.commit451.gitlab.model.api.MergeRequest;
@@ -37,6 +37,7 @@ public class ApiTests {
     private static final long FAKE_GROUP_PROJECT_ID = 376651;
 
     private static Project sFakeProject;
+    private static GitLab gitLab;
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -45,9 +46,9 @@ public class ApiTests {
 
         LoganSquare.registerTypeConverter(Uri.class, new NullTypeConverter());
 
-        TestUtil.login();
+        gitLab = TestUtil.login();
 
-        Response<Project> projectResponse = GitLabClient.instance()
+        Response<Project> projectResponse = gitLab
                 .getProject(String.valueOf(FAKE_GROUP_PROJECT_ID))
                 .execute();
         assertTrue(projectResponse.isSuccessful());
@@ -58,7 +59,7 @@ public class ApiTests {
 
     @Test
     public void getProjects() throws Exception {
-        Response<List<Project>> projectsResponse = GitLabClient.instance()
+        Response<List<Project>> projectsResponse = gitLab
                 .getAllProjects()
                 .execute();
         assertTrue(projectsResponse.isSuccessful());
@@ -67,7 +68,7 @@ public class ApiTests {
 
     @Test
     public void getGroups() throws Exception {
-        Response<List<Group>> groupResponse = GitLabClient.instance()
+        Response<List<Group>> groupResponse = gitLab
                 .getGroups()
                 .execute();
         assertTrue(groupResponse.isSuccessful());
@@ -77,7 +78,7 @@ public class ApiTests {
     @Test
     public void getIssues() throws Exception {
         String defaultState = RuntimeEnvironment.application.getResources().getString(R.string.issue_state_value_default);
-        Response<List<Issue>> issuesResponse = GitLabClient.instance()
+        Response<List<Issue>> issuesResponse = gitLab
                 .getIssues(sFakeProject.getId(), defaultState)
                 .execute();
         assertTrue(issuesResponse.isSuccessful());
@@ -88,7 +89,7 @@ public class ApiTests {
     public void getFiles() throws Exception {
         String defaultBranch = "master";
         String currentPath = "";
-        Response<List<RepositoryTreeObject>> treeResponse = GitLabClient.instance()
+        Response<List<RepositoryTreeObject>> treeResponse = gitLab
                 .getTree(sFakeProject.getId(), defaultBranch, currentPath)
                 .execute();
         assertTrue(treeResponse.isSuccessful());
@@ -98,7 +99,7 @@ public class ApiTests {
     @Test
     public void getCommits() throws Exception {
         String defaultBranch = "master";
-        Response<List<RepositoryCommit>> commitsResponse = GitLabClient.instance()
+        Response<List<RepositoryCommit>> commitsResponse = gitLab
                 .getCommits(sFakeProject.getId(), defaultBranch, 0)
                 .execute();
         assertTrue(commitsResponse.isSuccessful());
@@ -108,7 +109,7 @@ public class ApiTests {
     @Test
     public void getMergeRequests() throws Exception {
         String defaultState = RuntimeEnvironment.application.getResources().getString(R.string.merge_request_state_value_default);
-        Response<List<MergeRequest>> mergeRequestResponse = GitLabClient.instance()
+        Response<List<MergeRequest>> mergeRequestResponse = gitLab
                 .getMergeRequests(sFakeProject.getId(), defaultState)
                 .execute();
         assertTrue(mergeRequestResponse.isSuccessful());
@@ -117,7 +118,7 @@ public class ApiTests {
 
     @Test
     public void getCurrentUser() throws Exception {
-        Response<UserFull> userFullResponse = GitLabClient.instance()
+        Response<UserFull> userFullResponse = gitLab
                 .getThisUser()
                 .execute();
         assertTrue(userFullResponse.isSuccessful());
