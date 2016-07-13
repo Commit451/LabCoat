@@ -16,12 +16,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.commit451.bypasspicassoimagegetter.BypassPicassoImageGetter;
+import com.commit451.easycallback.EasyCallback;
+import com.commit451.easycallback.HttpException;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ProjectActivity;
-import com.commit451.easycallback.EasyCallback;
-import com.commit451.gitlab.api.GitLabFactory;
-import com.commit451.gitlab.api.exception.HttpException;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryFile;

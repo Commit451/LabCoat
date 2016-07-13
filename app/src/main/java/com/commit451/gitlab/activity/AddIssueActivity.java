@@ -16,12 +16,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.commit451.easycallback.EasyCallback;
+import com.commit451.easycallback.NullBodyException;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.AddIssueLabelAdapter;
 import com.commit451.gitlab.adapter.AssigneeSpinnerAdapter;
 import com.commit451.gitlab.adapter.MilestoneSpinnerAdapter;
-import com.commit451.gitlab.api.exception.NullBodyException;
 import com.commit451.gitlab.event.IssueChangedEvent;
 import com.commit451.gitlab.event.IssueCreatedEvent;
 import com.commit451.gitlab.model.api.Issue;
