@@ -15,12 +15,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.gitlab.adapter.MilestoneIssuesAdapter;
-import com.commit451.easycallback.EasyCallback;
-import com.commit451.gitlab.api.GitLabFactory;
 import com.commit451.gitlab.event.MilestoneChangedEvent;
 import com.commit451.gitlab.model.api.Issue;
 import com.commit451.gitlab.model.api.Milestone;
@@ -76,8 +75,8 @@ public class MilestoneActivity extends BaseActivity {
     EventReceiver mEventReceiver;
 
     @OnClick(R.id.add)
-    void onAddClick() {
-        Navigator.navigateToAddIssue(MilestoneActivity.this, null, mProject);
+    void onAddClick(View fab) {
+        Navigator.navigateToAddIssue(MilestoneActivity.this, fab, mProject);
     }
 
     @OnClick(R.id.edit)
