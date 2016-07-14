@@ -38,7 +38,6 @@
 -dontwarn okhttp3.**
 -dontwarn okio.**
 -dontwarn retrofit2.**
--dontwarn rx.**
 
 -keepclasseswithmembers class * {
     @retrofit2.http.* <methods>;
