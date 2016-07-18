@@ -15,6 +15,7 @@ import com.commit451.gitlab.activity.ActivityActivity;
 import com.commit451.gitlab.activity.AddIssueActivity;
 import com.commit451.gitlab.activity.AddLabelActivity;
 import com.commit451.gitlab.activity.AddMilestoneActivity;
+import com.commit451.gitlab.activity.AddNewLabelActivity;
 import com.commit451.gitlab.activity.AddUserActivity;
 import com.commit451.gitlab.activity.BuildActivity;
 import com.commit451.gitlab.activity.DiffActivity;
@@ -182,6 +183,11 @@ public class Navigator {
 
     public static void navigateToAddLabels(Activity activity, Project project, int requestCode) {
         Intent intent = AddLabelActivity.newIntent(activity, project.getId());
+        activity.startActivityForResult(intent, requestCode);
+    }
+
+    public static void navigateToAddNewLabel(Activity activity, long projectId, int requestCode) {
+        Intent intent = AddNewLabelActivity.newIntent(activity, projectId);
         activity.startActivityForResult(intent, requestCode);
     }
 

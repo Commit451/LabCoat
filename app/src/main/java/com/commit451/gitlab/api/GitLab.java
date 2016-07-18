@@ -284,7 +284,8 @@ public interface GitLab {
                             @Field("title") String title,
                             @Field("description") String description,
                             @Field("assignee_id") @Nullable Long assigneeId,
-                            @Field("milestone_id") @Nullable Long milestoneId);
+                            @Field("milestone_id") @Nullable Long milestoneId,
+                            @Field("labels") @Nullable String commaSeparatedLabelNames);
 
     @PUT(API_VERSION + "/projects/{id}/issues/{issue_id}")
     Call<Issue> updateIssue(@Path("id") long projectId,
@@ -292,7 +293,8 @@ public interface GitLab {
                             @Query("title") String title,
                             @Query("description") String description,
                             @Query("assignee_id") @Nullable Long assigneeId,
-                            @Query("milestone_id") @Nullable Long milestoneId);
+                            @Query("milestone_id") @Nullable Long milestoneId,
+                            @Query("labels") @Nullable String commaSeparatedLabelNames);
 
     @PUT(API_VERSION + "/projects/{id}/issues/{issue_id}")
     Call<Issue> updateIssueStatus(@Path("id") long projectId,
@@ -363,7 +365,8 @@ public interface GitLab {
     @POST(API_VERSION + "/projects/{id}/labels")
     Call<Label> createLabel(@Path("id") long projectId,
                             @Query("name") String name,
-                            @Query("color") String color);
+                            @Query("color") String color,
+                            @Query("description") @Nullable String description);
 
     /**
      * Delete the label by its name

@@ -11,7 +11,7 @@ import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.api.Issue;
 import com.commit451.gitlab.transformation.CircleTransformation;
-import com.commit451.gitlab.util.DateUtils;
+import com.commit451.gitlab.util.DateUtil;
 import com.commit451.gitlab.util.ImageUtil;
 
 import butterknife.BindView;
@@ -52,7 +52,7 @@ public class IssueViewHolder extends RecyclerView.ViewHolder {
 
         String time = "";
         if (issue.getCreatedAt() != null) {
-            time += DateUtils.getRelativeTimeSpanString(itemView.getContext(), issue.getCreatedAt());
+            time += DateUtil.getRelativeTimeSpanString(itemView.getContext(), issue.getCreatedAt());
         }
         String author = "";
         if (issue.getAuthor() != null) {

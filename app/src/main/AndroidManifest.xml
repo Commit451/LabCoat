@@ -66,6 +66,7 @@
             android:theme="@style/Activity.Translucent"/>
         <activity android:name=".activity.SettingsActivity"/>
         <activity android:name=".activity.AddLabelActivity"/>
+        <activity android:name=".activity.AddNewLabelActivity"/>
 
         <activity
             android:name=".activity.RoutingActivity"

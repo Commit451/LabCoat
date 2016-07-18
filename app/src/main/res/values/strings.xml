@@ -204,10 +204,20 @@
     <string name="milestone">Milestone</string>
     <string name="no_milestone">No Milestone</string>
     <string name="add_labels">+ Add Labels</string>
+    <string name="label_already_added">Label already added</string>
 
     <!-- Labels -->
     <string name="labels">Labels</string>
     <string name="no_labels">No labels</string>
+
+    <!-- Add New Label -->
+    <string name="add_new_label_title">Title</string>
+    <string name="add_new_label_description">Description</string>
+    <string name="add_new_label_color">Color</string>
+    <string name="add_new_label_choose_color">Choose color</string>
+    <string name="add_new_label_color_is_required">Color is required</string>
+    <string name="label_already_exists">Label already exists</string>
+    <string name="failed_to_create_label">Failed to create label</string>
 
     <!-- User -->
     <string name="remove_user_dialog_title">Remove user?</string>

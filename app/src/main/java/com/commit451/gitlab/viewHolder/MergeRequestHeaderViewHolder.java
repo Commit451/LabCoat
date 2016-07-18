@@ -14,7 +14,7 @@ import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.transformation.CircleTransformation;
-import com.commit451.gitlab.util.DateUtils;
+import com.commit451.gitlab.util.DateUtil;
 import com.commit451.gitlab.util.ImageUtil;
 
 import butterknife.BindView;
@@ -61,7 +61,7 @@ public class MergeRequestHeaderViewHolder extends RecyclerView.ViewHolder {
         }
         author += itemView.getResources().getString(R.string.created_merge_request);
         if (mergeRequest.getCreatedAt() != null) {
-            author += " " + DateUtils.getRelativeTimeSpanString(itemView.getContext(), mergeRequest.getCreatedAt());
+            author += " " + DateUtil.getRelativeTimeSpanString(itemView.getContext(), mergeRequest.getCreatedAt());
         }
         mAuthorView.setText(author);
     }

@@ -22,10 +22,9 @@ import android.widget.Toast;
 
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.adapter.SectionsPagerAdapter;
+import com.commit451.gitlab.adapter.ProjectSectionsPagerAdapter;
 import com.commit451.gitlab.animation.HideRunnable;
 import com.commit451.easycallback.EasyCallback;
-import com.commit451.gitlab.api.GitLabFactory;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.fragment.BaseFragment;
 import com.commit451.gitlab.model.api.Branch;
@@ -245,9 +244,9 @@ public class ProjectActivity extends BaseActivity {
     }
 
     private void setupTabs() {
-        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
+        ProjectSectionsPagerAdapter projectSectionsPagerAdapter = new ProjectSectionsPagerAdapter(this, getSupportFragmentManager());
 
-        mViewPager.setAdapter(sectionsPagerAdapter);
+        mViewPager.setAdapter(projectSectionsPagerAdapter);
         mTabLayout.setupWithViewPager(mViewPager);
     }
 

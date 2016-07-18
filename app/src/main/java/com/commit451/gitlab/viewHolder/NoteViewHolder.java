@@ -13,7 +13,7 @@ import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.api.Note;
 import com.commit451.gitlab.transformation.CircleTransformation;
-import com.commit451.gitlab.util.DateUtils;
+import com.commit451.gitlab.util.DateUtil;
 import com.commit451.gitlab.util.ImageUtil;
 
 import butterknife.BindView;
@@ -43,7 +43,7 @@ public class NoteViewHolder extends RecyclerView.ViewHolder {
 
     public void bind(Note note, Bypass bypass) {
         if (note.getCreatedAt() != null) {
-            mCreationDateView.setText(DateUtils.getRelativeTimeSpanString(itemView.getContext(), note.getCreatedAt()));
+            mCreationDateView.setText(DateUtil.getRelativeTimeSpanString(itemView.getContext(), note.getCreatedAt()));
         }
 
         if (note.getAuthor() != null) {

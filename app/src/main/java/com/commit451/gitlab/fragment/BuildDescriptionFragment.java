@@ -13,13 +13,12 @@ import android.widget.TextView;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.easycallback.EasyCallback;
-import com.commit451.gitlab.api.GitLabFactory;
 import com.commit451.gitlab.event.BuildChangedEvent;
 import com.commit451.gitlab.model.api.Build;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryCommit;
 import com.commit451.gitlab.model.api.Runner;
-import com.commit451.gitlab.util.DateUtils;
+import com.commit451.gitlab.util.DateUtil;
 import com.squareup.otto.Subscribe;
 
 import org.parceler.Parcels;
@@ -127,13 +126,13 @@ public class BuildDescriptionFragment extends ButterKnifeFragment {
         if (finishedTime == null) {
             finishedTime = new Date();
         }
-        String timeTaken = DateUtils.getTimeTaken(build.getStartedAt(), finishedTime);
+        String timeTaken = DateUtil.getTimeTaken(build.getStartedAt(), finishedTime);
         String duration = String.format(getString(R.string.build_duration), timeTaken);
         mTextDuration.setText(duration);
-        String created = String.format(getString(R.string.build_created), DateUtils.getRelativeTimeSpanString(getActivity(), build.getCreatedAt()));
+        String created = String.format(getString(R.string.build_created), DateUtil.getRelativeTimeSpanString(getActivity(), build.getCreatedAt()));
         mTextCreated.setText(created);
         if (build.getFinishedAt() != null) {
-            String finished = String.format(getString(R.string.build_finished), DateUtils.getRelativeTimeSpanString(getActivity(), build.getFinishedAt()));
+            String finished = String.format(getString(R.string.build_finished), DateUtil.getRelativeTimeSpanString(getActivity(), build.getFinishedAt()));
             mTextFinished.setText(finished);
             mTextFinished.setVisibility(View.VISIBLE);
         } else {

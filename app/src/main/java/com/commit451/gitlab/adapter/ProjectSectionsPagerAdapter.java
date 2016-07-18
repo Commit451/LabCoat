@@ -26,7 +26,7 @@ import timber.log.Timber;
 /**
  * Controls the sections that should be shown in a {@link com.commit451.gitlab.activity.ProjectActivity}
  */
-public class SectionsPagerAdapter extends FragmentPagerAdapter {
+public class ProjectSectionsPagerAdapter extends FragmentPagerAdapter {
 
     private static final int PROJECT_POS = 0;
     private static final int ACTIVITY_POS = 1;
@@ -43,7 +43,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     private final String[] mTitles;
     private final Set<Integer> mDisabledSections = new HashSet<>();
 
-    public SectionsPagerAdapter(ProjectActivity context, FragmentManager fm) {
+    public ProjectSectionsPagerAdapter(ProjectActivity context, FragmentManager fm) {
         super(fm);
 
         mProject = context.getProject();
@@ -66,7 +66,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
             Timber.d("Milestones are disabled");
             mDisabledSections.add(MILESTONES_POS);
         }
-        //TODO change this back when we do snippets
+        //TODO enable snippets when they are done
         if (true){//!project.isSnippetsEnabled()) {
             Timber.d("Snippets are disabled");
             mDisabledSections.add(SNIPPETS_POS);

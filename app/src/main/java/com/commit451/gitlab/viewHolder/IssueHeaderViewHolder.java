@@ -13,7 +13,7 @@ import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.api.Issue;
 import com.commit451.gitlab.transformation.CircleTransformation;
-import com.commit451.gitlab.util.DateUtils;
+import com.commit451.gitlab.util.DateUtil;
 import com.commit451.gitlab.util.ImageUtil;
 
 import butterknife.BindView;
@@ -65,7 +65,7 @@ public class IssueHeaderViewHolder extends RecyclerView.ViewHolder {
         }
         author += itemView.getResources().getString(R.string.created_issue);
         if (issue.getCreatedAt() != null) {
-            author = author + " " + DateUtils.getRelativeTimeSpanString(itemView.getContext(), issue.getCreatedAt());
+            author = author + " " + DateUtil.getRelativeTimeSpanString(itemView.getContext(), issue.getCreatedAt());
         }
         mAuthorView.setText(author);
         if (issue.getMilestone() != null) {

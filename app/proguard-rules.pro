@@ -23,7 +23,6 @@
 
 # So that Fabric can still have line numbers
 -keepattributes SourceFile,LineNumberTable
--keep class com.commit451.gitlab.ssl.CustomSSLSocketFactory
 
 # Picasso rules
 -dontwarn com.squareup.okhttp.**
@@ -126,3 +125,6 @@
 
 # Unicoding Bypass library
 -keep class in.uncod.android.** { *; }
+
+# Custom rules
+-keep class com.commit451.gitlab.ssl.CustomSSLSocketFactory

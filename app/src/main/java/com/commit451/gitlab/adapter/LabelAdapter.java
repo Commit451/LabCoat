@@ -13,15 +13,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * Shows a projects members and a groups members
+ * Shows a bunch of labels
  */
 public class LabelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final int TYPE_ITEM = 0;
-    private static final int TYPE_FOOTER = 1;
-
-    //TODO bring this back maybe?
-    private static final int FOOTER_COUNT = 0;
 
     private Listener mListener;
 
@@ -33,13 +29,6 @@ public class LabelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             int position = (int) v.getTag(R.id.list_position);
             LabelViewHolder viewHolder = (LabelViewHolder) v.getTag(R.id.list_view_holder);
             mListener.onLabelClicked(getItem(position), viewHolder);
-        }
-    };
-
-    private final View.OnClickListener mFooterClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            mListener.onAddLabelClicked();
         }
     };
 
@@ -61,8 +50,8 @@ public class LabelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     public void addLabel(Label label) {
-        mItems.add(label);
-        notifyItemInserted(mItems.size());
+        mItems.add(0, label);
+        notifyItemInserted(0);
     }
 
     @Override
@@ -72,10 +61,6 @@ public class LabelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 LabelViewHolder itemViewHolder = LabelViewHolder.inflate(parent);
                 itemViewHolder.itemView.setOnClickListener(mProjectMemberClickListener);
                 return itemViewHolder;
-            case TYPE_FOOTER:
-                ProjectMemberFooterViewHolder footerHolder = ProjectMemberFooterViewHolder.inflate(parent);
-                footerHolder.itemView.setOnClickListener(mFooterClickListener);
-                return footerHolder;
         }
         throw new IllegalStateException("No idea what to inflate with view type of " + viewType);
     }
@@ -94,20 +79,15 @@ public class LabelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public int getItemCount() {
-        return mItems.size() + FOOTER_COUNT;
+        return mItems.size();
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (position == mItems.size()) {
-            return TYPE_FOOTER;
-        } else {
-            return TYPE_ITEM;
-        }
+        return TYPE_ITEM;
     }
 
     public interface Listener {
         void onLabelClicked(Label label, LabelViewHolder viewHolder);
-        void onAddLabelClicked();
     }
 }
