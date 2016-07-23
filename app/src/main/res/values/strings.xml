@@ -79,14 +79,14 @@
     <string name="token_hint">Private token</string>
     <string name="login_activity">Login</string>
     <string name="login_progress_dialog">Logging in. Please wait</string>
-    <string name="token_link"><u>Login using private token</u></string>
-    <string name="normal_link"><u>Login using username or email</u></string>
+    <string name="token_link">Login using private token</string>
+    <string name="normal_link">Login using username or email</string>
     <string name="certificate_title">Certificate not trusted</string>
     <string name="certificate_message">The certificate the server used was not issued by a trusted authority.\n\nThis could mean a hacker is trying to intercept your communications.\n\nIf you trust the certificate, press OK to continue.\n\nFingerprint (SHA-1):\n%1$s</string>
     <string name="hostname_title">Hostname did not match</string>
     <string name="hostname_message">The hostname in the certificate did not match the hostname you are connecting to.\n\nThis could mean a hacker is trying to intercept your communications.\n\nIf you trust the certificate, press OK to continue.</string>
     <string name="not_a_valid_url">Not a valid URL</string>
-    <string name="please_end_your_url_with_a_slash">Please end your url with a "/"</string>
+    <string name="please_end_your_url_with_a_slash">Please end your URL with a "/"</string>
     <string name="not_a_valid_private_token">Not a valid private token</string>
     <string name="realm_message">A username and password are being requested by the server.\nThe server says: \"%1$s\"</string>
     <string name="already_logged_in">This account is already logged in</string>
@@ -204,10 +204,20 @@
     <string name="milestone">Milestone</string>
     <string name="no_milestone">No Milestone</string>
     <string name="add_labels">+ Add Labels</string>
+    <string name="label_already_added">Label already added</string>
 
     <!-- Labels -->
     <string name="labels">Labels</string>
     <string name="no_labels">No labels</string>
+
+    <!-- Add New Label -->
+    <string name="add_new_label_title">Title</string>
+    <string name="add_new_label_description">Description</string>
+    <string name="add_new_label_color">Color</string>
+    <string name="add_new_label_choose_color">Choose color</string>
+    <string name="add_new_label_color_is_required">Color is required</string>
+    <string name="label_already_exists">Label already exists</string>
+    <string name="failed_to_create_label">Failed to create label</string>
 
     <!-- User -->
     <string name="remove_user_dialog_title">Remove user?</string>

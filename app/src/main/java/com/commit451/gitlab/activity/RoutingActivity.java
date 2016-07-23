@@ -6,8 +6,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.navigation.DeepLinker;
 import com.commit451.gitlab.navigation.Navigator;
@@ -114,7 +114,7 @@ public class RoutingActivity extends Activity {
 
         //okay so last thing, if the user has followed a link, but the user
         //is not actually signed in, we want to direct them to signin
-        if (GitLabClient.getAccount() == null && Account.getAccounts(this).isEmpty()) {
+        if (App.instance().getAccount() == null && Account.getAccounts(this).isEmpty()) {
             Navigator.navigateToLogin(this);
             finish();
             return;

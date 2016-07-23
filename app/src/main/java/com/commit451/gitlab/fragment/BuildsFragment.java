@@ -21,7 +21,7 @@ import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.adapter.BuildsAdapter;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.easycallback.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.api.GitLabFactory;
 import com.commit451.gitlab.event.BuildChangedEvent;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Build;
@@ -222,7 +222,7 @@ public class BuildsFragment extends ButterKnifeFragment {
         });
         mNextPageUrl = null;
         mLoading = true;
-        GitLabClient.instance().getBuilds(mProject.getId(), mScope).enqueue(mLoadCallback);
+        App.instance().getGitLab().getBuilds(mProject.getId(), mScope).enqueue(mLoadCallback);
     }
 
     private void loadMore() {
@@ -238,7 +238,7 @@ public class BuildsFragment extends ButterKnifeFragment {
         mLoading = true;
 
         Timber.d("loadMore called for %s", mNextPageUrl);
-        GitLabClient.instance().getBuilds(mNextPageUrl.toString(), mScope).enqueue(mMoreCallback);
+        App.instance().getGitLab().getBuilds(mNextPageUrl.toString(), mScope).enqueue(mMoreCallback);
     }
 
     private class EventReceiver {

@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/root"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+             android:id="@+id/root"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:elevation="0dp"/>
 
     <ImageView
         android:layout_width="wrap_content"
@@ -11,17 +17,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="32dp"
         android:contentDescription="@string/app_name"
-        android:src="@drawable/ic_logo" />
-
-    <ImageView
-        android:id="@+id/close"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_close_24dp"
-        android:padding="8dp"
-        android:layout_margin="8dp"
-        android:contentDescription="@null"
-        android:background="?attr/selectableItemBackgroundBorderless"/>
+        app:srcCompat="@drawable/ic_logo"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -68,8 +64,8 @@
                     android:layout_alignParentTop="true"
                     android:ems="10"
                     android:hint="@string/user_hint"
-                    android:inputType="textEmailAddress"
-                    android:imeOptions="actionNext"/>
+                    android:imeOptions="actionNext"
+                    android:inputType="textEmailAddress"/>
 
             </android.support.design.widget.TextInputLayout>
 
@@ -85,7 +81,7 @@
                     android:layout_below="@+id/user_input"
                     android:layout_centerHorizontal="true"
                     android:hint="@string/password_hint"
-                    android:inputType="textPassword" />
+                    android:inputType="textPassword"/>
 
             </android.support.design.widget.TextInputLayout>
         </LinearLayout>
@@ -113,30 +109,16 @@
             </android.support.design.widget.TextInputLayout>
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/show_normal_link"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackground"
-            android:gravity="center_horizontal"
-            android:padding="20dp"
-            android:text="@string/token_link"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
     </LinearLayout>
 
-    <com.devspark.robototextview.widget.RobotoTextView
+    <Button
         android:id="@+id/login_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:background="?attr/selectableItemBackground"
-        android:gravity="center_horizontal"
-        android:padding="@dimen/padding_normal"
-        android:text="@string/login_button"
-        android:textAllCaps="true"
-        app:typeface="roboto_medium" />
+        android:layout_margin="16dp"
+        android:text="@string/login_button"/>
 
-    <include layout="@layout/progress_fullscreen" />
+    <include layout="@layout/progress_fullscreen"/>
 
 </FrameLayout>

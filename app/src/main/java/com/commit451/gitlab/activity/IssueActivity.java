@@ -21,7 +21,7 @@ import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.IssueDetailsAdapter;
 import com.commit451.easycallback.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.api.GitLabFactory;
 import com.commit451.gitlab.event.IssueChangedEvent;
 import com.commit451.gitlab.event.IssueReloadEvent;
 import com.commit451.gitlab.model.api.FileUploadResponse;
@@ -142,7 +142,7 @@ public class IssueActivity extends BaseActivity {
         @Override
         public void success(@NonNull Project response) {
             mProject = response;
-            GitLabClient.instance().getIssuesByIid(mProject.getId(), mIssueIid).enqueue(mIssueCallback);
+            App.instance().getGitLab().getIssuesByIid(mProject.getId(), mIssueIid).enqueue(mIssueCallback);
         }
 
         @Override
@@ -341,7 +341,7 @@ public class IssueActivity extends BaseActivity {
                     }
                 }
             });
-            GitLabClient.instance().getProject(projectNamespace, projectName).enqueue(mProjectCallback);
+            App.instance().getGitLab().getProject(projectNamespace, projectName).enqueue(mProjectCallback);
         }
     }
 
@@ -358,7 +358,7 @@ public class IssueActivity extends BaseActivity {
                         ByteArrayOutputStream stream = new ByteArrayOutputStream();
                         bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                         RequestBody requestBody = RequestBody.create(MediaType.parse("image/jpeg"), stream.toByteArray());
-                        GitLabClient.instance().uploadFile(mProject.getId(), requestBody).enqueue(mUploadImageCallback);
+                        App.instance().getGitLab().uploadFile(mProject.getId(), requestBody).enqueue(mUploadImageCallback);
                     } catch (IOException e) {
                         Timber.e(e, null);
                     }
@@ -394,13 +394,13 @@ public class IssueActivity extends BaseActivity {
             }
         });
         mLoading = true;
-        GitLabClient.instance().getIssueNotes(mProject.getId(), mIssue.getId()).enqueue(mNotesCallback);
+        App.instance().getGitLab().getIssueNotes(mProject.getId(), mIssue.getId()).enqueue(mNotesCallback);
     }
 
     private void loadMoreNotes() {
         mLoading = true;
         mIssueDetailsAdapter.setLoading(true);
-        GitLabClient.instance().getIssueNotes(mNextPageUrl.toString()).enqueue(mMoreNotesCallback);
+        App.instance().getGitLab().getIssueNotes(mNextPageUrl.toString()).enqueue(mMoreNotesCallback);
     }
 
     private void postNote(String message) {
@@ -416,16 +416,16 @@ public class IssueActivity extends BaseActivity {
         mTeleprinter.hideKeyboard();
         mSendMessageView.clearText();
 
-        GitLabClient.instance().addIssueNote(mProject.getId(), mIssue.getId(), message).enqueue(mPostNoteCallback);
+        App.instance().getGitLab().addIssueNote(mProject.getId(), mIssue.getId(), message).enqueue(mPostNoteCallback);
     }
 
     private void closeOrOpenIssue() {
         mProgress.setVisibility(View.VISIBLE);
         if (mIssue.getState().equals(Issue.STATE_CLOSED)) {
-            GitLabClient.instance().updateIssueStatus(mProject.getId(), mIssue.getId(), Issue.STATE_REOPEN)
+            App.instance().getGitLab().updateIssueStatus(mProject.getId(), mIssue.getId(), Issue.STATE_REOPEN)
                     .enqueue(mOpenCloseCallback);
         } else {
-            GitLabClient.instance().updateIssueStatus(mProject.getId(), mIssue.getId(), Issue.STATE_CLOSE)
+            App.instance().getGitLab().updateIssueStatus(mProject.getId(), mIssue.getId(), Issue.STATE_CLOSE)
                     .enqueue(mOpenCloseCallback);
         }
     }

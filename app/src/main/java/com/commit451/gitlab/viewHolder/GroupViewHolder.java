@@ -8,8 +8,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Group;
 
 import butterknife.BindView;
@@ -38,7 +38,7 @@ public class GroupViewHolder extends RecyclerView.ViewHolder{
         mNameView.setText(group.getName());
 
         if (group.getAvatarUrl() != null && !group.getAvatarUrl().equals(Uri.EMPTY)) {
-            GitLabClient.getPicasso()
+            App.instance().getPicasso()
                     .load(group.getAvatarUrl())
                     .into(mImageView);
         }

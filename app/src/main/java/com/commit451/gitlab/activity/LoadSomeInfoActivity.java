@@ -8,9 +8,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
 
-import com.commit451.gitlab.R;
 import com.commit451.easycallback.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.App;
+import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.api.Build;
 import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.model.api.Milestone;
@@ -98,19 +98,19 @@ public class LoadSomeInfoActivity extends AppCompatActivity {
             switch (mLoadType) {
                 case LOAD_TYPE_DIFF:
                     String sha = getIntent().getStringExtra(EXTRA_COMMIT_SHA);
-                    GitLabClient.instance().getCommit(response.getId(), sha).enqueue(mCommitCallback);
+                    App.instance().getGitLab().getCommit(response.getId(), sha).enqueue(mCommitCallback);
                     return;
                 case LOAD_TYPE_MERGE_REQUEST:
                     String mergeRequestId = getIntent().getStringExtra(EXTRA_MERGE_REQUEST);
-                    GitLabClient.instance().getMergeRequestsByIid(response.getId(), mergeRequestId).enqueue(mMergeRequestCallback);
+                    App.instance().getGitLab().getMergeRequestsByIid(response.getId(), mergeRequestId).enqueue(mMergeRequestCallback);
                     return;
                 case LOAD_TYPE_BUILD:
                     long buildId = getIntent().getLongExtra(EXTRA_BUILD_ID, -1);
-                    GitLabClient.instance().getBuild(response.getId(), buildId).enqueue(mBuildCallback);
+                    App.instance().getGitLab().getBuild(response.getId(), buildId).enqueue(mBuildCallback);
                     return;
                 case LOAD_TYPE_MILESTONE:
                     String milestoneId = getIntent().getStringExtra(EXTRA_MILESTONE_ID);
-                    GitLabClient.instance().getMilestonesByIid(response.getId(), milestoneId).enqueue(mMilestoneCallback);
+                    App.instance().getGitLab().getMilestonesByIid(response.getId(), milestoneId).enqueue(mMilestoneCallback);
                     return;
             }
 
@@ -203,7 +203,7 @@ public class LoadSomeInfoActivity extends AppCompatActivity {
             case LOAD_TYPE_MILESTONE:
                 String namespace = getIntent().getStringExtra(EXTRA_PROJECT_NAMESPACE);
                 String project = getIntent().getStringExtra(EXTRA_PROJECT_NAME);
-                GitLabClient.instance().getProject(namespace, project).enqueue(mProjectCallback);
+                App.instance().getGitLab().getProject(namespace, project).enqueue(mProjectCallback);
                 break;
         }
     }

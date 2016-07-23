@@ -15,10 +15,10 @@
         android:id="@+id/icon"
         android:layout_width="@dimen/image_size"
         android:layout_height="@dimen/image_size"
-        android:src="@mipmap/ic_launcher"
         android:layout_marginLeft="@dimen/padding_normal"
         android:layout_gravity="center_vertical"
-        android:contentDescription="@null"/>
+        android:contentDescription="@null"
+        tools:src="@drawable/ic_logo"/>
 
     <LinearLayout
         android:layout_width="match_parent"

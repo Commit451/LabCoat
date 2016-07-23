@@ -7,9 +7,12 @@ import android.graphics.Bitmap;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
+import com.commit451.gitlab.BuildConfig;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.api.GitLabRss;
+import com.commit451.gitlab.api.GitLabRssFactory;
+import com.commit451.gitlab.api.OkHttpClientFactory;
+import com.commit451.gitlab.api.PicassoFactory;
 import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.model.rss.Entry;
 import com.commit451.gitlab.model.rss.Feed;
@@ -19,6 +22,8 @@ import com.squareup.picasso.Picasso;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Response;
 
 /**
@@ -30,6 +35,7 @@ public class FeedRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
     private Context mContext;
     private int mAppWidgetId;
     private ArrayList<Entry> mEntries;
+    private Picasso mPicasso;
 
     public FeedRemoteViewsFactory(Context context, Intent intent) {
         mContext = context;
@@ -74,7 +80,7 @@ public class FeedRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
         rv.setOnClickFillInIntent(R.id.root, fillInIntent);
 
         try {
-            Bitmap image = Picasso.with(mContext)
+            Bitmap image = mPicasso
                     .load(entry.getThumbnail().getUrl())
                     .transform(new CircleTransformation())
                     .get();
@@ -121,7 +127,13 @@ public class FeedRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
             //TODO show error state?
             return;
         }
-        GitLabRss rssClient = GitLabClient.rssInstance(account);
+        OkHttpClient.Builder gitlabRssClientBuilder = OkHttpClientFactory.create(account);
+        if (BuildConfig.DEBUG) {
+            gitlabRssClientBuilder.addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
+        }
+        GitLabRss rssClient = GitLabRssFactory.create(account, gitlabRssClientBuilder.build());
+        OkHttpClient.Builder picassoClientBuilder = OkHttpClientFactory.create(account);
+        mPicasso = PicassoFactory.createPicasso(picassoClientBuilder.build());
         try {
             Response<Feed> feedResponse = rssClient.getFeed(account.getUser().getFeedUrl().toString()).execute();
             if (feedResponse.isSuccessful()) {

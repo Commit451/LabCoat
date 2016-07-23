@@ -8,21 +8,19 @@ import android.support.annotation.NonNull;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
 
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.GroupAdapter;
-import com.commit451.easycallback.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.CloseDrawerEvent;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.navigation.Navigator;
+import com.commit451.gitlab.util.DynamicGridLayoutManager;
 import com.commit451.gitlab.util.PaginationUtil;
 import com.commit451.gitlab.viewHolder.GroupViewHolder;
 import com.squareup.otto.Subscribe;
@@ -50,7 +48,7 @@ public class GroupsActivity extends BaseActivity {
     @BindView(R.id.list) RecyclerView mGroupRecyclerView;
     @BindView(R.id.message_text) TextView mMessageText;
     GroupAdapter mGroupAdapter;
-    LinearLayoutManager mGroupLayoutManager;
+    DynamicGridLayoutManager mGroupLayoutManager;
 
     private Uri mNextPageUrl;
     private boolean mLoading = false;
@@ -145,7 +143,8 @@ public class GroupsActivity extends BaseActivity {
                 load();
             }
         });
-        mGroupLayoutManager = new GridLayoutManager(this, 2);
+        mGroupLayoutManager = new DynamicGridLayoutManager(this);
+        mGroupLayoutManager.setMinimumWidthDimension(R.dimen.user_list_image_size);
         mGroupRecyclerView.setLayoutManager(mGroupLayoutManager);
         mGroupAdapter = new GroupAdapter(mGroupAdapterListener);
         mGroupRecyclerView.setAdapter(mGroupAdapter);
@@ -173,7 +172,7 @@ public class GroupsActivity extends BaseActivity {
         mNextPageUrl = null;
         mLoading = true;
 
-        GitLabClient.instance().getGroups().enqueue(mGroupsCallback);
+        App.instance().getGitLab().getGroups().enqueue(mGroupsCallback);
     }
 
     private void loadMore() {
@@ -193,7 +192,7 @@ public class GroupsActivity extends BaseActivity {
         mLoading = true;
 
         Timber.d("loadMore called for %s", mNextPageUrl);
-        GitLabClient.instance().getGroups(mNextPageUrl.toString()).enqueue(mMoreGroupsCallback);
+        App.instance().getGitLab().getGroups(mNextPageUrl.toString()).enqueue(mMoreGroupsCallback);
     }
 
     private class EventReceiver {

@@ -16,7 +16,7 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.CommitsAdapter;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.easycallback.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.api.GitLabFactory;
 import com.commit451.gitlab.event.MergeRequestChangedEvent;
 import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.model.api.Project;
@@ -194,7 +194,7 @@ public class MergeRequestCommitsFragment extends ButterKnifeFragment {
         mPage = 0;
         mLoading = true;
 
-        GitLabClient.instance().getMergeRequestCommits(mProject.getId(), mMergeRequest.getId()).enqueue(mCommitsCallback);
+        App.instance().getGitLab().getMergeRequestCommits(mProject.getId(), mMergeRequest.getId()).enqueue(mCommitsCallback);
     }
 
     private void loadMore() {

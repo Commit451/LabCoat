@@ -4,25 +4,26 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.commit451.easycallback.EasyCallback;
+import com.commit451.easycallback.NullBodyException;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.AddIssueLabelAdapter;
 import com.commit451.gitlab.adapter.AssigneeSpinnerAdapter;
 import com.commit451.gitlab.adapter.MilestoneSpinnerAdapter;
-import com.commit451.easycallback.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.api.exception.NullBodyException;
 import com.commit451.gitlab.event.IssueChangedEvent;
 import com.commit451.gitlab.event.IssueCreatedEvent;
 import com.commit451.gitlab.model.api.Issue;
@@ -88,10 +89,10 @@ public class AddIssueActivity extends MorphActivity {
     TextView mLabelLabel;
     @BindView(R.id.labels_progress)
     View mLabelsProgress;
+    @BindView(R.id.root_add_labels)
+    ViewGroup mRootAddLabels;
     @BindView(R.id.list_labels)
     AdapterFlowLayout mListLabels;
-    @BindView(R.id.text_add_labels)
-    TextView mTextAddLabels;
 
     private Project mProject;
     private Issue mIssue;
@@ -99,7 +100,7 @@ public class AddIssueActivity extends MorphActivity {
     private AddIssueLabelAdapter mLabelsAdapter;
     private Teleprinter mTeleprinter;
 
-    @OnClick(R.id.text_add_labels)
+    @OnClick(R.id.root_add_labels)
     void onAddLabelsClick() {
         Navigator.navigateToAddLabels(AddIssueActivity.this, mProject, REQUEST_LABEL);
     }
@@ -135,7 +136,7 @@ public class AddIssueActivity extends MorphActivity {
             mMembers.addAll(response);
             if (mProject.belongsToGroup()) {
                 Timber.d("Project belongs to a group, loading those users too");
-                GitLabClient.instance().getGroupMembers(mProject.getNamespace().getId()).enqueue(mGroupMembersCallback);
+                App.instance().getGitLab().getGroupMembers(mProject.getNamespace().getId()).enqueue(mGroupMembersCallback);
             } else {
                 setAssignees();
             }
@@ -168,7 +169,7 @@ public class AddIssueActivity extends MorphActivity {
         @Override
         public void success(@NonNull List<Label> response) {
             mLabelsProgress.setVisibility(View.GONE);
-            mListLabels.setVisibility(View.VISIBLE);
+            mRootAddLabels.setVisibility(View.VISIBLE);
             setLabels(response);
         }
 
@@ -250,9 +251,9 @@ public class AddIssueActivity extends MorphActivity {
     }
 
     private void load() {
-        GitLabClient.instance().getMilestones(mProject.getId(), getString(R.string.milestone_state_value_default)).enqueue(mMilestonesCallback);
-        GitLabClient.instance().getProjectMembers(mProject.getId()).enqueue(mAssigneeCallback);
-        GitLabClient.instance().getLabels(mProject.getId()).enqueue(mLabelCallback);
+        App.instance().getGitLab().getMilestones(mProject.getId(), getString(R.string.milestone_state_value_default)).enqueue(mMilestonesCallback);
+        App.instance().getGitLab().getProjectMembers(mProject.getId()).enqueue(mAssigneeCallback);
+        App.instance().getGitLab().getLabels(mProject.getId()).enqueue(mLabelCallback);
     }
 
     private void showLoading() {
@@ -293,8 +294,24 @@ public class AddIssueActivity extends MorphActivity {
             if (!currentLabels.isEmpty()) {
                 mLabelsAdapter.setLabels(currentLabels);
             }
-        } else {
-            mTextAddLabels.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_LABEL:
+                if (resultCode == RESULT_OK) {
+                    Label label = Parcels.unwrap(data.getParcelableExtra(AddLabelActivity.KEY_LABEL));
+                    if (mLabelsAdapter.containsLabel(label)) {
+                        Snackbar.make(mRoot, R.string.label_already_added, Snackbar.LENGTH_SHORT)
+                                .show();
+                    } else {
+                        mLabelsAdapter.addLabel(label);
+                    }
+                }
+                break;
         }
     }
 
@@ -326,30 +343,35 @@ public class AddIssueActivity extends MorphActivity {
                     milestoneId = milestone.getId();
                 }
             }
+            String labelsCommaSeperated = mLabelsAdapter.getCommaSeperatedStringOfLabels();
             createOrSaveIssue(mTitleInput.getText().toString(),
                     mDescriptionInput.getText().toString(),
                     assigneeId,
-                    milestoneId);
+                    milestoneId,
+                    labelsCommaSeperated);
         } else {
             mTitleInputLayout.setError(getString(R.string.required_field));
         }
     }
 
-    private void createOrSaveIssue(String title, String description, Long assigneeId, Long milestoneId) {
+    private void createOrSaveIssue(String title, String description, @Nullable Long assigneeId,
+                                   @Nullable Long milestoneId, @Nullable String labels) {
         if (mIssue == null) {
-            GitLabClient.instance().createIssue(
+            App.instance().getGitLab().createIssue(
                     mProject.getId(),
                     title,
                     description,
                     assigneeId,
-                    milestoneId).enqueue(mIssueCreatedCallback);
+                    milestoneId,
+                    labels).enqueue(mIssueCreatedCallback);
         } else {
-            GitLabClient.instance().updateIssue(mProject.getId(),
+            App.instance().getGitLab().updateIssue(mProject.getId(),
                     mIssue.getId(),
                     title,
                     description,
                     assigneeId,
-                    milestoneId).enqueue(mIssueCreatedCallback);
+                    milestoneId,
+                    labels).enqueue(mIssueCreatedCallback);
         }
     }
 

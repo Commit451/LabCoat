@@ -12,10 +12,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.commit451.easycallback.EasyCallback;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.DiffAdapter;
-import com.commit451.easycallback.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Diff;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryCommit;
@@ -116,6 +116,6 @@ public class DiffActivity extends BaseActivity {
             }
             }
         });
-        GitLabClient.instance().getCommitDiff(mProject.getId(), mCommit.getId()).enqueue(mDiffCallback);
+        App.instance().getGitLab().getCommitDiff(mProject.getId(), mCommit.getId()).enqueue(mDiffCallback);
     }
 }

@@ -11,12 +11,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.gitlab.adapter.FeedAdapter;
-import com.commit451.easycallback.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.rss.Entry;
 import com.commit451.gitlab.model.rss.Feed;
 import com.commit451.gitlab.navigation.Navigator;
@@ -85,7 +84,7 @@ public class FeedFragment extends ButterKnifeFragment {
     private final FeedAdapter.Listener mFeedAdapterListener = new FeedAdapter.Listener() {
         @Override
         public void onFeedEntryClicked(Entry entry) {
-            Navigator.navigateToUrl(getActivity(), entry.getLink().getHref(), GitLabClient.getAccount());
+            Navigator.navigateToUrl(getActivity(), entry.getLink().getHref(), App.instance().getAccount());
         }
     };
 
@@ -161,7 +160,7 @@ public class FeedFragment extends ButterKnifeFragment {
                 }
             }
         });
-        GitLabClient.rssInstance().getFeed(mFeedUrl.toString()).enqueue(mUserFeedCallback);
+        App.instance().getGitLabRss().getFeed(mFeedUrl.toString()).enqueue(mUserFeedCallback);
     }
 
     private class EventReceiver {

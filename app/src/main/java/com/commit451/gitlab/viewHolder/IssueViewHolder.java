@@ -7,11 +7,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Issue;
 import com.commit451.gitlab.transformation.CircleTransformation;
-import com.commit451.gitlab.util.DateUtils;
+import com.commit451.gitlab.util.DateUtil;
 import com.commit451.gitlab.util.ImageUtil;
 
 import butterknife.BindView;
@@ -40,7 +40,7 @@ public class IssueViewHolder extends RecyclerView.ViewHolder {
     public void bind(Issue issue) {
 
         if (issue.getAssignee() != null) {
-            GitLabClient.getPicasso()
+            App.instance().getPicasso()
                     .load(ImageUtil.getAvatarUrl(issue.getAssignee(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size)))
                     .transform(new CircleTransformation())
                     .into(mImageView);
@@ -52,7 +52,7 @@ public class IssueViewHolder extends RecyclerView.ViewHolder {
 
         String time = "";
         if (issue.getCreatedAt() != null) {
-            time += DateUtils.getRelativeTimeSpanString(itemView.getContext(), issue.getCreatedAt());
+            time += DateUtil.getRelativeTimeSpanString(itemView.getContext(), issue.getCreatedAt());
         }
         String author = "";
         if (issue.getAuthor() != null) {

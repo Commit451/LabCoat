@@ -17,10 +17,10 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.commit451.gitbal.Gimbal;
-import com.commit451.gitlab.R;
 import com.commit451.easycallback.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gimbal.Gimbal;
+import com.commit451.gitlab.App;
+import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.api.Contributor;
 import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.transformation.CircleTransformation;
@@ -64,7 +64,7 @@ public class AboutActivity extends BaseActivity {
 
     @OnClick(R.id.sauce)
     void onSauceClick() {
-        if (getString(R.string.url_gitlab).equals(GitLabClient.getAccount().getServerUrl().toString())) {
+        if (getString(R.string.url_gitlab).equals(App.instance().getAccount().getServerUrl().toString())) {
             Navigator.navigateToProject(AboutActivity.this, REPO_ID);
         } else {
             IntentUtil.openPage(AboutActivity.this, getString(R.string.source_url));
@@ -125,7 +125,7 @@ public class AboutActivity extends BaseActivity {
         mPhysicsLayout.getPhysics().enableFling();
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         gravitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
-        GitLabClient.instance().getContributors(REPO_ID).enqueue(mContributorResponseCallback);
+        App.instance().getGitLab().getContributors(REPO_ID).enqueue(mContributorResponseCallback);
         mProgress.setVisibility(View.VISIBLE);
     }
 
@@ -166,7 +166,7 @@ public class AboutActivity extends BaseActivity {
             }
 
             Uri url = ImageUtil.getAvatarUrl(contributor.getEmail(), imageSize);
-            GitLabClient.getPicasso()
+            App.instance().getPicasso()
                     .load(url)
                     .transform(new CircleTransformation())
                     .into(imageView);

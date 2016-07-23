@@ -16,8 +16,8 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.commit451.easel.Easel;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.fragment.FeedFragment;
 import com.commit451.gitlab.model.api.UserBasic;
 import com.commit451.gitlab.transformation.PaletteTransformation;
@@ -68,7 +68,7 @@ public class UserActivity extends BaseActivity {
         mToolbar.setTitle(mUser.getUsername());
         Uri url = ImageUtil.getAvatarUrl(mUser, getResources().getDimensionPixelSize(R.dimen.user_header_image_size));
 
-        GitLabClient.getPicasso()
+        App.instance().getPicasso()
                 .load(url)
                 .transform(PaletteTransformation.instance())
                 .into(mBackdrop, new PaletteTransformation.PaletteCallback(mBackdrop) {

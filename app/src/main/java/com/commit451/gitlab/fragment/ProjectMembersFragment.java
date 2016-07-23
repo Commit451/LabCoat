@@ -18,7 +18,7 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.adapter.MemberAdapter;
 import com.commit451.easycallback.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.api.GitLabFactory;
 import com.commit451.gitlab.dialog.AccessDialog;
 import com.commit451.gitlab.event.MemberAddedEvent;
 import com.commit451.gitlab.event.ProjectReloadEvent;
@@ -84,7 +84,7 @@ public class ProjectMembersFragment extends ButterKnifeFragment {
         @Override
         public void onRemoveMember(Member member) {
             mMember = member;
-            GitLabClient.instance().removeProjectMember(mProject.getId(), member.getId()).enqueue(mRemoveMemberCallback);
+            App.instance().getGitLab().removeProjectMember(mProject.getId(), member.getId()).enqueue(mRemoveMemberCallback);
         }
 
         @Override
@@ -233,7 +233,7 @@ public class ProjectMembersFragment extends ButterKnifeFragment {
         mNextPageUrl = null;
         mLoading = true;
 
-        GitLabClient.instance().getProjectMembers(mProject.getId()).enqueue(mProjectMembersCallback);
+        App.instance().getGitLab().getProjectMembers(mProject.getId()).enqueue(mProjectMembersCallback);
     }
 
     private void loadMore() {
@@ -257,7 +257,7 @@ public class ProjectMembersFragment extends ButterKnifeFragment {
         mLoading = true;
 
         Timber.d("loadMore called for " + mNextPageUrl);
-        GitLabClient.instance().getProjectMembers(mNextPageUrl.toString()).enqueue(mProjectMembersCallback);
+        App.instance().getGitLab().getProjectMembers(mNextPageUrl.toString()).enqueue(mProjectMembersCallback);
     }
 
     private void setNamespace() {

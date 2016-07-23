@@ -19,6 +19,9 @@ import timber.log.Timber;
  */
 public class LaunchActivity extends Activity {
 
+    //Figure out how this works, then reenable
+    private static final boolean PRIVATE_KEY_ENABLED = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,13 +35,15 @@ public class LaunchActivity extends Activity {
         List<Account> accounts = Account.getAccounts(this);
         if(accounts.isEmpty()) {
             Navigator.navigateToLogin(this);
+            finish();
         } else {
-            loadPrivateKey(accounts, 0);
-            return;
+            if (PRIVATE_KEY_ENABLED) {
+                loadPrivateKey(accounts, 0);
+            } else {
+                Navigator.navigateToStartingActivity(LaunchActivity.this);
+                finish();
+            }
         }
-
-        // Always finish this activity
-        finish();
     }
 
     private void loadPrivateKey(final List<Account> accounts, final int i) {
@@ -46,8 +51,7 @@ public class LaunchActivity extends Activity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Navigator.navigateToStartingActivity(LaunchActivity.this);
-                    finish();
+
                 }
             });
             return;

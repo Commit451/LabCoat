@@ -8,8 +8,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.rss.Entry;
 import com.commit451.gitlab.transformation.CircleTransformation;
 
@@ -37,7 +37,7 @@ public class FeedEntryViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(Entry entry) {
-        GitLabClient.getPicasso()
+        App.instance().getPicasso()
                 .load(entry.getThumbnail().getUrl())
                 .transform(new CircleTransformation())
                 .into(mImageView);

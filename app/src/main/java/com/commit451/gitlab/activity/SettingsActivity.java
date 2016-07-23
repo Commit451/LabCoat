@@ -21,8 +21,6 @@ import butterknife.OnClick;
  */
 public class SettingsActivity extends BaseActivity {
 
-    private static final int REQUEST_COUNTRY = 1;
-
     public static Intent newIntent(Context context) {
         Intent intent = new Intent(context, SettingsActivity.class);
         return intent;
@@ -33,7 +31,6 @@ public class SettingsActivity extends BaseActivity {
 
     @BindView(R.id.text_launch_activity)
     TextView mTextLaunchActivity;
-
 
     @OnClick(R.id.root_launch_activity)
     void onLaunchActivityClicked() {

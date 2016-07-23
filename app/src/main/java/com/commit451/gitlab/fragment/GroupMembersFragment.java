@@ -4,23 +4,22 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.GroupMembersAdapter;
-import com.commit451.easycallback.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.dialog.AccessDialog;
 import com.commit451.gitlab.event.MemberAddedEvent;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.model.api.Member;
 import com.commit451.gitlab.navigation.Navigator;
+import com.commit451.gitlab.util.DynamicGridLayoutManager;
 import com.commit451.gitlab.viewHolder.ProjectMemberViewHolder;
 import com.squareup.otto.Subscribe;
 
@@ -121,7 +120,7 @@ public class GroupMembersFragment extends ButterKnifeFragment {
         @Override
         public void onUserRemoveClicked(Member member) {
             mMember = member;
-            GitLabClient.instance().removeGroupMember(mGroup.getId(), member.getId()).enqueue(mRemoveMemberCallback);
+            App.instance().getGitLab().removeGroupMember(mGroup.getId(), member.getId()).enqueue(mRemoveMemberCallback);
         }
 
         @Override
@@ -151,7 +150,9 @@ public class GroupMembersFragment extends ButterKnifeFragment {
         App.bus().register(mEventReceiver);
 
         mGroupMembersAdapter = new GroupMembersAdapter(mListener);
-        mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+        DynamicGridLayoutManager dynamicGridLayoutManager = new DynamicGridLayoutManager(getActivity());
+        dynamicGridLayoutManager.setMinimumWidthDimension(R.dimen.user_list_image_size);
+        mRecyclerView.setLayoutManager(dynamicGridLayoutManager);
         mRecyclerView.setAdapter(mGroupMembersAdapter);
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -192,7 +193,7 @@ public class GroupMembersFragment extends ButterKnifeFragment {
                 }
             }
         });
-        GitLabClient.instance().getGroupMembers(mGroup.getId()).enqueue(mGroupMembersCallback);
+        App.instance().getGitLab().getGroupMembers(mGroup.getId()).enqueue(mGroupMembersCallback);
     }
 
     private class EventReceiver {

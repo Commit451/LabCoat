@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.api.Build;
-import com.commit451.gitlab.util.DateUtils;
+import com.commit451.gitlab.util.DateUtil;
 
 import java.util.Date;
 
@@ -47,7 +47,7 @@ public class BuildViewHolder extends RecyclerView.ViewHolder {
         if (startedAt == null) {
             startedAt = new Date();
         }
-        String timeTaken = DateUtils.getTimeTaken(startedAt, finishedTime);
+        String timeTaken = DateUtil.getTimeTaken(startedAt, finishedTime);
         String durationStr = String.format(itemView.getResources().getString(R.string.build_duration), timeTaken);
         duration.setText(durationStr);
     }

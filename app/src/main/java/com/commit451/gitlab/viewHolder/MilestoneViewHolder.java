@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.api.Milestone;
-import com.commit451.gitlab.util.DateUtils;
+import com.commit451.gitlab.util.DateUtil;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -36,7 +36,7 @@ public class MilestoneViewHolder extends RecyclerView.ViewHolder {
         mTitleView.setText(milestone.getTitle());
         if (milestone.getDueDate() != null) {
             mDueDateView.setVisibility(View.VISIBLE);
-            CharSequence due = DateUtils.getRelativeTimeSpanString(itemView.getContext(), milestone.getDueDate());
+            CharSequence due = DateUtil.getRelativeTimeSpanString(itemView.getContext(), milestone.getDueDate());
             mDueDateView.setText(String.format(itemView.getResources().getString(R.string.due_date_formatted), due));
         } else {
             mDueDateView.setVisibility(View.GONE);

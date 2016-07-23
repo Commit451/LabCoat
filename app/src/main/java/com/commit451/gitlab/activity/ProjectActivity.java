@@ -22,10 +22,9 @@ import android.widget.Toast;
 
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.adapter.SectionsPagerAdapter;
+import com.commit451.gitlab.adapter.ProjectSectionsPagerAdapter;
 import com.commit451.gitlab.animation.HideRunnable;
 import com.commit451.easycallback.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.fragment.BaseFragment;
 import com.commit451.gitlab.model.api.Branch;
@@ -210,14 +209,14 @@ public class ProjectActivity extends BaseActivity {
         mProgress.setAlpha(0.0f);
         mProgress.setVisibility(View.VISIBLE);
         mProgress.animate().alpha(1.0f);
-        GitLabClient.instance().getProject(projectId).enqueue(mProjectCallback);
+        App.instance().getGitLab().getProject(projectId).enqueue(mProjectCallback);
     }
 
     private void loadBranches() {
         mProgress.setAlpha(0.0f);
         mProgress.setVisibility(View.VISIBLE);
         mProgress.animate().alpha(1.0f);
-        GitLabClient.instance().getBranches(mProject.getId()).enqueue(mBranchesCallback);
+        App.instance().getGitLab().getBranches(mProject.getId()).enqueue(mBranchesCallback);
     }
 
     private void broadcastLoad() {
@@ -245,9 +244,9 @@ public class ProjectActivity extends BaseActivity {
     }
 
     private void setupTabs() {
-        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
+        ProjectSectionsPagerAdapter projectSectionsPagerAdapter = new ProjectSectionsPagerAdapter(this, getSupportFragmentManager());
 
-        mViewPager.setAdapter(sectionsPagerAdapter);
+        mViewPager.setAdapter(projectSectionsPagerAdapter);
         mTabLayout.setupWithViewPager(mViewPager);
     }
 

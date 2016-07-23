@@ -7,8 +7,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.UserBasic;
 import com.commit451.gitlab.util.ImageUtil;
 
@@ -36,7 +36,7 @@ public class UserViewHolder extends RecyclerView.ViewHolder {
 
     public void bind(UserBasic user) {
         mUsernameView.setText(user.getUsername());
-        GitLabClient.getPicasso()
+        App.instance().getPicasso()
                 .load(ImageUtil.getAvatarUrl(user, itemView.getResources().getDimensionPixelSize(R.dimen.user_list_image_size)))
                 .into(mImageView);
     }

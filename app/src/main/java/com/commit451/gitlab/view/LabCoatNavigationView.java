@@ -15,23 +15,22 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.commit451.easel.Easel;
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ActivityActivity;
 import com.commit451.gitlab.activity.GroupsActivity;
 import com.commit451.gitlab.activity.ProjectsActivity;
 import com.commit451.gitlab.adapter.AccountsAdapter;
-import com.commit451.easycallback.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.data.Prefs;
 import com.commit451.gitlab.event.CloseDrawerEvent;
 import com.commit451.gitlab.event.LoginEvent;
 import com.commit451.gitlab.event.ReloadDataEvent;
 import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.model.api.UserFull;
+import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.transformation.CircleTransformation;
 import com.commit451.gitlab.util.ImageUtil;
-import com.commit451.gitlab.navigation.Navigator;
 import com.squareup.otto.Subscribe;
 
 import java.util.Collections;
@@ -126,7 +125,7 @@ public class LabCoatNavigationView extends NavigationView {
                 Navigator.navigateToLogin((Activity) getContext());
                 ((Activity) getContext()).finish();
             } else {
-                if (account.equals(GitLabClient.getAccount())) {
+                if (account.equals(App.instance().getAccount())) {
                     switchToAccount(accounts.get(0));
                 }
             }
@@ -139,7 +138,7 @@ public class LabCoatNavigationView extends NavigationView {
         public void success(@NonNull UserFull response) {
             //Store the newly retrieved user to the account so that it stays up to date
             // in local storage
-            Account account = GitLabClient.getAccount();
+            Account account = App.instance().getAccount();
             account.setUser(response);
             Prefs.updateAccount(getContext(), account);
             bindUser(response);
@@ -153,7 +152,7 @@ public class LabCoatNavigationView extends NavigationView {
 
     @OnClick(R.id.profile_image)
     public void onUserImageClick(ImageView imageView) {
-        Navigator.navigateToUser((Activity) getContext(), imageView, GitLabClient.getAccount().getUser());
+        Navigator.navigateToUser((Activity) getContext(), imageView, App.instance().getAccount().getUser());
     }
 
     @OnClick(R.id.drawer_header)
@@ -235,7 +234,7 @@ public class LabCoatNavigationView extends NavigationView {
     }
 
     private void loadCurrentUser() {
-        GitLabClient.instance().getThisUser().enqueue(mUserCallback);
+        App.instance().getGitLab().getThisUser().enqueue(mUserCallback);
     }
 
     private void bindUser(UserFull user) {
@@ -249,7 +248,7 @@ public class LabCoatNavigationView extends NavigationView {
             mUserEmail.setText(user.getEmail());
         }
         Uri url = ImageUtil.getAvatarUrl(user, getResources().getDimensionPixelSize(R.dimen.larger_image_size));
-        GitLabClient.getPicasso()
+        App.instance().getPicasso()
                 .load(url)
                 .transform(new CircleTransformation())
                 .into(mProfileImage);
@@ -280,7 +279,7 @@ public class LabCoatNavigationView extends NavigationView {
     private void switchToAccount(Account account) {
         Timber.d("Switching to account: %s", account);
         account.setLastUsed(new Date());
-        GitLabClient.setAccount(account);
+        App.instance().setAccount(account);
         Prefs.updateAccount(getContext(), account);
         bindUser(account.getUser());
         toggleAccounts();
