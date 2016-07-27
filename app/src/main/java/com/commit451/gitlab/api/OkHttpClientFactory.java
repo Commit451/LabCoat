@@ -19,29 +19,20 @@ public final class OkHttpClientFactory {
      * @return a configured {@link okhttp3.OkHttpClient.Builder}
      */
     public static OkHttpClient.Builder create(Account account) {
-        CustomTrustManager customTrustManager = null;
         //Do we even need a custom trust manager?
-        if (account.getTrustedCertificate() != null
-                || account.getTrustedHostname() != null
-                || account.getPrivateKeyAlias() != null) {
-            customTrustManager = new CustomTrustManager();
-            customTrustManager.setTrustedCertificate(account.getTrustedCertificate());
-            customTrustManager.setTrustedHostname(account.getTrustedHostname());
-            customTrustManager.setPrivateKeyAlias(account.getPrivateKeyAlias());
-        }
+        // Yep. Otherwise SSL won't work properly with some configurations :) -Michi
+        CustomTrustManager customTrustManager = new CustomTrustManager();
+        customTrustManager.setTrustedCertificate(account.getTrustedCertificate());
+        customTrustManager.setTrustedHostname(account.getTrustedHostname());
+        customTrustManager.setPrivateKeyAlias(account.getPrivateKeyAlias());
+
         OpenSignInAuthenticator authenticator = new OpenSignInAuthenticator(account);
-        OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder()
+        return new OkHttpClient.Builder()
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .authenticator(authenticator)
                 .proxyAuthenticator(authenticator)
-                .addInterceptor(new AuthenticationRequestInterceptor(account));
-        //Only apply these custom things when needed, since they slow down the init
-        if (customTrustManager != null && customTrustManager.getSSLSocketFactory() != null) {
-            clientBuilder.sslSocketFactory(customTrustManager.getSSLSocketFactory(), X509TrustManagerProvider.get());
-        }
-        if (customTrustManager != null && customTrustManager.getHostnameVerifier() != null) {
-            clientBuilder.hostnameVerifier(customTrustManager.getHostnameVerifier());
-        }
-        return clientBuilder;
+                .addInterceptor(new AuthenticationRequestInterceptor(account))
+                .sslSocketFactory(customTrustManager.getSSLSocketFactory(), X509TrustManagerProvider.get())
+                .hostnameVerifier(customTrustManager.getHostnameVerifier());
     }
 }
