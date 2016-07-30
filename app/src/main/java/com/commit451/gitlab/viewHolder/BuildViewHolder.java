@@ -8,11 +8,11 @@ import android.widget.TextView;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.api.Build;
-import com.commit451.gitlab.util.DateUtils;
+import com.commit451.gitlab.util.DateUtil;
 
 import java.util.Date;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -26,9 +26,9 @@ public class BuildViewHolder extends RecyclerView.ViewHolder {
         return new BuildViewHolder(view);
     }
 
-    @Bind(R.id.number) TextView buildNumber;
-    @Bind(R.id.status) TextView status;
-    @Bind(R.id.duration) TextView duration;
+    @BindView(R.id.number) TextView buildNumber;
+    @BindView(R.id.status) TextView status;
+    @BindView(R.id.duration) TextView duration;
 
     public BuildViewHolder(View view) {
         super(view);
@@ -43,7 +43,11 @@ public class BuildViewHolder extends RecyclerView.ViewHolder {
         if (finishedTime == null) {
             finishedTime = new Date();
         }
-        String timeTaken = DateUtils.getTimeTaken(build.getStartedAt(), finishedTime);
+        Date startedAt = build.getStartedAt();
+        if (startedAt == null) {
+            startedAt = new Date();
+        }
+        String timeTaken = DateUtil.getTimeTaken(startedAt, finishedTime);
         String durationStr = String.format(itemView.getResources().getString(R.string.build_duration), timeTaken);
         duration.setText(durationStr);
     }

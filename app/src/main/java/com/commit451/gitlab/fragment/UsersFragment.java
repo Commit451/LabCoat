@@ -13,23 +13,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.commit451.gitlab.LabCoatApp;
+import com.commit451.easycallback.EasyCallback;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.UsersAdapter;
-import com.commit451.gitlab.api.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.UserBasic;
-import com.commit451.gitlab.navigation.NavigationManager;
+import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.PaginationUtil;
 import com.commit451.gitlab.viewHolder.UserViewHolder;
 
 import java.util.List;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
+import butterknife.BindView;
 import timber.log.Timber;
 
-public class UsersFragment extends BaseFragment {
+public class UsersFragment extends ButterKnifeFragment {
 
     private static final String EXTRA_QUERY = "extra_query";
 
@@ -50,11 +48,11 @@ public class UsersFragment extends BaseFragment {
         return fragment;
     }
 
-    @Bind(R.id.swipe_layout)
+    @BindView(R.id.swipe_layout)
     SwipeRefreshLayout mSwipeRefreshLayout;
-    @Bind(R.id.list)
+    @BindView(R.id.list)
     RecyclerView mUsersListView;
-    @Bind(R.id.message_text)
+    @BindView(R.id.message_text)
     TextView mMessageView;
     private GridLayoutManager mUserLinearLayoutManager;
 
@@ -80,13 +78,13 @@ public class UsersFragment extends BaseFragment {
     private final UsersAdapter.Listener mUsersAdapterListener = new UsersAdapter.Listener() {
         @Override
         public void onUserClicked(UserBasic user, UserViewHolder userViewHolder) {
-            NavigationManager.navigateToUser(getActivity(), userViewHolder.mImageView, user);
+            Navigator.navigateToUser(getActivity(), userViewHolder.mImageView, user);
         }
     };
 
     public EasyCallback<List<UserBasic>> mSearchCallback = new EasyCallback<List<UserBasic>>() {
         @Override
-        public void onResponse(@NonNull List<UserBasic> response) {
+        public void success(@NonNull List<UserBasic> response) {
             if (getView() == null) {
                 return;
             }
@@ -101,7 +99,7 @@ public class UsersFragment extends BaseFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mLoading = false;
             if (getView() == null) {
@@ -116,23 +114,25 @@ public class UsersFragment extends BaseFragment {
 
     public EasyCallback<List<UserBasic>> mMoreUsersCallback = new EasyCallback<List<UserBasic>>() {
         @Override
-        public void onResponse(@NonNull List<UserBasic> response) {
+        public void success(@NonNull List<UserBasic> response) {
             mLoading = false;
             if (getView() == null) {
                 return;
             }
+            mSwipeRefreshLayout.setRefreshing(false);
             mUsersAdapter.addData(response);
             mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
             mUsersAdapter.setLoading(false);
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mLoading = false;
             if (getView() == null) {
                 return;
             }
+            mSwipeRefreshLayout.setRefreshing(false);
             mUsersAdapter.setLoading(false);
         }
     };
@@ -152,10 +152,9 @@ public class UsersFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
 
         mEventReceiver = new EventReceiver();
-        LabCoatApp.bus().register(mEventReceiver);
+        App.bus().register(mEventReceiver);
 
         mUsersAdapter = new UsersAdapter(mUsersAdapterListener);
         mUserLinearLayoutManager = new GridLayoutManager(getActivity(), 2);
@@ -177,8 +176,7 @@ public class UsersFragment extends BaseFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.unbind(this);
-        LabCoatApp.bus().unregister(mEventReceiver);
+        App.bus().unregister(mEventReceiver);
     }
 
     @Override
@@ -203,14 +201,14 @@ public class UsersFragment extends BaseFragment {
             }
         });
 
-        GitLabClient.instance().searchUsers(mQuery).enqueue(mSearchCallback);
+        App.instance().getGitLab().searchUsers(mQuery).enqueue(mSearchCallback);
     }
 
     private void loadMore() {
         mLoading = true;
         mUsersAdapter.setLoading(true);
         Timber.d("loadMore called for %s %s", mNextPageUrl.toString(), mQuery);
-        GitLabClient.instance().searchUsers(mNextPageUrl.toString(), mQuery).enqueue(mMoreUsersCallback);
+        App.instance().getGitLab().searchUsers(mNextPageUrl.toString(), mQuery).enqueue(mMoreUsersCallback);
     }
 
     public void searchQuery(String query) {

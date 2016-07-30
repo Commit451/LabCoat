@@ -11,31 +11,30 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.commit451.gitlab.LabCoatApp;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.CommitsAdapter;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
-import com.commit451.gitlab.api.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.easycallback.EasyCallback;
+import com.commit451.gitlab.api.GitLabFactory;
 import com.commit451.gitlab.event.MergeRequestChangedEvent;
 import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryCommit;
-import com.commit451.gitlab.navigation.NavigationManager;
+import com.commit451.gitlab.navigation.Navigator;
 import com.squareup.otto.Subscribe;
 
 import org.parceler.Parcels;
 
 import java.util.List;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
+import butterknife.BindView;
 import timber.log.Timber;
 
 /**
  * Like {@link CommitsFragment} but showing commits for a merge request
  */
-public class MergeRequestCommitsFragment extends BaseFragment {
+public class MergeRequestCommitsFragment extends ButterKnifeFragment {
 
     private static final String KEY_PROJECT = "project";
     private static final String KEY_MERGE_REQUEST = "merge_request";
@@ -49,9 +48,9 @@ public class MergeRequestCommitsFragment extends BaseFragment {
         return fragment;
     }
 
-    @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
-    @Bind(R.id.list) RecyclerView mCommitsListView;
-    @Bind(R.id.message_text) TextView mMessageView;
+    @BindView(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
+    @BindView(R.id.list) RecyclerView mCommitsListView;
+    @BindView(R.id.message_text) TextView mMessageView;
 
     private Project mProject;
     private MergeRequest mMergeRequest;
@@ -77,7 +76,7 @@ public class MergeRequestCommitsFragment extends BaseFragment {
 
     private final EasyCallback<List<RepositoryCommit>> mCommitsCallback = new EasyCallback<List<RepositoryCommit>>() {
         @Override
-        public void onResponse(@NonNull List<RepositoryCommit> response) {
+        public void success(@NonNull List<RepositoryCommit> response) {
             mLoading = false;
             if (getView() == null) {
                 return;
@@ -96,7 +95,7 @@ public class MergeRequestCommitsFragment extends BaseFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             mLoading = false;
             Timber.e(t, null);
             if (getView() == null) {
@@ -112,7 +111,7 @@ public class MergeRequestCommitsFragment extends BaseFragment {
 
     private final EasyCallback<List<RepositoryCommit>> mMoreCommitsCallback = new EasyCallback<List<RepositoryCommit>>() {
         @Override
-        public void onResponse(@NonNull List<RepositoryCommit> response) {
+        public void success(@NonNull List<RepositoryCommit> response) {
             mLoading = false;
             mCommitsAdapter.setLoading(false);
             if (response.isEmpty()) {
@@ -123,7 +122,7 @@ public class MergeRequestCommitsFragment extends BaseFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             mLoading = false;
             Timber.e(t, null);
             mCommitsAdapter.setLoading(false);
@@ -133,7 +132,7 @@ public class MergeRequestCommitsFragment extends BaseFragment {
     private final CommitsAdapter.Listener mCommitsAdapterListener = new CommitsAdapter.Listener() {
         @Override
         public void onCommitClicked(RepositoryCommit commit) {
-            NavigationManager.navigateToDiffActivity(getActivity(), mProject, commit);
+            Navigator.navigateToDiffActivity(getActivity(), mProject, commit);
         }
     };
 
@@ -152,7 +151,6 @@ public class MergeRequestCommitsFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
 
         mCommitsAdapter = new CommitsAdapter(mCommitsAdapterListener);
         mCommitsLayoutManager = new LinearLayoutManager(getActivity());
@@ -169,14 +167,13 @@ public class MergeRequestCommitsFragment extends BaseFragment {
         });
         loadData();
         mEventReceiver = new EventReceiver();
-        LabCoatApp.bus().register(mEventReceiver);
+        App.bus().register(mEventReceiver);
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        LabCoatApp.bus().unregister(mEventReceiver);
-        ButterKnife.unbind(this);
+        App.bus().unregister(mEventReceiver);
     }
 
     @Override
@@ -197,7 +194,7 @@ public class MergeRequestCommitsFragment extends BaseFragment {
         mPage = 0;
         mLoading = true;
 
-        GitLabClient.instance().getMergeRequestCommits(mProject.getId(), mMergeRequest.getId()).enqueue(mCommitsCallback);
+        App.instance().getGitLab().getMergeRequestCommits(mProject.getId(), mMergeRequest.getId()).enqueue(mCommitsCallback);
     }
 
     private void loadMore() {

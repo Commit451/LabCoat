@@ -7,30 +7,32 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.commit451.gitlab.R;
+import com.commit451.gitlab.model.api.Label;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
- * Shows the labels for an issue
+ * Label
  */
 public class LabelViewHolder extends RecyclerView.ViewHolder {
 
     public static LabelViewHolder inflate(ViewGroup parent) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.viewholder_label, parent, false);
+                .inflate(R.layout.item_label, parent, false);
         return new LabelViewHolder(view);
     }
 
-    @Bind(R.id.title)
-    TextView mTitleView;
+    @BindView(R.id.title) public TextView title;
+    @BindView(R.id.color) public View colorView;
 
     public LabelViewHolder(View view) {
         super(view);
         ButterKnife.bind(this, view);
     }
 
-    public void bind(String label) {
-        mTitleView.setText(label);
+    public void bind(Label label) {
+        title.setText(label.getName());
+        colorView.setBackgroundColor(label.getColor());
     }
 }

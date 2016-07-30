@@ -15,45 +15,44 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.commit451.gitlab.LabCoatApp;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.adapter.BuildsAdapter;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
-import com.commit451.gitlab.api.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.easycallback.EasyCallback;
+import com.commit451.gitlab.api.GitLabFactory;
 import com.commit451.gitlab.event.BuildChangedEvent;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Build;
 import com.commit451.gitlab.model.api.Project;
-import com.commit451.gitlab.navigation.NavigationManager;
+import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.PaginationUtil;
 import com.squareup.otto.Subscribe;
 
 import java.util.List;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
+import butterknife.BindView;
 import timber.log.Timber;
 
 /**
  * Shows the builds of a project
  */
-public class BuildsFragment extends BaseFragment {
+public class BuildsFragment extends ButterKnifeFragment {
 
     public static BuildsFragment newInstance() {
         return new BuildsFragment();
     }
 
-    @Bind(R.id.root)
+    @BindView(R.id.root)
     ViewGroup mRoot;
-    @Bind(R.id.swipe_layout)
+    @BindView(R.id.swipe_layout)
     SwipeRefreshLayout mSwipeRefreshLayout;
-    @Bind(R.id.list)
+    @BindView(R.id.list)
     RecyclerView mListBuilds;
-    @Bind(R.id.message_text)
+    @BindView(R.id.message_text)
     TextView mMessageView;
-    @Bind(R.id.issue_spinner)
+    @BindView(R.id.issue_spinner)
     Spinner mSpinner;
 
     private Project mProject;
@@ -83,7 +82,7 @@ public class BuildsFragment extends BaseFragment {
         @Override
         public void onBuildClicked(Build build) {
             if (mProject != null) {
-                NavigationManager.navigateToBuild(getActivity(), mProject, build);
+                Navigator.navigateToBuild(getActivity(), mProject, build);
             } else {
                 Snackbar.make(mRoot, getString(R.string.wait_for_project_to_load), Snackbar.LENGTH_SHORT)
                         .show();
@@ -105,7 +104,7 @@ public class BuildsFragment extends BaseFragment {
 
     private final EasyCallback<List<Build>> mLoadCallback = new EasyCallback<List<Build>>() {
         @Override
-        public void onResponse(@NonNull List<Build> response) {
+        public void success(@NonNull List<Build> response) {
             mLoading = false;
             if (getView() == null) {
                 return;
@@ -121,7 +120,7 @@ public class BuildsFragment extends BaseFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             mLoading = false;
             Timber.e(t, null);
             if (getView() == null) {
@@ -129,7 +128,7 @@ public class BuildsFragment extends BaseFragment {
             }
             mSwipeRefreshLayout.setRefreshing(false);
             mMessageView.setVisibility(View.VISIBLE);
-            mMessageView.setText(R.string.connection_error_issues);
+            mMessageView.setText(R.string.failed_to_load_builds);
             mBuildsAdapter.setValues(null);
             mNextPageUrl = null;
         }
@@ -137,7 +136,7 @@ public class BuildsFragment extends BaseFragment {
 
     private final EasyCallback<List<Build>> mMoreCallback = new EasyCallback<List<Build>>() {
         @Override
-        public void onResponse(@NonNull List<Build> response) {
+        public void success(@NonNull List<Build> response) {
             mLoading = false;
             mBuildsAdapter.setLoading(false);
             mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
@@ -145,7 +144,7 @@ public class BuildsFragment extends BaseFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mLoading = false;
             mBuildsAdapter.setLoading(false);
@@ -167,10 +166,9 @@ public class BuildsFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
 
         mEventReceiver = new EventReceiver();
-        LabCoatApp.bus().register(mEventReceiver);
+        App.bus().register(mEventReceiver);
 
         mBuildsAdapter = new BuildsAdapter(mAdapterListener);
         mLayoutManagerBuilds = new LinearLayoutManager(getActivity());
@@ -201,8 +199,7 @@ public class BuildsFragment extends BaseFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.unbind(this);
-        LabCoatApp.bus().unregister(mEventReceiver);
+        App.bus().unregister(mEventReceiver);
     }
 
     @Override
@@ -225,7 +222,7 @@ public class BuildsFragment extends BaseFragment {
         });
         mNextPageUrl = null;
         mLoading = true;
-        GitLabClient.instance().getBuilds(mProject.getId(), mScope).enqueue(mLoadCallback);
+        App.instance().getGitLab().getBuilds(mProject.getId(), mScope).enqueue(mLoadCallback);
     }
 
     private void loadMore() {
@@ -241,7 +238,7 @@ public class BuildsFragment extends BaseFragment {
         mLoading = true;
 
         Timber.d("loadMore called for %s", mNextPageUrl);
-        GitLabClient.instance().getBuilds(mNextPageUrl.toString(), mScope).enqueue(mMoreCallback);
+        App.instance().getGitLab().getBuilds(mNextPageUrl.toString(), mScope).enqueue(mMoreCallback);
     }
 
     private class EventReceiver {

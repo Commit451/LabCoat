@@ -18,17 +18,22 @@ import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatAutoCompleteTextView;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.Patterns;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.commit451.gitlab.LabCoatApp;
+import com.commit451.gitlab.App;
+import com.commit451.gitlab.BuildConfig;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.gitlab.api.GitLab;
+import com.commit451.gitlab.api.GitLabFactory;
+import com.commit451.gitlab.api.OkHttpClientFactory;
 import com.commit451.gitlab.data.Prefs;
 import com.commit451.gitlab.dialog.HttpLoginDialog;
 import com.commit451.gitlab.event.LoginEvent;
@@ -40,7 +45,7 @@ import com.commit451.gitlab.ssl.CustomHostnameVerifier;
 import com.commit451.gitlab.ssl.CustomKeyManager;
 import com.commit451.gitlab.ssl.X509CertificateException;
 import com.commit451.gitlab.ssl.X509Util;
-import com.commit451.gitlab.navigation.NavigationManager;
+import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.teleprinter.Teleprinter;
 
 import java.net.ConnectException;
@@ -56,11 +61,13 @@ import java.util.regex.Pattern;
 import javax.net.ssl.SSLHandshakeException;
 import javax.net.ssl.SSLPeerUnverifiedException;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import okhttp3.Credentials;
 import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -73,41 +80,41 @@ public class LoginActivity extends BaseActivity {
     private static final int PERMISSION_REQUEST_GET_ACCOUNTS = 1337;
     private static Pattern sTokenPattern = Pattern.compile("^[A-Za-z0-9-_]*$");
 
-    public static Intent newInstance(Context context) {
-        return newInstance(context, false);
+    public static Intent newIntent(Context context) {
+        return newIntent(context, false);
     }
 
-    public static Intent newInstance(Context context, boolean showClose) {
+    public static Intent newIntent(Context context, boolean showClose) {
         Intent intent = new Intent(context, LoginActivity.class);
         intent.putExtra(EXTRA_SHOW_CLOSE, showClose);
         return intent;
     }
 
-    @Bind(R.id.root)
+    @BindView(R.id.root)
     View mRoot;
-    @Bind(R.id.close)
-    View mClose;
-    @Bind(R.id.url_hint)
+    @BindView(R.id.toolbar)
+    Toolbar mToolbar;
+    @BindView(R.id.url_hint)
     TextInputLayout mUrlHint;
-    @Bind(R.id.url_input)
+    @BindView(R.id.url_input)
     TextView mUrlInput;
-    @Bind(R.id.user_input_hint)
+    @BindView(R.id.user_input_hint)
     TextInputLayout mUserHint;
-    @Bind(R.id.user_input)
+    @BindView(R.id.user_input)
     AppCompatAutoCompleteTextView mUserInput;
-    @Bind(R.id.password_hint)
+    @BindView(R.id.password_hint)
     TextInputLayout mPasswordHint;
-    @Bind(R.id.password_input)
+    @BindView(R.id.password_input)
     TextView mPasswordInput;
-    @Bind(R.id.token_hint)
+    @BindView(R.id.token_hint)
     TextInputLayout mTokenHint;
-    @Bind(R.id.token_input)
+    @BindView(R.id.token_input)
     TextView mTokenInput;
-    @Bind(R.id.normal_login)
+    @BindView(R.id.normal_login)
     View mNormalLogin;
-    @Bind(R.id.token_login)
+    @BindView(R.id.token_login)
     View mTokenLogin;
-    @Bind(R.id.progress)
+    @BindView(R.id.progress)
     View mProgress;
 
     private boolean mIsNormalLogin = true;
@@ -121,26 +128,6 @@ public class LoginActivity extends BaseActivity {
             return true;
         }
     };
-
-    @OnClick(R.id.close)
-    public void onCloseClick() {
-        onBackPressed();
-    }
-
-    @OnClick(R.id.show_normal_link)
-    public void showNormalLogin(TextView loginTypeTextView) {
-        if (mNormalLogin.getVisibility() == View.VISIBLE) {
-            mNormalLogin.setVisibility(View.GONE);
-            mTokenLogin.setVisibility(View.VISIBLE);
-            loginTypeTextView.setText(R.string.normal_link);
-            mIsNormalLogin = false;
-        } else {
-            mNormalLogin.setVisibility(View.VISIBLE);
-            mTokenLogin.setVisibility(View.GONE);
-            loginTypeTextView.setText(R.string.token_link);
-            mIsNormalLogin = true;
-        }
-    }
 
     @OnClick(R.id.login_button)
     public void onLoginClick() {
@@ -203,7 +190,7 @@ public class LoginActivity extends BaseActivity {
 
     private void login() {
         // This seems useless - But believe me, it makes everything work! Don't remove it.
-        // (OkHttpClientProvider caches the clients and needs a new account to recreate them)
+        // (OkHttpClientFactory caches the clients and needs a new account to recreate them)
 
         Account newAccount = new Account();
         newAccount.setServerUrl(mAccount.getServerUrl());
@@ -290,11 +277,11 @@ public class LoginActivity extends BaseActivity {
             mAccount.setUser(response.body());
             mAccount.setLastUsed(new Date());
             Prefs.addAccount(LoginActivity.this, mAccount);
-            GitLabClient.setAccount(mAccount);
-            LabCoatApp.bus().post(new LoginEvent(mAccount));
+            App.instance().setAccount(mAccount);
+            App.bus().post(new LoginEvent(mAccount));
             //This is mostly for if projects already exists, then we will reload the data
-            LabCoatApp.bus().post(new ReloadDataEvent());
-            NavigationManager.navigateToProjects(LoginActivity.this);
+            App.bus().post(new ReloadDataEvent());
+            Navigator.navigateToStartingActivity(LoginActivity.this);
             finish();
         }
 
@@ -314,7 +301,38 @@ public class LoginActivity extends BaseActivity {
         mTeleprinter = new Teleprinter(this);
         boolean showClose = getIntent().getBooleanExtra(EXTRA_SHOW_CLOSE, false);
 
-        mClose.setVisibility(showClose ? View.VISIBLE : View.GONE);
+        mToolbar.inflateMenu(R.menu.menu_login);
+        mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.action_private_token:
+                        boolean isNormalLogin = mNormalLogin.getVisibility() == View.VISIBLE;
+                        if (isNormalLogin) {
+                            mNormalLogin.setVisibility(View.GONE);
+                            mTokenLogin.setVisibility(View.VISIBLE);
+                            item.setTitle(R.string.normal_link);
+                            mIsNormalLogin = false;
+                        } else {
+                            mNormalLogin.setVisibility(View.VISIBLE);
+                            mTokenLogin.setVisibility(View.GONE);
+                            item.setTitle(R.string.token_link);
+                            mIsNormalLogin = true;
+                        }
+                        return true;
+                }
+                return false;
+            }
+        });
+        if (showClose) {
+            mToolbar.setNavigationIcon(R.drawable.ic_close_24dp);
+            mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onBackPressed();
+                }
+            });
+        }
         mPasswordInput.setOnEditorActionListener(onEditorActionListener);
         mTokenInput.setOnEditorActionListener(onEditorActionListener);
         mUserInput.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -360,10 +378,15 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void connectByAuth() {
+        OkHttpClient.Builder gitlabClientBuilder = OkHttpClientFactory.create(mAccount);
+        if (BuildConfig.DEBUG) {
+            gitlabClientBuilder.addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
+        }
+        GitLab gitLab = GitLabFactory.create(mAccount, gitlabClientBuilder.build());
         if (mUserInput.getText().toString().contains("@")) {
-            GitLabClient.instance(mAccount).loginWithEmail(mUserInput.getText().toString(), mPasswordInput.getText().toString()).enqueue(mLoginCallback);
+            gitLab.loginWithEmail(mUserInput.getText().toString(), mPasswordInput.getText().toString()).enqueue(mLoginCallback);
         } else {
-            GitLabClient.instance(mAccount).loginWithUsername(mUserInput.getText().toString(), mPasswordInput.getText().toString()).enqueue(mLoginCallback);
+            gitLab.loginWithUsername(mUserInput.getText().toString(), mPasswordInput.getText().toString()).enqueue(mLoginCallback);
         }
     }
 
@@ -373,7 +396,12 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void loadUser() {
-        GitLabClient.instance(mAccount).getThisUser().enqueue(mTestUserCallback);
+        OkHttpClient.Builder gitlabClientBuilder = OkHttpClientFactory.create(mAccount);
+        if (BuildConfig.DEBUG) {
+            gitlabClientBuilder.addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
+        }
+        GitLab gitLab = GitLabFactory.create(mAccount, gitlabClientBuilder.build());
+        gitLab.getThisUser().enqueue(mTestUserCallback);
     }
 
     private void handleConnectionError(Throwable t) {

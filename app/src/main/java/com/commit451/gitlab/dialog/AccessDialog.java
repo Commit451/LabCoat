@@ -7,9 +7,10 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.Theme;
+import com.commit451.easycallback.EasyCallback;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.api.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.model.api.Member;
 
@@ -24,6 +25,11 @@ import timber.log.Timber;
 public class AccessDialog extends MaterialDialog {
 
     void onApply() {
+        if (getSelectedIndex() == -1) {
+            Toast.makeText(getContext(), R.string.please_select_access_level, Toast.LENGTH_LONG)
+                    .show();
+            return;
+        }
         String accessLevel = mRoleNames[getSelectedIndex()];
         if (accessLevel == null) {
             Toast.makeText(getContext(), R.string.please_select_access_level, Toast.LENGTH_LONG)
@@ -47,7 +53,7 @@ public class AccessDialog extends MaterialDialog {
 
     private final Callback<Member> mEditUserCallback = new EasyCallback<Member>() {
         @Override
-        public void onResponse(@NonNull Member response) {
+        public void success(@NonNull Member response) {
             if (mAccessChangedListener != null) {
                 mAccessChangedListener.onAccessChanged(mMember, mRoleNames[getSelectedIndex()]);
             }
@@ -55,7 +61,7 @@ public class AccessDialog extends MaterialDialog {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             onError();
         }
@@ -83,6 +89,7 @@ public class AccessDialog extends MaterialDialog {
                         return true;
                     }
                 })
+                .theme(Theme.DARK)
                 .progress(true, 0) // So we can later show loading progress
                 .positiveText(R.string.action_apply)
                 .negativeText(R.string.md_cancel_label));
@@ -114,10 +121,10 @@ public class AccessDialog extends MaterialDialog {
 
         if (mGroup != null) {
             showLoading();
-            GitLabClient.instance().editGroupMember(mGroup.getId(), mMember.getId(), accessLevel).enqueue(mEditUserCallback);
+            App.instance().getGitLab().editGroupMember(mGroup.getId(), mMember.getId(), accessLevel).enqueue(mEditUserCallback);
         } else if (mProjectId != -1) {
             showLoading();
-            GitLabClient.instance().editProjectMember(mProjectId, mMember.getId(), accessLevel).enqueue(mEditUserCallback);
+            App.instance().getGitLab().editProjectMember(mProjectId, mMember.getId(), accessLevel).enqueue(mEditUserCallback);
         } else if (mAccessAppliedListener != null) {
             mAccessAppliedListener.onAccessApplied(accessLevel);
         } else {

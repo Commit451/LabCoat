@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -28,7 +29,6 @@
                 android:layout_height="wrap_content"
                 android:padding="16dp"
                 android:layout_marginRight="56dp"
-                android:tag="text_color|primary_color_dependent"
                 tools:text="This is an issue"/>
 
         </android.support.design.widget.AppBarLayout>
@@ -47,15 +47,18 @@
 
     </LinearLayout>
     
-    <include layout="@layout/view_send_message"/>
+    <com.commit451.gitlab.view.SendMessageView
+        android:id="@+id/send_message_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_edit_issue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:src="@drawable/ic_edit_24dp"
-        android:tag="tint_selector|accent_color"
+        app:srcCompat="@drawable/ic_edit_24dp"
         app:fabSize="mini"
         app:layout_anchor="@id/appbar"
         app:layout_anchorGravity="bottom|right|end"/>

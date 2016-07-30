@@ -1,35 +1,38 @@
 package com.commit451.gitlab.model.api;
 
-import com.google.gson.annotations.SerializedName;
+import android.net.Uri;
+
+import com.bluelinelabs.logansquare.annotation.JsonField;
+import com.bluelinelabs.logansquare.annotation.JsonObject;
 
 import org.parceler.Parcel;
-
-import android.net.Uri;
 
 import java.util.Date;
 
 @Parcel
+@JsonObject
 public class ProjectNamespace {
-    @SerializedName("id")
+    @JsonField(name = "id")
     long mId;
-    @SerializedName("name")
+    @JsonField(name = "name")
     String mName;
-    @SerializedName("path")
+    @JsonField(name = "path")
     String mPath;
-    @SerializedName("owner_id")
+    @JsonField(name = "owner_id")
     long mOwnerId;
-    @SerializedName("created_at")
+    @JsonField(name = "created_at")
     Date mCreatedAt;
-    @SerializedName("updated_at")
+    @JsonField(name = "updated_at")
     Date mUpdatedAt;
-    @SerializedName("description")
+    @JsonField(name = "description")
     String mDescription;
-    @SerializedName("avatar")
+    @JsonField(name = "avatar")
     Avatar mAvatar;
-    @SerializedName("public")
+    @JsonField(name = "public")
     boolean mPublic;
 
-    public ProjectNamespace() {}
+    public ProjectNamespace() {
+    }
 
     public long getId() {
         return mId;
@@ -83,11 +86,13 @@ public class ProjectNamespace {
     }
 
     @Parcel
+    @JsonObject
     public static class Avatar {
-        @SerializedName("url")
+        @JsonField(name = "url")
         Uri mUrl;
 
-        public Avatar() {}
+        public Avatar() {
+        }
 
         public Uri getUrl() {
             return mUrl;

@@ -10,14 +10,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.commit451.bypasspicassoimagegetter.BypassPicassoImageGetter;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.transformation.CircleTransformation;
-import com.commit451.gitlab.util.DateUtils;
+import com.commit451.gitlab.util.DateUtil;
 import com.commit451.gitlab.util.ImageUtil;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import in.uncod.android.bypass.Bypass;
 
@@ -32,9 +32,9 @@ public class MergeRequestHeaderViewHolder extends RecyclerView.ViewHolder {
         return new MergeRequestHeaderViewHolder(view);
     }
 
-    @Bind(R.id.description) TextView mDescriptionView;
-    @Bind(R.id.author_image) ImageView mAuthorImageView;
-    @Bind(R.id.author) TextView mAuthorView;
+    @BindView(R.id.description) TextView mDescriptionView;
+    @BindView(R.id.author_image) ImageView mAuthorImageView;
+    @BindView(R.id.author) TextView mAuthorView;
 
     public MergeRequestHeaderViewHolder(View view) {
         super(view);
@@ -46,11 +46,11 @@ public class MergeRequestHeaderViewHolder extends RecyclerView.ViewHolder {
             mDescriptionView.setVisibility(View.GONE);
         } else {
             mDescriptionView.setVisibility(View.VISIBLE);
-            mDescriptionView.setText(bypass.markdownToSpannable(mergeRequest.getDescription(), new BypassPicassoImageGetter(mDescriptionView, GitLabClient.getPicasso())));
+            mDescriptionView.setText(bypass.markdownToSpannable(mergeRequest.getDescription(), new BypassPicassoImageGetter(mDescriptionView, App.instance().getPicasso())));
             mDescriptionView.setMovementMethod(LinkMovementMethod.getInstance());
         }
 
-        GitLabClient.getPicasso()
+        App.instance().getPicasso()
                 .load(ImageUtil.getAvatarUrl(mergeRequest.getAuthor(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size)))
                 .transform(new CircleTransformation())
                 .into(mAuthorImageView);
@@ -61,7 +61,7 @@ public class MergeRequestHeaderViewHolder extends RecyclerView.ViewHolder {
         }
         author += itemView.getResources().getString(R.string.created_merge_request);
         if (mergeRequest.getCreatedAt() != null) {
-            author += " " + DateUtils.getRelativeTimeSpanString(itemView.getContext(), mergeRequest.getCreatedAt());
+            author += " " + DateUtil.getRelativeTimeSpanString(itemView.getContext(), mergeRequest.getCreatedAt());
         }
         mAuthorView.setText(author);
     }

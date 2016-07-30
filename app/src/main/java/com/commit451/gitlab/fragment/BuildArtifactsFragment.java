@@ -11,12 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.commit451.gitlab.LabCoatApp;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.BuildArtifactsAdapter;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
-import com.commit451.gitlab.api.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.easycallback.EasyCallback;
+import com.commit451.gitlab.api.GitLabFactory;
 import com.commit451.gitlab.event.BuildChangedEvent;
 import com.commit451.gitlab.model.api.Artifact;
 import com.commit451.gitlab.model.api.Build;
@@ -27,14 +27,13 @@ import org.parceler.Parcels;
 
 import java.util.List;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
+import butterknife.BindView;
 import timber.log.Timber;
 
 /**
  * Shows the build artifacts
  */
-public class BuildArtifactsFragment extends BaseFragment {
+public class BuildArtifactsFragment extends ButterKnifeFragment {
 
     private static final String KEY_PROJECT = "project";
     private static final String KEY_BUILD = "build";
@@ -48,9 +47,9 @@ public class BuildArtifactsFragment extends BaseFragment {
         return fragment;
     }
 
-    @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
-    @Bind(R.id.list) RecyclerView mCommitsListView;
-    @Bind(R.id.message_text) TextView mMessageView;
+    @BindView(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
+    @BindView(R.id.list) RecyclerView mCommitsListView;
+    @BindView(R.id.message_text) TextView mMessageView;
 
     private Project mProject;
     private Build mBuild;
@@ -60,7 +59,7 @@ public class BuildArtifactsFragment extends BaseFragment {
 
     private final EasyCallback<List<Artifact>> mCommitsCallback = new EasyCallback<List<Artifact>>() {
         @Override
-        public void onResponse(@NonNull List<Artifact> response) {
+        public void success(@NonNull List<Artifact> response) {
             if (getView() == null) {
                 return;
             }
@@ -75,7 +74,7 @@ public class BuildArtifactsFragment extends BaseFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             if (getView() == null) {
                 return;
@@ -129,8 +128,6 @@ public class BuildArtifactsFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
-
         mArtifactsAdapter = new BuildArtifactsAdapter(mAdapterListener);
         mCommitsListView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mCommitsListView.addItemDecoration(new DividerItemDecoration(getActivity()));
@@ -144,14 +141,13 @@ public class BuildArtifactsFragment extends BaseFragment {
         });
         loadData();
         mEventReceiver = new EventReceiver();
-        LabCoatApp.bus().register(mEventReceiver);
+        App.bus().register(mEventReceiver);
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        LabCoatApp.bus().unregister(mEventReceiver);
-        ButterKnife.unbind(this);
+        App.bus().unregister(mEventReceiver);
     }
 
     @Override
@@ -169,7 +165,7 @@ public class BuildArtifactsFragment extends BaseFragment {
             }
         });
 
-        GitLabClient.instance().getBuildArtifacts(mProject.getId(), mBuild.getId()).enqueue(mCommitsCallback);
+        App.instance().getGitLab().getBuildArtifacts(mProject.getId(), mBuild.getId()).enqueue(mCommitsCallback);
     }
 
     private class EventReceiver {

@@ -7,6 +7,7 @@ import com.commit451.gitlab.model.api.Branch;
 import com.commit451.gitlab.model.api.Build;
 import com.commit451.gitlab.model.api.Contributor;
 import com.commit451.gitlab.model.api.Diff;
+import com.commit451.gitlab.model.api.FileUploadResponse;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.model.api.GroupDetail;
 import com.commit451.gitlab.model.api.Issue;
@@ -19,6 +20,7 @@ import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryCommit;
 import com.commit451.gitlab.model.api.RepositoryFile;
 import com.commit451.gitlab.model.api.RepositoryTreeObject;
+import com.commit451.gitlab.model.api.Snippet;
 import com.commit451.gitlab.model.api.User;
 import com.commit451.gitlab.model.api.UserBasic;
 import com.commit451.gitlab.model.api.UserFull;
@@ -26,7 +28,9 @@ import com.commit451.gitlab.model.api.UserLogin;
 
 import java.util.List;
 
+import okhttp3.RequestBody;
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -163,13 +167,29 @@ public interface GitLab {
     @POST(API_VERSION + "/projects/fork/{id}")
     Call<Void> forkProject(@Path("id") long projectId);
 
+    @POST(API_VERSION + "/projects/{id}/star")
+    Call<Project> starProject(@Path("id") long projectId);
+
+    @DELETE(API_VERSION + "/projects/{id}/star")
+    Call<Project> unstarProject(@Path("id") long projectId);
+
+    //@Multipart
+    @POST(API_VERSION + "/projects/{id}/uploads")
+    Call<FileUploadResponse> uploadFile(@Path("id") long projectId,
+                                        @Body RequestBody file);
+
     /* --- MILESTONES --- */
 
     @GET(API_VERSION + "/projects/{id}/milestones")
-    Call<List<Milestone>> getMilestones(@Path("id") long projectId);
+    Call<List<Milestone>> getMilestones(@Path("id") long projectId,
+                                        @Query("state") String state);
 
     @GET
     Call<List<Milestone>> getMilestones(@Url String url);
+
+    @GET(API_VERSION + "/projects/{id}/issues")
+    Call<List<Milestone>> getMilestonesByIid(@Path("id") long projectId,
+                                             @Query("iid") String internalMilestoneId);
 
     @GET(API_VERSION + "/projects/{id}/milestones/{milestone_id}/issues")
     Call<List<Issue>> getMilestoneIssues(@Path("id") long projectId,
@@ -208,6 +228,10 @@ public interface GitLab {
     Call<List<MergeRequest>> getMergeRequests(@Url String url,
                                               @Query("state") String state);
 
+    @GET(API_VERSION + "/projects/{id}/merge_requests")
+    Call<List<MergeRequest>> getMergeRequestsByIid(@Path("id") long projectId,
+                                                   @Query("iid") String internalMergeRequestId);
+
     @GET(API_VERSION + "/projects/{id}/merge_request/{merge_request_id}")
     Call<MergeRequest> getMergeRequest(@Path("id") long projectId,
                                        @Path("merge_request_id") long mergeRequestId);
@@ -244,8 +268,7 @@ public interface GitLab {
                                 @Query("state") String state);
 
     @GET
-    Call<List<Issue>> getIssues(@Url String url,
-                                @Query("state") String state);
+    Call<List<Issue>> getIssues(@Url String url);
 
     @GET(API_VERSION + "/projects/{id}/issues/{issue_id}")
     Call<Issue> getIssue(@Path("id") long projectId,
@@ -253,7 +276,7 @@ public interface GitLab {
 
     @GET(API_VERSION + "/projects/{id}/issues")
     Call<List<Issue>> getIssuesByIid(@Path("id") long projectId,
-                         @Query("iid") String internalIssueId);
+                                     @Query("iid") String internalIssueId);
 
     @FormUrlEncoded
     @POST(API_VERSION + "/projects/{id}/issues")
@@ -261,7 +284,8 @@ public interface GitLab {
                             @Field("title") String title,
                             @Field("description") String description,
                             @Field("assignee_id") @Nullable Long assigneeId,
-                            @Field("milestone_id") @Nullable Long milestoneId);
+                            @Field("milestone_id") @Nullable Long milestoneId,
+                            @Field("labels") @Nullable String commaSeparatedLabelNames);
 
     @PUT(API_VERSION + "/projects/{id}/issues/{issue_id}")
     Call<Issue> updateIssue(@Path("id") long projectId,
@@ -269,7 +293,8 @@ public interface GitLab {
                             @Query("title") String title,
                             @Query("description") String description,
                             @Query("assignee_id") @Nullable Long assigneeId,
-                            @Query("milestone_id") @Nullable Long milestoneId);
+                            @Query("milestone_id") @Nullable Long milestoneId,
+                            @Query("labels") @Nullable String commaSeparatedLabelNames);
 
     @PUT(API_VERSION + "/projects/{id}/issues/{issue_id}")
     Call<Issue> updateIssueStatus(@Path("id") long projectId,
@@ -340,7 +365,8 @@ public interface GitLab {
     @POST(API_VERSION + "/projects/{id}/labels")
     Call<Label> createLabel(@Path("id") long projectId,
                             @Query("name") String name,
-                            @Query("color") String color);
+                            @Query("color") String color,
+                            @Query("description") @Nullable String description);
 
     /**
      * Delete the label by its name
@@ -381,4 +407,11 @@ public interface GitLab {
     @GET(API_VERSION + "/projects/{id}/builds/{build_id}/artifacts")
     Call<List<Artifact>> getBuildArtifacts(@Path("id") long projectId,
                                            @Path("build_id") long buildId);
+
+    /* --- SNIPPETS --- */
+    @GET(API_VERSION + "/projects/{id}/snippets")
+    Call<List<Snippet>> getSnippets(@Path("id") long projectId);
+
+    @GET
+    Call<List<Snippet>> getSnippets(@Url String url);
 }

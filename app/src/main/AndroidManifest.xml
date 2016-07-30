@@ -8,12 +8,16 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
 
     <application
-        android:name=".LabCoatApp"
+        android:name=".App"
         android:allowBackup="true"
         android:fullBackupContent="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
+
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="${fabric_key}"/>
 
         <activity
             android:name=".activity.LaunchActivity"
@@ -24,31 +28,42 @@
 
         <activity
             android:name=".activity.ProjectsActivity"
-            android:launchMode="singleTask"/>
+            android:launchMode="singleTask"
+            android:theme="@style/Activity.Projects"/>
         <activity
             android:name=".activity.GroupsActivity"
-            android:launchMode="singleTask"/>
+            android:launchMode="singleTask"
+            android:theme="@style/Activity.Groups"/>
         <activity
             android:name=".activity.ActivityActivity"
-            android:launchMode="singleTask"/>
+            android:launchMode="singleTask"
+            android:theme="@style/Activity.Activity"/>
         <activity android:name=".activity.ProjectActivity"/>
-        <activity android:name=".activity.LoginActivity"/>
+        <activity android:name=".activity.LoginActivity"
+            android:theme="@style/Activity.Login"/>
         <activity android:name=".activity.FileActivity"/>
         <activity android:name=".activity.IssueActivity"/>
         <activity android:name=".activity.DiffActivity"/>
         <activity android:name=".activity.AboutActivity"/>
         <activity android:name=".activity.AddUserActivity"/>
-        <activity android:name=".activity.UserActivity"/>
+        <activity
+            android:name=".activity.UserActivity"
+            android:theme="@style/Activity.User"/>
         <activity android:name=".activity.SearchActivity"/>
-        <activity android:name=".activity.GroupActivity"/>
+        <activity
+            android:name=".activity.GroupActivity"
+            android:theme="@style/Activity.Group"/>
         <activity android:name=".activity.MergeRequestActivity"/>
         <activity android:name=".activity.AddIssueActivity"/>
         <activity android:name=".activity.MilestoneActivity"/>
         <activity android:name=".activity.AddMilestoneActivity"/>
-        <activity android:name=".activity.SettingsActivity"/>
         <activity android:name=".activity.BuildActivity"/>
-        <activity android:name=".activity.LoadSomeInfoActivity"
+        <activity
+            android:name=".activity.LoadSomeInfoActivity"
             android:theme="@style/Activity.Translucent"/>
+        <activity android:name=".activity.SettingsActivity"/>
+        <activity android:name=".activity.AddLabelActivity"/>
+        <activity android:name=".activity.AddNewLabelActivity"/>
         <activity android:name=".activity.WebviewLoginActivity">
 
         <intent-filter>
@@ -68,14 +83,31 @@
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <category android:name="android.intent.category.DEFAULT"/>
 
-                <data
-                    android:scheme="@string/deeplink_scheme"/>
+                <data android:scheme="@string/deeplink_scheme"/>
             </intent-filter>
         </activity>
 
-        <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="${fabric_key}"/>
+        <activity android:name=".widget.FeedWidgetConfigureActivity">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
+            </intent-filter>
+        </activity>
+
+        <receiver
+            android:name=".widget.FeedWidgetProvider"
+            android:label="GitLab Feed">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_feed"/>
+        </receiver>
+
+        <service
+            android:name=".widget.FeedWidgetService"
+            android:permission="android.permission.BIND_REMOTEVIEWS"/>
+
     </application>
 
 </manifest>

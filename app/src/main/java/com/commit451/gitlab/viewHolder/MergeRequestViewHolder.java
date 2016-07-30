@@ -7,15 +7,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.afollestad.appthemeengine.ATE;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.transformation.CircleTransformation;
-import com.commit451.gitlab.util.AppThemeUtil;
 import com.commit451.gitlab.util.ImageUtil;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -29,9 +27,9 @@ public class MergeRequestViewHolder extends RecyclerView.ViewHolder {
         return new MergeRequestViewHolder(view);
     }
 
-    @Bind(R.id.request_image) ImageView mImageView;
-    @Bind(R.id.request_title) TextView mTitleView;
-    @Bind(R.id.request_author) TextView mAuthorView;
+    @BindView(R.id.request_image) ImageView mImageView;
+    @BindView(R.id.request_title) TextView mTitleView;
+    @BindView(R.id.request_author) TextView mAuthorView;
 
     public MergeRequestViewHolder(View view) {
         super(view);
@@ -39,7 +37,7 @@ public class MergeRequestViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(MergeRequest item) {
-        GitLabClient.getPicasso()
+        App.instance().getPicasso()
                 .load(ImageUtil.getAvatarUrl(item.getAuthor(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size)))
                 .transform(new CircleTransformation())
                 .into(mImageView);

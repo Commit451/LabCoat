@@ -8,13 +8,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.afollestad.appthemeengine.ATE;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Group;
-import com.commit451.gitlab.util.AppThemeUtil;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -28,8 +26,8 @@ public class GroupViewHolder extends RecyclerView.ViewHolder{
         return new GroupViewHolder(view);
     }
 
-    @Bind(R.id.image) public ImageView mImageView;
-    @Bind(R.id.name) public TextView mNameView;
+    @BindView(R.id.image) public ImageView mImageView;
+    @BindView(R.id.name) public TextView mNameView;
 
     public GroupViewHolder(View view) {
         super(view);
@@ -40,7 +38,7 @@ public class GroupViewHolder extends RecyclerView.ViewHolder{
         mNameView.setText(group.getName());
 
         if (group.getAvatarUrl() != null && !group.getAvatarUrl().equals(Uri.EMPTY)) {
-            GitLabClient.getPicasso()
+            App.instance().getPicasso()
                     .load(group.getAvatarUrl())
                     .into(mImageView);
         }

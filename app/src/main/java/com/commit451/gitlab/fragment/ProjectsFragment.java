@@ -11,25 +11,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.commit451.easycallback.EasyCallback;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.gitlab.adapter.ProjectsAdapter;
-import com.commit451.gitlab.api.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.model.api.Project;
-import com.commit451.gitlab.navigation.NavigationManager;
+import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.PaginationUtil;
 
 import org.parceler.Parcels;
 
 import java.util.List;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
+import butterknife.BindView;
 import timber.log.Timber;
 
-public class ProjectsFragment extends BaseFragment {
+public class ProjectsFragment extends ButterKnifeFragment {
 
     private static final String EXTRA_MODE = "extra_mode";
     private static final String EXTRA_QUERY = "extra_query";
@@ -68,9 +67,9 @@ public class ProjectsFragment extends BaseFragment {
         return fragment;
     }
 
-    @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
-    @Bind(R.id.list) RecyclerView mProjectsListView;
-    @Bind(R.id.message_text) TextView mMessageView;
+    @BindView(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
+    @BindView(R.id.list) RecyclerView mProjectsListView;
+    @BindView(R.id.message_text) TextView mMessageView;
 
     private LinearLayoutManager mLayoutManager;
     private ProjectsAdapter mProjectsAdapter;
@@ -95,7 +94,7 @@ public class ProjectsFragment extends BaseFragment {
 
     private final EasyCallback<List<Project>> mProjectsCallback = new EasyCallback<List<Project>>() {
         @Override
-        public void onResponse(@NonNull List<Project> response) {
+        public void success(@NonNull List<Project> response) {
             mLoading = false;
             if (getView() == null) {
                 return;
@@ -111,7 +110,7 @@ public class ProjectsFragment extends BaseFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             mLoading = false;
             Timber.e(t, null);
             if (getView() == null) {
@@ -127,7 +126,7 @@ public class ProjectsFragment extends BaseFragment {
 
     private final EasyCallback<List<Project>> mMoreProjectsCallback = new EasyCallback<List<Project>>() {
         @Override
-        public void onResponse(@NonNull List<Project> response) {
+        public void success(@NonNull List<Project> response) {
             mLoading = false;
             if (getView() == null) {
                 return;
@@ -139,7 +138,7 @@ public class ProjectsFragment extends BaseFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             mLoading = false;
             Timber.e(t, null);
 
@@ -153,7 +152,7 @@ public class ProjectsFragment extends BaseFragment {
     private final ProjectsAdapter.Listener mProjectsListener = new ProjectsAdapter.Listener() {
         @Override
         public void onProjectClicked(Project project) {
-            NavigationManager.navigateToProject(getActivity(), project);
+            Navigator.navigateToProject(getActivity(), project);
         }
     };
 
@@ -172,7 +171,6 @@ public class ProjectsFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
 
         mProjectsAdapter = new ProjectsAdapter(getActivity(), mProjectsListener);
         mLayoutManager = new LinearLayoutManager(getActivity());
@@ -192,12 +190,6 @@ public class ProjectsFragment extends BaseFragment {
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        ButterKnife.unbind(this);
-    }
-
-    @Override
     protected void loadData() {
         if (getView() == null) {
             return;
@@ -209,20 +201,20 @@ public class ProjectsFragment extends BaseFragment {
         switch (mMode) {
             case MODE_ALL:
                 showLoading();
-                GitLabClient.instance().getAllProjects().enqueue(mProjectsCallback);
+                App.instance().getGitLab().getAllProjects().enqueue(mProjectsCallback);
                 break;
             case MODE_MINE:
                 showLoading();
-                GitLabClient.instance().getMyProjects().enqueue(mProjectsCallback);
+                App.instance().getGitLab().getMyProjects().enqueue(mProjectsCallback);
                 break;
             case MODE_STARRED:
                 showLoading();
-                GitLabClient.instance().getStarredProjects().enqueue(mProjectsCallback);
+                App.instance().getGitLab().getStarredProjects().enqueue(mProjectsCallback);
                 break;
             case MODE_SEARCH:
                 if (mQuery != null) {
                     showLoading();
-                    GitLabClient.instance().searchAllProjects(mQuery).enqueue(mProjectsCallback);
+                    App.instance().getGitLab().searchAllProjects(mQuery).enqueue(mProjectsCallback);
                 }
                 break;
             case MODE_GROUP:
@@ -231,7 +223,7 @@ public class ProjectsFragment extends BaseFragment {
                 if (group == null) {
                     throw new IllegalStateException("You must also pass a group if you want to show a groups projects");
                 }
-                GitLabClient.instance().getGroupProjects(group.getId()).enqueue(mProjectsCallback);
+                App.instance().getGitLab().getGroupProjects(group.getId()).enqueue(mProjectsCallback);
                 break;
             default:
                 throw new IllegalStateException(mMode + " is not defined");
@@ -249,7 +241,7 @@ public class ProjectsFragment extends BaseFragment {
         mLoading = true;
         mProjectsAdapter.setLoading(true);
         Timber.d("loadMore called for " + mNextPageUrl);
-        GitLabClient.instance().getProjects(mNextPageUrl.toString()).enqueue(mMoreProjectsCallback);
+        App.instance().getGitLab().getProjects(mNextPageUrl.toString()).enqueue(mMoreProjectsCallback);
     }
 
     private void showLoading() {

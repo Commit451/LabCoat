@@ -7,7 +7,7 @@ import android.support.design.widget.Snackbar;
 import android.text.TextUtils;
 import android.view.View;
 
-import com.afollestad.appthemeengine.Config;
+import com.commit451.easel.Easel;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.navigation.BrowserFallback;
 import com.commit451.gitlab.navigation.LabCoatIntentCustomizer;
@@ -23,7 +23,7 @@ public class IntentUtil {
             return;
         }
 
-        int primaryColor = Config.primaryColor(activity, AppThemeUtil.resolveThemeKey(activity));
+        int primaryColor = Easel.getThemeAttrColor(activity, R.attr.colorPrimary);
         SimpleChromeCustomTabs.getInstance()
                 .withFallback(new BrowserFallback(activity))
                 .withIntentCustomizer(new LabCoatIntentCustomizer(activity, primaryColor))

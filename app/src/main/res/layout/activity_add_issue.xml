@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
-    android:id="@+id/root"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:transitionName="@string/transition_morph">
@@ -22,7 +22,6 @@
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?attr/windowBackground"
         android:layout_marginTop="?attr/actionBarSize">
 
         <LinearLayout
@@ -82,7 +81,6 @@
                     android:id="@+id/assignee_spinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:tag="tint|primary_text"
                     android:visibility="gone"/>
 
             </FrameLayout>
@@ -109,7 +107,6 @@
                     android:id="@+id/milestone_spinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:tag="tint|primary_text"
                     android:visibility="gone"/>
 
             </FrameLayout>
@@ -133,18 +130,29 @@
                     app:matProg_barColor="?attr/colorAccent"
                     app:matProg_progressIndeterminate="true"/>
 
-                <com.commit451.gitlab.view.AdapterFlowLayout
-                    android:id="@+id/list_labels"
+                <LinearLayout
+                    android:id="@+id/root_add_labels"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:visibility="gone"/>
+                    android:orientation="vertical"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="16dp"
+                    android:visibility="gone"
+                    android:background="?attr/selectableItemBackground">
 
-                <TextView
-                    android:id="@+id/text_add_labels"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/add_labels"
-                    android:visibility="gone"/>
+                    <com.commit451.gitlab.view.AdapterFlowLayout
+                        android:id="@+id/list_labels"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="4dp"/>
+
+                    <TextView
+                        android:id="@+id/text_add_labels"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/add_labels"/>
+
+                </LinearLayout>
 
             </FrameLayout>
         </LinearLayout>

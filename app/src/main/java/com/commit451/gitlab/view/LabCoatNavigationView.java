@@ -15,30 +15,29 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.commit451.easel.Easel;
-import com.commit451.gitlab.LabCoatApp;
+import com.commit451.easycallback.EasyCallback;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ActivityActivity;
 import com.commit451.gitlab.activity.GroupsActivity;
 import com.commit451.gitlab.activity.ProjectsActivity;
 import com.commit451.gitlab.adapter.AccountsAdapter;
-import com.commit451.gitlab.api.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.data.Prefs;
 import com.commit451.gitlab.event.CloseDrawerEvent;
 import com.commit451.gitlab.event.LoginEvent;
 import com.commit451.gitlab.event.ReloadDataEvent;
 import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.model.api.UserFull;
+import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.transformation.CircleTransformation;
 import com.commit451.gitlab.util.ImageUtil;
-import com.commit451.gitlab.navigation.NavigationManager;
 import com.squareup.otto.Subscribe;
 
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import timber.log.Timber;
@@ -48,10 +47,10 @@ import timber.log.Timber;
  */
 public class LabCoatNavigationView extends NavigationView {
 
-    @Bind(R.id.profile_image) ImageView mProfileImage;
-    @Bind(R.id.profile_user) TextView mUserName;
-    @Bind(R.id.profile_email) TextView mUserEmail;
-    @Bind(R.id.arrow) View mArrow;
+    @BindView(R.id.profile_image) ImageView mProfileImage;
+    @BindView(R.id.profile_user) TextView mUserName;
+    @BindView(R.id.profile_email) TextView mUserEmail;
+    @BindView(R.id.arrow) View mArrow;
 
     RecyclerView mAccountList;
     AccountsAdapter mAccountAdapter;
@@ -65,39 +64,39 @@ public class LabCoatNavigationView extends NavigationView {
                     if (getContext() instanceof ProjectsActivity) {
 
                     } else {
-                        NavigationManager.navigateToProjects((Activity) getContext());
+                        Navigator.navigateToProjects((Activity) getContext());
                         ((Activity) getContext()).finish();
                         ((Activity)getContext()).overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
                     }
-                    LabCoatApp.bus().post(new CloseDrawerEvent());
+                    App.bus().post(new CloseDrawerEvent());
                     return true;
                 case R.id.nav_groups:
                     if (getContext() instanceof GroupsActivity) {
 
                     } else {
-                        NavigationManager.navigateToGroups((Activity) getContext());
+                        Navigator.navigateToGroups((Activity) getContext());
                         ((Activity) getContext()).finish();
                         ((Activity)getContext()).overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
                     }
-                    LabCoatApp.bus().post(new CloseDrawerEvent());
+                    App.bus().post(new CloseDrawerEvent());
                     return true;
                 case R.id.nav_activity:
                     if (getContext() instanceof ActivityActivity) {
 
                     } else {
-                        NavigationManager.navigateToActivity((Activity) getContext());
+                        Navigator.navigateToActivity((Activity) getContext());
                         ((Activity) getContext()).finish();
                         ((Activity)getContext()).overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
                     }
-                    LabCoatApp.bus().post(new CloseDrawerEvent());
-                    return true;
-                case R.id.nav_settings:
-                    LabCoatApp.bus().post(new CloseDrawerEvent());
-                    NavigationManager.navigateToSettings((Activity) getContext());
+                    App.bus().post(new CloseDrawerEvent());
                     return true;
                 case R.id.nav_about:
-                    LabCoatApp.bus().post(new CloseDrawerEvent());
-                    NavigationManager.navigateToAbout((Activity) getContext());
+                    App.bus().post(new CloseDrawerEvent());
+                    Navigator.navigateToAbout((Activity) getContext());
+                    return true;
+                case R.id.nav_settings:
+                    App.bus().post(new CloseDrawerEvent());
+                    Navigator.navigateToSettings((Activity) getContext());
                     return true;
             }
             return false;
@@ -112,9 +111,9 @@ public class LabCoatNavigationView extends NavigationView {
 
         @Override
         public void onAddAccountClicked() {
-            NavigationManager.navigateToLogin((Activity) getContext(), true);
+            Navigator.navigateToLogin((Activity) getContext(), true);
             toggleAccounts();
-            LabCoatApp.bus().post(new CloseDrawerEvent());
+            App.bus().post(new CloseDrawerEvent());
         }
 
         @Override
@@ -123,10 +122,10 @@ public class LabCoatNavigationView extends NavigationView {
             List<Account> accounts = Account.getAccounts(getContext());
 
             if (accounts.isEmpty()) {
-                NavigationManager.navigateToLogin((Activity) getContext());
+                Navigator.navigateToLogin((Activity) getContext());
                 ((Activity) getContext()).finish();
             } else {
-                if (account.equals(GitLabClient.getAccount())) {
+                if (account.equals(App.instance().getAccount())) {
                     switchToAccount(accounts.get(0));
                 }
             }
@@ -136,24 +135,24 @@ public class LabCoatNavigationView extends NavigationView {
     private final EasyCallback<UserFull> mUserCallback = new EasyCallback<UserFull>() {
 
         @Override
-        public void onResponse(@NonNull UserFull response) {
+        public void success(@NonNull UserFull response) {
             //Store the newly retrieved user to the account so that it stays up to date
             // in local storage
-            Account account = GitLabClient.getAccount();
+            Account account = App.instance().getAccount();
             account.setUser(response);
             Prefs.updateAccount(getContext(), account);
             bindUser(response);
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
         }
     };
 
     @OnClick(R.id.profile_image)
     public void onUserImageClick(ImageView imageView) {
-        NavigationManager.navigateToUser((Activity) getContext(), imageView, GitLabClient.getAccount().getUser());
+        Navigator.navigateToUser((Activity) getContext(), imageView, App.instance().getAccount().getUser());
     }
 
     @OnClick(R.id.drawer_header)
@@ -178,7 +177,7 @@ public class LabCoatNavigationView extends NavigationView {
 
     private void init() {
         mEventReceiver = new EventReceiver();
-        LabCoatApp.bus().register(mEventReceiver);
+        App.bus().register(mEventReceiver);
         int colorPrimary = Easel.getThemeAttrColor(getContext(), R.attr.colorPrimary);
 
         setNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -203,7 +202,7 @@ public class LabCoatNavigationView extends NavigationView {
 
     @Override
     protected void onDetachedFromWindow() {
-        LabCoatApp.bus().unregister(mEventReceiver);
+        App.bus().unregister(mEventReceiver);
         super.onDetachedFromWindow();
     }
 
@@ -235,7 +234,7 @@ public class LabCoatNavigationView extends NavigationView {
     }
 
     private void loadCurrentUser() {
-        GitLabClient.instance().getThisUser().enqueue(mUserCallback);
+        App.instance().getGitLab().getThisUser().enqueue(mUserCallback);
     }
 
     private void bindUser(UserFull user) {
@@ -249,7 +248,7 @@ public class LabCoatNavigationView extends NavigationView {
             mUserEmail.setText(user.getEmail());
         }
         Uri url = ImageUtil.getAvatarUrl(user, getResources().getDimensionPixelSize(R.dimen.larger_image_size));
-        GitLabClient.getPicasso()
+        App.instance().getPicasso()
                 .load(url)
                 .transform(new CircleTransformation())
                 .into(mProfileImage);
@@ -280,12 +279,12 @@ public class LabCoatNavigationView extends NavigationView {
     private void switchToAccount(Account account) {
         Timber.d("Switching to account: %s", account);
         account.setLastUsed(new Date());
-        GitLabClient.setAccount(account);
+        App.instance().setAccount(account);
         Prefs.updateAccount(getContext(), account);
         bindUser(account.getUser());
         toggleAccounts();
-        LabCoatApp.bus().post(new ReloadDataEvent());
-        LabCoatApp.bus().post(new CloseDrawerEvent());
+        App.bus().post(new ReloadDataEvent());
+        App.bus().post(new CloseDrawerEvent());
         // Trigger a reload in the adapter so that we will place the accounts
         // in the correct order from most recently used
         mAccountAdapter.notifyDataSetChanged();

@@ -3,8 +3,8 @@ package com.commit451.gitlab.view;
 import android.content.Context;
 import android.util.AttributeSet;
 
-import com.afollestad.appthemeengine.Config;
-import com.commit451.gitlab.util.AppThemeUtil;
+import com.commit451.easel.Easel;
+import com.commit451.gitlab.R;
 import com.pnikosis.materialishprogress.ProgressWheel;
 
 /**
@@ -23,6 +23,6 @@ public class LabCoatProgressView extends ProgressWheel {
     }
 
     private void init() {
-        setBarColor(Config.accentColor(getContext(), AppThemeUtil.resolveThemeKey(getContext())));
+        setBarColor(Easel.getThemeAttrColor(getContext(), R.attr.colorAccent));
     }
 }

@@ -4,7 +4,6 @@ package com.commit451.gitlab.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
@@ -16,15 +15,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 
-import com.afollestad.appthemeengine.customizers.ATEActivityThemeCustomizer;
-import com.commit451.gitlab.LabCoatApp;
+import com.commit451.easel.Easel;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.api.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.easycallback.EasyCallback;
+import com.commit451.gitlab.api.GitLabFactory;
 import com.commit451.gitlab.event.MilestoneChangedEvent;
 import com.commit451.gitlab.event.MilestoneCreatedEvent;
 import com.commit451.gitlab.model.api.Milestone;
-import com.commit451.gitlab.util.AppThemeUtil;
+import com.commit451.teleprinter.Teleprinter;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import org.parceler.Parcels;
@@ -32,28 +31,22 @@ import org.parceler.Parcels;
 import java.util.Calendar;
 import java.util.Date;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import retrofit2.Callback;
 import timber.log.Timber;
 
-public class AddMilestoneActivity extends MorphActivity implements ATEActivityThemeCustomizer {
-
-    @Override
-    public int getActivityTheme() {
-        return PreferenceManager.getDefaultSharedPreferences(this).getBoolean("dark_theme", true) ?
-                R.style.Activity_Translucent : R.style.ActivityLight_Translucent;
-    }
+public class AddMilestoneActivity extends MorphActivity {
 
     private static final String KEY_PROJECT_ID = "project_id";
     private static final String KEY_MILESTONE = "milestone";
 
-    public static Intent newInstance(Context context, long projectId) {
-        return newInstance(context, projectId, null);
+    public static Intent newIntent(Context context, long projectId) {
+        return newIntent(context, projectId, null);
     }
 
-    public static Intent newInstance(Context context, long projectId, Milestone milestone) {
+    public static Intent newIntent(Context context, long projectId, Milestone milestone) {
         Intent intent = new Intent(context, AddMilestoneActivity.class);
         intent.putExtra(KEY_PROJECT_ID, projectId);
         if (milestone != null) {
@@ -62,19 +55,19 @@ public class AddMilestoneActivity extends MorphActivity implements ATEActivityTh
         return intent;
     }
 
-    @Bind(R.id.root)
+    @BindView(R.id.root)
     FrameLayout mRoot;
-    @Bind(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar mToolbar;
-    @Bind(R.id.title_text_input_layout)
+    @BindView(R.id.title_text_input_layout)
     TextInputLayout mTitleTextInputLayout;
-    @Bind(R.id.title)
+    @BindView(R.id.title)
     EditText mTitle;
-    @Bind(R.id.description)
+    @BindView(R.id.description)
     EditText mDescription;
-    @Bind(R.id.due_date)
+    @BindView(R.id.due_date)
     Button mDueDate;
-    @Bind(R.id.progress)
+    @BindView(R.id.progress)
     View mProgress;
 
     @OnClick(R.id.due_date)
@@ -89,13 +82,14 @@ public class AddMilestoneActivity extends MorphActivity implements ATEActivityTh
                 now.get(Calendar.MONTH),
                 now.get(Calendar.DAY_OF_MONTH)
         );
-        dpd.setAccentColor(AppThemeUtil.resolveAccentColor(this));
+        dpd.setAccentColor(Easel.getThemeAttrColor(this, R.attr.colorAccent));
         dpd.show(getFragmentManager(), "date_picker");
     }
 
     long mProjectId;
     Milestone mMilestone;
     Date mCurrentDate;
+    Teleprinter mTeleprinter;
 
     private final DatePickerDialog.OnDateSetListener mOnDateSetListener = new DatePickerDialog.OnDateSetListener() {
         @Override
@@ -119,18 +113,18 @@ public class AddMilestoneActivity extends MorphActivity implements ATEActivityTh
     private Callback<Milestone> mMilestoneCallback = new EasyCallback<Milestone>() {
 
         @Override
-        public void onResponse(@NonNull Milestone response) {
+        public void success(@NonNull Milestone response) {
             mProgress.setVisibility(View.GONE);
             if (mMilestone == null) {
-                LabCoatApp.bus().post(new MilestoneCreatedEvent(response));
+                App.bus().post(new MilestoneCreatedEvent(response));
             } else {
-                LabCoatApp.bus().post(new MilestoneChangedEvent(response));
+                App.bus().post(new MilestoneChangedEvent(response));
             }
             finish();
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mProgress.setVisibility(View.GONE);
             showError();
@@ -143,6 +137,7 @@ public class AddMilestoneActivity extends MorphActivity implements ATEActivityTh
         setContentView(R.layout.activity_add_milestone);
         ButterKnife.bind(this);
         morph(mRoot);
+        mTeleprinter = new Teleprinter(this);
         mProjectId = getIntent().getLongExtra(KEY_PROJECT_ID, -1);
         mMilestone = Parcels.unwrap(getIntent().getParcelableExtra(KEY_MILESTONE));
         if (mMilestone != null) {
@@ -168,6 +163,7 @@ public class AddMilestoneActivity extends MorphActivity implements ATEActivityTh
     }
 
     private void createMilestone() {
+        mTeleprinter.hideKeyboard();
         if (TextUtils.isEmpty(mTitle.getText())) {
             mTitleTextInputLayout.setError(getString(R.string.required_field));
             return;
@@ -180,12 +176,12 @@ public class AddMilestoneActivity extends MorphActivity implements ATEActivityTh
         }
 
         if (mMilestone == null) {
-            GitLabClient.instance().createMilestone(mProjectId,
+            App.instance().getGitLab().createMilestone(mProjectId,
                     mTitle.getText().toString(),
                     mDescription.getText().toString(),
                     dueDate).enqueue(mMilestoneCallback);
         } else {
-            GitLabClient.instance().editMilestone(mProjectId,
+            App.instance().getGitLab().editMilestone(mProjectId,
                     mMilestone.getId(),
                     mTitle.getText().toString(),
                     mDescription.getText().toString(),

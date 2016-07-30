@@ -1,10 +1,12 @@
 package com.commit451.gitlab.fragment;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.text.Html;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
@@ -14,25 +16,27 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.commit451.bypasspicassoimagegetter.BypassPicassoImageGetter;
-import com.commit451.gitlab.LabCoatApp;
+import com.commit451.easycallback.EasyCallback;
+import com.commit451.easycallback.HttpException;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ProjectActivity;
-import com.commit451.gitlab.api.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryFile;
 import com.commit451.gitlab.model.api.RepositoryTreeObject;
-import com.commit451.gitlab.navigation.NavigationManager;
+import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.observable.DecodeObservableFactory;
 import com.squareup.otto.Subscribe;
 
 import java.util.List;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
+import butterknife.BindView;
 import butterknife.OnClick;
 import in.uncod.android.bypass.Bypass;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -41,7 +45,7 @@ import timber.log.Timber;
 /**
  * Shows the overview of the project
  */
-public class ProjectFragment extends BaseFragment {
+public class ProjectFragment extends ButterKnifeFragment {
 
     private static final int README_TYPE_UNKNOWN = -1;
     private static final int README_TYPE_MARKDOWN = 0;
@@ -53,11 +57,11 @@ public class ProjectFragment extends BaseFragment {
         return new ProjectFragment();
     }
 
-    @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
-    @Bind(R.id.creator) TextView mCreatorView;
-    @Bind(R.id.star_count) TextView mStarCountView;
-    @Bind(R.id.forks_count) TextView mForksCountView;
-    @Bind(R.id.overview_text) TextView mOverviewVew;
+    @BindView(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
+    @BindView(R.id.creator) TextView mCreatorView;
+    @BindView(R.id.star_count) TextView mStarCountView;
+    @BindView(R.id.forks_count) TextView mForksCountView;
+    @BindView(R.id.overview_text) TextView mOverviewVew;
 
     private Project mProject;
     private String mBranchName;
@@ -68,9 +72,9 @@ public class ProjectFragment extends BaseFragment {
     void onCreatorClick() {
         if (mProject != null) {
             if (mProject.belongsToGroup()) {
-                NavigationManager.navigateToGroup(getActivity(), mProject.getNamespace().getId());
+                Navigator.navigateToGroup(getActivity(), mProject.getNamespace().getId());
             } else {
-                NavigationManager.navigateToUser(getActivity(), mProject.getOwner());
+                Navigator.navigateToUser(getActivity(), mProject.getOwner());
             }
         }
     }
@@ -78,19 +82,36 @@ public class ProjectFragment extends BaseFragment {
     @OnClick(R.id.root_fork)
     void onForkClicked() {
         if (mProject != null) {
-            GitLabClient.instance().forkProject(mProject.getId()).enqueue(mForkCallback);
+            new AlertDialog.Builder(getActivity())
+                    .setTitle(R.string.project_fork_title)
+                    .setMessage(R.string.project_fork_message)
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            App.instance().getGitLab().forkProject(mProject.getId()).enqueue(mForkCallback);
+                        }
+                    })
+                    .show();
+        }
+    }
+
+    @OnClick(R.id.root_star)
+    void onStarClicked() {
+        if (mProject != null) {
+            App.instance().getGitLab().starProject(mProject.getId()).enqueue(mStarCallback);
         }
     }
 
     private final EasyCallback<List<RepositoryTreeObject>> mFilesCallback = new EasyCallback<List<RepositoryTreeObject>>() {
         @Override
-        public void onResponse(@NonNull List<RepositoryTreeObject> response) {
+        public void success(@NonNull List<RepositoryTreeObject> response) {
             if (getView() == null) {
                 return;
             }
             for (RepositoryTreeObject treeItem : response) {
                 if (getReadmeType(treeItem.getName()) != README_TYPE_UNKNOWN) {
-                    GitLabClient.instance().getFile(mProject.getId(), treeItem.getName(), mBranchName).enqueue(mFileCallback);
+                    App.instance().getGitLab().getFile(mProject.getId(), treeItem.getName(), mBranchName).enqueue(mFileCallback);
                     return;
                 }
             }
@@ -99,7 +120,7 @@ public class ProjectFragment extends BaseFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             if (getView() == null) {
                 return;
@@ -111,7 +132,7 @@ public class ProjectFragment extends BaseFragment {
 
     private EasyCallback<RepositoryFile> mFileCallback = new EasyCallback<RepositoryFile>() {
         @Override
-        public void onResponse(@NonNull final RepositoryFile response) {
+        public void success(@NonNull final RepositoryFile response) {
             if (getView() == null) {
                 return;
             }
@@ -121,38 +142,43 @@ public class ProjectFragment extends BaseFragment {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Subscriber<byte[]>() {
                         @Override
-                        public void onCompleted() {}
+                        public void onCompleted() {
+                        }
 
                         @Override
                         public void onError(Throwable e) {
-                            Snackbar.make(mSwipeRefreshLayout, R.string.failed_to_load, Snackbar.LENGTH_SHORT)
-                                    .show();
+                            if (getView() != null) {
+                                Snackbar.make(mSwipeRefreshLayout, R.string.failed_to_load, Snackbar.LENGTH_SHORT)
+                                        .show();
+                            }
                         }
 
                         @Override
                         public void onNext(byte[] bytes) {
-                            String text = new String(bytes);
-                            switch (getReadmeType(response.getFileName())) {
-                                case README_TYPE_MARKDOWN:
-                                    mOverviewVew.setText(mBypass.markdownToSpannable(text,
-                                            new BypassPicassoImageGetter(mOverviewVew, GitLabClient.getPicasso())));
-                                    break;
-                                case README_TYPE_HTML:
-                                    mOverviewVew.setText(Html.fromHtml(text));
-                                    break;
-                                case README_TYPE_TEXT:
-                                    mOverviewVew.setText(text);
-                                    break;
-                                case README_TYPE_NO_EXTENSION:
-                                    mOverviewVew.setText(text);
-                                    break;
+                            if (getView() != null) {
+                                String text = new String(bytes);
+                                switch (getReadmeType(response.getFileName())) {
+                                    case README_TYPE_MARKDOWN:
+                                        mOverviewVew.setText(mBypass.markdownToSpannable(text,
+                                                new BypassPicassoImageGetter(mOverviewVew, App.instance().getPicasso())));
+                                        break;
+                                    case README_TYPE_HTML:
+                                        mOverviewVew.setText(Html.fromHtml(text));
+                                        break;
+                                    case README_TYPE_TEXT:
+                                        mOverviewVew.setText(text);
+                                        break;
+                                    case README_TYPE_NO_EXTENSION:
+                                        mOverviewVew.setText(text);
+                                        break;
+                                }
                             }
                         }
                     });
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             if (getView() == null) {
                 return;
@@ -162,9 +188,9 @@ public class ProjectFragment extends BaseFragment {
         }
     };
 
-    private EasyCallback<Void> mForkCallback = new EasyCallback<Void>() {
+    private Callback<Void> mForkCallback = new Callback<Void>() {
         @Override
-        public void onResponse(@NonNull Void response) {
+        public void onResponse(Call<Void> call, Response<Void> response) {
             if (getView() == null) {
                 return;
             }
@@ -173,11 +199,64 @@ public class ProjectFragment extends BaseFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void onFailure(Call<Void> call, Throwable t) {
             if (getView() == null) {
                 return;
             }
             Snackbar.make(mSwipeRefreshLayout, R.string.fork_failed, Snackbar.LENGTH_SHORT)
+                    .show();
+        }
+    };
+
+    private EasyCallback<Project> mStarCallback = new EasyCallback<Project>() {
+        @Override
+        public void success(@NonNull Project response) {
+            if (getView() == null) {
+                return;
+            }
+            Snackbar.make(mSwipeRefreshLayout, R.string.project_starred, Snackbar.LENGTH_SHORT)
+                    .show();
+        }
+
+        @Override
+        public void failure(Throwable t) {
+            if (getView() == null) {
+                return;
+            }
+            if (t instanceof HttpException) {
+                if (((HttpException) t).getCode() == 304) {
+                    Snackbar.make(mSwipeRefreshLayout, R.string.project_already_starred, Snackbar.LENGTH_SHORT)
+                            .setAction(R.string.project_unstar, new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    App.instance().getGitLab().unstarProject(mProject.getId()).enqueue(mUnstarProjectCallback);
+                                }
+                            })
+                            .show();
+                    return;
+                }
+            }
+            Snackbar.make(mSwipeRefreshLayout, R.string.project_star_failed, Snackbar.LENGTH_SHORT)
+                    .show();
+        }
+    };
+
+    private EasyCallback<Project> mUnstarProjectCallback = new EasyCallback<Project>() {
+        @Override
+        public void success(@NonNull Project response) {
+            if (getView() == null) {
+                return;
+            }
+            Snackbar.make(mSwipeRefreshLayout, R.string.project_unstarred, Snackbar.LENGTH_SHORT)
+                    .show();
+        }
+
+        @Override
+        public void failure(Throwable t) {
+            if (getView() == null) {
+                return;
+            }
+            Snackbar.make(mSwipeRefreshLayout, R.string.unstar_failed, Snackbar.LENGTH_SHORT)
                     .show();
         }
     };
@@ -197,10 +276,9 @@ public class ProjectFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
 
         mEventReceiver = new EventReceiver();
-        LabCoatApp.bus().register(mEventReceiver);
+        App.bus().register(mEventReceiver);
 
         mOverviewVew.setMovementMethod(LinkMovementMethod.getInstance());
 
@@ -224,8 +302,7 @@ public class ProjectFragment extends BaseFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.unbind(this);
-        LabCoatApp.bus().unregister(mEventReceiver);
+        App.bus().unregister(mEventReceiver);
     }
 
     @Override
@@ -248,7 +325,7 @@ public class ProjectFragment extends BaseFragment {
             }
         });
 
-        GitLabClient.instance().getTree(mProject.getId(), mBranchName, null).enqueue(mFilesCallback);
+        App.instance().getGitLab().getTree(mProject.getId(), mBranchName, null).enqueue(mFilesCallback);
     }
 
     private void bindProject(Project project) {

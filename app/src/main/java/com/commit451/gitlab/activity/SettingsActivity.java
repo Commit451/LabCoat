@@ -2,131 +2,92 @@ package com.commit451.gitlab.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.preference.Preference;
-import android.preference.PreferenceFragment;
-import android.support.annotation.ColorInt;
-import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.TextView;
 
-import com.afollestad.appthemeengine.ATE;
-import com.afollestad.appthemeengine.Config;
-import com.afollestad.appthemeengine.prefs.ATEColorPreference;
-import com.afollestad.materialdialogs.color.ColorChooserDialog;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.commit451.gitlab.R;
+import com.commit451.gitlab.data.Prefs;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
- * Settings screens are fun!
+ * Settings
  */
-public class SettingsActivity extends BaseActivity
-        implements ColorChooserDialog.ColorCallback {
+public class SettingsActivity extends BaseActivity {
 
-    public static Intent newInstance(Context context) {
+    public static Intent newIntent(Context context) {
         Intent intent = new Intent(context, SettingsActivity.class);
         return intent;
     }
 
-    @Bind(R.id.toolbar) Toolbar toolbar;
+    @BindView(R.id.toolbar)
+    Toolbar mToolbar;
+
+    @BindView(R.id.text_launch_activity)
+    TextView mTextLaunchActivity;
+
+    @OnClick(R.id.root_launch_activity)
+    void onLaunchActivityClicked() {
+        new MaterialDialog.Builder(this)
+                .title(R.string.setting_starting_view)
+                .items(R.array.setting_starting_view_choices)
+                .itemsCallbackSingleChoice(getSelectedIndex(), new MaterialDialog.ListCallbackSingleChoice() {
+                    @Override
+                    public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                        Prefs.setStartingView(SettingsActivity.this, which);
+                        bindPrefs();
+                        /**
+                         * If you use alwaysCallSingleChoiceCallback(), which is discussed below,
+                         * returning false here won't allow the newly selected radio button to actually be selected.
+                         **/
+                        return true;
+                    }
+                })
+                .show();
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
         ButterKnife.bind(this);
-        toolbar.setNavigationIcon(R.drawable.ic_back_24dp);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        mToolbar.setTitle(R.string.settings);
+        mToolbar.setNavigationIcon(R.drawable.ic_back_24dp);
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
             }
         });
-        toolbar.setTitle(R.string.settings);
+        bindPrefs();
+    }
 
-        if (savedInstanceState == null) {
-            getFragmentManager().beginTransaction().replace(R.id.settings_container, new SettingsFragment()).commit();
-        } else {
-            SettingsFragment frag = (SettingsFragment) getFragmentManager().findFragmentById(R.id.settings_container);
-            if (frag != null) {
-                frag.invalidateSettings();
-            }
+    private void bindPrefs() {
+        setStartingViewSelection();
+    }
+
+    private void setStartingViewSelection() {
+        int startinView = Prefs.getStartingView(this);
+        switch (startinView) {
+            case Prefs.STARTING_VIEW_PROJECTS:
+                mTextLaunchActivity.setText(R.string.setting_starting_view_projects);
+                break;
+            case Prefs.STARTING_VIEW_GROUPS:
+                mTextLaunchActivity.setText(R.string.setting_starting_view_groups);
+                break;
+            case Prefs.STARTING_VIEW_ACTIVITY:
+                mTextLaunchActivity.setText(R.string.setting_starting_view_activity);
+                break;
         }
     }
 
-    @Override
-    public void onColorSelection(@NonNull ColorChooserDialog dialog, @ColorInt int selectedColor) {
-        final Config config = ATE.config(this, getATEKey());
-        switch (dialog.getTitle()) {
-            case R.string.primary_color:
-                config.primaryColor(selectedColor);
-                break;
-            case R.string.accent_color:
-                config.accentColor(selectedColor);
-                break;
-        }
-        config.commit();
-        recreate(); // recreation needed to reach the checkboxes in the preferences layout
-    }
-
-    public static class SettingsFragment extends PreferenceFragment {
-
-        String mAteKey;
-
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.preferences);
-        }
-
-        @Override
-        public void onViewCreated(View view, Bundle savedInstanceState) {
-            super.onViewCreated(view, savedInstanceState);
-            invalidateSettings();
-        }
-
-        public void invalidateSettings() {
-            mAteKey = ((SettingsActivity) getActivity()).getATEKey();
-
-            ATEColorPreference primaryColorPref = (ATEColorPreference) findPreference("primary_color");
-            primaryColorPref.setColor(Config.primaryColor(getActivity(), mAteKey), Color.BLACK);
-            primaryColorPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    new ColorChooserDialog.Builder((SettingsActivity) getActivity(), R.string.primary_color)
-                            .preselect(Config.primaryColor(getActivity(), mAteKey))
-                            .show();
-                    return true;
-                }
-            });
-
-            ATEColorPreference accentColorPref = (ATEColorPreference) findPreference("accent_color");
-            accentColorPref.setColor(Config.accentColor(getActivity(), mAteKey), Color.BLACK);
-            accentColorPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    new ColorChooserDialog.Builder((SettingsActivity) getActivity(), R.string.accent_color)
-                            .preselect(Config.accentColor(getActivity(), mAteKey))
-                            .show();
-                    return true;
-                }
-            });
-
-            findPreference("dark_theme").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                @Override
-                public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    // Marks both theme configs as changed so MainActivity restarts itself on return
-                    Config.markChanged(getActivity(), "light_theme");
-                    Config.markChanged(getActivity(), "dark_theme");
-                    // The dark_theme preference value gets saved by Android in the default PreferenceManager.
-                    // It's used in getATEKey() of both the Activities.
-                    getActivity().recreate();
-                    return true;
-                }
-            });
-        }
+    private int getSelectedIndex() {
+        return Prefs.getStartingView(this);
     }
 }

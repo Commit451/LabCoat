@@ -7,14 +7,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.RepositoryCommit;
 import com.commit451.gitlab.transformation.CircleTransformation;
-import com.commit451.gitlab.util.DateUtils;
+import com.commit451.gitlab.util.DateUtil;
 import com.commit451.gitlab.util.ImageUtil;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -28,11 +28,11 @@ public class DiffHeaderViewHolder extends RecyclerView.ViewHolder {
         return new DiffHeaderViewHolder(view);
     }
 
-    @Bind(R.id.commit_author_image) ImageView mImageView;
-    @Bind(R.id.commit_author) TextView mAuthorView;
-    @Bind(R.id.commit_time) TextView mTimeView;
-    @Bind(R.id.commit_title) TextView mTitleView;
-    @Bind(R.id.commit_message) TextView mMessageView;
+    @BindView(R.id.commit_author_image) ImageView mImageView;
+    @BindView(R.id.commit_author) TextView mAuthorView;
+    @BindView(R.id.commit_time) TextView mTimeView;
+    @BindView(R.id.commit_title) TextView mTitleView;
+    @BindView(R.id.commit_message) TextView mMessageView;
 
     public DiffHeaderViewHolder(View view) {
         super(view);
@@ -40,13 +40,13 @@ public class DiffHeaderViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(RepositoryCommit commit) {
-        GitLabClient.getPicasso()
+        App.instance().getPicasso()
                 .load(ImageUtil.getAvatarUrl(commit.getAuthorEmail(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size)))
                 .transform(new CircleTransformation())
                 .into(mImageView);
 
         mAuthorView.setText(commit.getAuthorName());
-        mTimeView.setText(DateUtils.getRelativeTimeSpanString(itemView.getContext(), commit.getCreatedAt()));
+        mTimeView.setText(DateUtil.getRelativeTimeSpanString(itemView.getContext(), commit.getCreatedAt()));
         mTitleView.setText(commit.getTitle());
         String message = extractMessage(commit.getTitle(), commit.getMessage());
         mMessageView.setText(message);

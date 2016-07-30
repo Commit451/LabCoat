@@ -1,16 +1,16 @@
 package com.commit451.gitlab.model;
 
-import com.google.gson.annotations.SerializedName;
+import android.content.Context;
+import android.net.Uri;
+import android.support.annotation.NonNull;
 
+import com.bluelinelabs.logansquare.annotation.JsonField;
+import com.bluelinelabs.logansquare.annotation.JsonObject;
 import com.commit451.gitlab.data.Prefs;
 import com.commit451.gitlab.model.api.UserFull;
 import com.commit451.gitlab.util.ObjectUtil;
 
 import org.parceler.Parcel;
-
-import android.content.Context;
-import android.net.Uri;
-import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,8 +18,10 @@ import java.util.Date;
 import java.util.List;
 
 @Parcel
+@JsonObject
 public class Account implements Comparable<Account>{
 
+    @NonNull
     public static List<Account> getAccounts(Context context) {
         List<Account> accounts = new ArrayList<>(Prefs.getAccounts(context));
         Collections.sort(accounts);
@@ -27,21 +29,21 @@ public class Account implements Comparable<Account>{
         return accounts;
     }
 
-    @SerializedName("server_url")
+    @JsonField(name = "server_url")
     Uri mServerUrl;
-    @SerializedName("authorization_header")
+    @JsonField(name = "authorization_header")
     String mAuthorizationHeader;
-    @SerializedName("private_token")
+    @JsonField(name = "private_token")
     String mPrivateToken;
-    @SerializedName("trusted_certificate")
+    @JsonField(name = "trusted_certificate")
     String mTrustedCertificate;
-    @SerializedName("trusted_hostname")
+    @JsonField(name = "trusted_hostname")
     String mTrustedHostname;
-    @SerializedName("private_key_alias")
+    @JsonField(name = "private_key_alias")
     String mPrivateKeyAlias;
-    @SerializedName("user")
+    @JsonField(name = "user")
     UserFull mUser;
-    @SerializedName("last_used")
+    @JsonField(name = "last_used")
     Date mLastUsed;
 
     public Account() {}

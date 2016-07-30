@@ -11,7 +11,7 @@ import com.commit451.gitlab.view.AdapterFlowLayout;
 
 import java.util.Collection;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -25,14 +25,14 @@ public class IssueLabelsViewHolder extends RecyclerView.ViewHolder {
         return new IssueLabelsViewHolder(view);
     }
 
-    @Bind(R.id.adapter_layout)
+    @BindView(R.id.adapter_layout)
     AdapterFlowLayout mFlowLayout;
     IssueLabelsAdapter mAdapter;
 
     private final IssueLabelsAdapter.Listener mListener = new IssueLabelsAdapter.Listener() {
         @Override
-        public void onLabelClicked(String label, LabelViewHolder viewHolder) {
-
+        public void onLabelClicked(String label, IssueLabelViewHolder viewHolder) {
+            //TODO anything?
         }
     };
 

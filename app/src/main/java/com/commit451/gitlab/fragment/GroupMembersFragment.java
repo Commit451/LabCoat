@@ -4,23 +4,22 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.commit451.gitlab.LabCoatApp;
+import com.commit451.easycallback.EasyCallback;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.GroupMembersAdapter;
-import com.commit451.gitlab.api.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.dialog.AccessDialog;
 import com.commit451.gitlab.event.MemberAddedEvent;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.model.api.Member;
-import com.commit451.gitlab.navigation.NavigationManager;
+import com.commit451.gitlab.navigation.Navigator;
+import com.commit451.gitlab.util.DynamicGridLayoutManager;
 import com.commit451.gitlab.viewHolder.ProjectMemberViewHolder;
 import com.squareup.otto.Subscribe;
 
@@ -28,12 +27,11 @@ import org.parceler.Parcels;
 
 import java.util.List;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
+import butterknife.BindView;
 import butterknife.OnClick;
 import timber.log.Timber;
 
-public class GroupMembersFragment extends BaseFragment {
+public class GroupMembersFragment extends ButterKnifeFragment {
 
     private static final String KEY_GROUP = "group";
 
@@ -46,11 +44,11 @@ public class GroupMembersFragment extends BaseFragment {
         return fragment;
     }
 
-    @Bind(R.id.root) View mRoot;
-    @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
-    @Bind(R.id.list) RecyclerView mRecyclerView;
-    @Bind(R.id.message_text) TextView mMessageView;
-    @Bind(R.id.add_user_button) View mAddUserButton;
+    @BindView(R.id.root) View mRoot;
+    @BindView(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
+    @BindView(R.id.list) RecyclerView mRecyclerView;
+    @BindView(R.id.message_text) TextView mMessageView;
+    @BindView(R.id.add_user_button) View mAddUserButton;
 
     private Group mGroup;
     private EventReceiver mEventReceiver;
@@ -66,7 +64,7 @@ public class GroupMembersFragment extends BaseFragment {
 
     private final EasyCallback<List<Member>> mGroupMembersCallback = new EasyCallback<List<Member>>() {
         @Override
-        public void onResponse(@NonNull List<Member> response) {
+        public void success(@NonNull List<Member> response) {
             if (getView() == null) {
                 return;
             }
@@ -80,7 +78,7 @@ public class GroupMembersFragment extends BaseFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             if (getView() == null) {
                 return;
@@ -95,7 +93,7 @@ public class GroupMembersFragment extends BaseFragment {
 
     private final EasyCallback<Void> mRemoveMemberCallback = new EasyCallback<Void>() {
         @Override
-        public void onResponse(@NonNull Void response) {
+        public void success(@NonNull Void response) {
             if (getView() == null) {
                 return;
             }
@@ -103,7 +101,7 @@ public class GroupMembersFragment extends BaseFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             if (getView() == null) {
                 return;
@@ -116,13 +114,13 @@ public class GroupMembersFragment extends BaseFragment {
     private final GroupMembersAdapter.Listener mListener = new GroupMembersAdapter.Listener() {
         @Override
         public void onUserClicked(Member member, ProjectMemberViewHolder holder) {
-            NavigationManager.navigateToUser(getActivity(), holder.mImageView, member);
+            Navigator.navigateToUser(getActivity(), holder.mImageView, member);
         }
 
         @Override
         public void onUserRemoveClicked(Member member) {
             mMember = member;
-            GitLabClient.instance().removeGroupMember(mGroup.getId(), member.getId()).enqueue(mRemoveMemberCallback);
+            App.instance().getGitLab().removeGroupMember(mGroup.getId(), member.getId()).enqueue(mRemoveMemberCallback);
         }
 
         @Override
@@ -147,13 +145,14 @@ public class GroupMembersFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
 
         mEventReceiver = new EventReceiver();
-        LabCoatApp.bus().register(mEventReceiver);
+        App.bus().register(mEventReceiver);
 
         mGroupMembersAdapter = new GroupMembersAdapter(mListener);
-        mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+        DynamicGridLayoutManager dynamicGridLayoutManager = new DynamicGridLayoutManager(getActivity());
+        dynamicGridLayoutManager.setMinimumWidthDimension(R.dimen.user_list_image_size);
+        mRecyclerView.setLayoutManager(dynamicGridLayoutManager);
         mRecyclerView.setAdapter(mGroupMembersAdapter);
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -169,13 +168,12 @@ public class GroupMembersFragment extends BaseFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.unbind(this);
-        LabCoatApp.bus().unregister(mEventReceiver);
+        App.bus().unregister(mEventReceiver);
     }
 
     @OnClick(R.id.add_user_button)
     public void onAddUserClick(View fab) {
-        NavigationManager.navigateToAddGroupMember(getActivity(), fab, mGroup);
+        Navigator.navigateToAddGroupMember(getActivity(), fab, mGroup);
     }
 
     public void loadData() {
@@ -195,7 +193,7 @@ public class GroupMembersFragment extends BaseFragment {
                 }
             }
         });
-        GitLabClient.instance().getGroupMembers(mGroup.getId()).enqueue(mGroupMembersCallback);
+        App.instance().getGitLab().getGroupMembers(mGroup.getId()).enqueue(mGroupMembersCallback);
     }
 
     private class EventReceiver {

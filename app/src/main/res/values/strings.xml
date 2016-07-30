@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- General -->
     <string name="app_name">LabCoat</string>
+    <string name="unknown">Unknown</string>
 
     <!-- Drawer -->
     <string name="nav_projects">Projects</string>
@@ -37,6 +39,7 @@
     <string name="title_merge_requests">Merge Requests</string>
     <string name="title_members">Members</string>
     <string name="title_builds">Builds</string>
+    <string name="title_snippets">Snippets</string>
 
     <string-array name="main_tabs">
         <item>@string/title_project</item>
@@ -48,6 +51,7 @@
         <item>@string/title_issues</item>
         <item>@string/title_merge_requests</item>
         <item>@string/title_members</item>
+        <item>@string/title_snippets</item>
     </string-array>
 
     <string name="title_all">All</string>
@@ -75,14 +79,14 @@
     <string name="token_hint">Private token</string>
     <string name="login_activity">Login</string>
     <string name="login_progress_dialog">Logging in. Please wait</string>
-    <string name="token_link"><u>Login using private token</u></string>
-    <string name="normal_link"><u>Login using username or email</u></string>
+    <string name="token_link">Login using private token</string>
+    <string name="normal_link">Login using username or email</string>
     <string name="certificate_title">Certificate not trusted</string>
     <string name="certificate_message">The certificate the server used was not issued by a trusted authority.\n\nThis could mean a hacker is trying to intercept your communications.\n\nIf you trust the certificate, press OK to continue.\n\nFingerprint (SHA-1):\n%1$s</string>
     <string name="hostname_title">Hostname did not match</string>
     <string name="hostname_message">The hostname in the certificate did not match the hostname you are connecting to.\n\nThis could mean a hacker is trying to intercept your communications.\n\nIf you trust the certificate, press OK to continue.</string>
     <string name="not_a_valid_url">Not a valid URL</string>
-    <string name="please_end_your_url_with_a_slash">Please end your url with a "/"</string>
+    <string name="please_end_your_url_with_a_slash">Please end your URL with a "/"</string>
     <string name="not_a_valid_private_token">Not a valid private token</string>
     <string name="realm_message">A username and password are being requested by the server.\nThe server says: \"%1$s\"</string>
     <string name="already_logged_in">This account is already logged in</string>
@@ -125,6 +129,7 @@
 
     <string name="required_field">Required Field</string>
     <string name="wait_for_project_to_load">Wait for the project to load!</string>
+    <string name="error_401">Account credentials no longer valid. Please sign in again</string>
     <!-- General -->
     <string name="projects">Projects</string>
     <string name="no_projects">No projects.</string>
@@ -144,7 +149,15 @@
     <string name="no_readme_found">No README found for project</string>
     <string name="created_by">Created by %1$s</string>
     <string name="project_forked">Project forked into user namespace</string>
+    <string name="project_starred">Project starred</string>
+    <string name="project_already_starred">Project already starred</string>
+    <string name="project_star_failed">Failed to star project</string>
+    <string name="project_unstar">Unstar</string>
     <string name="fork_failed">Failed to fork project</string>
+    <string name="project_unstarred">Project unstarred</string>
+    <string name="unstar_failed">Failed to unstar project</string>
+    <string name="project_fork_title">Fork Project</string>
+    <string name="project_fork_message">Do you want to fork this project?</string>
     <!-- Commits -->
     <string name="no_commits_found">No commits found.</string>
 
@@ -190,8 +203,21 @@
     <string name="assignee">Assignee</string>
     <string name="milestone">Milestone</string>
     <string name="no_milestone">No Milestone</string>
-    <string name="labels">Labels</string>
     <string name="add_labels">+ Add Labels</string>
+    <string name="label_already_added">Label already added</string>
+
+    <!-- Labels -->
+    <string name="labels">Labels</string>
+    <string name="no_labels">No labels</string>
+
+    <!-- Add New Label -->
+    <string name="add_new_label_title">Title</string>
+    <string name="add_new_label_description">Description</string>
+    <string name="add_new_label_color">Color</string>
+    <string name="add_new_label_choose_color">Choose color</string>
+    <string name="add_new_label_color_is_required">Color is required</string>
+    <string name="label_already_exists">Label already exists</string>
+    <string name="failed_to_create_label">Failed to create label</string>
 
     <!-- User -->
     <string name="remove_user_dialog_title">Remove user?</string>
@@ -292,8 +318,8 @@
     <string name="failed_to_create_milestone">Failed to create or modify milestone</string>
     <string name="milestone_opened">Opened</string>
     <string name="milestone_closed">Closed</string>
-    <string name="milestone_all">Closed</string>
-    <string name="milestone_state_value_default">opened</string>
+    <string name="milestone_all">All</string>
+    <string name="milestone_state_value_default">active</string>
     <string-array name="milestone_state_names">
         <item>@string/milestone_opened</item>
         <item>@string/milestone_closed</item>
@@ -301,9 +327,9 @@
     </string-array>
 
     <string-array name="milestone_state_values">
-        <item>opened</item>
+        <item>active</item>
         <item>closed</item>
-        <item>all</item>
+        <item>@null</item>
     </string-array>
 
     <!-- Members -->
@@ -337,6 +363,7 @@
 
     <!-- Builds -->
     <string name="no_builds">No builds</string>
+    <string name="failed_to_load_builds">Failed to load builds</string>
 
     <string-array name="build_scope_names">
         <item>All</item>
@@ -377,6 +404,17 @@
     <string name="build_commit_message">Message: %1$s</string>
     <string name="no_build_artifacts_found">No build artifacts found.</string>
 
+    <!-- Settings -->
+    <string name="setting_starting_view">Starting View</string>
+    <string name="setting_starting_view_projects">Projects</string>
+    <string name="setting_starting_view_groups">Groups</string>
+    <string name="setting_starting_view_activity">Activity</string>
+    <string-array name="setting_starting_view_choices">
+        <item>@string/setting_starting_view_projects</item>
+        <item>@string/setting_starting_view_groups</item>
+        <item>@string/setting_starting_view_activity</item>
+    </string-array>
+
     <!-- Deep link scheme -->
     <string name="deeplink_scheme">labcoat</string>
     <!-- Deep link host -->
@@ -387,4 +425,10 @@
     <string name="deeplink_path_issue">issue</string>
 
     <string name="deeplink_navigate_error">No idea where to navigate to</string>
+
+    <!-- Widget -->
+    <string name="widget_feed">Feed</string>
+    <string name="widget_loading">Loading&#8230;</string>
+    <string name="widget_config_no_accounts">No accounts</string>
+    <string name="widget_choose_account">Choose Account</string>
 </resources>

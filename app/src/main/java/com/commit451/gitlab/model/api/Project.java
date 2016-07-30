@@ -3,7 +3,8 @@ package com.commit451.gitlab.model.api;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 
-import com.google.gson.annotations.SerializedName;
+import com.bluelinelabs.logansquare.annotation.JsonField;
+import com.bluelinelabs.logansquare.annotation.JsonObject;
 
 import org.parceler.Parcel;
 
@@ -11,64 +12,65 @@ import java.util.Date;
 import java.util.List;
 
 @Parcel
+@JsonObject
 public class Project {
-    @SerializedName("id")
+    @JsonField(name = "id")
     long mId;
-    @SerializedName("description")
+    @JsonField(name = "description")
     String mDescription;
-    @SerializedName("default_branch")
+    @JsonField(name = "default_branch")
     String mDefaultBranch;
-    @SerializedName("tag_list")
+    @JsonField(name = "tag_list")
     List<String> mTagList;
-    @SerializedName("public")
+    @JsonField(name = "public")
     boolean mPublic;
-    @SerializedName("archived")
+    @JsonField(name = "archived")
     boolean mArchived;
-    @SerializedName("visibility_level")
+    @JsonField(name = "visibility_level")
     int mVisibilityLevel;
-    @SerializedName("ssh_url_to_repo")
+    @JsonField(name = "ssh_url_to_repo")
     String mSshUrlToRepo;
-    @SerializedName("http_url_to_repo")
+    @JsonField(name = "http_url_to_repo")
     String mHttpUrlToRepo;
-    @SerializedName("web_url")
+    @JsonField(name = "web_url")
     Uri mWebUrl;
-    @SerializedName("owner")
+    @JsonField(name = "owner")
     UserBasic mOwner;
-    @SerializedName("name")
+    @JsonField(name = "name")
     String mName;
-    @SerializedName("name_with_namespace")
+    @JsonField(name = "name_with_namespace")
     String mNameWithNamespace;
-    @SerializedName("path")
+    @JsonField(name = "path")
     String mPath;
-    @SerializedName("path_with_namespace")
+    @JsonField(name = "path_with_namespace")
     String mPathWithNamespace;
-    @SerializedName("issues_enabled")
+    @JsonField(name = "issues_enabled")
     boolean mIssuesEnabled;
-    @SerializedName("merge_requests_enabled")
+    @JsonField(name = "merge_requests_enabled")
     boolean mMergeRequestsEnabled;
-    @SerializedName("wiki_enabled")
+    @JsonField(name = "wiki_enabled")
     boolean mWikiEnabled;
-    @SerializedName("builds_enabled")
+    @JsonField(name = "builds_enabled")
     boolean mBuildEnabled;
-    @SerializedName("snippets_enabled")
+    @JsonField(name = "snippets_enabled")
     boolean mSnippetsEnabled;
-    @SerializedName("created_at")
+    @JsonField(name = "created_at")
     Date mCreatedAt;
-    @SerializedName("last_activity_at")
+    @JsonField(name = "last_activity_at")
     Date mLastActivityAt;
-    @SerializedName("creator_id")
+    @JsonField(name = "creator_id")
     long mCreatorId;
-    @SerializedName("namespace")
+    @JsonField(name = "namespace")
     ProjectNamespace mNamespace;
-    @SerializedName("forked_from_project")
+    @JsonField(name = "forked_from_project")
     ForkedFromProject mForkedFromProject;
-    @SerializedName("avatar_url")
+    @JsonField(name = "avatar_url")
     Uri mAvatarUrl;
-    @SerializedName("star_count")
+    @JsonField(name = "star_count")
     int mStarCount;
-    @SerializedName("forks_count")
+    @JsonField(name = "forks_count")
     int mForksCount;
-    @SerializedName("open_issues_count")
+    @JsonField(name = "open_issues_count")
     int mOpenIssuesCount;
 
     public Project() {}

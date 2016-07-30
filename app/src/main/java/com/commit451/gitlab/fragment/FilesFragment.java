@@ -15,39 +15,38 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.commit451.gitlab.LabCoatApp;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.adapter.BreadcrumbAdapter;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.gitlab.adapter.FilesAdapter;
-import com.commit451.gitlab.api.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.easycallback.EasyCallback;
+import com.commit451.gitlab.api.GitLabFactory;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryTreeObject;
+import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.IntentUtil;
-import com.commit451.gitlab.navigation.NavigationManager;
 import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
+import butterknife.BindView;
 import timber.log.Timber;
 
-public class FilesFragment extends BaseFragment {
+public class FilesFragment extends ButterKnifeFragment {
 
     public static FilesFragment newInstance() {
         return new FilesFragment();
     }
 
-    @Bind(R.id.root) View mRoot;
-    @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
-    @Bind(R.id.list) RecyclerView mFilesListView;
-    @Bind(R.id.breadcrumb) RecyclerView mBreadcrumbListView;
-    @Bind(R.id.message_text) TextView mMessageView;
+    @BindView(R.id.root) View mRoot;
+    @BindView(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
+    @BindView(R.id.list) RecyclerView mFilesListView;
+    @BindView(R.id.breadcrumb) RecyclerView mBreadcrumbListView;
+    @BindView(R.id.message_text) TextView mMessageView;
 
     private Project mProject;
     private String mBranchName;
@@ -64,7 +63,7 @@ public class FilesFragment extends BaseFragment {
         }
 
         @Override
-        public void onResponse(@NonNull List<RepositoryTreeObject> response) {
+        public void success(@NonNull List<RepositoryTreeObject> response) {
             if (getView() == null) {
                 return;
             }
@@ -84,7 +83,7 @@ public class FilesFragment extends BaseFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             if (getView() == null) {
                 return;
@@ -107,7 +106,7 @@ public class FilesFragment extends BaseFragment {
         @Override
         public void onFileClicked(RepositoryTreeObject treeItem) {
             String path = mCurrentPath + treeItem.getName();
-            NavigationManager.navigateToFile(getActivity(), mProject.getId(), path, mBranchName);
+            Navigator.navigateToFile(getActivity(), mProject.getId(), path, mBranchName);
         }
 
         @Override
@@ -140,10 +139,9 @@ public class FilesFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
 
         mEventReceiver = new EventReceiver();
-        LabCoatApp.bus().register(mEventReceiver);
+        App.bus().register(mEventReceiver);
 
         mFilesAdapter = new FilesAdapter(mFilesAdapterListener);
         mFilesListView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -173,8 +171,7 @@ public class FilesFragment extends BaseFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.unbind(this);
-        LabCoatApp.bus().unregister(mEventReceiver);
+        App.bus().unregister(mEventReceiver);
     }
 
     @Override
@@ -201,7 +198,7 @@ public class FilesFragment extends BaseFragment {
             }
         });
 
-        GitLabClient.instance().getTree(mProject.getId(), mBranchName, newPath).enqueue(new FilesCallback(newPath));
+        App.instance().getGitLab().getTree(mProject.getId(), mBranchName, newPath).enqueue(new FilesCallback(newPath));
     }
 
     @Override

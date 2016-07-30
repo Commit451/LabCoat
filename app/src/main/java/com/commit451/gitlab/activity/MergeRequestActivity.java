@@ -12,18 +12,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.commit451.gitlab.LabCoatApp;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.MergeRequestSectionsPagerAdapter;
-import com.commit451.gitlab.api.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.easycallback.EasyCallback;
+import com.commit451.gitlab.api.GitLabFactory;
 import com.commit451.gitlab.event.MergeRequestChangedEvent;
 import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.model.api.Project;
 
 import org.parceler.Parcels;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 
@@ -35,22 +35,22 @@ public class MergeRequestActivity extends BaseActivity {
     private static final String KEY_PROJECT = "key_project";
     private static final String KEY_MERGE_REQUEST = "key_merge_request";
 
-    public static Intent newInstance(Context context, Project project, MergeRequest mergeRequest) {
+    public static Intent newIntent(Context context, Project project, MergeRequest mergeRequest) {
         Intent intent = new Intent(context, MergeRequestActivity.class);
         intent.putExtra(KEY_PROJECT, Parcels.wrap(project));
         intent.putExtra(KEY_MERGE_REQUEST, Parcels.wrap(mergeRequest));
         return intent;
     }
 
-    @Bind(R.id.root)
+    @BindView(R.id.root)
     ViewGroup mRoot;
-    @Bind(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar mToolbar;
-    @Bind(R.id.tabs)
+    @BindView(R.id.tabs)
     TabLayout mTabLayout;
-    @Bind(R.id.pager)
+    @BindView(R.id.pager)
     ViewPager mViewPager;
-    @Bind(R.id.progress)
+    @BindView(R.id.progress)
     View mProgress;
 
     Project mProject;
@@ -58,15 +58,15 @@ public class MergeRequestActivity extends BaseActivity {
 
     private final EasyCallback<MergeRequest> mMergeRequestCallback = new EasyCallback<MergeRequest>() {
         @Override
-        public void onResponse(@NonNull MergeRequest response) {
+        public void success(@NonNull MergeRequest response) {
             mProgress.setVisibility(View.GONE);
             Snackbar.make(mRoot, R.string.merge_request_accepted, Snackbar.LENGTH_LONG)
                     .show();
-            LabCoatApp.bus().post(new MergeRequestChangedEvent(response));
+            App.bus().post(new MergeRequestChangedEvent(response));
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mProgress.setVisibility(View.GONE);
             Snackbar.make(mRoot, R.string.unable_to_merge, Snackbar.LENGTH_LONG)
@@ -80,7 +80,7 @@ public class MergeRequestActivity extends BaseActivity {
             switch (item.getItemId()) {
                 case R.id.action_merge:
                     mProgress.setVisibility(View.VISIBLE);
-                    GitLabClient.instance().acceptMergeRequest(mProject.getId(), mMergeRequest.getId()).enqueue(mMergeRequestCallback);
+                    App.instance().getGitLab().acceptMergeRequest(mProject.getId(), mMergeRequest.getId()).enqueue(mMergeRequestCallback);
                     return true;
             }
             return false;

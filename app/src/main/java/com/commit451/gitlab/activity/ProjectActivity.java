@@ -15,17 +15,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.commit451.gitlab.LabCoatApp;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.adapter.SectionsPagerAdapter;
-import com.commit451.gitlab.adapter.ThemedArrayAdapter;
+import com.commit451.gitlab.adapter.ProjectSectionsPagerAdapter;
 import com.commit451.gitlab.animation.HideRunnable;
-import com.commit451.gitlab.api.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.fragment.BaseFragment;
 import com.commit451.gitlab.model.api.Branch;
@@ -36,7 +35,7 @@ import org.parceler.Parcels;
 
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Callback;
 import timber.log.Timber;
@@ -46,29 +45,29 @@ public class ProjectActivity extends BaseActivity {
     private static final String EXTRA_PROJECT = "extra_project";
     private static final String EXTRA_PROJECT_ID = "extra_project_id";
 
-    public static Intent newInstance(Context context, Project project) {
+    public static Intent newIntent(Context context, Project project) {
         Intent intent = new Intent(context, ProjectActivity.class);
         intent.putExtra(EXTRA_PROJECT, Parcels.wrap(project));
         return intent;
     }
 
-    public static Intent newInstance(Context context, String projectId) {
+    public static Intent newIntent(Context context, String projectId) {
         Intent intent = new Intent(context, ProjectActivity.class);
         intent.putExtra(EXTRA_PROJECT_ID, projectId);
         return intent;
     }
 
-    @Bind(R.id.root)
+    @BindView(R.id.root)
     ViewGroup mRoot;
-    @Bind(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar mToolbar;
-    @Bind(R.id.tabs)
+    @BindView(R.id.tabs)
     TabLayout mTabLayout;
-    @Bind(R.id.branch_spinner)
+    @BindView(R.id.branch_spinner)
     Spinner mBranchSpinner;
-    @Bind(R.id.progress)
+    @BindView(R.id.progress)
     View mProgress;
-    @Bind(R.id.pager)
+    @BindView(R.id.pager)
     ViewPager mViewPager;
 
     private final AdapterView.OnItemSelectedListener mSpinnerItemSelectedListener = new AdapterView.OnItemSelectedListener() {
@@ -92,14 +91,14 @@ public class ProjectActivity extends BaseActivity {
 
     private final Callback<Project> mProjectCallback = new EasyCallback<Project>() {
         @Override
-        public void onResponse(@NonNull Project response) {
+        public void success(@NonNull Project response) {
             mProject = response;
             setupTabs();
             loadBranches();
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mProgress.animate()
                     .alpha(0.0f)
@@ -112,7 +111,7 @@ public class ProjectActivity extends BaseActivity {
     private final Callback<List<Branch>> mBranchesCallback = new EasyCallback<List<Branch>>() {
 
         @Override
-        public void onResponse(@NonNull List<Branch> response) {
+        public void success(@NonNull List<Branch> response) {
             mProgress.animate()
                     .alpha(0.0f)
                     .withEndAction(new HideRunnable(mProgress));
@@ -124,7 +123,7 @@ public class ProjectActivity extends BaseActivity {
                 mBranchSpinner.setAlpha(0.0f);
                 mBranchSpinner.animate().alpha(1.0f);
                 // Set up the dropdown list navigation in the action bar.
-                mBranchSpinner.setAdapter(new ThemedArrayAdapter<>(ProjectActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, response));
+                mBranchSpinner.setAdapter(new ArrayAdapter<>(ProjectActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, response));
             }
             for (int i = 0; i < response.size(); i++) {
                 if (response.get(i).getName().equals(mProject.getDefaultBranch())) {
@@ -140,7 +139,7 @@ public class ProjectActivity extends BaseActivity {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mProgress.animate()
                     .alpha(0.0f)
@@ -210,18 +209,18 @@ public class ProjectActivity extends BaseActivity {
         mProgress.setAlpha(0.0f);
         mProgress.setVisibility(View.VISIBLE);
         mProgress.animate().alpha(1.0f);
-        GitLabClient.instance().getProject(projectId).enqueue(mProjectCallback);
+        App.instance().getGitLab().getProject(projectId).enqueue(mProjectCallback);
     }
 
     private void loadBranches() {
         mProgress.setAlpha(0.0f);
         mProgress.setVisibility(View.VISIBLE);
         mProgress.animate().alpha(1.0f);
-        GitLabClient.instance().getBranches(mProject.getId()).enqueue(mBranchesCallback);
+        App.instance().getGitLab().getBranches(mProject.getId()).enqueue(mBranchesCallback);
     }
 
     private void broadcastLoad() {
-        LabCoatApp.bus().post(new ProjectReloadEvent(mProject, mBranchName));
+        App.bus().post(new ProjectReloadEvent(mProject, mBranchName));
     }
 
     @Override
@@ -245,9 +244,9 @@ public class ProjectActivity extends BaseActivity {
     }
 
     private void setupTabs() {
-        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
+        ProjectSectionsPagerAdapter projectSectionsPagerAdapter = new ProjectSectionsPagerAdapter(this, getSupportFragmentManager());
 
-        mViewPager.setAdapter(sectionsPagerAdapter);
+        mViewPager.setAdapter(projectSectionsPagerAdapter);
         mTabLayout.setupWithViewPager(mViewPager);
     }
 

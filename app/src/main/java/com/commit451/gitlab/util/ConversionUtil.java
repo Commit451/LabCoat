@@ -1,14 +1,17 @@
 package com.commit451.gitlab.util;
 
+import android.net.Uri;
+
 import com.commit451.gitlab.model.Account;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.ISODateTimeFormat;
 
-import android.net.Uri;
-
 import java.util.Date;
 
+/**
+ * Converts things!
+ */
 public final class ConversionUtil {
     private ConversionUtil() {}
 

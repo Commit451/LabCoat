@@ -6,9 +6,8 @@ import android.os.Bundle;
 import com.commit451.gitlab.BuildConfig;
 import com.commit451.gitlab.data.Prefs;
 import com.commit451.gitlab.model.Account;
-import com.commit451.gitlab.util.AppThemeUtil;
 import com.commit451.gitlab.ssl.CustomKeyManager;
-import com.commit451.gitlab.navigation.NavigationManager;
+import com.commit451.gitlab.navigation.Navigator;
 
 import java.util.List;
 
@@ -20,9 +19,11 @@ import timber.log.Timber;
  */
 public class LaunchActivity extends Activity {
 
+    //Figure out how this works, then reenable
+    private static final boolean PRIVATE_KEY_ENABLED = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        AppThemeUtil.setupDefaultConfigs(this);
         super.onCreate(savedInstanceState);
 
         int savedVersion = Prefs.getSavedVersion(this);
@@ -33,14 +34,16 @@ public class LaunchActivity extends Activity {
         }
         List<Account> accounts = Account.getAccounts(this);
         if(accounts.isEmpty()) {
-            NavigationManager.navigateToLogin(this);
+            Navigator.navigateToLogin(this);
+            finish();
         } else {
-            loadPrivateKey(accounts, 0);
-            return;
+            if (PRIVATE_KEY_ENABLED) {
+                loadPrivateKey(accounts, 0);
+            } else {
+                Navigator.navigateToStartingActivity(LaunchActivity.this);
+                finish();
+            }
         }
-
-        // Always finish this activity
-        finish();
     }
 
     private void loadPrivateKey(final List<Account> accounts, final int i) {
@@ -48,8 +51,7 @@ public class LaunchActivity extends Activity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    NavigationManager.navigateToProjects(LaunchActivity.this);
-                    finish();
+
                 }
             });
             return;

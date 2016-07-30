@@ -10,30 +10,28 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.commit451.gitlab.LabCoatApp;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.api.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.event.BuildChangedEvent;
 import com.commit451.gitlab.model.api.Build;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryCommit;
 import com.commit451.gitlab.model.api.Runner;
-import com.commit451.gitlab.util.DateUtils;
+import com.commit451.gitlab.util.DateUtil;
 import com.squareup.otto.Subscribe;
 
 import org.parceler.Parcels;
 
 import java.util.Date;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
+import butterknife.BindView;
 import timber.log.Timber;
 
 /**
  * Shows the details of a build
  */
-public class BuildDescriptionFragment extends BaseFragment {
+public class BuildDescriptionFragment extends ButterKnifeFragment {
 
     private static final String KEY_PROJECT = "project";
     private static final String KEY_BUILD = "build";
@@ -47,21 +45,21 @@ public class BuildDescriptionFragment extends BaseFragment {
         return fragment;
     }
 
-    @Bind(R.id.root)
+    @BindView(R.id.root)
     ViewGroup mRoot;
-    @Bind(R.id.swipe_layout)
+    @BindView(R.id.swipe_layout)
     SwipeRefreshLayout mSwipeRefreshLayout;
-    @Bind(R.id.text_duration)
+    @BindView(R.id.text_duration)
     TextView mTextDuration;
-    @Bind(R.id.text_created)
+    @BindView(R.id.text_created)
     TextView mTextCreated;
-    @Bind(R.id.text_finished)
+    @BindView(R.id.text_finished)
     TextView mTextFinished;
-    @Bind(R.id.text_runner)
+    @BindView(R.id.text_runner)
     TextView mTextRunner;
-    @Bind(R.id.text_author)
+    @BindView(R.id.text_author)
     TextView mTextAuthor;
-    @Bind(R.id.text_message)
+    @BindView(R.id.text_message)
     TextView mTextMessage;
 
     Project mProject;
@@ -71,16 +69,22 @@ public class BuildDescriptionFragment extends BaseFragment {
 
     private final EasyCallback<Build> mLoadBuildCallback = new EasyCallback<Build>() {
         @Override
-        public void onResponse(@NonNull Build response) {
+        public void success(@NonNull Build response) {
+            if (getView() == null) {
+                return;
+            }
             mSwipeRefreshLayout.setRefreshing(false);
             mBuild = response;
             bindBuild(response);
-            LabCoatApp.bus().post(new BuildChangedEvent(response));
+            App.bus().post(new BuildChangedEvent(response));
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
+            if (getView() == null) {
+                return;
+            }
             Snackbar.make(mRoot, R.string.unable_to_load_build, Snackbar.LENGTH_LONG)
                     .show();
         }
@@ -101,7 +105,6 @@ public class BuildDescriptionFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -111,11 +114,11 @@ public class BuildDescriptionFragment extends BaseFragment {
         });
         bindBuild(mBuild);
         mEventReceiver = new EventReceiver();
-        LabCoatApp.bus().register(mEventReceiver);
+        App.bus().register(mEventReceiver);
     }
 
     private void load() {
-        GitLabClient.instance().getBuild(mProject.getId(), mBuild.getId()).enqueue(mLoadBuildCallback);
+        App.instance().getGitLab().getBuild(mProject.getId(), mBuild.getId()).enqueue(mLoadBuildCallback);
     }
 
     private void bindBuild(Build build) {
@@ -123,20 +126,24 @@ public class BuildDescriptionFragment extends BaseFragment {
         if (finishedTime == null) {
             finishedTime = new Date();
         }
-        String timeTaken = DateUtils.getTimeTaken(build.getStartedAt(), finishedTime);
+        String timeTaken = DateUtil.getTimeTaken(build.getStartedAt(), finishedTime);
         String duration = String.format(getString(R.string.build_duration), timeTaken);
         mTextDuration.setText(duration);
-        String created = String.format(getString(R.string.build_created), DateUtils.getRelativeTimeSpanString(getActivity(), build.getCreatedAt()));
+        String created = String.format(getString(R.string.build_created), DateUtil.getRelativeTimeSpanString(getActivity(), build.getCreatedAt()));
         mTextCreated.setText(created);
         if (build.getFinishedAt() != null) {
-            String finished = String.format(getString(R.string.build_finished), DateUtils.getRelativeTimeSpanString(getActivity(), build.getFinishedAt()));
+            String finished = String.format(getString(R.string.build_finished), DateUtil.getRelativeTimeSpanString(getActivity(), build.getFinishedAt()));
             mTextFinished.setText(finished);
             mTextFinished.setVisibility(View.VISIBLE);
         } else {
             mTextFinished.setVisibility(View.GONE);
         }
-        bindRunner(build.getRunner());
-        bindCommit(build.getCommit());
+        if (build.getRunner() != null) {
+            bindRunner(build.getRunner());
+        }
+        if(build.getCommit() != null) {
+            bindCommit(build.getCommit());
+        }
     }
 
     private void bindRunner(Runner runner) {
@@ -154,8 +161,7 @@ public class BuildDescriptionFragment extends BaseFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.unbind(this);
-        LabCoatApp.bus().unregister(mEventReceiver);
+        App.bus().unregister(mEventReceiver);
     }
 
     private class EventReceiver {

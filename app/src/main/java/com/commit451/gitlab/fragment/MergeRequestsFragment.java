@@ -14,36 +14,35 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.commit451.gitlab.LabCoatApp;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.gitlab.adapter.MergeRequestAdapter;
-import com.commit451.gitlab.api.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.easycallback.EasyCallback;
+import com.commit451.gitlab.api.GitLabFactory;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.model.api.Project;
-import com.commit451.gitlab.navigation.NavigationManager;
+import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.PaginationUtil;
 import com.squareup.otto.Subscribe;
 
 import java.util.List;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
+import butterknife.BindView;
 import timber.log.Timber;
 
-public class MergeRequestsFragment extends BaseFragment {
+public class MergeRequestsFragment extends ButterKnifeFragment {
 
     public static MergeRequestsFragment newInstance() {
         return new MergeRequestsFragment();
     }
 
-    @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
-    @Bind(R.id.list) RecyclerView mRecyclerView;
-    @Bind(R.id.message_text) TextView mMessageView;
-    @Bind(R.id.state_spinner) Spinner mSpinner;
+    @BindView(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
+    @BindView(R.id.list) RecyclerView mRecyclerView;
+    @BindView(R.id.message_text) TextView mMessageView;
+    @BindView(R.id.state_spinner) Spinner mSpinner;
 
     private Project mProject;
     private EventReceiver mEventReceiver;
@@ -69,7 +68,7 @@ public class MergeRequestsFragment extends BaseFragment {
     private final MergeRequestAdapter.Listener mMergeRequestAdapterListener = new MergeRequestAdapter.Listener() {
         @Override
         public void onMergeRequestClicked(MergeRequest mergeRequest) {
-            NavigationManager.navigateToMergeRequest(getActivity(), mProject, mergeRequest);
+            Navigator.navigateToMergeRequest(getActivity(), mProject, mergeRequest);
         }
     };
 
@@ -88,7 +87,7 @@ public class MergeRequestsFragment extends BaseFragment {
 
     private final EasyCallback<List<MergeRequest>> mCallback = new EasyCallback<List<MergeRequest>>() {
         @Override
-        public void onResponse(@NonNull List<MergeRequest> response) {
+        public void success(@NonNull List<MergeRequest> response) {
             mLoading = false;
             if (getView() == null) {
                 return;
@@ -104,7 +103,7 @@ public class MergeRequestsFragment extends BaseFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             mLoading = false;
             Timber.e(t, null);
             if (getView() == null) {
@@ -120,7 +119,7 @@ public class MergeRequestsFragment extends BaseFragment {
 
     private final EasyCallback<List<MergeRequest>> mMoreIssuesCallback = new EasyCallback<List<MergeRequest>>() {
         @Override
-        public void onResponse(@NonNull List<MergeRequest> response) {
+        public void success(@NonNull List<MergeRequest> response) {
             mLoading = false;
             mMergeRequestAdapter.setLoading(false);
             mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
@@ -128,7 +127,7 @@ public class MergeRequestsFragment extends BaseFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mMergeRequestAdapter.setLoading(false);
             mLoading = false;
@@ -150,10 +149,9 @@ public class MergeRequestsFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
 
         mEventReceiver = new EventReceiver();
-        LabCoatApp.bus().register(mEventReceiver);
+        App.bus().register(mEventReceiver);
 
         mMergeRequestAdapter = new MergeRequestAdapter(mMergeRequestAdapterListener);
         mMergeLayoutManager = new LinearLayoutManager(getActivity());
@@ -183,8 +181,7 @@ public class MergeRequestsFragment extends BaseFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.unbind(this);
-        LabCoatApp.bus().unregister(mEventReceiver);
+        App.bus().unregister(mEventReceiver);
     }
 
     @Override
@@ -207,7 +204,7 @@ public class MergeRequestsFragment extends BaseFragment {
         });
         mNextPageUrl = null;
         mLoading = true;
-        GitLabClient.instance().getMergeRequests(mProject.getId(), mState).enqueue(mCallback);
+        App.instance().getGitLab().getMergeRequests(mProject.getId(), mState).enqueue(mCallback);
     }
 
     private void loadMore() {
@@ -220,7 +217,7 @@ public class MergeRequestsFragment extends BaseFragment {
         mMergeRequestAdapter.setLoading(true);
         mLoading = true;
         Timber.d("loadMore called for " + mNextPageUrl);
-        GitLabClient.instance().getMergeRequests(mNextPageUrl.toString(), mState).enqueue(mMoreIssuesCallback);
+        App.instance().getGitLab().getMergeRequests(mNextPageUrl.toString(), mState).enqueue(mMoreIssuesCallback);
     }
 
     private class EventReceiver {

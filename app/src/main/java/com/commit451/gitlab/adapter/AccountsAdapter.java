@@ -8,8 +8,8 @@ import android.view.ViewGroup;
 import android.widget.PopupMenu;
 
 import com.commit451.easel.Easel;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.viewHolder.AccountFooterViewHolder;
 import com.commit451.gitlab.viewHolder.AccountViewHolder;
@@ -91,7 +91,7 @@ public class AccountsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof AccountViewHolder) {
             final Account account = getItemAtPosition(position);
-            ((AccountViewHolder) holder).bind(account, account.equals(GitLabClient.getAccount()), mColorControlHighlight);
+            ((AccountViewHolder) holder).bind(account, account.equals(App.instance().getAccount()), mColorControlHighlight);
             holder.itemView.setTag(R.id.list_position, position);
             ((AccountViewHolder) holder).mPopupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                 @Override

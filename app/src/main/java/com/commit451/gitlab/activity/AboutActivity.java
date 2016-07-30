@@ -17,15 +17,15 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.commit451.gitbal.Gimbal;
+import com.commit451.easycallback.EasyCallback;
+import com.commit451.gimbal.Gimbal;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.api.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Contributor;
+import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.transformation.CircleTransformation;
 import com.commit451.gitlab.util.ImageUtil;
 import com.commit451.gitlab.util.IntentUtil;
-import com.commit451.gitlab.navigation.NavigationManager;
 import com.jawnnypoo.physicslayout.Physics;
 import com.jawnnypoo.physicslayout.PhysicsConfig;
 import com.jawnnypoo.physicslayout.PhysicsFrameLayout;
@@ -34,7 +34,7 @@ import org.jbox2d.common.Vec2;
 
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import retrofit2.Callback;
@@ -46,26 +46,26 @@ import timber.log.Timber;
 public class AboutActivity extends BaseActivity {
     private static final String REPO_ID = "473568";
 
-    public static Intent newInstance(Context context) {
+    public static Intent newIntent(Context context) {
         Intent intent = new Intent(context, AboutActivity.class);
         return intent;
     }
 
-    @Bind(R.id.root)
+    @BindView(R.id.root)
     ViewGroup mRoot;
-    @Bind(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar mToolbar;
-    @Bind(R.id.contributors)
+    @BindView(R.id.contributors)
     TextView mContributors;
-    @Bind(R.id.physics_layout)
+    @BindView(R.id.physics_layout)
     PhysicsFrameLayout mPhysicsLayout;
-    @Bind(R.id.progress)
+    @BindView(R.id.progress)
     View mProgress;
 
     @OnClick(R.id.sauce)
     void onSauceClick() {
-        if (getString(R.string.url_gitlab).equals(GitLabClient.getAccount().getServerUrl().toString())) {
-            NavigationManager.navigateToProject(AboutActivity.this, REPO_ID);
+        if (getString(R.string.url_gitlab).equals(App.instance().getAccount().getServerUrl().toString())) {
+            Navigator.navigateToProject(AboutActivity.this, REPO_ID);
         } else {
             IntentUtil.openPage(AboutActivity.this, getString(R.string.source_url));
         }
@@ -93,13 +93,13 @@ public class AboutActivity extends BaseActivity {
 
     private Callback<List<Contributor>> mContributorResponseCallback = new EasyCallback<List<Contributor>>() {
         @Override
-        public void onResponse(@NonNull List<Contributor> response) {
+        public void success(@NonNull List<Contributor> response) {
             mProgress.setVisibility(View.GONE);
             addContributors(Contributor.groupContributors(response));
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mProgress.setVisibility(View.GONE);
             Snackbar.make(mRoot, R.string.failed_to_load_contributors, Snackbar.LENGTH_SHORT)
@@ -125,7 +125,7 @@ public class AboutActivity extends BaseActivity {
         mPhysicsLayout.getPhysics().enableFling();
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         gravitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
-        GitLabClient.instance().getContributors(REPO_ID).enqueue(mContributorResponseCallback);
+        App.instance().getGitLab().getContributors(REPO_ID).enqueue(mContributorResponseCallback);
         mProgress.setVisibility(View.VISIBLE);
     }
 
@@ -142,12 +142,8 @@ public class AboutActivity extends BaseActivity {
     }
 
     private void addContributors(List<Contributor> contributors) {
-        PhysicsConfig config = new PhysicsConfig.Builder()
-                .setShapeType(PhysicsConfig.ShapeType.CIRCLE)
-                .setDensity(1.0f)
-                .setFriction(0.0f)
-                .setRestitution(0.0f)
-                .build();
+        PhysicsConfig config = PhysicsConfig.create();
+        config.shapeType = PhysicsConfig.SHAPE_TYPE_CIRCLE;
         int x = 0;
         int y = 0;
         int imageSize = getResources().getDimensionPixelSize(R.dimen.circle_size);
@@ -170,7 +166,7 @@ public class AboutActivity extends BaseActivity {
             }
 
             Uri url = ImageUtil.getAvatarUrl(contributor.getEmail(), imageSize);
-            GitLabClient.getPicasso()
+            App.instance().getPicasso()
                     .load(url)
                     .transform(new CircleTransformation())
                     .into(imageView);

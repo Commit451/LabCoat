@@ -18,7 +18,11 @@
 
     </com.commit451.gitlab.view.LabCoatSwipeRefreshLayout>
 
-    <include layout="@layout/view_send_message" />
+    <com.commit451.gitlab.view.SendMessageView
+        android:id="@+id/send_message_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"/>
 
     <include layout="@layout/progress_fullscreen" />
 

@@ -52,9 +52,9 @@
         android:layout_gravity="center_horizontal">
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@mipmap/ic_launcher"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_logo"
             android:contentDescription="@null"
             android:layout_gravity="center_vertical"/>
         <TextView
@@ -62,6 +62,7 @@
             android:layout_height="wrap_content"
             android:padding="@dimen/activity_horizontal_margin"
             android:gravity="center"
+            android:layout_gravity="center_vertical"
             android:text="@string/sauce"
             android:textSize="22sp" />
 

@@ -3,28 +3,27 @@ package com.commit451.gitlab.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.afollestad.appthemeengine.customizers.ATEActivityThemeCustomizer;
-import com.commit451.gitlab.LabCoatApp;
+import com.commit451.easycallback.EasyCallback;
+import com.commit451.easycallback.NullBodyException;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.AddIssueLabelAdapter;
 import com.commit451.gitlab.adapter.AssigneeSpinnerAdapter;
 import com.commit451.gitlab.adapter.MilestoneSpinnerAdapter;
-import com.commit451.gitlab.api.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.api.exception.NullBodyException;
 import com.commit451.gitlab.event.IssueChangedEvent;
 import com.commit451.gitlab.event.IssueCreatedEvent;
 import com.commit451.gitlab.model.api.Issue;
@@ -32,8 +31,9 @@ import com.commit451.gitlab.model.api.Label;
 import com.commit451.gitlab.model.api.Member;
 import com.commit451.gitlab.model.api.Milestone;
 import com.commit451.gitlab.model.api.Project;
-import com.commit451.gitlab.navigation.NavigationManager;
+import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.view.AdapterFlowLayout;
+import com.commit451.teleprinter.Teleprinter;
 
 import org.parceler.Parcels;
 
@@ -41,7 +41,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import retrofit2.Callback;
@@ -50,14 +50,9 @@ import timber.log.Timber;
 /**
  * Activity to input new issues, but not really a dialog at all wink wink
  */
-public class AddIssueActivity extends MorphActivity implements ATEActivityThemeCustomizer {
+public class AddIssueActivity extends MorphActivity {
 
-    @Override
-    public int getActivityTheme() {
-        return PreferenceManager.getDefaultSharedPreferences(this).getBoolean("dark_theme", true) ?
-                R.style.Activity_Translucent : R.style.ActivityLight_Translucent;
-    }
-
+    private static final int REQUEST_LABEL = 1;
     private static final String KEY_PROJECT = "project";
     private static final String KEY_ISSUE = "issue";
 
@@ -70,48 +65,54 @@ public class AddIssueActivity extends MorphActivity implements ATEActivityThemeC
         return intent;
     }
 
-    @Bind(R.id.root)
+    @BindView(R.id.root)
     FrameLayout mRoot;
-    @Bind(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar mToolbar;
-    @Bind(R.id.title_text_input_layout)
+    @BindView(R.id.title_text_input_layout)
     TextInputLayout mTitleInputLayout;
-    @Bind(R.id.title)
+    @BindView(R.id.title)
     EditText mTitleInput;
-    @Bind(R.id.description)
+    @BindView(R.id.description)
     EditText mDescriptionInput;
-    @Bind(R.id.progress)
+    @BindView(R.id.progress)
     View mProgress;
-    @Bind(R.id.assignee_progress)
+    @BindView(R.id.assignee_progress)
     View mAssigneeProgress;
-    @Bind(R.id.assignee_spinner)
+    @BindView(R.id.assignee_spinner)
     Spinner mAssigneeSpinner;
-    @Bind(R.id.milestone_progress)
+    @BindView(R.id.milestone_progress)
     View mMilestoneProgress;
-    @Bind(R.id.milestone_spinner)
+    @BindView(R.id.milestone_spinner)
     Spinner mMilestoneSpinner;
-    @Bind(R.id.label_label)
+    @BindView(R.id.label_label)
     TextView mLabelLabel;
-    @Bind(R.id.labels_progress)
+    @BindView(R.id.labels_progress)
     View mLabelsProgress;
-    @Bind(R.id.list_labels)
+    @BindView(R.id.root_add_labels)
+    ViewGroup mRootAddLabels;
+    @BindView(R.id.list_labels)
     AdapterFlowLayout mListLabels;
-    @Bind(R.id.text_add_labels)
-    TextView mTextAddLabels;
 
     private Project mProject;
     private Issue mIssue;
     private HashSet<Member> mMembers;
     private AddIssueLabelAdapter mLabelsAdapter;
+    private Teleprinter mTeleprinter;
 
-    @OnClick({R.id.text_add_labels, R.id.list_labels})
+    @OnClick(R.id.root_add_labels)
     void onAddLabelsClick() {
-        NavigationManager.navigateToAddLabels(AddIssueActivity.this, mProject, mIssue);
+        Navigator.navigateToAddLabels(AddIssueActivity.this, mProject, REQUEST_LABEL);
+    }
+
+    @OnClick(R.id.list_labels)
+    void onLabelsClicked() {
+        Navigator.navigateToAddLabels(AddIssueActivity.this, mProject, REQUEST_LABEL);
     }
 
     private final Callback<List<Milestone>> mMilestonesCallback = new EasyCallback<List<Milestone>>() {
         @Override
-        public void onResponse(@NonNull List<Milestone> response) {
+        public void success(@NonNull List<Milestone> response) {
             mMilestoneProgress.setVisibility(View.GONE);
             mMilestoneSpinner.setVisibility(View.VISIBLE);
             MilestoneSpinnerAdapter milestoneSpinnerAdapter = new MilestoneSpinnerAdapter(AddIssueActivity.this, response);
@@ -122,7 +123,7 @@ public class AddIssueActivity extends MorphActivity implements ATEActivityThemeC
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mMilestoneProgress.setVisibility(View.GONE);
             mMilestoneSpinner.setVisibility(View.GONE);
@@ -131,18 +132,18 @@ public class AddIssueActivity extends MorphActivity implements ATEActivityThemeC
 
     private final Callback<List<Member>> mAssigneeCallback = new EasyCallback<List<Member>>() {
         @Override
-        public void onResponse(@NonNull List<Member> response) {
+        public void success(@NonNull List<Member> response) {
             mMembers.addAll(response);
             if (mProject.belongsToGroup()) {
                 Timber.d("Project belongs to a group, loading those users too");
-                GitLabClient.instance().getGroupMembers(mProject.getNamespace().getId()).enqueue(mGroupMembersCallback);
+                App.instance().getGitLab().getGroupMembers(mProject.getNamespace().getId()).enqueue(mGroupMembersCallback);
             } else {
                 setAssignees();
             }
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mAssigneeSpinner.setVisibility(View.GONE);
             mAssigneeProgress.setVisibility(View.GONE);
@@ -151,13 +152,13 @@ public class AddIssueActivity extends MorphActivity implements ATEActivityThemeC
 
     private final Callback<List<Member>> mGroupMembersCallback = new EasyCallback<List<Member>>() {
         @Override
-        public void onResponse(@NonNull List<Member> response) {
+        public void success(@NonNull List<Member> response) {
             mMembers.addAll(response);
             setAssignees();
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mAssigneeSpinner.setVisibility(View.GONE);
             mAssigneeProgress.setVisibility(View.GONE);
@@ -166,14 +167,14 @@ public class AddIssueActivity extends MorphActivity implements ATEActivityThemeC
 
     private final Callback<List<Label>> mLabelCallback = new EasyCallback<List<Label>>() {
         @Override
-        public void onResponse(@NonNull List<Label> response) {
+        public void success(@NonNull List<Label> response) {
             mLabelsProgress.setVisibility(View.GONE);
-            mListLabels.setVisibility(View.VISIBLE);
+            mRootAddLabels.setVisibility(View.VISIBLE);
             setLabels(response);
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             //null body could just mean no labels have been created for this project
             if (t instanceof NullBodyException) {
@@ -189,17 +190,17 @@ public class AddIssueActivity extends MorphActivity implements ATEActivityThemeC
     private final Callback<Issue> mIssueCreatedCallback = new EasyCallback<Issue>() {
 
         @Override
-        public void onResponse(@NonNull Issue response) {
+        public void success(@NonNull Issue response) {
             if (mIssue == null) {
-                LabCoatApp.bus().post(new IssueCreatedEvent(response));
+                App.bus().post(new IssueCreatedEvent(response));
             } else {
-                LabCoatApp.bus().post(new IssueChangedEvent(response));
+                App.bus().post(new IssueChangedEvent(response));
             }
             dismiss();
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             Snackbar.make(mRoot, getString(R.string.failed_to_create_issue), Snackbar.LENGTH_SHORT)
                     .show();
@@ -212,6 +213,7 @@ public class AddIssueActivity extends MorphActivity implements ATEActivityThemeC
         setContentView(R.layout.activity_add_issue);
         ButterKnife.bind(this);
         morph(mRoot);
+        mTeleprinter = new Teleprinter(this);
 
         mProject = Parcels.unwrap(getIntent().getParcelableExtra(KEY_PROJECT));
         mIssue = Parcels.unwrap(getIntent().getParcelableExtra(KEY_ISSUE));
@@ -249,9 +251,9 @@ public class AddIssueActivity extends MorphActivity implements ATEActivityThemeC
     }
 
     private void load() {
-        GitLabClient.instance().getMilestones(mProject.getId()).enqueue(mMilestonesCallback);
-        GitLabClient.instance().getProjectMembers(mProject.getId()).enqueue(mAssigneeCallback);
-        GitLabClient.instance().getLabels(mProject.getId()).enqueue(mLabelCallback);
+        App.instance().getGitLab().getMilestones(mProject.getId(), getString(R.string.milestone_state_value_default)).enqueue(mMilestonesCallback);
+        App.instance().getGitLab().getProjectMembers(mProject.getId()).enqueue(mAssigneeCallback);
+        App.instance().getGitLab().getLabels(mProject.getId()).enqueue(mLabelCallback);
     }
 
     private void showLoading() {
@@ -292,13 +294,30 @@ public class AddIssueActivity extends MorphActivity implements ATEActivityThemeC
             if (!currentLabels.isEmpty()) {
                 mLabelsAdapter.setLabels(currentLabels);
             }
-        } else {
-            mTextAddLabels.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_LABEL:
+                if (resultCode == RESULT_OK) {
+                    Label label = Parcels.unwrap(data.getParcelableExtra(AddLabelActivity.KEY_LABEL));
+                    if (mLabelsAdapter.containsLabel(label)) {
+                        Snackbar.make(mRoot, R.string.label_already_added, Snackbar.LENGTH_SHORT)
+                                .show();
+                    } else {
+                        mLabelsAdapter.addLabel(label);
+                    }
+                }
+                break;
         }
     }
 
     private void save() {
         if (!TextUtils.isEmpty(mTitleInput.getText())) {
+            mTeleprinter.hideKeyboard();
             mTitleInputLayout.setError(null);
             showLoading();
             Long assigneeId = null;
@@ -324,30 +343,35 @@ public class AddIssueActivity extends MorphActivity implements ATEActivityThemeC
                     milestoneId = milestone.getId();
                 }
             }
+            String labelsCommaSeperated = mLabelsAdapter.getCommaSeperatedStringOfLabels();
             createOrSaveIssue(mTitleInput.getText().toString(),
                     mDescriptionInput.getText().toString(),
                     assigneeId,
-                    milestoneId);
+                    milestoneId,
+                    labelsCommaSeperated);
         } else {
             mTitleInputLayout.setError(getString(R.string.required_field));
         }
     }
 
-    private void createOrSaveIssue(String title, String description, Long assigneeId, Long milestoneId) {
+    private void createOrSaveIssue(String title, String description, @Nullable Long assigneeId,
+                                   @Nullable Long milestoneId, @Nullable String labels) {
         if (mIssue == null) {
-            GitLabClient.instance().createIssue(
+            App.instance().getGitLab().createIssue(
                     mProject.getId(),
                     title,
                     description,
                     assigneeId,
-                    milestoneId).enqueue(mIssueCreatedCallback);
+                    milestoneId,
+                    labels).enqueue(mIssueCreatedCallback);
         } else {
-            GitLabClient.instance().updateIssue(mProject.getId(),
+            App.instance().getGitLab().updateIssue(mProject.getId(),
                     mIssue.getId(),
                     title,
                     description,
                     assigneeId,
-                    milestoneId).enqueue(mIssueCreatedCallback);
+                    milestoneId,
+                    labels).enqueue(mIssueCreatedCallback);
         }
     }
 

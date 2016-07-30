@@ -19,13 +19,12 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.commit451.gitlab.LabCoatApp;
+import com.commit451.easycallback.EasyCallback;
+import com.commit451.easycallback.HttpException;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.UsersAdapter;
 import com.commit451.gitlab.animation.HideRunnable;
-import com.commit451.gitlab.api.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
-import com.commit451.gitlab.api.exception.HttpException;
 import com.commit451.gitlab.dialog.AccessDialog;
 import com.commit451.gitlab.event.MemberAddedEvent;
 import com.commit451.gitlab.model.api.Group;
@@ -39,7 +38,7 @@ import org.parceler.Parcels;
 
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import retrofit2.Callback;
@@ -65,17 +64,17 @@ public class AddUserActivity extends MorphActivity {
         return intent;
     }
 
-    @Bind(R.id.root)
+    @BindView(R.id.root)
     ViewGroup mRoot;
-    @Bind(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar mToolbar;
-    @Bind(R.id.search)
+    @BindView(R.id.search)
     EditText mUserSearch;
-    @Bind(R.id.swipe_layout)
+    @BindView(R.id.swipe_layout)
     SwipeRefreshLayout mSwipeRefreshLayout;
-    @Bind(R.id.list)
+    @BindView(R.id.list)
     RecyclerView mRecyclerView;
-    @Bind(R.id.clear)
+    @BindView(R.id.clear)
     View mClearView;
     GridLayoutManager mUserLinearLayoutManager;
 
@@ -169,12 +168,12 @@ public class AddUserActivity extends MorphActivity {
         public void onAccessApplied(int accessLevel) {
             mAccessDialog.showLoading();
             if (mGroup == null) {
-                GitLabClient.instance().addProjectMember(
+                App.instance().getGitLab().addProjectMember(
                         mProjectId,
                         mSelectedUser.getId(),
                         accessLevel).enqueue(mAddGroupMemeberCallback);
             } else {
-                GitLabClient.instance().addGroupMember(mGroup.getId(),
+                App.instance().getGitLab().addGroupMember(mGroup.getId(),
                         mSelectedUser.getId(),
                         accessLevel).enqueue(mAddGroupMemeberCallback);
             }
@@ -183,7 +182,7 @@ public class AddUserActivity extends MorphActivity {
 
     private final Callback<List<UserBasic>> mUserCallback = new EasyCallback<List<UserBasic>>() {
         @Override
-        public void onResponse(@NonNull List<UserBasic> response) {
+        public void success(@NonNull List<UserBasic> response) {
             mSwipeRefreshLayout.setRefreshing(false);
             mLoading = false;
             mAdapter.setData(response);
@@ -192,7 +191,7 @@ public class AddUserActivity extends MorphActivity {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mSwipeRefreshLayout.setRefreshing(false);
             mLoading = false;
@@ -203,7 +202,7 @@ public class AddUserActivity extends MorphActivity {
 
     private final Callback<List<UserBasic>> mMoreUsersCallback = new EasyCallback<List<UserBasic>>() {
         @Override
-        public void onResponse(@NonNull List<UserBasic> response) {
+        public void success(@NonNull List<UserBasic> response) {
             mLoading = false;
             mAdapter.setLoading(false);
             mAdapter.addData(response);
@@ -211,7 +210,7 @@ public class AddUserActivity extends MorphActivity {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mAdapter.setLoading(false);
         }
@@ -219,16 +218,16 @@ public class AddUserActivity extends MorphActivity {
 
     private final Callback<Member> mAddGroupMemeberCallback = new EasyCallback<Member>() {
         @Override
-        public void onResponse(@NonNull Member response) {
+        public void success(@NonNull Member response) {
             Snackbar.make(mRoot, R.string.user_added_successfully, Snackbar.LENGTH_SHORT)
                     .show();
             mAccessDialog.dismiss();
             dismiss();
-            LabCoatApp.bus().post(new MemberAddedEvent(response));
+            App.bus().post(new MemberAddedEvent(response));
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             if (t instanceof HttpException) {
                 //Conflict
@@ -257,6 +256,12 @@ public class AddUserActivity extends MorphActivity {
         mUserSearch.setOnEditorActionListener(mSearchEditorActionListener);
         mUserSearch.addTextChangedListener(mTextWatcher);
         mAdapter = new UsersAdapter(mUserClickListener);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadData();
+            }
+        });
         mRecyclerView.setAdapter(mAdapter);
         mUserLinearLayoutManager = new GridLayoutManager(this, 2);
         mUserLinearLayoutManager.setSpanSizeLookup(mAdapter.getSpanSizeLookup());
@@ -270,13 +275,13 @@ public class AddUserActivity extends MorphActivity {
         mTeleprinter.hideKeyboard();
         mSwipeRefreshLayout.setRefreshing(true);
         mLoading = true;
-        GitLabClient.instance().searchUsers(mSearchQuery).enqueue(mUserCallback);
+        App.instance().getGitLab().searchUsers(mSearchQuery).enqueue(mUserCallback);
     }
 
     private void loadMore() {
         mLoading = true;
         mAdapter.setLoading(true);
         Timber.d("loadMore " + mNextPageUrl.toString() + " " + mSearchQuery);
-        GitLabClient.instance().searchUsers(mNextPageUrl.toString(), mSearchQuery).enqueue(mMoreUsersCallback);
+        App.instance().getGitLab().searchUsers(mNextPageUrl.toString(), mSearchQuery).enqueue(mMoreUsersCallback);
     }
 }

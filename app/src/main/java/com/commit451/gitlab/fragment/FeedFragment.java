@@ -11,25 +11,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.commit451.gitlab.LabCoatApp;
+import com.commit451.easycallback.EasyCallback;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.gitlab.adapter.FeedAdapter;
-import com.commit451.gitlab.api.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.rss.Entry;
 import com.commit451.gitlab.model.rss.Feed;
-import com.commit451.gitlab.navigation.NavigationManager;
+import com.commit451.gitlab.navigation.Navigator;
 import com.novoda.simplechromecustomtabs.SimpleChromeCustomTabs;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
+import butterknife.BindView;
 import timber.log.Timber;
 
 /**
  * Takes an RSS feed url and shows the feed
  */
-public class FeedFragment extends BaseFragment {
+public class FeedFragment extends ButterKnifeFragment {
 
     private static final String EXTRA_FEED_URL = "extra_feed_url";
 
@@ -42,11 +40,11 @@ public class FeedFragment extends BaseFragment {
         return fragment;
     }
 
-    @Bind(R.id.swipe_layout)
+    @BindView(R.id.swipe_layout)
     SwipeRefreshLayout mSwipeRefreshLayout;
-    @Bind(R.id.list)
+    @BindView(R.id.list)
     RecyclerView mEntryListView;
-    @Bind(R.id.message_text)
+    @BindView(R.id.message_text)
     TextView mMessageView;
 
     private Uri mFeedUrl;
@@ -55,7 +53,7 @@ public class FeedFragment extends BaseFragment {
 
     private final EasyCallback<Feed> mUserFeedCallback = new EasyCallback<Feed>() {
         @Override
-        public void onResponse(@NonNull Feed response) {
+        public void success(@NonNull Feed response) {
             if (getView() == null) {
                 return;
             }
@@ -71,7 +69,7 @@ public class FeedFragment extends BaseFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             if (getView() == null) {
                 return;
@@ -86,7 +84,7 @@ public class FeedFragment extends BaseFragment {
     private final FeedAdapter.Listener mFeedAdapterListener = new FeedAdapter.Listener() {
         @Override
         public void onFeedEntryClicked(Entry entry) {
-            NavigationManager.navigateToUrl(getActivity(), entry.getLink().getHref(), GitLabClient.getAccount());
+            Navigator.navigateToUrl(getActivity(), entry.getLink().getHref(), App.instance().getAccount());
         }
     };
 
@@ -104,10 +102,9 @@ public class FeedFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
 
         mEventReceiver = new EventReceiver();
-        LabCoatApp.bus().register(mEventReceiver);
+        App.bus().register(mEventReceiver);
 
         mFeedAdapter = new FeedAdapter(mFeedAdapterListener);
         mEntryListView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -141,8 +138,7 @@ public class FeedFragment extends BaseFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.unbind(this);
-        LabCoatApp.bus().unregister(mEventReceiver);
+        App.bus().unregister(mEventReceiver);
     }
 
     @Override
@@ -164,7 +160,7 @@ public class FeedFragment extends BaseFragment {
                 }
             }
         });
-        GitLabClient.rssInstance().getFeed(mFeedUrl.toString()).enqueue(mUserFeedCallback);
+        App.instance().getGitLabRss().getFeed(mFeedUrl.toString()).enqueue(mUserFeedCallback);
     }
 
     private class EventReceiver {

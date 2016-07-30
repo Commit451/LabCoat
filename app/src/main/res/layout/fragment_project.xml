@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.commit451.gitlab.view.LabCoatSwipeRefreshLayout
-    android:id="@+id/swipe_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipe_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -30,44 +31,50 @@
                     android:gravity="center_vertical"
                     android:paddingLeft="@dimen/activity_horizontal_margin"
                     android:paddingRight="@dimen/activity_horizontal_margin"
-                    android:tag="text_color|primary_text"
                     android:textSize="14sp"
                     tools:text="Created by Commit451"/>
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:contentDescription="@null"
-                    android:src="@drawable/ic_star_24dp"
-                    android:tag="tint|primary_text"/>
-
-                <TextView
-                    android:id="@+id/star_count"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:paddingRight="@dimen/activity_horizontal_margin"
-                    android:tag="text_color|primary_text"
-                    tools:text="100"/>
-
                 <LinearLayout
-                    android:id="@+id/root_fork"
+                    android:id="@+id/root_star"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:background="?attr/selectableItemBackgroundBorderless">
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:orientation="horizontal">
 
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:contentDescription="@null"
-                        android:src="@drawable/ic_fork"
-                        android:tag="tint|primary_text"/>
+                        app:srcCompat="@drawable/ic_star_24dp"/>
+
+                    <TextView
+                        android:id="@+id/star_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginRight="8dp"
+                        android:paddingRight="@dimen/activity_horizontal_margin"
+                        tools:text="100"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/root_fork"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:contentDescription="@null"
+                        app:srcCompat="@drawable/ic_fork"/>
 
                     <TextView
                         android:id="@+id/forks_count"
@@ -77,7 +84,6 @@
                         android:layout_marginLeft="8dp"
                         android:layout_marginStart="8dp"
                         android:paddingRight="@dimen/activity_horizontal_margin"
-                        android:tag="text_color|primary_text"
                         tools:text="100"/>
                 </LinearLayout>
 
@@ -87,8 +93,7 @@
                 android:id="@+id/overview_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:tag="text_color|primary_text"/>
+                android:padding="16dp"/>
         </LinearLayout>
 
     </ScrollView>

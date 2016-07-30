@@ -1,7 +1,5 @@
 package com.commit451.gitlab.dialog;
 
-import com.commit451.gitlab.R;
-
 import android.content.Context;
 import android.support.v7.app.AppCompatDialog;
 import android.view.View;
@@ -9,16 +7,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import butterknife.Bind;
+import com.commit451.gitlab.R;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class HttpLoginDialog extends AppCompatDialog {
 
-    @Bind(R.id.message_text) TextView mMessageTextView;
-    @Bind(R.id.login_username) EditText mUsernameView;
-    @Bind(R.id.login_password) EditText mPasswordView;
-    @Bind(R.id.ok_button) Button mOkButton;
-    @Bind(R.id.cancel_button) Button mCancelButton;
+    @BindView(R.id.message_text) TextView mMessageTextView;
+    @BindView(R.id.login_username) EditText mUsernameView;
+    @BindView(R.id.login_password) EditText mPasswordView;
+    @BindView(R.id.ok_button) Button mOkButton;
+    @BindView(R.id.cancel_button) Button mCancelButton;
 
     public HttpLoginDialog(Context context, String realm, final LoginListener loginListener) {
         super(context);

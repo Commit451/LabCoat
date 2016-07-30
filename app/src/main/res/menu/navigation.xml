@@ -21,10 +21,12 @@
     <group
         android:id="@+id/nonCheckableGroup"
         android:checkableBehavior="none">
+
         <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_settings_24dp"
             android:title="@string/settings" />
+
         <item
             android:id="@+id/nav_about"
             android:icon="@drawable/ic_about_24dp"

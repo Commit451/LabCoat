@@ -12,10 +12,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.commit451.easycallback.EasyCallback;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.DiffAdapter;
-import com.commit451.gitlab.api.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Diff;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryCommit;
@@ -24,7 +24,7 @@ import org.parceler.Parcels;
 
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Callback;
 import timber.log.Timber;
@@ -37,32 +37,32 @@ public class DiffActivity extends BaseActivity {
     private static final String EXTRA_PROJECT = "extra_project";
     private static final String EXTRA_COMMIT = "extra_commit";
 
-    public static Intent newInstance(Context context, Project project, RepositoryCommit commit) {
+    public static Intent newIntent(Context context, Project project, RepositoryCommit commit) {
         Intent intent = new Intent(context, DiffActivity.class);
         intent.putExtra(EXTRA_PROJECT, Parcels.wrap(project));
         intent.putExtra(EXTRA_COMMIT, Parcels.wrap(commit));
         return intent;
     }
 
-    @Bind(R.id.root) ViewGroup mRoot;
-    @Bind(R.id.toolbar) Toolbar mToolbar;
-    @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
-    @Bind(R.id.list) RecyclerView mDiffRecyclerView;
+    @BindView(R.id.root) ViewGroup mRoot;
+    @BindView(R.id.toolbar) Toolbar mToolbar;
+    @BindView(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
+    @BindView(R.id.list) RecyclerView mDiffRecyclerView;
     DiffAdapter mDiffAdapter;
-    @Bind(R.id.message_text) TextView mMessageText;
+    @BindView(R.id.message_text) TextView mMessageText;
 
     private Project mProject;
     private RepositoryCommit mCommit;
 
     private Callback<List<Diff>> mDiffCallback = new EasyCallback<List<Diff>>() {
         @Override
-        public void onResponse(@NonNull List<Diff> response) {
+        public void success(@NonNull List<Diff> response) {
             mSwipeRefreshLayout.setRefreshing(false);
             mDiffAdapter.setData(response);
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             mSwipeRefreshLayout.setRefreshing(false);
             Timber.e(t, null);
             mMessageText.setText(R.string.connection_error);
@@ -116,6 +116,6 @@ public class DiffActivity extends BaseActivity {
             }
             }
         });
-        GitLabClient.instance().getCommitDiff(mProject.getId(), mCommit.getId()).enqueue(mDiffCallback);
+        App.instance().getGitLab().getCommitDiff(mProject.getId(), mCommit.getId()).enqueue(mDiffCallback);
     }
 }

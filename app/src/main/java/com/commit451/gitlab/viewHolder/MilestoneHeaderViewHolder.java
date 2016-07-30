@@ -6,13 +6,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.afollestad.appthemeengine.ATE;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.api.Milestone;
-import com.commit451.gitlab.util.AppThemeUtil;
-import com.commit451.gitlab.util.DateUtils;
+import com.commit451.gitlab.util.DateUtil;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -26,9 +24,9 @@ public class MilestoneHeaderViewHolder extends RecyclerView.ViewHolder {
         return new MilestoneHeaderViewHolder(view);
     }
 
-    @Bind(R.id.description)
+    @BindView(R.id.description)
     TextView mDescriptionView;
-    @Bind(R.id.due_date)
+    @BindView(R.id.due_date)
     TextView mDueDateView;
 
     public MilestoneHeaderViewHolder(View view) {
@@ -41,7 +39,7 @@ public class MilestoneHeaderViewHolder extends RecyclerView.ViewHolder {
             mDescriptionView.setText(milestone.getDescription());
         }
         if (milestone.getDueDate() != null) {
-            CharSequence due = DateUtils.getRelativeTimeSpanString(itemView.getContext(), milestone.getDueDate());
+            CharSequence due = DateUtil.getRelativeTimeSpanString(itemView.getContext(), milestone.getDueDate());
             mDueDateView.setText(String.format(itemView.getResources().getString(R.string.due_date_formatted), due));
         }
     }

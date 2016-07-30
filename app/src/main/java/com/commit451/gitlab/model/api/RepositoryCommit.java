@@ -1,7 +1,7 @@
 package com.commit451.gitlab.model.api;
 
-import com.google.gson.annotations.SerializedName;
-
+import com.bluelinelabs.logansquare.annotation.JsonField;
+import com.bluelinelabs.logansquare.annotation.JsonObject;
 import com.commit451.gitlab.util.ObjectUtil;
 
 import org.parceler.Parcel;
@@ -9,20 +9,21 @@ import org.parceler.Parcel;
 import java.util.Date;
 
 @Parcel
+@JsonObject
 public class RepositoryCommit {
-    @SerializedName("id")
+    @JsonField(name = "id")
     String mId;
-    @SerializedName("short_id")
+    @JsonField(name = "short_id")
     String mShortId;
-    @SerializedName("title")
+    @JsonField(name = "title")
     String mTitle;
-    @SerializedName("author_name")
+    @JsonField(name = "author_name")
     String mAuthorName;
-    @SerializedName("author_email")
+    @JsonField(name = "author_email")
     String mAuthorEmail;
-    @SerializedName("created_at")
+    @JsonField(name = "created_at")
     Date mCreatedAt;
-    @SerializedName("message")
+    @JsonField(name = "message")
     String mMessage;
 
     public RepositoryCommit() {}

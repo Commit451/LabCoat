@@ -6,12 +6,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.afollestad.appthemeengine.ATE;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.api.ProjectNamespace;
-import com.commit451.gitlab.util.AppThemeUtil;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -25,7 +23,7 @@ public class ProjectMemberFooterViewHolder extends RecyclerView.ViewHolder{
         return new ProjectMemberFooterViewHolder(view);
     }
 
-    @Bind(R.id.button) Button mButton;
+    @BindView(R.id.button) Button mButton;
 
     public ProjectMemberFooterViewHolder(View view) {
         super(view);

@@ -11,34 +11,33 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.commit451.gitlab.LabCoatApp;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.adapter.CommitsAdapter;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
-import com.commit451.gitlab.api.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.easycallback.EasyCallback;
+import com.commit451.gitlab.api.GitLabFactory;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryCommit;
-import com.commit451.gitlab.navigation.NavigationManager;
+import com.commit451.gitlab.navigation.Navigator;
 import com.squareup.otto.Subscribe;
 
 import java.util.List;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
+import butterknife.BindView;
 import timber.log.Timber;
 
-public class CommitsFragment extends BaseFragment {
+public class CommitsFragment extends ButterKnifeFragment {
 
     public static CommitsFragment newInstance() {
         return new CommitsFragment();
     }
 
-    @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
-    @Bind(R.id.list) RecyclerView mCommitsListView;
-    @Bind(R.id.message_text) TextView mMessageView;
+    @BindView(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
+    @BindView(R.id.list) RecyclerView mCommitsListView;
+    @BindView(R.id.message_text) TextView mMessageView;
 
     private Project mProject;
     private String mBranchName;
@@ -63,7 +62,7 @@ public class CommitsFragment extends BaseFragment {
 
     private final EasyCallback<List<RepositoryCommit>> mCommitsCallback = new EasyCallback<List<RepositoryCommit>>() {
         @Override
-        public void onResponse(@NonNull List<RepositoryCommit> response) {
+        public void success(@NonNull List<RepositoryCommit> response) {
             mLoading = false;
             if (getView() == null) {
                 return;
@@ -82,7 +81,7 @@ public class CommitsFragment extends BaseFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             mLoading = false;
             Timber.e(t, null);
             if (getView() == null) {
@@ -98,7 +97,7 @@ public class CommitsFragment extends BaseFragment {
 
     private final EasyCallback<List<RepositoryCommit>> mMoreCommitsCallback = new EasyCallback<List<RepositoryCommit>>() {
         @Override
-        public void onResponse(@NonNull List<RepositoryCommit> response) {
+        public void success(@NonNull List<RepositoryCommit> response) {
             mLoading = false;
             if (getView() == null) {
                 return;
@@ -112,7 +111,7 @@ public class CommitsFragment extends BaseFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             mLoading = false;
             Timber.e(t, null);
             if (getView() == null) {
@@ -125,7 +124,7 @@ public class CommitsFragment extends BaseFragment {
     private final CommitsAdapter.Listener mCommitsAdapterListener = new CommitsAdapter.Listener() {
         @Override
         public void onCommitClicked(RepositoryCommit commit) {
-            NavigationManager.navigateToDiffActivity(getActivity(), mProject, commit);
+            Navigator.navigateToDiffActivity(getActivity(), mProject, commit);
         }
     };
 
@@ -137,10 +136,9 @@ public class CommitsFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
 
         mEventReceiver = new EventReceiver();
-        LabCoatApp.bus().register(mEventReceiver);
+        App.bus().register(mEventReceiver);
 
         mCommitsAdapter = new CommitsAdapter(mCommitsAdapterListener);
         mCommitsLayoutManager = new LinearLayoutManager(getActivity());
@@ -168,8 +166,7 @@ public class CommitsFragment extends BaseFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.unbind(this);
-        LabCoatApp.bus().unregister(mEventReceiver);
+        App.bus().unregister(mEventReceiver);
     }
 
     @Override
@@ -195,7 +192,7 @@ public class CommitsFragment extends BaseFragment {
         mPage = 0;
         mLoading = true;
 
-        GitLabClient.instance().getCommits(mProject.getId(), mBranchName, mPage).enqueue(mCommitsCallback);
+        App.instance().getGitLab().getCommits(mProject.getId(), mBranchName, mPage).enqueue(mCommitsCallback);
     }
 
     private void loadMore() {
@@ -212,7 +209,7 @@ public class CommitsFragment extends BaseFragment {
         mCommitsAdapter.setLoading(true);
 
         Timber.d("loadMore called for %s", mPage);
-        GitLabClient.instance().getCommits(mProject.getId(), mBranchName, mPage).enqueue(mMoreCommitsCallback);
+        App.instance().getGitLab().getCommits(mProject.getId(), mBranchName, mPage).enqueue(mMoreCommitsCallback);
     }
 
     private class EventReceiver {

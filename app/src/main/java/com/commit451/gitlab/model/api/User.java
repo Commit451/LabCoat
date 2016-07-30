@@ -1,28 +1,30 @@
 package com.commit451.gitlab.model.api;
 
-import com.google.gson.annotations.SerializedName;
+import android.net.Uri;
+
+import com.bluelinelabs.logansquare.annotation.JsonField;
+import com.bluelinelabs.logansquare.annotation.JsonObject;
 
 import org.parceler.Parcel;
-
-import android.net.Uri;
 
 import java.util.Date;
 
 @Parcel
+@JsonObject
 public class User extends UserBasic {
-    @SerializedName("created_at")
+    @JsonField(name = "created_at")
     Date mCreatedAt;
-    @SerializedName("is_admin")
+    @JsonField(name = "is_admin")
     boolean mIsAdmin;
-    @SerializedName("bio")
+    @JsonField(name = "bio")
     String mBio;
-    @SerializedName("skype")
+    @JsonField(name = "skype")
     String mSkype;
-    @SerializedName("linkedin")
+    @JsonField(name = "linkedin")
     String mLinkedin;
-    @SerializedName("twitter")
+    @JsonField(name = "twitter")
     String mTwitter;
-    @SerializedName("website_url")
+    @JsonField(name = "website_url")
     Uri mWebsiteUrl;
 
     public User() {}

@@ -10,15 +10,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.afollestad.appthemeengine.ATE;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.transformation.CircleTransformation;
-import com.commit451.gitlab.util.AppThemeUtil;
 import com.github.ivbaranov.mli.MaterialLetterIcon;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -32,11 +30,11 @@ public class ProjectViewHolder extends RecyclerView.ViewHolder {
         return new ProjectViewHolder(view);
     }
 
-    @Bind(R.id.project_image) ImageView mImageView;
-    @Bind(R.id.project_letter) MaterialLetterIcon mLetterView;
-    @Bind(R.id.project_title) TextView mTitleView;
-    @Bind(R.id.project_description) TextView mDescriptionView;
-    @Bind(R.id.project_visibility) ImageView mVisibilityView;
+    @BindView(R.id.project_image) ImageView mImageView;
+    @BindView(R.id.project_letter) MaterialLetterIcon mLetterView;
+    @BindView(R.id.project_title) TextView mTitleView;
+    @BindView(R.id.project_description) TextView mDescriptionView;
+    @BindView(R.id.project_visibility) ImageView mVisibilityView;
 
     public ProjectViewHolder(View view) {
         super(view);
@@ -48,7 +46,7 @@ public class ProjectViewHolder extends RecyclerView.ViewHolder {
             mLetterView.setVisibility(View.GONE);
 
             mImageView.setVisibility(View.VISIBLE);
-            GitLabClient.getPicasso()
+            App.instance().getPicasso()
                     .load(project.getAvatarUrl())
                     .transform(new CircleTransformation())
                     .into(mImageView);

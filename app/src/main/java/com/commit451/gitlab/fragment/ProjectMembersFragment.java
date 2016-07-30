@@ -13,40 +13,39 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.commit451.gitlab.LabCoatApp;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.adapter.MemberAdapter;
-import com.commit451.gitlab.api.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
+import com.commit451.easycallback.EasyCallback;
+import com.commit451.gitlab.api.GitLabFactory;
 import com.commit451.gitlab.dialog.AccessDialog;
 import com.commit451.gitlab.event.MemberAddedEvent;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Member;
 import com.commit451.gitlab.model.api.Project;
-import com.commit451.gitlab.navigation.NavigationManager;
+import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.PaginationUtil;
 import com.commit451.gitlab.viewHolder.ProjectMemberViewHolder;
 import com.squareup.otto.Subscribe;
 
 import java.util.List;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
+import butterknife.BindView;
 import butterknife.OnClick;
 import timber.log.Timber;
 
-public class ProjectMembersFragment extends BaseFragment {
+public class ProjectMembersFragment extends ButterKnifeFragment {
 
     public static ProjectMembersFragment newInstance() {
         return new ProjectMembersFragment();
     }
 
-    @Bind(R.id.root) View mRoot;
-    @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
-    @Bind(R.id.list) RecyclerView mMembersListView;
-    @Bind(R.id.message_text) TextView mMessageView;
-    @Bind(R.id.add_user_button) FloatingActionButton mAddUserButton;
+    @BindView(R.id.root) View mRoot;
+    @BindView(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
+    @BindView(R.id.list) RecyclerView mMembersListView;
+    @BindView(R.id.message_text) TextView mMessageView;
+    @BindView(R.id.add_user_button) FloatingActionButton mAddUserButton;
 
     private Project mProject;
     private EventReceiver mEventReceiver;
@@ -79,13 +78,13 @@ public class ProjectMembersFragment extends BaseFragment {
     private final MemberAdapter.Listener mMemberAdapterListener = new MemberAdapter.Listener() {
         @Override
         public void onProjectMemberClicked(Member member, ProjectMemberViewHolder memberGroupViewHolder) {
-            NavigationManager.navigateToUser(getActivity(), memberGroupViewHolder.mImageView, member);
+            Navigator.navigateToUser(getActivity(), memberGroupViewHolder.mImageView, member);
         }
 
         @Override
         public void onRemoveMember(Member member) {
             mMember = member;
-            GitLabClient.instance().removeProjectMember(mProject.getId(), member.getId()).enqueue(mRemoveMemberCallback);
+            App.instance().getGitLab().removeProjectMember(mProject.getId(), member.getId()).enqueue(mRemoveMemberCallback);
         }
 
         @Override
@@ -97,13 +96,13 @@ public class ProjectMembersFragment extends BaseFragment {
 
         @Override
         public void onSeeGroupClicked() {
-            NavigationManager.navigateToGroup(getActivity(), mProject.getNamespace().getId());
+            Navigator.navigateToGroup(getActivity(), mProject.getNamespace().getId());
         }
     };
 
     private final EasyCallback<List<Member>> mProjectMembersCallback = new EasyCallback<List<Member>>() {
         @Override
-        public void onResponse(@NonNull List<Member> response) {
+        public void success(@NonNull List<Member> response) {
             mLoading = false;
             if (getView() == null) {
                 return;
@@ -130,7 +129,7 @@ public class ProjectMembersFragment extends BaseFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             mLoading = false;
             Timber.e(t, null);
             if (getView() == null) {
@@ -147,7 +146,7 @@ public class ProjectMembersFragment extends BaseFragment {
 
     private final EasyCallback<Void> mRemoveMemberCallback = new EasyCallback<Void>() {
         @Override
-        public void onResponse(@NonNull Void response) {
+        public void success(@NonNull Void response) {
             if (getView() == null) {
                 return;
             }
@@ -155,7 +154,7 @@ public class ProjectMembersFragment extends BaseFragment {
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             if (getView() == null) {
                 return;
@@ -173,10 +172,9 @@ public class ProjectMembersFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
 
         mEventReceiver = new EventReceiver();
-        LabCoatApp.bus().register(mEventReceiver);
+        App.bus().register(mEventReceiver);
 
         mAdapter = new MemberAdapter(mMemberAdapterListener);
         mProjectLayoutManager = new GridLayoutManager(getActivity(), 2);
@@ -204,13 +202,12 @@ public class ProjectMembersFragment extends BaseFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.unbind(this);
-        LabCoatApp.bus().unregister(mEventReceiver);
+        App.bus().unregister(mEventReceiver);
     }
 
     @OnClick(R.id.add_user_button)
     public void onAddUserClick(View fab) {
-        NavigationManager.navigateToAddProjectMember(getActivity(), fab, mProject.getId());
+        Navigator.navigateToAddProjectMember(getActivity(), fab, mProject.getId());
     }
 
     @Override
@@ -236,7 +233,7 @@ public class ProjectMembersFragment extends BaseFragment {
         mNextPageUrl = null;
         mLoading = true;
 
-        GitLabClient.instance().getProjectMembers(mProject.getId()).enqueue(mProjectMembersCallback);
+        App.instance().getGitLab().getProjectMembers(mProject.getId()).enqueue(mProjectMembersCallback);
     }
 
     private void loadMore() {
@@ -260,7 +257,7 @@ public class ProjectMembersFragment extends BaseFragment {
         mLoading = true;
 
         Timber.d("loadMore called for " + mNextPageUrl);
-        GitLabClient.instance().getProjectMembers(mNextPageUrl.toString()).enqueue(mProjectMembersCallback);
+        App.instance().getGitLab().getProjectMembers(mNextPageUrl.toString()).enqueue(mProjectMembersCallback);
     }
 
     private void setNamespace() {

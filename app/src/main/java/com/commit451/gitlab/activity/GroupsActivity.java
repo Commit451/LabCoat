@@ -4,34 +4,30 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
 
-import com.afollestad.appthemeengine.customizers.ATEActivityThemeCustomizer;
-import com.commit451.gitlab.LabCoatApp;
+import com.commit451.easycallback.EasyCallback;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.GroupAdapter;
-import com.commit451.gitlab.api.EasyCallback;
-import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.event.CloseDrawerEvent;
 import com.commit451.gitlab.model.api.Group;
-import com.commit451.gitlab.navigation.NavigationManager;
+import com.commit451.gitlab.navigation.Navigator;
+import com.commit451.gitlab.util.DynamicGridLayoutManager;
 import com.commit451.gitlab.util.PaginationUtil;
 import com.commit451.gitlab.viewHolder.GroupViewHolder;
 import com.squareup.otto.Subscribe;
 
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Callback;
 import timber.log.Timber;
@@ -39,26 +35,20 @@ import timber.log.Timber;
 /**
  * Displays the groups of the current user
  */
-public class GroupsActivity extends BaseActivity implements ATEActivityThemeCustomizer {
+public class GroupsActivity extends BaseActivity {
 
-    @Override
-    public int getActivityTheme() {
-        return PreferenceManager.getDefaultSharedPreferences(this).getBoolean("dark_theme", true) ?
-                R.style.Activity_Groups : R.style.ActivityLight_Groups;
-    }
-
-    public static Intent newInstance(Context context) {
+    public static Intent newIntent(Context context) {
         Intent intent = new Intent(context, GroupsActivity.class);
         return intent;
     }
 
-    @Bind(R.id.drawer_layout) DrawerLayout mDrawerLayout;
-    @Bind(R.id.toolbar) Toolbar mToolbar;
-    @Bind(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
-    @Bind(R.id.list) RecyclerView mGroupRecyclerView;
-    @Bind(R.id.message_text) TextView mMessageText;
+    @BindView(R.id.drawer_layout) DrawerLayout mDrawerLayout;
+    @BindView(R.id.toolbar) Toolbar mToolbar;
+    @BindView(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
+    @BindView(R.id.list) RecyclerView mGroupRecyclerView;
+    @BindView(R.id.message_text) TextView mMessageText;
     GroupAdapter mGroupAdapter;
-    LinearLayoutManager mGroupLayoutManager;
+    DynamicGridLayoutManager mGroupLayoutManager;
 
     private Uri mNextPageUrl;
     private boolean mLoading = false;
@@ -79,7 +69,7 @@ public class GroupsActivity extends BaseActivity implements ATEActivityThemeCust
 
     private final Callback<List<Group>> mGroupsCallback = new EasyCallback<List<Group>>() {
         @Override
-        public void onResponse(@NonNull List<Group> response) {
+        public void success(@NonNull List<Group> response) {
             mLoading = false;
             mSwipeRefreshLayout.setRefreshing(false);
             if (response.isEmpty()) {
@@ -94,7 +84,7 @@ public class GroupsActivity extends BaseActivity implements ATEActivityThemeCust
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mSwipeRefreshLayout.setRefreshing(false);
             mLoading = false;
@@ -105,14 +95,14 @@ public class GroupsActivity extends BaseActivity implements ATEActivityThemeCust
 
     private final Callback<List<Group>> mMoreGroupsCallback = new EasyCallback<List<Group>>() {
         @Override
-        public void onResponse(@NonNull List<Group> response) {
+        public void success(@NonNull List<Group> response) {
             mLoading = false;
             mGroupAdapter.addGroups(response);
             mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
         }
 
         @Override
-        public void onAllFailure(Throwable t) {
+        public void failure(Throwable t) {
             Timber.e(t, null);
             mLoading = false;
         }
@@ -121,7 +111,7 @@ public class GroupsActivity extends BaseActivity implements ATEActivityThemeCust
     private final GroupAdapter.Listener mGroupAdapterListener = new GroupAdapter.Listener() {
         @Override
         public void onGroupClicked(Group group, GroupViewHolder groupViewHolder) {
-            NavigationManager.navigateToGroup(GroupsActivity.this, groupViewHolder.mImageView, group);
+            Navigator.navigateToGroup(GroupsActivity.this, groupViewHolder.mImageView, group);
         }
     };
 
@@ -131,7 +121,7 @@ public class GroupsActivity extends BaseActivity implements ATEActivityThemeCust
         setContentView(R.layout.activity_groups);
         ButterKnife.bind(this);
         mEventReceiver = new EventReceiver();
-        LabCoatApp.bus().register(mEventReceiver);
+        App.bus().register(mEventReceiver);
 
         mToolbar.setTitle(R.string.nav_groups);
         mToolbar.setNavigationIcon(R.drawable.ic_menu_24dp);
@@ -153,7 +143,8 @@ public class GroupsActivity extends BaseActivity implements ATEActivityThemeCust
                 load();
             }
         });
-        mGroupLayoutManager = new GridLayoutManager(this, 2);
+        mGroupLayoutManager = new DynamicGridLayoutManager(this);
+        mGroupLayoutManager.setMinimumWidthDimension(R.dimen.user_list_image_size);
         mGroupRecyclerView.setLayoutManager(mGroupLayoutManager);
         mGroupAdapter = new GroupAdapter(mGroupAdapterListener);
         mGroupRecyclerView.setAdapter(mGroupAdapter);
@@ -164,7 +155,7 @@ public class GroupsActivity extends BaseActivity implements ATEActivityThemeCust
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        LabCoatApp.bus().unregister(mEventReceiver);
+        App.bus().unregister(mEventReceiver);
     }
 
     private void load() {
@@ -181,7 +172,7 @@ public class GroupsActivity extends BaseActivity implements ATEActivityThemeCust
         mNextPageUrl = null;
         mLoading = true;
 
-        GitLabClient.instance().getGroups().enqueue(mGroupsCallback);
+        App.instance().getGitLab().getGroups().enqueue(mGroupsCallback);
     }
 
     private void loadMore() {
@@ -201,7 +192,7 @@ public class GroupsActivity extends BaseActivity implements ATEActivityThemeCust
         mLoading = true;
 
         Timber.d("loadMore called for %s", mNextPageUrl);
-        GitLabClient.instance().getGroups(mNextPageUrl.toString()).enqueue(mMoreGroupsCallback);
+        App.instance().getGitLab().getGroups(mNextPageUrl.toString()).enqueue(mMoreGroupsCallback);
     }
 
     private class EventReceiver {

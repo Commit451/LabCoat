@@ -3,7 +3,6 @@ package com.commit451.gitlab.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
@@ -13,38 +12,31 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.afollestad.appthemeengine.customizers.ATEActivityThemeCustomizer;
-import com.commit451.gitlab.LabCoatApp;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.ProjectsPagerAdapter;
 import com.commit451.gitlab.event.CloseDrawerEvent;
-import com.commit451.gitlab.navigation.NavigationManager;
+import com.commit451.gitlab.navigation.Navigator;
 import com.squareup.otto.Subscribe;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
  * Shows the projects
  */
-public class ProjectsActivity extends BaseActivity implements ATEActivityThemeCustomizer {
+public class ProjectsActivity extends BaseActivity {
 
-    @Override
-    public int getActivityTheme() {
-        return PreferenceManager.getDefaultSharedPreferences(this).getBoolean("dark_theme", true) ?
-                R.style.Activity_Projects : R.style.ActivityLight_Projects;
-    }
-
-    public static Intent newInstance(Context context) {
+    public static Intent newIntent(Context context) {
         Intent intent = new Intent(context, ProjectsActivity.class);
         return intent;
     }
 
-    @Bind(R.id.toolbar) Toolbar mToolbar;
-    @Bind(R.id.tabs) TabLayout mTabLayout;
-    @Bind(R.id.pager) ViewPager mViewPager;
-    @Bind(R.id.navigation_view) NavigationView mNavigationView;
-    @Bind(R.id.drawer_layout) DrawerLayout mDrawerLayout;
+    @BindView(R.id.toolbar) Toolbar mToolbar;
+    @BindView(R.id.tabs) TabLayout mTabLayout;
+    @BindView(R.id.pager) ViewPager mViewPager;
+    @BindView(R.id.navigation_view) NavigationView mNavigationView;
+    @BindView(R.id.drawer_layout) DrawerLayout mDrawerLayout;
 
     EventReceiver mEventReceiver;
 
@@ -53,7 +45,7 @@ public class ProjectsActivity extends BaseActivity implements ATEActivityThemeCu
         public boolean onMenuItemClick(MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.action_search:
-                    NavigationManager.navigateToSearch(ProjectsActivity.this);
+                    Navigator.navigateToSearch(ProjectsActivity.this);
                     return true;
             }
             return false;
@@ -66,7 +58,7 @@ public class ProjectsActivity extends BaseActivity implements ATEActivityThemeCu
         setContentView(R.layout.activity_projects);
         ButterKnife.bind(this);
         mEventReceiver = new EventReceiver();
-        LabCoatApp.bus().register(mEventReceiver);
+        App.bus().register(mEventReceiver);
 
         mToolbar.setTitle(R.string.projects);
         mToolbar.setNavigationIcon(R.drawable.ic_menu_24dp);
@@ -85,7 +77,7 @@ public class ProjectsActivity extends BaseActivity implements ATEActivityThemeCu
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        LabCoatApp.bus().unregister(mEventReceiver);
+        App.bus().unregister(mEventReceiver);
     }
 
     private class EventReceiver {

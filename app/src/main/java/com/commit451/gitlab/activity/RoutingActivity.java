@@ -6,10 +6,15 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
+import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.navigation.DeepLinker;
+import com.commit451.gitlab.navigation.Navigator;
+import com.commit451.gitlab.navigation.RoutingNavigator;
+import com.commit451.gitlab.navigation.RoutingRouter;
 import com.commit451.gitlab.util.IntentUtil;
-import com.commit451.gitlab.navigation.NavigationManager;
+import com.novoda.simplechromecustomtabs.SimpleChromeCustomTabs;
 
 import timber.log.Timber;
 
@@ -17,6 +22,56 @@ import timber.log.Timber;
  * The easy way to do deep links. Just route everything here, and it does all the work.
  */
 public class RoutingActivity extends Activity {
+
+    RoutingRouter mRouter;
+
+    private final RoutingNavigator mNavigator = new RoutingNavigator() {
+        @Override
+        public void onRouteToIssue(String projectNamespace, String projectName, String issueIid) {
+            Navigator.navigateToIssue(RoutingActivity.this, projectNamespace, projectName, issueIid);
+        }
+
+        @Override
+        public void onRouteToCommit(String projectNamespace, String projectName, String commitSha) {
+            startActivity(LoadSomeInfoActivity.newIntent(RoutingActivity.this, projectNamespace, projectName, commitSha));
+            overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
+        }
+
+        @Override
+        public void onRouteToMergeRequest(String projectNamespace, String projectName, String mergeRequestId) {
+            startActivity(LoadSomeInfoActivity.newMergeRequestIntent(RoutingActivity.this, projectNamespace, projectName, mergeRequestId));
+            overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
+        }
+
+        @Override
+        public void onRouteToProject(String namespace, String projectId) {
+            Navigator.navigateToProject(RoutingActivity.this, projectId);
+        }
+
+        @Override
+        public void onRouteToBuild(String projectNamespace, String projectName, String buildNumber) {
+            startActivity(LoadSomeInfoActivity.newBuildIntent(RoutingActivity.this, projectNamespace, projectName, Long.valueOf(buildNumber)));
+            overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
+        }
+
+        @Override
+        public void onRouteToMilestone(String projectNamespace, String projectName, String milestoneNumber) {
+            startActivity(LoadSomeInfoActivity.newMilestoneIntent(RoutingActivity.this, projectNamespace, projectName, milestoneNumber));
+            overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
+        }
+
+        @Override
+        public void onRouteUnknown(Uri uri) {
+            if (mOriginalUri != null) {
+                IntentUtil.openPage(RoutingActivity.this, uri.toString());
+            } else {
+                Toast.makeText(RoutingActivity.this, R.string.deeplink_navigate_error, Toast.LENGTH_SHORT)
+                        .show();
+            }
+        }
+    };
+
+    Uri mOriginalUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +85,20 @@ public class RoutingActivity extends Activity {
         handleIntent(intent);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SimpleChromeCustomTabs.getInstance().connectTo(this);
+    }
+
+    @Override
+    protected void onPause() {
+        if (SimpleChromeCustomTabs.getInstance().isConnected()) {
+            SimpleChromeCustomTabs.getInstance().disconnectFrom(this);
+        }
+        super.onPause();
+    }
+
     private void handleIntent(Intent intent) {
         if (intent == null || intent.getData() == null) {
             Timber.e("No url was passed. How did that happen?");
@@ -38,96 +107,21 @@ public class RoutingActivity extends Activity {
         }
         //If it has an original uri, this means that it is an internal deep link and we
         //can still fall back to what the original uri was and just show it
-        Uri originalUri = intent.getParcelableExtra(DeepLinker.EXTRA_ORIGINAL_URI);
+        mOriginalUri = intent.getParcelableExtra(DeepLinker.EXTRA_ORIGINAL_URI);
         Uri link = intent.getData();
         Timber.d("Received deep link %s", link);
-        Timber.d("Original link was %s", originalUri);
-        boolean handled = false;
-        if (link.getPath().contains("issues")) {
-            Timber.d("Parsing as issue uri");
-            if (link.getLastPathSegment().equals("issues")) {
-                //this means it was just a link to something like
-                //gitlab.com/Commit451/LabCoat/issues
-                launchProject(link);
-                handled = true;
-            } else {
-                int indexOfIssuesPathSegment = -1;
-                for (int i=0; i<link.getPathSegments().size(); i++) {
-                    if (link.getPathSegments().get(i).equals("issues")) {
-                        indexOfIssuesPathSegment = i;
-                        break;
-                    }
-                }
-                //this is good, it means it is a link to an actual issue
-                String projectNamespace = link.getPathSegments().get(0);
-                String projectName = link.getPathSegments().get(1);
-                String lastSegment = link.getPathSegments().get(3);
-                //We have to do this cause there can be args on the url, such as
-                //https://gitlab.com/Commit451/LabCoat/issues/158#note_4560580
-                String[] stuff = lastSegment.split("#");
-                String issueIid = stuff[0];
-                Timber.d("Navigating to project %s with issue number %s", projectName, issueIid);
-                NavigationManager.navigateToIssue(this, projectNamespace, projectName, issueIid);
-                handled = true;
-            }
-        } else if (link.getPath().contains("commit")) {
-            if (link.getPathSegments().size() == 4) {
-                String projectNamespace = link.getPathSegments().get(0);
-                String projectName = link.getPathSegments().get(1);
-                String commitSha = link.getPathSegments().get(3);
-                startActivity(LoadSomeInfoActivity.newInstance(this, projectNamespace, projectName, commitSha));
-                overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
-                handled = true;
-            }
-        } else if (link.getPath().contains("commits")) {
-            launchProject(link);
-            handled = true;
-        } else if (link.getPath().contains("compare")) {
-            //comparing two commit shas
-            String[] shas = link.getLastPathSegment().split("...");
-            //TODO do the rest
-        } else if (link.getPath().contains("merge_requests")) {
-            for (int i=0; i<link.getPathSegments().size(); i++) {
-                if (link.getPathSegments().get(i).equals("merge_requests")) {
-                    if (i < link.getPathSegments().size() - 1) {
-                        String projectNamespace = link.getPathSegments().get(i-2);
-                        String projectName = link.getPathSegments().get(i-1);
-                        String mergeRequestId = link.getPathSegments().get(i+1);
-                        startActivity(LoadSomeInfoActivity.newMergeRequestInstance(this, projectNamespace, projectName, mergeRequestId));
-                        overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
-                        handled = true;
-                        break;
-                    } else {
-                        launchProject(link);
-                        handled = true;
-                        break;
-                    }
-                }
-            }
-        }
+        Timber.d("Original link was %s", mOriginalUri);
 
-        if (!handled) {
-            if (originalUri != null) {
-                launchOriginalUri(originalUri);
-            } else {
-                showError();
-            }
+        //okay so last thing, if the user has followed a link, but the user
+        //is not actually signed in, we want to direct them to signin
+        if (App.instance().getAccount() == null && Account.getAccounts(this).isEmpty()) {
+            Navigator.navigateToLogin(this);
+            finish();
+            return;
         }
+        mRouter = new RoutingRouter(mNavigator);
+        mRouter.route(link);
         finish();
-    }
-
-    private void launchProject(Uri uri) {
-        String projectId = uri.getPathSegments().get(2);
-        NavigationManager.navigateToProject(this, projectId);
-    }
-
-    private void launchOriginalUri(Uri uri) {
-        IntentUtil.openPage(this, uri.toString());
-    }
-
-    private void showError() {
-        Toast.makeText(RoutingActivity.this, R.string.deeplink_navigate_error, Toast.LENGTH_SHORT)
-                .show();
     }
 }
 

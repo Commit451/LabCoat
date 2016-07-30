@@ -6,13 +6,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.afollestad.appthemeengine.ATE;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.api.Milestone;
-import com.commit451.gitlab.util.AppThemeUtil;
-import com.commit451.gitlab.util.DateUtils;
+import com.commit451.gitlab.util.DateUtil;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -26,8 +24,8 @@ public class MilestoneViewHolder extends RecyclerView.ViewHolder {
         return new MilestoneViewHolder(view);
     }
 
-    @Bind(R.id.title) TextView mTitleView;
-    @Bind(R.id.due_date) TextView mDueDateView;
+    @BindView(R.id.title) TextView mTitleView;
+    @BindView(R.id.due_date) TextView mDueDateView;
 
     public MilestoneViewHolder(View view) {
         super(view);
@@ -38,7 +36,7 @@ public class MilestoneViewHolder extends RecyclerView.ViewHolder {
         mTitleView.setText(milestone.getTitle());
         if (milestone.getDueDate() != null) {
             mDueDateView.setVisibility(View.VISIBLE);
-            CharSequence due = DateUtils.getRelativeTimeSpanString(itemView.getContext(), milestone.getDueDate());
+            CharSequence due = DateUtil.getRelativeTimeSpanString(itemView.getContext(), milestone.getDueDate());
             mDueDateView.setText(String.format(itemView.getResources().getString(R.string.due_date_formatted), due));
         } else {
             mDueDateView.setVisibility(View.GONE);

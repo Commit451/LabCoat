@@ -4,8 +4,7 @@ import android.content.Context;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.AttributeSet;
 
-import com.afollestad.appthemeengine.Config;
-import com.commit451.gitlab.util.AppThemeUtil;
+import com.commit451.gitlab.R;
 
 
 /**
@@ -24,8 +23,7 @@ public class LabCoatSwipeRefreshLayout extends SwipeRefreshLayout {
     }
 
     private void init() {
-        int accentColor = Config.accentColor(getContext(),
-                AppThemeUtil.resolveThemeKey(getContext()));
-        setColorSchemeColors(accentColor, accentColor, accentColor);
+        int[] colors = getResources().getIntArray(R.array.cool_colors);
+        setColorSchemeColors(colors);
     }
 }

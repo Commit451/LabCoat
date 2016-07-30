@@ -9,16 +9,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.afollestad.appthemeengine.ATE;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Issue;
 import com.commit451.gitlab.transformation.CircleTransformation;
-import com.commit451.gitlab.util.AppThemeUtil;
-import com.commit451.gitlab.util.DateUtils;
+import com.commit451.gitlab.util.DateUtil;
 import com.commit451.gitlab.util.ImageUtil;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import in.uncod.android.bypass.Bypass;
 
@@ -33,11 +31,11 @@ public class IssueHeaderViewHolder extends RecyclerView.ViewHolder {
         return new IssueHeaderViewHolder(view);
     }
 
-    @Bind(R.id.description) TextView mDescriptionView;
-    @Bind(R.id.author_image) ImageView mAuthorImageView;
-    @Bind(R.id.author) TextView mAuthorView;
-    @Bind(R.id.milestone_root) ViewGroup mMilestoneRoot;
-    @Bind(R.id.milestone_text) TextView mMilestoneText;
+    @BindView(R.id.description) TextView mDescriptionView;
+    @BindView(R.id.author_image) ImageView mAuthorImageView;
+    @BindView(R.id.author) TextView mAuthorView;
+    @BindView(R.id.milestone_root) ViewGroup mMilestoneRoot;
+    @BindView(R.id.milestone_text) TextView mMilestoneText;
 
     private final Bypass mBypass;
 
@@ -56,7 +54,7 @@ public class IssueHeaderViewHolder extends RecyclerView.ViewHolder {
             mDescriptionView.setMovementMethod(LinkMovementMethod.getInstance());
         }
 
-        GitLabClient.getPicasso()
+        App.instance().getPicasso()
                 .load(ImageUtil.getAvatarUrl(issue.getAuthor(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size)))
                 .transform(new CircleTransformation())
                 .into(mAuthorImageView);
@@ -67,7 +65,7 @@ public class IssueHeaderViewHolder extends RecyclerView.ViewHolder {
         }
         author += itemView.getResources().getString(R.string.created_issue);
         if (issue.getCreatedAt() != null) {
-            author = author + " " + DateUtils.getRelativeTimeSpanString(itemView.getContext(), issue.getCreatedAt());
+            author = author + " " + DateUtil.getRelativeTimeSpanString(itemView.getContext(), issue.getCreatedAt());
         }
         mAuthorView.setText(author);
         if (issue.getMilestone() != null) {

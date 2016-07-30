@@ -8,14 +8,12 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
-import com.afollestad.appthemeengine.ATE;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.api.GitLabClient;
 import com.commit451.gitlab.model.api.Member;
-import com.commit451.gitlab.util.AppThemeUtil;
 import com.commit451.gitlab.util.ImageUtil;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -29,10 +27,10 @@ public class ProjectMemberViewHolder extends RecyclerView.ViewHolder{
         return new ProjectMemberViewHolder(view);
     }
 
-    @Bind(R.id.overflow) View mOverflowView;
-    @Bind(R.id.name) TextView mUsernameView;
-    @Bind(R.id.access) TextView mAccessView;
-    @Bind(R.id.image) public ImageView mImageView;
+    @BindView(R.id.overflow) View mOverflowView;
+    @BindView(R.id.name) TextView mUsernameView;
+    @BindView(R.id.access) TextView mAccessView;
+    @BindView(R.id.image) public ImageView mImageView;
 
     public final PopupMenu mPopupMenu;
 
@@ -55,7 +53,7 @@ public class ProjectMemberViewHolder extends RecyclerView.ViewHolder{
         mUsernameView.setText(member.getUsername());
         mAccessView.setText(Member.getAccessLevel(member.getAccessLevel()));
 
-        GitLabClient.getPicasso()
+        App.instance().getPicasso()
                 .load(ImageUtil.getAvatarUrl(member, itemView.getResources().getDimensionPixelSize(R.dimen.user_header_image_size)))
                 .into(mImageView);
     }
