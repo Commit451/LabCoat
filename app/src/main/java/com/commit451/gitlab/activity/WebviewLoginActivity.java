@@ -2,29 +2,23 @@ package com.commit451.gitlab.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.webkit.JavascriptInterface;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
+import android.webkit.*;
 import android.widget.Toast;
 
 import com.commit451.gitlab.R;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
-import timber.log.Timber;
 
 /**
  * Shows user a WebView for login and intercepts the headers to get the private token. Hmmmm
  */
 public class WebviewLoginActivity extends BaseActivity {
-
-    private static final String JAVASCRIPT_INTERFACE_EXTRACTOR = "Extractor";
-
-    private static final String KEY_URL= "url";
+    private static final String JAVASCRIPT_INTERFACE_EXTRACTOR = "TokenExtractor";
+    private static final String KEY_URL = "url";
 
     public static Intent newInstance(Context context, String url) {
         Intent intent = new Intent(context, WebviewLoginActivity.class);
@@ -32,65 +26,77 @@ public class WebviewLoginActivity extends BaseActivity {
         return intent;
     }
 
-    @Bind(R.id.toolbar)
-    Toolbar mToolbar;
-    @Bind(R.id.webview)
-    WebView mWebView;
-
-    @OnClick(R.id.button_get_it)
-    void onGetItClicked() {
-        mWebView.loadUrl("javascript:" + JAVASCRIPT_INTERFACE_EXTRACTOR + ".showHTML" +
-                "('<html>'+document.getElementsByTagName('html')[0].innerHTML+'</html>');");
-    }
     String mUrl;
+
+    @BindView(R.id.toolbar)
+    Toolbar mToolbar;
+    @BindView(R.id.webview)
+    WebView mWebView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mUrl = getIntent().getStringExtra(KEY_URL);
-        //TODO remove
-        mUrl = "https://gitlab.com/";
+
         setContentView(R.layout.activity_webview_login);
         ButterKnife.bind(this);
 
+        mUrl = getIntent().getStringExtra(KEY_URL);
+        mUrl = "https://gitlab.com/"; // TODO: remove
+        if (mUrl.endsWith("/")) {
+            mUrl = mUrl.substring(0, mUrl.length() - 1);
+        }
+
         mToolbar.setTitle("Login -> ");
+
         WebSettings settings = mWebView.getSettings();
         settings.setJavaScriptEnabled(true);
         mWebView.addJavascriptInterface(new HtmlExtractorJavaScriptInterface(), JAVASCRIPT_INTERFACE_EXTRACTOR);
         mWebView.setWebViewClient(new YourWebClient());
-        mWebView.loadUrl(mUrl + "users/sign_in");
+        mWebView.clearCache(true);
+        mWebView.clearFormData();
+        mWebView.clearHistory();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            CookieManager.getInstance().removeAllCookies(null);
+            CookieManager.getInstance().flush();
+        } else {
+            CookieSyncManager cookieSyncMngr=CookieSyncManager.createInstance(this);
+            cookieSyncMngr.startSync();
+            CookieManager cookieManager=CookieManager.getInstance();
+            cookieManager.removeAllCookie();
+            cookieManager.removeSessionCookie();
+            cookieSyncMngr.stopSync();
+            cookieSyncMngr.sync();
+        }
+
+        mWebView.loadUrl(mUrl + "/users/sign_in");
     }
 
-    // this will be the webclient that will manage the webview
     private class YourWebClient extends WebViewClient {
-
-        // you want to catch when an URL is going to be loaded
-        public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            Timber.d("Loading url %s", url);
-            if (url.equals(mUrl.replace("/", ""))) {
-                mWebView.loadUrl(mUrl + "/profile/account");
-                return true;
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            if (url.endsWith("/")) {
+                url = url.substring(0, url.length() - 1);
             }
 
-            return false;
+            if (url.equals(mUrl)) {
+                mWebView.loadUrl(mUrl + "/profile/account");
+                return;
+            }
+
+            if (url.equals(mUrl + "/profile/account")) {
+                mWebView.loadUrl("javascript:" + JAVASCRIPT_INTERFACE_EXTRACTOR + ".extract" +
+                        "(document.getElementById('token').value);");
+                return;
+            }
+
+            super.onPageFinished(view, url);
         }
     }
 
     private class HtmlExtractorJavaScriptInterface {
-
-        public HtmlExtractorJavaScriptInterface() {
-        }
-
         @JavascriptInterface
-        public void showHTML(String html) {
-            Timber.d("html" + html);
-            //Parse the token out of the HTML
-            String startOfToken = "<input type=\"text\" name=\"token\" id=\"token\" value=\"";
-            String endOfToken = "\" class=\"form-control\"";
-
-            int indexOfStart = html.indexOf(startOfToken) + startOfToken.length();
-            int indexOfEnd = html.indexOf(endOfToken, indexOfStart);
-            String token = html.substring(indexOfStart, indexOfEnd);
+        public void extract(String token) {
             Toast.makeText(WebviewLoginActivity.this, "Token:" + token, Toast.LENGTH_LONG)
                     .show();
         }
