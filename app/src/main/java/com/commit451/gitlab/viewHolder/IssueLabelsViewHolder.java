@@ -5,9 +5,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.commit451.adapterflowlayout.AdapterFlowLayout;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.IssueLabelsAdapter;
-import com.commit451.gitlab.view.AdapterFlowLayout;
 
 import java.util.Collection;
 

@@ -17,6 +17,7 @@ import android.widget.FrameLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.commit451.adapterflowlayout.AdapterFlowLayout;
 import com.commit451.easycallback.EasyCallback;
 import com.commit451.easycallback.NullBodyException;
 import com.commit451.gitlab.App;
@@ -32,7 +33,6 @@ import com.commit451.gitlab.model.api.Member;
 import com.commit451.gitlab.model.api.Milestone;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.navigation.Navigator;
-import com.commit451.gitlab.view.AdapterFlowLayout;
 import com.commit451.teleprinter.Teleprinter;
 
 import org.parceler.Parcels;

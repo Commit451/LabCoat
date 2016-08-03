@@ -140,7 +140,7 @@
                     android:visibility="gone"
                     android:background="?attr/selectableItemBackground">
 
-                    <com.commit451.gitlab.view.AdapterFlowLayout
+                    <com.commit451.adapterflowlayout.AdapterFlowLayout
                         android:id="@+id/list_labels"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
