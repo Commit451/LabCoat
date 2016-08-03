@@ -14,12 +14,7 @@ repositories {
 
 apply plugin: 'com.android.application'
 apply plugin: 'com.neenbedankt.android-apt'
-if (project.hasProperty("LABCOAT_FABRIC_KEY")) {
-    System.out.println("Has fabric key. Enabling fabric plugin")
-    apply plugin: 'io.fabric'
-} else {
-    System.out.println("No fabric key found. Disabling fabric plugin")
-}
+apply plugin: 'io.fabric'
 
 def versionMajor = 2
 def versionMinor = 2
