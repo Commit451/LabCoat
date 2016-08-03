@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.Keep;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.webkit.CookieManager;
@@ -106,7 +107,9 @@ public class WebviewLoginActivity extends BaseActivity {
     }
 
     private class HtmlExtractorJavaScriptInterface {
+
         @JavascriptInterface
+        @Keep
         public void extract(String token) {
             Intent data = new Intent();
             data.putExtra(EXTRA_TOKEN, token);
