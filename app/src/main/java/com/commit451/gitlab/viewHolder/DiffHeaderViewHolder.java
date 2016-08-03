@@ -1,6 +1,7 @@
 package com.commit451.gitlab.viewHolder;
 
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,7 +59,7 @@ public class DiffHeaderViewHolder extends RecyclerView.ViewHolder {
      * (the commit message also contains the commit title)
      */
     private String extractMessage(String title, String message) {
-        if (message != null) {
+        if (!TextUtils.isEmpty(message)) {
             boolean ellipsis = title.endsWith("\u2026") && message.charAt(title.length() - 1) != '\u2026';
             String trailing = message.substring(title.length() - (ellipsis ? 1 : 0));
             return trailing.equals("\u2026") ? "" : ((ellipsis ? "\u2026" : "") + trailing).trim();

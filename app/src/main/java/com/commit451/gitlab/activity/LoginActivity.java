@@ -240,7 +240,7 @@ public class LoginActivity extends BaseActivity {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
-                    case R.id.action_private_token:
+                    case R.id.action_advanced_login:
                         boolean isNormalLogin = mNormalLogin.getVisibility() == View.VISIBLE;
                         if (isNormalLogin) {
                             mNormalLogin.setVisibility(View.GONE);
@@ -250,7 +250,7 @@ public class LoginActivity extends BaseActivity {
                         } else {
                             mNormalLogin.setVisibility(View.VISIBLE);
                             mTokenLogin.setVisibility(View.GONE);
-                            item.setTitle(R.string.token_link);
+                            item.setTitle(R.string.advanced_login);
                             mIsNormalLogin = true;
                         }
                         return true;

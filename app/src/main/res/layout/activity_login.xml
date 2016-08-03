@@ -32,7 +32,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <EditText
+            <android.support.design.widget.TextInputEditText
                 android:id="@+id/url_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -40,9 +40,7 @@
                 android:layout_centerHorizontal="true"
                 android:hint="@string/url_hint"
                 android:inputType="textUri"
-                android:text="@string/url_gitlab">
-
-            </EditText>
+                android:text="@string/url_gitlab"/>
 
         </android.support.design.widget.TextInputLayout>
 
@@ -74,7 +72,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <EditText
+                <android.support.design.widget.TextInputEditText
                     android:id="@+id/password_input"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -98,7 +96,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <EditText
+                <android.support.design.widget.TextInputEditText
                     android:id="@+id/token_input"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

@@ -126,7 +126,11 @@ public class BuildDescriptionFragment extends ButterKnifeFragment {
         if (finishedTime == null) {
             finishedTime = new Date();
         }
-        String timeTaken = DateUtil.getTimeTaken(build.getStartedAt(), finishedTime);
+        Date startedTime = build.getStartedAt();
+        if (startedTime == null) {
+            startedTime = new Date();
+        }
+        String timeTaken = DateUtil.getTimeTaken(startedTime, finishedTime);
         String duration = String.format(getString(R.string.build_duration), timeTaken);
         mTextDuration.setText(duration);
         String created = String.format(getString(R.string.build_created), DateUtil.getRelativeTimeSpanString(getActivity(), build.getCreatedAt()));

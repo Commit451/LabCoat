@@ -3,8 +3,8 @@
       xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_private_token"
+        android:id="@+id/action_advanced_login"
         app:showAsAction="never"
-        android:title="@string/token_link"/>
+        android:title="@string/advanced_login"/>
 
 </menu>

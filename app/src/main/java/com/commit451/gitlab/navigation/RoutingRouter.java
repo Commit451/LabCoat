@@ -19,6 +19,10 @@ public class RoutingRouter {
             mNavigator.onRouteUnknown(null);
             return;
         }
+        if (link.getPath() == null) {
+            mNavigator.onRouteUnknown(link);
+            return;
+        }
         if (link.getPath().contains("issues")) {
             if (link.getLastPathSegment().equals("issues")) {
                 //this means it was just a link to something like
