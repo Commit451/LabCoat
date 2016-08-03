@@ -12,5 +12,4 @@ before_script:
 
 build:
   script:
-    # Run the build script, excluding the fabric tasks since they will fail with no proper API key
-    - ./gradlew build -x fabricGenerateResourcesRelease -x crashlyticsStoreDeobsRelease -x crashlyticsUploadDeobsRelease --stacktrace
+    - ./gradlew testFdroidDebug --stacktrace
