@@ -15,8 +15,7 @@ import com.commit451.gitlab.api.OkHttpClientFactory;
 import com.commit451.gitlab.api.PicassoFactory;
 import com.commit451.gitlab.api.converter.UriTypeConverter;
 import com.commit451.gitlab.model.Account;
-import com.crashlytics.android.Crashlytics;
-import com.crashlytics.android.core.CrashlyticsCore;
+import com.commit451.gitlab.util.FabricUtil;
 import com.novoda.simplechromecustomtabs.SimpleChromeCustomTabs;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.otto.Bus;
@@ -27,7 +26,6 @@ import net.danlew.android.joda.JodaTimeAndroid;
 import java.util.List;
 import java.util.Locale;
 
-import io.fabric.sdk.android.Fabric;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import timber.log.Timber;
@@ -88,10 +86,7 @@ public class App extends Application {
 
     @VisibleForTesting
     protected void setupCrashReporting() {
-        CrashlyticsCore core = new CrashlyticsCore.Builder()
-                .disabled(BuildConfig.DEBUG)
-                .build();
-        Fabric.with(this, new Crashlytics.Builder().core(core).build());
+        FabricUtil.init(this);
     }
 
     @VisibleForTesting
