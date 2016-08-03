@@ -31,6 +31,7 @@ import com.commit451.gitlab.activity.ProjectsActivity;
 import com.commit451.gitlab.activity.SearchActivity;
 import com.commit451.gitlab.activity.SettingsActivity;
 import com.commit451.gitlab.activity.UserActivity;
+import com.commit451.gitlab.activity.WebviewLoginActivity;
 import com.commit451.gitlab.data.Prefs;
 import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.model.api.Group;
@@ -97,6 +98,11 @@ public class Navigator {
 
     public static void navigateToLogin(Activity activity, boolean showClose) {
         activity.startActivity(LoginActivity.newIntent(activity, showClose));
+    }
+
+    public static void navigateToWebSignin(Activity activity, String url, int requestCode) {
+        Intent intent = WebviewLoginActivity.newIntent(activity, url);
+        activity.startActivityForResult(intent, requestCode);
     }
 
     public static void navigateToSearch(Activity activity) {

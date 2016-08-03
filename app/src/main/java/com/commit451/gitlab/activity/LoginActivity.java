@@ -41,11 +41,11 @@ import com.commit451.gitlab.event.ReloadDataEvent;
 import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.model.api.UserFull;
 import com.commit451.gitlab.model.api.UserLogin;
+import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.ssl.CustomHostnameVerifier;
 import com.commit451.gitlab.ssl.CustomKeyManager;
 import com.commit451.gitlab.ssl.X509CertificateException;
 import com.commit451.gitlab.ssl.X509Util;
-import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.teleprinter.Teleprinter;
 
 import java.net.ConnectException;
@@ -77,7 +77,8 @@ public class LoginActivity extends BaseActivity {
 
     private static final String EXTRA_SHOW_CLOSE = "show_close";
 
-    private static final int PERMISSION_REQUEST_GET_ACCOUNTS = 1337;
+    private static final int REQUEST_PERMISSION_GET_ACCOUNTS = 1337;
+    private static final int REQUEST_PRIVATE_TOKEN = 123;
     private static Pattern sTokenPattern = Pattern.compile("^[A-Za-z0-9-_]*$");
 
     public static Intent newIntent(Context context) {
@@ -129,6 +130,53 @@ public class LoginActivity extends BaseActivity {
         }
     };
 
+    private final Callback<UserLogin> mLoginCallback = new Callback<UserLogin>() {
+
+        @Override
+        public void onResponse(Call<UserLogin> call, Response<UserLogin> response) {
+            if (!response.isSuccessful() || response.body() == null) {
+                handleConnectionResponse(response);
+                return;
+            }
+
+            mAccount.setPrivateToken(response.body().getPrivateToken());
+            loadUser();
+        }
+
+        @Override
+        public void onFailure(Call<UserLogin> call, Throwable t) {
+            Timber.e(t, null);
+            handleConnectionError(t);
+        }
+    };
+
+    private final Callback<UserFull> mTestUserCallback = new Callback<UserFull>() {
+
+        @Override
+        public void onResponse(Call<UserFull> call, Response<UserFull> response) {
+            mProgress.setVisibility(View.GONE);
+            if (!response.isSuccessful() || response.body() == null) {
+                handleConnectionResponse(response);
+                return;
+            }
+            mAccount.setUser(response.body());
+            mAccount.setLastUsed(new Date());
+            Prefs.addAccount(LoginActivity.this, mAccount);
+            App.instance().setAccount(mAccount);
+            App.bus().post(new LoginEvent(mAccount));
+            //This is mostly for if projects already exists, then we will reload the data
+            App.bus().post(new ReloadDataEvent());
+            Navigator.navigateToStartingActivity(LoginActivity.this);
+            finish();
+        }
+
+        @Override
+        public void onFailure(Call<UserFull> call, Throwable t) {
+            Timber.e(t, null);
+            handleConnectionError(t);
+        }
+    };
+
     @OnClick(R.id.login_button)
     public void onLoginClick() {
         mTeleprinter.hideKeyboard();
@@ -137,31 +185,13 @@ public class LoginActivity extends BaseActivity {
             return;
         }
 
-        String url = mUrlInput.getText().toString();
-        Uri uri = null;
-        try {
-            if (HttpUrl.parse(url) != null) {
-                uri = Uri.parse(url);
-            }
-        } catch (Exception e) {
-            Timber.e(e, null);
-        }
-
-        if (uri == null) {
-            mUrlHint.setError(getString(R.string.not_a_valid_url));
+        if (!verifyUrl()) {
             return;
-        } else {
-            mUrlHint.setError(null);
         }
-        if (url.charAt(url.length()-1) != '/') {
-            mUrlHint.setError(getString(R.string.please_end_your_url_with_a_slash));
-            return;
-        } else {
-            mUrlHint.setError(null);
-        }
+        Uri uri = Uri.parse(mUrlHint.getEditText().getText().toString());
 
         if (mIsNormalLogin) {
-            if (hasEmptyFields(mUrlHint, mUserHint, mPasswordHint)) {
+            if (hasEmptyFields(mUserHint, mPasswordHint)) {
                 return;
             }
         } else {
@@ -188,109 +218,13 @@ public class LoginActivity extends BaseActivity {
         login();
     }
 
-    private void login() {
-        // This seems useless - But believe me, it makes everything work! Don't remove it.
-        // (OkHttpClientFactory caches the clients and needs a new account to recreate them)
-
-        Account newAccount = new Account();
-        newAccount.setServerUrl(mAccount.getServerUrl());
-        newAccount.setTrustedCertificate(mAccount.getTrustedCertificate());
-        newAccount.setTrustedHostname(mAccount.getTrustedHostname());
-        newAccount.setPrivateKeyAlias(mAccount.getPrivateKeyAlias());
-        newAccount.setAuthorizationHeader(mAccount.getAuthorizationHeader());
-        mAccount = newAccount;
-
-        if (mIsNormalLogin) {
-            connect(true);
-        } else {
-            connect(false);
+    @OnClick(R.id.button_open_login_page)
+    void onOpenLoginPageClicked() {
+        if (verifyUrl()) {
+            String url = mUrlHint.getEditText().getText().toString();
+            Navigator.navigateToWebSignin(this, url, REQUEST_PRIVATE_TOKEN);
         }
     }
-
-    private void loginWithPrivateToken() {
-        KeyChain.choosePrivateKeyAlias(this, new KeyChainAliasCallback() {
-            @Override
-            public void alias(String alias) {
-                mAccount.setPrivateKeyAlias(alias);
-
-                if (alias != null) {
-                    if (!CustomKeyManager.isCached(alias)) {
-                        CustomKeyManager.cache(LoginActivity.this, alias, new CustomKeyManager.KeyCallback() {
-                            @Override
-                            public void onSuccess(CustomKeyManager.KeyEntry entry) {
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        login();
-                                    }
-                                });
-                            }
-
-                            @Override
-                            public void onError(Exception e) {
-                                mAccount.setPrivateKeyAlias(null);
-                                Timber.e(e, "Failed to load private key");
-                            }
-                        });
-                    } else {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                login();
-                            }
-                        });
-                    }
-                }
-            }
-        }, null, null, mAccount.getServerUrl().getHost(), mAccount.getServerUrl().getPort(), null);
-    }
-
-    private Callback<UserLogin> mLoginCallback = new Callback<UserLogin>() {
-
-        @Override
-        public void onResponse(Call<UserLogin> call, Response<UserLogin> response) {
-            if (!response.isSuccessful() || response.body() == null) {
-                handleConnectionResponse(response);
-                return;
-            }
-
-            mAccount.setPrivateToken(response.body().getPrivateToken());
-            loadUser();
-        }
-
-        @Override
-        public void onFailure(Call<UserLogin> call, Throwable t) {
-            Timber.e(t, null);
-            handleConnectionError(t);
-        }
-    };
-
-    private Callback<UserFull> mTestUserCallback = new Callback<UserFull>() {
-
-        @Override
-        public void onResponse(Call<UserFull> call, Response<UserFull> response) {
-            mProgress.setVisibility(View.GONE);
-            if (!response.isSuccessful() || response.body() == null) {
-                handleConnectionResponse(response);
-                return;
-            }
-            mAccount.setUser(response.body());
-            mAccount.setLastUsed(new Date());
-            Prefs.addAccount(LoginActivity.this, mAccount);
-            App.instance().setAccount(mAccount);
-            App.bus().post(new LoginEvent(mAccount));
-            //This is mostly for if projects already exists, then we will reload the data
-            App.bus().post(new ReloadDataEvent());
-            Navigator.navigateToStartingActivity(LoginActivity.this);
-            finish();
-        }
-
-        @Override
-        public void onFailure(Call<UserFull> call, Throwable t) {
-            Timber.e(t, null);
-            handleConnectionError(t);
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -350,18 +284,31 @@ public class LoginActivity extends BaseActivity {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.GET_ACCOUNTS) == PackageManager.PERMISSION_GRANTED) {
             retrieveAccounts();
         } else {
-            requestPermissions(new String[]{Manifest.permission.GET_ACCOUNTS}, PERMISSION_REQUEST_GET_ACCOUNTS);
+            requestPermissions(new String[]{Manifest.permission.GET_ACCOUNTS}, REQUEST_PERMISSION_GET_ACCOUNTS);
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         switch (requestCode) {
-            case PERMISSION_REQUEST_GET_ACCOUNTS: {
+            case REQUEST_PERMISSION_GET_ACCOUNTS: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     retrieveAccounts();
                 }
             }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_PRIVATE_TOKEN:
+                if (resultCode == RESULT_OK) {
+                    String token = data.getStringExtra(WebviewLoginActivity.EXTRA_TOKEN);
+                    mTokenHint.getEditText().setText(token);
+                }
+                break;
         }
     }
 
@@ -393,6 +340,89 @@ public class LoginActivity extends BaseActivity {
     private void connectByToken() {
         mAccount.setPrivateToken(mTokenInput.getText().toString());
         loadUser();
+    }
+
+    private void loginWithPrivateToken() {
+        KeyChain.choosePrivateKeyAlias(this, new KeyChainAliasCallback() {
+            @Override
+            public void alias(String alias) {
+                mAccount.setPrivateKeyAlias(alias);
+
+                if (alias != null) {
+                    if (!CustomKeyManager.isCached(alias)) {
+                        CustomKeyManager.cache(LoginActivity.this, alias, new CustomKeyManager.KeyCallback() {
+                            @Override
+                            public void onSuccess(CustomKeyManager.KeyEntry entry) {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        login();
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onError(Exception e) {
+                                mAccount.setPrivateKeyAlias(null);
+                                Timber.e(e, "Failed to load private key");
+                            }
+                        });
+                    } else {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                login();
+                            }
+                        });
+                    }
+                }
+            }
+        }, null, null, mAccount.getServerUrl().getHost(), mAccount.getServerUrl().getPort(), null);
+    }
+
+    private boolean verifyUrl() {
+        String url = mUrlInput.getText().toString();
+        Uri uri = null;
+        try {
+            if (HttpUrl.parse(url) != null) {
+                uri = Uri.parse(url);
+            }
+        } catch (Exception e) {
+            Timber.e(e, null);
+        }
+
+        if (uri == null) {
+            mUrlHint.setError(getString(R.string.not_a_valid_url));
+            return false;
+        } else {
+            mUrlHint.setError(null);
+        }
+        if (url.charAt(url.length()-1) != '/') {
+            mUrlHint.setError(getString(R.string.please_end_your_url_with_a_slash));
+            return false;
+        } else {
+            mUrlHint.setError(null);
+        }
+        return true;
+    }
+
+    private void login() {
+        // This seems useless - But believe me, it makes everything work! Don't remove it.
+        // (OkHttpClientFactory caches the clients and needs a new account to recreate them)
+
+        Account newAccount = new Account();
+        newAccount.setServerUrl(mAccount.getServerUrl());
+        newAccount.setTrustedCertificate(mAccount.getTrustedCertificate());
+        newAccount.setTrustedHostname(mAccount.getTrustedHostname());
+        newAccount.setPrivateKeyAlias(mAccount.getPrivateKeyAlias());
+        newAccount.setAuthorizationHeader(mAccount.getAuthorizationHeader());
+        mAccount = newAccount;
+
+        if (mIsNormalLogin) {
+            connect(true);
+        } else {
+            connect(false);
+        }
     }
 
     private void loadUser() {
@@ -545,7 +575,7 @@ public class LoginActivity extends BaseActivity {
      * Manually retrieve the accounts, typically used for API 23+ after getting the permission. Called automatically
      * on creation, but needs to be recalled if the permission is granted later
      */
-    public void retrieveAccounts() {
+    private void retrieveAccounts() {
         Collection<String> accounts = getEmailAccounts();
         if (accounts != null && !accounts.isEmpty()) {
             ArrayAdapter<String> adapter = new ArrayAdapter<>(this,

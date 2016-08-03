@@ -5,8 +5,13 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.webkit.*;
-import android.widget.Toast;
+import android.view.View;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
+import android.webkit.JavascriptInterface;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import com.commit451.gitlab.R;
 
@@ -17,10 +22,11 @@ import butterknife.ButterKnife;
  * Shows user a WebView for login and intercepts the headers to get the private token. Hmmmm
  */
 public class WebviewLoginActivity extends BaseActivity {
+    public static final String EXTRA_TOKEN = "token";
     private static final String JAVASCRIPT_INTERFACE_EXTRACTOR = "TokenExtractor";
     private static final String KEY_URL = "url";
 
-    public static Intent newInstance(Context context, String url) {
+    public static Intent newIntent(Context context, String url) {
         Intent intent = new Intent(context, WebviewLoginActivity.class);
         intent.putExtra(KEY_URL, url);
         return intent;
@@ -41,12 +47,17 @@ public class WebviewLoginActivity extends BaseActivity {
         ButterKnife.bind(this);
 
         mUrl = getIntent().getStringExtra(KEY_URL);
-        mUrl = "https://gitlab.com/"; // TODO: remove
         if (mUrl.endsWith("/")) {
             mUrl = mUrl.substring(0, mUrl.length() - 1);
         }
 
-        mToolbar.setTitle("Login -> ");
+        mToolbar.setNavigationIcon(R.drawable.ic_back_24dp);
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
 
         WebSettings settings = mWebView.getSettings();
         settings.setJavaScriptEnabled(true);
@@ -97,8 +108,10 @@ public class WebviewLoginActivity extends BaseActivity {
     private class HtmlExtractorJavaScriptInterface {
         @JavascriptInterface
         public void extract(String token) {
-            Toast.makeText(WebviewLoginActivity.this, "Token:" + token, Toast.LENGTH_LONG)
-                    .show();
+            Intent data = new Intent();
+            data.putExtra(EXTRA_TOKEN, token);
+            setResult(RESULT_OK, data);
+            finish();
         }
     }
 }

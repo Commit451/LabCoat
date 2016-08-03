@@ -24,6 +24,11 @@
             android:noHistory="true"
             android:theme="@android:style/Theme.NoDisplay">
 
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+
         </activity>
 
         <activity
@@ -64,13 +69,7 @@
         <activity android:name=".activity.SettingsActivity"/>
         <activity android:name=".activity.AddLabelActivity"/>
         <activity android:name=".activity.AddNewLabelActivity"/>
-        <activity android:name=".activity.WebviewLoginActivity">
-
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN"/>
-            <category android:name="android.intent.category.LAUNCHER"/>
-        </intent-filter>
-        </activity>
+        <activity android:name=".activity.WebviewLoginActivity"/>
         <activity
             android:name=".activity.RoutingActivity"
             android:launchMode="singleTask"
