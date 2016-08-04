@@ -12,14 +12,19 @@ import okhttp3.OkHttpClient;
  */
 public final class OkHttpClientFactory {
 
+    public static OkHttpClient.Builder create(Account account) {
+        return create(account, true);
+    }
+
     /**
      * Creates an {@link OkHttpClient} configured with the account configuration
      *
-     * @param account the account
+     * @param account                    the account
+     * @param includeSignInAuthenticator include a sign in authenticator that checks signed in status
      * @return a configured {@link okhttp3.OkHttpClient.Builder}
      */
-    public static OkHttpClient.Builder create(Account account) {
-        //Do we even need a custom trust manager?
+    public static OkHttpClient.Builder create(Account account, boolean includeSignInAuthenticator) {
+        // Do we even need a custom trust manager?
         // Yep. Otherwise SSL won't work properly with some configurations :) -Michi
         CustomTrustManager customTrustManager = new CustomTrustManager();
         customTrustManager.setTrustedCertificate(account.getTrustedCertificate());
@@ -27,12 +32,16 @@ public final class OkHttpClientFactory {
         customTrustManager.setPrivateKeyAlias(account.getPrivateKeyAlias());
 
         OpenSignInAuthenticator authenticator = new OpenSignInAuthenticator(account);
-        return new OkHttpClient.Builder()
+        OkHttpClient.Builder builder = new OkHttpClient.Builder()
                 .connectTimeout(30, TimeUnit.SECONDS)
-                .authenticator(authenticator)
-                .proxyAuthenticator(authenticator)
                 .addInterceptor(new AuthenticationRequestInterceptor(account))
                 .sslSocketFactory(customTrustManager.getSSLSocketFactory(), X509TrustManagerProvider.get())
                 .hostnameVerifier(customTrustManager.getHostnameVerifier());
+        if (includeSignInAuthenticator) {
+            builder.authenticator(authenticator)
+                    .proxyAuthenticator(authenticator);
+        }
+
+        return builder;
     }
 }

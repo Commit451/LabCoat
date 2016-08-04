@@ -426,7 +426,7 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void loadUser() {
-        OkHttpClient.Builder gitlabClientBuilder = OkHttpClientFactory.create(mAccount);
+        OkHttpClient.Builder gitlabClientBuilder = OkHttpClientFactory.create(mAccount, false);
         if (BuildConfig.DEBUG) {
             gitlabClientBuilder.addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
         }
