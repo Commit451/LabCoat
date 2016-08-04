@@ -30,6 +30,7 @@ import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.activity.ProjectsActivity;
 import com.commit451.gitlab.activity.SearchActivity;
 import com.commit451.gitlab.activity.SettingsActivity;
+import com.commit451.gitlab.activity.TodosActivity;
 import com.commit451.gitlab.activity.UserActivity;
 import com.commit451.gitlab.activity.WebviewLoginActivity;
 import com.commit451.gitlab.data.Prefs;
@@ -90,6 +91,10 @@ public class Navigator {
 
     public static void navigateToActivity(Activity activity) {
         activity.startActivity(ActivityActivity.newIntent(activity));
+    }
+
+    public static void navigateToTodos(Activity activity) {
+        activity.startActivity(TodosActivity.newIntent(activity));
     }
 
     public static void navigateToLogin(Activity activity) {

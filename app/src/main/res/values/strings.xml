@@ -9,6 +9,7 @@
     <string name="nav_projects">Projects</string>
     <string name="nav_groups">Groups</string>
     <string name="nav_activity">Activity</string>
+    <string name="nav_todos">Todos</string>
     <!-- Menu -->
     <string name="action_logout">Logout</string>
     <string name="action_save">Save</string>
@@ -69,6 +70,13 @@
     <string-array name="search_tabs">
         <item>@string/title_projects</item>
         <item>@string/title_users</item>
+    </string-array>
+
+    <string name="title_todo">To do</string>
+    <string name="title_done">Done</string>
+    <string-array name="tabs_todo">
+        <item>@string/title_todo</item>
+        <item>@string/title_done</item>
     </string-array>
 
     <!-- Login -->
@@ -418,6 +426,9 @@
         <item>@string/setting_starting_view_groups</item>
         <item>@string/setting_starting_view_activity</item>
     </string-array>
+
+    <!-- Todos -->
+    <string name="no_todos">No todos.</string>
 
     <!-- Deep link scheme -->
     <string name="deeplink_scheme">labcoat</string>

@@ -21,6 +21,7 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ActivityActivity;
 import com.commit451.gitlab.activity.GroupsActivity;
 import com.commit451.gitlab.activity.ProjectsActivity;
+import com.commit451.gitlab.activity.TodosActivity;
 import com.commit451.gitlab.adapter.AccountsAdapter;
 import com.commit451.gitlab.data.Prefs;
 import com.commit451.gitlab.event.CloseDrawerEvent;
@@ -85,6 +86,16 @@ public class LabCoatNavigationView extends NavigationView {
 
                     } else {
                         Navigator.navigateToActivity((Activity) getContext());
+                        ((Activity) getContext()).finish();
+                        ((Activity)getContext()).overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
+                    }
+                    App.bus().post(new CloseDrawerEvent());
+                    return true;
+                case R.id.nav_todos:
+                    if (getContext() instanceof TodosActivity) {
+
+                    } else {
+                        Navigator.navigateToTodos((Activity) getContext());
                         ((Activity) getContext()).finish();
                         ((Activity)getContext()).overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
                     }
@@ -218,6 +229,10 @@ public class LabCoatNavigationView extends NavigationView {
                 return;
             }
             if (getContext() instanceof ActivityActivity && menuItem.getItemId() == R.id.nav_activity) {
+                menuItem.setChecked(true);
+                return;
+            }
+            if (getContext() instanceof TodosActivity && menuItem.getItemId() == R.id.nav_todos) {
                 menuItem.setChecked(true);
                 return;
             }

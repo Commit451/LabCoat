@@ -38,6 +38,10 @@
         <!--Check v21 for the good bits-->
     </style>
 
+    <style name="Activity.Todos">
+        <!--Check v21 for the good bits-->
+    </style>
+
     <style name="Activity.Translucent">
         <!-- using a semi-transparent window background for the drag-back gesture -->
         <item name="android:windowBackground">@color/scrim</item>

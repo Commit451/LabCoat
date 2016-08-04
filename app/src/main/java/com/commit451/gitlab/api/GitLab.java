@@ -21,6 +21,7 @@ import com.commit451.gitlab.model.api.RepositoryCommit;
 import com.commit451.gitlab.model.api.RepositoryFile;
 import com.commit451.gitlab.model.api.RepositoryTreeObject;
 import com.commit451.gitlab.model.api.Snippet;
+import com.commit451.gitlab.model.api.Todo;
 import com.commit451.gitlab.model.api.User;
 import com.commit451.gitlab.model.api.UserBasic;
 import com.commit451.gitlab.model.api.UserFull;
@@ -418,4 +419,11 @@ public interface GitLab {
 
     @GET
     Call<List<Snippet>> getSnippets(@Url String url);
+
+    /* --- TODOS --- */
+    @GET(API_VERSION + "/todos")
+    Call<List<Todo>> getTodos(@Query("state") @Todo.State String state);
+
+    @GET
+    Call<List<Todo>> getTodosByUrl(@Url String url);
 }

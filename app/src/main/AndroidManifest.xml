@@ -43,6 +43,10 @@
             android:name=".activity.ActivityActivity"
             android:launchMode="singleTask"
             android:theme="@style/Activity.Activity"/>
+        <activity
+            android:name=".activity.TodosActivity"
+            android:launchMode="singleTask"
+            android:theme="@style/Activity.Todos"/>
         <activity android:name=".activity.ProjectActivity"/>
         <activity android:name=".activity.LoginActivity"
             android:theme="@style/Activity.Login"/>
