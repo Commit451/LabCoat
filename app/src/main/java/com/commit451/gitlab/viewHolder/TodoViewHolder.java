@@ -28,9 +28,14 @@ public class TodoViewHolder extends RecyclerView.ViewHolder {
         return new TodoViewHolder(view);
     }
 
-    @BindView(R.id.issue_image) ImageView mImageView;
-    @BindView(R.id.issue_message) TextView mMessageView;
-    @BindView(R.id.issue_creator) TextView mCreatorView;
+    @BindView(R.id.text_project)
+    TextView mTextProject;
+    @BindView(R.id.issue_image)
+    ImageView mImageView;
+    @BindView(R.id.issue_message)
+    TextView mMessageView;
+    @BindView(R.id.issue_creator)
+    TextView mCreatorView;
 
     public TodoViewHolder(View view) {
         super(view);
@@ -39,6 +44,7 @@ public class TodoViewHolder extends RecyclerView.ViewHolder {
 
     public void bind(Todo todo) {
 
+        mTextProject.setText(todo.getProject().getNameWithNamespace());
         if (todo.getAuthor() != null) {
             App.instance().getPicasso()
                     .load(ImageUtil.getAvatarUrl(todo.getAuthor(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size)))

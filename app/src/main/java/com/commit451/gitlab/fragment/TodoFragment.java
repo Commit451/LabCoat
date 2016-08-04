@@ -14,9 +14,9 @@ import android.widget.TextView;
 import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.gitlab.adapter.TodoAdapter;
 import com.commit451.gitlab.model.api.Todo;
+import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.PaginationUtil;
 
 import java.util.List;
@@ -128,7 +128,7 @@ public class TodoFragment extends ButterKnifeFragment {
 
         @Override
         public void onTodoClicked(Todo todo) {
-            //TODO
+            Navigator.navigateToUrl(getActivity(), Uri.parse(todo.getTargetUrl()), App.instance().getAccount());
         }
     };
 
@@ -150,7 +150,6 @@ public class TodoFragment extends ButterKnifeFragment {
         mTodoAdapter = new TodoAdapter(mProjectsListener);
         mLayoutManager = new LinearLayoutManager(getActivity());
         mProjectsListView.setLayoutManager(mLayoutManager);
-        mProjectsListView.addItemDecoration(new DividerItemDecoration(getActivity()));
         mProjectsListView.setAdapter(mTodoAdapter);
         mProjectsListView.addOnScrollListener(mOnScrollListener);
 
