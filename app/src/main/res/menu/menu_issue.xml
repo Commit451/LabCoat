@@ -13,4 +13,9 @@
         android:title="@string/action_share"
         android:icon="@drawable/ic_share_24dp"/>
 
+    <item
+        android:id="@+id/action_delete"
+        app:showAsAction="never"
+        android:title="@string/action_delete"/>
+
 </menu>

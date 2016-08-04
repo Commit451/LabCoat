@@ -26,6 +26,7 @@
     <string name="action_erase">Erase</string>
     <string name="action_retry">Retry</string>
     <string name="action_cancel">Cancel</string>
+    <string name="action_delete">Delete</string>
     <string name="action_copy_git_https">Copy git https link</string>
     <string name="action_copy_git_ssh">Copy git ssh link</string>
 
@@ -206,6 +207,8 @@
     <string name="no_milestone">No Milestone</string>
     <string name="add_labels">+ Add Labels</string>
     <string name="label_already_added">Label already added</string>
+    <string name="failed_to_delete_issue">Failed to delete issue</string>
+    <string name="issue_deleted">Issue deleted</string>
 
     <!-- Labels -->
     <string name="labels">Labels</string>

@@ -16,12 +16,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.IssueDetailsAdapter;
-import com.commit451.easycallback.EasyCallback;
-import com.commit451.gitlab.api.GitLabFactory;
 import com.commit451.gitlab.event.IssueChangedEvent;
 import com.commit451.gitlab.event.IssueReloadEvent;
 import com.commit451.gitlab.model.api.FileUploadResponse;
@@ -46,7 +46,9 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
+import retrofit2.Call;
 import retrofit2.Callback;
+import retrofit2.Response;
 import timber.log.Timber;
 
 /**
@@ -92,23 +94,18 @@ public class IssueActivity extends BaseActivity {
     @BindView(R.id.progress)
     View mProgress;
 
-    @OnClick(R.id.fab_edit_issue)
-    public void onEditIssueClick(View fab) {
-        Navigator.navigateToEditIssue(IssueActivity.this, fab, mProject, mIssue);
-    }
+    MenuItem mOpenCloseMenuItem;
+    IssueDetailsAdapter mIssueDetailsAdapter;
+    LinearLayoutManager mNotesLayoutManager;
 
-    private MenuItem mOpenCloseMenuItem;
-    private IssueDetailsAdapter mIssueDetailsAdapter;
-    private LinearLayoutManager mNotesLayoutManager;
+    Project mProject;
+    Issue mIssue;
+    String mIssueIid;
+    boolean mLoading;
+    Uri mNextPageUrl;
+    Teleprinter mTeleprinter;
 
-    private Project mProject;
-    private Issue mIssue;
-    private String mIssueIid;
-    private boolean mLoading;
-    private Uri mNextPageUrl;
-    private Teleprinter mTeleprinter;
-
-    private EventReceiver mEventReceiver;
+    EventReceiver mEventReceiver;
 
     private final RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
         @Override
@@ -132,6 +129,9 @@ public class IssueActivity extends BaseActivity {
                     return true;
                 case R.id.action_close:
                     closeOrOpenIssue();
+                    return true;
+                case R.id.action_delete:
+                    App.instance().getGitLab().deleteIssue(mProject.getId(), mIssue.getId()).enqueue(mDeleteIssueCallback);
                     return true;
             }
             return false;
@@ -272,6 +272,28 @@ public class IssueActivity extends BaseActivity {
                     .show();
         }
     };
+
+    private final Callback<Void> mDeleteIssueCallback = new Callback<Void>() {
+        @Override
+        public void onResponse(Call<Void> call, Response<Void> response) {
+            App.bus().post(new IssueReloadEvent());
+            Toast.makeText(IssueActivity.this, R.string.issue_deleted, Toast.LENGTH_SHORT)
+                    .show();
+            finish();
+        }
+
+        @Override
+        public void onFailure(Call<Void> call, Throwable t) {
+            Timber.e(t, null);
+            Snackbar.make(mRoot, getString(R.string.failed_to_delete_issue), Snackbar.LENGTH_SHORT)
+                    .show();
+        }
+    };
+
+    @OnClick(R.id.fab_edit_issue)
+    public void onEditIssueClick(View fab) {
+        Navigator.navigateToEditIssue(IssueActivity.this, fab, mProject, mIssue);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

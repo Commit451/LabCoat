@@ -314,6 +314,10 @@ public interface GitLab {
                             @Path("issue_id") long issueId,
                             @Field("body") String body);
 
+    @DELETE(API_VERSION + "/projects/{id}/issues/{issue_id}")
+    Call<Void> deleteIssue(@Path("id") long projectId,
+                           @Path("issue_id") long issueId);
+
     /* --- REPOSITORY --- */
 
     @GET(API_VERSION + "/projects/{id}/repository/branches?order_by=last_activity_at")

@@ -49,47 +49,6 @@
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
     </style>
 
-    <!-- Light theme -->
-    <style name="AppThemeLight" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="cardBackgroundColor">#FFFFFF</item>
-        <item name="android:windowContentTransitions" tools:ignore="NewApi">true</item>
-        <item name="dialogTheme">@style/AppDialogTheme</item>
-        <item name="ate_key">light_theme</item>
-    </style>
-
-    <style name="ActivityLight" parent="AppThemeLight"/>
-
-    <style name="ActivityLight.Projects">
-        <!--Check v21 for the good bits-->
-    </style>
-
-    <style name="ActivityLight.Groups">
-        <!--Check v21 for the good bits-->
-    </style>
-
-    <style name="ActivityLight.Activity">
-        <!--Check v21 for the good bits-->
-    </style>
-
-    <style name="ActivityLight.User">
-        <item name="colorPrimaryDark">@android:color/transparent</item>
-        <item name="android:statusBarColor" tools:ignore="NewApi">@android:color/transparent</item>
-        <item name="android:windowTranslucentStatus" tools:ignore="NewApi">true</item>
-    </style>
-
-    <style name="ActivityLight.Group">
-        <item name="colorPrimaryDark">@android:color/transparent</item>
-        <item name="android:statusBarColor" tools:ignore="NewApi">@android:color/transparent</item>
-        <item name="android:windowTranslucentStatus" tools:ignore="NewApi">true</item>
-    </style>
-
-    <style name="ActivityLight.Translucent">
-        <item name="android:windowBackground">@color/scrim</item>
-        <item name="windowBackground">@color/scrim</item>
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowAnimationStyle">@null</item>
-    </style>
-
     <!-- Widget styles -->
     <style name="AppDialogTheme" parent="Theme.AppCompat.Dialog">
         <item name="colorAccent">@color/yellow</item>
