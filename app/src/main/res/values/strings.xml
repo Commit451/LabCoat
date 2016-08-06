@@ -421,10 +421,12 @@
     <string name="setting_starting_view_projects">Projects</string>
     <string name="setting_starting_view_groups">Groups</string>
     <string name="setting_starting_view_activity">Activity</string>
+    <string name="setting_starting_view_todos">Todos</string>
     <string-array name="setting_starting_view_choices">
         <item>@string/setting_starting_view_projects</item>
         <item>@string/setting_starting_view_groups</item>
         <item>@string/setting_starting_view_activity</item>
+        <item>@string/setting_starting_view_todos</item>
     </string-array>
 
     <!-- Todos -->

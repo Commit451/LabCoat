@@ -79,6 +79,11 @@ public class Navigator {
             case Prefs.STARTING_VIEW_ACTIVITY:
                 navigateToActivity(activity);
                 break;
+            case Prefs.STARTING_VIEW_TODOS:
+                navigateToTodos(activity);
+                break;
+            default:
+                throw new IllegalArgumentException("You need to define start activity " + startingActivity);
         }
     }
     public static void navigateToProjects(Activity activity) {

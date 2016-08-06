@@ -84,6 +84,10 @@ public class SettingsActivity extends BaseActivity {
             case Prefs.STARTING_VIEW_ACTIVITY:
                 mTextLaunchActivity.setText(R.string.setting_starting_view_activity);
                 break;
+            case Prefs.STARTING_VIEW_TODOS:
+                mTextLaunchActivity.setText(R.string.setting_starting_view_todos);
+                break;
+
         }
     }
 

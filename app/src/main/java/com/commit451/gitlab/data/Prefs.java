@@ -29,9 +29,10 @@ public class Prefs {
     public static final int STARTING_VIEW_PROJECTS = 0;
     public static final int STARTING_VIEW_GROUPS = 1;
     public static final int STARTING_VIEW_ACTIVITY = 2;
+    public static final int STARTING_VIEW_TODOS = 3;
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({STARTING_VIEW_PROJECTS, STARTING_VIEW_GROUPS, STARTING_VIEW_ACTIVITY})
+    @IntDef({STARTING_VIEW_PROJECTS, STARTING_VIEW_GROUPS, STARTING_VIEW_ACTIVITY, STARTING_VIEW_TODOS})
     public @interface StartingView {}
 
     private static SharedPreferences getSharedPrefs(Context context) {
