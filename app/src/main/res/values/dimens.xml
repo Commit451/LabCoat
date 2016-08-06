@@ -16,7 +16,7 @@
     <dimen name="image_size">40dp</dimen>
     <dimen name="larger_image_size">56dp</dimen>
     <dimen name="border_size">2dp</dimen>
-    <dimen name="circle_size">56dp</dimen>
+    <dimen name="circle_size">72dp</dimen>
 
     <dimen name="account_header_height">148dp</dimen>
     <dimen name="account_header_margin_top">16dp</dimen>

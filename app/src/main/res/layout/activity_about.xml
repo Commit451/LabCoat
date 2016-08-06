@@ -11,70 +11,70 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/appbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/appbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize" />
+            android:layout_height="wrap_content">
 
-    </android.support.design.widget.AppBarLayout>
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"/>
 
-    <TextView
-        android:id="@+id/contributors"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/padding_normal"
-        android:gravity="center"
-        android:layout_gravity="center_horizontal"
-        android:text="@string/contributors"
-        android:textSize="22sp"/>
+        </android.support.design.widget.AppBarLayout>
 
-    <com.jawnnypoo.physicslayout.PhysicsFrameLayout
-        android:id="@+id/physics_layout"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        app:gravityX="0"
-        app:gravityY="0">
-
-    </com.jawnnypoo.physicslayout.PhysicsFrameLayout>
-
-    <LinearLayout
-        android:id="@+id/sauce"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:layout_gravity="center_horizontal">
-
-        <ImageView
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/ic_logo"
-            android:contentDescription="@null"
-            android:layout_gravity="center_vertical"/>
         <TextView
+            android:id="@+id/contributors"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="@dimen/activity_horizontal_margin"
+            android:layout_gravity="center_horizontal"
             android:gravity="center"
-            android:layout_gravity="center_vertical"
-            android:text="@string/sauce"
-            android:textSize="22sp" />
+            android:padding="@dimen/padding_normal"
+            android:text="@string/contributors"
+            android:textSize="22sp"/>
 
-    </LinearLayout>
+        <com.commit451.gitlab.view.PhysicsFlowLayout
+            android:id="@+id/physics_layout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            app:fling="true"
+            app:gravityX="0"
+            app:gravityY="0"/>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="pssst... try tilting"
-        android:textSize="12dp"
-        android:layout_marginBottom="4dp"/>
+        <LinearLayout
+            android:id="@+id/sauce"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center_vertical"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_logo"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:gravity="center"
+                android:padding="@dimen/activity_horizontal_margin"
+                android:text="@string/sauce"
+                android:textSize="22sp"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:gravity="center"
+            android:text="pssst... try tilting"
+            android:textSize="12dp"/>
     </LinearLayout>
 
     <include layout="@layout/progress"/>

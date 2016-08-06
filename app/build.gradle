@@ -124,6 +124,7 @@ dependencies {
     compile 'com.github.novoda:simple-chrome-custom-tabs:0.1.3-rc1'
     compile 'com.afollestad.material-dialogs:core:0.8.6.2'
     compile 'com.afollestad.material-dialogs:commons:0.8.6.2'
+    compile 'de.hdodenhof:circleimageview:2.0.0'
 
     normalCompile('com.crashlytics.sdk.android:crashlytics:2.6.1@aar') {
         transitive = true;

@@ -2,6 +2,7 @@ package com.commit451.gitlab.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -13,8 +14,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.commit451.easycallback.EasyCallback;
@@ -23,12 +22,12 @@ import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.api.Contributor;
 import com.commit451.gitlab.navigation.Navigator;
-import com.commit451.gitlab.transformation.CircleTransformation;
 import com.commit451.gitlab.util.ImageUtil;
 import com.commit451.gitlab.util.IntentUtil;
+import com.commit451.gitlab.view.PhysicsFlowLayout;
 import com.jawnnypoo.physicslayout.Physics;
 import com.jawnnypoo.physicslayout.PhysicsConfig;
-import com.jawnnypoo.physicslayout.PhysicsFrameLayout;
+import com.wefika.flowlayout.FlowLayout;
 
 import org.jbox2d.common.Vec2;
 
@@ -37,6 +36,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Callback;
 import timber.log.Timber;
 
@@ -58,7 +58,7 @@ public class AboutActivity extends BaseActivity {
     @BindView(R.id.contributors)
     TextView mContributors;
     @BindView(R.id.physics_layout)
-    PhysicsFrameLayout mPhysicsLayout;
+    PhysicsFlowLayout mPhysicsLayout;
     @BindView(R.id.progress)
     View mProgress;
 
@@ -144,33 +144,25 @@ public class AboutActivity extends BaseActivity {
     private void addContributors(List<Contributor> contributors) {
         PhysicsConfig config = PhysicsConfig.create();
         config.shapeType = PhysicsConfig.SHAPE_TYPE_CIRCLE;
-        int x = 0;
-        int y = 0;
+        int borderSize = getResources().getDimensionPixelSize(R.dimen.border_size);
         int imageSize = getResources().getDimensionPixelSize(R.dimen.circle_size);
-        for (int i = 0; i < contributors.size(); i++) {
+        for (int i=0; i<contributors.size(); i++) {
             Contributor contributor = contributors.get(i);
-            ImageView imageView = new ImageView(this);
-            FrameLayout.LayoutParams llp = new FrameLayout.LayoutParams(
+            CircleImageView imageView = new CircleImageView(this);
+            FlowLayout.LayoutParams llp = new FlowLayout.LayoutParams(
                     imageSize,
                     imageSize);
             imageView.setLayoutParams(llp);
+            imageView.setBorderWidth(borderSize);
+            imageView.setBorderColor(Color.BLACK);
             Physics.setPhysicsConfig(imageView, config);
             mPhysicsLayout.addView(imageView);
-            imageView.setX(x);
-            imageView.setY(y);
-
-            x = (x + imageSize);
-            if (x > mPhysicsLayout.getWidth()) {
-                x = 0;
-                y = (y + imageSize) % mPhysicsLayout.getHeight();
-            }
 
             Uri url = ImageUtil.getAvatarUrl(contributor.getEmail(), imageSize);
             App.instance().getPicasso()
                     .load(url)
-                    .transform(new CircleTransformation())
                     .into(imageView);
         }
-        mPhysicsLayout.getPhysics().onLayout(true);
+        mPhysicsLayout.requestLayout();
     }
 }
