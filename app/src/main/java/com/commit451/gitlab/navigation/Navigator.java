@@ -26,6 +26,7 @@ import com.commit451.gitlab.activity.IssueActivity;
 import com.commit451.gitlab.activity.LoginActivity;
 import com.commit451.gitlab.activity.MergeRequestActivity;
 import com.commit451.gitlab.activity.MilestoneActivity;
+import com.commit451.gitlab.activity.PickBranchOrTagActivity;
 import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.activity.ProjectsActivity;
 import com.commit451.gitlab.activity.SearchActivity;
@@ -65,6 +66,10 @@ public class Navigator {
 
     public static void navigateToProject(Activity activity, String projectId) {
         activity.startActivity(ProjectActivity.newIntent(activity, projectId));
+    }
+
+    public static void navigateToPickBranchOrTag(Activity activity, long projectId, int requestCode) {
+        activity.startActivityForResult(PickBranchOrTagActivity.newIntent(activity, projectId), requestCode);
     }
 
     public static void navigateToStartingActivity(Activity activity) {

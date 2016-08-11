@@ -448,4 +448,14 @@
     <string name="widget_loading">Loading&#8230;</string>
     <string name="widget_config_no_accounts">No accounts</string>
     <string name="widget_choose_account">Choose Account</string>
+
+    <!-- Pick Branch/Tag -->
+    <string name="branches">Branches</string>
+    <string name="tags">Tags</string>
+    <string-array name="tabs_branch_tag">
+        <item>@string/branches</item>
+        <item>@string/tags</item>
+    </string-array>
+    <string name="no_branches">No branches</string>
+    <string name="no_tags">No tags</string>
 </resources>

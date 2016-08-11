@@ -21,7 +21,7 @@
     <color name="other_blue">#5b6b7e</color>
 
     <color name="card_background">@color/other_blue</color>
-    <color name="background_color">@color/blue_background</color>
+    <color name="window_background">#303030</color>
 
     <color name="scrim">#99323232</color>
 

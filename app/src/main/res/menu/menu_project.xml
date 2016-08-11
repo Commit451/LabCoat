@@ -3,6 +3,12 @@
       xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/action_branch"
+        app:showAsAction="ifRoom"
+        android:title="@string/branches"
+        android:icon="@drawable/ic_fork"/>
+
+    <item
         android:id="@+id/action_share"
         app:showAsAction="ifRoom"
         android:title="@string/action_share"

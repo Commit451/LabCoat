@@ -14,21 +14,18 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.ProjectSectionsPagerAdapter;
 import com.commit451.gitlab.animation.HideRunnable;
-import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.fragment.BaseFragment;
 import com.commit451.gitlab.model.api.Branch;
 import com.commit451.gitlab.model.api.Project;
+import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.IntentUtil;
 
 import org.parceler.Parcels;
@@ -44,6 +41,8 @@ public class ProjectActivity extends BaseActivity {
 
     private static final String EXTRA_PROJECT = "extra_project";
     private static final String EXTRA_PROJECT_ID = "extra_project_id";
+
+    private static final int REQUEST_BRANCH_OR_TAG = 1;
 
     public static Intent newIntent(Context context, Project project) {
         Intent intent = new Intent(context, ProjectActivity.class);
@@ -63,28 +62,10 @@ public class ProjectActivity extends BaseActivity {
     Toolbar mToolbar;
     @BindView(R.id.tabs)
     TabLayout mTabLayout;
-    @BindView(R.id.branch_spinner)
-    Spinner mBranchSpinner;
     @BindView(R.id.progress)
     View mProgress;
     @BindView(R.id.pager)
     ViewPager mViewPager;
-
-    private final AdapterView.OnItemSelectedListener mSpinnerItemSelectedListener = new AdapterView.OnItemSelectedListener() {
-        @Override
-        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            if (!(view instanceof TextView)) {
-                return;
-            }
-
-            mBranchName = ((TextView) view).getText().toString();
-            broadcastLoad();
-        }
-
-        @Override
-        public void onNothingSelected(AdapterView<?> parent) {
-        }
-    };
 
     Project mProject;
     String mBranchName;
@@ -116,22 +97,11 @@ public class ProjectActivity extends BaseActivity {
                     .alpha(0.0f)
                     .withEndAction(new HideRunnable(mProgress));
 
-            if (response.isEmpty()) {
-                mBranchSpinner.setVisibility(View.GONE);
-            } else {
-                mBranchSpinner.setVisibility(View.VISIBLE);
-                mBranchSpinner.setAlpha(0.0f);
-                mBranchSpinner.animate().alpha(1.0f);
-                // Set up the dropdown list navigation in the action bar.
-                mBranchSpinner.setAdapter(new ArrayAdapter<>(ProjectActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, response));
-            }
             for (int i = 0; i < response.size(); i++) {
                 if (response.get(i).getName().equals(mProject.getDefaultBranch())) {
-                    mBranchSpinner.setSelection(i);
+                    mBranchName = response.get(i).getName();
                 }
             }
-
-            mBranchSpinner.setOnItemSelectedListener(mSpinnerItemSelectedListener);
 
             if (response.isEmpty()) {
                 broadcastLoad();
@@ -153,6 +123,11 @@ public class ProjectActivity extends BaseActivity {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
             switch (item.getItemId()) {
+                case R.id.action_branch:
+                    if (mProject != null) {
+                        Navigator.navigateToPickBranchOrTag(ProjectActivity.this, mProject.getId(), REQUEST_BRANCH_OR_TAG);
+                    }
+                    return true;
                 case R.id.action_share:
                     if (mProject != null) {
                         IntentUtil.share(mRoot, mProject.getWebUrl());
@@ -202,6 +177,19 @@ public class ProjectActivity extends BaseActivity {
         } else {
             setupTabs();
             loadBranches();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_BRANCH_OR_TAG:
+                if (resultCode == RESULT_OK) {
+                    mBranchName = data.getStringExtra(PickBranchOrTagActivity.EXTRA_REF);
+                    broadcastLoad();
+                }
+                break;
         }
     }
 
