@@ -21,6 +21,7 @@ import com.commit451.gitlab.model.api.RepositoryCommit;
 import com.commit451.gitlab.model.api.RepositoryFile;
 import com.commit451.gitlab.model.api.RepositoryTreeObject;
 import com.commit451.gitlab.model.api.Snippet;
+import com.commit451.gitlab.model.api.Tag;
 import com.commit451.gitlab.model.api.Todo;
 import com.commit451.gitlab.model.api.User;
 import com.commit451.gitlab.model.api.UserBasic;
@@ -426,4 +427,8 @@ public interface GitLab {
 
     @GET
     Call<List<Todo>> getTodosByUrl(@Url String url);
+
+    /* --- TAGS --- */
+    @GET(API_VERSION + "/projects/{id}/repository/tags")
+    Call<List<Tag>> getTags(@Path("id") long projectId);
 }
