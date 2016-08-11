@@ -6,9 +6,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.commit451.easel.Easel;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.api.Branch;
-import com.commit451.gitlab.model.api.Label;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -24,14 +24,23 @@ public class BranchViewHolder extends RecyclerView.ViewHolder {
         return new BranchViewHolder(view);
     }
 
-    @BindView(R.id.title) public TextView title;
+    @BindView(R.id.title)
+    public TextView title;
+
+    int colorHighlighted;
 
     public BranchViewHolder(View view) {
         super(view);
         ButterKnife.bind(this, view);
+        colorHighlighted = Easel.getThemeAttrColor(itemView.getContext(), R.attr.colorControlHighlight);
     }
 
-    public void bind(Branch branch) {
+    public void bind(Branch branch, boolean selected) {
         title.setText(branch.getName());
+        if (selected) {
+            itemView.setBackgroundColor(colorHighlighted);
+        } else {
+            itemView.setBackground(null);
+        }
     }
 }

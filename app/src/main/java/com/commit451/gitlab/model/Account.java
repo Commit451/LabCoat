@@ -17,6 +17,9 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * An account, stored locally, which references the needed info to connect to a server
+ */
 @Parcel
 @JsonObject
 public class Account implements Comparable<Account>{

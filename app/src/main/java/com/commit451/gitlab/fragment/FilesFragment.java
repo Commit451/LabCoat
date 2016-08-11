@@ -22,7 +22,6 @@ import com.commit451.gitlab.adapter.BreadcrumbAdapter;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.gitlab.adapter.FilesAdapter;
 import com.commit451.easycallback.EasyCallback;
-import com.commit451.gitlab.api.GitLabFactory;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryTreeObject;
@@ -161,7 +160,7 @@ public class FilesFragment extends ButterKnifeFragment {
 
         if (getActivity() instanceof ProjectActivity) {
             mProject = ((ProjectActivity) getActivity()).getProject();
-            mBranchName = ((ProjectActivity) getActivity()).getBranchName();
+            mBranchName = ((ProjectActivity) getActivity()).getRef();
             loadData("");
         } else {
             throw new IllegalStateException("Incorrect parent activity");

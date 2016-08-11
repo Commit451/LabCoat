@@ -3,12 +3,16 @@ package com.commit451.gitlab.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.PickBranchOrTagPagerAdapter;
+import com.commit451.gitlab.model.Ref;
+
+import org.parceler.Parcels;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -20,12 +24,14 @@ import butterknife.OnClick;
 public class PickBranchOrTagActivity extends AppCompatActivity {
 
     private static final String EXTRA_PROJECT_ID = "project_id";
+    private static final String EXTRA_CURRENT_REF = "current_ref";
 
     public static final String EXTRA_REF = "ref";
 
-    public static Intent newIntent(Context context, long projectId) {
+    public static Intent newIntent(Context context, long projectId, @Nullable Ref currentRef) {
         Intent intent = new Intent(context, PickBranchOrTagActivity.class);
         intent.putExtra(EXTRA_PROJECT_ID, projectId);
+        intent.putExtra(EXTRA_CURRENT_REF, Parcels.wrap(currentRef));
         return intent;
     }
 
@@ -45,7 +51,8 @@ public class PickBranchOrTagActivity extends AppCompatActivity {
         setContentView(R.layout.activity_pick_branch_or_tag);
         ButterKnife.bind(this);
         long projectId = getIntent().getLongExtra(EXTRA_PROJECT_ID, -1);
-        mViewPager.setAdapter(new PickBranchOrTagPagerAdapter(this, getSupportFragmentManager(), projectId));
+        Ref currentRef = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_CURRENT_REF));
+        mViewPager.setAdapter(new PickBranchOrTagPagerAdapter(this, getSupportFragmentManager(), projectId, currentRef));
         mTabLayout.setupWithViewPager(mViewPager);
     }
 

@@ -17,7 +17,10 @@ import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.PickBranchOrTagActivity;
 import com.commit451.gitlab.adapter.BranchesAdapter;
+import com.commit451.gitlab.model.Ref;
 import com.commit451.gitlab.model.api.Branch;
+
+import org.parceler.Parcels;
 
 import java.util.List;
 
@@ -30,11 +33,13 @@ import timber.log.Timber;
 public class PickBranchFragment extends ButterKnifeFragment {
 
     private static final String EXTRA_PROJECT_ID = "project_id";
+    private static final String EXTRA_REF = "ref";
 
-    public static PickBranchFragment newInstance(long projectId) {
+    public static PickBranchFragment newInstance(long projectId, @Nullable Ref ref) {
         PickBranchFragment fragment = new PickBranchFragment();
         Bundle args = new Bundle();
         args.putLong(EXTRA_PROJECT_ID, projectId);
+        args.putParcelable(EXTRA_REF, Parcels.wrap(ref));
         fragment.setArguments(args);
         return fragment;
     }
@@ -63,11 +68,13 @@ public class PickBranchFragment extends ButterKnifeFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mBranchesAdapter = new BranchesAdapter(new BranchesAdapter.Listener() {
+        Ref existingRef = Parcels.unwrap(getArguments().getParcelable(EXTRA_REF));
+        mBranchesAdapter = new BranchesAdapter(existingRef, new BranchesAdapter.Listener() {
             @Override
             public void onBranchClicked(Branch entry) {
                 Intent data = new Intent();
-                data.putExtra(PickBranchOrTagActivity.EXTRA_REF, entry.getName());
+                Ref ref = new Ref(Ref.TYPE_BRANCH, entry.getName());
+                data.putExtra(PickBranchOrTagActivity.EXTRA_REF, Parcels.wrap(ref));
                 getActivity().setResult(Activity.RESULT_OK, data);
                 getActivity().finish();
             }

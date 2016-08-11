@@ -5,6 +5,7 @@ import android.app.ActivityOptions;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.view.View;
 import android.widget.ImageView;
@@ -36,6 +37,7 @@ import com.commit451.gitlab.activity.UserActivity;
 import com.commit451.gitlab.activity.WebviewLoginActivity;
 import com.commit451.gitlab.data.Prefs;
 import com.commit451.gitlab.model.Account;
+import com.commit451.gitlab.model.Ref;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.model.api.Issue;
 import com.commit451.gitlab.model.api.MergeRequest;
@@ -68,8 +70,8 @@ public class Navigator {
         activity.startActivity(ProjectActivity.newIntent(activity, projectId));
     }
 
-    public static void navigateToPickBranchOrTag(Activity activity, long projectId, int requestCode) {
-        activity.startActivityForResult(PickBranchOrTagActivity.newIntent(activity, projectId), requestCode);
+    public static void navigateToPickBranchOrTag(Activity activity, long projectId, @Nullable Ref currentRef, int requestCode) {
+        activity.startActivityForResult(PickBranchOrTagActivity.newIntent(activity, projectId, currentRef), requestCode);
     }
 
     public static void navigateToStartingActivity(Activity activity) {

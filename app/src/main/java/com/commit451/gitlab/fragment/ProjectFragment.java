@@ -291,7 +291,7 @@ public class ProjectFragment extends ButterKnifeFragment {
 
         if (getActivity() instanceof ProjectActivity) {
             mProject = ((ProjectActivity) getActivity()).getProject();
-            mBranchName = ((ProjectActivity) getActivity()).getBranchName();
+            mBranchName = ((ProjectActivity) getActivity()).getRef();
             bindProject(mProject);
             loadData();
         } else {

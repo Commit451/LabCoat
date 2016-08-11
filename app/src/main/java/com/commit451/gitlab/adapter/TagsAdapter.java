@@ -1,10 +1,12 @@
 package com.commit451.gitlab.adapter;
 
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.commit451.gitlab.R;
+import com.commit451.gitlab.model.Ref;
 import com.commit451.gitlab.model.api.Tag;
 import com.commit451.gitlab.viewHolder.TagViewHolder;
 
@@ -22,10 +24,13 @@ public class TagsAdapter extends RecyclerView.Adapter<TagViewHolder> {
     private Listener mListener;
 
     private ArrayList<Tag> mValues;
+    @Nullable
+    private Ref mRef;
 
-    public TagsAdapter(Listener listener) {
+    public TagsAdapter(@Nullable Ref ref, Listener listener) {
         mListener = listener;
         mValues = new ArrayList<>();
+        mRef = ref;
     }
 
     private final View.OnClickListener mOnItemClickListener = new View.OnClickListener() {
@@ -54,7 +59,15 @@ public class TagsAdapter extends RecyclerView.Adapter<TagViewHolder> {
     @Override
     public void onBindViewHolder(final TagViewHolder holder, int position) {
         holder.itemView.setTag(R.id.list_position, position);
-        holder.bind(getEntry(position));
+        Tag tag = getEntry(position);
+        boolean selected = false;
+        if (mRef != null) {
+            if (mRef.getType() == Ref.TYPE_TAG
+                    && mRef.getRef().equals(tag.getName())) {
+                selected = true;
+            }
+        }
+        holder.bind(tag, selected);
     }
 
     @Override

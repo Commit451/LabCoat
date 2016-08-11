@@ -23,6 +23,7 @@ import com.commit451.gitlab.adapter.ProjectSectionsPagerAdapter;
 import com.commit451.gitlab.animation.HideRunnable;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.fragment.BaseFragment;
+import com.commit451.gitlab.model.Ref;
 import com.commit451.gitlab.model.api.Branch;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.navigation.Navigator;
@@ -68,7 +69,7 @@ public class ProjectActivity extends BaseActivity {
     ViewPager mViewPager;
 
     Project mProject;
-    String mBranchName;
+    Ref mRef;
 
     private final Callback<Project> mProjectCallback = new EasyCallback<Project>() {
         @Override
@@ -99,7 +100,8 @@ public class ProjectActivity extends BaseActivity {
 
             for (int i = 0; i < response.size(); i++) {
                 if (response.get(i).getName().equals(mProject.getDefaultBranch())) {
-                    mBranchName = response.get(i).getName();
+                    String ref = response.get(i).getName();
+                    mRef = new Ref(Ref.TYPE_BRANCH, ref);
                 }
             }
 
@@ -125,7 +127,7 @@ public class ProjectActivity extends BaseActivity {
             switch (item.getItemId()) {
                 case R.id.action_branch:
                     if (mProject != null) {
-                        Navigator.navigateToPickBranchOrTag(ProjectActivity.this, mProject.getId(), REQUEST_BRANCH_OR_TAG);
+                        Navigator.navigateToPickBranchOrTag(ProjectActivity.this, mProject.getId(), mRef, REQUEST_BRANCH_OR_TAG);
                     }
                     return true;
                 case R.id.action_share:
@@ -186,7 +188,7 @@ public class ProjectActivity extends BaseActivity {
         switch (requestCode) {
             case REQUEST_BRANCH_OR_TAG:
                 if (resultCode == RESULT_OK) {
-                    mBranchName = data.getStringExtra(PickBranchOrTagActivity.EXTRA_REF);
+                    mRef = Parcels.unwrap(data.getParcelableExtra(PickBranchOrTagActivity.EXTRA_REF));
                     broadcastLoad();
                 }
                 break;
@@ -208,7 +210,7 @@ public class ProjectActivity extends BaseActivity {
     }
 
     private void broadcastLoad() {
-        App.bus().post(new ProjectReloadEvent(mProject, mBranchName));
+        App.bus().post(new ProjectReloadEvent(mProject, mRef.getRef()));
     }
 
     @Override
@@ -223,8 +225,11 @@ public class ProjectActivity extends BaseActivity {
         super.onBackPressed();
     }
 
-    public String getBranchName() {
-        return mBranchName;
+    public String getRef() {
+        if (mRef == null) {
+            return null;
+        }
+        return mRef.getRef();
     }
 
     public Project getProject() {

@@ -1,14 +1,14 @@
 package com.commit451.gitlab.adapter;
 
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.commit451.gitlab.R;
+import com.commit451.gitlab.model.Ref;
 import com.commit451.gitlab.model.api.Branch;
-import com.commit451.gitlab.model.rss.Entry;
 import com.commit451.gitlab.viewHolder.BranchViewHolder;
-import com.commit451.gitlab.viewHolder.FeedEntryViewHolder;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,10 +24,13 @@ public class BranchesAdapter extends RecyclerView.Adapter<BranchViewHolder> {
     private Listener mListener;
 
     private ArrayList<Branch> mValues;
+    @Nullable
+    private Ref mRef;
 
-    public BranchesAdapter(Listener listener) {
+    public BranchesAdapter(@Nullable Ref currentRef, Listener listener) {
         mListener = listener;
         mValues = new ArrayList<>();
+        mRef = currentRef;
     }
 
     private final View.OnClickListener mOnItemClickListener = new View.OnClickListener() {
@@ -56,7 +59,15 @@ public class BranchesAdapter extends RecyclerView.Adapter<BranchViewHolder> {
     @Override
     public void onBindViewHolder(final BranchViewHolder holder, int position) {
         holder.itemView.setTag(R.id.list_position, position);
-        holder.bind(getEntry(position));
+        Branch branch = getEntry(position);
+        boolean selected = false;
+        if (mRef != null) {
+            if (mRef.getType() == Ref.TYPE_BRANCH
+                    && mRef.getRef().equals(branch.getName())) {
+                selected = true;
+            }
+        }
+        holder.bind(branch, selected);
     }
 
     @Override
