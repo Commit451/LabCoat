@@ -75,8 +75,7 @@ public class ProjectActivity extends BaseActivity {
         @Override
         public void success(@NonNull Project response) {
             mProject = response;
-            setupTabs();
-            loadBranches();
+            bindProject();
         }
 
         @Override
@@ -177,8 +176,7 @@ public class ProjectActivity extends BaseActivity {
             String projectId = getIntent().getStringExtra(EXTRA_PROJECT_ID);
             loadProject(projectId);
         } else {
-            setupTabs();
-            loadBranches();
+            bindProject();
         }
     }
 
@@ -234,6 +232,13 @@ public class ProjectActivity extends BaseActivity {
 
     public Project getProject() {
         return mProject;
+    }
+
+    private void bindProject() {
+        mToolbar.setTitle(mProject.getName());
+        mToolbar.setSubtitle(mProject.getNamespace().getName());
+        setupTabs();
+        loadBranches();
     }
 
     private void setupTabs() {

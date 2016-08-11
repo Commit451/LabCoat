@@ -54,6 +54,11 @@ public class PickBranchOrTagActivity extends AppCompatActivity {
         Ref currentRef = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_CURRENT_REF));
         mViewPager.setAdapter(new PickBranchOrTagPagerAdapter(this, getSupportFragmentManager(), projectId, currentRef));
         mTabLayout.setupWithViewPager(mViewPager);
+        if (currentRef != null) {
+            int position = currentRef.getType() == Ref.TYPE_BRANCH ? 0 : 1;
+            mTabLayout.getTabAt(position).select();
+            mViewPager.setCurrentItem(position);
+        }
     }
 
     @Override

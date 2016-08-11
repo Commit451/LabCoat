@@ -10,9 +10,8 @@
 
     <item
         android:id="@+id/action_share"
-        app:showAsAction="ifRoom"
-        android:title="@string/action_share"
-        android:icon="@drawable/ic_share_24dp"/>
+        app:showAsAction="never"
+        android:title="@string/action_share"/>
 
     <item
         android:id="@+id/action_copy_git_https"
