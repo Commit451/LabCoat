@@ -1,20 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.commit451.gitlab.view.LabCoatSwipeRefreshLayout
-        android:id="@+id/swipe_layout"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent" />
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
-    </com.commit451.gitlab.view.LabCoatSwipeRefreshLayout>
 
     <TextView
         android:id="@+id/message_text"
@@ -24,6 +17,8 @@
         android:layout_margin="16dp"
         android:gravity="center"
         android:text="@string/no_branches"
-        android:visibility="gone"/>
+        android:visibility="gone" />
+
+    <include layout="@layout/progress"/>
 
 </FrameLayout>

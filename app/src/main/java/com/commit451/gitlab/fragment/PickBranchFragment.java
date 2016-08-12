@@ -48,6 +48,8 @@ public class PickBranchFragment extends ButterKnifeFragment {
     RecyclerView mProjectsListView;
     @BindView(R.id.message_text)
     TextView mMessageView;
+    @BindView(R.id.progress)
+    View mProgress;
 
     BranchesAdapter mBranchesAdapter;
 
@@ -90,6 +92,7 @@ public class PickBranchFragment extends ButterKnifeFragment {
         if (getView() == null) {
             return;
         }
+        mProgress.setVisibility(View.VISIBLE);
         mMessageView.setVisibility(View.GONE);
 
         App.instance().getGitLab().getBranches(mProjectId).enqueue(new EasyCallback<List<Branch>>() {
@@ -98,6 +101,7 @@ public class PickBranchFragment extends ButterKnifeFragment {
                 if (getView() == null) {
                     return;
                 }
+                mProgress.setVisibility(View.GONE);
                 mBranchesAdapter.setEntries(response);
             }
 
@@ -107,6 +111,7 @@ public class PickBranchFragment extends ButterKnifeFragment {
                 if (getView() == null) {
                     return;
                 }
+                mProgress.setVisibility(View.GONE);
                 mMessageView.setVisibility(View.VISIBLE);
             }
         });

@@ -11,6 +11,7 @@
         <item name="android:windowContentTransitions" tools:ignore="NewApi">true</item>
         <item name="android:windowBackground">@color/window_background</item>
         <item name="dialogTheme">@style/AppDialogTheme</item>
+        <item name="alertDialogTheme">@style/AppDialogTheme</item>
     </style>
 
     <style name="Activity" parent="AppTheme"/>

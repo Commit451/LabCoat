@@ -24,14 +24,11 @@ import com.commit451.gitlab.animation.HideRunnable;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.fragment.BaseFragment;
 import com.commit451.gitlab.model.Ref;
-import com.commit451.gitlab.model.api.Branch;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.IntentUtil;
 
 import org.parceler.Parcels;
-
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -74,39 +71,7 @@ public class ProjectActivity extends BaseActivity {
     private final Callback<Project> mProjectCallback = new EasyCallback<Project>() {
         @Override
         public void success(@NonNull Project response) {
-            mProject = response;
-            bindProject();
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t, null);
-            mProgress.animate()
-                    .alpha(0.0f)
-                    .withEndAction(new HideRunnable(mProgress));
-            Snackbar.make(mRoot, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
-                    .show();
-        }
-    };
-
-    private final Callback<List<Branch>> mBranchesCallback = new EasyCallback<List<Branch>>() {
-
-        @Override
-        public void success(@NonNull List<Branch> response) {
-            mProgress.animate()
-                    .alpha(0.0f)
-                    .withEndAction(new HideRunnable(mProgress));
-
-            for (int i = 0; i < response.size(); i++) {
-                if (response.get(i).getName().equals(mProject.getDefaultBranch())) {
-                    String ref = response.get(i).getName();
-                    mRef = new Ref(Ref.TYPE_BRANCH, ref);
-                }
-            }
-
-            if (response.isEmpty()) {
-                broadcastLoad();
-            }
+            bindProject(response);
         }
 
         @Override
@@ -160,7 +125,7 @@ public class ProjectActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project);
         ButterKnife.bind(this);
-        mProject = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_PROJECT));
+        Project project = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_PROJECT));
 
         mToolbar.setNavigationIcon(R.drawable.ic_back_24dp);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -172,11 +137,11 @@ public class ProjectActivity extends BaseActivity {
         mToolbar.inflateMenu(R.menu.menu_project);
         mToolbar.setOnMenuItemClickListener(mOnMenuItemClickListener);
 
-        if (mProject == null) {
+        if (project == null) {
             String projectId = getIntent().getStringExtra(EXTRA_PROJECT_ID);
             loadProject(projectId);
         } else {
-            bindProject();
+            bindProject(project);
         }
     }
 
@@ -198,13 +163,6 @@ public class ProjectActivity extends BaseActivity {
         mProgress.setVisibility(View.VISIBLE);
         mProgress.animate().alpha(1.0f);
         App.instance().getGitLab().getProject(projectId).enqueue(mProjectCallback);
-    }
-
-    private void loadBranches() {
-        mProgress.setAlpha(0.0f);
-        mProgress.setVisibility(View.VISIBLE);
-        mProgress.animate().alpha(1.0f);
-        App.instance().getGitLab().getBranches(mProject.getId()).enqueue(mBranchesCallback);
     }
 
     private void broadcastLoad() {
@@ -234,16 +192,16 @@ public class ProjectActivity extends BaseActivity {
         return mProject;
     }
 
-    private void bindProject() {
+    private void bindProject(Project project) {
+        mProject = project;
+        mRef = new Ref(Ref.TYPE_BRANCH, mProject.getDefaultBranch());
         mToolbar.setTitle(mProject.getName());
         mToolbar.setSubtitle(mProject.getNamespace().getName());
         setupTabs();
-        loadBranches();
     }
 
     private void setupTabs() {
         ProjectSectionsPagerAdapter projectSectionsPagerAdapter = new ProjectSectionsPagerAdapter(this, getSupportFragmentManager());
-
         mViewPager.setAdapter(projectSectionsPagerAdapter);
         mTabLayout.setupWithViewPager(mViewPager);
     }

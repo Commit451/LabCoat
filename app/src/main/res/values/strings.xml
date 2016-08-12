@@ -140,6 +140,7 @@
     <string name="required_field">Required Field</string>
     <string name="wait_for_project_to_load">Wait for the project to load!</string>
     <string name="error_401">Account credentials no longer valid. Please sign in again</string>
+
     <!-- General -->
     <string name="projects">Projects</string>
     <string name="no_projects">No projects.</string>
@@ -154,6 +155,8 @@
     <string name="failed_to_load">Failed to load</string>
     <string name="just_now">just now</string>
     <string name="failed_to_create_issue">Failed to create or modify issue</string>
+    <string name="discard">Discard</string>
+    <string name="are_you_sure_you_want_to_discard">Are you sure you want to discard?</string>
 
     <!-- Project -->
     <string name="no_readme_found">No README found for project</string>

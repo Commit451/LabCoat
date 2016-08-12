@@ -48,6 +48,8 @@ public class PickTagFragment extends ButterKnifeFragment {
     RecyclerView mProjectsListView;
     @BindView(R.id.message_text)
     TextView mMessageView;
+    @BindView(R.id.progress)
+    View mProgress;
 
     TagsAdapter mTagsAdapter;
 
@@ -91,6 +93,7 @@ public class PickTagFragment extends ButterKnifeFragment {
         if (getView() == null) {
             return;
         }
+        mProgress.setVisibility(View.VISIBLE);
         mMessageView.setVisibility(View.GONE);
 
         App.instance().getGitLab().getTags(mProjectId).enqueue(new EasyCallback<List<Tag>>() {
@@ -99,6 +102,7 @@ public class PickTagFragment extends ButterKnifeFragment {
                 if (getView() == null) {
                     return;
                 }
+                mProgress.setVisibility(View.GONE);
                 mTagsAdapter.setEntries(response);
             }
 
@@ -108,6 +112,7 @@ public class PickTagFragment extends ButterKnifeFragment {
                 if (getView() == null) {
                     return;
                 }
+                mProgress.setVisibility(View.GONE);
                 mMessageView.setVisibility(View.VISIBLE);
             }
         });

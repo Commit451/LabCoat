@@ -1,9 +1,12 @@
 package com.commit451.gitlab;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 
 import com.bluelinelabs.logansquare.LoganSquare;
 import com.commit451.gitlab.api.GitLab;
+import com.commit451.gitlab.model.api.FileUploadResponse;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.model.api.Issue;
 import com.commit451.gitlab.model.api.MergeRequest;
@@ -20,8 +23,11 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowLog;
 
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 import retrofit2.Response;
 
 import static org.junit.Assert.assertNotNull;
@@ -120,6 +126,20 @@ public class ApiTests {
     public void getCurrentUser() throws Exception {
         Response<UserFull> userFullResponse = gitLab
                 .getThisUser()
+                .execute();
+        assertTrue(userFullResponse.isSuccessful());
+        assertNotNull(userFullResponse.body());
+    }
+
+    //@Test
+    public void uploadFile() throws Exception {
+        Bitmap bitmap = BitmapFactory.decodeResource(RuntimeEnvironment.application.getResources(), R.drawable.ic_fork);
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        RequestBody requestBody = RequestBody.create(MediaType.parse("image/png"), stream.toByteArray());
+
+        Response<FileUploadResponse> userFullResponse = gitLab
+                .uploadFile(sFakeProject.getId(), requestBody)
                 .execute();
         assertTrue(userFullResponse.isSuccessful());
         assertNotNull(userFullResponse.body());
