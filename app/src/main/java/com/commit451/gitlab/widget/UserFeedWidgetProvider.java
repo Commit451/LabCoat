@@ -25,9 +25,10 @@ import android.net.Uri;
 import android.widget.RemoteViews;
 
 import com.commit451.gitlab.R;
+import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.navigation.DeepLinker;
 
-public class FeedWidgetProvider extends AppWidgetProvider {
+public class UserFeedWidgetProvider extends AppWidgetProvider {
     public static final String ACTION_FOLLOW_LINK = "com.commit451.gitlab.ACTION_FOLLOW_LINK";
     public static final String EXTRA_LINK = "com.commit451.gitlab.EXTRA_LINK";
 
@@ -51,8 +52,13 @@ public class FeedWidgetProvider extends AppWidgetProvider {
 
             // Here we setup the intent which points to the StackViewService which will
             // provide the views for this collection.
-            Intent intent = new Intent(context, FeedWidgetService.class);
-            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
+            Account account = UserFeedWidgetPrefs.getAccount(context, widgetId);
+            if (account == null || account.getUser().getFeedUrl() == null) {
+                //TODO alert the user to this misfortune?
+                return;
+            }
+            String feedUrl = account.getUser().getFeedUrl().toString();
+            Intent intent = ProjectFeedWidgetService.newIntent(context, widgetId, account, feedUrl);
             // When intents are compared, the extras are ignored, so we need to embed the extras
             // into the data so that the extras will not be ignored.
             intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
@@ -65,8 +71,8 @@ public class FeedWidgetProvider extends AppWidgetProvider {
             // cannot setup their own pending intents, instead, the collection as a whole can
             // setup a pending intent template, and the individual items can set a fillInIntent
             // to create unique before on an item to item basis.
-            Intent toastIntent = new Intent(context, FeedWidgetProvider.class);
-            toastIntent.setAction(FeedWidgetProvider.ACTION_FOLLOW_LINK);
+            Intent toastIntent = new Intent(context, UserFeedWidgetProvider.class);
+            toastIntent.setAction(UserFeedWidgetProvider.ACTION_FOLLOW_LINK);
             toastIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
             intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
             PendingIntent toastPendingIntent = PendingIntent.getBroadcast(context, 0, toastIntent,

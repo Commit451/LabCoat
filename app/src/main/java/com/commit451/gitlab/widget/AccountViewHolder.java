@@ -27,9 +27,12 @@ public class AccountViewHolder extends TypedViewHolder<Account> {
         return new AccountViewHolder(view);
     }
 
-    @BindView(R.id.account_image) ImageView mImageView;
-    @BindView(R.id.account_username) TextView mUsernameView;
-    @BindView(R.id.account_server) TextView mServerView;
+    @BindView(R.id.account_image)
+    ImageView mImageView;
+    @BindView(R.id.account_username)
+    TextView mUsernameView;
+    @BindView(R.id.account_server)
+    TextView mServerView;
 
     public AccountViewHolder(View view) {
         super(view);

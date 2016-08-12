@@ -13,11 +13,12 @@ import java.io.IOException;
 /**
  * The prefs for the feed widget
  */
-public class FeedWidgetPrefs {
+public class ProjectFeedWidgetPrefs {
 
-    public static String FILE_NAME = "LabCoatWidgetPrefs";
+    public static String FILE_NAME = "LabCoatProjectWidgetPrefs";
 
     private static final String KEY_ACCOUNT = "_account";
+    private static final String KEY_PROJECT_FEED_URL = "_feed_url";
 
     private static SharedPreferences getSharedPrefs(Context context) {
         return context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
@@ -49,4 +50,15 @@ public class FeedWidgetPrefs {
         }
     }
 
+    @Nullable
+    public static String getFeedUrl(Context context, int widgetId) {
+        return getSharedPrefs(context).getString(widgetId + KEY_PROJECT_FEED_URL, null);
+    }
+
+    public static void setFeedUrl(Context context, int widgetId, String url) {
+        getSharedPrefs(context)
+                .edit()
+                .putString(widgetId + KEY_PROJECT_FEED_URL, url)
+                .commit();
+    }
 }

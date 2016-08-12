@@ -7,5 +7,5 @@
     android:previewImage="@mipmap/ic_launcher"
     android:initialLayout="@layout/widget_layout_entry"
     android:resizeMode="horizontal|vertical"
-    android:configure="com.commit451.gitlab.widget.FeedWidgetConfigureActivity"
+    android:configure="com.commit451.gitlab.widget.ProjectFeedWidgetConfigureActivity"
     android:widgetCategory="home_screen"/>

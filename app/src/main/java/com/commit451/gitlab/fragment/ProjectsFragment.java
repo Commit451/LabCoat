@@ -1,5 +1,6 @@
 package com.commit451.gitlab.fragment;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -16,6 +17,7 @@ import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.gitlab.adapter.ProjectsAdapter;
+import com.commit451.gitlab.api.GitLab;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.navigation.Navigator;
@@ -71,13 +73,15 @@ public class ProjectsFragment extends ButterKnifeFragment {
     @BindView(R.id.list) RecyclerView mProjectsListView;
     @BindView(R.id.message_text) TextView mMessageView;
 
-    private LinearLayoutManager mLayoutManager;
-    private ProjectsAdapter mProjectsAdapter;
+    LinearLayoutManager mLayoutManager;
+    ProjectsAdapter mProjectsAdapter;
 
-    private int mMode;
-    private String mQuery;
-    private Uri mNextPageUrl;
-    private boolean mLoading = false;
+    int mMode;
+    String mQuery;
+    Uri mNextPageUrl;
+    boolean mLoading = false;
+    Listener mListener;
+    GitLab mGitLab;
 
     private final RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
         @Override
@@ -152,9 +156,24 @@ public class ProjectsFragment extends ButterKnifeFragment {
     private final ProjectsAdapter.Listener mProjectsListener = new ProjectsAdapter.Listener() {
         @Override
         public void onProjectClicked(Project project) {
-            Navigator.navigateToProject(getActivity(), project);
+            if (mListener == null) {
+                Navigator.navigateToProject(getActivity(), project);
+            } else {
+                mListener.onProjectClicked(project);
+            }
         }
     };
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof Listener) {
+            mListener = (Listener) context;
+            mGitLab = mListener.getGitLab();
+        } else {
+            mGitLab = App.instance().getGitLab();
+        }
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -201,20 +220,20 @@ public class ProjectsFragment extends ButterKnifeFragment {
         switch (mMode) {
             case MODE_ALL:
                 showLoading();
-                App.instance().getGitLab().getAllProjects().enqueue(mProjectsCallback);
+                mGitLab.getAllProjects().enqueue(mProjectsCallback);
                 break;
             case MODE_MINE:
                 showLoading();
-                App.instance().getGitLab().getMyProjects().enqueue(mProjectsCallback);
+                mGitLab.getMyProjects().enqueue(mProjectsCallback);
                 break;
             case MODE_STARRED:
                 showLoading();
-                App.instance().getGitLab().getStarredProjects().enqueue(mProjectsCallback);
+                mGitLab.getStarredProjects().enqueue(mProjectsCallback);
                 break;
             case MODE_SEARCH:
                 if (mQuery != null) {
                     showLoading();
-                    App.instance().getGitLab().searchAllProjects(mQuery).enqueue(mProjectsCallback);
+                    mGitLab.searchAllProjects(mQuery).enqueue(mProjectsCallback);
                 }
                 break;
             case MODE_GROUP:
@@ -223,7 +242,7 @@ public class ProjectsFragment extends ButterKnifeFragment {
                 if (group == null) {
                     throw new IllegalStateException("You must also pass a group if you want to show a groups projects");
                 }
-                App.instance().getGitLab().getGroupProjects(group.getId()).enqueue(mProjectsCallback);
+                mGitLab.getGroupProjects(group.getId()).enqueue(mProjectsCallback);
                 break;
             default:
                 throw new IllegalStateException(mMode + " is not defined");
@@ -240,8 +259,8 @@ public class ProjectsFragment extends ButterKnifeFragment {
         }
         mLoading = true;
         mProjectsAdapter.setLoading(true);
-        Timber.d("loadMore called for " + mNextPageUrl);
-        App.instance().getGitLab().getProjects(mNextPageUrl.toString()).enqueue(mMoreProjectsCallback);
+        Timber.d("loadMore called for %s", mNextPageUrl);
+        mGitLab.getProjects(mNextPageUrl.toString()).enqueue(mMoreProjectsCallback);
     }
 
     private void showLoading() {
@@ -263,5 +282,10 @@ public class ProjectsFragment extends ButterKnifeFragment {
             mProjectsAdapter.clearData();
             loadData();
         }
+    }
+
+    public interface Listener {
+        void onProjectClicked(Project project);
+        GitLab getGitLab();
     }
 }

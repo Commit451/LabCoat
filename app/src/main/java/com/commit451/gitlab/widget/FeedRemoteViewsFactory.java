@@ -34,13 +34,24 @@ public class FeedRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
     private static final int mCount = 10;
     private Context mContext;
     private int mAppWidgetId;
+    private String mFeedUrl;
     private ArrayList<Entry> mEntries;
     private Picasso mPicasso;
+    private GitLabRss mRssClient;
 
-    public FeedRemoteViewsFactory(Context context, Intent intent) {
+    public FeedRemoteViewsFactory(Context context, Intent intent, Account account, String url) {
         mContext = context;
         mAppWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
                 AppWidgetManager.INVALID_APPWIDGET_ID);
+        mFeedUrl = url;
+
+        OkHttpClient.Builder gitlabRssClientBuilder = OkHttpClientFactory.create(account);
+        if (BuildConfig.DEBUG) {
+            gitlabRssClientBuilder.addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
+        }
+        mRssClient = GitLabRssFactory.create(account, gitlabRssClientBuilder.build());
+        OkHttpClient.Builder picassoClientBuilder = OkHttpClientFactory.create(account);
+        mPicasso = PicassoFactory.createPicasso(picassoClientBuilder.build());
     }
 
     @Override
@@ -74,9 +85,9 @@ public class FeedRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
         rv.setTextViewText(R.id.summary, entry.getSummary());
 
         // Next, we set a fill-intent which will be used to fill-in the pending intent template
-        // which is set on the collection view in FeedWidgetProvider.
+        // which is set on the collection view in UserFeedWidgetProvider.
         Intent fillInIntent = new Intent();
-        fillInIntent.putExtra(FeedWidgetProvider.EXTRA_LINK, entry.getLink().getHref().toString());
+        fillInIntent.putExtra(UserFeedWidgetProvider.EXTRA_LINK, entry.getLink().getHref().toString());
         rv.setOnClickFillInIntent(R.id.root, fillInIntent);
 
         try {
@@ -122,20 +133,9 @@ public class FeedRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
         // from the network, etc., it is ok to do it here, synchronously. The widget will remain
         // in its current state while work is being done here, so you don't need to worry about
         // locking up the widget.
-        Account account = FeedWidgetPrefs.getAccount(mContext, mAppWidgetId);
-        if (account == null || account.getUser() == null || account.getUser().getFeedUrl() == null) {
-            //TODO show error state?
-            return;
-        }
-        OkHttpClient.Builder gitlabRssClientBuilder = OkHttpClientFactory.create(account);
-        if (BuildConfig.DEBUG) {
-            gitlabRssClientBuilder.addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
-        }
-        GitLabRss rssClient = GitLabRssFactory.create(account, gitlabRssClientBuilder.build());
-        OkHttpClient.Builder picassoClientBuilder = OkHttpClientFactory.create(account);
-        mPicasso = PicassoFactory.createPicasso(picassoClientBuilder.build());
+
         try {
-            Response<Feed> feedResponse = rssClient.getFeed(account.getUser().getFeedUrl().toString()).execute();
+            Response<Feed> feedResponse = mRssClient.getFeed(mFeedUrl).execute();
             if (feedResponse.isSuccessful()) {
                 if (feedResponse.body().getEntries() != null) {
                     mEntries.addAll(feedResponse.body().getEntries());
