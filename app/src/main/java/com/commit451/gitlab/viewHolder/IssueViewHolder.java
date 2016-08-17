@@ -4,15 +4,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.api.Issue;
-import com.commit451.gitlab.transformation.CircleTransformation;
 import com.commit451.gitlab.util.DateUtil;
-import com.commit451.gitlab.util.ImageUtil;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -28,6 +24,7 @@ public class IssueViewHolder extends RecyclerView.ViewHolder {
         return new IssueViewHolder(view);
     }
 
+    @BindView(R.id.issue_status) TextView mStatusView;
     @BindView(R.id.issue_message) TextView mMessageView;
     @BindView(R.id.issue_creator) TextView mCreatorView;
 
@@ -39,6 +36,18 @@ public class IssueViewHolder extends RecyclerView.ViewHolder {
     public void bind(Issue issue) {
 
         mMessageView.setText(issue.getTitle());
+
+        switch (issue.getState()) {
+            case Issue.STATE_OPENED:
+                mStatusView.setText(itemView.getResources().getText(R.string.issue_open));
+                break;
+            case Issue.STATE_CLOSED:
+                mStatusView.setText(itemView.getResources().getText(R.string.issue_closed));
+                break;
+            default:
+                mStatusView.setVisibility(View.GONE);
+                break;
+        }
 
         String time = "";
         if (issue.getCreatedAt() != null) {
