@@ -3,7 +3,9 @@ package com.commit451.gitlab.api;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 
+import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
@@ -17,6 +19,7 @@ public class X509TrustManagerProvider {
 
     /**
      * Get the static {@link X509TrustManager} for the system
+     *
      * @return the static instance
      */
     public static X509TrustManager get() {
@@ -31,18 +34,19 @@ public class X509TrustManagerProvider {
         return sX509TrustManager;
     }
 
+    /**
+     * Getting the {@link X509TrustManager} as shown in the {@link okhttp3.OkHttpClient.Builder#sslSocketFactory(SSLSocketFactory, X509TrustManager)} docs
+     * @throws NoSuchAlgorithmException
+     * @throws KeyStoreException
+     */
     private static void init() throws NoSuchAlgorithmException, KeyStoreException {
-        TrustManagerFactory factory = TrustManagerFactory.getInstance("X509");
-        factory.init((KeyStore) null);
-
-        TrustManager[] trustManagers = factory.getTrustManagers();
-        if (trustManagers != null) {
-            for (TrustManager trustManager : trustManagers) {
-                if (trustManager instanceof X509TrustManager) {
-                    sX509TrustManager = (X509TrustManager) trustManager;
-                    break;
-                }
-            }
+        TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+        trustManagerFactory.init((KeyStore) null);
+        TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
+        if (trustManagers.length != 1 || !(trustManagers[0] instanceof X509TrustManager)) {
+            throw new IllegalStateException("Unexpected default trust managers:"
+                    + Arrays.toString(trustManagers));
         }
+        sX509TrustManager = (X509TrustManager) trustManagers[0];
     }
 }
