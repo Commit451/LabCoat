@@ -28,6 +28,7 @@ public class IssueViewHolder extends RecyclerView.ViewHolder {
         return new IssueViewHolder(view);
     }
 
+    @BindView(R.id.issue_state) TextView mStateView;
     @BindView(R.id.issue_image) ImageView mImageView;
     @BindView(R.id.issue_message) TextView mMessageView;
     @BindView(R.id.issue_creator) TextView mCreatorView;
@@ -38,6 +39,18 @@ public class IssueViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(Issue issue) {
+
+        switch (issue.getState()){
+            case Issue.STATE_OPENED:
+                mStateView.setText(itemView.getResources().getString(R.string.issue_open));
+                break;
+            case Issue.STATE_CLOSED:
+                mStateView.setText(itemView.getResources().getString(R.string.issue_closed));
+                break;
+            default:
+                mStateView.setVisibility(View.GONE);
+                break;
+        }
 
         if (issue.getAssignee() != null) {
             App.instance().getPicasso()
