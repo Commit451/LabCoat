@@ -35,4 +35,14 @@
 
     </LinearLayout>
 
+    <ImageView
+        android:id="@+id/issue_image"
+        android:layout_width="@dimen/image_size"
+        android:layout_height="@dimen/image_size"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:contentDescription="@null"
+        tools:src="@drawable/ic_assign_24dp" />
+
 </LinearLayout>

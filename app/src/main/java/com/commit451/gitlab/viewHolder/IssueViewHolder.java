@@ -28,6 +28,7 @@ public class IssueViewHolder extends RecyclerView.ViewHolder {
         return new IssueViewHolder(view);
     }
 
+    @BindView(R.id.issue_image) ImageView mImageView;
     @BindView(R.id.issue_message) TextView mMessageView;
     @BindView(R.id.issue_creator) TextView mCreatorView;
 
@@ -37,6 +38,15 @@ public class IssueViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(Issue issue) {
+
+        if (issue.getAssignee() != null) {
+            App.instance().getPicasso()
+                    .load(ImageUtil.getAvatarUrl(issue.getAssignee(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size)))
+                    .transform(new CircleTransformation())
+                    .into(mImageView);
+        } else {
+            mImageView.setImageBitmap(null);
+        }
 
         mMessageView.setText(issue.getTitle());
 
