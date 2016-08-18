@@ -198,7 +198,6 @@
     <string name="error_changing_issue">There was an error changing the issue</string>
     <string name="no_issues">No issues</string>
     <string name="issue_opened">Opened</string>
-    <string name="issue_open">Open</string>
     <string name="issue_closed">Closed</string>
     <string name="issue_all">All</string>
     <string name="issue_state_value_default">opened</string>
