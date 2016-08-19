@@ -1,8 +1,6 @@
 package com.commit451.gitlab.api;
 
 import android.content.Intent;
-import android.os.Handler;
-import android.os.Looper;
 import android.widget.Toast;
 
 import com.commit451.gitlab.App;
@@ -10,6 +8,7 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.LoginActivity;
 import com.commit451.gitlab.data.Prefs;
 import com.commit451.gitlab.model.Account;
+import com.commit451.gitlab.util.ThreadUtil;
 
 import java.io.IOException;
 
@@ -35,8 +34,7 @@ public class OpenSignInAuthenticator implements Authenticator {
         //Special case for if someone just put in their username or password wrong
         if (!"session".equals(response.request().url().pathSegments().get(response.request().url().pathSegments().size()-1))) {
             //Off the background thread
-            Handler mainHandler = new Handler(Looper.getMainLooper());
-            mainHandler.post(new Runnable() {
+            ThreadUtil.postOnMainThread(new Runnable() {
                 @Override
                 public void run() {
                     //Remove the account, so that the user can sign in again
