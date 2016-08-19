@@ -11,18 +11,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.BuildArtifactsAdapter;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
-import com.commit451.easycallback.EasyCallback;
-import com.commit451.gitlab.api.GitLabFactory;
 import com.commit451.gitlab.event.BuildChangedEvent;
 import com.commit451.gitlab.model.api.Artifact;
 import com.commit451.gitlab.model.api.Build;
 import com.commit451.gitlab.model.api.Project;
-import com.squareup.otto.Subscribe;
 
+import org.greenrobot.eventbus.Subscribe;
 import org.parceler.Parcels;
 
 import java.util.List;

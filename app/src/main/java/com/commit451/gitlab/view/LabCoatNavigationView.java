@@ -32,7 +32,7 @@ import com.commit451.gitlab.model.api.UserFull;
 import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.transformation.CircleTransformation;
 import com.commit451.gitlab.util.ImageUtil;
-import com.squareup.otto.Subscribe;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.Collections;
 import java.util.Date;

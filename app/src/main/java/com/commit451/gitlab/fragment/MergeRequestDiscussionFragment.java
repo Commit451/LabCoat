@@ -24,7 +24,7 @@ import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.PaginationUtil;
 import com.commit451.gitlab.view.SendMessageView;
 import com.commit451.teleprinter.Teleprinter;
-import com.squareup.otto.Subscribe;
+import org.greenrobot.eventbus.Subscribe;
 
 import org.parceler.Parcels;
 

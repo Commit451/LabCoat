@@ -7,7 +7,9 @@ import android.view.View;
 
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.event.ReloadDataEvent;
-import com.squareup.otto.Subscribe;
+
+import org.greenrobot.eventbus.Subscribe;
+
 
 public class BaseFragment extends Fragment{
 

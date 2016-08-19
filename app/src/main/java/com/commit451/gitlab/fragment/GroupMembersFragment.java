@@ -21,7 +21,7 @@ import com.commit451.gitlab.model.api.Member;
 import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.DynamicGridLayoutManager;
 import com.commit451.gitlab.viewHolder.ProjectMemberViewHolder;
-import com.squareup.otto.Subscribe;
+import org.greenrobot.eventbus.Subscribe;
 
 import org.parceler.Parcels;
 

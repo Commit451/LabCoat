@@ -17,7 +17,8 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.ProjectsPagerAdapter;
 import com.commit451.gitlab.event.CloseDrawerEvent;
 import com.commit451.gitlab.navigation.Navigator;
-import com.squareup.otto.Subscribe;
+
+import org.greenrobot.eventbus.Subscribe;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

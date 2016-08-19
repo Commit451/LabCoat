@@ -23,7 +23,8 @@ import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.DynamicGridLayoutManager;
 import com.commit451.gitlab.util.PaginationUtil;
 import com.commit451.gitlab.viewHolder.GroupViewHolder;
-import com.squareup.otto.Subscribe;
+
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.List;
 

@@ -27,7 +27,7 @@ import com.commit451.gitlab.model.api.RepositoryTreeObject;
 import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.observable.DecodeObservableFactory;
 import com.commit451.gitlab.util.BypassImageGetterFactory;
-import com.squareup.otto.Subscribe;
+import org.greenrobot.eventbus.Subscribe;
 import com.vdurmont.emoji.EmojiParser;
 
 import java.util.List;

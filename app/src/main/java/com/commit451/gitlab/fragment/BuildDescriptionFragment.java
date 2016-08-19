@@ -19,7 +19,7 @@ import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryCommit;
 import com.commit451.gitlab.model.api.Runner;
 import com.commit451.gitlab.util.DateUtil;
-import com.squareup.otto.Subscribe;
+import org.greenrobot.eventbus.Subscribe;
 
 import org.parceler.Parcels;
 

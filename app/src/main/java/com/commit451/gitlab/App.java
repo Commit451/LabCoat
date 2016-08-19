@@ -18,10 +18,11 @@ import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.util.FabricUtil;
 import com.novoda.simplechromecustomtabs.SimpleChromeCustomTabs;
 import com.squareup.leakcanary.LeakCanary;
-import com.squareup.otto.Bus;
 import com.squareup.picasso.Picasso;
 
 import net.danlew.android.joda.JodaTimeAndroid;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 import java.util.Locale;
@@ -43,12 +44,12 @@ public class App extends Application {
         LoganSquare.registerTypeConverter(Uri.class, new UriTypeConverter());
     }
 
-    private static Bus sBus;
+    private static EventBus sBus;
     private static App sInstance;
 
-    public static Bus bus() {
+    public static EventBus bus() {
         if (sBus == null) {
-            sBus = new Bus();
+            sBus = EventBus.getDefault();
         }
         return sBus;
     }
