@@ -12,11 +12,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.MergeRequestDetailAdapter;
-import com.commit451.easycallback.EasyCallback;
-import com.commit451.gitlab.api.GitLabFactory;
 import com.commit451.gitlab.event.MergeRequestChangedEvent;
 import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.model.api.Note;
@@ -178,7 +177,7 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
         super.onViewCreated(view, savedInstanceState);
         mTeleprinter = new Teleprinter(getActivity());
 
-        mMergeRequestDetailAdapter = new MergeRequestDetailAdapter(getActivity(), mMergeRequest);
+        mMergeRequestDetailAdapter = new MergeRequestDetailAdapter(getActivity(), mMergeRequest, mProject);
         mNotesLinearLayoutManager = new LinearLayoutManager(getActivity());
         mNotesRecyclerView.setLayoutManager(mNotesLinearLayoutManager);
         mNotesRecyclerView.setAdapter(mMergeRequestDetailAdapter);

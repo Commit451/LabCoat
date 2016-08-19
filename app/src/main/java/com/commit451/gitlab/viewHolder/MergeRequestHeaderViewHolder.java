@@ -9,11 +9,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.commit451.bypasspicassoimagegetter.BypassPicassoImageGetter;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.api.MergeRequest;
+import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.transformation.CircleTransformation;
+import com.commit451.gitlab.util.BypassImageGetterFactory;
 import com.commit451.gitlab.util.DateUtil;
 import com.commit451.gitlab.util.ImageUtil;
 
@@ -32,21 +33,28 @@ public class MergeRequestHeaderViewHolder extends RecyclerView.ViewHolder {
         return new MergeRequestHeaderViewHolder(view);
     }
 
-    @BindView(R.id.description) TextView mDescriptionView;
-    @BindView(R.id.author_image) ImageView mAuthorImageView;
-    @BindView(R.id.author) TextView mAuthorView;
+    @BindView(R.id.description)
+    TextView mDescriptionView;
+    @BindView(R.id.author_image)
+    ImageView mAuthorImageView;
+    @BindView(R.id.author)
+    TextView mAuthorView;
 
     public MergeRequestHeaderViewHolder(View view) {
         super(view);
         ButterKnife.bind(this, view);
     }
 
-    public void bind(MergeRequest mergeRequest, Bypass bypass) {
+    public void bind(MergeRequest mergeRequest, Bypass bypass, Project project) {
         if (TextUtils.isEmpty(mergeRequest.getDescription())) {
             mDescriptionView.setVisibility(View.GONE);
         } else {
             mDescriptionView.setVisibility(View.VISIBLE);
-            mDescriptionView.setText(bypass.markdownToSpannable(mergeRequest.getDescription(), new BypassPicassoImageGetter(mDescriptionView, App.instance().getPicasso())));
+            mDescriptionView.setText(bypass.markdownToSpannable(mergeRequest.getDescription(),
+                    BypassImageGetterFactory.create(mDescriptionView,
+                            App.instance().getPicasso(),
+                            App.instance().getAccount().getServerUrl().toString(),
+                            project)));
             mDescriptionView.setMovementMethod(LinkMovementMethod.getInstance());
         }
 

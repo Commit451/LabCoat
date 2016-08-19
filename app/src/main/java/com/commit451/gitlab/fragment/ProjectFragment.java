@@ -15,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.commit451.bypasspicassoimagegetter.BypassPicassoImageGetter;
 import com.commit451.easycallback.EasyCallback;
 import com.commit451.easycallback.HttpException;
 import com.commit451.gitlab.App;
@@ -27,6 +26,7 @@ import com.commit451.gitlab.model.api.RepositoryFile;
 import com.commit451.gitlab.model.api.RepositoryTreeObject;
 import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.observable.DecodeObservableFactory;
+import com.commit451.gitlab.util.BypassImageGetterFactory;
 import com.squareup.otto.Subscribe;
 
 import java.util.List;
@@ -160,7 +160,10 @@ public class ProjectFragment extends ButterKnifeFragment {
                                 switch (getReadmeType(response.getFileName())) {
                                     case README_TYPE_MARKDOWN:
                                         mOverviewVew.setText(mBypass.markdownToSpannable(text,
-                                                new BypassPicassoImageGetter(mOverviewVew, App.instance().getPicasso())));
+                                                BypassImageGetterFactory.create(mOverviewVew,
+                                                        App.instance().getPicasso(),
+                                                        App.instance().getAccount().getServerUrl().toString(),
+                                                        mProject)));
                                         break;
                                     case README_TYPE_HTML:
                                         mOverviewVew.setText(Html.fromHtml(text));

@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 
 import com.commit451.gitlab.model.api.Issue;
 import com.commit451.gitlab.model.api.Note;
+import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.viewHolder.IssueHeaderViewHolder;
 import com.commit451.gitlab.viewHolder.IssueLabelsViewHolder;
 import com.commit451.gitlab.viewHolder.LoadingFooterViewHolder;
@@ -29,15 +30,17 @@ public class IssueDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private static final int HEADER_COUNT = 2;
     private static final int FOOTER_COUNT = 1;
 
+    private Project mProject;
     private LinkedList<Note> mNotes;
     private Issue mIssue;
     private boolean mLoading = false;
     private Bypass mBypass;
 
-    public IssueDetailsAdapter(Context context, Issue issue) {
+    public IssueDetailsAdapter(Context context, Issue issue, Project project) {
         mIssue = issue;
         mNotes = new LinkedList<>();
         mBypass = new Bypass(context);
+        mProject = project;
     }
 
     @Override
@@ -62,7 +65,7 @@ public class IssueDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             ((IssueLabelsViewHolder) holder).bind(mIssue.getLabels());
         } else if (holder instanceof NoteViewHolder) {
             Note note = getNoteAt(position);
-            ((NoteViewHolder) holder).bind(note, mBypass);
+            ((NoteViewHolder) holder).bind(note, mBypass, mProject);
         } else if (holder instanceof LoadingFooterViewHolder) {
             ((LoadingFooterViewHolder) holder).bind(mLoading);
         }

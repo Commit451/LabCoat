@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 
 import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.model.api.Note;
+import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.viewHolder.LoadingFooterViewHolder;
 import com.commit451.gitlab.viewHolder.MergeRequestHeaderViewHolder;
 import com.commit451.gitlab.viewHolder.NoteViewHolder;
@@ -31,11 +32,13 @@ public class MergeRequestDetailAdapter extends RecyclerView.Adapter<RecyclerView
     private MergeRequest mMergeRequest;
     private boolean mLoading = false;
     private Bypass mBypass;
+    private Project mProject;
 
-    public MergeRequestDetailAdapter(Context context, MergeRequest mergeRequest) {
+    public MergeRequestDetailAdapter(Context context, MergeRequest mergeRequest, Project project) {
         mMergeRequest = mergeRequest;
         mNotes = new LinkedList<>();
         mBypass = new Bypass(context);
+        mProject = project;
     }
 
     @Override
@@ -53,10 +56,10 @@ public class MergeRequestDetailAdapter extends RecyclerView.Adapter<RecyclerView
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof MergeRequestHeaderViewHolder) {
-            ((MergeRequestHeaderViewHolder) holder).bind(mMergeRequest, mBypass);
+            ((MergeRequestHeaderViewHolder) holder).bind(mMergeRequest, mBypass, mProject);
         } else if (holder instanceof NoteViewHolder) {
             Note note = getNoteAt(position);
-            ((NoteViewHolder) holder).bind(note, mBypass);
+            ((NoteViewHolder) holder).bind(note, mBypass, mProject);
         } else if (holder instanceof LoadingFooterViewHolder) {
             ((LoadingFooterViewHolder) holder).bind(mLoading);
         }

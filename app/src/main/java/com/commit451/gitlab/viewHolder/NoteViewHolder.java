@@ -12,7 +12,9 @@ import com.commit451.bypasspicassoimagegetter.BypassPicassoImageGetter;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.api.Note;
+import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.transformation.CircleTransformation;
+import com.commit451.gitlab.util.BypassImageGetterFactory;
 import com.commit451.gitlab.util.DateUtil;
 import com.commit451.gitlab.util.ImageUtil;
 
@@ -41,7 +43,7 @@ public class NoteViewHolder extends RecyclerView.ViewHolder {
         ButterKnife.bind(this, view);
     }
 
-    public void bind(Note note, Bypass bypass) {
+    public void bind(Note note, Bypass bypass, Project project) {
         if (note.getCreatedAt() != null) {
             mCreationDateView.setText(DateUtil.getRelativeTimeSpanString(itemView.getContext(), note.getCreatedAt()));
         }
@@ -55,7 +57,11 @@ public class NoteViewHolder extends RecyclerView.ViewHolder {
             summary = note.getBody();
         }
 
-        mSummaryView.setText(bypass.markdownToSpannable(summary, new BypassPicassoImageGetter(mSummaryView, App.instance().getPicasso())));
+        BypassPicassoImageGetter getter = BypassImageGetterFactory.create(mSummaryView,
+                App.instance().getPicasso(),
+                App.instance().getAccount().getServerUrl().toString(),
+                project);
+        mSummaryView.setText(bypass.markdownToSpannable(summary, getter));
         mSummaryView.setMovementMethod(LinkMovementMethod.getInstance());
 
         App.instance().getPicasso()

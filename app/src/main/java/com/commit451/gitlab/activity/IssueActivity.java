@@ -164,7 +164,7 @@ public class IssueActivity extends BaseActivity {
                         .show();
             } else {
                 mIssue = response.get(0);
-                mIssueDetailsAdapter = new IssueDetailsAdapter(IssueActivity.this, mIssue);
+                mIssueDetailsAdapter = new IssueDetailsAdapter(IssueActivity.this, mIssue, mProject);
                 mNotesRecyclerView.setAdapter(mIssueDetailsAdapter);
                 bindIssue();
                 bindProject();
@@ -346,7 +346,7 @@ public class IssueActivity extends BaseActivity {
         if (getIntent().hasExtra(EXTRA_SELECTED_ISSUE)) {
             mProject = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_PROJECT));
             mIssue = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_SELECTED_ISSUE));
-            mIssueDetailsAdapter = new IssueDetailsAdapter(IssueActivity.this, mIssue);
+            mIssueDetailsAdapter = new IssueDetailsAdapter(IssueActivity.this, mIssue, mProject);
             mNotesRecyclerView.setAdapter(mIssueDetailsAdapter);
             bindIssue();
             bindProject();
