@@ -28,6 +28,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.bluelinelabs.logansquare.LoganSquare;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.BuildConfig;
 import com.commit451.gitlab.R;
@@ -39,6 +40,7 @@ import com.commit451.gitlab.dialog.HttpLoginDialog;
 import com.commit451.gitlab.event.LoginEvent;
 import com.commit451.gitlab.event.ReloadDataEvent;
 import com.commit451.gitlab.model.Account;
+import com.commit451.gitlab.model.api.Message;
 import com.commit451.gitlab.model.api.UserFull;
 import com.commit451.gitlab.model.api.UserLogin;
 import com.commit451.gitlab.navigation.Navigator;
@@ -48,6 +50,7 @@ import com.commit451.gitlab.ssl.X509CertificateException;
 import com.commit451.gitlab.ssl.X509Util;
 import com.commit451.teleprinter.Teleprinter;
 
+import java.io.IOException;
 import java.net.ConnectException;
 import java.security.cert.CertificateEncodingException;
 import java.util.ArrayList;
@@ -516,7 +519,16 @@ public class LoginActivity extends BaseActivity {
                     handleBasicAuthentication(response);
                     return;
                 }
-                Snackbar.make(mRoot, getString(R.string.login_unauthorized), Snackbar.LENGTH_LONG)
+                String errorMessage = getString(R.string.login_unauthorized);
+                try {
+                    Message message = LoganSquare.parse(response.errorBody().byteStream(), Message.class);
+                    if (message != null && message.getMessage() != null) {
+                        errorMessage = message.getMessage();
+                    }
+                } catch (IOException e) {
+                    Timber.e(e);
+                }
+                Snackbar.make(mRoot, errorMessage, Snackbar.LENGTH_LONG)
                         .show();
                 return;
             case 404:
