@@ -326,13 +326,8 @@ public class IssueActivity extends BaseActivity {
             }
 
             @Override
-            public void onGalleryClicked() {
-                Navigator.navigateToChoosePhoto(IssueActivity.this, REQUEST_IMAGE);
-            }
-
-            @Override
-            public void onCameraClicked() {
-
+            public void onAttachmentClicked() {
+                Navigator.navigateToAttach(IssueActivity.this);
             }
         });
 

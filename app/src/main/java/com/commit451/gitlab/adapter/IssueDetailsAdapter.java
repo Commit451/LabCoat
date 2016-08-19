@@ -60,7 +60,7 @@ public class IssueDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof IssueHeaderViewHolder) {
-            ((IssueHeaderViewHolder) holder).bind(mIssue);
+            ((IssueHeaderViewHolder) holder).bind(mIssue, mProject);
         } else if (holder instanceof IssueLabelsViewHolder) {
             ((IssueLabelsViewHolder) holder).bind(mIssue.getLabels());
         } else if (holder instanceof NoteViewHolder) {

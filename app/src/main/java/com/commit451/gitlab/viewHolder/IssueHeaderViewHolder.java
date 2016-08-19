@@ -9,10 +9,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.commit451.bypasspicassoimagegetter.BypassPicassoImageGetter;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.api.Issue;
+import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.transformation.CircleTransformation;
+import com.commit451.gitlab.util.BypassImageGetterFactory;
 import com.commit451.gitlab.util.DateUtil;
 import com.commit451.gitlab.util.ImageUtil;
 
@@ -45,12 +48,17 @@ public class IssueHeaderViewHolder extends RecyclerView.ViewHolder {
         mBypass = new Bypass(view.getContext());
     }
 
-    public void bind(Issue issue) {
+    public void bind(Issue issue, Project project) {
+
         if (TextUtils.isEmpty(issue.getDescription())) {
             mDescriptionView.setVisibility(View.GONE);
         } else {
             mDescriptionView.setVisibility(View.VISIBLE);
-            mDescriptionView.setText(mBypass.markdownToSpannable(issue.getDescription()));
+            BypassPicassoImageGetter getter = BypassImageGetterFactory.create(mDescriptionView,
+                    App.instance().getPicasso(),
+                    App.instance().getAccount().getServerUrl().toString(),
+                    project);
+            mDescriptionView.setText(mBypass.markdownToSpannable(issue.getDescription(), getter));
             mDescriptionView.setMovementMethod(LinkMovementMethod.getInstance());
         }
 

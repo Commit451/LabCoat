@@ -31,17 +31,10 @@ public class SendMessageView extends LinearLayout {
         }
     }
 
-    @OnClick(R.id.icon_gallery)
-    void onGalleryClicked() {
+    @OnClick(R.id.button_attach)
+    void onAttachClicked() {
         if (mCallbacks != null) {
-            mCallbacks.onGalleryClicked();
-        }
-    }
-
-    @OnClick(R.id.icon_camera)
-    void onCameraClicked() {
-        if (mCallbacks != null) {
-            mCallbacks.onCameraClicked();
+            mCallbacks.onAttachmentClicked();
         }
     }
 
@@ -70,7 +63,7 @@ public class SendMessageView extends LinearLayout {
 
     private void init() {
         inflate(getContext(), R.layout.view_send_message, this);
-        setOrientation(VERTICAL);
+        setOrientation(HORIZONTAL);
         ButterKnife.bind(this);
         setBackgroundColor(Easel.getThemeAttrColor(getContext(), R.attr.colorPrimary));
         if (Build.VERSION.SDK_INT >= 21) {
@@ -100,7 +93,6 @@ public class SendMessageView extends LinearLayout {
 
     public interface Callbacks {
         void onSendClicked(String message);
-        void onGalleryClicked();
-        void onCameraClicked();
+        void onAttachmentClicked();
     }
 }

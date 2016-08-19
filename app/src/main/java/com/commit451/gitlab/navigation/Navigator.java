@@ -230,6 +230,10 @@ public class Navigator {
         activity.startActivity(intent);
     }
 
+    public static void navigateToAttach(Activity activity) {
+        //TODO
+    }
+
     public static void navigateToChoosePhoto(Activity activity, int requestCode) {
         Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
         photoPickerIntent.setType("image/*");

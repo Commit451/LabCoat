@@ -6,57 +6,39 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <ImageView
+        android:id="@+id/button_attach"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/ic_attachment_24dp"
+        android:layout_gravity="center_vertical"
+        android:padding="8dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:visibility="gone"
+        android:contentDescription="@null"/>
+
     <EditText
         android:id="@+id/text_note"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_weight="1"
         android:hint="@string/new_note_hint"
         android:imeOptions="actionNone"
         android:inputType="textCapSentences|textAutoCorrect|textMultiLine"
         android:maxLines="4"/>
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/button_send"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_gravity="center_vertical"
+        app:srcCompat="@drawable/ic_send_24dp"
+        app:fabSize="mini"/>
 
-        <ImageView
-            android:id="@+id/icon_gallery"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_gallery_24dp"
-            android:layout_gravity="center_vertical"
-            android:padding="8dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:visibility="gone"
-            android:contentDescription="@null"/>
-
-        <ImageView
-            android:id="@+id/icon_camera"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_camera_24dp"
-            android:layout_gravity="center_vertical"
-            android:padding="8dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:visibility="gone"
-            android:contentDescription="@null"/>
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"/>
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/button_send"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            app:srcCompat="@drawable/ic_send_24dp"
-            app:fabSize="mini"/>
-
-    </LinearLayout>
 </merge>

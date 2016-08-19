@@ -20,6 +20,7 @@ import com.commit451.gitlab.event.MergeRequestChangedEvent;
 import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.model.api.Note;
 import com.commit451.gitlab.model.api.Project;
+import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.PaginationUtil;
 import com.commit451.gitlab.view.SendMessageView;
 import com.commit451.teleprinter.Teleprinter;
@@ -190,13 +191,8 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
             }
 
             @Override
-            public void onGalleryClicked() {
-
-            }
-
-            @Override
-            public void onCameraClicked() {
-
+            public void onAttachmentClicked() {
+                Navigator.navigateToAttach(getActivity());
             }
         });
 
