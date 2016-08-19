@@ -81,7 +81,6 @@ public class ProjectsFragment extends ButterKnifeFragment {
     Uri mNextPageUrl;
     boolean mLoading = false;
     Listener mListener;
-    GitLab mGitLab;
 
     private final RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
         @Override
@@ -169,9 +168,6 @@ public class ProjectsFragment extends ButterKnifeFragment {
         super.onAttach(context);
         if (context instanceof Listener) {
             mListener = (Listener) context;
-            mGitLab = mListener.getGitLab();
-        } else {
-            mGitLab = App.instance().getGitLab();
         }
     }
 
@@ -220,20 +216,20 @@ public class ProjectsFragment extends ButterKnifeFragment {
         switch (mMode) {
             case MODE_ALL:
                 showLoading();
-                mGitLab.getAllProjects().enqueue(mProjectsCallback);
+                getGitLab().getAllProjects().enqueue(mProjectsCallback);
                 break;
             case MODE_MINE:
                 showLoading();
-                mGitLab.getMyProjects().enqueue(mProjectsCallback);
+                getGitLab().getMyProjects().enqueue(mProjectsCallback);
                 break;
             case MODE_STARRED:
                 showLoading();
-                mGitLab.getStarredProjects().enqueue(mProjectsCallback);
+                getGitLab().getStarredProjects().enqueue(mProjectsCallback);
                 break;
             case MODE_SEARCH:
                 if (mQuery != null) {
                     showLoading();
-                    mGitLab.searchAllProjects(mQuery).enqueue(mProjectsCallback);
+                    getGitLab().searchAllProjects(mQuery).enqueue(mProjectsCallback);
                 }
                 break;
             case MODE_GROUP:
@@ -242,7 +238,7 @@ public class ProjectsFragment extends ButterKnifeFragment {
                 if (group == null) {
                     throw new IllegalStateException("You must also pass a group if you want to show a groups projects");
                 }
-                mGitLab.getGroupProjects(group.getId()).enqueue(mProjectsCallback);
+                getGitLab().getGroupProjects(group.getId()).enqueue(mProjectsCallback);
                 break;
             default:
                 throw new IllegalStateException(mMode + " is not defined");
@@ -260,7 +256,7 @@ public class ProjectsFragment extends ButterKnifeFragment {
         mLoading = true;
         mProjectsAdapter.setLoading(true);
         Timber.d("loadMore called for %s", mNextPageUrl);
-        mGitLab.getProjects(mNextPageUrl.toString()).enqueue(mMoreProjectsCallback);
+        getGitLab().getProjects(mNextPageUrl.toString()).enqueue(mMoreProjectsCallback);
     }
 
     private void showLoading() {
@@ -281,6 +277,14 @@ public class ProjectsFragment extends ButterKnifeFragment {
         if (mProjectsAdapter != null) {
             mProjectsAdapter.clearData();
             loadData();
+        }
+    }
+
+    private GitLab getGitLab() {
+        if (mListener != null) {
+            return mListener.getGitLab();
+        } else {
+            return App.instance().getGitLab();
         }
     }
 

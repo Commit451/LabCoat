@@ -31,13 +31,14 @@ public final class OkHttpClientFactory {
         customTrustManager.setTrustedHostname(account.getTrustedHostname());
         customTrustManager.setPrivateKeyAlias(account.getPrivateKeyAlias());
 
-        OpenSignInAuthenticator authenticator = new OpenSignInAuthenticator(account);
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .addInterceptor(new AuthenticationRequestInterceptor(account))
                 .sslSocketFactory(customTrustManager.getSSLSocketFactory(), X509TrustManagerProvider.get())
                 .hostnameVerifier(customTrustManager.getHostnameVerifier());
+
         if (includeSignInAuthenticator) {
+            OpenSignInAuthenticator authenticator = new OpenSignInAuthenticator(account);
             builder.authenticator(authenticator)
                     .proxyAuthenticator(authenticator);
         }
