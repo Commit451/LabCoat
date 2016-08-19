@@ -73,9 +73,7 @@
                     android:id="@+id/assignee_progress"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:layout_gravity="center"
-                    app:matProg_barColor="?attr/colorAccent"
-                    app:matProg_progressIndeterminate="true"/>
+                    android:layout_gravity="center"/>
 
                 <Spinner
                     android:id="@+id/assignee_spinner"
@@ -100,8 +98,7 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_gravity="center"
-                    app:matProg_barColor="?attr/colorAccent"
-                    app:matProg_progressIndeterminate="true"/>
+                    android:indeterminate="true"/>
 
                 <Spinner
                     android:id="@+id/milestone_spinner"
@@ -127,8 +124,7 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_gravity="center"
-                    app:matProg_barColor="?attr/colorAccent"
-                    app:matProg_progressIndeterminate="true"/>
+                    android:indeterminate="true"/>
 
                 <LinearLayout
                     android:id="@+id/root_add_labels"

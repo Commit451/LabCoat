@@ -225,7 +225,15 @@ public class LoginActivity extends BaseActivity {
     void onOpenLoginPageClicked() {
         if (verifyUrl()) {
             String url = mUrlHint.getEditText().getText().toString();
-            Navigator.navigateToWebSignin(this, url, REQUEST_PRIVATE_TOKEN);
+            Navigator.navigateToWebSignin(this, url, true, REQUEST_PRIVATE_TOKEN);
+        }
+    }
+
+    @OnClick(R.id.button_open_login_page_for_personal_access)
+    void onOpenLoginPageForPersonalAccessTokenClicked() {
+        if (verifyUrl()) {
+            String url = mUrlHint.getEditText().getText().toString();
+            Navigator.navigateToWebSignin(this, url, false, REQUEST_PRIVATE_TOKEN);
         }
     }
 

@@ -4,6 +4,7 @@
     <!-- General -->
     <string name="app_name">LabCoat</string>
     <string name="unknown">Unknown</string>
+    <string name="or">or</string>
 
     <!-- Drawer -->
     <string name="nav_projects">Projects</string>
@@ -85,7 +86,7 @@
     <string name="url_gitlab">https://gitlab.com/</string>
     <string name="user_hint">Username or Email</string>
     <string name="password_hint">Password</string>
-    <string name="token_hint">Private token</string>
+    <string name="token_hint">Private or personal access token</string>
     <string name="login_activity">Login</string>
     <string name="login_progress_dialog">Logging in. Please wait</string>
     <string name="advanced_login">Advanced Login</string>
@@ -99,7 +100,8 @@
     <string name="not_a_valid_private_token">Not a valid private token</string>
     <string name="realm_message">A username and password are being requested by the server.\nThe server says: \"%1$s\"</string>
     <string name="already_logged_in">This account is already logged in</string>
-    <string name="open_login_page">Open Login Page</string>
+    <string name="open_login_page">Web Login To Fetch Private Token</string>
+    <string name="open_login_page_for_personal_access_token">Web Login To Fetch Personal Access Token</string>
 
     <!-- Error messages -->
     <string name="connection_error">Connection failed</string>

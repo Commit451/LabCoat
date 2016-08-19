@@ -10,6 +10,7 @@ import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.webkit.JavascriptInterface;
+import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -18,18 +19,23 @@ import com.commit451.gitlab.R;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 
 /**
  * Shows user a WebView for login and intercepts the headers to get the private token. Hmmmm
  */
 public class WebviewLoginActivity extends BaseActivity {
     public static final String EXTRA_TOKEN = "token";
-    private static final String JAVASCRIPT_INTERFACE_EXTRACTOR = "TokenExtractor";
-    private static final String KEY_URL = "url";
 
-    public static Intent newIntent(Context context, String url) {
+    private static final String JAVASCRIPT_INTERFACE_EXTRACTOR = "TokenExtractor";
+
+    private static final String KEY_URL = "url";
+    private static final String KEY_EXTRACTING_PRIVATE_TOKEN = "extracting_private_token";
+
+    public static Intent newIntent(Context context, String url, boolean extractingPrivateToken) {
         Intent intent = new Intent(context, WebviewLoginActivity.class);
         intent.putExtra(KEY_URL, url);
+        intent.putExtra(KEY_EXTRACTING_PRIVATE_TOKEN, extractingPrivateToken);
         return intent;
     }
 
@@ -37,8 +43,24 @@ public class WebviewLoginActivity extends BaseActivity {
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
+    @BindView(R.id.progress)
+    MaterialProgressBar mProgressBar;
     @BindView(R.id.webview)
     WebView mWebView;
+
+    private final WebChromeClient mWebChromeClient = new WebChromeClient(){
+        @Override
+        public void onProgressChanged(WebView view, int newProgress) {
+            super.onProgressChanged(view, newProgress);
+            if (mProgressBar.getVisibility() != View.VISIBLE) {
+                mProgressBar.setVisibility(View.VISIBLE);
+            }
+            mProgressBar.setProgress(newProgress);
+            if (newProgress == 100) {
+                mProgressBar.setVisibility(View.GONE);
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +85,8 @@ public class WebviewLoginActivity extends BaseActivity {
         WebSettings settings = mWebView.getSettings();
         settings.setJavaScriptEnabled(true);
         mWebView.addJavascriptInterface(new HtmlExtractorJavaScriptInterface(), JAVASCRIPT_INTERFACE_EXTRACTOR);
-        mWebView.setWebViewClient(new YourWebClient());
+        mWebView.setWebViewClient(new ExtractionWebClient());
+        mWebView.setWebChromeClient(mWebChromeClient);
         mWebView.clearCache(true);
         mWebView.clearFormData();
         mWebView.clearHistory();
@@ -84,7 +107,11 @@ public class WebviewLoginActivity extends BaseActivity {
         mWebView.loadUrl(mUrl + "/users/sign_in");
     }
 
-    private class YourWebClient extends WebViewClient {
+    private boolean isExtracting() {
+        return getIntent().getBooleanExtra(KEY_EXTRACTING_PRIVATE_TOKEN, false);
+    }
+
+    private class ExtractionWebClient extends WebViewClient {
         @Override
         public void onPageFinished(WebView view, String url) {
             if (url.endsWith("/")) {
@@ -92,7 +119,11 @@ public class WebviewLoginActivity extends BaseActivity {
             }
 
             if (url.equals(mUrl)) {
-                mWebView.loadUrl(mUrl + "/profile/account");
+                if (isExtracting()) {
+                    mWebView.loadUrl(mUrl + "/profile/account");
+                } else {
+                    mWebView.loadUrl(mUrl + "/profile/personal_access_tokens");
+                }
                 return;
             }
 

@@ -10,6 +10,6 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_gravity="center"
-        app:matProg_progressIndeterminate="true" />
+        android:indeterminate="true"/>
 
 </FrameLayout>

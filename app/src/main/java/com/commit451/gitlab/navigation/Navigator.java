@@ -118,8 +118,8 @@ public class Navigator {
         activity.startActivity(LoginActivity.newIntent(activity, showClose));
     }
 
-    public static void navigateToWebSignin(Activity activity, String url, int requestCode) {
-        Intent intent = WebviewLoginActivity.newIntent(activity, url);
+    public static void navigateToWebSignin(Activity activity, String url, boolean extractingPrivateToken, int requestCode) {
+        Intent intent = WebviewLoginActivity.newIntent(activity, url, extractingPrivateToken);
         activity.startActivityForResult(intent, requestCode);
     }
 

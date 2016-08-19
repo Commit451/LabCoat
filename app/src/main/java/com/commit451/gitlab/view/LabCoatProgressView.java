@@ -1,16 +1,19 @@
 package com.commit451.gitlab.view;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.util.AttributeSet;
 
 import com.commit451.easel.Easel;
 import com.commit451.gitlab.R;
-import com.pnikosis.materialishprogress.ProgressWheel;
+
+import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
+
 
 /**
  * A subclass of ProgressWheel that automagically themes itself to the accent color
  */
-public class LabCoatProgressView extends ProgressWheel {
+public class LabCoatProgressView extends MaterialProgressBar {
 
     public LabCoatProgressView(Context context) {
         super(context);
@@ -23,6 +26,7 @@ public class LabCoatProgressView extends ProgressWheel {
     }
 
     private void init() {
-        setBarColor(Easel.getThemeAttrColor(getContext(), R.attr.colorAccent));
+        int color = Easel.getThemeAttrColor(getContext(), R.attr.colorAccent);
+        setProgressTintList(ColorStateList.valueOf(color));
     }
 }
