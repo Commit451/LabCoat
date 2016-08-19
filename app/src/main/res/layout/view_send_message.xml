@@ -23,12 +23,13 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
         android:layout_weight="1"
         android:hint="@string/new_note_hint"
         android:imeOptions="actionNone"
         android:inputType="textCapSentences|textAutoCorrect|textMultiLine"
+        android:background="@null"
         android:maxLines="4"/>
 
     <android.support.design.widget.FloatingActionButton
