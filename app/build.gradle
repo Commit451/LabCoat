@@ -73,12 +73,12 @@ dependencies {
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.3.1'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.3.1'
 
-    compile 'com.android.support:appcompat-v7:24.1.1'
-    compile 'com.android.support:design:24.1.1'
-    compile 'com.android.support:recyclerview-v7:24.1.1'
-    compile 'com.android.support:cardview-v7:24.1.1'
-    compile 'com.android.support:palette-v7:24.1.1'
-    compile 'com.android.support:customtabs:24.1.1'
+    compile 'com.android.support:appcompat-v7:24.2.0'
+    compile 'com.android.support:design:24.2.0'
+    compile 'com.android.support:recyclerview-v7:24.2.0'
+    compile 'com.android.support:cardview-v7:24.2.0'
+    compile 'com.android.support:palette-v7:24.2.0'
+    compile 'com.android.support:customtabs:24.2.0'
     compile 'com.squareup.retrofit2:retrofit:2.1.0'
     compile('com.squareup.retrofit2:converter-simplexml:2.1.0') {
         exclude group: 'xpp3', module: 'xpp3'
@@ -91,12 +91,12 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.0.2'
     compile 'com.squareup:otto:1.3.8'
-    compile 'io.reactivex:rxjava:1.1.8'
-    compile 'com.artemzin.rxjava:proguard-rules:1.1.8.0'
+    compile 'io.reactivex:rxjava:1.1.9'
+    compile 'com.artemzin.rxjava:proguard-rules:1.1.9.0'
     compile 'io.reactivex:rxandroid:1.2.1'
     compile 'com.jakewharton:butterknife:8.2.1'
     apt 'com.jakewharton:butterknife-compiler:8.2.1'
-    compile 'com.jakewharton.timber:timber:4.1.2'
+    compile 'com.jakewharton.timber:timber:4.3.0'
     apt 'com.bluelinelabs:logansquare-compiler:1.3.7'
     compile 'com.bluelinelabs:logansquare:1.3.7'
     compile 'net.danlew:android.joda:2.9.4.1'
@@ -111,7 +111,7 @@ dependencies {
     compile 'com.github.Commit451:Teleprinter:1.0.2'
     compile 'com.github.Commit451:BypassPicassoImageGetter:1.1.0'
     compile 'com.github.Commit451:Jounce:1.0.1'
-    compile 'com.github.Commit451:EasyCallback:1.0.0'
+    compile 'com.github.Commit451:EasyCallback:1.1.0'
     compile 'com.github.Commit451:ForegroundViews:2.1.0'
     compile 'com.pnikosis:materialish-progress:1.7'
     compile 'com.github.Jawnnypoo:PhysicsLayout:2.0.0'
@@ -122,11 +122,11 @@ dependencies {
     compile 'com.wdullaer:materialdatetimepicker:2.5.0'
     compile 'com.wefika:flowlayout:0.4.1'
     compile 'com.github.novoda:simple-chrome-custom-tabs:0.1.3-rc1'
-    compile 'com.afollestad.material-dialogs:core:0.8.6.2'
-    compile 'com.afollestad.material-dialogs:commons:0.8.6.2'
+    compile 'com.afollestad.material-dialogs:core:0.9.0.1'
+    compile 'com.afollestad.material-dialogs:commons:0.9.0.1'
     compile 'de.hdodenhof:circleimageview:2.1.0'
 
-    normalCompile('com.crashlytics.sdk.android:crashlytics:2.6.1@aar') {
+    normalCompile('com.crashlytics.sdk.android:crashlytics:2.6.2@aar') {
         transitive = true;
     }
 }
