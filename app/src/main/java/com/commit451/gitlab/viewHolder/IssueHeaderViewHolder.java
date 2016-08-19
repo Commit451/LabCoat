@@ -18,6 +18,7 @@ import com.commit451.gitlab.transformation.CircleTransformation;
 import com.commit451.gitlab.util.BypassImageGetterFactory;
 import com.commit451.gitlab.util.DateUtil;
 import com.commit451.gitlab.util.ImageUtil;
+import com.vdurmont.emoji.EmojiParser;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -58,7 +59,9 @@ public class IssueHeaderViewHolder extends RecyclerView.ViewHolder {
                     App.instance().getPicasso(),
                     App.instance().getAccount().getServerUrl().toString(),
                     project);
-            mDescriptionView.setText(mBypass.markdownToSpannable(issue.getDescription(), getter));
+            String description = issue.getDescription();
+            description = EmojiParser.parseToUnicode(description);
+            mDescriptionView.setText(mBypass.markdownToSpannable(description, getter));
             mDescriptionView.setMovementMethod(LinkMovementMethod.getInstance());
         }
 

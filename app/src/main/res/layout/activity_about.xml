@@ -68,13 +68,6 @@
 
         </LinearLayout>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:gravity="center"
-            android:text="pssst... try tilting"
-            android:textSize="12dp"/>
     </LinearLayout>
 
     <include layout="@layout/progress"/>

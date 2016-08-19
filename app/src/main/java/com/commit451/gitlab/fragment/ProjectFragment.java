@@ -28,6 +28,7 @@ import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.observable.DecodeObservableFactory;
 import com.commit451.gitlab.util.BypassImageGetterFactory;
 import com.squareup.otto.Subscribe;
+import com.vdurmont.emoji.EmojiParser;
 
 import java.util.List;
 
@@ -159,6 +160,7 @@ public class ProjectFragment extends ButterKnifeFragment {
                                 String text = new String(bytes);
                                 switch (getReadmeType(response.getFileName())) {
                                     case README_TYPE_MARKDOWN:
+                                        text = EmojiParser.parseToUnicode(text);
                                         mOverviewVew.setText(mBypass.markdownToSpannable(text,
                                                 BypassImageGetterFactory.create(mOverviewVew,
                                                         App.instance().getPicasso(),

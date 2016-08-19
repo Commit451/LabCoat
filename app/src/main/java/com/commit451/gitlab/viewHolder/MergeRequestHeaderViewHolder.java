@@ -17,6 +17,7 @@ import com.commit451.gitlab.transformation.CircleTransformation;
 import com.commit451.gitlab.util.BypassImageGetterFactory;
 import com.commit451.gitlab.util.DateUtil;
 import com.commit451.gitlab.util.ImageUtil;
+import com.vdurmont.emoji.EmojiParser;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -50,7 +51,9 @@ public class MergeRequestHeaderViewHolder extends RecyclerView.ViewHolder {
             mDescriptionView.setVisibility(View.GONE);
         } else {
             mDescriptionView.setVisibility(View.VISIBLE);
-            mDescriptionView.setText(bypass.markdownToSpannable(mergeRequest.getDescription(),
+            String description = mergeRequest.getDescription();
+            description = EmojiParser.parseToUnicode(description);
+            mDescriptionView.setText(bypass.markdownToSpannable(description,
                     BypassImageGetterFactory.create(mDescriptionView,
                             App.instance().getPicasso(),
                             App.instance().getAccount().getServerUrl().toString(),

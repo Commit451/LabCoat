@@ -17,6 +17,7 @@ import com.commit451.gitlab.transformation.CircleTransformation;
 import com.commit451.gitlab.util.BypassImageGetterFactory;
 import com.commit451.gitlab.util.DateUtil;
 import com.commit451.gitlab.util.ImageUtil;
+import com.vdurmont.emoji.EmojiParser;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -55,6 +56,7 @@ public class NoteViewHolder extends RecyclerView.ViewHolder {
         String summary = "";
         if (note.getBody() != null) {
             summary = note.getBody();
+            summary = EmojiParser.parseToUnicode(summary);
         }
 
         BypassPicassoImageGetter getter = BypassImageGetterFactory.create(mSummaryView,

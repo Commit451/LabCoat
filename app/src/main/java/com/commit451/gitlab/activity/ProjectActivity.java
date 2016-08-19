@@ -71,6 +71,9 @@ public class ProjectActivity extends BaseActivity {
     private final Callback<Project> mProjectCallback = new EasyCallback<Project>() {
         @Override
         public void success(@NonNull Project response) {
+            mProgress.animate()
+                    .alpha(0.0f)
+                    .withEndAction(new HideRunnable(mProgress));
             bindProject(response);
         }
 
