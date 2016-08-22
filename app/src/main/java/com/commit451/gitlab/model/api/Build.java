@@ -21,7 +21,7 @@ public class Build {
     @JsonField(name = "created_at")
     Date mCreatedAt;
     @JsonField(name = "artifacts_file")
-    String mArtifactsFile;
+    ArtifactsFile mArtifactsFile;
     @JsonField(name = "finished_at")
     Date mFinishedAt;
     @JsonField(name = "id")
@@ -55,7 +55,7 @@ public class Build {
         return mCreatedAt;
     }
 
-    public String getArtifactsFile() {
+    public ArtifactsFile getArtifactsFile() {
         return mArtifactsFile;
     }
 

@@ -12,14 +12,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.BuildSectionsPagerAdapter;
-import com.commit451.easycallback.EasyCallback;
-import com.commit451.gitlab.api.GitLabFactory;
 import com.commit451.gitlab.event.BuildChangedEvent;
+import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.model.api.Build;
 import com.commit451.gitlab.model.api.Project;
+import com.commit451.gitlab.util.BuildUtil;
+import com.commit451.gitlab.util.DownloadUtil;
 
 import org.parceler.Parcels;
 
@@ -52,6 +54,8 @@ public class BuildActivity extends BaseActivity {
     ViewPager mViewPager;
     @BindView(R.id.progress)
     View mProgress;
+
+    MenuItem mMenuItemDownload;
 
     Project mProject;
     Build mBuild;
@@ -126,6 +130,12 @@ public class BuildActivity extends BaseActivity {
                     mProgress.setVisibility(View.VISIBLE);
                     App.instance().getGitLab().cancelBuild(mProject.getId(), mBuild.getId()).enqueue(mCancelCallback);
                     return true;
+                case R.id.action_download:
+                    Account account = App.instance().getAccount();
+                    String downloadUrl = BuildUtil.getDownloadBuildUrl(App.instance().getAccount().getServerUrl(), mProject, mBuild);
+                    Timber.d("Downloading build: " + downloadUrl);
+                    DownloadUtil.download(BuildActivity.this, account, downloadUrl, mBuild.getArtifactsFile().getFileName());
+                    return true;
             }
             return false;
         }
@@ -151,6 +161,8 @@ public class BuildActivity extends BaseActivity {
         mToolbar.setSubtitle(mProject.getNameWithNamespace());
         mToolbar.inflateMenu(R.menu.menu_build);
         mToolbar.setOnMenuItemClickListener(mOnMenuItemClickListener);
+        mMenuItemDownload = mToolbar.getMenu().findItem(R.id.action_download);
+        mMenuItemDownload.setVisible(mBuild.getArtifactsFile() != null);
         setupTabs();
     }
 

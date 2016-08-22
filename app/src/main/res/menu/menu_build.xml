@@ -16,4 +16,9 @@
         android:id="@+id/action_cancel"
         app:showAsAction="never"
         android:title="@string/action_cancel"/>
+
+    <item
+        android:id="@+id/action_download"
+        app:showAsAction="never"
+        android:title="@string/action_download"/>
 </menu>

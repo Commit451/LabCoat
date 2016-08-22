@@ -15,8 +15,8 @@ import timber.log.Timber;
  */
 public class AuthenticationRequestInterceptor implements Interceptor {
 
-    private static final String AUTHORIZATION_HEADER_FIELD = "Authorization";
-    private static final String PRIVATE_TOKEN_HEADER_FIELD = "PRIVATE-TOKEN";
+    public static final String AUTHORIZATION_HEADER_FIELD = "Authorization";
+    public static final String PRIVATE_TOKEN_HEADER_FIELD = "PRIVATE-TOKEN";
     private static final String PRIVATE_TOKEN_GET_PARAMETER = "private_token";
 
     private Account mAccount;

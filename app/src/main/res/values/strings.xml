@@ -31,6 +31,7 @@
     <string name="action_delete">Delete</string>
     <string name="action_copy_git_https">Copy git https link</string>
     <string name="action_copy_git_ssh">Copy git ssh link</string>
+    <string name="action_download">Download</string>
 
     <!-- Tabs -->
     <string name="title_project">Project</string>
