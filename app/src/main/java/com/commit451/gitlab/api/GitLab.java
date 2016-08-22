@@ -2,6 +2,7 @@ package com.commit451.gitlab.api;
 
 import android.support.annotation.Nullable;
 
+import com.commit451.gitlab.model.api.AwardEmoji;
 import com.commit451.gitlab.model.api.Branch;
 import com.commit451.gitlab.model.api.Build;
 import com.commit451.gitlab.model.api.Contributor;
@@ -426,6 +427,65 @@ public interface GitLab {
     /* --- TAGS --- */
     @GET(API_VERSION + "/projects/{id}/repository/tags")
     Call<List<Tag>> getTags(@Path("id") long projectId);
+
+    /* --- AWARD EMOJI --- */
+    @GET(API_VERSION + "/projects/{id}/issues/{issue_id}/award_emoji")
+    Call<List<AwardEmoji>> getAwardEmojiForIssue(@Path("id") long projectId,
+                                                 @Path("issue_id") String issueId);
+
+    @GET(API_VERSION + "/projects/{id}/merge_requests/{merge_request_id}/award_emoji")
+    Call<List<AwardEmoji>> getAwardEmojiForMergeRequest(@Path("id") long projectId,
+                                                        @Path("merge_request_id") String mergeRequestId);
+
+    @GET(API_VERSION + "/projects/{id}/issues/{issue_id}/notes/{note_id}/award_emoji")
+    Call<List<AwardEmoji>> getAwardEmojiForIssueNote(@Path("id") long projectId,
+                                                     @Path("issue_id") String issueId,
+                                                     @Path("note_id") String noteId);
+
+    @GET(API_VERSION + "/projects/{id}/merge_requests/{merge_request_id}/notes/{note_id}/award_emoji")
+    Call<List<AwardEmoji>> getAwardEmojiForMergeRequestNote(@Path("id") long projectId,
+                                                            @Path("merge_request_id") String mergeRequestId,
+                                                            @Path("note_id") String noteId);
+
+    @POST(API_VERSION + "/projects/{id}/issues/{issue_id}/award_emoji")
+    Call<AwardEmoji> postAwardEmojiForIssue(@Path("id") long projectId,
+                                            @Path("issue_id") String issueId);
+
+    @GET(API_VERSION + "/projects/{id}/merge_requests/{merge_request_id}/award_emoji")
+    Call<AwardEmoji> postAwardEmojiForMergeRequest(@Path("id") long projectId,
+                                                   @Path("merge_request_id") String mergeRequestId);
+
+    @GET(API_VERSION + "/projects/{id}/merge_requests/{merge_request_id}/notes/{note_id}/award_emoji")
+    Call<AwardEmoji> postAwardEmojiForMergeRequestNote(@Path("id") long projectId,
+                                                       @Path("merge_request_id") String mergeRequestId,
+                                                       @Path("note_id") String noteId);
+
+    @POST(API_VERSION + "/projects/{id}/issues/{issue_id}/notes/{note_id}/award_emoji")
+    Call<AwardEmoji> postAwardEmojiForIssueNote(@Path("id") long projectId,
+                                                @Path("issue_id") String issueId,
+                                                @Path("note_id") String noteId);
+
+    @DELETE(API_VERSION + "/projects/{id}/issues/{issue_id}/award_emoji/{award_id}")
+    Call<AwardEmoji> deleteAwardEmojiForIssue(@Path("id") long projectId,
+                                              @Path("issue_id") String issueId,
+                                              @Path("award_id") String awardId);
+
+    @DELETE(API_VERSION + "/projects/{id}/merge_requests/{merge_request_id}/award_emoji/{award_id}")
+    Call<AwardEmoji> deleteAwardEmojiForMergeRequest(@Path("id") long projectId,
+                                                     @Path("merge_request_id") String mergeRequestId,
+                                                     @Path("award_id") String awardId);
+
+    @DELETE(API_VERSION + "/projects/{id}/issues/{issue_id}/notes/{note_id}/award_emoji/{award_id}")
+    Call<AwardEmoji> deleteAwardEmojiForIssueNote(@Path("id") long projectId,
+                                                  @Path("issue_id") String issueId,
+                                                  @Path("note_id") String noteId,
+                                                  @Path("award_id") String awardId);
+
+    @DELETE(API_VERSION + "/projects/{id}/merge_requests/{merge_request_id}/notes/{note_id}/award_emoji/{award_id}")
+    Call<AwardEmoji> deleteAwardEmojiForMergeRequestNote(@Path("id") long projectId,
+                                                         @Path("merge_request_id") String mergeRequestId,
+                                                         @Path("note_id") String noteId,
+                                                         @Path("award_id") String awardId);
 
     /* --- MISC --- */
     @GET

@@ -37,9 +37,9 @@ public class Note {
     @JsonField(name = "noteable_type")
     @Type
     String mNoteableType;
-    @JsonField(name = "upvote")
+    @JsonField(name = "upvote?")
     boolean mUpvote;
-    @JsonField(name = "downvote")
+    @JsonField(name = "downvote?")
     boolean mDownvote;
 
     public Note() {}
