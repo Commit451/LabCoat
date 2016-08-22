@@ -409,7 +409,7 @@
     <string name="unable_to_load_build">Unable to load build</string>
     <string-array name="build_tabs">
         <item>Details</item>
-        <item>Artifacts</item>
+        <item>Log</item>
     </string-array>
     <string name="build_status">Status: %1$s</string>
     <string name="build_duration">Duration: %1$s</string>
@@ -420,7 +420,7 @@
     <string name="build_commit_branch">Branch: %1$s</string>
     <string name="build_commit_author">Author: %1$s</string>
     <string name="build_commit_message">Message: %1$s</string>
-    <string name="no_build_artifacts_found">No build artifacts found.</string>
+    <string name="no_log_found">No log found.</string>
 
     <!-- Settings -->
     <string name="setting_starting_view">Starting View</string>

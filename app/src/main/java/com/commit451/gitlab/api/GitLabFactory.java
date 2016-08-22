@@ -5,6 +5,7 @@ import com.github.aurae.retrofit2.LoganSquareConverterFactory;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
+import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 /**
  * Pulls all the GitLab stuff from the API
@@ -20,6 +21,7 @@ public final class GitLabFactory {
         Retrofit restAdapter = new Retrofit.Builder()
                 .baseUrl(account.getServerUrl().toString())
                 .client(client)
+                .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(LoganSquareConverterFactory.create())
                 .build();
         return restAdapter.create(GitLab.class);

@@ -6,7 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.fragment.BuildArtifactsFragment;
+import com.commit451.gitlab.fragment.BuildLogFragment;
 import com.commit451.gitlab.fragment.BuildDescriptionFragment;
 import com.commit451.gitlab.model.api.Build;
 import com.commit451.gitlab.model.api.Project;
@@ -15,7 +15,6 @@ import com.commit451.gitlab.model.api.Project;
  * Build sections
  */
 public class BuildSectionsPagerAdapter extends FragmentPagerAdapter {
-    private static final int SECTION_COUNT = 2;
 
     private Project mProject;
     private Build mBuild;
@@ -35,7 +34,7 @@ public class BuildSectionsPagerAdapter extends FragmentPagerAdapter {
             case 0:
                 return BuildDescriptionFragment.newInstance(mProject, mBuild);
             case 1:
-                return BuildArtifactsFragment.newInstance(mProject, mBuild);
+                return BuildLogFragment.newInstance(mProject, mBuild);
         }
 
         throw new IllegalStateException("Position exceeded on view pager");
@@ -43,7 +42,7 @@ public class BuildSectionsPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return SECTION_COUNT;
+        return mTitles.length;
     }
 
     @Override

@@ -2,7 +2,6 @@ package com.commit451.gitlab.api;
 
 import android.support.annotation.Nullable;
 
-import com.commit451.gitlab.model.api.Artifact;
 import com.commit451.gitlab.model.api.Branch;
 import com.commit451.gitlab.model.api.Build;
 import com.commit451.gitlab.model.api.Contributor;
@@ -410,10 +409,6 @@ public interface GitLab {
     Call<Build> cancelBuild(@Path("id") long projectId,
                             @Path("build_id") long buildId);
 
-    @GET(API_VERSION + "/projects/{id}/builds/{build_id}/artifacts")
-    Call<List<Artifact>> getBuildArtifacts(@Path("id") long projectId,
-                                           @Path("build_id") long buildId);
-
     /* --- SNIPPETS --- */
     @GET(API_VERSION + "/projects/{id}/snippets")
     Call<List<Snippet>> getSnippets(@Path("id") long projectId);
@@ -431,4 +426,8 @@ public interface GitLab {
     /* --- TAGS --- */
     @GET(API_VERSION + "/projects/{id}/repository/tags")
     Call<List<Tag>> getTags(@Path("id") long projectId);
+
+    /* --- MISC --- */
+    @GET
+    Call<String> getRaw(@Url String url);
 }

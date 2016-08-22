@@ -85,6 +85,7 @@ dependencies {
         exclude group: 'stax', module: 'stax-api'
         exclude group: 'stax', module: 'stax'
     }
+    compile 'com.squareup.retrofit2:converter-scalars:2.1.0'
     compile 'com.github.aurae.retrofit2:converter-logansquare:1.4.1'
     compile 'com.squareup.okhttp3:okhttp:3.4.1'
     compile 'com.squareup.okhttp3:logging-interceptor:3.4.1'

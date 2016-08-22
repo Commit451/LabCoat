@@ -48,7 +48,6 @@ public class FeedFragment extends ButterKnifeFragment {
     TextView mMessageView;
 
     private Uri mFeedUrl;
-    private EventReceiver mEventReceiver;
     private FeedAdapter mFeedAdapter;
 
     private final EasyCallback<Feed> mUserFeedCallback = new EasyCallback<Feed>() {
@@ -103,9 +102,6 @@ public class FeedFragment extends ButterKnifeFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mEventReceiver = new EventReceiver();
-        App.bus().register(mEventReceiver);
-
         mFeedAdapter = new FeedAdapter(mFeedAdapterListener);
         mEntryListView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mEntryListView.addItemDecoration(new DividerItemDecoration(getActivity()));
@@ -136,12 +132,6 @@ public class FeedFragment extends ButterKnifeFragment {
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        App.bus().unregister(mEventReceiver);
-    }
-
-    @Override
     protected void loadData() {
         if (getView() == null) {
             return;
@@ -161,8 +151,5 @@ public class FeedFragment extends ButterKnifeFragment {
             }
         });
         App.instance().getGitLabRss().getFeed(mFeedUrl.toString()).enqueue(mUserFeedCallback);
-    }
-
-    private class EventReceiver {
     }
 }
