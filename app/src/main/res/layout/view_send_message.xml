@@ -14,7 +14,7 @@
         android:layout_gravity="center_vertical"
         android:padding="8dp"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:visibility="gone"
+        android:visibility="visible"
         android:contentDescription="@null"/>
 
     <EditText

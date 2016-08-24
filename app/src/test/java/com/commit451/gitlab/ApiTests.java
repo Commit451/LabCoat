@@ -14,6 +14,7 @@ import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryCommit;
 import com.commit451.gitlab.model.api.RepositoryTreeObject;
 import com.commit451.gitlab.model.api.UserFull;
+import com.commit451.gitlab.util.FileUtil;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -23,11 +24,9 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowLog;
 
-import java.io.ByteArrayOutputStream;
 import java.util.List;
 
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
+import okhttp3.MultipartBody;
 import retrofit2.Response;
 
 import static org.junit.Assert.assertNotNull;
@@ -131,18 +130,15 @@ public class ApiTests {
         assertNotNull(userFullResponse.body());
     }
 
-    //@Test
+//    @Test
     public void uploadFile() throws Exception {
         Bitmap bitmap = BitmapFactory.decodeResource(RuntimeEnvironment.application.getResources(), R.drawable.ic_fork);
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-        RequestBody requestBody = RequestBody.create(MediaType.parse("image/png"), stream.toByteArray());
+        MultipartBody.Part part = FileUtil.toPart(bitmap, "fork.png");
 
-        Response<FileUploadResponse> userFullResponse = gitLab
-                .uploadFile(sFakeProject.getId(), requestBody)
-                .execute();
-        assertTrue(userFullResponse.isSuccessful());
-        assertNotNull(userFullResponse.body());
+        Response<FileUploadResponse> uploadResponseResponse =
+                gitLab.uploadFile(sFakeProject.getId(), part).execute();
+        assertTrue(uploadResponseResponse.isSuccessful());
+        assertNotNull(uploadResponseResponse.body());
     }
 
 }

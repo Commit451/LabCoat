@@ -2,10 +2,8 @@ package com.commit451.gitlab.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -29,6 +27,7 @@ import com.commit451.gitlab.model.api.Issue;
 import com.commit451.gitlab.model.api.Note;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.navigation.Navigator;
+import com.commit451.gitlab.util.FileUtil;
 import com.commit451.gitlab.util.IntentUtil;
 import com.commit451.gitlab.util.PaginationUtil;
 import com.commit451.gitlab.view.SendMessageView;
@@ -37,15 +36,12 @@ import com.commit451.teleprinter.Teleprinter;
 import org.greenrobot.eventbus.Subscribe;
 import org.parceler.Parcels;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
+import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -327,7 +323,7 @@ public class IssueActivity extends BaseActivity {
 
             @Override
             public void onAttachmentClicked() {
-                Navigator.navigateToAttach(IssueActivity.this);
+                Navigator.navigateToChoosePhoto(IssueActivity.this, REQUEST_IMAGE);
             }
         });
 
@@ -370,15 +366,8 @@ public class IssueActivity extends BaseActivity {
                 //Not checking result code because apps are dumb and don't use it
                 Uri selectedImage = data.getData();
                 if (selectedImage != null) {
-                    try {
-                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
-                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                        RequestBody requestBody = RequestBody.create(MediaType.parse("image/jpeg"), stream.toByteArray());
-                        App.instance().getGitLab().uploadFile(mProject.getId(), requestBody).enqueue(mUploadImageCallback);
-                    } catch (IOException e) {
-                        Timber.e(e, null);
-                    }
+                    MultipartBody.Part part = FileUtil.toPart(IssueActivity.this, selectedImage);
+                    App.instance().getGitLab().uploadFile(mProject.getId(), part).enqueue(mUploadImageCallback);
                 }
                 break;
         }
