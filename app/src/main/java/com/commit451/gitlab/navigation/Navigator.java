@@ -18,6 +18,7 @@ import com.commit451.gitlab.activity.AddLabelActivity;
 import com.commit451.gitlab.activity.AddMilestoneActivity;
 import com.commit451.gitlab.activity.AddNewLabelActivity;
 import com.commit451.gitlab.activity.AddUserActivity;
+import com.commit451.gitlab.activity.AttachActivity;
 import com.commit451.gitlab.activity.BuildActivity;
 import com.commit451.gitlab.activity.DiffActivity;
 import com.commit451.gitlab.activity.FileActivity;
@@ -230,14 +231,9 @@ public class Navigator {
         activity.startActivity(intent);
     }
 
-    public static void navigateToAttach(Activity activity) {
-        //TODO
-    }
-
-    public static void navigateToChoosePhoto(Activity activity, int requestCode) {
-        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-        photoPickerIntent.setType("image/*");
-        activity.startActivityForResult(photoPickerIntent, requestCode);
+    public static void navigateToAttach(Activity activity, Project project, int requestCode) {
+        Intent intent = AttachActivity.newIntent(activity, project);
+        activity.startActivityForResult(intent, requestCode);
     }
 
     private static void startMorphActivity(Activity activity, View fab, Intent intent) {

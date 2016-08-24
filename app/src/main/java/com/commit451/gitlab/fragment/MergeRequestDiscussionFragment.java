@@ -20,12 +20,11 @@ import com.commit451.gitlab.event.MergeRequestChangedEvent;
 import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.model.api.Note;
 import com.commit451.gitlab.model.api.Project;
-import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.PaginationUtil;
 import com.commit451.gitlab.view.SendMessageView;
 import com.commit451.teleprinter.Teleprinter;
-import org.greenrobot.eventbus.Subscribe;
 
+import org.greenrobot.eventbus.Subscribe;
 import org.parceler.Parcels;
 
 import java.util.List;
@@ -192,7 +191,7 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
 
             @Override
             public void onAttachmentClicked() {
-                Navigator.navigateToAttach(getActivity());
+                //TODO
             }
         });
 

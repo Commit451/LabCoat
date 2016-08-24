@@ -9,6 +9,7 @@ import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 
 import okhttp3.MediaType;
@@ -31,6 +32,11 @@ public class FileUtil {
             Timber.e(e);
         }
         return null;
+    }
+
+    public static MultipartBody.Part toPart(File file) {
+        RequestBody requestBody = RequestBody.create(MediaType.parse("image/png"), file);
+        return MultipartBody.Part.createFormData("file", file.getName(), requestBody);
     }
 
     public static MultipartBody.Part toPart(Bitmap bitmap, String name) {

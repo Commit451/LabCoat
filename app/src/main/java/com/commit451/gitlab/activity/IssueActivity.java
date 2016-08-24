@@ -27,7 +27,6 @@ import com.commit451.gitlab.model.api.Issue;
 import com.commit451.gitlab.model.api.Note;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.navigation.Navigator;
-import com.commit451.gitlab.util.FileUtil;
 import com.commit451.gitlab.util.IntentUtil;
 import com.commit451.gitlab.util.PaginationUtil;
 import com.commit451.gitlab.view.SendMessageView;
@@ -41,7 +40,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -58,7 +56,7 @@ public class IssueActivity extends BaseActivity {
     private static final String EXTRA_PROJECT_NAME = "project_name";
     private static final String EXTRA_ISSUE_IID = "extra_issue_iid";
 
-    private static final int REQUEST_IMAGE = 1;
+    private static final int REQUEST_ATTACH = 1;
 
     public static Intent newIntent(Context context, Project project, Issue issue) {
         Intent intent = new Intent(context, IssueActivity.class);
@@ -256,8 +254,7 @@ public class IssueActivity extends BaseActivity {
     private Callback<FileUploadResponse> mUploadImageCallback = new EasyCallback<FileUploadResponse>() {
         @Override
         public void success(@NonNull FileUploadResponse response) {
-            mProgress.setVisibility(View.GONE);
-            mSendMessageView.appendText(response.getMarkdown());
+
         }
 
         @Override
@@ -323,7 +320,7 @@ public class IssueActivity extends BaseActivity {
 
             @Override
             public void onAttachmentClicked() {
-                Navigator.navigateToChoosePhoto(IssueActivity.this, REQUEST_IMAGE);
+                Navigator.navigateToAttach(IssueActivity.this, mProject, REQUEST_ATTACH);
             }
         });
 
@@ -362,12 +359,14 @@ public class IssueActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
-            case REQUEST_IMAGE:
-                //Not checking result code because apps are dumb and don't use it
-                Uri selectedImage = data.getData();
-                if (selectedImage != null) {
-                    MultipartBody.Part part = FileUtil.toPart(IssueActivity.this, selectedImage);
-                    App.instance().getGitLab().uploadFile(mProject.getId(), part).enqueue(mUploadImageCallback);
+            case REQUEST_ATTACH:
+                if (resultCode == RESULT_OK) {
+                    FileUploadResponse response = Parcels.unwrap(data.getParcelableExtra(AttachActivity.KEY_FILE_UPLOAD_RESPONSE));
+                    mProgress.setVisibility(View.GONE);
+                    mSendMessageView.appendText(response.getMarkdown());
+                } else {
+                  Snackbar.make(mRoot, R.string.failed_to_upload_file, Snackbar.LENGTH_LONG)
+                          .show();
                 }
                 break;
         }

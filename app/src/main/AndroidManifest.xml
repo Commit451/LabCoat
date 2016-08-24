@@ -73,6 +73,8 @@
         <activity android:name=".activity.PickBranchOrTagActivity"
             android:theme="@style/Activity.Translucent"/>
         <activity android:name=".activity.WebviewLoginActivity" />
+        <activity android:name=".activity.AttachActivity"
+            android:theme="@style/Activity.Translucent"/>
         <activity
             android:name=".activity.RoutingActivity"
             android:launchMode="singleTask"
