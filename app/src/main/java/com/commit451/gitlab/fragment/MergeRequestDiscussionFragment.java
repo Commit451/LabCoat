@@ -1,5 +1,7 @@
 package com.commit451.gitlab.fragment;
 
+import android.app.ActivityOptions;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,11 +17,14 @@ import android.view.ViewGroup;
 import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
+import com.commit451.gitlab.activity.AttachActivity;
 import com.commit451.gitlab.adapter.MergeRequestDetailAdapter;
 import com.commit451.gitlab.event.MergeRequestChangedEvent;
+import com.commit451.gitlab.model.api.FileUploadResponse;
 import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.model.api.Note;
 import com.commit451.gitlab.model.api.Project;
+import com.commit451.gitlab.navigation.TransitionFactory;
 import com.commit451.gitlab.util.PaginationUtil;
 import com.commit451.gitlab.view.SendMessageView;
 import com.commit451.teleprinter.Teleprinter;
@@ -32,6 +37,8 @@ import java.util.List;
 import butterknife.BindView;
 import timber.log.Timber;
 
+import static android.app.Activity.RESULT_OK;
+
 /**
  * Shows the discussion of a merge request
  */
@@ -39,6 +46,8 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
 
     private static final String KEY_PROJECT = "project";
     private static final String KEY_MERGE_REQUEST = "merge_request";
+
+    private static final int REQUEST_ATTACH = 1;
 
     public static MergeRequestDiscussionFragment newInstance(Project project, MergeRequest mergeRequest) {
         MergeRequestDiscussionFragment fragment = new MergeRequestDiscussionFragment();
@@ -191,7 +200,9 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
 
             @Override
             public void onAttachmentClicked() {
-                //TODO
+                Intent intent = AttachActivity.newIntent(getActivity(), mProject);
+                ActivityOptions activityOptions = TransitionFactory.createFadeInOptions(getActivity());
+                startActivityForResult(intent, REQUEST_ATTACH, activityOptions.toBundle());
             }
         });
 
@@ -205,6 +216,23 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
 
         mEventReceiver = new EventReceiver();
         App.bus().register(mEventReceiver);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_ATTACH:
+                if (resultCode == RESULT_OK) {
+                    FileUploadResponse response = Parcels.unwrap(data.getParcelableExtra(AttachActivity.KEY_FILE_UPLOAD_RESPONSE));
+                    mProgress.setVisibility(View.GONE);
+                    mSendMessageView.appendText(response.getMarkdown());
+                } else {
+                    Snackbar.make(mRoot, R.string.failed_to_upload_file, Snackbar.LENGTH_LONG)
+                            .show();
+                }
+                break;
+        }
     }
 
     @Override

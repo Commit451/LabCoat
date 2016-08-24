@@ -234,6 +234,7 @@ public class Navigator {
     public static void navigateToAttach(Activity activity, Project project, int requestCode) {
         Intent intent = AttachActivity.newIntent(activity, project);
         activity.startActivityForResult(intent, requestCode);
+        activity.overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
     }
 
     private static void startMorphActivity(Activity activity, View fab, Intent intent) {

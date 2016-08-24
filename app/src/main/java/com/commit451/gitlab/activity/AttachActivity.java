@@ -6,23 +6,29 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.api.FileUploadResponse;
 import com.commit451.gitlab.model.api.Project;
-import com.commit451.gitlab.util.FileUtil;
+import com.commit451.gitlab.observable.FileObservableFactory;
 
 import org.parceler.Parcels;
 
 import java.io.File;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import okhttp3.MultipartBody;
 import pl.aprilapps.easyphotopicker.DefaultCallback;
 import pl.aprilapps.easyphotopicker.EasyImage;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -40,7 +46,33 @@ public class AttachActivity extends BaseActivity {
         return intent;
     }
 
-    private Project mProject;
+    @BindView(R.id.root_buttons)
+    ViewGroup mRootButtons;
+    @BindView(R.id.progress)
+    View mProgress;
+
+    Project mProject;
+
+    private final EasyCallback<FileUploadResponse> mUploadCallback = new EasyCallback<FileUploadResponse>() {
+        @Override
+        public void success(@NonNull FileUploadResponse response) {
+            Intent data = new Intent();
+            data.putExtra(KEY_FILE_UPLOAD_RESPONSE, Parcels.wrap(response));
+            setResult(RESULT_OK, data);
+            finish();
+        }
+
+        @Override
+        public void failure(Throwable t) {
+            Timber.e(t);
+            finish();
+        }
+    };
+
+    @OnClick(R.id.root)
+    void onRootClicked() {
+        onBackPressed();
+    }
 
     @OnClick(R.id.button_choose_photo)
     void onChoosePhotoClicked() {
@@ -94,22 +126,16 @@ public class AttachActivity extends BaseActivity {
     }
 
     private void onPhotoReturned(File photo) {
-        MultipartBody.Part part = FileUtil.toPart(photo);
-        App.instance().getGitLab().uploadFile(mProject.getId(), part).enqueue(new EasyCallback<FileUploadResponse>() {
-            @Override
-            public void success(@NonNull FileUploadResponse response) {
-                Intent data = new Intent();
-                data.putExtra(KEY_FILE_UPLOAD_RESPONSE, Parcels.wrap(response));
-                setResult(RESULT_OK, data);
-                finish();
-            }
-
-            @Override
-            public void failure(Throwable t) {
-                Timber.e(t);
-                finish();
-            }
-        });
-
+        mProgress.setVisibility(View.VISIBLE);
+        mRootButtons.setVisibility(View.INVISIBLE);
+        FileObservableFactory.toPart(photo)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<MultipartBody.Part>() {
+                    @Override
+                    public void call(MultipartBody.Part part) {
+                        App.instance().getGitLab().uploadFile(mProject.getId(), part).enqueue(mUploadCallback);
+                    }
+                });
     }
 }

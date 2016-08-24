@@ -11,7 +11,7 @@ import com.commit451.gitlab.event.ReloadDataEvent;
 import org.greenrobot.eventbus.Subscribe;
 
 
-public class BaseFragment extends Fragment{
+public class BaseFragment extends Fragment {
 
     private EventReceiver mBaseEventReceiever;
 
