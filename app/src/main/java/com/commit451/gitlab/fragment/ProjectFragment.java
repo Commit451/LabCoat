@@ -1,6 +1,7 @@
 package com.commit451.gitlab.fragment;
 
 import android.content.DialogInterface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -9,7 +10,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
 import android.text.TextUtils;
-import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,8 +27,10 @@ import com.commit451.gitlab.model.api.RepositoryTreeObject;
 import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.observable.DecodeObservableFactory;
 import com.commit451.gitlab.util.BypassImageGetterFactory;
-import org.greenrobot.eventbus.Subscribe;
+import com.commit451.gitlab.util.InternalLinkMovementMethod;
 import com.vdurmont.emoji.EmojiParser;
+
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.List;
 
@@ -285,7 +287,18 @@ public class ProjectFragment extends ButterKnifeFragment {
         mEventReceiver = new EventReceiver();
         App.bus().register(mEventReceiver);
 
-        mOverviewVew.setMovementMethod(LinkMovementMethod.getInstance());
+        mOverviewVew.setMovementMethod(new InternalLinkMovementMethod(new InternalLinkMovementMethod.OnLinkClickedListener() {
+            @Override
+            public boolean onLinkClicked(String url) {
+                String server = App.instance().getAccount().getServerUrl().toString();
+                if (url.startsWith(server)) {
+                    Timber.d("Looks like an internal server link: %s", url);
+                    Navigator.navigateToUrl(getActivity(), Uri.parse(url), App.instance().getAccount());
+                    return true;
+                }
+                return false;
+            }
+        }));
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
