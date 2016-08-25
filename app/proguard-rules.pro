@@ -26,30 +26,23 @@
 
 # Picasso rules
 -dontwarn com.squareup.okhttp.**
--dontwarn okhttp3.**
 
 # Retrofit rules
--keep class okhttp3.** { *; }
--keep class retrofit2.** { *; }
--keep interface okhttp3.** { *; }
-
--dontwarn com.squareup.okhttp.**
--dontwarn okhttp3.**
--dontwarn okio.**
--dontwarn retrofit2.**
-
--keepclasseswithmembers class * {
-    @retrofit2.http.* <methods>;
-}
-
-# If in your rest service interface you use methods with Callback argument.
+# Platform calls Class.forName on types which do not exist on Android to determine platform.
+-dontnote retrofit2.Platform
+# Platform used when running on RoboVM on iOS. Will not be used at runtime.
+-dontnote retrofit2.Platform$IOS$MainThreadExecutor
+# Platform used when running on Java 8 VMs. Will not be used at runtime.
+-dontwarn retrofit2.Platform$Java8
+# Retain generic type information for use by reflection by converters and adapters.
+-keepattributes Signature
+# Retain declared checked exceptions for use by a Proxy instance.
 -keepattributes Exceptions
 
-# If your rest service methods throw custom exceptions, because you've defined an ErrorHandler.
--keepattributes Signature
+# Okio
+-dontwarn okio.**
 
 # Simple-Xml Proguard Config
-
 # Keep public classes and methods.
 -dontwarn com.bea.xml.stream.**
 -keep class org.simpleframework.xml.**{ *; }
@@ -59,13 +52,6 @@
 }
 -dontwarn javax.xml.stream.events.**
 -dontwarn javax.xml.**
-
-# OkHttp
--keepattributes Signature
--keepattributes *Annotation*
--keep class com.squareup.okhttp.** { *; }
--keep interface com.squareup.okhttp.** { *; }
--dontwarn com.squareup.okhttp.**
 
 # EventBus
 -keepattributes *Annotation*
