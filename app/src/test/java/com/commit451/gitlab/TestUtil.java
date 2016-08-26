@@ -8,6 +8,8 @@ import com.commit451.gitlab.api.OkHttpClientFactory;
 import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.model.api.UserLogin;
 
+import org.junit.Assert;
+
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Response;
@@ -38,5 +40,11 @@ public class TestUtil {
         //attach the newly retrieved private token
         account.setPrivateToken(loginResponse.body().getPrivateToken());
         return gitLab;
+    }
+
+    public static void assertRetrofitResponseSuccess(Response response) throws Exception {
+        if (!response.isSuccessful()) {
+            Assert.assertTrue(response.errorBody().string(), response.isSuccessful());
+        }
     }
 }

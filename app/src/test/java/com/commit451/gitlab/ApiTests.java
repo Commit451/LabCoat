@@ -67,7 +67,7 @@ public class ApiTests {
         Response<List<Project>> projectsResponse = gitLab
                 .getAllProjects()
                 .execute();
-        assertTrue(projectsResponse.isSuccessful());
+        TestUtil.assertRetrofitResponseSuccess(projectsResponse);
         assertNotNull(projectsResponse.body());
     }
 
@@ -76,7 +76,7 @@ public class ApiTests {
         Response<List<Group>> groupResponse = gitLab
                 .getGroups()
                 .execute();
-        assertTrue(groupResponse.isSuccessful());
+        TestUtil.assertRetrofitResponseSuccess(groupResponse);
         assertNotNull(groupResponse.body());
     }
 
@@ -86,7 +86,7 @@ public class ApiTests {
         Response<List<Issue>> issuesResponse = gitLab
                 .getIssues(sFakeProject.getId(), defaultState)
                 .execute();
-        assertTrue(issuesResponse.isSuccessful());
+        TestUtil.assertRetrofitResponseSuccess(issuesResponse);
         assertNotNull(issuesResponse.body());
     }
 
@@ -97,7 +97,7 @@ public class ApiTests {
         Response<List<RepositoryTreeObject>> treeResponse = gitLab
                 .getTree(sFakeProject.getId(), defaultBranch, currentPath)
                 .execute();
-        assertTrue(treeResponse.isSuccessful());
+        TestUtil.assertRetrofitResponseSuccess(treeResponse);
         assertNotNull(treeResponse.body());
     }
 
@@ -107,7 +107,7 @@ public class ApiTests {
         Response<List<RepositoryCommit>> commitsResponse = gitLab
                 .getCommits(sFakeProject.getId(), defaultBranch, 0)
                 .execute();
-        assertTrue(commitsResponse.isSuccessful());
+        TestUtil.assertRetrofitResponseSuccess(commitsResponse);
         assertNotNull(commitsResponse.body());
     }
 
@@ -117,7 +117,7 @@ public class ApiTests {
         Response<List<MergeRequest>> mergeRequestResponse = gitLab
                 .getMergeRequests(sFakeProject.getId(), defaultState)
                 .execute();
-        assertTrue(mergeRequestResponse.isSuccessful());
+        TestUtil.assertRetrofitResponseSuccess(mergeRequestResponse);
         assertNotNull(mergeRequestResponse.body());
     }
 
@@ -126,7 +126,7 @@ public class ApiTests {
         Response<UserFull> userFullResponse = gitLab
                 .getThisUser()
                 .execute();
-        assertTrue(userFullResponse.isSuccessful());
+        TestUtil.assertRetrofitResponseSuccess(userFullResponse);
         assertNotNull(userFullResponse.body());
     }
 
