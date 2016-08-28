@@ -1,7 +1,6 @@
 package com.commit451.gitlab.viewHolder;
 
 import android.support.v7.widget.RecyclerView;
-import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +16,7 @@ import com.commit451.gitlab.transformation.CircleTransformation;
 import com.commit451.gitlab.util.BypassImageGetterFactory;
 import com.commit451.gitlab.util.DateUtil;
 import com.commit451.gitlab.util.ImageUtil;
+import com.commit451.gitlab.util.InternalLinkMovementMethod;
 import com.vdurmont.emoji.EmojiParser;
 
 import butterknife.BindView;
@@ -64,7 +64,7 @@ public class NoteViewHolder extends RecyclerView.ViewHolder {
                 App.instance().getAccount().getServerUrl().toString(),
                 project);
         mSummaryView.setText(bypass.markdownToSpannable(summary, getter));
-        mSummaryView.setMovementMethod(LinkMovementMethod.getInstance());
+        mSummaryView.setMovementMethod(new InternalLinkMovementMethod(App.instance().getAccount().getServerUrl()));
 
         App.instance().getPicasso()
                 .load(ImageUtil.getAvatarUrl(note.getAuthor(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size)))

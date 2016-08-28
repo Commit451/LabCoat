@@ -2,6 +2,7 @@ package com.commit451.gitlab.navigation;
 
 import android.app.Activity;
 import android.app.ActivityOptions;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -259,5 +260,15 @@ public class Navigator {
         } else {
             IntentUtil.openPage(activity, uri.toString());
         }
+    }
+
+    /**
+     * Like {@link #navigateToUrl(Activity, Uri, Account)} but we already know it is the same server
+     * @param context context
+     * @param uri uri
+     */
+    public static void navigateToUrl(Context context, Uri uri) {
+        Timber.d("navigateToUrl: %s", uri);
+        context.startActivity(DeepLinker.generateDeeplinkIntentFromUri(context, uri));
     }
 }

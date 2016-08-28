@@ -1,7 +1,6 @@
 package com.commit451.gitlab.util;
 
 
-import android.app.Activity;
 import android.net.Uri;
 import android.text.Layout;
 import android.text.method.LinkMovementMethod;
@@ -9,7 +8,6 @@ import android.text.style.URLSpan;
 import android.view.MotionEvent;
 import android.widget.TextView;
 
-import com.commit451.gitlab.App;
 import com.commit451.gitlab.navigation.Navigator;
 
 import timber.log.Timber;
@@ -19,12 +17,9 @@ import timber.log.Timber;
  */
 public class InternalLinkMovementMethod extends LinkMovementMethod {
 
-    //I hate this
-    private Activity mActivity;
     private Uri mServerUrl;
 
-    public InternalLinkMovementMethod(Activity activity, Uri serverUrl) {
-        mActivity = activity;
+    public InternalLinkMovementMethod(Uri serverUrl) {
         mServerUrl = serverUrl;
     }
 
@@ -51,7 +46,7 @@ public class InternalLinkMovementMethod extends LinkMovementMethod {
                 String url = link[0].getURL();
                 if (url.startsWith(mServerUrl.toString())) {
                     Timber.d("Looks like an internal server link: %s", url);
-                    Navigator.navigateToUrl(mActivity, Uri.parse(url), App.instance().getAccount());
+                    Navigator.navigateToUrl(widget.getContext(), Uri.parse(url));
                     return true;
                 }
                 return super.onTouchEvent(widget, buffer, event);

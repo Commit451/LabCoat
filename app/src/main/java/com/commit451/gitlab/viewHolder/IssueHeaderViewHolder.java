@@ -2,7 +2,6 @@ package com.commit451.gitlab.viewHolder;
 
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +17,7 @@ import com.commit451.gitlab.transformation.CircleTransformation;
 import com.commit451.gitlab.util.BypassImageGetterFactory;
 import com.commit451.gitlab.util.DateUtil;
 import com.commit451.gitlab.util.ImageUtil;
+import com.commit451.gitlab.util.InternalLinkMovementMethod;
 import com.vdurmont.emoji.EmojiParser;
 
 import butterknife.BindView;
@@ -62,7 +62,7 @@ public class IssueHeaderViewHolder extends RecyclerView.ViewHolder {
             String description = issue.getDescription();
             description = EmojiParser.parseToUnicode(description);
             mDescriptionView.setText(mBypass.markdownToSpannable(description, getter));
-            mDescriptionView.setMovementMethod(LinkMovementMethod.getInstance());
+            mDescriptionView.setMovementMethod(new InternalLinkMovementMethod(App.instance().getAccount().getServerUrl()));
         }
 
         App.instance().getPicasso()

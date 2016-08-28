@@ -286,7 +286,7 @@ public class ProjectFragment extends ButterKnifeFragment {
         mEventReceiver = new EventReceiver();
         App.bus().register(mEventReceiver);
 
-        mOverviewVew.setMovementMethod(new InternalLinkMovementMethod(getActivity(), App.instance().getAccount().getServerUrl()));
+        mOverviewVew.setMovementMethod(new InternalLinkMovementMethod(App.instance().getAccount().getServerUrl()));
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
