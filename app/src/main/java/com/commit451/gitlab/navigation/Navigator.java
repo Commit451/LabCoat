@@ -71,6 +71,10 @@ public class Navigator {
         activity.startActivity(ProjectActivity.newIntent(activity, projectId));
     }
 
+    public static void navigateToProject(Activity activity, String projectNamespace, String projectName) {
+        activity.startActivity(ProjectActivity.newIntent(activity, projectNamespace, projectName));
+    }
+
     public static void navigateToPickBranchOrTag(Activity activity, long projectId, @Nullable Ref currentRef, int requestCode) {
         activity.startActivityForResult(PickBranchOrTagActivity.newIntent(activity, projectId, currentRef), requestCode);
         activity.overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);

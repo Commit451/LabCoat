@@ -28,40 +28,47 @@ public class RoutingActivity extends Activity {
     private final RoutingNavigator mNavigator = new RoutingNavigator() {
         @Override
         public void onRouteToIssue(String projectNamespace, String projectName, String issueIid) {
+            Timber.d("Routing to issue");
             Navigator.navigateToIssue(RoutingActivity.this, projectNamespace, projectName, issueIid);
         }
 
         @Override
         public void onRouteToCommit(String projectNamespace, String projectName, String commitSha) {
+            Timber.d("Routing to commit");
             startActivity(LoadSomeInfoActivity.newIntent(RoutingActivity.this, projectNamespace, projectName, commitSha));
             overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
         }
 
         @Override
         public void onRouteToMergeRequest(String projectNamespace, String projectName, String mergeRequestId) {
+            Timber.d("Routing to merge request");
             startActivity(LoadSomeInfoActivity.newMergeRequestIntent(RoutingActivity.this, projectNamespace, projectName, mergeRequestId));
             overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
         }
 
         @Override
         public void onRouteToProject(String namespace, String projectId) {
-            Navigator.navigateToProject(RoutingActivity.this, projectId);
+            Timber.d("Routing to project");
+            Navigator.navigateToProject(RoutingActivity.this, namespace, projectId);
         }
 
         @Override
         public void onRouteToBuild(String projectNamespace, String projectName, String buildNumber) {
+            Timber.d("Routing to build");
             startActivity(LoadSomeInfoActivity.newBuildIntent(RoutingActivity.this, projectNamespace, projectName, Long.valueOf(buildNumber)));
             overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
         }
 
         @Override
         public void onRouteToMilestone(String projectNamespace, String projectName, String milestoneNumber) {
+            Timber.d("Routing to milestone");
             startActivity(LoadSomeInfoActivity.newMilestoneIntent(RoutingActivity.this, projectNamespace, projectName, milestoneNumber));
             overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
         }
 
         @Override
         public void onRouteUnknown(Uri uri) {
+            Timber.d("Route unknown. Opening original Uri if it exists");
             if (mOriginalUri != null) {
                 IntentUtil.openPage(RoutingActivity.this, uri.toString());
             } else {

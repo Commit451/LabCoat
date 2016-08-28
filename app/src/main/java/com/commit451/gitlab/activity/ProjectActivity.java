@@ -39,6 +39,8 @@ public class ProjectActivity extends BaseActivity {
 
     private static final String EXTRA_PROJECT = "extra_project";
     private static final String EXTRA_PROJECT_ID = "extra_project_id";
+    private static final String EXTRA_PROJECT_NAMESPACE = "extra_project_namespace";
+    private static final String EXTRA_PROJECT_NAME = "extra_project_name";
 
     private static final int REQUEST_BRANCH_OR_TAG = 1;
 
@@ -51,6 +53,13 @@ public class ProjectActivity extends BaseActivity {
     public static Intent newIntent(Context context, String projectId) {
         Intent intent = new Intent(context, ProjectActivity.class);
         intent.putExtra(EXTRA_PROJECT_ID, projectId);
+        return intent;
+    }
+
+    public static Intent newIntent(Context context, String projectNamespace, String projectName) {
+        Intent intent = new Intent(context, ProjectActivity.class);
+        intent.putExtra(EXTRA_PROJECT_NAMESPACE, projectNamespace);
+        intent.putExtra(EXTRA_PROJECT_NAME, projectName);
         return intent;
     }
 
@@ -142,7 +151,15 @@ public class ProjectActivity extends BaseActivity {
 
         if (project == null) {
             String projectId = getIntent().getStringExtra(EXTRA_PROJECT_ID);
-            loadProject(projectId);
+            String projectNamespace = getIntent().getStringExtra(EXTRA_PROJECT_NAMESPACE);
+            if (projectId != null) {
+                loadProject(projectId);
+            } else if (projectNamespace != null) {
+                String projectName = getIntent().getStringExtra(EXTRA_PROJECT_NAME);
+                loadProject(projectNamespace, projectName);
+            } else {
+                throw new IllegalStateException("You did something wrong and now we don't know what project to load. :(");
+            }
         } else {
             bindProject(project);
         }
@@ -162,10 +179,19 @@ public class ProjectActivity extends BaseActivity {
     }
 
     private void loadProject(String projectId) {
+        showProgress();
+        App.instance().getGitLab().getProject(projectId).enqueue(mProjectCallback);
+    }
+
+    private void loadProject(String projectNamespace, String projectName) {
+        showProgress();
+        App.instance().getGitLab().getProject(projectNamespace, projectName).enqueue(mProjectCallback);
+    }
+
+    private void showProgress() {
         mProgress.setAlpha(0.0f);
         mProgress.setVisibility(View.VISIBLE);
         mProgress.animate().alpha(1.0f);
-        App.instance().getGitLab().getProject(projectId).enqueue(mProjectCallback);
     }
 
     private void broadcastLoad() {

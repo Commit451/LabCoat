@@ -16,9 +16,8 @@ import android.widget.TextView;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ProjectActivity;
-import com.commit451.gitlab.adapter.MemberAdapter;
+import com.commit451.gitlab.adapter.ProjectMembersAdapter;
 import com.commit451.easycallback.EasyCallback;
-import com.commit451.gitlab.api.GitLabFactory;
 import com.commit451.gitlab.dialog.AccessDialog;
 import com.commit451.gitlab.event.MemberAddedEvent;
 import com.commit451.gitlab.event.ProjectReloadEvent;
@@ -49,7 +48,7 @@ public class ProjectMembersFragment extends ButterKnifeFragment {
 
     private Project mProject;
     private EventReceiver mEventReceiver;
-    private MemberAdapter mAdapter;
+    private ProjectMembersAdapter mAdapter;
     private GridLayoutManager mProjectLayoutManager;
     private Member mMember;
     private Uri mNextPageUrl;
@@ -75,7 +74,7 @@ public class ProjectMembersFragment extends ButterKnifeFragment {
         }
     };
 
-    private final MemberAdapter.Listener mMemberAdapterListener = new MemberAdapter.Listener() {
+    private final ProjectMembersAdapter.Listener mMemberAdapterListener = new ProjectMembersAdapter.Listener() {
         @Override
         public void onProjectMemberClicked(Member member, ProjectMemberViewHolder memberGroupViewHolder) {
             Navigator.navigateToUser(getActivity(), memberGroupViewHolder.mImageView, member);
@@ -176,7 +175,7 @@ public class ProjectMembersFragment extends ButterKnifeFragment {
         mEventReceiver = new EventReceiver();
         App.bus().register(mEventReceiver);
 
-        mAdapter = new MemberAdapter(mMemberAdapterListener);
+        mAdapter = new ProjectMembersAdapter(mMemberAdapterListener);
         mProjectLayoutManager = new GridLayoutManager(getActivity(), 2);
         mProjectLayoutManager.setSpanSizeLookup(mAdapter.getSpanSizeLookup());
         mMembersListView.setLayoutManager(mProjectLayoutManager);

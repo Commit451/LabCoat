@@ -19,7 +19,7 @@ import java.util.Collection;
 /**
  * Shows a projects members and a groups members
  */
-public class MemberAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class ProjectMembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final int TYPE_MEMBER = 0;
     private static final int TYPE_FOOTER = 1;
@@ -70,7 +70,7 @@ public class MemberAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         return mProjectMembers.get(position);
     }
 
-    public MemberAdapter(Listener listener) {
+    public ProjectMembersAdapter(Listener listener) {
         mListener = listener;
         mProjectMembers = new ArrayList<>();
     }

@@ -1,21 +1,31 @@
 package com.commit451.gitlab.util;
 
 
+import android.app.Activity;
+import android.net.Uri;
 import android.text.Layout;
 import android.text.method.LinkMovementMethod;
 import android.text.style.URLSpan;
 import android.view.MotionEvent;
 import android.widget.TextView;
 
+import com.commit451.gitlab.App;
+import com.commit451.gitlab.navigation.Navigator;
+
+import timber.log.Timber;
+
 /**
  * Set this on a textview and then you can potentially open links locally if applicable
  */
 public class InternalLinkMovementMethod extends LinkMovementMethod {
 
-    private OnLinkClickedListener mOnLinkClickedListener;
+    //I hate this
+    private Activity mActivity;
+    private Uri mServerUrl;
 
-    public InternalLinkMovementMethod(OnLinkClickedListener onLinkClickedListener) {
-        mOnLinkClickedListener = onLinkClickedListener;
+    public InternalLinkMovementMethod(Activity activity, Uri serverUrl) {
+        mActivity = activity;
+        mServerUrl = serverUrl;
     }
 
     public boolean onTouchEvent(TextView widget, android.text.Spannable buffer, android.view.MotionEvent event) {
@@ -39,17 +49,14 @@ public class InternalLinkMovementMethod extends LinkMovementMethod {
             URLSpan[] link = buffer.getSpans(off, off, URLSpan.class);
             if (link.length != 0) {
                 String url = link[0].getURL();
-                boolean handled = mOnLinkClickedListener.onLinkClicked(url);
-                if (handled) {
+                if (url.startsWith(mServerUrl.toString())) {
+                    Timber.d("Looks like an internal server link: %s", url);
+                    Navigator.navigateToUrl(mActivity, Uri.parse(url), App.instance().getAccount());
                     return true;
                 }
                 return super.onTouchEvent(widget, buffer, event);
             }
         }
         return super.onTouchEvent(widget, buffer, event);
-    }
-
-    public interface OnLinkClickedListener {
-        boolean onLinkClicked(String url);
     }
 }

@@ -30,8 +30,9 @@ public class RoutingRouter {
                 int index = link.getPathSegments().indexOf("issues");
                 if (index != -1 && index > 1) {
                     String namespace = link.getPathSegments().get(index - 2);
-                    String projectId = link.getPathSegments().get(index - 1);
-                    mNavigator.onRouteToProject(namespace, projectId);
+                    String name = link.getPathSegments().get(index - 1);
+                    //TODO make this tell what tab to open up when we get to projects
+                    mNavigator.onRouteToProject(namespace, name);
                     return;
                 }
             } else {

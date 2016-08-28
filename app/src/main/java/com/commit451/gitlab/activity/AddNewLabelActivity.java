@@ -147,7 +147,7 @@ public class AddNewLabelActivity extends BaseActivity implements ColorChooserDia
             String color = null;
             if (mChosenColor != -1) {
                 color = ColorUtil.convertColorIntToString(mChosenColor);
-                Timber.d("Setting color to " + color);
+                Timber.d("Setting color to %s", color);
             }
             mProgress.setVisibility(View.VISIBLE);
             mProgress.setAlpha(0.0f);

@@ -1,7 +1,6 @@
 package com.commit451.gitlab.fragment;
 
 import android.content.DialogInterface;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -287,18 +286,7 @@ public class ProjectFragment extends ButterKnifeFragment {
         mEventReceiver = new EventReceiver();
         App.bus().register(mEventReceiver);
 
-        mOverviewVew.setMovementMethod(new InternalLinkMovementMethod(new InternalLinkMovementMethod.OnLinkClickedListener() {
-            @Override
-            public boolean onLinkClicked(String url) {
-                String server = App.instance().getAccount().getServerUrl().toString();
-                if (url.startsWith(server)) {
-                    Timber.d("Looks like an internal server link: %s", url);
-                    Navigator.navigateToUrl(getActivity(), Uri.parse(url), App.instance().getAccount());
-                    return true;
-                }
-                return false;
-            }
-        }));
+        mOverviewVew.setMovementMethod(new InternalLinkMovementMethod(getActivity(), App.instance().getAccount().getServerUrl()));
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
