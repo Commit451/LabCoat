@@ -81,5 +81,10 @@
 # Unicoding Bypass library
 -keep class in.uncod.android.** { *; }
 
+# LoganSquare
+-keep class com.bluelinelabs.logansquare.** { *; }
+-keep @com.bluelinelabs.logansquare.annotation.JsonObject class *
+-keep class **$$JsonObjectMapper { *; }
+
 # Custom rules
 -keep class com.commit451.gitlab.ssl.CustomSSLSocketFactory
