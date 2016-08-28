@@ -19,7 +19,7 @@ apply plugin: 'io.fabric'
 def versionMajor = 2
 def versionMinor = 4
 def versionPatch = 0
-def versionBuild = 0 // bump for dogfood builds, public betas, etc.
+def versionBuild = 1 // bump for dogfood builds, public betas, etc.
 
 android {
     compileSdkVersion 24
