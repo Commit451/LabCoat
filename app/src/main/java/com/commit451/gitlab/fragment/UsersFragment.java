@@ -57,7 +57,6 @@ public class UsersFragment extends ButterKnifeFragment {
     private GridLayoutManager mUserLinearLayoutManager;
 
     private String mQuery;
-    private EventReceiver mEventReceiver;
     private UsersAdapter mUsersAdapter;
     private boolean mLoading;
     private Uri mNextPageUrl;
@@ -153,9 +152,6 @@ public class UsersFragment extends ButterKnifeFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mEventReceiver = new EventReceiver();
-        App.bus().register(mEventReceiver);
-
         mUsersAdapter = new UsersAdapter(mUsersAdapterListener);
         mUserLinearLayoutManager = new GridLayoutManager(getActivity(), 2);
         mUserLinearLayoutManager.setSpanSizeLookup(mUsersAdapter.getSpanSizeLookup());
@@ -171,12 +167,6 @@ public class UsersFragment extends ButterKnifeFragment {
         });
 
         loadData();
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        App.bus().unregister(mEventReceiver);
     }
 
     @Override
@@ -218,8 +208,5 @@ public class UsersFragment extends ButterKnifeFragment {
             mUsersAdapter.clearData();
             loadData();
         }
-    }
-
-    private class EventReceiver {
     }
 }
