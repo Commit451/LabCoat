@@ -6,17 +6,17 @@ import retrofit2.Response;
 import timber.log.Timber;
 
 /**
- * Gets the pages
- * https://github.com/gitlabhq/gitlabhq/tree/master/doc/api#pagination
+ * Parses link headers from a retrofit {@link Response}
+ * @see <a href="https://www.w3.org/wiki/LinkHeader">https://www.w3.org/wiki/LinkHeader</a>
  */
-public final class PaginationUtil {
+public final class LinkHeaderParser {
 
     private static final String PREV_PAGE_SUFFIX = "rel=\"prev\"";
     private static final String NEXT_PAGE_SUFFIX = "rel=\"next\"";
     private static final String FIRST_PAGE_SUFFIX = "rel=\"first\"";
     private static final String LAST_PAGE_SUFFIX = "rel=\"last\"";
 
-    private PaginationUtil() {}
+    private LinkHeaderParser() {}
 
     public static PaginationData parse(Response response) {
         Uri prev = null;

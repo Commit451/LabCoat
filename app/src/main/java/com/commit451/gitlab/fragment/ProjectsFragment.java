@@ -21,7 +21,7 @@ import com.commit451.gitlab.api.GitLab;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.navigation.Navigator;
-import com.commit451.gitlab.util.PaginationUtil;
+import com.commit451.gitlab.util.LinkHeaderParser;
 
 import org.parceler.Parcels;
 
@@ -108,7 +108,7 @@ public class ProjectsFragment extends ButterKnifeFragment {
                 mMessageView.setText(R.string.no_projects);
             }
             mProjectsAdapter.setData(response);
-            mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
+            mNextPageUrl = LinkHeaderParser.parse(getResponse()).getNext();
             Timber.d("Next page url " + mNextPageUrl);
         }
 
@@ -136,7 +136,7 @@ public class ProjectsFragment extends ButterKnifeFragment {
             }
             mProjectsAdapter.setLoading(false);
             mProjectsAdapter.addData(response);
-            mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
+            mNextPageUrl = LinkHeaderParser.parse(getResponse()).getNext();
             Timber.d("Next page url " + mNextPageUrl);
         }
 

@@ -21,7 +21,6 @@ import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.gitlab.adapter.IssuesAdapter;
 import com.commit451.easycallback.EasyCallback;
-import com.commit451.gitlab.api.GitLabFactory;
 import com.commit451.gitlab.event.IssueChangedEvent;
 import com.commit451.gitlab.event.IssueCreatedEvent;
 import com.commit451.gitlab.event.IssueReloadEvent;
@@ -29,7 +28,7 @@ import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Issue;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.navigation.Navigator;
-import com.commit451.gitlab.util.PaginationUtil;
+import com.commit451.gitlab.util.LinkHeaderParser;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.List;
@@ -115,7 +114,7 @@ public class IssuesFragment extends ButterKnifeFragment {
                 mMessageView.setText(R.string.no_issues);
             }
             mIssuesAdapter.setIssues(response);
-            mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
+            mNextPageUrl = LinkHeaderParser.parse(getResponse()).getNext();
             Timber.d("Next page url " + mNextPageUrl);
         }
 
@@ -139,7 +138,7 @@ public class IssuesFragment extends ButterKnifeFragment {
         public void success(@NonNull List<Issue> response) {
             mLoading = false;
             mIssuesAdapter.setLoading(false);
-            mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
+            mNextPageUrl = LinkHeaderParser.parse(getResponse()).getNext();
             mIssuesAdapter.addIssues(response);
         }
 

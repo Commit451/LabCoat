@@ -25,7 +25,7 @@ import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.model.api.Note;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.navigation.TransitionFactory;
-import com.commit451.gitlab.util.PaginationUtil;
+import com.commit451.gitlab.util.LinkHeaderParser;
 import com.commit451.gitlab.view.SendMessageView;
 import com.commit451.teleprinter.Teleprinter;
 
@@ -102,7 +102,7 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
             }
             mSwipeRefreshLayout.setRefreshing(false);
             mLoading = false;
-            mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
+            mNextPageUrl = LinkHeaderParser.parse(getResponse()).getNext();
             mMergeRequestDetailAdapter.setNotes(response);
         }
 
@@ -128,7 +128,7 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
             }
             mMergeRequestDetailAdapter.setLoading(false);
             mLoading = false;
-            mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
+            mNextPageUrl = LinkHeaderParser.parse(getResponse()).getNext();
             mMergeRequestDetailAdapter.addNotes(response);
         }
 

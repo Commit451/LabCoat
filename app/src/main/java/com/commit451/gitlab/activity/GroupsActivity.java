@@ -21,7 +21,7 @@ import com.commit451.gitlab.event.CloseDrawerEvent;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.DynamicGridLayoutManager;
-import com.commit451.gitlab.util.PaginationUtil;
+import com.commit451.gitlab.util.LinkHeaderParser;
 import com.commit451.gitlab.viewHolder.GroupViewHolder;
 
 import org.greenrobot.eventbus.Subscribe;
@@ -99,7 +99,7 @@ public class GroupsActivity extends BaseActivity {
         public void success(@NonNull List<Group> response) {
             mLoading = false;
             mGroupAdapter.addGroups(response);
-            mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
+            mNextPageUrl = LinkHeaderParser.parse(getResponse()).getNext();
         }
 
         @Override

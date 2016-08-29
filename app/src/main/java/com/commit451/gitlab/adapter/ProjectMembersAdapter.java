@@ -26,13 +26,6 @@ public class ProjectMembersAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     private static final int FOOTER_COUNT = 1;
 
-    public interface Listener {
-        void onProjectMemberClicked(Member member, ProjectMemberViewHolder memberGroupViewHolder);
-        void onRemoveMember(Member member);
-        void onChangeAccess(Member member);
-        void onSeeGroupClicked();
-    }
-
     private Listener mListener;
 
     private ArrayList<Member> mProjectMembers;
@@ -66,10 +59,6 @@ public class ProjectMembersAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         }
     };
 
-    public Member getProjectMember(int position) {
-        return mProjectMembers.get(position);
-    }
-
     public ProjectMembersAdapter(Listener listener) {
         mListener = listener;
         mProjectMembers = new ArrayList<>();
@@ -90,6 +79,10 @@ public class ProjectMembersAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     public void setNamespace(ProjectNamespace namespace) {
         mNamespace = namespace;
         notifyDataSetChanged();
+    }
+
+    public Member getProjectMember(int position) {
+        return mProjectMembers.get(position);
     }
 
     @Override
@@ -165,5 +158,12 @@ public class ProjectMembersAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         int position = mProjectMembers.indexOf(member);
         mProjectMembers.remove(member);
         notifyItemRemoved(position);
+    }
+
+    public interface Listener {
+        void onProjectMemberClicked(Member member, ProjectMemberViewHolder memberGroupViewHolder);
+        void onRemoveMember(Member member);
+        void onChangeAccess(Member member);
+        void onSeeGroupClicked();
     }
 }

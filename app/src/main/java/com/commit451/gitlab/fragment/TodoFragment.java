@@ -17,7 +17,7 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.TodoAdapter;
 import com.commit451.gitlab.model.api.Todo;
 import com.commit451.gitlab.navigation.Navigator;
-import com.commit451.gitlab.util.PaginationUtil;
+import com.commit451.gitlab.util.LinkHeaderParser;
 
 import java.util.List;
 
@@ -80,7 +80,7 @@ public class TodoFragment extends ButterKnifeFragment {
                 mMessageView.setText(R.string.no_todos);
             }
             mTodoAdapter.setData(response);
-            mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
+            mNextPageUrl = LinkHeaderParser.parse(getResponse()).getNext();
             Timber.d("Next page url " + mNextPageUrl);
         }
 
@@ -108,7 +108,7 @@ public class TodoFragment extends ButterKnifeFragment {
             }
             mTodoAdapter.setLoading(false);
             mTodoAdapter.addData(response);
-            mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
+            mNextPageUrl = LinkHeaderParser.parse(getResponse()).getNext();
             Timber.d("Next page url " + mNextPageUrl);
         }
 

@@ -25,7 +25,7 @@ import com.commit451.gitlab.model.api.Issue;
 import com.commit451.gitlab.model.api.Milestone;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.navigation.Navigator;
-import com.commit451.gitlab.util.PaginationUtil;
+import com.commit451.gitlab.util.LinkHeaderParser;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.parceler.Parcels;
@@ -98,7 +98,7 @@ public class MilestoneActivity extends BaseActivity {
                 mMessageText.setText(R.string.no_issues);
             }
 
-            mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
+            mNextPageUrl = LinkHeaderParser.parse(getResponse()).getNext();
             mMilestoneIssuesAdapter.setIssues(response);
         }
 
@@ -117,7 +117,7 @@ public class MilestoneActivity extends BaseActivity {
         @Override
         public void success(@NonNull List<Issue> response) {
             mLoading = false;
-            mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
+            mNextPageUrl = LinkHeaderParser.parse(getResponse()).getNext();
             mMilestoneIssuesAdapter.addIssues(response);
         }
 

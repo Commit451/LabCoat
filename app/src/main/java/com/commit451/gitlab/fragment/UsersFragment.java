@@ -19,7 +19,7 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.UsersAdapter;
 import com.commit451.gitlab.model.api.UserBasic;
 import com.commit451.gitlab.navigation.Navigator;
-import com.commit451.gitlab.util.PaginationUtil;
+import com.commit451.gitlab.util.LinkHeaderParser;
 import com.commit451.gitlab.viewHolder.UserViewHolder;
 
 import java.util.List;
@@ -94,7 +94,7 @@ public class UsersFragment extends ButterKnifeFragment {
                 mMessageView.setText(R.string.no_users_found);
             }
             mUsersAdapter.setData(response);
-            mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
+            mNextPageUrl = LinkHeaderParser.parse(getResponse()).getNext();
         }
 
         @Override
@@ -120,7 +120,7 @@ public class UsersFragment extends ButterKnifeFragment {
             }
             mSwipeRefreshLayout.setRefreshing(false);
             mUsersAdapter.addData(response);
-            mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
+            mNextPageUrl = LinkHeaderParser.parse(getResponse()).getNext();
             mUsersAdapter.setLoading(false);
         }
 

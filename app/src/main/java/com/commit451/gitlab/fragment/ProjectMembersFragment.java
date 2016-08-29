@@ -24,7 +24,7 @@ import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Member;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.navigation.Navigator;
-import com.commit451.gitlab.util.PaginationUtil;
+import com.commit451.gitlab.util.LinkHeaderParser;
 import com.commit451.gitlab.viewHolder.ProjectMemberViewHolder;
 import org.greenrobot.eventbus.Subscribe;
 
@@ -46,13 +46,13 @@ public class ProjectMembersFragment extends ButterKnifeFragment {
     @BindView(R.id.message_text) TextView mMessageView;
     @BindView(R.id.add_user_button) FloatingActionButton mAddUserButton;
 
-    private Project mProject;
-    private EventReceiver mEventReceiver;
-    private ProjectMembersAdapter mAdapter;
-    private GridLayoutManager mProjectLayoutManager;
-    private Member mMember;
-    private Uri mNextPageUrl;
-    private boolean mLoading = false;
+    Project mProject;
+    EventReceiver mEventReceiver;
+    ProjectMembersAdapter mAdapter;
+    GridLayoutManager mProjectLayoutManager;
+    Member mMember;
+    Uri mNextPageUrl;
+    boolean mLoading = false;
 
     private final RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
         @Override
@@ -123,7 +123,7 @@ public class ProjectMembersFragment extends ButterKnifeFragment {
                 mAdapter.addProjectMembers(response);
             }
 
-            mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
+            mNextPageUrl = LinkHeaderParser.parse(getResponse()).getNext();
             Timber.d("Next page url " + mNextPageUrl);
         }
 

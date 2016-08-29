@@ -28,7 +28,7 @@ import com.commit451.gitlab.model.api.Note;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.IntentUtil;
-import com.commit451.gitlab.util.PaginationUtil;
+import com.commit451.gitlab.util.LinkHeaderParser;
 import com.commit451.gitlab.view.SendMessageView;
 import com.commit451.teleprinter.Teleprinter;
 
@@ -181,7 +181,7 @@ public class IssueActivity extends BaseActivity {
         public void success(@NonNull List<Note> response) {
             mLoading = false;
             mSwipeRefreshLayout.setRefreshing(false);
-            mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
+            mNextPageUrl = LinkHeaderParser.parse(getResponse()).getNext();
             mIssueDetailsAdapter.setNotes(response);
         }
 
@@ -201,7 +201,7 @@ public class IssueActivity extends BaseActivity {
         public void success(@NonNull List<Note> response) {
             mLoading = false;
             mIssueDetailsAdapter.setLoading(false);
-            mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
+            mNextPageUrl = LinkHeaderParser.parse(getResponse()).getNext();
             mIssueDetailsAdapter.addNotes(response);
         }
 

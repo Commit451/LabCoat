@@ -9,6 +9,7 @@ import com.commit451.gitlab.api.GitLab;
 import com.commit451.gitlab.model.api.FileUploadResponse;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.model.api.Issue;
+import com.commit451.gitlab.model.api.Member;
 import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryCommit;
@@ -75,6 +76,16 @@ public class ApiTests {
     public void getGroups() throws Exception {
         Response<List<Group>> groupResponse = gitLab
                 .getGroups()
+                .execute();
+        TestUtil.assertRetrofitResponseSuccess(groupResponse);
+        assertNotNull(groupResponse.body());
+    }
+
+    @Test
+    public void getGroupMembers() throws Exception {
+        long gitLabGroupId = 9970;
+        Response<List<Member>> groupResponse = gitLab
+                .getGroupMembers(gitLabGroupId)
                 .execute();
         TestUtil.assertRetrofitResponseSuccess(groupResponse);
         assertNotNull(groupResponse.body());

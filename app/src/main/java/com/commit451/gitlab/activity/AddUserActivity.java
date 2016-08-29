@@ -30,7 +30,7 @@ import com.commit451.gitlab.event.MemberAddedEvent;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.model.api.Member;
 import com.commit451.gitlab.model.api.UserBasic;
-import com.commit451.gitlab.util.PaginationUtil;
+import com.commit451.gitlab.util.LinkHeaderParser;
 import com.commit451.gitlab.viewHolder.UserViewHolder;
 import com.commit451.teleprinter.Teleprinter;
 
@@ -186,7 +186,7 @@ public class AddUserActivity extends MorphActivity {
             mSwipeRefreshLayout.setRefreshing(false);
             mLoading = false;
             mAdapter.setData(response);
-            mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
+            mNextPageUrl = LinkHeaderParser.parse(getResponse()).getNext();
             Timber.d("Next page url is %s", mNextPageUrl);
         }
 
@@ -206,7 +206,7 @@ public class AddUserActivity extends MorphActivity {
             mLoading = false;
             mAdapter.setLoading(false);
             mAdapter.addData(response);
-            mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
+            mNextPageUrl = LinkHeaderParser.parse(getResponse()).getNext();
         }
 
         @Override

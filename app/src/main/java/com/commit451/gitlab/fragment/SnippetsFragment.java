@@ -21,12 +21,11 @@ import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.gitlab.adapter.SnippetAdapter;
 import com.commit451.easycallback.EasyCallback;
-import com.commit451.gitlab.api.GitLabFactory;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.Snippet;
 import com.commit451.gitlab.navigation.Navigator;
-import com.commit451.gitlab.util.PaginationUtil;
+import com.commit451.gitlab.util.LinkHeaderParser;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.List;
@@ -118,7 +117,7 @@ public class SnippetsFragment extends ButterKnifeFragment {
                 mMessageView.setText(R.string.no_milestones);
             }
             mSnippetAdapter.setData(response);
-            mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
+            mNextPageUrl = LinkHeaderParser.parse(getResponse()).getNext();
             Timber.d("Next page url %s", mNextPageUrl);
         }
 
@@ -142,7 +141,7 @@ public class SnippetsFragment extends ButterKnifeFragment {
         public void success(@NonNull List<Snippet> response) {
             mLoading = false;
             mSnippetAdapter.setLoading(false);
-            mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
+            mNextPageUrl = LinkHeaderParser.parse(getResponse()).getNext();
             mSnippetAdapter.addData(response);
         }
 
