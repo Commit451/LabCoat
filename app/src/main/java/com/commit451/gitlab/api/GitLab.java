@@ -260,7 +260,7 @@ public interface GitLab {
                                    @Path("merge_request_id") long mergeRequestId,
                                    @Field("body") String body);
 
-    @PUT(API_VERSION + "/projects/{id}/merge_requests/{merge_request_id}")
+    @PUT(API_VERSION + "/projects/{id}/merge_requests/{merge_request_id}/merge")
     Call<MergeRequest> acceptMergeRequest(@Path("id") long projectId,
                                           @Path("merge_request_id") long mergeRequestId);
 

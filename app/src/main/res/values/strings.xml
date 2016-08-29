@@ -327,6 +327,7 @@
     </string-array>
     <string name="created_merge_request">created merge request</string>
     <string name="unable_to_merge">Unable to merge</string>
+    <string name="merge_request_already_merged_or_closed">Merge request has already been merged or closed</string>
     <string name="merge_request_accepted">Merge request accepted</string>
 
     <!-- Milestones -->

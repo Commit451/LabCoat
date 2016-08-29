@@ -12,11 +12,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.commit451.easycallback.EasyCallback;
+import com.commit451.easycallback.HttpException;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.MergeRequestSectionsPagerAdapter;
-import com.commit451.easycallback.EasyCallback;
-import com.commit451.gitlab.api.GitLabFactory;
 import com.commit451.gitlab.event.MergeRequestChangedEvent;
 import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.model.api.Project;
@@ -69,7 +69,14 @@ public class MergeRequestActivity extends BaseActivity {
         public void failure(Throwable t) {
             Timber.e(t, null);
             mProgress.setVisibility(View.GONE);
-            Snackbar.make(mRoot, R.string.unable_to_merge, Snackbar.LENGTH_LONG)
+            String message = getString(R.string.unable_to_merge);
+            if (t instanceof HttpException) {
+                int code = ((HttpException) t).getCode();
+                if (code == 406) {
+                    message = getString(R.string.merge_request_already_merged_or_closed);
+                }
+            }
+            Snackbar.make(mRoot, message, Snackbar.LENGTH_LONG)
                     .show();
         }
     };
