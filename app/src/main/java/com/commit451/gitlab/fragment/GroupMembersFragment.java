@@ -109,7 +109,7 @@ public class GroupMembersFragment extends ButterKnifeFragment {
             Snackbar.make(mRoot, R.string.failed_to_remove_member, Snackbar.LENGTH_SHORT)
                     .show();
         }
-    };
+    }.allowNullBodies(true);
 
     private final GroupMembersAdapter.Listener mListener = new GroupMembersAdapter.Listener() {
         @Override

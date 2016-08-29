@@ -161,7 +161,7 @@ public class ProjectMembersFragment extends ButterKnifeFragment {
             Snackbar.make(mRoot, R.string.failed_to_remove_member, Snackbar.LENGTH_SHORT)
                     .show();
         }
-    };
+    }.allowNullBodies(true);
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
