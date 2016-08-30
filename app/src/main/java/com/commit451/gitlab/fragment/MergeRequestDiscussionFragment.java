@@ -102,7 +102,7 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
             }
             mSwipeRefreshLayout.setRefreshing(false);
             mLoading = false;
-            mNextPageUrl = LinkHeaderParser.parse(getResponse()).getNext();
+            mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
             mMergeRequestDetailAdapter.setNotes(response);
         }
 
@@ -128,7 +128,7 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
             }
             mMergeRequestDetailAdapter.setLoading(false);
             mLoading = false;
-            mNextPageUrl = LinkHeaderParser.parse(getResponse()).getNext();
+            mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
             mMergeRequestDetailAdapter.addNotes(response);
         }
 

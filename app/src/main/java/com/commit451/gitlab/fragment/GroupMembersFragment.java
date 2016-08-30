@@ -104,7 +104,7 @@ public class GroupMembersFragment extends ButterKnifeFragment {
             }
             mGroupMembersAdapter.setLoading(false);
 
-            mNextPageUrl = LinkHeaderParser.parse(getResponse()).getNext();
+            mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
             Timber.d("Next page url %s", mNextPageUrl);
         }
 

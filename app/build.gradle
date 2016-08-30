@@ -114,7 +114,7 @@ dependencies {
     compile 'com.github.Commit451:Teleprinter:1.0.2'
     compile 'com.github.Commit451:BypassPicassoImageGetter:1.1.0'
     compile 'com.github.Commit451:Jounce:1.0.1'
-    compile 'com.github.Commit451:EasyCallback:1.2.1'
+    compile 'com.github.Commit451:EasyCallback:2.0.0'
     compile 'com.github.Commit451:ForegroundViews:2.1.0'
     compile 'me.zhanghai.android.materialprogressbar:library:1.1.7'
     compile 'com.github.Jawnnypoo:PhysicsLayout:2.1.0'

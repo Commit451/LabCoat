@@ -97,7 +97,7 @@ public class MergeRequestsFragment extends ButterKnifeFragment {
                 mMessageView.setText(R.string.no_merge_requests);
             }
             mMergeRequestAdapter.setData(response);
-            mNextPageUrl = LinkHeaderParser.parse(getResponse()).getNext();
+            mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
             Timber.d("Next page url " + mNextPageUrl);
         }
 
@@ -121,7 +121,7 @@ public class MergeRequestsFragment extends ButterKnifeFragment {
         public void success(@NonNull List<MergeRequest> response) {
             mLoading = false;
             mMergeRequestAdapter.setLoading(false);
-            mNextPageUrl = LinkHeaderParser.parse(getResponse()).getNext();
+            mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
             mMergeRequestAdapter.addData(response);
         }
 

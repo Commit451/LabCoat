@@ -114,7 +114,7 @@ public class IssuesFragment extends ButterKnifeFragment {
                 mMessageView.setText(R.string.no_issues);
             }
             mIssuesAdapter.setIssues(response);
-            mNextPageUrl = LinkHeaderParser.parse(getResponse()).getNext();
+            mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
             Timber.d("Next page url " + mNextPageUrl);
         }
 
@@ -138,7 +138,7 @@ public class IssuesFragment extends ButterKnifeFragment {
         public void success(@NonNull List<Issue> response) {
             mLoading = false;
             mIssuesAdapter.setLoading(false);
-            mNextPageUrl = LinkHeaderParser.parse(getResponse()).getNext();
+            mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
             mIssuesAdapter.addIssues(response);
         }
 

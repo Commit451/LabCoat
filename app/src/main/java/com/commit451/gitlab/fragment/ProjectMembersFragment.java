@@ -123,7 +123,7 @@ public class ProjectMembersFragment extends ButterKnifeFragment {
                 mAdapter.addProjectMembers(response);
             }
 
-            mNextPageUrl = LinkHeaderParser.parse(getResponse()).getNext();
+            mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
             Timber.d("Next page url " + mNextPageUrl);
         }
 

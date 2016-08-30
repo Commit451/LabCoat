@@ -80,7 +80,7 @@ public class TodoFragment extends ButterKnifeFragment {
                 mMessageView.setText(R.string.no_todos);
             }
             mTodoAdapter.setData(response);
-            mNextPageUrl = LinkHeaderParser.parse(getResponse()).getNext();
+            mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
             Timber.d("Next page url " + mNextPageUrl);
         }
 
@@ -108,7 +108,7 @@ public class TodoFragment extends ButterKnifeFragment {
             }
             mTodoAdapter.setLoading(false);
             mTodoAdapter.addData(response);
-            mNextPageUrl = LinkHeaderParser.parse(getResponse()).getNext();
+            mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
             Timber.d("Next page url " + mNextPageUrl);
         }
 

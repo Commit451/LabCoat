@@ -114,7 +114,7 @@ public class BuildsFragment extends ButterKnifeFragment {
                 mMessageView.setText(R.string.no_builds);
             }
             mBuildsAdapter.setValues(response);
-            mNextPageUrl = LinkHeaderParser.parse(getResponse()).getNext();
+            mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
             Timber.d("Next page url %s", mNextPageUrl);
         }
 
@@ -138,7 +138,7 @@ public class BuildsFragment extends ButterKnifeFragment {
         public void success(@NonNull List<Build> response) {
             mLoading = false;
             mBuildsAdapter.setLoading(false);
-            mNextPageUrl = LinkHeaderParser.parse(getResponse()).getNext();
+            mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
             mBuildsAdapter.addValues(response);
         }
 

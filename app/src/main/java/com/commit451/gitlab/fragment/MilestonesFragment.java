@@ -118,7 +118,7 @@ public class MilestonesFragment extends ButterKnifeFragment {
                 mMessageView.setText(R.string.no_milestones);
             }
             mMilestoneAdapter.setData(response);
-            mNextPageUrl = LinkHeaderParser.parse(getResponse()).getNext();
+            mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
             Timber.d("Next page url " + mNextPageUrl);
         }
 
@@ -142,7 +142,7 @@ public class MilestonesFragment extends ButterKnifeFragment {
         public void success(@NonNull List<Milestone> response) {
             mLoading = false;
             mMilestoneAdapter.setLoading(false);
-            mNextPageUrl = LinkHeaderParser.parse(getResponse()).getNext();
+            mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
             mMilestoneAdapter.addData(response);
         }
 

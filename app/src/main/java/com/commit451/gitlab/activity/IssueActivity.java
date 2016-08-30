@@ -181,7 +181,7 @@ public class IssueActivity extends BaseActivity {
         public void success(@NonNull List<Note> response) {
             mLoading = false;
             mSwipeRefreshLayout.setRefreshing(false);
-            mNextPageUrl = LinkHeaderParser.parse(getResponse()).getNext();
+            mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
             mIssueDetailsAdapter.setNotes(response);
         }
 
@@ -201,7 +201,7 @@ public class IssueActivity extends BaseActivity {
         public void success(@NonNull List<Note> response) {
             mLoading = false;
             mIssueDetailsAdapter.setLoading(false);
-            mNextPageUrl = LinkHeaderParser.parse(getResponse()).getNext();
+            mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
             mIssueDetailsAdapter.addNotes(response);
         }
 

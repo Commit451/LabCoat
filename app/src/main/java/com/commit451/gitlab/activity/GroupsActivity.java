@@ -99,7 +99,7 @@ public class GroupsActivity extends BaseActivity {
         public void success(@NonNull List<Group> response) {
             mLoading = false;
             mGroupAdapter.addGroups(response);
-            mNextPageUrl = LinkHeaderParser.parse(getResponse()).getNext();
+            mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
         }
 
         @Override

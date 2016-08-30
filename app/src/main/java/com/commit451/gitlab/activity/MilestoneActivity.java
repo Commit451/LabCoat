@@ -98,7 +98,7 @@ public class MilestoneActivity extends BaseActivity {
                 mMessageText.setText(R.string.no_issues);
             }
 
-            mNextPageUrl = LinkHeaderParser.parse(getResponse()).getNext();
+            mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
             mMilestoneIssuesAdapter.setIssues(response);
         }
 
@@ -117,7 +117,7 @@ public class MilestoneActivity extends BaseActivity {
         @Override
         public void success(@NonNull List<Issue> response) {
             mLoading = false;
-            mNextPageUrl = LinkHeaderParser.parse(getResponse()).getNext();
+            mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
             mMilestoneIssuesAdapter.addIssues(response);
         }
 

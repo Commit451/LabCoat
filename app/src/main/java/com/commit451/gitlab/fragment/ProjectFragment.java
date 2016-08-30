@@ -230,7 +230,7 @@ public class ProjectFragment extends ButterKnifeFragment {
                 return;
             }
             if (t instanceof HttpException) {
-                if (((HttpException) t).getCode() == 304) {
+                if (((HttpException) t).response().code() == 304) {
                     Snackbar.make(mSwipeRefreshLayout, R.string.project_already_starred, Snackbar.LENGTH_SHORT)
                             .setAction(R.string.project_unstar, new View.OnClickListener() {
                                 @Override

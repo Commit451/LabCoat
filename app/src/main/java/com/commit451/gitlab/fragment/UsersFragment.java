@@ -94,7 +94,7 @@ public class UsersFragment extends ButterKnifeFragment {
                 mMessageView.setText(R.string.no_users_found);
             }
             mUsersAdapter.setData(response);
-            mNextPageUrl = LinkHeaderParser.parse(getResponse()).getNext();
+            mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
         }
 
         @Override
@@ -120,7 +120,7 @@ public class UsersFragment extends ButterKnifeFragment {
             }
             mSwipeRefreshLayout.setRefreshing(false);
             mUsersAdapter.addData(response);
-            mNextPageUrl = LinkHeaderParser.parse(getResponse()).getNext();
+            mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
             mUsersAdapter.setLoading(false);
         }
 

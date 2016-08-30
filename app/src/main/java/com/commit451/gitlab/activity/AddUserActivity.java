@@ -186,7 +186,7 @@ public class AddUserActivity extends MorphActivity {
             mSwipeRefreshLayout.setRefreshing(false);
             mLoading = false;
             mAdapter.setData(response);
-            mNextPageUrl = LinkHeaderParser.parse(getResponse()).getNext();
+            mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
             Timber.d("Next page url is %s", mNextPageUrl);
         }
 
@@ -206,7 +206,7 @@ public class AddUserActivity extends MorphActivity {
             mLoading = false;
             mAdapter.setLoading(false);
             mAdapter.addData(response);
-            mNextPageUrl = LinkHeaderParser.parse(getResponse()).getNext();
+            mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
         }
 
         @Override
@@ -231,7 +231,7 @@ public class AddUserActivity extends MorphActivity {
             Timber.e(t, null);
             if (t instanceof HttpException) {
                 //Conflict
-                if (((HttpException) t).getCode() == 409) {
+                if (((HttpException) t).response().code() == 409) {
                     Snackbar.make(mRoot, R.string.error_user_conflict, Snackbar.LENGTH_SHORT)
                             .show();
                 }

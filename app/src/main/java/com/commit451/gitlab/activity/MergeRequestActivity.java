@@ -71,7 +71,7 @@ public class MergeRequestActivity extends BaseActivity {
             mProgress.setVisibility(View.GONE);
             String message = getString(R.string.unable_to_merge);
             if (t instanceof HttpException) {
-                int code = ((HttpException) t).getCode();
+                int code = ((HttpException) t).response().code();
                 if (code == 406) {
                     message = getString(R.string.merge_request_already_merged_or_closed);
                 }

@@ -52,8 +52,11 @@ The following 3rd party libraries and resources are the reason this app works. R
 - MaterialDateTimePicker (https://github.com/wdullaer/MaterialDateTimePicker)
 - FlowLayout (https://github.com/blazsolar/FlowLayout)
 - SimpleChromeCustomTabs (https://github.com/novoda/simple-chrome-custom-tabs)
-- Crashlytics (https://www.crashlytics.com)
 - Material Dialogs (https://github.com/afollestad/material-dialogs)
+- CircleImageView (https://github.com/hdodenhof/CircleImageView)
+- EasyImage (https://github.com/jkwiecien/EasyImage)
+- emoji-java (https://github.com/vdurmont/emoji-java)
+- Crashlytics (https://www.crashlytics.com)
 - highlight.js (https://highlightjs.org/)
 
 ## Contributing
