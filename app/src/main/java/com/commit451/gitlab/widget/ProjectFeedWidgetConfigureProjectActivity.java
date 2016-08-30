@@ -8,7 +8,6 @@ import android.support.v4.view.ViewPager;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.BaseActivity;
-import com.commit451.gitlab.activity.ProjectsActivity;
 import com.commit451.gitlab.adapter.ProjectsPagerAdapter;
 import com.commit451.gitlab.api.GitLab;
 import com.commit451.gitlab.api.GitLabFactory;
@@ -31,7 +30,7 @@ public class ProjectFeedWidgetConfigureProjectActivity extends BaseActivity impl
     private static final String EXTRA_ACCOUNT = "account";
 
     public static Intent newIntent(Context context, Account account) {
-        Intent intent = new Intent(context, ProjectsActivity.class);
+        Intent intent = new Intent(context, ProjectFeedWidgetConfigureProjectActivity.class);
         intent.putExtra(EXTRA_ACCOUNT, Parcels.wrap(account));
         return intent;
     }

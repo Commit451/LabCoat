@@ -110,7 +110,7 @@ dependencies {
     compile 'com.github.Commit451.AdapterLayout:adapterlayout:1.0.3'
     compile 'com.github.Commit451.AdapterLayout:adapterflowlayout:1.0.3'
     compile 'com.github.Commit451:Easel:1.0.0'
-    compile 'com.github.Commit451:Gimbal:2.0.0'
+    compile 'com.github.Commit451:Gimbal:2.0.2'
     compile 'com.github.Commit451:Teleprinter:1.0.2'
     compile 'com.github.Commit451:BypassPicassoImageGetter:1.1.0'
     compile 'com.github.Commit451:Jounce:1.0.1'
