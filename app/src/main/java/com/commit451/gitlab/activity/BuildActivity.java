@@ -1,11 +1,15 @@
 package com.commit451.gitlab.activity;
 
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -33,6 +37,8 @@ import timber.log.Timber;
  * Shows the details of a merge request
  */
 public class BuildActivity extends BaseActivity {
+
+    private static final int REQUEST_PERMISSION_WRITE_STORAGE = 1337;
 
     private static final String KEY_PROJECT = "key_project";
     private static final String KEY_BUILD = "key_merge_request";
@@ -131,10 +137,7 @@ public class BuildActivity extends BaseActivity {
                     App.instance().getGitLab().cancelBuild(mProject.getId(), mBuild.getId()).enqueue(mCancelCallback);
                     return true;
                 case R.id.action_download:
-                    Account account = App.instance().getAccount();
-                    String downloadUrl = BuildUtil.getDownloadBuildUrl(App.instance().getAccount().getServerUrl(), mProject, mBuild);
-                    Timber.d("Downloading build: " + downloadUrl);
-                    DownloadUtil.download(BuildActivity.this, account, downloadUrl, mBuild.getArtifactsFile().getFileName());
+                    checkDownloadBuild();
                     return true;
             }
             return false;
@@ -166,6 +169,17 @@ public class BuildActivity extends BaseActivity {
         setupTabs();
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_PERMISSION_WRITE_STORAGE: {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    downloadBuild();
+                }
+            }
+        }
+    }
+
     private void setupTabs() {
         BuildSectionsPagerAdapter sectionsPagerAdapter = new BuildSectionsPagerAdapter(
                 this,
@@ -175,5 +189,21 @@ public class BuildActivity extends BaseActivity {
 
         mViewPager.setAdapter(sectionsPagerAdapter);
         mTabLayout.setupWithViewPager(mViewPager);
+    }
+
+    @TargetApi(23)
+    private void checkDownloadBuild() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            downloadBuild();
+        } else {
+            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSION_WRITE_STORAGE);
+        }
+    }
+
+    private void downloadBuild() {
+        Account account = App.instance().getAccount();
+        String downloadUrl = BuildUtil.getDownloadBuildUrl(App.instance().getAccount().getServerUrl(), mProject, mBuild);
+        Timber.d("Downloading build: " + downloadUrl);
+        DownloadUtil.download(BuildActivity.this, account, downloadUrl, mBuild.getArtifactsFile().getFileName());
     }
 }

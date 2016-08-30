@@ -44,7 +44,7 @@ import timber.log.Timber;
 
 public class FileActivity extends BaseActivity {
 
-    private static final int PERMISSION_REQUEST_WRITE_STORAGE = 1337;
+    private static final int REQUEST_PERMISSION_WRITE_STORAGE = 1337;
 
     private static final long MAX_FILE_SIZE = 1024 * 1024;
     private static final String EXTRA_PROJECT_ID = "extra_project_id";
@@ -221,14 +221,14 @@ public class FileActivity extends BaseActivity {
                 openFile();
             }
         } else {
-            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_REQUEST_WRITE_STORAGE);
+            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSION_WRITE_STORAGE);
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         switch (requestCode) {
-            case PERMISSION_REQUEST_WRITE_STORAGE: {
+            case REQUEST_PERMISSION_WRITE_STORAGE: {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     if (mOption == OPTION_SAVE) {
                         saveBlob();
