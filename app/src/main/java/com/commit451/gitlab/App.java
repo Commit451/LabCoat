@@ -14,6 +14,7 @@ import com.commit451.gitlab.api.GitLabRssFactory;
 import com.commit451.gitlab.api.OkHttpClientFactory;
 import com.commit451.gitlab.api.PicassoFactory;
 import com.commit451.gitlab.api.converter.UriTypeConverter;
+import com.commit451.gitlab.data.Prefs;
 import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.util.FabricUtil;
 import com.novoda.simplechromecustomtabs.SimpleChromeCustomTabs;
@@ -62,12 +63,14 @@ public class App extends Application {
     private GitLab mGitLab;
     private GitLabRss mGitLabRss;
     private Picasso mPicasso;
+    private Prefs mPrefs;
 
     @Override
     public void onCreate() {
         super.onCreate();
         sInstance = this;
 
+        mPrefs = new Prefs(this);
         forceLocale(Locale.ENGLISH);
         setupCrashReporting();
         setupLeakCanary();
@@ -79,7 +82,7 @@ public class App extends Application {
         JodaTimeAndroid.init(this);
         SimpleChromeCustomTabs.initialize(this);
 
-        List<Account> accounts = Account.getAccounts(this);
+        List<Account> accounts = Account.getAccounts();
         if(!accounts.isEmpty()) {
             setAccount(accounts.get(0));
         }
@@ -146,6 +149,10 @@ public class App extends Application {
         } else {
             initPicasso(client);
         }
+    }
+
+    public Prefs getPrefs() {
+        return mPrefs;
     }
 
     private void initGitLab(Account account, OkHttpClient client) {

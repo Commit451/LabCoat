@@ -164,7 +164,7 @@ public class LoginActivity extends BaseActivity {
             }
             mAccount.setUser(response.body());
             mAccount.setLastUsed(new Date());
-            Prefs.addAccount(LoginActivity.this, mAccount);
+            App.instance().getPrefs().addAccount(mAccount);
             App.instance().setAccount(mAccount);
             App.bus().post(new LoginEvent(mAccount));
             //This is mostly for if projects already exists, then we will reload the data
@@ -578,7 +578,7 @@ public class LoginActivity extends BaseActivity {
     }
 
     private boolean isAlreadySignedIn(@NonNull String url, @NonNull String usernameOrEmailOrPrivateToken) {
-        List<Account> accounts = Prefs.getAccounts(this);
+        List<Account> accounts = App.instance().getPrefs().getAccounts();
         for (Account account : accounts) {
             if (account.getServerUrl().equals(Uri.parse(url))) {
                 if (usernameOrEmailOrPrivateToken.equals(account.getUser().getUsername())

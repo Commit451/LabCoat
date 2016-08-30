@@ -11,6 +11,7 @@ import android.support.v4.app.ActivityOptionsCompat;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.AboutActivity;
 import com.commit451.gitlab.activity.ActivityActivity;
@@ -82,7 +83,7 @@ public class Navigator {
     }
 
     public static void navigateToStartingActivity(Activity activity) {
-        int startingActivity = Prefs.getStartingView(activity);
+        int startingActivity = App.instance().getPrefs().getStartingView();
         switch (startingActivity) {
             case Prefs.STARTING_VIEW_PROJECTS:
                 navigateToProjects(activity);

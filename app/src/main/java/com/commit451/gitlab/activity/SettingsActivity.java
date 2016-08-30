@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.data.Prefs;
 
@@ -40,7 +41,7 @@ public class SettingsActivity extends BaseActivity {
                 .itemsCallbackSingleChoice(getSelectedIndex(), new MaterialDialog.ListCallbackSingleChoice() {
                     @Override
                     public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                        Prefs.setStartingView(SettingsActivity.this, which);
+                        App.instance().getPrefs().setStartingView(which);
                         bindPrefs();
                         /**
                          * If you use alwaysCallSingleChoiceCallback(), which is discussed below,
@@ -73,7 +74,7 @@ public class SettingsActivity extends BaseActivity {
     }
 
     private void setStartingViewSelection() {
-        int startinView = Prefs.getStartingView(this);
+        int startinView = App.instance().getPrefs().getStartingView();
         switch (startinView) {
             case Prefs.STARTING_VIEW_PROJECTS:
                 mTextLaunchActivity.setText(R.string.setting_starting_view_projects);
@@ -92,6 +93,6 @@ public class SettingsActivity extends BaseActivity {
     }
 
     private int getSelectedIndex() {
-        return Prefs.getStartingView(this);
+        return App.instance().getPrefs().getStartingView();
     }
 }

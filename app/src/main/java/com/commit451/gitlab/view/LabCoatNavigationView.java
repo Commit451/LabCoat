@@ -23,7 +23,6 @@ import com.commit451.gitlab.activity.GroupsActivity;
 import com.commit451.gitlab.activity.ProjectsActivity;
 import com.commit451.gitlab.activity.TodosActivity;
 import com.commit451.gitlab.adapter.AccountsAdapter;
-import com.commit451.gitlab.data.Prefs;
 import com.commit451.gitlab.event.CloseDrawerEvent;
 import com.commit451.gitlab.event.LoginEvent;
 import com.commit451.gitlab.event.ReloadDataEvent;
@@ -32,6 +31,7 @@ import com.commit451.gitlab.model.api.UserFull;
 import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.transformation.CircleTransformation;
 import com.commit451.gitlab.util.ImageUtil;
+
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.Collections;
@@ -129,8 +129,8 @@ public class LabCoatNavigationView extends NavigationView {
 
         @Override
         public void onAccountLogoutClicked(Account account) {
-            Prefs.removeAccount(getContext(), account);
-            List<Account> accounts = Account.getAccounts(getContext());
+            App.instance().getPrefs().removeAccount(account);
+            List<Account> accounts = Account.getAccounts();
 
             if (accounts.isEmpty()) {
                 Navigator.navigateToLogin((Activity) getContext());
@@ -151,7 +151,7 @@ public class LabCoatNavigationView extends NavigationView {
             // in local storage
             Account account = App.instance().getAccount();
             account.setUser(response);
-            Prefs.updateAccount(getContext(), account);
+            App.instance().getPrefs().updateAccount(account);
             bindUser(response);
         }
 
@@ -241,7 +241,7 @@ public class LabCoatNavigationView extends NavigationView {
     }
 
     private void setAccounts() {
-        List<Account> accounts = Prefs.getAccounts(getContext());
+        List<Account> accounts = App.instance().getPrefs().getAccounts();
         Timber.d("Got %s accounts", accounts.size());
         Collections.sort(accounts);
         Collections.reverse(accounts);
@@ -295,7 +295,7 @@ public class LabCoatNavigationView extends NavigationView {
         Timber.d("Switching to account: %s", account);
         account.setLastUsed(new Date());
         App.instance().setAccount(account);
-        Prefs.updateAccount(getContext(), account);
+        App.instance().getPrefs().updateAccount(account);
         bindUser(account.getUser());
         toggleAccounts();
         App.bus().post(new ReloadDataEvent());

@@ -1,12 +1,11 @@
 package com.commit451.gitlab.model;
 
-import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
 import com.bluelinelabs.logansquare.annotation.JsonField;
 import com.bluelinelabs.logansquare.annotation.JsonObject;
-import com.commit451.gitlab.data.Prefs;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.model.api.UserFull;
 import com.commit451.gitlab.util.ObjectUtil;
 
@@ -25,8 +24,8 @@ import java.util.List;
 public class Account implements Comparable<Account>{
 
     @NonNull
-    public static List<Account> getAccounts(Context context) {
-        List<Account> accounts = new ArrayList<>(Prefs.getAccounts(context));
+    public static List<Account> getAccounts() {
+        List<Account> accounts = new ArrayList<>(App.instance().getPrefs().getAccounts());
         Collections.sort(accounts);
         Collections.reverse(accounts);
         return accounts;

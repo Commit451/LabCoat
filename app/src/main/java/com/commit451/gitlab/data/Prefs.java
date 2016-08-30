@@ -1,5 +1,6 @@
 package com.commit451.gitlab.data;
 
+import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -35,19 +36,24 @@ public class Prefs {
     @IntDef({STARTING_VIEW_PROJECTS, STARTING_VIEW_GROUPS, STARTING_VIEW_ACTIVITY, STARTING_VIEW_TODOS})
     public @interface StartingView {}
 
-    private static SharedPreferences getSharedPrefs(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context);
+    private SharedPreferences mSharedPreferences;
+
+    public Prefs(Context context) {
+        if (!(context instanceof Application)) {
+            throw new IllegalArgumentException("This should be the application context. Not the activity context");
+        }
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
     @NonNull
-    public static List<Account> getAccounts(Context context) {
-        String accountsJson = getSharedPrefs(context).getString(KEY_ACCOUNTS, null);
+    public List<Account> getAccounts() {
+        String accountsJson = mSharedPreferences.getString(KEY_ACCOUNTS, null);
         if (!TextUtils.isEmpty(accountsJson)) {
             try {
                 return LoganSquare.parseList(accountsJson, Account.class);
             } catch (IOException e) {
                 //why would this ever happen?!?!?1
-                getSharedPrefs(context).edit().remove(KEY_ACCOUNTS).commit();
+                mSharedPreferences.edit().remove(KEY_ACCOUNTS).commit();
             }
             return new ArrayList<>();
         } else {
@@ -55,29 +61,29 @@ public class Prefs {
         }
     }
 
-    public static void addAccount(Context context, Account account) {
-        List<Account> accounts = getAccounts(context);
+    public void addAccount(Account account) {
+        List<Account> accounts = getAccounts();
         accounts.add(account);
-        setAccounts(context, accounts);
+        setAccounts(accounts);
     }
 
-    public static void removeAccount(Context context, Account account) {
-        List<Account> accounts = getAccounts(context);
+    public void removeAccount(Account account) {
+        List<Account> accounts = getAccounts();
         accounts.remove(account);
-        setAccounts(context, accounts);
+        setAccounts(accounts);
     }
 
-    public static void updateAccount(Context context, Account account) {
-        List<Account> accounts = getAccounts(context);
+    public void updateAccount(Account account) {
+        List<Account> accounts = getAccounts();
         accounts.remove(account);
         accounts.add(account);
-        setAccounts(context, accounts);
+        setAccounts(accounts);
     }
 
-    private static void setAccounts(Context context, List<Account> accounts) {
+    private void setAccounts(List<Account> accounts) {
         try {
             String json = LoganSquare.serialize(accounts);
-            getSharedPrefs(context)
+            mSharedPreferences
                     .edit()
                     .putString(KEY_ACCOUNTS, json)
                     .commit();
@@ -86,23 +92,23 @@ public class Prefs {
         }
     }
 
-    public static int getSavedVersion(Context context) {
-        return getSharedPrefs(context).getInt(KEY_VERSION, -1);
+    public int getSavedVersion() {
+        return mSharedPreferences.getInt(KEY_VERSION, -1);
     }
 
-    public static void setSavedVersion(Context context) {
-        getSharedPrefs(context)
+    public void setSavedVersion() {
+        mSharedPreferences
                 .edit()
                 .putInt(KEY_VERSION, BuildConfig.VERSION_CODE)
                 .commit();
     }
 
-    public static int getStartingView(Context context) {
-        return getSharedPrefs(context).getInt(KEY_STARTING_VIEW, STARTING_VIEW_PROJECTS);
+    public int getStartingView() {
+        return mSharedPreferences.getInt(KEY_STARTING_VIEW, STARTING_VIEW_PROJECTS);
     }
 
-    public static void setStartingView(Context context, int startingView) {
-        getSharedPrefs(context)
+    public void setStartingView(int startingView) {
+        mSharedPreferences
                 .edit()
                 .putInt(KEY_STARTING_VIEW, startingView)
                 .commit();

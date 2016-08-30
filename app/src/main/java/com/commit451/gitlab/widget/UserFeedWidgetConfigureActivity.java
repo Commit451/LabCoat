@@ -10,9 +10,9 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.alexgwyn.recyclerviewsquire.ClickableArrayAdapter;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.BaseActivity;
-import com.commit451.gitlab.data.Prefs;
 import com.commit451.gitlab.model.Account;
 
 import java.util.Collections;
@@ -72,7 +72,7 @@ public class UserFeedWidgetConfigureActivity extends BaseActivity {
     }
 
     private void loadAccounts() {
-        List<Account> accounts = Prefs.getAccounts(this);
+        List<Account> accounts = App.instance().getPrefs().getAccounts();
         Timber.d("Got %s accounts", accounts.size());
         Collections.sort(accounts);
         Collections.reverse(accounts);

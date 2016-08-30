@@ -3,11 +3,11 @@ package com.commit451.gitlab.activity;
 import android.app.Activity;
 import android.os.Bundle;
 
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.BuildConfig;
-import com.commit451.gitlab.data.Prefs;
 import com.commit451.gitlab.model.Account;
-import com.commit451.gitlab.ssl.CustomKeyManager;
 import com.commit451.gitlab.navigation.Navigator;
+import com.commit451.gitlab.ssl.CustomKeyManager;
 
 import java.util.List;
 
@@ -26,13 +26,13 @@ public class LaunchActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        int savedVersion = Prefs.getSavedVersion(this);
+        int savedVersion = App.instance().getPrefs().getSavedVersion();
         if (savedVersion != -1 && savedVersion < BuildConfig.VERSION_CODE) {
             Timber.d("Performing upgrade");
             performUpgrade(savedVersion, BuildConfig.VERSION_CODE);
-            Prefs.setSavedVersion(this);
+            App.instance().getPrefs().setSavedVersion();
         }
-        List<Account> accounts = Account.getAccounts(this);
+        List<Account> accounts = Account.getAccounts();
         if(accounts.isEmpty()) {
             Navigator.navigateToLogin(this);
             finish();

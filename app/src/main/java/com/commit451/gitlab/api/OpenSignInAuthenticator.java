@@ -6,7 +6,6 @@ import android.widget.Toast;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.LoginActivity;
-import com.commit451.gitlab.data.Prefs;
 import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.util.ThreadUtil;
 
@@ -18,7 +17,7 @@ import okhttp3.Response;
 import okhttp3.Route;
 
 /**
- * If it detects a 401, redirect the user to the login screen, clearing the stack.
+ * If it detects a 401, redirect the user to the login screen, clearing activity the stack.
  * Kinda a weird global way of forcing the user to the login screen if their auth has expired
  */
 public class OpenSignInAuthenticator implements Authenticator {
@@ -38,7 +37,7 @@ public class OpenSignInAuthenticator implements Authenticator {
                 @Override
                 public void run() {
                     //Remove the account, so that the user can sign in again
-                    Prefs.removeAccount(App.instance(), mAccount);
+                    App.instance().getPrefs().removeAccount(mAccount);
                     Toast.makeText(App.instance(), R.string.error_401, Toast.LENGTH_LONG)
                             .show();
                     Intent intent = LoginActivity.newIntent(App.instance());
