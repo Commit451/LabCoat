@@ -60,6 +60,7 @@ public class ProjectFeedWidgetConfigureActivity extends BaseActivity {
         }
         // If they gave us an intent without the widget id, just bail.
         if (mAppWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
+            Timber.e("We did not get a widget id. Bail out");
             finish();
         }
 
@@ -111,8 +112,8 @@ public class ProjectFeedWidgetConfigureActivity extends BaseActivity {
     }
 
     private void saveWidgetConfig(Account account, Project project) {
-        ProjectFeedWidgetPrefs.setAccount(ProjectFeedWidgetConfigureActivity.this, mAppWidgetId, account);
-        ProjectFeedWidgetPrefs.setFeedUrl(ProjectFeedWidgetConfigureActivity.this, mAppWidgetId, project.getFeedUrl().toString());
+        ProjectFeedWidgetPrefs.setAccount(this, mAppWidgetId, account);
+        ProjectFeedWidgetPrefs.setFeedUrl(this, mAppWidgetId, project.getFeedUrl().toString());
 
         Intent resultValue = new Intent();
         resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);

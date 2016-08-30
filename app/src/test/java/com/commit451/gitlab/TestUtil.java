@@ -10,6 +10,7 @@ import com.commit451.gitlab.model.api.UserLogin;
 
 import org.junit.Assert;
 
+import okhttp3.Dispatcher;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Response;
@@ -31,7 +32,10 @@ public class TestUtil {
         if (BuildConfig.DEBUG) {
             gitlabClientBuilder.addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
         }
-        GitLab gitLab = GitLabFactory.create(account, gitlabClientBuilder.build());
+        //Need this, otherwise the tests will fail
+        Dispatcher dispatcher = new Dispatcher(null);
+        gitlabClientBuilder.dispatcher(dispatcher);
+        GitLab gitLab = GitLabFactory.create(account, gitlabClientBuilder.build(), true);
         Response<UserLogin> loginResponse = gitLab
                 .loginWithUsername("TestAllTheThings", "testing123")
                 .execute();

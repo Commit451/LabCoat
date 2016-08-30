@@ -20,7 +20,7 @@ import com.commit451.gitlab.util.FileUtil;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowLog;
@@ -36,8 +36,8 @@ import static org.junit.Assert.assertTrue;
 /**
  * Tests account login and basic retrieval stuff
  */
-@RunWith(RobolectricGradleTestRunner.class)
-@Config(constants = BuildConfig.class, sdk = 21, shadows = NetworkSecurityPolicyWorkaround.class)
+@RunWith(RobolectricTestRunner.class)
+@Config(constants = BuildConfig.class, sdk = 23, shadows = NetworkSecurityPolicyWorkaround.class)
 public class ApiTests {
 
     private static final long FAKE_GROUP_PROJECT_ID = 376651;
@@ -83,6 +83,7 @@ public class ApiTests {
 
     @Test
     public void getGroupMembers() throws Exception {
+        //GitLab group id
         long gitLabGroupId = 9970;
         Response<List<Member>> groupResponse = gitLab
                 .getGroupMembers(gitLabGroupId)

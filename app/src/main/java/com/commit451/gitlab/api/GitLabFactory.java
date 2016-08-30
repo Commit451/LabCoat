@@ -1,7 +1,13 @@
 package com.commit451.gitlab.api;
 
+import android.support.annotation.VisibleForTesting;
+
 import com.commit451.gitlab.model.Account;
 import com.github.aurae.retrofit2.LoganSquareConverterFactory;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.util.concurrent.Executor;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
@@ -18,12 +24,24 @@ public final class GitLabFactory {
      * @return the GitLab instance
      */
     public static GitLab create(Account account, OkHttpClient client) {
-        Retrofit restAdapter = new Retrofit.Builder()
+        return create(account, client, false);
+    }
+
+    @VisibleForTesting
+    public static GitLab create(Account account, OkHttpClient client, boolean dummyExecutor) {
+        Retrofit.Builder retrofitBuilder = new Retrofit.Builder()
                 .baseUrl(account.getServerUrl().toString())
                 .client(client)
                 .addConverterFactory(ScalarsConverterFactory.create())
-                .addConverterFactory(LoganSquareConverterFactory.create())
-                .build();
-        return restAdapter.create(GitLab.class);
+                .addConverterFactory(LoganSquareConverterFactory.create());
+        if (dummyExecutor) {
+            retrofitBuilder.callbackExecutor(new Executor() {
+                @Override
+                public void execute(@NotNull Runnable command) {
+                    //dumb, to prevent tests from failing
+                }
+            });
+        }
+        return retrofitBuilder.build().create(GitLab.class);
     }
 }
