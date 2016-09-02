@@ -78,9 +78,6 @@
 
 -keep class org.parceler.Parceler$$Parcels
 
-# Unicoding Bypass library
--keep class in.uncod.android.** { *; }
-
 # LoganSquare
 -keep class com.bluelinelabs.logansquare.** { *; }
 -keep @com.bluelinelabs.logansquare.annotation.JsonObject class *

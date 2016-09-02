@@ -48,10 +48,14 @@ import timber.log.Timber;
  */
 public class LabCoatNavigationView extends NavigationView {
 
-    @BindView(R.id.profile_image) ImageView mProfileImage;
-    @BindView(R.id.profile_user) TextView mUserName;
-    @BindView(R.id.profile_email) TextView mUserEmail;
-    @BindView(R.id.arrow) View mArrow;
+    @BindView(R.id.profile_image)
+    ImageView mProfileImage;
+    @BindView(R.id.profile_user)
+    TextView mUserName;
+    @BindView(R.id.profile_email)
+    TextView mUserEmail;
+    @BindView(R.id.arrow)
+    View mArrow;
 
     RecyclerView mAccountList;
     AccountsAdapter mAccountAdapter;
@@ -62,42 +66,34 @@ public class LabCoatNavigationView extends NavigationView {
         public boolean onNavigationItemSelected(MenuItem menuItem) {
             switch (menuItem.getItemId()) {
                 case R.id.nav_projects:
-                    if (getContext() instanceof ProjectsActivity) {
-
-                    } else {
+                    if (!(getContext() instanceof ProjectsActivity)) {
                         Navigator.navigateToProjects((Activity) getContext());
                         ((Activity) getContext()).finish();
-                        ((Activity)getContext()).overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
+                        ((Activity) getContext()).overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
                     }
                     App.bus().post(new CloseDrawerEvent());
                     return true;
                 case R.id.nav_groups:
-                    if (getContext() instanceof GroupsActivity) {
-
-                    } else {
+                    if (!(getContext() instanceof GroupsActivity)) {
                         Navigator.navigateToGroups((Activity) getContext());
                         ((Activity) getContext()).finish();
-                        ((Activity)getContext()).overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
+                        ((Activity) getContext()).overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
                     }
                     App.bus().post(new CloseDrawerEvent());
                     return true;
                 case R.id.nav_activity:
-                    if (getContext() instanceof ActivityActivity) {
-
-                    } else {
+                    if (!(getContext() instanceof ActivityActivity)) {
                         Navigator.navigateToActivity((Activity) getContext());
                         ((Activity) getContext()).finish();
-                        ((Activity)getContext()).overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
+                        ((Activity) getContext()).overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
                     }
                     App.bus().post(new CloseDrawerEvent());
                     return true;
                 case R.id.nav_todos:
-                    if (getContext() instanceof TodosActivity) {
-
-                    } else {
+                    if (!(getContext() instanceof TodosActivity)) {
                         Navigator.navigateToTodos((Activity) getContext());
                         ((Activity) getContext()).finish();
-                        ((Activity)getContext()).overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
+                        ((Activity) getContext()).overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
                     }
                     App.bus().post(new CloseDrawerEvent());
                     return true;
@@ -218,7 +214,7 @@ public class LabCoatNavigationView extends NavigationView {
     }
 
     private void setSelectedNavigationItem() {
-        for (int i=0; i<getMenu().size(); i++) {
+        for (int i = 0; i < getMenu().size(); i++) {
             MenuItem menuItem = getMenu().getItem(i);
             if (getContext() instanceof ProjectsActivity && menuItem.getItemId() == R.id.nav_projects) {
                 menuItem.setChecked(true);
