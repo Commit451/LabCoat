@@ -37,7 +37,7 @@ import static org.junit.Assert.assertTrue;
  * Tests account login and basic retrieval stuff
  */
 @RunWith(RobolectricTestRunner.class)
-@Config(constants = BuildConfig.class, sdk = 23, shadows = NetworkSecurityPolicyWorkaround.class)
+@Config(constants = BuildConfig.class, sdk = 23)
 public class ApiTests {
 
     private static final long FAKE_GROUP_PROJECT_ID = 376651;

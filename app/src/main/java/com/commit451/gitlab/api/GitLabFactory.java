@@ -1,11 +1,10 @@
 package com.commit451.gitlab.api;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 
 import com.commit451.gitlab.model.Account;
 import com.github.aurae.retrofit2.LoganSquareConverterFactory;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.Executor;
 
@@ -37,7 +36,7 @@ public final class GitLabFactory {
         if (dummyExecutor) {
             retrofitBuilder.callbackExecutor(new Executor() {
                 @Override
-                public void execute(@NotNull Runnable command) {
+                public void execute(@NonNull Runnable command) {
                     //dumb, to prevent tests from failing
                 }
             });
