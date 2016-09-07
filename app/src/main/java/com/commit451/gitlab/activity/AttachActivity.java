@@ -1,6 +1,7 @@
 package com.commit451.gitlab.activity;
 
 
+import android.animation.Animator;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 
 import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.App;
@@ -23,6 +25,7 @@ import java.io.File;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.codetail.animation.ViewAnimationUtils;
 import okhttp3.MultipartBody;
 import pl.aprilapps.easyphotopicker.DefaultCallback;
 import pl.aprilapps.easyphotopicker.EasyImage;
@@ -94,6 +97,25 @@ public class AttachActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_attach);
         ButterKnife.bind(this);
+
+        final View card = findViewById(R.id.attachCard);
+
+        //Run the runnable after the view has been measured
+        card.post(new Runnable() {
+            @Override
+            public void run() {
+                //we need the radius of the animation circle, which is the diagonal of the view
+                float finalRadius = (float) Math.hypot(card.getWidth(), card.getHeight());
+
+                //it's using a 3rd-party ViewAnimationUtils class for compat reasons (up to API 14)
+                Animator animator = ViewAnimationUtils
+                        .createCircularReveal(card, 0, card.getHeight(), 0, finalRadius);
+                animator.setDuration(500);
+                animator.setInterpolator( new AccelerateDecelerateInterpolator());
+                animator.start();
+            }
+        });
+
         mProject = Parcels.unwrap(getIntent().getParcelableExtra(KEY_PROJECT));
     }
 
