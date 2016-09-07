@@ -53,6 +53,8 @@ public class AttachActivity extends BaseActivity {
     ViewGroup mRootButtons;
     @BindView(R.id.progress)
     View mProgress;
+    @BindView(R.id.attachCard)
+    View mCard;
 
     Project mProject;
 
@@ -98,18 +100,16 @@ public class AttachActivity extends BaseActivity {
         setContentView(R.layout.activity_attach);
         ButterKnife.bind(this);
 
-        final View card = findViewById(R.id.attachCard);
-
         //Run the runnable after the view has been measured
-        card.post(new Runnable() {
+        mCard.post(new Runnable() {
             @Override
             public void run() {
                 //we need the radius of the animation circle, which is the diagonal of the view
-                float finalRadius = (float) Math.hypot(card.getWidth(), card.getHeight());
+                float finalRadius = (float) Math.hypot(mCard.getWidth(), mCard.getHeight());
 
                 //it's using a 3rd-party ViewAnimationUtils class for compat reasons (up to API 14)
                 Animator animator = ViewAnimationUtils
-                        .createCircularReveal(card, 0, card.getHeight(), 0, finalRadius);
+                        .createCircularReveal(mCard, 0, mCard.getHeight(), 0, finalRadius);
                 animator.setDuration(500);
                 animator.setInterpolator( new AccelerateDecelerateInterpolator());
                 animator.start();
@@ -145,6 +145,13 @@ public class AttachActivity extends BaseActivity {
                 }
             }
         });
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.do_nothing, R.anim.fade_out);
+
     }
 
     private void onPhotoReturned(File photo) {
