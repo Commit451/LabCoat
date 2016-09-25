@@ -446,6 +446,7 @@ public class IssueActivity extends BaseActivity {
             if (mIssue.getId() == event.mIssue.getId()) {
                 mIssue = event.mIssue;
                 bindIssue();
+                loadNotes();
             }
         }
     }
