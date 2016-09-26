@@ -82,7 +82,7 @@ public class CommitsFragment extends ButterKnifeFragment {
         @Override
         public void failure(Throwable t) {
             mLoading = false;
-            Timber.e(t, null);
+            Timber.e(t);
             if (getView() == null) {
                 return;
             }
@@ -112,7 +112,7 @@ public class CommitsFragment extends ButterKnifeFragment {
         @Override
         public void failure(Throwable t) {
             mLoading = false;
-            Timber.e(t, null);
+            Timber.e(t);
             if (getView() == null) {
                 return;
             }

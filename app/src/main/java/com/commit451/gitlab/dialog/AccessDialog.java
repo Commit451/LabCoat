@@ -62,7 +62,7 @@ public class AccessDialog extends MaterialDialog {
 
         @Override
         public void failure(Throwable t) {
-            Timber.e(t, null);
+            Timber.e(t);
             onError();
         }
     };

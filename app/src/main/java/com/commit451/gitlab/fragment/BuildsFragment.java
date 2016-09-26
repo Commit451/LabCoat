@@ -121,7 +121,7 @@ public class BuildsFragment extends ButterKnifeFragment {
         @Override
         public void failure(Throwable t) {
             mLoading = false;
-            Timber.e(t, null);
+            Timber.e(t);
             if (getView() == null) {
                 return;
             }
@@ -144,7 +144,7 @@ public class BuildsFragment extends ButterKnifeFragment {
 
         @Override
         public void failure(Throwable t) {
-            Timber.e(t, null);
+            Timber.e(t);
             mLoading = false;
             mBuildsAdapter.setLoading(false);
         }

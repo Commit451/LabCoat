@@ -126,7 +126,7 @@ public class AddIssueActivity extends MorphActivity {
 
         @Override
         public void failure(Throwable t) {
-            Timber.e(t, null);
+            Timber.e(t);
             mMilestoneProgress.setVisibility(View.GONE);
             mMilestoneSpinner.setVisibility(View.GONE);
         }
@@ -146,7 +146,7 @@ public class AddIssueActivity extends MorphActivity {
 
         @Override
         public void failure(Throwable t) {
-            Timber.e(t, null);
+            Timber.e(t);
             mAssigneeSpinner.setVisibility(View.GONE);
             mAssigneeProgress.setVisibility(View.GONE);
         }
@@ -161,7 +161,7 @@ public class AddIssueActivity extends MorphActivity {
 
         @Override
         public void failure(Throwable t) {
-            Timber.e(t, null);
+            Timber.e(t);
             mAssigneeSpinner.setVisibility(View.GONE);
             mAssigneeProgress.setVisibility(View.GONE);
         }
@@ -177,7 +177,7 @@ public class AddIssueActivity extends MorphActivity {
 
         @Override
         public void failure(Throwable t) {
-            Timber.e(t, null);
+            Timber.e(t);
             //null body could just mean no labels have been created for this project
             if (t instanceof NullBodyException) {
                 setLabels(new ArrayList<Label>());
@@ -203,7 +203,7 @@ public class AddIssueActivity extends MorphActivity {
 
         @Override
         public void failure(Throwable t) {
-            Timber.e(t, null);
+            Timber.e(t);
             Snackbar.make(mRoot, getString(R.string.failed_to_create_issue), Snackbar.LENGTH_SHORT)
                     .show();
         }

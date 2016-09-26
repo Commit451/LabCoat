@@ -70,7 +70,7 @@ public class GroupActivity extends BaseActivity {
 
         @Override
         public void failure(Throwable t) {
-            Timber.e(t, null);
+            Timber.e(t);
             mProgress.setVisibility(View.GONE);
             showError();
         }

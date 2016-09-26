@@ -64,7 +64,7 @@ public class DiffActivity extends BaseActivity {
         @Override
         public void failure(Throwable t) {
             mSwipeRefreshLayout.setRefreshing(false);
-            Timber.e(t, null);
+            Timber.e(t);
             mMessageText.setText(R.string.connection_error);
             mMessageText.setVisibility(View.VISIBLE);
         }

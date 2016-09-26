@@ -20,6 +20,7 @@ import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.gitlab.adapter.MergeRequestAdapter;
 import com.commit451.easycallback.EasyCallback;
+import com.commit451.gitlab.event.MergeRequestChangedEvent;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.model.api.Project;
@@ -104,7 +105,7 @@ public class MergeRequestsFragment extends ButterKnifeFragment {
         @Override
         public void failure(Throwable t) {
             mLoading = false;
-            Timber.e(t, null);
+            Timber.e(t);
             if (getView() == null) {
                 return;
             }
@@ -127,7 +128,7 @@ public class MergeRequestsFragment extends ButterKnifeFragment {
 
         @Override
         public void failure(Throwable t) {
-            Timber.e(t, null);
+            Timber.e(t);
             mMergeRequestAdapter.setLoading(false);
             mLoading = false;
         }
@@ -223,6 +224,11 @@ public class MergeRequestsFragment extends ButterKnifeFragment {
         @Subscribe
         public void onProjectReload(ProjectReloadEvent event) {
             mProject = event.mProject;
+            loadData();
+        }
+
+        @Subscribe
+        public void onMergeRequestChanged(MergeRequestChangedEvent event) {
             loadData();
         }
     }

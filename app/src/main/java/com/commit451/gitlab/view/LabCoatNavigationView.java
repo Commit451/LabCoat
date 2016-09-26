@@ -153,7 +153,7 @@ public class LabCoatNavigationView extends NavigationView {
 
         @Override
         public void failure(Throwable t) {
-            Timber.e(t, null);
+            Timber.e(t);
         }
     };
 

@@ -118,7 +118,7 @@ public class LoadSomeInfoActivity extends AppCompatActivity {
 
         @Override
         public void failure(Throwable t) {
-            Timber.e(t, null);
+            Timber.e(t);
             onError();
         }
     };
@@ -132,7 +132,7 @@ public class LoadSomeInfoActivity extends AppCompatActivity {
 
         @Override
         public void failure(Throwable t) {
-            Timber.e(t, null);
+            Timber.e(t);
             onError();
         }
     };
@@ -150,7 +150,7 @@ public class LoadSomeInfoActivity extends AppCompatActivity {
 
         @Override
         public void failure(Throwable t) {
-            Timber.e(t, null);
+            Timber.e(t);
             onError();
         }
     };
@@ -164,7 +164,7 @@ public class LoadSomeInfoActivity extends AppCompatActivity {
 
         @Override
         public void failure(Throwable t) {
-            Timber.e(t, null);
+            Timber.e(t);
             onError();
         }
     };
@@ -182,7 +182,7 @@ public class LoadSomeInfoActivity extends AppCompatActivity {
 
         @Override
         public void failure(Throwable t) {
-            Timber.e(t, null);
+            Timber.e(t);
             onError();
         }
     };

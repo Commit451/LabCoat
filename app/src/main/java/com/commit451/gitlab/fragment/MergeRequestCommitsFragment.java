@@ -11,19 +11,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.CommitsAdapter;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
-import com.commit451.easycallback.EasyCallback;
-import com.commit451.gitlab.api.GitLabFactory;
 import com.commit451.gitlab.event.MergeRequestChangedEvent;
 import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryCommit;
 import com.commit451.gitlab.navigation.Navigator;
-import org.greenrobot.eventbus.Subscribe;
 
+import org.greenrobot.eventbus.Subscribe;
 import org.parceler.Parcels;
 
 import java.util.List;
@@ -97,7 +96,7 @@ public class MergeRequestCommitsFragment extends ButterKnifeFragment {
         @Override
         public void failure(Throwable t) {
             mLoading = false;
-            Timber.e(t, null);
+            Timber.e(t);
             if (getView() == null) {
                 return;
             }
@@ -124,7 +123,7 @@ public class MergeRequestCommitsFragment extends ButterKnifeFragment {
         @Override
         public void failure(Throwable t) {
             mLoading = false;
-            Timber.e(t, null);
+            Timber.e(t);
             mCommitsAdapter.setLoading(false);
         }
     };

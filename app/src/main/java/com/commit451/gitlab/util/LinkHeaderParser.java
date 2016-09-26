@@ -44,7 +44,7 @@ public final class LinkHeaderParser {
                         last = link;
                     }
                 } catch (Exception e) {
-                    Timber.e(e, "An error occurred");
+                    Timber.e(e);
                 }
             }
         }

@@ -99,7 +99,7 @@ public class UsersFragment extends ButterKnifeFragment {
 
         @Override
         public void failure(Throwable t) {
-            Timber.e(t, null);
+            Timber.e(t);
             mLoading = false;
             if (getView() == null) {
                 return;
@@ -126,7 +126,7 @@ public class UsersFragment extends ButterKnifeFragment {
 
         @Override
         public void failure(Throwable t) {
-            Timber.e(t, null);
+            Timber.e(t);
             mLoading = false;
             if (getView() == null) {
                 return;

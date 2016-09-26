@@ -87,7 +87,7 @@ public class FileActivity extends BaseActivity {
 
         @Override
         public void failure(Throwable t) {
-            Timber.e(t, null);
+            Timber.e(t);
             mProgressView.setVisibility(View.GONE);
             Snackbar.make(mRoot, R.string.file_load_error, Snackbar.LENGTH_SHORT)
                     .show();
@@ -256,7 +256,7 @@ public class FileActivity extends BaseActivity {
 
                 return targetFile;
             } catch (IOException e) {
-                Timber.e(e, null);
+                Timber.e(e);
                 Snackbar.make(mRoot, getString(R.string.save_error), Snackbar.LENGTH_SHORT)
                         .show();
             } finally {
@@ -264,7 +264,7 @@ public class FileActivity extends BaseActivity {
                     try {
                         outputStream.close();
                     } catch (IOException e) {
-                        Timber.e(e, null);
+                        Timber.e(e);
                     }
                 }
             }
@@ -296,7 +296,7 @@ public class FileActivity extends BaseActivity {
         try {
             startActivity(intent);
         } catch (ActivityNotFoundException | SecurityException e) {
-            Timber.e(e, null);
+            Timber.e(e);
             Snackbar.make(mRoot, getString(R.string.open_error), Snackbar.LENGTH_SHORT)
                     .show();
         }

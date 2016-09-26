@@ -104,7 +104,7 @@ public class MilestoneActivity extends BaseActivity {
 
         @Override
         public void failure(Throwable t) {
-            Timber.e(t, null);
+            Timber.e(t);
             mLoading = false;
             mSwipeRefreshLayout.setRefreshing(false);
             mMessageText.setVisibility(View.VISIBLE);
@@ -123,7 +123,7 @@ public class MilestoneActivity extends BaseActivity {
 
         @Override
         public void failure(Throwable t) {
-            Timber.e(t, null);
+            Timber.e(t);
             mLoading = false;
         }
     };
@@ -139,7 +139,7 @@ public class MilestoneActivity extends BaseActivity {
 
         @Override
         public void failure(Throwable t) {
-            Timber.e(t, null);
+            Timber.e(t);
             mProgress.setVisibility(View.GONE);
             Snackbar.make(mRoot, getString(R.string.failed_to_create_milestone), Snackbar.LENGTH_SHORT)
                     .show();

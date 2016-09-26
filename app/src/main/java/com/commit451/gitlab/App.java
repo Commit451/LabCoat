@@ -112,7 +112,7 @@ public class App extends Application {
                 res.updateConfiguration(configuration, res.getDisplayMetrics());
             }
         } catch (Exception e) {
-            Timber.e(e, null);
+            Timber.e(e);
         }
     }
 

@@ -77,7 +77,7 @@ public class BuildActivity extends BaseActivity {
 
         @Override
         public void failure(Throwable t) {
-            Timber.e(t, null);
+            Timber.e(t);
             mProgress.setVisibility(View.GONE);
             Snackbar.make(mRoot, R.string.unable_to_retry_build, Snackbar.LENGTH_LONG)
                     .show();
@@ -95,7 +95,7 @@ public class BuildActivity extends BaseActivity {
 
         @Override
         public void failure(Throwable t) {
-            Timber.e(t, null);
+            Timber.e(t);
             mProgress.setVisibility(View.GONE);
             Snackbar.make(mRoot, R.string.unable_to_erase_build, Snackbar.LENGTH_LONG)
                     .show();
@@ -113,7 +113,7 @@ public class BuildActivity extends BaseActivity {
 
         @Override
         public void failure(Throwable t) {
-            Timber.e(t, null);
+            Timber.e(t);
             mProgress.setVisibility(View.GONE);
             Snackbar.make(mRoot, R.string.unable_to_cancel_build, Snackbar.LENGTH_LONG)
                     .show();

@@ -148,7 +148,7 @@ public class LoginActivity extends BaseActivity {
 
         @Override
         public void onFailure(Call<UserLogin> call, Throwable t) {
-            Timber.e(t, null);
+            Timber.e(t);
             handleConnectionError(t);
         }
     };
@@ -175,7 +175,7 @@ public class LoginActivity extends BaseActivity {
 
         @Override
         public void onFailure(Call<UserFull> call, Throwable t) {
-            Timber.e(t, null);
+            Timber.e(t);
             handleConnectionError(t);
         }
     };
@@ -399,7 +399,7 @@ public class LoginActivity extends BaseActivity {
                 uri = Uri.parse(url);
             }
         } catch (Exception e) {
-            Timber.e(e, null);
+            Timber.e(e);
         }
 
         if (uri == null) {
@@ -454,7 +454,7 @@ public class LoginActivity extends BaseActivity {
             try {
                 fingerprint = X509Util.getFingerPrint(((X509CertificateException) t.getCause()).getChain()[0]);
             } catch (CertificateEncodingException e) {
-                Timber.e(e, null);
+                Timber.e(e);
             }
             final String finalFingerprint = fingerprint;
 

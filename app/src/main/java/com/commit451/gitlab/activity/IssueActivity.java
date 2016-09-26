@@ -141,7 +141,7 @@ public class IssueActivity extends BaseActivity {
 
         @Override
         public void failure(Throwable t) {
-            Timber.e(t, null);
+            Timber.e(t);
             mSwipeRefreshLayout.setRefreshing(false);
             Snackbar.make(mRoot, getString(R.string.failed_to_load), Snackbar.LENGTH_SHORT)
                     .show();
@@ -168,7 +168,7 @@ public class IssueActivity extends BaseActivity {
 
         @Override
         public void failure(Throwable t) {
-            Timber.e(t, null);
+            Timber.e(t);
             mSwipeRefreshLayout.setRefreshing(false);
             Snackbar.make(mRoot, getString(R.string.failed_to_load), Snackbar.LENGTH_SHORT)
                     .show();
@@ -188,7 +188,7 @@ public class IssueActivity extends BaseActivity {
         @Override
         public void failure(Throwable t) {
             mLoading = false;
-            Timber.e(t, null);
+            Timber.e(t);
             mSwipeRefreshLayout.setRefreshing(false);
             Snackbar.make(mRoot, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
                     .show();
@@ -208,7 +208,7 @@ public class IssueActivity extends BaseActivity {
         @Override
         public void failure(Throwable t) {
             mLoading = false;
-            Timber.e(t, null);
+            Timber.e(t);
             mIssueDetailsAdapter.setLoading(false);
         }
     };
@@ -226,7 +226,7 @@ public class IssueActivity extends BaseActivity {
 
         @Override
         public void failure(Throwable t) {
-            Timber.e(t, null);
+            Timber.e(t);
             mProgress.setVisibility(View.GONE);
             Snackbar.make(mRoot, getString(R.string.error_changing_issue), Snackbar.LENGTH_SHORT)
                     .show();
@@ -244,22 +244,7 @@ public class IssueActivity extends BaseActivity {
 
         @Override
         public void failure(Throwable t) {
-            Timber.e(t, null);
-            mProgress.setVisibility(View.GONE);
-            Snackbar.make(mRoot, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
-                    .show();
-        }
-    };
-
-    private Callback<FileUploadResponse> mUploadImageCallback = new EasyCallback<FileUploadResponse>() {
-        @Override
-        public void success(@NonNull FileUploadResponse response) {
-
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t, null);
+            Timber.e(t);
             mProgress.setVisibility(View.GONE);
             Snackbar.make(mRoot, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
                     .show();
@@ -277,7 +262,7 @@ public class IssueActivity extends BaseActivity {
 
         @Override
         public void onFailure(Call<Void> call, Throwable t) {
-            Timber.e(t, null);
+            Timber.e(t);
             Snackbar.make(mRoot, getString(R.string.failed_to_delete_issue), Snackbar.LENGTH_SHORT)
                     .show();
         }

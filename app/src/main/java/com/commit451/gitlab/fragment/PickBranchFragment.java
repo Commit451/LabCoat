@@ -107,7 +107,7 @@ public class PickBranchFragment extends ButterKnifeFragment {
 
             @Override
             public void failure(Throwable t) {
-                Timber.e(t, null);
+                Timber.e(t);
                 if (getView() == null) {
                     return;
                 }

@@ -192,7 +192,7 @@ public class AddUserActivity extends MorphActivity {
 
         @Override
         public void failure(Throwable t) {
-            Timber.e(t, null);
+            Timber.e(t);
             mSwipeRefreshLayout.setRefreshing(false);
             mLoading = false;
             Snackbar.make(mRoot, getString(R.string.connection_error_users), Snackbar.LENGTH_SHORT)
@@ -211,7 +211,7 @@ public class AddUserActivity extends MorphActivity {
 
         @Override
         public void failure(Throwable t) {
-            Timber.e(t, null);
+            Timber.e(t);
             mAdapter.setLoading(false);
         }
     };
@@ -228,7 +228,7 @@ public class AddUserActivity extends MorphActivity {
 
         @Override
         public void failure(Throwable t) {
-            Timber.e(t, null);
+            Timber.e(t);
             if (t instanceof HttpException) {
                 //Conflict
                 if (((HttpException) t).response().code() == 409) {

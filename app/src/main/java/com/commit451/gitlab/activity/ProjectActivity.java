@@ -88,7 +88,7 @@ public class ProjectActivity extends BaseActivity {
 
         @Override
         public void failure(Throwable t) {
-            Timber.e(t, null);
+            Timber.e(t);
             mProgress.animate()
                     .alpha(0.0f)
                     .withEndAction(new HideRunnable(mProgress));

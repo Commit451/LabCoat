@@ -74,7 +74,7 @@ public class AddNewLabelActivity extends BaseActivity implements ColorChooserDia
 
         @Override
         public void failure(Throwable t) {
-            Timber.e(t, null);
+            Timber.e(t);
             mProgress.setVisibility(View.GONE);
             if (t instanceof HttpException && ((HttpException) t).response().code() == 409) {
                 Snackbar.make(mRoot, R.string.label_already_exists, Snackbar.LENGTH_SHORT)

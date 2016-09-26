@@ -110,7 +110,7 @@ public class GroupMembersFragment extends ButterKnifeFragment {
 
         @Override
         public void failure(Throwable t) {
-            Timber.e(t, null);
+            Timber.e(t);
             if (getView() == null) {
                 return;
             }
@@ -133,7 +133,7 @@ public class GroupMembersFragment extends ButterKnifeFragment {
 
         @Override
         public void failure(Throwable t) {
-            Timber.e(t, null);
+            Timber.e(t);
             if (getView() == null) {
                 return;
             }

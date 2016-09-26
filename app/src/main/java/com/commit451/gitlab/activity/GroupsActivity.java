@@ -86,7 +86,7 @@ public class GroupsActivity extends BaseActivity {
 
         @Override
         public void failure(Throwable t) {
-            Timber.e(t, null);
+            Timber.e(t);
             mSwipeRefreshLayout.setRefreshing(false);
             mLoading = false;
             mMessageText.setVisibility(View.VISIBLE);
@@ -104,7 +104,7 @@ public class GroupsActivity extends BaseActivity {
 
         @Override
         public void failure(Throwable t) {
-            Timber.e(t, null);
+            Timber.e(t);
             mLoading = false;
         }
     };

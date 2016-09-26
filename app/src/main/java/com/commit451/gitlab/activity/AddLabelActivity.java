@@ -132,7 +132,7 @@ public class AddLabelActivity extends BaseActivity {
             public void failure(Throwable t) {
                 mSwipeRefreshLayout.setRefreshing(false);
                 mTextMessage.setVisibility(View.VISIBLE);
-                Timber.e(t, null);
+                Timber.e(t);
             }
         });
     }

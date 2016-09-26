@@ -109,7 +109,7 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
         @Override
         public void failure(Throwable t) {
             mLoading = false;
-            Timber.e(t, null);
+            Timber.e(t);
             if (getView() == null) {
                 return;
             }
@@ -138,7 +138,7 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
                 return;
             }
             mLoading = false;
-            Timber.e(t, null);
+            Timber.e(t);
             mMergeRequestDetailAdapter.setLoading(false);
             Snackbar.make(mRoot, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
                     .show();
@@ -162,7 +162,7 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
             if (getView() == null) {
                 return;
             }
-            Timber.e(t, null);
+            Timber.e(t);
             mProgress.setVisibility(View.GONE);
             Snackbar.make(mRoot, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
                     .show();

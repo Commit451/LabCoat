@@ -67,7 +67,7 @@ public class MergeRequestActivity extends BaseActivity {
 
         @Override
         public void failure(Throwable t) {
-            Timber.e(t, null);
+            Timber.e(t);
             mProgress.setVisibility(View.GONE);
             String message = getString(R.string.unable_to_merge);
             if (t instanceof HttpException) {
