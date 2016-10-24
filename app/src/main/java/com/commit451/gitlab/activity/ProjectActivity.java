@@ -42,6 +42,9 @@ public class ProjectActivity extends BaseActivity {
     private static final String EXTRA_PROJECT_NAMESPACE = "extra_project_namespace";
     private static final String EXTRA_PROJECT_NAME = "extra_project_name";
 
+    private static final String STATE_REF = "ref";
+    private static final String STATE_PROJECT = "project";
+
     private static final int REQUEST_BRANCH_OR_TAG = 1;
 
     public static Intent newIntent(Context context, Project project) {
@@ -139,6 +142,10 @@ public class ProjectActivity extends BaseActivity {
         ButterKnife.bind(this);
         Project project = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_PROJECT));
 
+        if (savedInstanceState != null) {
+            project = Parcels.unwrap(savedInstanceState.getParcelable(STATE_PROJECT));
+            mRef = Parcels.unwrap(savedInstanceState.getParcelable(STATE_REF));
+        }
         mToolbar.setNavigationIcon(R.drawable.ic_back_24dp);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -176,6 +183,13 @@ public class ProjectActivity extends BaseActivity {
                 }
                 break;
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(STATE_REF, Parcels.wrap(mRef));
+        outState.putParcelable(STATE_PROJECT, Parcels.wrap(mProject));
     }
 
     private void loadProject(String projectId) {
@@ -223,7 +237,9 @@ public class ProjectActivity extends BaseActivity {
 
     private void bindProject(Project project) {
         mProject = project;
-        mRef = new Ref(Ref.TYPE_BRANCH, mProject.getDefaultBranch());
+        if (mRef == null) {
+            mRef = new Ref(Ref.TYPE_BRANCH, mProject.getDefaultBranch());
+        }
         mToolbar.setTitle(mProject.getName());
         mToolbar.setSubtitle(mProject.getNamespace().getName());
         setupTabs();
