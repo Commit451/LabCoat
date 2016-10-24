@@ -414,6 +414,7 @@
         <item>Details</item>
         <item>Log</item>
     </string-array>
+    <string name="build_ref">Ref: %1$s</string>
     <string name="build_status">Status: %1$s</string>
     <string name="build_duration">Duration: %1$s</string>
     <string name="build_created">Created: %1$s</string>

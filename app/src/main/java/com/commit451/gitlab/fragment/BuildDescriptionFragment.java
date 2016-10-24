@@ -49,6 +49,8 @@ public class BuildDescriptionFragment extends ButterKnifeFragment {
     ViewGroup mRoot;
     @BindView(R.id.swipe_layout)
     SwipeRefreshLayout mSwipeRefreshLayout;
+    @BindView(R.id.text_status)
+    TextView mTextStatus;
     @BindView(R.id.text_duration)
     TextView mTextDuration;
     @BindView(R.id.text_created)
@@ -57,6 +59,8 @@ public class BuildDescriptionFragment extends ButterKnifeFragment {
     TextView mTextFinished;
     @BindView(R.id.text_runner)
     TextView mTextRunner;
+    @BindView(R.id.text_ref)
+    TextView mTextRef;
     @BindView(R.id.text_author)
     TextView mTextAuthor;
     @BindView(R.id.text_message)
@@ -130,11 +134,15 @@ public class BuildDescriptionFragment extends ButterKnifeFragment {
         if (startedTime == null) {
             startedTime = new Date();
         }
+        String status = String.format(getString(R.string.build_status), build.getStatus());
+        mTextStatus.setText(status);
         String timeTaken = DateUtil.getTimeTaken(startedTime, finishedTime);
         String duration = String.format(getString(R.string.build_duration), timeTaken);
         mTextDuration.setText(duration);
         String created = String.format(getString(R.string.build_created), DateUtil.getRelativeTimeSpanString(getActivity(), build.getCreatedAt()));
         mTextCreated.setText(created);
+        String ref = String.format(getString(R.string.build_ref), build.getRef());
+        mTextRef.setText(ref);
         if (build.getFinishedAt() != null) {
             String finished = String.format(getString(R.string.build_finished), DateUtil.getRelativeTimeSpanString(getActivity(), build.getFinishedAt()));
             mTextFinished.setText(finished);

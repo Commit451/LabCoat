@@ -33,6 +33,16 @@
                         android:padding="8dp">
 
                         <TextView
+                            android:id="@+id/text_status"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginRight="16dp"
+                            android:layout_marginTop="16dp"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            tools:text="Status: success"/>
+
+                        <TextView
                             android:id="@+id/text_duration"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -96,6 +106,16 @@
                             android:layout_marginTop="16dp"
                             android:text="@string/build_commit"
                             android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+                        <TextView
+                            android:id="@+id/text_ref"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginRight="16dp"
+                            android:layout_marginTop="16dp"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            tools:text="Ref: master"/>
 
                         <TextView
                             android:id="@+id/text_author"
