@@ -6,7 +6,6 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.2.2'
-        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
         //check with ./gradlew dependencyUpdates
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.13.0'
     }
