@@ -26,6 +26,7 @@ public class Prefs {
     private static final String KEY_ACCOUNTS = "accounts";
     private static final String KEY_VERSION = "current_version";
     private static final String KEY_STARTING_VIEW = "starting_view";
+    private static final String KEY_REQUIRE_DEVICE_AUTH = "require_device_auth";
 
     public static final int STARTING_VIEW_PROJECTS = 0;
     public static final int STARTING_VIEW_GROUPS = 1;
@@ -53,7 +54,7 @@ public class Prefs {
                 return LoganSquare.parseList(accountsJson, Account.class);
             } catch (IOException e) {
                 //why would this ever happen?!?!?1
-                mSharedPreferences.edit().remove(KEY_ACCOUNTS).commit();
+                mSharedPreferences.edit().remove(KEY_ACCOUNTS).apply();
             }
             return new ArrayList<>();
         } else {
@@ -86,7 +87,7 @@ public class Prefs {
             mSharedPreferences
                     .edit()
                     .putString(KEY_ACCOUNTS, json)
-                    .commit();
+                    .apply();
         } catch (IOException e) {
             //this wont happen! Right?!?!?!
         }
@@ -100,7 +101,7 @@ public class Prefs {
         mSharedPreferences
                 .edit()
                 .putInt(KEY_VERSION, BuildConfig.VERSION_CODE)
-                .commit();
+                .apply();
     }
 
     public int getStartingView() {
@@ -111,6 +112,17 @@ public class Prefs {
         mSharedPreferences
                 .edit()
                 .putInt(KEY_STARTING_VIEW, startingView)
-                .commit();
+                .apply();
+    }
+
+    public boolean isRequireDeviceAuth() {
+        return mSharedPreferences.getBoolean(KEY_REQUIRE_DEVICE_AUTH, false);
+    }
+
+    public void setRequireDeviceAuth(boolean require) {
+        mSharedPreferences
+                .edit()
+                .putBoolean(KEY_REQUIRE_DEVICE_AUTH, require)
+                .apply();
     }
 }

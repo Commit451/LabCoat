@@ -96,21 +96,12 @@ public class AddIssueActivity extends MorphActivity {
     @BindView(R.id.list_labels)
     AdapterFlowLayout mListLabels;
 
-    private Project mProject;
-    private Issue mIssue;
-    private HashSet<Member> mMembers;
-    private AddIssueLabelAdapter mLabelsAdapter;
-    private Teleprinter mTeleprinter;
+    AddIssueLabelAdapter mLabelsAdapter;
+    Teleprinter mTeleprinter;
 
-    @OnClick(R.id.root_add_labels)
-    void onAddLabelsClick() {
-        Navigator.navigateToAddLabels(AddIssueActivity.this, mProject, REQUEST_LABEL);
-    }
-
-    @OnClick(R.id.list_labels)
-    void onLabelsClicked() {
-        Navigator.navigateToAddLabels(AddIssueActivity.this, mProject, REQUEST_LABEL);
-    }
+    Project mProject;
+    Issue mIssue;
+    HashSet<Member> mMembers;
 
     private final Callback<List<Milestone>> mMilestonesCallback = new EasyCallback<List<Milestone>>() {
         @Override
@@ -209,6 +200,11 @@ public class AddIssueActivity extends MorphActivity {
         }
     };
 
+    @OnClick(R.id.text_add_labels)
+    void onAddLabelClicked() {
+        Navigator.navigateToAddLabels(this, mProject, REQUEST_LABEL);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -220,7 +216,27 @@ public class AddIssueActivity extends MorphActivity {
         mProject = Parcels.unwrap(getIntent().getParcelableExtra(KEY_PROJECT));
         mIssue = Parcels.unwrap(getIntent().getParcelableExtra(KEY_ISSUE));
         mMembers = new HashSet<>();
-        mLabelsAdapter = new AddIssueLabelAdapter();
+        mLabelsAdapter = new AddIssueLabelAdapter(new AddIssueLabelAdapter.Listener() {
+            @Override
+            public void onLabelLongClicked(final Label label) {
+                new AlertDialog.Builder(AddIssueActivity.this)
+                        .setTitle(R.string.remove)
+                        .setMessage(R.string.are_you_sure_you_want_to_remove)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                mLabelsAdapter.removeLabel(label);
+                            }
+                        })
+                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
+            }
+        });
         mListLabels.setAdapter(mLabelsAdapter);
 
         mToolbar.setNavigationIcon(R.drawable.ic_back_24dp);

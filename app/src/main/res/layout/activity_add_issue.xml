@@ -134,6 +134,7 @@
                     android:paddingTop="16dp"
                     android:paddingBottom="16dp"
                     android:visibility="gone"
+                    android:animateLayoutChanges="true"
                     android:background="?attr/selectableItemBackground">
 
                     <com.commit451.adapterflowlayout.AdapterFlowLayout
@@ -146,6 +147,7 @@
                         android:id="@+id/text_add_labels"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:background="?attr/selectableItemBackground"
                         android:text="@string/add_labels"/>
 
                 </LinearLayout>

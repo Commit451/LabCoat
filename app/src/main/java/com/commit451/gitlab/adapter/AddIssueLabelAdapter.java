@@ -2,6 +2,7 @@ package com.commit451.gitlab.adapter;
 
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.view.ViewGroup;
 
 import com.commit451.gitlab.model.api.Label;
@@ -16,9 +17,11 @@ import java.util.Collection;
 public class AddIssueLabelAdapter extends RecyclerView.Adapter<AddLabelViewHolder> {
 
     private ArrayList<Label> mValues;
+    private Listener mListener;
 
-    public AddIssueLabelAdapter() {
+    public AddIssueLabelAdapter(Listener listener) {
         mValues = new ArrayList<>();
+        mListener = listener;
     }
 
     public void setLabels(Collection<Label> labels) {
@@ -38,9 +41,24 @@ public class AddIssueLabelAdapter extends RecyclerView.Adapter<AddLabelViewHolde
         notifyItemInserted(mValues.size()-1);
     }
 
+    public void removeLabel(Label label) {
+        int indexOf = mValues.indexOf(label);
+        mValues.remove(indexOf);
+        notifyItemRemoved(indexOf);
+    }
+
     @Override
     public AddLabelViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return AddLabelViewHolder.inflate(parent);
+        final AddLabelViewHolder holder = AddLabelViewHolder.inflate(parent);
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Label label = getEntry(holder.getAdapterPosition());
+                mListener.onLabelLongClicked(label);
+                return true;
+            }
+        });
+        return holder;
     }
 
     @Override
@@ -73,5 +91,9 @@ public class AddIssueLabelAdapter extends RecyclerView.Adapter<AddLabelViewHolde
         //Remove last ","
         labels = labels.substring(0, labels.length()-1);
         return labels;
+    }
+
+    public interface Listener {
+        void onLabelLongClicked(Label label);
     }
 }
