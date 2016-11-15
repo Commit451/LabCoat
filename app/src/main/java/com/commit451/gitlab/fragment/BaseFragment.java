@@ -2,16 +2,16 @@ package com.commit451.gitlab.fragment;
 
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.View;
 
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.event.ReloadDataEvent;
+import com.trello.rxlifecycle.components.support.RxFragment;
 
 import org.greenrobot.eventbus.Subscribe;
 
 
-public class BaseFragment extends Fragment {
+public class BaseFragment extends RxFragment {
 
     private EventReceiver mBaseEventReceiever;
 

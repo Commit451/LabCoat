@@ -191,7 +191,7 @@ public class CommitsFragment extends ButterKnifeFragment {
         mPage = 0;
         mLoading = true;
 
-        App.instance().getGitLab().getCommits(mProject.getId(), mBranchName, mPage).enqueue(mCommitsCallback);
+        App.get().getGitLab().getCommits(mProject.getId(), mBranchName, mPage).enqueue(mCommitsCallback);
     }
 
     private void loadMore() {
@@ -208,7 +208,7 @@ public class CommitsFragment extends ButterKnifeFragment {
         mCommitsAdapter.setLoading(true);
 
         Timber.d("loadMore called for %s", mPage);
-        App.instance().getGitLab().getCommits(mProject.getId(), mBranchName, mPage).enqueue(mMoreCommitsCallback);
+        App.get().getGitLab().getCommits(mProject.getId(), mBranchName, mPage).enqueue(mMoreCommitsCallback);
     }
 
     private class EventReceiver {

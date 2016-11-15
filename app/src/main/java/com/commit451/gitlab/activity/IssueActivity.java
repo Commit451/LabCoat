@@ -125,7 +125,7 @@ public class IssueActivity extends BaseActivity {
                     closeOrOpenIssue();
                     return true;
                 case R.id.action_delete:
-                    App.instance().getGitLab().deleteIssue(mProject.getId(), mIssue.getId()).enqueue(mDeleteIssueCallback);
+                    App.get().getGitLab().deleteIssue(mProject.getId(), mIssue.getId()).enqueue(mDeleteIssueCallback);
                     return true;
             }
             return false;
@@ -136,7 +136,7 @@ public class IssueActivity extends BaseActivity {
         @Override
         public void success(@NonNull Project response) {
             mProject = response;
-            App.instance().getGitLab().getIssuesByIid(mProject.getId(), mIssueIid).enqueue(mIssueCallback);
+            App.get().getGitLab().getIssuesByIid(mProject.getId(), mIssueIid).enqueue(mIssueCallback);
         }
 
         @Override
@@ -336,7 +336,7 @@ public class IssueActivity extends BaseActivity {
                     }
                 }
             });
-            App.instance().getGitLab().getProject(projectNamespace, projectName).enqueue(mProjectCallback);
+            App.get().getGitLab().getProject(projectNamespace, projectName).enqueue(mProjectCallback);
         }
     }
 
@@ -384,13 +384,13 @@ public class IssueActivity extends BaseActivity {
             }
         });
         mLoading = true;
-        App.instance().getGitLab().getIssueNotes(mProject.getId(), mIssue.getId()).enqueue(mNotesCallback);
+        App.get().getGitLab().getIssueNotes(mProject.getId(), mIssue.getId()).enqueue(mNotesCallback);
     }
 
     private void loadMoreNotes() {
         mLoading = true;
         mIssueDetailsAdapter.setLoading(true);
-        App.instance().getGitLab().getIssueNotes(mNextPageUrl.toString()).enqueue(mMoreNotesCallback);
+        App.get().getGitLab().getIssueNotes(mNextPageUrl.toString()).enqueue(mMoreNotesCallback);
     }
 
     private void postNote(String message) {
@@ -406,16 +406,16 @@ public class IssueActivity extends BaseActivity {
         mTeleprinter.hideKeyboard();
         mSendMessageView.clearText();
 
-        App.instance().getGitLab().addIssueNote(mProject.getId(), mIssue.getId(), message).enqueue(mPostNoteCallback);
+        App.get().getGitLab().addIssueNote(mProject.getId(), mIssue.getId(), message).enqueue(mPostNoteCallback);
     }
 
     private void closeOrOpenIssue() {
         mProgress.setVisibility(View.VISIBLE);
         if (mIssue.getState().equals(Issue.STATE_CLOSED)) {
-            App.instance().getGitLab().updateIssueStatus(mProject.getId(), mIssue.getId(), Issue.STATE_REOPEN)
+            App.get().getGitLab().updateIssueStatus(mProject.getId(), mIssue.getId(), Issue.STATE_REOPEN)
                     .enqueue(mOpenCloseCallback);
         } else {
-            App.instance().getGitLab().updateIssueStatus(mProject.getId(), mIssue.getId(), Issue.STATE_CLOSE)
+            App.get().getGitLab().updateIssueStatus(mProject.getId(), mIssue.getId(), Issue.STATE_CLOSE)
                     .enqueue(mOpenCloseCallback);
         }
     }

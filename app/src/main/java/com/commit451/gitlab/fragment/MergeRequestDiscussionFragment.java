@@ -250,12 +250,12 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
                 }
             }
         });
-        App.instance().getGitLab().getMergeRequestNotes(mProject.getId(), mMergeRequest.getId()).enqueue(mNotesCallback);
+        App.get().getGitLab().getMergeRequestNotes(mProject.getId(), mMergeRequest.getId()).enqueue(mNotesCallback);
     }
 
     private void loadMoreNotes() {
         mMergeRequestDetailAdapter.setLoading(true);
-        App.instance().getGitLab().getMergeRequestNotes(mNextPageUrl.toString()).enqueue(mMoreNotesCallback);
+        App.get().getGitLab().getMergeRequestNotes(mNextPageUrl.toString()).enqueue(mMoreNotesCallback);
     }
 
     private void postNote(String message) {
@@ -271,7 +271,7 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
         mTeleprinter.hideKeyboard();
         mSendMessageView.clearText();
 
-        App.instance().getGitLab().addMergeRequestNote(mProject.getId(), mMergeRequest.getId(), message).enqueue(mPostNoteCallback);
+        App.get().getGitLab().addMergeRequestNote(mProject.getId(), mMergeRequest.getId(), message).enqueue(mPostNoteCallback);
     }
 
     private class EventReceiver {

@@ -33,17 +33,17 @@ public class LaunchActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        int savedVersion = App.instance().getPrefs().getSavedVersion();
+        int savedVersion = App.get().getPrefs().getSavedVersion();
         if (savedVersion != -1 && savedVersion < BuildConfig.VERSION_CODE) {
             Timber.d("Performing upgrade");
             performUpgrade(savedVersion, BuildConfig.VERSION_CODE);
-            App.instance().getPrefs().setSavedVersion();
+            App.get().getPrefs().setSavedVersion();
         }
         List<Account> accounts = Account.getAccounts();
         if(accounts.isEmpty()) {
             Navigator.navigateToLogin(this);
             finish();
-        } else if (App.instance().getPrefs().isRequireDeviceAuth()) {
+        } else if (App.get().getPrefs().isRequireDeviceAuth()) {
             showKeyguard();
         } else {
             if (PRIVATE_KEY_ENABLED) {

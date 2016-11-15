@@ -15,6 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.commit451.alakazam.Alakazam;
 import com.commit451.easel.Easel;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
@@ -41,9 +42,12 @@ public class UserActivity extends BaseActivity {
         return intent;
     }
 
-    @BindView(R.id.toolbar) Toolbar mToolbar;
-    @BindView(R.id.collapsing_toolbar) CollapsingToolbarLayout mCollapsingToolbarLayout;
-    @BindView(R.id.backdrop) ImageView mBackdrop;
+    @BindView(R.id.toolbar)
+    Toolbar mToolbar;
+    @BindView(R.id.collapsing_toolbar)
+    CollapsingToolbarLayout mCollapsingToolbarLayout;
+    @BindView(R.id.backdrop)
+    ImageView mBackdrop;
 
     UserBasic mUser;
 
@@ -68,7 +72,7 @@ public class UserActivity extends BaseActivity {
         mToolbar.setTitle(mUser.getUsername());
         Uri url = ImageUtil.getAvatarUrl(mUser, getResources().getDimensionPixelSize(R.dimen.user_header_image_size));
 
-        App.instance().getPicasso()
+        App.get().getPicasso()
                 .load(url)
                 .transform(PaletteTransformation.instance())
                 .into(mBackdrop, new PaletteTransformation.PaletteCallback(mBackdrop) {
@@ -78,7 +82,8 @@ public class UserActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void onError() {}
+                    public void onError() {
+                    }
                 });
 
         if (savedInstanceState == null) {
@@ -98,7 +103,7 @@ public class UserActivity extends BaseActivity {
         int darkerColor = Easel.getDarkerColor(vibrantColor);
 
         if (Build.VERSION.SDK_INT >= 21) {
-            Easel.getNavigationBarColorAnimator(getWindow(), darkerColor)
+            Alakazam.navigationBarColorAnimator(getWindow(), darkerColor)
                     .setDuration(animationTime)
                     .start();
             getWindow().setStatusBarColor(darkerColor);

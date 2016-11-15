@@ -21,6 +21,7 @@ import com.commit451.gitlab.observable.FileObservableFactory;
 import org.parceler.Parcels;
 
 import java.io.File;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -81,7 +82,7 @@ public class AttachActivity extends BaseActivity {
 
     @OnClick(R.id.button_choose_photo)
     void onChoosePhotoClicked() {
-        EasyImage.openGallery(this, 0);
+        EasyImage.openGallery(this, 0, false);
     }
 
     @OnClick(R.id.button_take_photo)
@@ -129,9 +130,8 @@ public class AttachActivity extends BaseActivity {
             }
 
             @Override
-            public void onImagePicked(File imageFile, EasyImage.ImageSource source, int type) {
-                //Handle the image
-                onPhotoReturned(imageFile);
+            public void onImagesPicked(List<File> imageFiles, EasyImage.ImageSource source, int type) {
+                onPhotoReturned(imageFiles.get(0));
             }
 
             @Override
@@ -163,7 +163,7 @@ public class AttachActivity extends BaseActivity {
                 .subscribe(new Action1<MultipartBody.Part>() {
                     @Override
                     public void call(MultipartBody.Part part) {
-                        App.instance().getGitLab().uploadFile(mProject.getId(), part).enqueue(mUploadCallback);
+                        App.get().getGitLab().uploadFile(mProject.getId(), part).enqueue(mUploadCallback);
                     }
                 });
     }

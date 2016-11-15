@@ -64,7 +64,7 @@ public class AboutActivity extends BaseActivity {
 
     @OnClick(R.id.sauce)
     void onSauceClick() {
-        if (getString(R.string.url_gitlab).equals(App.instance().getAccount().getServerUrl().toString())) {
+        if (getString(R.string.url_gitlab).equals(App.get().getAccount().getServerUrl().toString())) {
             Navigator.navigateToProject(AboutActivity.this, REPO_ID);
         } else {
             IntentUtil.openPage(AboutActivity.this, getString(R.string.source_url));
@@ -125,7 +125,7 @@ public class AboutActivity extends BaseActivity {
         mPhysicsLayout.getPhysics().enableFling();
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         gravitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
-        App.instance().getGitLab().getContributors(REPO_ID).enqueue(mContributorResponseCallback);
+        App.get().getGitLab().getContributors(REPO_ID).enqueue(mContributorResponseCallback);
         mProgress.setVisibility(View.VISIBLE);
     }
 
@@ -159,7 +159,7 @@ public class AboutActivity extends BaseActivity {
             mPhysicsLayout.addView(imageView);
 
             Uri url = ImageUtil.getAvatarUrl(contributor.getEmail(), imageSize);
-            App.instance().getPicasso()
+            App.get().getPicasso()
                     .load(url)
                     .into(imageView);
         }

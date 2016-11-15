@@ -36,7 +36,7 @@ public class UserViewHolder extends RecyclerView.ViewHolder {
 
     public void bind(UserBasic user) {
         mUsernameView.setText(user.getUsername());
-        App.instance().getPicasso()
+        App.get().getPicasso()
                 .load(ImageUtil.getAvatarUrl(user, itemView.getResources().getDimensionPixelSize(R.dimen.user_list_image_size)))
                 .into(mImageView);
     }

@@ -95,7 +95,7 @@ public class PickBranchFragment extends ButterKnifeFragment {
         mProgress.setVisibility(View.VISIBLE);
         mMessageView.setVisibility(View.GONE);
 
-        App.instance().getGitLab().getBranches(mProjectId).enqueue(new EasyCallback<List<Branch>>() {
+        App.get().getGitLab().getBranches(mProjectId).enqueue(new EasyCallback<List<Branch>>() {
             @Override
             public void success(@NonNull List<Branch> response) {
                 if (getView() == null) {

@@ -204,7 +204,7 @@ public class MergeRequestsFragment extends ButterKnifeFragment {
         });
         mNextPageUrl = null;
         mLoading = true;
-        App.instance().getGitLab().getMergeRequests(mProject.getId(), mState).enqueue(mCallback);
+        App.get().getGitLab().getMergeRequests(mProject.getId(), mState).enqueue(mCallback);
     }
 
     private void loadMore() {
@@ -217,7 +217,7 @@ public class MergeRequestsFragment extends ButterKnifeFragment {
         mMergeRequestAdapter.setLoading(true);
         mLoading = true;
         Timber.d("loadMore called for " + mNextPageUrl);
-        App.instance().getGitLab().getMergeRequests(mNextPageUrl.toString(), mState).enqueue(mMoreIssuesCallback);
+        App.get().getGitLab().getMergeRequests(mNextPageUrl.toString(), mState).enqueue(mMoreIssuesCallback);
     }
 
     private class EventReceiver {

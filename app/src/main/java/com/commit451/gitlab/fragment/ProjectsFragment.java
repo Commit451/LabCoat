@@ -284,7 +284,7 @@ public class ProjectsFragment extends ButterKnifeFragment {
         if (mListener != null) {
             return mListener.getGitLab();
         } else {
-            return App.instance().getGitLab();
+            return App.get().getGitLab();
         }
     }
 

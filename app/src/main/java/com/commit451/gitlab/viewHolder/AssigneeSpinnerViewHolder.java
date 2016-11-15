@@ -44,7 +44,7 @@ public class AssigneeSpinnerViewHolder extends RecyclerView.ViewHolder {
             mImageView.setImageResource(R.drawable.ic_assign_24dp);
         } else {
             mUsernameView.setText(user.getUsername());
-            App.instance().getPicasso()
+            App.get().getPicasso()
                     .load(ImageUtil.getAvatarUrl(user, itemView.getResources().getDimensionPixelSize(R.dimen.user_list_image_size)))
                     .transform(new CircleTransformation())
                     .into(mImageView);

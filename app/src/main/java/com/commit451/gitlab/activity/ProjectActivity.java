@@ -194,12 +194,12 @@ public class ProjectActivity extends BaseActivity {
 
     private void loadProject(String projectId) {
         showProgress();
-        App.instance().getGitLab().getProject(projectId).enqueue(mProjectCallback);
+        App.get().getGitLab().getProject(projectId).enqueue(mProjectCallback);
     }
 
     private void loadProject(String projectNamespace, String projectName) {
         showProgress();
-        App.instance().getGitLab().getProject(projectNamespace, projectName).enqueue(mProjectCallback);
+        App.get().getGitLab().getProject(projectNamespace, projectName).enqueue(mProjectCallback);
     }
 
     private void showProgress() {

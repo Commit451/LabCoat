@@ -116,6 +116,6 @@ public class DiffActivity extends BaseActivity {
             }
             }
         });
-        App.instance().getGitLab().getCommitDiff(mProject.getId(), mCommit.getId()).enqueue(mDiffCallback);
+        App.get().getGitLab().getCommitDiff(mProject.getId(), mCommit.getId()).enqueue(mDiffCallback);
     }
 }

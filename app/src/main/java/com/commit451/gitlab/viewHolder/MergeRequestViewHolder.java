@@ -37,7 +37,7 @@ public class MergeRequestViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(MergeRequest item) {
-        App.instance().getPicasso()
+        App.get().getPicasso()
                 .load(ImageUtil.getAvatarUrl(item.getAuthor(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size)))
                 .transform(new CircleTransformation())
                 .into(mImageView);

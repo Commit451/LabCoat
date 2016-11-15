@@ -10,6 +10,7 @@ import java.util.concurrent.Executor;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 /**
@@ -18,9 +19,9 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 public final class GitLabFactory {
 
     /**
-     * Create a GitLab instance with the current account passed.
+     * Create a GitLab get with the current account passed.
      * @param account the account to try and log in with
-     * @return the GitLab instance
+     * @return the GitLab get
      */
     public static GitLab create(Account account, OkHttpClient client) {
         return create(account, client, false);
@@ -31,6 +32,7 @@ public final class GitLabFactory {
         Retrofit.Builder retrofitBuilder = new Retrofit.Builder()
                 .baseUrl(account.getServerUrl().toString())
                 .client(client)
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(LoganSquareConverterFactory.create());
         if (dummyExecutor) {

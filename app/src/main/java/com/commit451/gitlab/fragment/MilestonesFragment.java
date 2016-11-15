@@ -224,7 +224,7 @@ public class MilestonesFragment extends ButterKnifeFragment {
         });
         mNextPageUrl = null;
         mLoading = true;
-        App.instance().getGitLab().getMilestones(mProject.getId(), mState).enqueue(mCallback);
+        App.get().getGitLab().getMilestones(mProject.getId(), mState).enqueue(mCallback);
     }
 
     private void loadMore() {
@@ -240,7 +240,7 @@ public class MilestonesFragment extends ButterKnifeFragment {
         mMilestoneAdapter.setLoading(true);
 
         Timber.d("loadMore called for " + mNextPageUrl);
-        App.instance().getGitLab().getMilestones(mNextPageUrl.toString()).enqueue(mMoreMilestonesCallback);
+        App.get().getGitLab().getMilestones(mNextPageUrl.toString()).enqueue(mMoreMilestonesCallback);
     }
 
     private class EventReceiver {

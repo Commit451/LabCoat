@@ -55,13 +55,13 @@ public class MergeRequestHeaderViewHolder extends RecyclerView.ViewHolder {
             description = EmojiParser.parseToUnicode(description);
             mDescriptionView.setText(bypass.markdownToSpannable(description,
                     BypassImageGetterFactory.create(mDescriptionView,
-                            App.instance().getPicasso(),
-                            App.instance().getAccount().getServerUrl().toString(),
+                            App.get().getPicasso(),
+                            App.get().getAccount().getServerUrl().toString(),
                             project)));
-            mDescriptionView.setMovementMethod(new InternalLinkMovementMethod(App.instance().getAccount().getServerUrl()));
+            mDescriptionView.setMovementMethod(new InternalLinkMovementMethod(App.get().getAccount().getServerUrl()));
         }
 
-        App.instance().getPicasso()
+        App.get().getPicasso()
                 .load(ImageUtil.getAvatarUrl(mergeRequest.getAuthor(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size)))
                 .transform(new CircleTransformation())
                 .into(mAuthorImageView);

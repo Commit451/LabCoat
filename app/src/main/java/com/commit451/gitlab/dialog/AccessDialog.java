@@ -121,10 +121,10 @@ public class AccessDialog extends MaterialDialog {
 
         if (mGroup != null) {
             showLoading();
-            App.instance().getGitLab().editGroupMember(mGroup.getId(), mMember.getId(), accessLevel).enqueue(mEditUserCallback);
+            App.get().getGitLab().editGroupMember(mGroup.getId(), mMember.getId(), accessLevel).enqueue(mEditUserCallback);
         } else if (mProjectId != -1) {
             showLoading();
-            App.instance().getGitLab().editProjectMember(mProjectId, mMember.getId(), accessLevel).enqueue(mEditUserCallback);
+            App.get().getGitLab().editProjectMember(mProjectId, mMember.getId(), accessLevel).enqueue(mEditUserCallback);
         } else if (mAccessAppliedListener != null) {
             mAccessAppliedListener.onAccessApplied(accessLevel);
         } else {

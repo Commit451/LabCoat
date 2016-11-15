@@ -191,14 +191,14 @@ public class UsersFragment extends ButterKnifeFragment {
             }
         });
 
-        App.instance().getGitLab().searchUsers(mQuery).enqueue(mSearchCallback);
+        App.get().getGitLab().searchUsers(mQuery).enqueue(mSearchCallback);
     }
 
     private void loadMore() {
         mLoading = true;
         mUsersAdapter.setLoading(true);
         Timber.d("loadMore called for %s %s", mNextPageUrl.toString(), mQuery);
-        App.instance().getGitLab().searchUsers(mNextPageUrl.toString(), mQuery).enqueue(mMoreUsersCallback);
+        App.get().getGitLab().searchUsers(mNextPageUrl.toString(), mQuery).enqueue(mMoreUsersCallback);
     }
 
     public void searchQuery(String query) {

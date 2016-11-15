@@ -98,19 +98,19 @@ public class LoadSomeInfoActivity extends AppCompatActivity {
             switch (mLoadType) {
                 case LOAD_TYPE_DIFF:
                     String sha = getIntent().getStringExtra(EXTRA_COMMIT_SHA);
-                    App.instance().getGitLab().getCommit(response.getId(), sha).enqueue(mCommitCallback);
+                    App.get().getGitLab().getCommit(response.getId(), sha).enqueue(mCommitCallback);
                     return;
                 case LOAD_TYPE_MERGE_REQUEST:
                     String mergeRequestId = getIntent().getStringExtra(EXTRA_MERGE_REQUEST);
-                    App.instance().getGitLab().getMergeRequestsByIid(response.getId(), mergeRequestId).enqueue(mMergeRequestCallback);
+                    App.get().getGitLab().getMergeRequestsByIid(response.getId(), mergeRequestId).enqueue(mMergeRequestCallback);
                     return;
                 case LOAD_TYPE_BUILD:
                     long buildId = getIntent().getLongExtra(EXTRA_BUILD_ID, -1);
-                    App.instance().getGitLab().getBuild(response.getId(), buildId).enqueue(mBuildCallback);
+                    App.get().getGitLab().getBuild(response.getId(), buildId).enqueue(mBuildCallback);
                     return;
                 case LOAD_TYPE_MILESTONE:
                     String milestoneId = getIntent().getStringExtra(EXTRA_MILESTONE_ID);
-                    App.instance().getGitLab().getMilestonesByIid(response.getId(), milestoneId).enqueue(mMilestoneCallback);
+                    App.get().getGitLab().getMilestonesByIid(response.getId(), milestoneId).enqueue(mMilestoneCallback);
                     return;
             }
 
@@ -203,7 +203,7 @@ public class LoadSomeInfoActivity extends AppCompatActivity {
             case LOAD_TYPE_MILESTONE:
                 String namespace = getIntent().getStringExtra(EXTRA_PROJECT_NAMESPACE);
                 String project = getIntent().getStringExtra(EXTRA_PROJECT_NAME);
-                App.instance().getGitLab().getProject(namespace, project).enqueue(mProjectCallback);
+                App.get().getGitLab().getProject(namespace, project).enqueue(mProjectCallback);
                 break;
         }
     }

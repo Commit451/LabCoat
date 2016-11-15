@@ -86,7 +86,7 @@ public class Navigator {
     }
 
     public static void navigateToStartingActivity(Activity activity) {
-        int startingActivity = App.instance().getPrefs().getStartingView();
+        int startingActivity = App.get().getPrefs().getStartingView();
         switch (startingActivity) {
             case Prefs.STARTING_VIEW_PROJECTS:
                 navigateToProjects(activity);

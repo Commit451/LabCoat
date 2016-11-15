@@ -91,7 +91,7 @@ public class ProjectFragment extends ButterKnifeFragment {
                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            App.instance().getGitLab().forkProject(mProject.getId()).enqueue(mForkCallback);
+                            App.get().getGitLab().forkProject(mProject.getId()).enqueue(mForkCallback);
                         }
                     })
                     .show();
@@ -101,7 +101,7 @@ public class ProjectFragment extends ButterKnifeFragment {
     @OnClick(R.id.root_star)
     void onStarClicked() {
         if (mProject != null) {
-            App.instance().getGitLab().starProject(mProject.getId()).enqueue(mStarCallback);
+            App.get().getGitLab().starProject(mProject.getId()).enqueue(mStarCallback);
         }
     }
 
@@ -113,7 +113,7 @@ public class ProjectFragment extends ButterKnifeFragment {
             }
             for (RepositoryTreeObject treeItem : response) {
                 if (getReadmeType(treeItem.getName()) != README_TYPE_UNKNOWN) {
-                    App.instance().getGitLab().getFile(mProject.getId(), treeItem.getName(), mBranchName).enqueue(mFileCallback);
+                    App.get().getGitLab().getFile(mProject.getId(), treeItem.getName(), mBranchName).enqueue(mFileCallback);
                     return;
                 }
             }
@@ -164,8 +164,8 @@ public class ProjectFragment extends ButterKnifeFragment {
                                         text = EmojiParser.parseToUnicode(text);
                                         mOverviewVew.setText(mBypass.markdownToSpannable(text,
                                                 BypassImageGetterFactory.create(mOverviewVew,
-                                                        App.instance().getPicasso(),
-                                                        App.instance().getAccount().getServerUrl().toString(),
+                                                        App.get().getPicasso(),
+                                                        App.get().getAccount().getServerUrl().toString(),
                                                         mProject)));
                                         break;
                                     case README_TYPE_HTML:
@@ -235,7 +235,7 @@ public class ProjectFragment extends ButterKnifeFragment {
                             .setAction(R.string.project_unstar, new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    App.instance().getGitLab().unstarProject(mProject.getId()).enqueue(mUnstarProjectCallback);
+                                    App.get().getGitLab().unstarProject(mProject.getId()).enqueue(mUnstarProjectCallback);
                                 }
                             })
                             .show();
@@ -286,7 +286,7 @@ public class ProjectFragment extends ButterKnifeFragment {
         mEventReceiver = new EventReceiver();
         App.bus().register(mEventReceiver);
 
-        mOverviewVew.setMovementMethod(new InternalLinkMovementMethod(App.instance().getAccount().getServerUrl()));
+        mOverviewVew.setMovementMethod(new InternalLinkMovementMethod(App.get().getAccount().getServerUrl()));
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -331,7 +331,7 @@ public class ProjectFragment extends ButterKnifeFragment {
             }
         });
 
-        App.instance().getGitLab().getTree(mProject.getId(), mBranchName, null).enqueue(mFilesCallback);
+        App.get().getGitLab().getTree(mProject.getId(), mBranchName, null).enqueue(mFilesCallback);
     }
 
     private void bindProject(Project project) {

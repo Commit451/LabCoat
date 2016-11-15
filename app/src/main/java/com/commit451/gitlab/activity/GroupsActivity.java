@@ -173,7 +173,7 @@ public class GroupsActivity extends BaseActivity {
         mNextPageUrl = null;
         mLoading = true;
 
-        App.instance().getGitLab().getGroups().enqueue(mGroupsCallback);
+        App.get().getGitLab().getGroups().enqueue(mGroupsCallback);
     }
 
     private void loadMore() {
@@ -193,7 +193,7 @@ public class GroupsActivity extends BaseActivity {
         mLoading = true;
 
         Timber.d("loadMore called for %s", mNextPageUrl);
-        App.instance().getGitLab().getGroups(mNextPageUrl.toString()).enqueue(mMoreGroupsCallback);
+        App.get().getGitLab().getGroups(mNextPageUrl.toString()).enqueue(mMoreGroupsCallback);
     }
 
     private class EventReceiver {

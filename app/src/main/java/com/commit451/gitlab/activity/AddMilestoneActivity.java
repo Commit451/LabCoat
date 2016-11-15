@@ -175,12 +175,12 @@ public class AddMilestoneActivity extends MorphActivity {
         }
 
         if (mMilestone == null) {
-            App.instance().getGitLab().createMilestone(mProjectId,
+            App.get().getGitLab().createMilestone(mProjectId,
                     mTitle.getText().toString(),
                     mDescription.getText().toString(),
                     dueDate).enqueue(mMilestoneCallback);
         } else {
-            App.instance().getGitLab().editMilestone(mProjectId,
+            App.get().getGitLab().editMilestone(mProjectId,
                     mMilestone.getId(),
                     mTitle.getText().toString(),
                     mDescription.getText().toString(),

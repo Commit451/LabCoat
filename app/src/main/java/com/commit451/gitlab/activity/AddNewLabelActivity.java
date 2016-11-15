@@ -152,7 +152,7 @@ public class AddNewLabelActivity extends BaseActivity implements ColorChooserDia
             mProgress.setVisibility(View.VISIBLE);
             mProgress.setAlpha(0.0f);
             mProgress.animate().alpha(1.0f);
-            App.instance().getGitLab().createLabel(getProjectId(), title, color, description)
+            App.get().getGitLab().createLabel(getProjectId(), title, color, description)
                     .enqueue(mCreateLabelCallback);
         }
     }

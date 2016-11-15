@@ -20,7 +20,7 @@ public class X509TrustManagerProvider {
     /**
      * Get the static {@link X509TrustManager} for the system
      *
-     * @return the static instance
+     * @return the static get
      */
     public static X509TrustManager get() {
         if (sX509TrustManager == null) {

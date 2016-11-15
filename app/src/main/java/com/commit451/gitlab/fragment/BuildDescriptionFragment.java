@@ -122,7 +122,7 @@ public class BuildDescriptionFragment extends ButterKnifeFragment {
     }
 
     private void load() {
-        App.instance().getGitLab().getBuild(mProject.getId(), mBuild.getId()).enqueue(mLoadBuildCallback);
+        App.get().getGitLab().getBuild(mProject.getId(), mBuild.getId()).enqueue(mLoadBuildCallback);
     }
 
     private void bindBuild(Build build) {

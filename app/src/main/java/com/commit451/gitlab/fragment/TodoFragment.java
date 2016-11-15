@@ -128,7 +128,7 @@ public class TodoFragment extends ButterKnifeFragment {
 
         @Override
         public void onTodoClicked(Todo todo) {
-            Navigator.navigateToUrl(getActivity(), Uri.parse(todo.getTargetUrl()), App.instance().getAccount());
+            Navigator.navigateToUrl(getActivity(), Uri.parse(todo.getTargetUrl()), App.get().getAccount());
         }
     };
 
@@ -175,11 +175,11 @@ public class TodoFragment extends ButterKnifeFragment {
         switch (mMode) {
             case MODE_TODO:
                 showLoading();
-                App.instance().getGitLab().getTodos(Todo.STATE_PENDING).enqueue(mProjectsCallback);
+                App.get().getGitLab().getTodos(Todo.STATE_PENDING).enqueue(mProjectsCallback);
                 break;
             case MODE_DONE:
                 showLoading();
-                App.instance().getGitLab().getTodos(Todo.STATE_DONE).enqueue(mProjectsCallback);
+                App.get().getGitLab().getTodos(Todo.STATE_DONE).enqueue(mProjectsCallback);
                 break;
             default:
                 throw new IllegalStateException(mMode + " is not defined");
@@ -197,7 +197,7 @@ public class TodoFragment extends ButterKnifeFragment {
         mLoading = true;
         mTodoAdapter.setLoading(true);
         Timber.d("loadMore called for " + mNextPageUrl);
-        App.instance().getGitLab().getTodosByUrl(mNextPageUrl.toString()).enqueue(mMoreProjectsCallback);
+        App.get().getGitLab().getTodosByUrl(mNextPageUrl.toString()).enqueue(mMoreProjectsCallback);
     }
 
     private void showLoading() {

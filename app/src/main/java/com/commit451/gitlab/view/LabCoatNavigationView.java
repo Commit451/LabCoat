@@ -125,14 +125,14 @@ public class LabCoatNavigationView extends NavigationView {
 
         @Override
         public void onAccountLogoutClicked(Account account) {
-            App.instance().getPrefs().removeAccount(account);
+            App.get().getPrefs().removeAccount(account);
             List<Account> accounts = Account.getAccounts();
 
             if (accounts.isEmpty()) {
                 Navigator.navigateToLogin((Activity) getContext());
                 ((Activity) getContext()).finish();
             } else {
-                if (account.equals(App.instance().getAccount())) {
+                if (account.equals(App.get().getAccount())) {
                     switchToAccount(accounts.get(0));
                 }
             }
@@ -145,9 +145,9 @@ public class LabCoatNavigationView extends NavigationView {
         public void success(@NonNull UserFull response) {
             //Store the newly retrieved user to the account so that it stays up to date
             // in local storage
-            Account account = App.instance().getAccount();
+            Account account = App.get().getAccount();
             account.setUser(response);
-            App.instance().getPrefs().updateAccount(account);
+            App.get().getPrefs().updateAccount(account);
             bindUser(response);
         }
 
@@ -159,7 +159,7 @@ public class LabCoatNavigationView extends NavigationView {
 
     @OnClick(R.id.profile_image)
     public void onUserImageClick(ImageView imageView) {
-        Navigator.navigateToUser((Activity) getContext(), imageView, App.instance().getAccount().getUser());
+        Navigator.navigateToUser((Activity) getContext(), imageView, App.get().getAccount().getUser());
     }
 
     @OnClick(R.id.drawer_header)
@@ -237,7 +237,7 @@ public class LabCoatNavigationView extends NavigationView {
     }
 
     private void setAccounts() {
-        List<Account> accounts = App.instance().getPrefs().getAccounts();
+        List<Account> accounts = App.get().getPrefs().getAccounts();
         Timber.d("Got %s accounts", accounts.size());
         Collections.sort(accounts);
         Collections.reverse(accounts);
@@ -245,7 +245,7 @@ public class LabCoatNavigationView extends NavigationView {
     }
 
     private void loadCurrentUser() {
-        App.instance().getGitLab().getThisUser().enqueue(mUserCallback);
+        App.get().getGitLab().getThisUser().enqueue(mUserCallback);
     }
 
     private void bindUser(UserFull user) {
@@ -259,7 +259,7 @@ public class LabCoatNavigationView extends NavigationView {
             mUserEmail.setText(user.getEmail());
         }
         Uri url = ImageUtil.getAvatarUrl(user, getResources().getDimensionPixelSize(R.dimen.larger_image_size));
-        App.instance().getPicasso()
+        App.get().getPicasso()
                 .load(url)
                 .transform(new CircleTransformation())
                 .into(mProfileImage);
@@ -290,8 +290,8 @@ public class LabCoatNavigationView extends NavigationView {
     private void switchToAccount(Account account) {
         Timber.d("Switching to account: %s", account);
         account.setLastUsed(new Date());
-        App.instance().setAccount(account);
-        App.instance().getPrefs().updateAccount(account);
+        App.get().setAccount(account);
+        App.get().getPrefs().updateAccount(account);
         bindUser(account.getUser());
         toggleAccounts();
         App.bus().post(new ReloadDataEvent());

@@ -94,7 +94,7 @@ public class ProjectFeedWidgetConfigureActivity extends BaseActivity {
     }
 
     private void loadAccounts() {
-        List<Account> accounts = App.instance().getPrefs().getAccounts();
+        List<Account> accounts = App.get().getPrefs().getAccounts();
         Timber.d("Got %s accounts", accounts.size());
         Collections.sort(accounts);
         Collections.reverse(accounts);

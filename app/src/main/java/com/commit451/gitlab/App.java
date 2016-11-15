@@ -38,7 +38,7 @@ import timber.log.Timber;
 public class App extends Application {
 
     /**
-     * Register our type converters on our singleton LoganSquare instance. Needs to be set here
+     * Register our type converters on our singleton LoganSquare get. Needs to be set here
      * since we are fetching accounts immediately with LoganSquare
      */
     static {
@@ -55,7 +55,7 @@ public class App extends Application {
         return sBus;
     }
 
-    public static App instance() {
+    public static App get() {
         return sInstance;
     }
 
@@ -77,6 +77,7 @@ public class App extends Application {
         sInstance = this;
 
         mPrefs = new Prefs(this);
+        //So that we don't get weird half translations
         forceLocale(Locale.ENGLISH);
         setupCrashReporting();
 

@@ -39,7 +39,7 @@ public class CommitViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(RepositoryCommit commit) {
-        App.instance().getPicasso()
+        App.get().getPicasso()
                 .load(ImageUtil.getAvatarUrl(commit.getAuthorEmail(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size)))
                 .transform(new CircleTransformation())
                 .into(mImageView);

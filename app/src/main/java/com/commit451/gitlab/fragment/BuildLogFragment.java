@@ -97,9 +97,9 @@ public class BuildLogFragment extends ButterKnifeFragment {
             }
         });
 
-        String url = BuildUtil.getRawBuildUrl(App.instance().getAccount().getServerUrl(), mProject, mBuild);
+        String url = BuildUtil.getRawBuildUrl(App.get().getAccount().getServerUrl(), mProject, mBuild);
 
-        App.instance().getGitLab().getRaw(url).enqueue(new EasyCallback<String>() {
+        App.get().getGitLab().getRaw(url).enqueue(new EasyCallback<String>() {
             @Override
             public void success(@NonNull String response) {
                 if (getView() == null) {

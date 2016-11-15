@@ -60,13 +60,13 @@ public class NoteViewHolder extends RecyclerView.ViewHolder {
         }
 
         BypassPicassoImageGetter getter = BypassImageGetterFactory.create(mSummaryView,
-                App.instance().getPicasso(),
-                App.instance().getAccount().getServerUrl().toString(),
+                App.get().getPicasso(),
+                App.get().getAccount().getServerUrl().toString(),
                 project);
         mSummaryView.setText(bypass.markdownToSpannable(summary, getter));
-        mSummaryView.setMovementMethod(new InternalLinkMovementMethod(App.instance().getAccount().getServerUrl()));
+        mSummaryView.setMovementMethod(new InternalLinkMovementMethod(App.get().getAccount().getServerUrl()));
 
-        App.instance().getPicasso()
+        App.get().getPicasso()
                 .load(ImageUtil.getAvatarUrl(note.getAuthor(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size)))
                 .transform(new CircleTransformation())
                 .into(mIconView);

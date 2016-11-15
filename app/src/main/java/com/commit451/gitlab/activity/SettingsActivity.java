@@ -48,7 +48,7 @@ public class SettingsActivity extends BaseActivity {
                 .itemsCallbackSingleChoice(getSelectedIndex(), new MaterialDialog.ListCallbackSingleChoice() {
                     @Override
                     public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                        App.instance().getPrefs().setStartingView(which);
+                        App.get().getPrefs().setStartingView(which);
                         bindPrefs();
                         /**
                          * If you use alwaysCallSingleChoiceCallback(), which is discussed below,
@@ -87,18 +87,18 @@ public class SettingsActivity extends BaseActivity {
         switchRequireAuth.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                App.instance().getPrefs().setRequireDeviceAuth(b);
+                App.get().getPrefs().setRequireDeviceAuth(b);
             }
         });
     }
 
     private void bindPrefs() {
         setStartingViewSelection();
-        switchRequireAuth.setChecked(App.instance().getPrefs().isRequireDeviceAuth());
+        switchRequireAuth.setChecked(App.get().getPrefs().isRequireDeviceAuth());
     }
 
     private void setStartingViewSelection() {
-        int startinView = App.instance().getPrefs().getStartingView();
+        int startinView = App.get().getPrefs().getStartingView();
         switch (startinView) {
             case Prefs.STARTING_VIEW_PROJECTS:
                 mTextLaunchActivity.setText(R.string.setting_starting_view_projects);
@@ -117,6 +117,6 @@ public class SettingsActivity extends BaseActivity {
     }
 
     private int getSelectedIndex() {
-        return App.instance().getPrefs().getStartingView();
+        return App.get().getPrefs().getStartingView();
     }
 }

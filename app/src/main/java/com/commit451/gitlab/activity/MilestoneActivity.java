@@ -236,7 +236,7 @@ public class MilestoneActivity extends BaseActivity {
                 }
             }
         });
-        App.instance().getGitLab().getMilestoneIssues(mProject.getId(), mMilestone.getId()).enqueue(mIssuesCallback);
+        App.get().getGitLab().getMilestoneIssues(mProject.getId(), mMilestone.getId()).enqueue(mIssuesCallback);
     }
 
     private void loadMore() {
@@ -248,16 +248,16 @@ public class MilestoneActivity extends BaseActivity {
         mLoading = true;
 
         Timber.d("loadMore called for %s", mNextPageUrl);
-        App.instance().getGitLab().getMilestoneIssues(mNextPageUrl.toString()).enqueue(mMoreIssuesCallback);
+        App.get().getGitLab().getMilestoneIssues(mNextPageUrl.toString()).enqueue(mMoreIssuesCallback);
     }
 
     private void closeOrOpenIssue() {
         mProgress.setVisibility(View.VISIBLE);
         if (mMilestone.getState().equals(Milestone.STATE_ACTIVE)) {
-            App.instance().getGitLab().updateMilestoneStatus(mProject.getId(), mMilestone.getId(), Milestone.STATE_EVENT_CLOSE)
+            App.get().getGitLab().updateMilestoneStatus(mProject.getId(), mMilestone.getId(), Milestone.STATE_EVENT_CLOSE)
                     .enqueue(mOpenCloseCallback);
         } else {
-            App.instance().getGitLab().updateMilestoneStatus(mProject.getId(), mMilestone.getId(), Milestone.STATE_EVENT_ACTIVATE)
+            App.get().getGitLab().updateMilestoneStatus(mProject.getId(), mMilestone.getId(), Milestone.STATE_EVENT_ACTIVATE)
                     .enqueue(mOpenCloseCallback);
         }
     }

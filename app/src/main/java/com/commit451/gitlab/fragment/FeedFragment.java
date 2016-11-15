@@ -83,7 +83,7 @@ public class FeedFragment extends ButterKnifeFragment {
     private final FeedAdapter.Listener mFeedAdapterListener = new FeedAdapter.Listener() {
         @Override
         public void onFeedEntryClicked(Entry entry) {
-            Navigator.navigateToUrl(getActivity(), entry.getLink().getHref(), App.instance().getAccount());
+            Navigator.navigateToUrl(getActivity(), entry.getLink().getHref(), App.get().getAccount());
         }
     };
 
@@ -150,6 +150,6 @@ public class FeedFragment extends ButterKnifeFragment {
                 }
             }
         });
-        App.instance().getGitLabRss().getFeed(mFeedUrl.toString()).enqueue(mUserFeedCallback);
+        App.get().getGitLabRss().getFeed(mFeedUrl.toString()).enqueue(mUserFeedCallback);
     }
 }

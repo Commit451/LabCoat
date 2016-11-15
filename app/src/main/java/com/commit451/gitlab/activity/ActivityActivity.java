@@ -57,7 +57,7 @@ public class ActivityActivity extends BaseActivity {
 
         FeedFragment feedFragment = (FeedFragment) getSupportFragmentManager().findFragmentByTag(TAG_FEED_FRAGMENT);
         if (feedFragment == null) {
-            Uri feedUri = App.instance().getAccount().getServerUrl();
+            Uri feedUri = App.get().getAccount().getServerUrl();
 
             feedUri = feedUri.buildUpon()
                     .appendPath("dashboard")

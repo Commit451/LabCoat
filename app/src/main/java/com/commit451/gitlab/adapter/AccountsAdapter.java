@@ -91,7 +91,7 @@ public class AccountsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof AccountViewHolder) {
             final Account account = getItemAtPosition(position);
-            ((AccountViewHolder) holder).bind(account, account.equals(App.instance().getAccount()), mColorControlHighlight);
+            ((AccountViewHolder) holder).bind(account, account.equals(App.get().getAccount()), mColorControlHighlight);
             holder.itemView.setTag(R.id.list_position, position);
             ((AccountViewHolder) holder).mPopupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                 @Override

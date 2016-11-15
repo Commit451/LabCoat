@@ -46,7 +46,7 @@ public class ProjectViewHolder extends RecyclerView.ViewHolder {
             mLetterView.setVisibility(View.GONE);
 
             mImageView.setVisibility(View.VISIBLE);
-            App.instance().getPicasso()
+            App.get().getPicasso()
                     .load(project.getAvatarUrl())
                     .transform(new CircleTransformation())
                     .into(mImageView);

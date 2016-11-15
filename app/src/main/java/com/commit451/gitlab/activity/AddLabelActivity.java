@@ -118,7 +118,7 @@ public class AddLabelActivity extends BaseActivity {
                 }
             }
         });
-        App.instance().getGitLab().getLabels(mProjectId).enqueue(new EasyCallback<List<Label>>() {
+        App.get().getGitLab().getLabels(mProjectId).enqueue(new EasyCallback<List<Label>>() {
             @Override
             public void success(@NonNull List<Label> response) {
                 mSwipeRefreshLayout.setRefreshing(false);

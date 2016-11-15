@@ -151,7 +151,7 @@ public class GroupMembersFragment extends ButterKnifeFragment {
         @Override
         public void onUserRemoveClicked(Member member) {
             mMember = member;
-            App.instance().getGitLab().removeGroupMember(mGroup.getId(), member.getId()).enqueue(mRemoveMemberCallback);
+            App.get().getGitLab().removeGroupMember(mGroup.getId(), member.getId()).enqueue(mRemoveMemberCallback);
         }
 
         @Override
@@ -233,7 +233,7 @@ public class GroupMembersFragment extends ButterKnifeFragment {
                 }
             }
         });
-        App.instance().getGitLab().getGroupMembers(mGroup.getId()).enqueue(mGroupMembersCallback);
+        App.get().getGitLab().getGroupMembers(mGroup.getId()).enqueue(mGroupMembersCallback);
     }
 
     private void loadMore() {
@@ -257,7 +257,7 @@ public class GroupMembersFragment extends ButterKnifeFragment {
         mGroupMembersAdapter.setLoading(true);
 
         Timber.d("loadMore called for %s", mNextPageUrl);
-        App.instance().getGitLab().getProjectMembers(mNextPageUrl.toString()).enqueue(mGroupMembersCallback);
+        App.get().getGitLab().getProjectMembers(mNextPageUrl.toString()).enqueue(mGroupMembersCallback);
     }
 
     @Subscribe

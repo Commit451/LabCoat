@@ -37,12 +37,12 @@ public class OpenSignInAuthenticator implements Authenticator {
                 @Override
                 public void run() {
                     //Remove the account, so that the user can sign in again
-                    App.instance().getPrefs().removeAccount(mAccount);
-                    Toast.makeText(App.instance(), R.string.error_401, Toast.LENGTH_LONG)
+                    App.get().getPrefs().removeAccount(mAccount);
+                    Toast.makeText(App.get(), R.string.error_401, Toast.LENGTH_LONG)
                             .show();
-                    Intent intent = LoginActivity.newIntent(App.instance());
+                    Intent intent = LoginActivity.newIntent(App.get());
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    App.instance().startActivity(intent);
+                    App.get().startActivity(intent);
                 }
             });
         }

@@ -10,7 +10,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
 
 /**
- * Creates RSS instance for GitLab
+ * Creates RSS get for GitLab
  */
 public class GitLabRssFactory {
 

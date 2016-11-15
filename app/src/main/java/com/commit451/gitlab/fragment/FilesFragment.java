@@ -197,7 +197,7 @@ public class FilesFragment extends ButterKnifeFragment {
             }
         });
 
-        App.instance().getGitLab().getTree(mProject.getId(), mBranchName, newPath).enqueue(new FilesCallback(newPath));
+        App.get().getGitLab().getTree(mProject.getId(), mBranchName, newPath).enqueue(new FilesCallback(newPath));
     }
 
     @Override

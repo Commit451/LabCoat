@@ -87,7 +87,7 @@ public class MergeRequestActivity extends BaseActivity {
             switch (item.getItemId()) {
                 case R.id.action_merge:
                     mProgress.setVisibility(View.VISIBLE);
-                    App.instance().getGitLab().acceptMergeRequest(mProject.getId(), mMergeRequest.getId()).enqueue(mMergeRequestCallback);
+                    App.get().getGitLab().acceptMergeRequest(mProject.getId(), mMergeRequest.getId()).enqueue(mMergeRequestCallback);
                     return true;
             }
             return false;

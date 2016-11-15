@@ -60,7 +60,7 @@ public class AccountViewHolder extends RecyclerView.ViewHolder{
             itemView.setBackground(null);
         }
 
-        App.instance().getPicasso()
+        App.get().getPicasso()
                 .load(ImageUtil.getAvatarUrl(account.getUser(), itemView.getResources().getDimensionPixelSize(R.dimen.user_list_image_size)))
                 .transform(new CircleTransformation())
                 .into(mImageView);

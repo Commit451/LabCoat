@@ -193,7 +193,7 @@ public class MergeRequestCommitsFragment extends ButterKnifeFragment {
         mPage = 0;
         mLoading = true;
 
-        App.instance().getGitLab().getMergeRequestCommits(mProject.getId(), mMergeRequest.getId()).enqueue(mCommitsCallback);
+        App.get().getGitLab().getMergeRequestCommits(mProject.getId(), mMergeRequest.getId()).enqueue(mCommitsCallback);
     }
 
     private void loadMore() {

@@ -168,12 +168,12 @@ public class AddUserActivity extends MorphActivity {
         public void onAccessApplied(int accessLevel) {
             mAccessDialog.showLoading();
             if (mGroup == null) {
-                App.instance().getGitLab().addProjectMember(
+                App.get().getGitLab().addProjectMember(
                         mProjectId,
                         mSelectedUser.getId(),
                         accessLevel).enqueue(mAddGroupMemeberCallback);
             } else {
-                App.instance().getGitLab().addGroupMember(mGroup.getId(),
+                App.get().getGitLab().addGroupMember(mGroup.getId(),
                         mSelectedUser.getId(),
                         accessLevel).enqueue(mAddGroupMemeberCallback);
             }
@@ -275,13 +275,13 @@ public class AddUserActivity extends MorphActivity {
         mTeleprinter.hideKeyboard();
         mSwipeRefreshLayout.setRefreshing(true);
         mLoading = true;
-        App.instance().getGitLab().searchUsers(mSearchQuery).enqueue(mUserCallback);
+        App.get().getGitLab().searchUsers(mSearchQuery).enqueue(mUserCallback);
     }
 
     private void loadMore() {
         mLoading = true;
         mAdapter.setLoading(true);
         Timber.d("loadMore " + mNextPageUrl.toString() + " " + mSearchQuery);
-        App.instance().getGitLab().searchUsers(mNextPageUrl.toString(), mSearchQuery).enqueue(mMoreUsersCallback);
+        App.get().getGitLab().searchUsers(mNextPageUrl.toString(), mSearchQuery).enqueue(mMoreUsersCallback);
     }
 }

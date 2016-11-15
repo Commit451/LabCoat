@@ -53,7 +53,7 @@ public class ProjectMemberViewHolder extends RecyclerView.ViewHolder{
         mUsernameView.setText(member.getUsername());
         mAccessView.setText(Member.getAccessLevel(member.getAccessLevel()));
 
-        App.instance().getPicasso()
+        App.get().getPicasso()
                 .load(ImageUtil.getAvatarUrl(member, itemView.getResources().getDimensionPixelSize(R.dimen.user_header_image_size)))
                 .into(mImageView);
     }

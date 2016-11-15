@@ -46,7 +46,7 @@ public class TodoViewHolder extends RecyclerView.ViewHolder {
 
         mTextProject.setText(todo.getProject().getNameWithNamespace());
         if (todo.getAuthor() != null) {
-            App.instance().getPicasso()
+            App.get().getPicasso()
                     .load(ImageUtil.getAvatarUrl(todo.getAuthor(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size)))
                     .transform(new CircleTransformation())
                     .into(mImageView);

@@ -38,7 +38,7 @@ public class GroupViewHolder extends RecyclerView.ViewHolder{
         mNameView.setText(group.getName());
 
         if (group.getAvatarUrl() != null && !group.getAvatarUrl().equals(Uri.EMPTY)) {
-            App.instance().getPicasso()
+            App.get().getPicasso()
                     .load(group.getAvatarUrl())
                     .into(mImageView);
         }

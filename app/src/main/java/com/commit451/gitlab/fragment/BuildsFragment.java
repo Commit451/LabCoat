@@ -221,7 +221,7 @@ public class BuildsFragment extends ButterKnifeFragment {
         });
         mNextPageUrl = null;
         mLoading = true;
-        App.instance().getGitLab().getBuilds(mProject.getId(), mScope).enqueue(mLoadCallback);
+        App.get().getGitLab().getBuilds(mProject.getId(), mScope).enqueue(mLoadCallback);
     }
 
     private void loadMore() {
@@ -237,7 +237,7 @@ public class BuildsFragment extends ButterKnifeFragment {
         mLoading = true;
 
         Timber.d("loadMore called for %s", mNextPageUrl);
-        App.instance().getGitLab().getBuilds(mNextPageUrl.toString(), mScope).enqueue(mMoreCallback);
+        App.get().getGitLab().getBuilds(mNextPageUrl.toString(), mScope).enqueue(mMoreCallback);
     }
 
     private class EventReceiver {

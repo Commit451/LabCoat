@@ -83,7 +83,7 @@ public class ProjectMembersFragment extends ButterKnifeFragment {
         @Override
         public void onRemoveMember(Member member) {
             mMember = member;
-            App.instance().getGitLab().removeProjectMember(mProject.getId(), member.getId()).enqueue(mRemoveMemberCallback);
+            App.get().getGitLab().removeProjectMember(mProject.getId(), member.getId()).enqueue(mRemoveMemberCallback);
         }
 
         @Override
@@ -232,7 +232,7 @@ public class ProjectMembersFragment extends ButterKnifeFragment {
         mNextPageUrl = null;
         mLoading = true;
 
-        App.instance().getGitLab().getProjectMembers(mProject.getId()).enqueue(mProjectMembersCallback);
+        App.get().getGitLab().getProjectMembers(mProject.getId()).enqueue(mProjectMembersCallback);
     }
 
     private void loadMore() {
@@ -256,7 +256,7 @@ public class ProjectMembersFragment extends ButterKnifeFragment {
         mLoading = true;
 
         Timber.d("loadMore called for " + mNextPageUrl);
-        App.instance().getGitLab().getProjectMembers(mNextPageUrl.toString()).enqueue(mProjectMembersCallback);
+        App.get().getGitLab().getProjectMembers(mNextPageUrl.toString()).enqueue(mProjectMembersCallback);
     }
 
     private void setNamespace() {

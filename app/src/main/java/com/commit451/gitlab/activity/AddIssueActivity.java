@@ -129,7 +129,7 @@ public class AddIssueActivity extends MorphActivity {
             mMembers.addAll(response);
             if (mProject.belongsToGroup()) {
                 Timber.d("Project belongs to a group, loading those users too");
-                App.instance().getGitLab().getGroupMembers(mProject.getNamespace().getId()).enqueue(mGroupMembersCallback);
+                App.get().getGitLab().getGroupMembers(mProject.getNamespace().getId()).enqueue(mGroupMembersCallback);
             } else {
                 setAssignees();
             }
@@ -269,9 +269,9 @@ public class AddIssueActivity extends MorphActivity {
     }
 
     private void load() {
-        App.instance().getGitLab().getMilestones(mProject.getId(), getString(R.string.milestone_state_value_default)).enqueue(mMilestonesCallback);
-        App.instance().getGitLab().getProjectMembers(mProject.getId()).enqueue(mAssigneeCallback);
-        App.instance().getGitLab().getLabels(mProject.getId()).enqueue(mLabelCallback);
+        App.get().getGitLab().getMilestones(mProject.getId(), getString(R.string.milestone_state_value_default)).enqueue(mMilestonesCallback);
+        App.get().getGitLab().getProjectMembers(mProject.getId()).enqueue(mAssigneeCallback);
+        App.get().getGitLab().getLabels(mProject.getId()).enqueue(mLabelCallback);
     }
 
     private void showLoading() {
@@ -395,7 +395,7 @@ public class AddIssueActivity extends MorphActivity {
     private void createOrSaveIssue(String title, String description, @Nullable Long assigneeId,
                                    @Nullable Long milestoneId, @Nullable String labels) {
         if (mIssue == null) {
-            App.instance().getGitLab().createIssue(
+            App.get().getGitLab().createIssue(
                     mProject.getId(),
                     title,
                     description,
@@ -403,7 +403,7 @@ public class AddIssueActivity extends MorphActivity {
                     milestoneId,
                     labels).enqueue(mIssueCreatedCallback);
         } else {
-            App.instance().getGitLab().updateIssue(mProject.getId(),
+            App.get().getGitLab().updateIssue(mProject.getId(),
                     mIssue.getId(),
                     title,
                     description,

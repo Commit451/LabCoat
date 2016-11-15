@@ -121,7 +121,7 @@ public class RoutingActivity extends Activity {
 
         //okay so last thing, if the user has followed a link, but the user
         //is not actually signed in, we want to direct them to signin
-        if (App.instance().getAccount() == null && Account.getAccounts().isEmpty()) {
+        if (App.get().getAccount() == null && Account.getAccounts().isEmpty()) {
             Navigator.navigateToLogin(this);
             finish();
             return;

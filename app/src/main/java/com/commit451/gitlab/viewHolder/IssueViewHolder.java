@@ -53,7 +53,7 @@ public class IssueViewHolder extends RecyclerView.ViewHolder {
         }
 
         if (issue.getAssignee() != null) {
-            App.instance().getPicasso()
+            App.get().getPicasso()
                     .load(ImageUtil.getAvatarUrl(issue.getAssignee(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size)))
                     .transform(new CircleTransformation())
                     .into(mImageView);

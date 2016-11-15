@@ -96,7 +96,7 @@ public class PickTagFragment extends ButterKnifeFragment {
         mProgress.setVisibility(View.VISIBLE);
         mMessageView.setVisibility(View.GONE);
 
-        App.instance().getGitLab().getTags(mProjectId).enqueue(new EasyCallback<List<Tag>>() {
+        App.get().getGitLab().getTags(mProjectId).enqueue(new EasyCallback<List<Tag>>() {
             @Override
             public void success(@NonNull List<Tag> response) {
                 if (getView() == null) {

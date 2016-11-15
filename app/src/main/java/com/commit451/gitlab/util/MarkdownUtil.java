@@ -19,8 +19,8 @@ public class MarkdownUtil {
         markdown = EmojiParser.parseToUnicode(markdown);
         CharSequence charSequence = bypass.markdownToSpannable(markdown,
                 BypassImageGetterFactory.create(textView,
-                        App.instance().getPicasso(),
-                        App.instance().getAccount().getServerUrl().toString(),
+                        App.get().getPicasso(),
+                        App.get().getAccount().getServerUrl().toString(),
                         project));
         return charSequence;
     }

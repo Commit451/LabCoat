@@ -126,15 +126,15 @@ public class BuildActivity extends BaseActivity {
             switch (item.getItemId()) {
                 case R.id.action_retry:
                     mProgress.setVisibility(View.VISIBLE);
-                    App.instance().getGitLab().retryBuild(mProject.getId(), mBuild.getId()).enqueue(mRetryCallback);
+                    App.get().getGitLab().retryBuild(mProject.getId(), mBuild.getId()).enqueue(mRetryCallback);
                     return true;
                 case R.id.action_erase:
                     mProgress.setVisibility(View.VISIBLE);
-                    App.instance().getGitLab().eraseBuild(mProject.getId(), mBuild.getId()).enqueue(mEraseCallback);
+                    App.get().getGitLab().eraseBuild(mProject.getId(), mBuild.getId()).enqueue(mEraseCallback);
                     return true;
                 case R.id.action_cancel:
                     mProgress.setVisibility(View.VISIBLE);
-                    App.instance().getGitLab().cancelBuild(mProject.getId(), mBuild.getId()).enqueue(mCancelCallback);
+                    App.get().getGitLab().cancelBuild(mProject.getId(), mBuild.getId()).enqueue(mCancelCallback);
                     return true;
                 case R.id.action_download:
                     checkDownloadBuild();
@@ -201,8 +201,8 @@ public class BuildActivity extends BaseActivity {
     }
 
     private void downloadBuild() {
-        Account account = App.instance().getAccount();
-        String downloadUrl = BuildUtil.getDownloadBuildUrl(App.instance().getAccount().getServerUrl(), mProject, mBuild);
+        Account account = App.get().getAccount();
+        String downloadUrl = BuildUtil.getDownloadBuildUrl(App.get().getAccount().getServerUrl(), mProject, mBuild);
         Timber.d("Downloading build: " + downloadUrl);
         DownloadUtil.download(BuildActivity.this, account, downloadUrl, mBuild.getArtifactsFile().getFileName());
     }

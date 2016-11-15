@@ -37,7 +37,7 @@ public class FeedEntryViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(Entry entry) {
-        App.instance().getPicasso()
+        App.get().getPicasso()
                 .load(entry.getThumbnail().getUrl())
                 .transform(new CircleTransformation())
                 .into(mImageView);

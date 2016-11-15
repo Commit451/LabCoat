@@ -35,7 +35,6 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.api.GitLab;
 import com.commit451.gitlab.api.GitLabFactory;
 import com.commit451.gitlab.api.OkHttpClientFactory;
-import com.commit451.gitlab.data.Prefs;
 import com.commit451.gitlab.dialog.HttpLoginDialog;
 import com.commit451.gitlab.event.LoginEvent;
 import com.commit451.gitlab.event.ReloadDataEvent;
@@ -164,8 +163,8 @@ public class LoginActivity extends BaseActivity {
             }
             mAccount.setUser(response.body());
             mAccount.setLastUsed(new Date());
-            App.instance().getPrefs().addAccount(mAccount);
-            App.instance().setAccount(mAccount);
+            App.get().getPrefs().addAccount(mAccount);
+            App.get().setAccount(mAccount);
             App.bus().post(new LoginEvent(mAccount));
             //This is mostly for if projects already exists, then we will reload the data
             App.bus().post(new ReloadDataEvent());
@@ -578,7 +577,7 @@ public class LoginActivity extends BaseActivity {
     }
 
     private boolean isAlreadySignedIn(@NonNull String url, @NonNull String usernameOrEmailOrPrivateToken) {
-        List<Account> accounts = App.instance().getPrefs().getAccounts();
+        List<Account> accounts = App.get().getPrefs().getAccounts();
         for (Account account : accounts) {
             if (account.getServerUrl().equals(Uri.parse(url))) {
                 if (usernameOrEmailOrPrivateToken.equals(account.getUser().getUsername())

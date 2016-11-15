@@ -56,16 +56,16 @@ public class IssueHeaderViewHolder extends RecyclerView.ViewHolder {
         } else {
             mDescriptionView.setVisibility(View.VISIBLE);
             BypassPicassoImageGetter getter = BypassImageGetterFactory.create(mDescriptionView,
-                    App.instance().getPicasso(),
-                    App.instance().getAccount().getServerUrl().toString(),
+                    App.get().getPicasso(),
+                    App.get().getAccount().getServerUrl().toString(),
                     project);
             String description = issue.getDescription();
             description = EmojiParser.parseToUnicode(description);
             mDescriptionView.setText(mBypass.markdownToSpannable(description, getter));
-            mDescriptionView.setMovementMethod(new InternalLinkMovementMethod(App.instance().getAccount().getServerUrl()));
+            mDescriptionView.setMovementMethod(new InternalLinkMovementMethod(App.get().getAccount().getServerUrl()));
         }
 
-        App.instance().getPicasso()
+        App.get().getPicasso()
                 .load(ImageUtil.getAvatarUrl(issue.getAuthor(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size)))
                 .transform(new CircleTransformation())
                 .into(mAuthorImageView);

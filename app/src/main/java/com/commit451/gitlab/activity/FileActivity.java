@@ -133,7 +133,7 @@ public class FileActivity extends BaseActivity {
 
     private void loadData() {
         mProgressView.setVisibility(View.VISIBLE);
-        App.instance().getGitLab().getFile(mProjectId, mPath, mRef).enqueue(mRepositoryFileCallback);
+        App.get().getGitLab().getFile(mProjectId, mPath, mRef).enqueue(mRepositoryFileCallback);
     }
 
     private void bindFile(RepositoryFile repositoryFile) {
