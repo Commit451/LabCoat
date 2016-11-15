@@ -16,7 +16,7 @@ import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.api.FileUploadResponse;
 import com.commit451.gitlab.model.api.Project;
-import com.commit451.gitlab.observable.FileObservableFactory;
+import com.commit451.gitlab.rx.FileObservableFactory;
 
 import org.parceler.Parcels;
 
@@ -158,6 +158,7 @@ public class AttachActivity extends BaseActivity {
         mProgress.setVisibility(View.VISIBLE);
         mRootButtons.setVisibility(View.INVISIBLE);
         FileObservableFactory.toPart(photo)
+                .compose(this.<MultipartBody.Part>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action1<MultipartBody.Part>() {

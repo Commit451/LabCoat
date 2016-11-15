@@ -1,4 +1,4 @@
-package com.commit451.gitlab.observable;
+package com.commit451.gitlab.rx;
 
 import com.commit451.gitlab.util.FileUtil;
 

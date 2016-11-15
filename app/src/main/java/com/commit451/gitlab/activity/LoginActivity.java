@@ -73,6 +73,10 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class LoginActivity extends BaseActivity {
@@ -129,26 +133,6 @@ public class LoginActivity extends BaseActivity {
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
             onLoginClick();
             return true;
-        }
-    };
-
-    private final Callback<UserLogin> mLoginCallback = new Callback<UserLogin>() {
-
-        @Override
-        public void onResponse(Call<UserLogin> call, Response<UserLogin> response) {
-            if (!response.isSuccessful() || response.body() == null) {
-                handleConnectionResponse(response);
-                return;
-            }
-
-            mAccount.setPrivateToken(response.body().getPrivateToken());
-            loadUser();
-        }
-
-        @Override
-        public void onFailure(Call<UserLogin> call, Throwable t) {
-            Timber.e(t);
-            handleConnectionError(t);
         }
     };
 
@@ -341,10 +325,39 @@ public class LoginActivity extends BaseActivity {
         }
         GitLab gitLab = GitLabFactory.create(mAccount, gitlabClientBuilder.build());
         if (mUserInput.getText().toString().contains("@")) {
-            gitLab.loginWithEmail(mUserInput.getText().toString(), mPasswordInput.getText().toString()).enqueue(mLoginCallback);
+            attemptLogin(gitLab.loginWithEmail(mUserInput.getText().toString(), mPasswordInput.getText().toString()));
         } else {
-            gitLab.loginWithUsername(mUserInput.getText().toString(), mPasswordInput.getText().toString()).enqueue(mLoginCallback);
+            attemptLogin(gitLab.loginWithEmail(mUserInput.getText().toString(), mPasswordInput.getText().toString()));
         }
+    }
+
+    private void attemptLogin(Observable<Response<UserLogin>> observable) {
+        observable
+                .compose(this.<Response<UserLogin>>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Response<UserLogin>>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e);
+                        handleConnectionError(e);
+                    }
+
+                    @Override
+                    public void onNext(Response<UserLogin> response) {
+                        if (!response.isSuccessful() || response.body() == null) {
+                            handleConnectionResponse(response);
+                            return;
+                        }
+
+                        mAccount.setPrivateToken(response.body().getPrivateToken());
+                        loadUser();
+                    }
+                });
     }
 
     private void connectByToken() {

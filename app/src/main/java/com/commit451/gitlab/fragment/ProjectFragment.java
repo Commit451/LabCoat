@@ -24,7 +24,7 @@ import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryFile;
 import com.commit451.gitlab.model.api.RepositoryTreeObject;
 import com.commit451.gitlab.navigation.Navigator;
-import com.commit451.gitlab.observable.DecodeObservableFactory;
+import com.commit451.gitlab.rx.DecodeObservableFactory;
 import com.commit451.gitlab.util.BypassImageGetterFactory;
 import com.commit451.gitlab.util.InternalLinkMovementMethod;
 import com.vdurmont.emoji.EmojiParser;
@@ -140,6 +140,7 @@ public class ProjectFragment extends ButterKnifeFragment {
             }
             mSwipeRefreshLayout.setRefreshing(false);
             DecodeObservableFactory.newDecode(response.getContent())
+                    .compose(ProjectFragment.this.<byte[]>bindToLifecycle())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Subscriber<byte[]>() {

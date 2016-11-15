@@ -25,7 +25,7 @@ import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.api.RepositoryFile;
-import com.commit451.gitlab.observable.DecodeObservableFactory;
+import com.commit451.gitlab.rx.DecodeObservableFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -150,6 +150,7 @@ public class FileActivity extends BaseActivity {
 
     private void loadBlob(RepositoryFile repositoryFile) {
         DecodeObservableFactory.newDecode(repositoryFile.getContent())
+                .compose(this.<byte[]>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<byte[]>() {

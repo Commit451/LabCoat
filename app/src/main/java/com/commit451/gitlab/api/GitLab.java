@@ -32,6 +32,7 @@ import java.util.List;
 
 import okhttp3.MultipartBody;
 import retrofit2.Call;
+import retrofit2.Response;
 import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -43,6 +44,7 @@ import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 import retrofit2.http.Url;
+import rx.Observable;
 
 
 /**
@@ -56,12 +58,12 @@ public interface GitLab {
 
     @FormUrlEncoded
     @POST(API_VERSION + "/session")
-    Call<UserLogin> loginWithUsername(@Field("login") String login,
-                                      @Field("password") String password);
+    Observable<Response<UserLogin>> loginWithUsername(@Field("login") String login,
+                                                     @Field("password") String password);
 
     @FormUrlEncoded
     @POST(API_VERSION + "/session")
-    Call<UserLogin> loginWithEmail(@Field("email") String email,
+    Observable<Response<UserLogin>> loginWithEmail(@Field("email") String email,
                                    @Field("password") String password);
 
     /* --- USERS --- */
