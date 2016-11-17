@@ -2,7 +2,6 @@ package com.commit451.gitlab.fragment;
 
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,7 +19,6 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.gitlab.adapter.IssuesAdapter;
-import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.event.IssueChangedEvent;
 import com.commit451.gitlab.event.IssueCreatedEvent;
 import com.commit451.gitlab.event.IssueReloadEvent;
@@ -29,12 +27,18 @@ import com.commit451.gitlab.model.api.Issue;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.LinkHeaderParser;
+
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import retrofit2.Response;
+import retrofit2.adapter.rxjava.HttpException;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class IssuesFragment extends ButterKnifeFragment {
@@ -98,55 +102,6 @@ public class IssuesFragment extends ButterKnifeFragment {
 
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
-        }
-    };
-
-    private final EasyCallback<List<Issue>> mIssuesCallback = new EasyCallback<List<Issue>>() {
-        @Override
-        public void success(@NonNull List<Issue> response) {
-            mLoading = false;
-            if (getView() == null) {
-                return;
-            }
-            mSwipeRefreshLayout.setRefreshing(false);
-            if (response.isEmpty()) {
-                mMessageView.setVisibility(View.VISIBLE);
-                mMessageView.setText(R.string.no_issues);
-            }
-            mIssuesAdapter.setIssues(response);
-            mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
-            Timber.d("Next page url " + mNextPageUrl);
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            mLoading = false;
-            Timber.e(t);
-            if (getView() == null) {
-                return;
-            }
-            mSwipeRefreshLayout.setRefreshing(false);
-            mMessageView.setVisibility(View.VISIBLE);
-            mMessageView.setText(R.string.connection_error_issues);
-            mIssuesAdapter.setIssues(null);
-            mNextPageUrl = null;
-        }
-    };
-
-    private final EasyCallback<List<Issue>> mMoreIssuesCallback = new EasyCallback<List<Issue>>() {
-        @Override
-        public void success(@NonNull List<Issue> response) {
-            mLoading = false;
-            mIssuesAdapter.setLoading(false);
-            mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
-            mIssuesAdapter.addIssues(response);
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t);
-            mLoading = false;
-            mIssuesAdapter.setLoading(false);
         }
     };
 
@@ -230,7 +185,44 @@ public class IssuesFragment extends ButterKnifeFragment {
         });
         mNextPageUrl = null;
         mLoading = true;
-        App.get().getGitLab().getIssues(mProject.getId(), mState).enqueue(mIssuesCallback);
+        App.get().getGitLab().getIssues(mProject.getId(), mState)
+                .compose(this.<Response<List<Issue>>>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Response<List<Issue>>>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mLoading = false;
+                        Timber.e(e);
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        mMessageView.setVisibility(View.VISIBLE);
+                        mMessageView.setText(R.string.connection_error_issues);
+                        mIssuesAdapter.setIssues(null);
+                        mNextPageUrl = null;
+                    }
+
+                    @Override
+                    public void onNext(Response<List<Issue>> listResponse) {
+                        if (!listResponse.isSuccessful()) {
+                            onError(new HttpException(listResponse));
+                            return;
+                        }
+                        mLoading = false;
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        if (listResponse.body().isEmpty()) {
+                            mMessageView.setVisibility(View.VISIBLE);
+                            mMessageView.setText(R.string.no_issues);
+                        }
+                        mIssuesAdapter.setIssues(listResponse.body());
+                        mNextPageUrl = LinkHeaderParser.parse(listResponse).getNext();
+                        Timber.d("Next page url " + mNextPageUrl);
+
+                    }
+                });
     }
 
     private void loadMore() {
@@ -246,7 +238,30 @@ public class IssuesFragment extends ButterKnifeFragment {
         mLoading = true;
 
         Timber.d("loadMore called for " + mNextPageUrl);
-        App.get().getGitLab().getIssues(mNextPageUrl.toString()).enqueue(mMoreIssuesCallback);
+        App.get().getGitLab().getIssues(mNextPageUrl.toString())
+                .compose(this.<Response<List<Issue>>>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Response<List<Issue>>>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e);
+                        mLoading = false;
+                        mIssuesAdapter.setLoading(false);
+                    }
+
+                    @Override
+                    public void onNext(Response<List<Issue>> listResponse) {
+                        mLoading = false;
+                        mIssuesAdapter.setLoading(false);
+                        mNextPageUrl = LinkHeaderParser.parse(listResponse).getNext();
+                        mIssuesAdapter.addIssues(listResponse.body());
+                    }
+                });
     }
 
     private class EventReceiver {

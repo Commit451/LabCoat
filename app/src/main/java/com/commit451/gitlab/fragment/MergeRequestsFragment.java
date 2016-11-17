@@ -2,7 +2,6 @@ package com.commit451.gitlab.fragment;
 
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,18 +18,23 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.gitlab.adapter.MergeRequestAdapter;
-import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.event.MergeRequestChangedEvent;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.LinkHeaderParser;
+
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.List;
 
 import butterknife.BindView;
+import retrofit2.Response;
+import retrofit2.adapter.rxjava.HttpException;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class MergeRequestsFragment extends ButterKnifeFragment {
@@ -82,55 +86,6 @@ public class MergeRequestsFragment extends ButterKnifeFragment {
             if (firstVisibleItem + visibleItemCount >= totalItemCount && !mLoading && mNextPageUrl != null) {
                 loadMore();
             }
-        }
-    };
-
-    private final EasyCallback<List<MergeRequest>> mCallback = new EasyCallback<List<MergeRequest>>() {
-        @Override
-        public void success(@NonNull List<MergeRequest> response) {
-            mLoading = false;
-            if (getView() == null) {
-                return;
-            }
-            mSwipeRefreshLayout.setRefreshing(false);
-            if (response.isEmpty()) {
-                mMessageView.setVisibility(View.VISIBLE);
-                mMessageView.setText(R.string.no_merge_requests);
-            }
-            mMergeRequestAdapter.setData(response);
-            mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
-            Timber.d("Next page url " + mNextPageUrl);
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            mLoading = false;
-            Timber.e(t);
-            if (getView() == null) {
-                return;
-            }
-            mSwipeRefreshLayout.setRefreshing(false);
-            mMessageView.setVisibility(View.VISIBLE);
-            mMessageView.setText(R.string.connection_error_merge_requests);
-            mMergeRequestAdapter.setData(null);
-            mNextPageUrl = null;
-        }
-    };
-
-    private final EasyCallback<List<MergeRequest>> mMoreIssuesCallback = new EasyCallback<List<MergeRequest>>() {
-        @Override
-        public void success(@NonNull List<MergeRequest> response) {
-            mLoading = false;
-            mMergeRequestAdapter.setLoading(false);
-            mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
-            mMergeRequestAdapter.addData(response);
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t);
-            mMergeRequestAdapter.setLoading(false);
-            mLoading = false;
         }
     };
 
@@ -204,7 +159,43 @@ public class MergeRequestsFragment extends ButterKnifeFragment {
         });
         mNextPageUrl = null;
         mLoading = true;
-        App.get().getGitLab().getMergeRequests(mProject.getId(), mState).enqueue(mCallback);
+        App.get().getGitLab().getMergeRequests(mProject.getId(), mState)
+                .compose(this.<Response<List<MergeRequest>>>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Response<List<MergeRequest>>>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mLoading = false;
+                        Timber.e(e);
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        mMessageView.setVisibility(View.VISIBLE);
+                        mMessageView.setText(R.string.connection_error_merge_requests);
+                        mMergeRequestAdapter.setData(null);
+                        mNextPageUrl = null;
+                    }
+
+                    @Override
+                    public void onNext(Response<List<MergeRequest>> listResponse) {
+                        if (!listResponse.isSuccessful()) {
+                            onError(new HttpException(listResponse));
+                            return;
+                        }
+                        mLoading = false;
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        if (listResponse.body().isEmpty()) {
+                            mMessageView.setVisibility(View.VISIBLE);
+                            mMessageView.setText(R.string.no_merge_requests);
+                        }
+                        mMergeRequestAdapter.setData(listResponse.body());
+                        mNextPageUrl = LinkHeaderParser.parse(listResponse).getNext();
+                        Timber.d("Next page url " + mNextPageUrl);
+                    }
+                });
     }
 
     private void loadMore() {
@@ -217,7 +208,30 @@ public class MergeRequestsFragment extends ButterKnifeFragment {
         mMergeRequestAdapter.setLoading(true);
         mLoading = true;
         Timber.d("loadMore called for " + mNextPageUrl);
-        App.get().getGitLab().getMergeRequests(mNextPageUrl.toString(), mState).enqueue(mMoreIssuesCallback);
+        App.get().getGitLab().getMergeRequests(mNextPageUrl.toString(), mState)
+                .compose(this.<Response<List<MergeRequest>>>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Response<List<MergeRequest>>>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e);
+                        mMergeRequestAdapter.setLoading(false);
+                        mLoading = false;
+                    }
+
+                    @Override
+                    public void onNext(Response<List<MergeRequest>> listResponse) {
+                        mLoading = false;
+                        mMergeRequestAdapter.setLoading(false);
+                        mNextPageUrl = LinkHeaderParser.parse(listResponse).getNext();
+                        mMergeRequestAdapter.addData(listResponse.body());
+                    }
+                });
     }
 
     private class EventReceiver {

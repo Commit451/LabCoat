@@ -5,13 +5,11 @@ import android.animation.Animator;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 
-import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.api.FileUploadResponse;
@@ -30,6 +28,7 @@ import io.codetail.animation.ViewAnimationUtils;
 import okhttp3.MultipartBody;
 import pl.aprilapps.easyphotopicker.DefaultCallback;
 import pl.aprilapps.easyphotopicker.EasyImage;
+import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
@@ -58,22 +57,6 @@ public class AttachActivity extends BaseActivity {
     View mCard;
 
     Project mProject;
-
-    private final EasyCallback<FileUploadResponse> mUploadCallback = new EasyCallback<FileUploadResponse>() {
-        @Override
-        public void success(@NonNull FileUploadResponse response) {
-            Intent data = new Intent();
-            data.putExtra(KEY_FILE_UPLOAD_RESPONSE, Parcels.wrap(response));
-            setResult(RESULT_OK, data);
-            finish();
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t);
-            finish();
-        }
-    };
 
     @OnClick(R.id.root)
     void onRootClicked() {
@@ -112,7 +95,7 @@ public class AttachActivity extends BaseActivity {
                 Animator animator = ViewAnimationUtils
                         .createCircularReveal(mCard, 0, mCard.getHeight(), 0, finalRadius);
                 animator.setDuration(500);
-                animator.setInterpolator( new AccelerateDecelerateInterpolator());
+                animator.setInterpolator(new AccelerateDecelerateInterpolator());
                 animator.start();
             }
         });
@@ -164,7 +147,29 @@ public class AttachActivity extends BaseActivity {
                 .subscribe(new Action1<MultipartBody.Part>() {
                     @Override
                     public void call(MultipartBody.Part part) {
-                        App.get().getGitLab().uploadFile(mProject.getId(), part).enqueue(mUploadCallback);
+                        App.get().getGitLab().uploadFile(mProject.getId(), part)
+                                .compose(AttachActivity.this.<FileUploadResponse>bindToLifecycle())
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(new Subscriber<FileUploadResponse>() {
+                                    @Override
+                                    public void onCompleted() {
+                                    }
+
+                                    @Override
+                                    public void onError(Throwable e) {
+                                        Timber.e(e);
+                                        finish();
+                                    }
+
+                                    @Override
+                                    public void onNext(FileUploadResponse fileUploadResponse) {
+                                        Intent data = new Intent();
+                                        data.putExtra(KEY_FILE_UPLOAD_RESPONSE, Parcels.wrap(fileUploadResponse));
+                                        setResult(RESULT_OK, data);
+                                        finish();
+                                    }
+                                });
                     }
                 });
     }

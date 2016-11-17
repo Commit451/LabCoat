@@ -2,7 +2,6 @@ package com.commit451.gitlab.fragment;
 
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -17,7 +16,6 @@ import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.adapter.ProjectMembersAdapter;
-import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.dialog.AccessDialog;
 import com.commit451.gitlab.event.MemberAddedEvent;
 import com.commit451.gitlab.event.ProjectReloadEvent;
@@ -26,12 +24,19 @@ import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.LinkHeaderParser;
 import com.commit451.gitlab.viewHolder.ProjectMemberViewHolder;
+
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import retrofit2.Response;
+import retrofit2.adapter.rxjava.HttpException;
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class ProjectMembersFragment extends ButterKnifeFragment {
@@ -83,7 +88,27 @@ public class ProjectMembersFragment extends ButterKnifeFragment {
         @Override
         public void onRemoveMember(Member member) {
             mMember = member;
-            App.get().getGitLab().removeProjectMember(mProject.getId(), member.getId()).enqueue(mRemoveMemberCallback);
+            App.get().getGitLab().removeProjectMember(mProject.getId(), member.getId())
+                    .compose(ProjectMembersFragment.this.<Void>bindToLifecycle())
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Subscriber<Void>() {
+                        @Override
+                        public void onCompleted() {
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Timber.e(e);
+                            Snackbar.make(mRoot, R.string.failed_to_remove_member, Snackbar.LENGTH_SHORT)
+                                    .show();
+                        }
+
+                        @Override
+                        public void onNext(Void aVoid) {
+                            mAdapter.removeMember(mMember);
+                        }
+                    });
         }
 
         @Override
@@ -98,70 +123,6 @@ public class ProjectMembersFragment extends ButterKnifeFragment {
             Navigator.navigateToGroup(getActivity(), mProject.getNamespace().getId());
         }
     };
-
-    private final EasyCallback<List<Member>> mProjectMembersCallback = new EasyCallback<List<Member>>() {
-        @Override
-        public void success(@NonNull List<Member> response) {
-            mLoading = false;
-            if (getView() == null) {
-                return;
-            }
-            mSwipeRefreshLayout.setRefreshing(false);
-            if (!response.isEmpty()) {
-                mMessageView.setVisibility(View.GONE);
-            } else if (mNextPageUrl == null) {
-                Timber.d("No project members found");
-                mMessageView.setText(R.string.no_project_members);
-                mMessageView.setVisibility(View.VISIBLE);
-            }
-
-            mAddUserButton.setVisibility(View.VISIBLE);
-
-            if (mNextPageUrl == null) {
-                mAdapter.setProjectMembers(response);
-            } else {
-                mAdapter.addProjectMembers(response);
-            }
-
-            mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
-            Timber.d("Next page url " + mNextPageUrl);
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            mLoading = false;
-            Timber.e(t);
-            if (getView() == null) {
-                return;
-            }
-            mSwipeRefreshLayout.setRefreshing(false);
-            mMessageView.setVisibility(View.VISIBLE);
-            mMessageView.setText(R.string.connection_error_users);
-            mAddUserButton.setVisibility(View.GONE);
-            mAdapter.setProjectMembers(null);
-            mNextPageUrl = null;
-        }
-    };
-
-    private final EasyCallback<Void> mRemoveMemberCallback = new EasyCallback<Void>() {
-        @Override
-        public void success(@NonNull Void response) {
-            if (getView() == null) {
-                return;
-            }
-            mAdapter.removeMember(mMember);
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t);
-            if (getView() == null) {
-                return;
-            }
-            Snackbar.make(mRoot, R.string.failed_to_remove_member, Snackbar.LENGTH_SHORT)
-                    .show();
-        }
-    }.allowNullBodies(true);
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -232,7 +193,7 @@ public class ProjectMembersFragment extends ButterKnifeFragment {
         mNextPageUrl = null;
         mLoading = true;
 
-        App.get().getGitLab().getProjectMembers(mProject.getId()).enqueue(mProjectMembersCallback);
+        load(App.get().getGitLab().getProjectMembers(mProject.getId()));
     }
 
     private void loadMore() {
@@ -256,7 +217,59 @@ public class ProjectMembersFragment extends ButterKnifeFragment {
         mLoading = true;
 
         Timber.d("loadMore called for " + mNextPageUrl);
-        App.get().getGitLab().getProjectMembers(mNextPageUrl.toString()).enqueue(mProjectMembersCallback);
+        load(App.get().getGitLab().getProjectMembers(mNextPageUrl.toString()));
+    }
+
+    private void load(Observable<Response<List<Member>>> observable) {
+        observable
+                .compose(this.<Response<List<Member>>>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Response<List<Member>>>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mLoading = false;
+                        Timber.e(e);
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        mMessageView.setVisibility(View.VISIBLE);
+                        mMessageView.setText(R.string.connection_error_users);
+                        mAddUserButton.setVisibility(View.GONE);
+                        mAdapter.setProjectMembers(null);
+                        mNextPageUrl = null;
+                    }
+
+                    @Override
+                    public void onNext(Response<List<Member>> listResponse) {
+                        if (!listResponse.isSuccessful()) {
+                            onError(new HttpException(listResponse));
+                            return;
+                        }
+                        mLoading = false;
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        if (!listResponse.body().isEmpty()) {
+                            mMessageView.setVisibility(View.GONE);
+                        } else if (mNextPageUrl == null) {
+                            Timber.d("No project members found");
+                            mMessageView.setText(R.string.no_project_members);
+                            mMessageView.setVisibility(View.VISIBLE);
+                        }
+
+                        mAddUserButton.setVisibility(View.VISIBLE);
+
+                        if (mNextPageUrl == null) {
+                            mAdapter.setProjectMembers(listResponse.body());
+                        } else {
+                            mAdapter.addProjectMembers(listResponse.body());
+                        }
+
+                        mNextPageUrl = LinkHeaderParser.parse(listResponse).getNext();
+                        Timber.d("Next page url " + mNextPageUrl);
+                    }
+                });
     }
 
     private void setNamespace() {

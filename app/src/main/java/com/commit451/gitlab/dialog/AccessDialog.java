@@ -1,14 +1,12 @@
 package com.commit451.gitlab.dialog;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
-import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.api.Group;
@@ -16,7 +14,10 @@ import com.commit451.gitlab.model.api.Member;
 
 import java.util.Arrays;
 
-import retrofit2.Callback;
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -50,22 +51,6 @@ public class AccessDialog extends MaterialDialog {
     long mProjectId = -1;
     Group mGroup;
     Member mMember;
-
-    private final Callback<Member> mEditUserCallback = new EasyCallback<Member>() {
-        @Override
-        public void success(@NonNull Member response) {
-            if (mAccessChangedListener != null) {
-                mAccessChangedListener.onAccessChanged(mMember, mRoleNames[getSelectedIndex()]);
-            }
-            dismiss();
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t);
-            onError();
-        }
-    };
 
     public AccessDialog(Context context, OnAccessAppliedListener accessAppliedListener) {
         this(context, null, null, -1);
@@ -121,15 +106,40 @@ public class AccessDialog extends MaterialDialog {
 
         if (mGroup != null) {
             showLoading();
-            App.get().getGitLab().editGroupMember(mGroup.getId(), mMember.getId(), accessLevel).enqueue(mEditUserCallback);
+            editGroupOrProjectMember(App.get().getGitLab().editGroupMember(mGroup.getId(), mMember.getId(), accessLevel));
         } else if (mProjectId != -1) {
             showLoading();
-            App.get().getGitLab().editProjectMember(mProjectId, mMember.getId(), accessLevel).enqueue(mEditUserCallback);
+            editGroupOrProjectMember(App.get().getGitLab().editProjectMember(mProjectId, mMember.getId(), accessLevel));
         } else if (mAccessAppliedListener != null) {
             mAccessAppliedListener.onAccessApplied(accessLevel);
         } else {
             throw new IllegalStateException("Not sure what to apply this access change to. Check the constructors plz");
         }
+    }
+
+    private void editGroupOrProjectMember(Observable<Member> observable) {
+        observable
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Member>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e);
+                        AccessDialog.this.onError();
+                    }
+
+                    @Override
+                    public void onNext(Member member) {
+                        if (mAccessChangedListener != null) {
+                            mAccessChangedListener.onAccessChanged(mMember, mRoleNames[getSelectedIndex()]);
+                        }
+                        dismiss();
+                    }
+                });
     }
 
     public void showLoading() {

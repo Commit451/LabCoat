@@ -21,7 +21,6 @@ import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 import android.webkit.WebView;
 
-import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.api.RepositoryFile;
@@ -36,7 +35,6 @@ import java.nio.charset.Charset;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import retrofit2.Callback;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -53,7 +51,9 @@ public class FileActivity extends BaseActivity {
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({OPTION_SAVE, OPTION_OPEN})
-    public @interface Option {}
+    public @interface Option {
+    }
+
     public static final int OPTION_SAVE = 0;
     public static final int OPTION_OPEN = 1;
 
@@ -65,10 +65,14 @@ public class FileActivity extends BaseActivity {
         return intent;
     }
 
-    @BindView(R.id.root) ViewGroup mRoot;
-    @BindView(R.id.toolbar) Toolbar mToolbar;
-    @BindView(R.id.file_blob) WebView mFileBlobView;
-    @BindView(R.id.progress) View mProgressView;
+    @BindView(R.id.root)
+    ViewGroup mRoot;
+    @BindView(R.id.toolbar)
+    Toolbar mToolbar;
+    @BindView(R.id.file_blob)
+    WebView mFileBlobView;
+    @BindView(R.id.progress)
+    View mProgressView;
 
     private long mProjectId;
     private String mPath;
@@ -76,23 +80,9 @@ public class FileActivity extends BaseActivity {
     private RepositoryFile mRepositoryFile;
     private String mFileName;
     private byte[] mBlob;
-    private @Option int mOption;
-
-    private final Callback<RepositoryFile> mRepositoryFileCallback = new EasyCallback<RepositoryFile>() {
-        @Override
-        public void success(@NonNull RepositoryFile response) {
-            mProgressView.setVisibility(View.GONE);
-            bindFile(response);
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t);
-            mProgressView.setVisibility(View.GONE);
-            Snackbar.make(mRoot, R.string.file_load_error, Snackbar.LENGTH_SHORT)
-                    .show();
-        }
-    };
+    private
+    @Option
+    int mOption;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,7 +104,7 @@ public class FileActivity extends BaseActivity {
         mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                switch(item.getItemId()) {
+                switch (item.getItemId()) {
                     case R.id.action_open:
                         mOption = OPTION_OPEN;
                         checkAccountPermission();
@@ -133,7 +123,29 @@ public class FileActivity extends BaseActivity {
 
     private void loadData() {
         mProgressView.setVisibility(View.VISIBLE);
-        App.get().getGitLab().getFile(mProjectId, mPath, mRef).enqueue(mRepositoryFileCallback);
+        App.get().getGitLab().getFile(mProjectId, mPath, mRef)
+                .compose(this.<RepositoryFile>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<RepositoryFile>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e);
+                        mProgressView.setVisibility(View.GONE);
+                        Snackbar.make(mRoot, R.string.file_load_error, Snackbar.LENGTH_SHORT)
+                                .show();
+                    }
+
+                    @Override
+                    public void onNext(RepositoryFile repositoryFile) {
+                        mProgressView.setVisibility(View.GONE);
+                        bindFile(repositoryFile);
+                    }
+                });
     }
 
     private void bindFile(RepositoryFile repositoryFile) {
@@ -155,7 +167,8 @@ public class FileActivity extends BaseActivity {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<byte[]>() {
                     @Override
-                    public void onCompleted() {}
+                    public void onCompleted() {
+                    }
 
                     @Override
                     public void onError(Throwable e) {

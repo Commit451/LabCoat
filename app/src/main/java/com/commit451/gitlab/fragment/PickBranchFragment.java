@@ -3,7 +3,6 @@ package com.commit451.gitlab.fragment;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.PickBranchOrTagActivity;
@@ -25,6 +23,9 @@ import org.parceler.Parcels;
 import java.util.List;
 
 import butterknife.BindView;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -95,26 +96,28 @@ public class PickBranchFragment extends ButterKnifeFragment {
         mProgress.setVisibility(View.VISIBLE);
         mMessageView.setVisibility(View.GONE);
 
-        App.get().getGitLab().getBranches(mProjectId).enqueue(new EasyCallback<List<Branch>>() {
-            @Override
-            public void success(@NonNull List<Branch> response) {
-                if (getView() == null) {
-                    return;
-                }
-                mProgress.setVisibility(View.GONE);
-                mBranchesAdapter.setEntries(response);
-            }
+        App.get().getGitLab().getBranches(mProjectId)
+                .compose(this.<List<Branch>>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<List<Branch>>() {
+                    @Override
+                    public void onCompleted() {
+                    }
 
-            @Override
-            public void failure(Throwable t) {
-                Timber.e(t);
-                if (getView() == null) {
-                    return;
-                }
-                mProgress.setVisibility(View.GONE);
-                mMessageView.setVisibility(View.VISIBLE);
-            }
-        });
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e);
+                        mProgress.setVisibility(View.GONE);
+                        mMessageView.setVisibility(View.VISIBLE);
+                    }
+
+                    @Override
+                    public void onNext(List<Branch> branches) {
+                        mProgress.setVisibility(View.GONE);
+                        mBranchesAdapter.setEntries(branches);
+                    }
+                });
     }
 
 }

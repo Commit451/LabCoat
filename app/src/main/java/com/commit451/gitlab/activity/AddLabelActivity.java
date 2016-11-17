@@ -3,7 +3,6 @@ package com.commit451.gitlab.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.LabelAdapter;
@@ -27,6 +25,9 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -118,23 +119,31 @@ public class AddLabelActivity extends BaseActivity {
                 }
             }
         });
-        App.get().getGitLab().getLabels(mProjectId).enqueue(new EasyCallback<List<Label>>() {
-            @Override
-            public void success(@NonNull List<Label> response) {
-                mSwipeRefreshLayout.setRefreshing(false);
-                if (response.isEmpty()) {
-                    mTextMessage.setVisibility(View.VISIBLE);
-                }
-                mLabelAdapter.setItems(response);
-            }
+        App.get().getGitLab().getLabels(mProjectId)
+                .compose(this.<List<Label>>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<List<Label>>() {
+                    @Override
+                    public void onCompleted() {
+                    }
 
-            @Override
-            public void failure(Throwable t) {
-                mSwipeRefreshLayout.setRefreshing(false);
-                mTextMessage.setVisibility(View.VISIBLE);
-                Timber.e(t);
-            }
-        });
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e);
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        mTextMessage.setVisibility(View.VISIBLE);
+                    }
+
+                    @Override
+                    public void onNext(List<Label> labels) {
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        if (labels.isEmpty()) {
+                            mTextMessage.setVisibility(View.VISIBLE);
+                        }
+                        mLabelAdapter.setItems(labels);
+                    }
+                });
     }
 
     @Override

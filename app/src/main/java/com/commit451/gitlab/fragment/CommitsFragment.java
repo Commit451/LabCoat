@@ -1,7 +1,6 @@
 package com.commit451.gitlab.fragment;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,16 +15,19 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.adapter.CommitsAdapter;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
-import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryCommit;
 import com.commit451.gitlab.navigation.Navigator;
+
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.List;
 
 import butterknife.BindView;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class CommitsFragment extends ButterKnifeFragment {
@@ -56,67 +58,6 @@ public class CommitsFragment extends ButterKnifeFragment {
             if (firstVisibleItem + visibleItemCount >= totalItemCount && !mLoading && mPage >= 0) {
                 loadMore();
             }
-        }
-    };
-
-    private final EasyCallback<List<RepositoryCommit>> mCommitsCallback = new EasyCallback<List<RepositoryCommit>>() {
-        @Override
-        public void success(@NonNull List<RepositoryCommit> response) {
-            mLoading = false;
-            if (getView() == null) {
-                return;
-            }
-            mSwipeRefreshLayout.setRefreshing(false);
-            if (!response.isEmpty()) {
-                mMessageView.setVisibility(View.GONE);
-            } else {
-                mMessageView.setVisibility(View.VISIBLE);
-                mMessageView.setText(R.string.no_commits_found);
-            }
-            mCommitsAdapter.setData(response);
-            if (response.isEmpty()) {
-                mPage = -1;
-            }
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            mLoading = false;
-            Timber.e(t);
-            if (getView() == null) {
-                return;
-            }
-            mSwipeRefreshLayout.setRefreshing(false);
-            mMessageView.setVisibility(View.VISIBLE);
-            mMessageView.setText(R.string.connection_error_commits);
-            mCommitsAdapter.setData(null);
-            mPage = -1;
-        }
-    };
-
-    private final EasyCallback<List<RepositoryCommit>> mMoreCommitsCallback = new EasyCallback<List<RepositoryCommit>>() {
-        @Override
-        public void success(@NonNull List<RepositoryCommit> response) {
-            mLoading = false;
-            if (getView() == null) {
-                return;
-            }
-            mCommitsAdapter.setLoading(false);
-            if (response.isEmpty()) {
-                mPage = -1;
-                return;
-            }
-            mCommitsAdapter.addData(response);
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            mLoading = false;
-            Timber.e(t);
-            if (getView() == null) {
-                return;
-            }
-            mCommitsAdapter.setLoading(false);
         }
     };
 
@@ -191,7 +132,42 @@ public class CommitsFragment extends ButterKnifeFragment {
         mPage = 0;
         mLoading = true;
 
-        App.get().getGitLab().getCommits(mProject.getId(), mBranchName, mPage).enqueue(mCommitsCallback);
+        App.get().getGitLab().getCommits(mProject.getId(), mBranchName, mPage)
+                .compose(this.<List<RepositoryCommit>>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<List<RepositoryCommit>>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mLoading = false;
+                        Timber.e(e);
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        mMessageView.setVisibility(View.VISIBLE);
+                        mMessageView.setText(R.string.connection_error_commits);
+                        mCommitsAdapter.setData(null);
+                        mPage = -1;
+                    }
+
+                    @Override
+                    public void onNext(List<RepositoryCommit> repositoryCommits) {
+                        mLoading = false;
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        if (!repositoryCommits.isEmpty()) {
+                            mMessageView.setVisibility(View.GONE);
+                        } else {
+                            mMessageView.setVisibility(View.VISIBLE);
+                            mMessageView.setText(R.string.no_commits_found);
+                        }
+                        mCommitsAdapter.setData(repositoryCommits);
+                        if (repositoryCommits.isEmpty()) {
+                            mPage = -1;
+                        }
+                    }
+                });
     }
 
     private void loadMore() {
@@ -208,7 +184,33 @@ public class CommitsFragment extends ButterKnifeFragment {
         mCommitsAdapter.setLoading(true);
 
         Timber.d("loadMore called for %s", mPage);
-        App.get().getGitLab().getCommits(mProject.getId(), mBranchName, mPage).enqueue(mMoreCommitsCallback);
+        App.get().getGitLab().getCommits(mProject.getId(), mBranchName, mPage)
+                .compose(this.<List<RepositoryCommit>>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<List<RepositoryCommit>>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mLoading = false;
+                        Timber.e(e);
+                        mCommitsAdapter.setLoading(false);
+                    }
+
+                    @Override
+                    public void onNext(List<RepositoryCommit> repositoryCommits) {
+                        mLoading = false;
+                        mCommitsAdapter.setLoading(false);
+                        if (repositoryCommits.isEmpty()) {
+                            mPage = -1;
+                            return;
+                        }
+                        mCommitsAdapter.addData(repositoryCommits);
+                    }
+                });
     }
 
     private class EventReceiver {

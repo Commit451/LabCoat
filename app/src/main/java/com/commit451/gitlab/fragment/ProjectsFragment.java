@@ -3,7 +3,6 @@ package com.commit451.gitlab.fragment;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.commit451.easycallback.EasyCallback;
+import com.commit451.easycallback.HttpException;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
@@ -28,6 +27,11 @@ import org.parceler.Parcels;
 import java.util.List;
 
 import butterknife.BindView;
+import retrofit2.Response;
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class ProjectsFragment extends ButterKnifeFragment {
@@ -95,63 +99,6 @@ public class ProjectsFragment extends ButterKnifeFragment {
         }
     };
 
-    private final EasyCallback<List<Project>> mProjectsCallback = new EasyCallback<List<Project>>() {
-        @Override
-        public void success(@NonNull List<Project> response) {
-            mLoading = false;
-            if (getView() == null) {
-                return;
-            }
-            mSwipeRefreshLayout.setRefreshing(false);
-            if (response.isEmpty()) {
-                mMessageView.setVisibility(View.VISIBLE);
-                mMessageView.setText(R.string.no_projects);
-            }
-            mProjectsAdapter.setData(response);
-            mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
-            Timber.d("Next page url " + mNextPageUrl);
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            mLoading = false;
-            Timber.e(t);
-            if (getView() == null) {
-                return;
-            }
-            mSwipeRefreshLayout.setRefreshing(false);
-            mMessageView.setVisibility(View.VISIBLE);
-            mMessageView.setText(R.string.connection_error);
-            mProjectsAdapter.setData(null);
-            mNextPageUrl = null;
-        }
-    };
-
-    private final EasyCallback<List<Project>> mMoreProjectsCallback = new EasyCallback<List<Project>>() {
-        @Override
-        public void success(@NonNull List<Project> response) {
-            mLoading = false;
-            if (getView() == null) {
-                return;
-            }
-            mProjectsAdapter.setLoading(false);
-            mProjectsAdapter.addData(response);
-            mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
-            Timber.d("Next page url " + mNextPageUrl);
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            mLoading = false;
-            Timber.e(t);
-
-            if (getView() == null) {
-                return;
-            }
-            mProjectsAdapter.setLoading(false);
-        }
-    };
-
     private final ProjectsAdapter.Listener mProjectsListener = new ProjectsAdapter.Listener() {
         @Override
         public void onProjectClicked(Project project) {
@@ -216,20 +163,20 @@ public class ProjectsFragment extends ButterKnifeFragment {
         switch (mMode) {
             case MODE_ALL:
                 showLoading();
-                getGitLab().getAllProjects().enqueue(mProjectsCallback);
+                actuallyLoadIt(getGitLab().getAllProjects());
                 break;
             case MODE_MINE:
                 showLoading();
-                getGitLab().getMyProjects().enqueue(mProjectsCallback);
+                actuallyLoadIt(getGitLab().getMyProjects());
                 break;
             case MODE_STARRED:
                 showLoading();
-                getGitLab().getStarredProjects().enqueue(mProjectsCallback);
+                actuallyLoadIt(getGitLab().getStarredProjects());
                 break;
             case MODE_SEARCH:
                 if (mQuery != null) {
                     showLoading();
-                    getGitLab().searchAllProjects(mQuery).enqueue(mProjectsCallback);
+                    actuallyLoadIt(getGitLab().searchAllProjects(mQuery));
                 }
                 break;
             case MODE_GROUP:
@@ -238,11 +185,51 @@ public class ProjectsFragment extends ButterKnifeFragment {
                 if (group == null) {
                     throw new IllegalStateException("You must also pass a group if you want to show a groups projects");
                 }
-                getGitLab().getGroupProjects(group.getId()).enqueue(mProjectsCallback);
+                actuallyLoadIt(getGitLab().getGroupProjects(group.getId()));
                 break;
             default:
                 throw new IllegalStateException(mMode + " is not defined");
         }
+    }
+
+    private void actuallyLoadIt(Observable<Response<List<Project>>> observable) {
+        observable
+                .compose(this.<Response<List<Project>>>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Response<List<Project>>>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mLoading = false;
+                        Timber.e(e);
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        mMessageView.setVisibility(View.VISIBLE);
+                        mMessageView.setText(R.string.connection_error);
+                        mProjectsAdapter.setData(null);
+                        mNextPageUrl = null;
+                    }
+
+                    @Override
+                    public void onNext(Response<List<Project>> response) {
+                        if (!response.isSuccessful()) {
+                            onError(new HttpException(response.raw()));
+                            return;
+                        }
+                        mLoading = false;
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        if (response.body().isEmpty()) {
+                            mMessageView.setVisibility(View.VISIBLE);
+                            mMessageView.setText(R.string.no_projects);
+                        }
+                        mProjectsAdapter.setData(response.body());
+                        mNextPageUrl = LinkHeaderParser.parse(response).getNext();
+                        Timber.d("Next page url " + mNextPageUrl);
+                    }
+                });
     }
 
     private void loadMore() {
@@ -256,7 +243,35 @@ public class ProjectsFragment extends ButterKnifeFragment {
         mLoading = true;
         mProjectsAdapter.setLoading(true);
         Timber.d("loadMore called for %s", mNextPageUrl);
-        getGitLab().getProjects(mNextPageUrl.toString()).enqueue(mMoreProjectsCallback);
+        getGitLab().getProjects(mNextPageUrl.toString())
+                .compose(this.<Response<List<Project>>>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Response<List<Project>>>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mLoading = false;
+                        Timber.e(e);
+                        mProjectsAdapter.setLoading(false);
+                    }
+
+                    @Override
+                    public void onNext(Response<List<Project>> response) {
+                        if (!response.isSuccessful()) {
+                            onError(new retrofit2.adapter.rxjava.HttpException(response));
+                            return;
+                        }
+                        mLoading = false;
+                        mProjectsAdapter.setLoading(false);
+                        mProjectsAdapter.addData(response.body());
+                        mNextPageUrl = LinkHeaderParser.parse(response).getNext();
+                        Timber.d("Next page url " + mNextPageUrl);
+                    }
+                });
     }
 
     private void showLoading() {

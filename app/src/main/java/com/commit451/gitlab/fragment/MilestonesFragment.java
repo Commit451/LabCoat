@@ -2,7 +2,6 @@ package com.commit451.gitlab.fragment;
 
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,7 +19,6 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.gitlab.adapter.MilestoneAdapter;
-import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.event.MilestoneChangedEvent;
 import com.commit451.gitlab.event.MilestoneCreatedEvent;
 import com.commit451.gitlab.event.ProjectReloadEvent;
@@ -28,12 +26,18 @@ import com.commit451.gitlab.model.api.Milestone;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.LinkHeaderParser;
+
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import retrofit2.Response;
+import retrofit2.adapter.rxjava.HttpException;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class MilestonesFragment extends ButterKnifeFragment {
@@ -102,55 +106,6 @@ public class MilestonesFragment extends ButterKnifeFragment {
             if (firstVisibleItem + visibleItemCount >= totalItemCount && !mLoading && mNextPageUrl != null) {
                 loadMore();
             }
-        }
-    };
-
-    private final EasyCallback<List<Milestone>> mCallback = new EasyCallback<List<Milestone>>() {
-        @Override
-        public void success(@NonNull List<Milestone> response) {
-            mLoading = false;
-            if (getView() == null) {
-                return;
-            }
-            mSwipeRefreshLayout.setRefreshing(false);
-            if (response.isEmpty()) {
-                mMessageView.setVisibility(View.VISIBLE);
-                mMessageView.setText(R.string.no_milestones);
-            }
-            mMilestoneAdapter.setData(response);
-            mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
-            Timber.d("Next page url " + mNextPageUrl);
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            mLoading = false;
-            Timber.e(t);
-            if (getView() == null) {
-                return;
-            }
-            mSwipeRefreshLayout.setRefreshing(false);
-            mMessageView.setVisibility(View.VISIBLE);
-            mMessageView.setText(R.string.connection_error_milestones);
-            mMilestoneAdapter.setData(null);
-            mNextPageUrl = null;
-        }
-    };
-
-    private final EasyCallback<List<Milestone>> mMoreMilestonesCallback = new EasyCallback<List<Milestone>>() {
-        @Override
-        public void success(@NonNull List<Milestone> response) {
-            mLoading = false;
-            mMilestoneAdapter.setLoading(false);
-            mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
-            mMilestoneAdapter.addData(response);
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t);
-            mMilestoneAdapter.setLoading(false);
-            mLoading = false;
         }
     };
 
@@ -224,7 +179,43 @@ public class MilestonesFragment extends ButterKnifeFragment {
         });
         mNextPageUrl = null;
         mLoading = true;
-        App.get().getGitLab().getMilestones(mProject.getId(), mState).enqueue(mCallback);
+        App.get().getGitLab().getMilestones(mProject.getId(), mState)
+                .compose(this.<Response<List<Milestone>>>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Response<List<Milestone>>>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mLoading = false;
+                        Timber.e(e);
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        mMessageView.setVisibility(View.VISIBLE);
+                        mMessageView.setText(R.string.connection_error_milestones);
+                        mMilestoneAdapter.setData(null);
+                        mNextPageUrl = null;
+                    }
+
+                    @Override
+                    public void onNext(Response<List<Milestone>> listResponse) {
+                        if (!listResponse.isSuccessful()) {
+                            onError(new HttpException(listResponse));
+                            return;
+                        }
+                        mLoading = false;
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        if (listResponse.body().isEmpty()) {
+                            mMessageView.setVisibility(View.VISIBLE);
+                            mMessageView.setText(R.string.no_milestones);
+                        }
+                        mMilestoneAdapter.setData(listResponse.body());
+                        mNextPageUrl = LinkHeaderParser.parse(listResponse).getNext();
+                        Timber.d("Next page url " + mNextPageUrl);
+                    }
+                });
     }
 
     private void loadMore() {
@@ -240,7 +231,30 @@ public class MilestonesFragment extends ButterKnifeFragment {
         mMilestoneAdapter.setLoading(true);
 
         Timber.d("loadMore called for " + mNextPageUrl);
-        App.get().getGitLab().getMilestones(mNextPageUrl.toString()).enqueue(mMoreMilestonesCallback);
+        App.get().getGitLab().getMilestones(mNextPageUrl.toString())
+                .compose(this.<Response<List<Milestone>>>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Response<List<Milestone>>>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e);
+                        mMilestoneAdapter.setLoading(false);
+                        mLoading = false;
+                    }
+
+                    @Override
+                    public void onNext(Response<List<Milestone>> listResponse) {
+                        mLoading = false;
+                        mMilestoneAdapter.setLoading(false);
+                        mNextPageUrl = LinkHeaderParser.parse(listResponse).getNext();
+                        mMilestoneAdapter.addData(listResponse.body());
+                    }
+                });
     }
 
     private class EventReceiver {

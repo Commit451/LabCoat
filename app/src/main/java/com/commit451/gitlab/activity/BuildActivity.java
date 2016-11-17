@@ -16,7 +16,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.BuildSectionsPagerAdapter;
@@ -31,6 +30,9 @@ import org.parceler.Parcels;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -66,75 +68,93 @@ public class BuildActivity extends BaseActivity {
     Project mProject;
     Build mBuild;
 
-    private final EasyCallback<Build> mRetryCallback = new EasyCallback<Build>() {
-        @Override
-        public void success(@NonNull Build response) {
-            mProgress.setVisibility(View.GONE);
-            Snackbar.make(mRoot, R.string.build_started, Snackbar.LENGTH_LONG)
-                    .show();
-            App.bus().post(new BuildChangedEvent(response));
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t);
-            mProgress.setVisibility(View.GONE);
-            Snackbar.make(mRoot, R.string.unable_to_retry_build, Snackbar.LENGTH_LONG)
-                    .show();
-        }
-    };
-
-    private final EasyCallback<Build> mEraseCallback = new EasyCallback<Build>() {
-        @Override
-        public void success(@NonNull Build response) {
-            mProgress.setVisibility(View.GONE);
-            Snackbar.make(mRoot, R.string.build_erased, Snackbar.LENGTH_LONG)
-                    .show();
-            App.bus().post(new BuildChangedEvent(response));
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t);
-            mProgress.setVisibility(View.GONE);
-            Snackbar.make(mRoot, R.string.unable_to_erase_build, Snackbar.LENGTH_LONG)
-                    .show();
-        }
-    };
-
-    private final EasyCallback<Build> mCancelCallback = new EasyCallback<Build>() {
-        @Override
-        public void success(@NonNull Build response) {
-            mProgress.setVisibility(View.GONE);
-            Snackbar.make(mRoot, R.string.build_canceled, Snackbar.LENGTH_LONG)
-                    .show();
-            App.bus().post(new BuildChangedEvent(response));
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t);
-            mProgress.setVisibility(View.GONE);
-            Snackbar.make(mRoot, R.string.unable_to_cancel_build, Snackbar.LENGTH_LONG)
-                    .show();
-        }
-    };
-
     private final Toolbar.OnMenuItemClickListener mOnMenuItemClickListener = new Toolbar.OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.action_retry:
                     mProgress.setVisibility(View.VISIBLE);
-                    App.get().getGitLab().retryBuild(mProject.getId(), mBuild.getId()).enqueue(mRetryCallback);
+                    App.get().getGitLab().retryBuild(mProject.getId(), mBuild.getId())
+                            .compose(BuildActivity.this.<Build>bindToLifecycle())
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new Subscriber<Build>() {
+                                @Override
+                                public void onCompleted() {
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+                                    Timber.e(e);
+                                    mProgress.setVisibility(View.GONE);
+                                    Snackbar.make(mRoot, R.string.unable_to_retry_build, Snackbar.LENGTH_LONG)
+                                            .show();
+                                }
+
+                                @Override
+                                public void onNext(Build build) {
+                                    mProgress.setVisibility(View.GONE);
+                                    Snackbar.make(mRoot, R.string.build_started, Snackbar.LENGTH_LONG)
+                                            .show();
+                                    App.bus().post(new BuildChangedEvent(build));
+                                }
+                            });
                     return true;
                 case R.id.action_erase:
                     mProgress.setVisibility(View.VISIBLE);
-                    App.get().getGitLab().eraseBuild(mProject.getId(), mBuild.getId()).enqueue(mEraseCallback);
+                    App.get().getGitLab().eraseBuild(mProject.getId(), mBuild.getId())
+                            .compose(BuildActivity.this.<Build>bindToLifecycle())
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new Subscriber<Build>() {
+                                @Override
+                                public void onCompleted() {
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+                                    Timber.e(e);
+                                    mProgress.setVisibility(View.GONE);
+                                    Snackbar.make(mRoot, R.string.unable_to_erase_build, Snackbar.LENGTH_LONG)
+                                            .show();
+                                }
+
+                                @Override
+                                public void onNext(Build build) {
+                                    mProgress.setVisibility(View.GONE);
+                                    Snackbar.make(mRoot, R.string.build_erased, Snackbar.LENGTH_LONG)
+                                            .show();
+                                    App.bus().post(new BuildChangedEvent(build));
+                                }
+                            });
                     return true;
                 case R.id.action_cancel:
                     mProgress.setVisibility(View.VISIBLE);
-                    App.get().getGitLab().cancelBuild(mProject.getId(), mBuild.getId()).enqueue(mCancelCallback);
+                    App.get().getGitLab().cancelBuild(mProject.getId(), mBuild.getId())
+                            .compose(BuildActivity.this.<Build>bindToLifecycle())
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new Subscriber<Build>() {
+                                @Override
+                                public void onCompleted() {
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+                                    Timber.e(e);
+                                    mProgress.setVisibility(View.GONE);
+                                    Snackbar.make(mRoot, R.string.unable_to_cancel_build, Snackbar.LENGTH_LONG)
+                                            .show();
+                                }
+
+                                @Override
+                                public void onNext(Build build) {
+                                    mProgress.setVisibility(View.GONE);
+                                    Snackbar.make(mRoot, R.string.build_canceled, Snackbar.LENGTH_LONG)
+                                            .show();
+                                    App.bus().post(new BuildChangedEvent(build));
+                                }
+                            });
                     return true;
                 case R.id.action_download:
                     checkDownloadBuild();

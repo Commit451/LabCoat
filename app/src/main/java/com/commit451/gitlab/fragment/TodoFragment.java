@@ -2,7 +2,6 @@ package com.commit451.gitlab.fragment;
 
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.TodoAdapter;
@@ -22,6 +20,12 @@ import com.commit451.gitlab.util.LinkHeaderParser;
 import java.util.List;
 
 import butterknife.BindView;
+import retrofit2.Response;
+import retrofit2.adapter.rxjava.HttpException;
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class TodoFragment extends ButterKnifeFragment {
@@ -64,63 +68,6 @@ public class TodoFragment extends ButterKnifeFragment {
             if (firstVisibleItem + visibleItemCount >= totalItemCount && !mLoading && mNextPageUrl != null) {
                 loadMore();
             }
-        }
-    };
-
-    private final EasyCallback<List<Todo>> mProjectsCallback = new EasyCallback<List<Todo>>() {
-        @Override
-        public void success(@NonNull List<Todo> response) {
-            mLoading = false;
-            if (getView() == null) {
-                return;
-            }
-            mSwipeRefreshLayout.setRefreshing(false);
-            if (response.isEmpty()) {
-                mMessageView.setVisibility(View.VISIBLE);
-                mMessageView.setText(R.string.no_todos);
-            }
-            mTodoAdapter.setData(response);
-            mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
-            Timber.d("Next page url " + mNextPageUrl);
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            mLoading = false;
-            Timber.e(t);
-            if (getView() == null) {
-                return;
-            }
-            mSwipeRefreshLayout.setRefreshing(false);
-            mMessageView.setVisibility(View.VISIBLE);
-            mMessageView.setText(R.string.connection_error);
-            mTodoAdapter.setData(null);
-            mNextPageUrl = null;
-        }
-    };
-
-    private final EasyCallback<List<Todo>> mMoreProjectsCallback = new EasyCallback<List<Todo>>() {
-        @Override
-        public void success(@NonNull List<Todo> response) {
-            mLoading = false;
-            if (getView() == null) {
-                return;
-            }
-            mTodoAdapter.setLoading(false);
-            mTodoAdapter.addData(response);
-            mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
-            Timber.d("Next page url " + mNextPageUrl);
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            mLoading = false;
-            Timber.e(t);
-
-            if (getView() == null) {
-                return;
-            }
-            mTodoAdapter.setLoading(false);
         }
     };
 
@@ -175,15 +122,56 @@ public class TodoFragment extends ButterKnifeFragment {
         switch (mMode) {
             case MODE_TODO:
                 showLoading();
-                App.get().getGitLab().getTodos(Todo.STATE_PENDING).enqueue(mProjectsCallback);
+                getTodos(App.get().getGitLab().getTodos(Todo.STATE_PENDING));
                 break;
             case MODE_DONE:
                 showLoading();
-                App.get().getGitLab().getTodos(Todo.STATE_DONE).enqueue(mProjectsCallback);
+                getTodos(App.get().getGitLab().getTodos(Todo.STATE_DONE));
                 break;
             default:
                 throw new IllegalStateException(mMode + " is not defined");
         }
+    }
+
+    private void getTodos(Observable<Response<List<Todo>>> observable) {
+        observable
+                .compose(this.<Response<List<Todo>>>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Response<List<Todo>>>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mLoading = false;
+                        Timber.e(e);
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        mMessageView.setVisibility(View.VISIBLE);
+                        mMessageView.setText(R.string.connection_error);
+                        mTodoAdapter.setData(null);
+                        mNextPageUrl = null;
+                    }
+
+                    @Override
+                    public void onNext(Response<List<Todo>> listResponse) {
+                        if (!listResponse.isSuccessful()) {
+                            onError(new HttpException(listResponse));
+                            return;
+                        }
+                        mLoading = false;
+
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        if (listResponse.body().isEmpty()) {
+                            mMessageView.setVisibility(View.VISIBLE);
+                            mMessageView.setText(R.string.no_todos);
+                        }
+                        mTodoAdapter.setData(listResponse.body());
+                        mNextPageUrl = LinkHeaderParser.parse(listResponse).getNext();
+                        Timber.d("Next page url " + mNextPageUrl);
+                    }
+                });
     }
 
     private void loadMore() {
@@ -197,7 +185,35 @@ public class TodoFragment extends ButterKnifeFragment {
         mLoading = true;
         mTodoAdapter.setLoading(true);
         Timber.d("loadMore called for " + mNextPageUrl);
-        App.get().getGitLab().getTodosByUrl(mNextPageUrl.toString()).enqueue(mMoreProjectsCallback);
+        App.get().getGitLab().getTodosByUrl(mNextPageUrl.toString())
+                .compose(this.<Response<List<Todo>>>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Response<List<Todo>>>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mLoading = false;
+                        Timber.e(e);
+                        mTodoAdapter.setLoading(false);
+                    }
+
+                    @Override
+                    public void onNext(Response<List<Todo>> listResponse) {
+                        if (!listResponse.isSuccessful()) {
+                            onError(new HttpException(listResponse));
+                            return;
+                        }
+                        mLoading = false;
+                        mTodoAdapter.setLoading(false);
+                        mTodoAdapter.addData(listResponse.body());
+                        mNextPageUrl = LinkHeaderParser.parse(listResponse).getNext();
+                        Timber.d("Next page url " + mNextPageUrl);
+                    }
+                });
     }
 
     private void showLoading() {

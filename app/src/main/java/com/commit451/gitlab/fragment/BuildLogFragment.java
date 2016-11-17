@@ -1,7 +1,6 @@
 package com.commit451.gitlab.fragment;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
@@ -9,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.event.BuildChangedEvent;
@@ -21,6 +19,9 @@ import org.greenrobot.eventbus.Subscribe;
 import org.parceler.Parcels;
 
 import butterknife.BindView;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -40,9 +41,12 @@ public class BuildLogFragment extends ButterKnifeFragment {
         return fragment;
     }
 
-    @BindView(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
-    @BindView(R.id.log) TextView mTextLog;
-    @BindView(R.id.message_text) TextView mMessageView;
+    @BindView(R.id.swipe_layout)
+    SwipeRefreshLayout mSwipeRefreshLayout;
+    @BindView(R.id.log)
+    TextView mTextLog;
+    @BindView(R.id.message_text)
+    TextView mMessageView;
 
     Project mProject;
     Build mBuild;
@@ -99,26 +103,28 @@ public class BuildLogFragment extends ButterKnifeFragment {
 
         String url = BuildUtil.getRawBuildUrl(App.get().getAccount().getServerUrl(), mProject, mBuild);
 
-        App.get().getGitLab().getRaw(url).enqueue(new EasyCallback<String>() {
-            @Override
-            public void success(@NonNull String response) {
-                if (getView() == null) {
-                    return;
-                }
-                mSwipeRefreshLayout.setRefreshing(false);
-                mTextLog.setText(response);
-            }
+        App.get().getGitLab().getRaw(url)
+                .compose(this.<String>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<String>() {
+                    @Override
+                    public void onCompleted() {
+                    }
 
-            @Override
-            public void failure(Throwable t) {
-                Timber.e(t);
-                if (getView() == null) {
-                    return;
-                }
-                mSwipeRefreshLayout.setRefreshing(false);
-                mMessageView.setVisibility(View.VISIBLE);
-            }
-        });
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e);
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        mMessageView.setVisibility(View.VISIBLE);
+                    }
+
+                    @Override
+                    public void onNext(String response) {
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        mTextLog.setText(response);
+                    }
+                });
     }
 
     private class EventReceiver {

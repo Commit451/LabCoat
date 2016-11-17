@@ -2,7 +2,6 @@ package com.commit451.gitlab.fragment;
 
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,18 +19,23 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.adapter.BuildsAdapter;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
-import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.event.BuildChangedEvent;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Build;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.LinkHeaderParser;
+
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.List;
 
 import butterknife.BindView;
+import retrofit2.Response;
+import retrofit2.adapter.rxjava.HttpException;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -98,55 +102,6 @@ public class BuildsFragment extends ButterKnifeFragment {
 
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
-        }
-    };
-
-    private final EasyCallback<List<Build>> mLoadCallback = new EasyCallback<List<Build>>() {
-        @Override
-        public void success(@NonNull List<Build> response) {
-            mLoading = false;
-            if (getView() == null) {
-                return;
-            }
-            mSwipeRefreshLayout.setRefreshing(false);
-            if (response.isEmpty()) {
-                mMessageView.setVisibility(View.VISIBLE);
-                mMessageView.setText(R.string.no_builds);
-            }
-            mBuildsAdapter.setValues(response);
-            mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
-            Timber.d("Next page url %s", mNextPageUrl);
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            mLoading = false;
-            Timber.e(t);
-            if (getView() == null) {
-                return;
-            }
-            mSwipeRefreshLayout.setRefreshing(false);
-            mMessageView.setVisibility(View.VISIBLE);
-            mMessageView.setText(R.string.failed_to_load_builds);
-            mBuildsAdapter.setValues(null);
-            mNextPageUrl = null;
-        }
-    };
-
-    private final EasyCallback<List<Build>> mMoreCallback = new EasyCallback<List<Build>>() {
-        @Override
-        public void success(@NonNull List<Build> response) {
-            mLoading = false;
-            mBuildsAdapter.setLoading(false);
-            mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
-            mBuildsAdapter.addValues(response);
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t);
-            mLoading = false;
-            mBuildsAdapter.setLoading(false);
         }
     };
 
@@ -221,7 +176,44 @@ public class BuildsFragment extends ButterKnifeFragment {
         });
         mNextPageUrl = null;
         mLoading = true;
-        App.get().getGitLab().getBuilds(mProject.getId(), mScope).enqueue(mLoadCallback);
+        App.get().getGitLab().getBuilds(mProject.getId(), mScope)
+                .compose(this.<Response<List<Build>>>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Response<List<Build>>>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mLoading = false;
+                        Timber.e(e);
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        mMessageView.setVisibility(View.VISIBLE);
+                        mMessageView.setText(R.string.failed_to_load_builds);
+                        mBuildsAdapter.setValues(null);
+                        mNextPageUrl = null;
+                    }
+
+                    @Override
+                    public void onNext(Response<List<Build>> listResponse) {
+                        if (!listResponse.isSuccessful()) {
+                            onError(new HttpException(listResponse));
+                            return;
+                        }
+                        mLoading = false;
+
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        if (listResponse.body().isEmpty()) {
+                            mMessageView.setVisibility(View.VISIBLE);
+                            mMessageView.setText(R.string.no_builds);
+                        }
+                        mBuildsAdapter.setValues(listResponse.body());
+                        mNextPageUrl = LinkHeaderParser.parse(listResponse).getNext();
+                        Timber.d("Next page url %s", mNextPageUrl);
+                    }
+                });
     }
 
     private void loadMore() {
@@ -237,7 +229,34 @@ public class BuildsFragment extends ButterKnifeFragment {
         mLoading = true;
 
         Timber.d("loadMore called for %s", mNextPageUrl);
-        App.get().getGitLab().getBuilds(mNextPageUrl.toString(), mScope).enqueue(mMoreCallback);
+        App.get().getGitLab().getBuilds(mNextPageUrl.toString(), mScope)
+                .compose(this.<Response<List<Build>>>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Response<List<Build>>>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e);
+                        mLoading = false;
+                        mBuildsAdapter.setLoading(false);
+                    }
+
+                    @Override
+                    public void onNext(Response<List<Build>> listResponse) {
+                        if (!listResponse.isSuccessful()) {
+                            onError(new HttpException(listResponse));
+                            return;
+                        }
+                        mLoading = false;
+                        mBuildsAdapter.setLoading(false);
+                        mNextPageUrl = LinkHeaderParser.parse(listResponse).getNext();
+                        mBuildsAdapter.addValues(listResponse.body());
+                    }
+                });
     }
 
     private class EventReceiver {

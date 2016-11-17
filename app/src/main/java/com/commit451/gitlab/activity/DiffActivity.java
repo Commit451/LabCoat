@@ -3,7 +3,6 @@ package com.commit451.gitlab.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.DiffAdapter;
@@ -26,7 +24,9 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import retrofit2.Callback;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -53,22 +53,6 @@ public class DiffActivity extends BaseActivity {
 
     private Project mProject;
     private RepositoryCommit mCommit;
-
-    private Callback<List<Diff>> mDiffCallback = new EasyCallback<List<Diff>>() {
-        @Override
-        public void success(@NonNull List<Diff> response) {
-            mSwipeRefreshLayout.setRefreshing(false);
-            mDiffAdapter.setData(response);
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            mSwipeRefreshLayout.setRefreshing(false);
-            Timber.e(t);
-            mMessageText.setText(R.string.connection_error);
-            mMessageText.setVisibility(View.VISIBLE);
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,6 +100,28 @@ public class DiffActivity extends BaseActivity {
             }
             }
         });
-        App.get().getGitLab().getCommitDiff(mProject.getId(), mCommit.getId()).enqueue(mDiffCallback);
+        App.get().getGitLab().getCommitDiff(mProject.getId(), mCommit.getId())
+                .compose(this.<List<Diff>>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<List<Diff>>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        Timber.e(e);
+                        mMessageText.setText(R.string.connection_error);
+                        mMessageText.setVisibility(View.VISIBLE);
+                    }
+
+                    @Override
+                    public void onNext(List<Diff> diffs) {
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        mDiffAdapter.setData(diffs);
+                    }
+                });
     }
 }

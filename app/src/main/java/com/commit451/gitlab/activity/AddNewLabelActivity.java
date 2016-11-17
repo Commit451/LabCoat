@@ -18,8 +18,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.color.ColorChooserDialog;
-import com.commit451.easycallback.EasyCallback;
-import com.commit451.easycallback.HttpException;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.api.Label;
@@ -31,6 +29,9 @@ import org.parceler.Parcels;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -62,29 +63,6 @@ public class AddNewLabelActivity extends BaseActivity implements ColorChooserDia
     View mProgress;
 
     int mChosenColor = -1;
-
-    private final EasyCallback<Label> mCreateLabelCallback = new EasyCallback<Label>() {
-        @Override
-        public void success(@NonNull Label response) {
-            Intent data = new Intent();
-            data.putExtra(KEY_NEW_LABEL, Parcels.wrap(response));
-            setResult(RESULT_OK, data);
-            finish();
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t);
-            mProgress.setVisibility(View.GONE);
-            if (t instanceof HttpException && ((HttpException) t).response().code() == 409) {
-                Snackbar.make(mRoot, R.string.label_already_exists, Snackbar.LENGTH_SHORT)
-                        .show();
-            } else {
-                Snackbar.make(mRoot, R.string.failed_to_create_label, Snackbar.LENGTH_SHORT)
-                        .show();
-            }
-        }
-    };
 
     @OnClick(R.id.root_color)
     void onChooseColorClicked() {
@@ -153,7 +131,35 @@ public class AddNewLabelActivity extends BaseActivity implements ColorChooserDia
             mProgress.setAlpha(0.0f);
             mProgress.animate().alpha(1.0f);
             App.get().getGitLab().createLabel(getProjectId(), title, color, description)
-                    .enqueue(mCreateLabelCallback);
+                    .compose(this.<Label>bindToLifecycle())
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Subscriber<Label>() {
+                        @Override
+                        public void onCompleted() {
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Timber.e(e);
+                            mProgress.setVisibility(View.GONE);
+                            if (e instanceof retrofit2.adapter.rxjava.HttpException && ((retrofit2.adapter.rxjava.HttpException) e).response().code() == 409) {
+                                Snackbar.make(mRoot, R.string.label_already_exists, Snackbar.LENGTH_SHORT)
+                                        .show();
+                            } else {
+                                Snackbar.make(mRoot, R.string.failed_to_create_label, Snackbar.LENGTH_SHORT)
+                                        .show();
+                            }
+                        }
+
+                        @Override
+                        public void onNext(Label label) {
+                            Intent data = new Intent();
+                            data.putExtra(KEY_NEW_LABEL, Parcels.wrap(label));
+                            setResult(RESULT_OK, data);
+                            finish();
+                        }
+                    });
         }
     }
 }

@@ -2,7 +2,6 @@ package com.commit451.gitlab.fragment;
 
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
@@ -13,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.UsersAdapter;
@@ -25,6 +23,11 @@ import com.commit451.gitlab.viewHolder.UserViewHolder;
 import java.util.List;
 
 import butterknife.BindView;
+import retrofit2.Response;
+import retrofit2.adapter.rxjava.HttpException;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class UsersFragment extends ButterKnifeFragment {
@@ -78,61 +81,6 @@ public class UsersFragment extends ButterKnifeFragment {
         @Override
         public void onUserClicked(UserBasic user, UserViewHolder userViewHolder) {
             Navigator.navigateToUser(getActivity(), userViewHolder.mImageView, user);
-        }
-    };
-
-    public EasyCallback<List<UserBasic>> mSearchCallback = new EasyCallback<List<UserBasic>>() {
-        @Override
-        public void success(@NonNull List<UserBasic> response) {
-            if (getView() == null) {
-                return;
-            }
-            mSwipeRefreshLayout.setRefreshing(false);
-            mLoading = false;
-            if (response.isEmpty()) {
-                mMessageView.setVisibility(View.VISIBLE);
-                mMessageView.setText(R.string.no_users_found);
-            }
-            mUsersAdapter.setData(response);
-            mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t);
-            mLoading = false;
-            if (getView() == null) {
-                return;
-            }
-            mSwipeRefreshLayout.setRefreshing(false);
-            mMessageView.setText(R.string.connection_error_users);
-            mMessageView.setVisibility(View.VISIBLE);
-            mUsersAdapter.setData(null);
-        }
-    };
-
-    public EasyCallback<List<UserBasic>> mMoreUsersCallback = new EasyCallback<List<UserBasic>>() {
-        @Override
-        public void success(@NonNull List<UserBasic> response) {
-            mLoading = false;
-            if (getView() == null) {
-                return;
-            }
-            mSwipeRefreshLayout.setRefreshing(false);
-            mUsersAdapter.addData(response);
-            mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
-            mUsersAdapter.setLoading(false);
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t);
-            mLoading = false;
-            if (getView() == null) {
-                return;
-            }
-            mSwipeRefreshLayout.setRefreshing(false);
-            mUsersAdapter.setLoading(false);
         }
     };
 
@@ -191,14 +139,77 @@ public class UsersFragment extends ButterKnifeFragment {
             }
         });
 
-        App.get().getGitLab().searchUsers(mQuery).enqueue(mSearchCallback);
+        App.get().getGitLab().searchUsers(mQuery)
+                .compose(this.<Response<List<UserBasic>>>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Response<List<UserBasic>>>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e);
+                        mLoading = false;
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        mMessageView.setText(R.string.connection_error_users);
+                        mMessageView.setVisibility(View.VISIBLE);
+                        mUsersAdapter.setData(null);
+                    }
+
+                    @Override
+                    public void onNext(Response<List<UserBasic>> response) {
+                        if (!response.isSuccessful()) {
+                            onError(new HttpException(response));
+                            return;
+                        }
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        mLoading = false;
+                        if (response.body().isEmpty()) {
+                            mMessageView.setVisibility(View.VISIBLE);
+                            mMessageView.setText(R.string.no_users_found);
+                        }
+                        mUsersAdapter.setData(response.body());
+                        mNextPageUrl = LinkHeaderParser.parse(response).getNext();
+                    }
+                });
     }
 
     private void loadMore() {
         mLoading = true;
         mUsersAdapter.setLoading(true);
         Timber.d("loadMore called for %s %s", mNextPageUrl.toString(), mQuery);
-        App.get().getGitLab().searchUsers(mNextPageUrl.toString(), mQuery).enqueue(mMoreUsersCallback);
+        App.get().getGitLab().searchUsers(mNextPageUrl.toString(), mQuery)
+                .compose(this.<Response<List<UserBasic>>>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Response<List<UserBasic>>>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e);
+                        mLoading = false;
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        mUsersAdapter.setLoading(false);
+                    }
+
+                    @Override
+                    public void onNext(Response<List<UserBasic>> response) {
+                        if (!response.isSuccessful()) {
+                            onError(new HttpException(response));
+                            return;
+                        }
+                        mLoading = false;
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        mUsersAdapter.addData(response.body());
+                        mNextPageUrl = LinkHeaderParser.parse(response).getNext();
+                        mUsersAdapter.setLoading(false);
+                    }
+                });
     }
 
     public void searchQuery(String query) {

@@ -136,33 +136,6 @@ public class LoginActivity extends BaseActivity {
         }
     };
 
-    private final Callback<UserFull> mTestUserCallback = new Callback<UserFull>() {
-
-        @Override
-        public void onResponse(Call<UserFull> call, Response<UserFull> response) {
-            mProgress.setVisibility(View.GONE);
-            if (!response.isSuccessful() || response.body() == null) {
-                handleConnectionResponse(response);
-                return;
-            }
-            mAccount.setUser(response.body());
-            mAccount.setLastUsed(new Date());
-            App.get().getPrefs().addAccount(mAccount);
-            App.get().setAccount(mAccount);
-            App.bus().post(new LoginEvent(mAccount));
-            //This is mostly for if projects already exists, then we will reload the data
-            App.bus().post(new ReloadDataEvent());
-            Navigator.navigateToStartingActivity(LoginActivity.this);
-            finish();
-        }
-
-        @Override
-        public void onFailure(Call<UserFull> call, Throwable t) {
-            Timber.e(t);
-            handleConnectionError(t);
-        }
-    };
-
     @OnClick(R.id.login_button)
     public void onLoginClick() {
         mTeleprinter.hideKeyboard();
@@ -420,7 +393,7 @@ public class LoginActivity extends BaseActivity {
         } else {
             mUrlHint.setError(null);
         }
-        if (url.charAt(url.length()-1) != '/') {
+        if (url.charAt(url.length() - 1) != '/') {
             mUrlHint.setError(getString(R.string.please_end_your_url_with_a_slash));
             return false;
         } else {
@@ -454,7 +427,39 @@ public class LoginActivity extends BaseActivity {
             gitlabClientBuilder.addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
         }
         GitLab gitLab = GitLabFactory.create(mAccount, gitlabClientBuilder.build());
-        gitLab.getThisUser().enqueue(mTestUserCallback);
+        gitLab.getThisUser()
+                .compose(this.<Response<UserFull>>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Response<UserFull>>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e);
+                        handleConnectionError(e);
+                    }
+
+                    @Override
+                    public void onNext(Response<UserFull> response) {
+                        mProgress.setVisibility(View.GONE);
+                        if (!response.isSuccessful() || response.body() == null) {
+                            handleConnectionResponse(response);
+                            return;
+                        }
+                        mAccount.setUser(response.body());
+                        mAccount.setLastUsed(new Date());
+                        App.get().getPrefs().addAccount(mAccount);
+                        App.get().setAccount(mAccount);
+                        App.bus().post(new LoginEvent(mAccount));
+                        //This is mostly for if projects already exists, then we will reload the data
+                        App.bus().post(new ReloadDataEvent());
+                        Navigator.navigateToStartingActivity(LoginActivity.this);
+                        finish();
+                    }
+                });
     }
 
     private void handleConnectionError(Throwable t) {

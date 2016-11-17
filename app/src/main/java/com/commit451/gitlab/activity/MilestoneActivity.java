@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,7 +14,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
@@ -35,7 +33,12 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.adapter.rxjava.HttpException;
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class MilestoneActivity extends BaseActivity {
@@ -83,68 +86,6 @@ public class MilestoneActivity extends BaseActivity {
     void onEditClicked(View fab) {
         Navigator.navigateToEditMilestone(MilestoneActivity.this, fab, mProject, mMilestone);
     }
-
-    private final Callback<List<Issue>> mIssuesCallback = new EasyCallback<List<Issue>>() {
-        @Override
-        public void success(@NonNull List<Issue> response) {
-            mSwipeRefreshLayout.setRefreshing(false);
-            mLoading = false;
-
-            if (!response.isEmpty()) {
-                mMessageText.setVisibility(View.GONE);
-            } else {
-                Timber.d("No issues found");
-                mMessageText.setVisibility(View.VISIBLE);
-                mMessageText.setText(R.string.no_issues);
-            }
-
-            mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
-            mMilestoneIssuesAdapter.setIssues(response);
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t);
-            mLoading = false;
-            mSwipeRefreshLayout.setRefreshing(false);
-            mMessageText.setVisibility(View.VISIBLE);
-            mMessageText.setText(R.string.connection_error_issues);
-            mMilestoneIssuesAdapter.setIssues(null);
-        }
-    };
-
-    private final Callback<List<Issue>> mMoreIssuesCallback = new EasyCallback<List<Issue>>() {
-        @Override
-        public void success(@NonNull List<Issue> response) {
-            mLoading = false;
-            mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
-            mMilestoneIssuesAdapter.addIssues(response);
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t);
-            mLoading = false;
-        }
-    };
-
-    private final Callback<Milestone> mOpenCloseCallback = new EasyCallback<Milestone>() {
-        @Override
-        public void success(@NonNull Milestone response) {
-            mProgress.setVisibility(View.GONE);
-            mMilestone = response;
-            App.bus().post(new MilestoneChangedEvent(mMilestone));
-            setOpenCloseMenuStatus();
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t);
-            mProgress.setVisibility(View.GONE);
-            Snackbar.make(mRoot, getString(R.string.failed_to_create_milestone), Snackbar.LENGTH_SHORT)
-                    .show();
-        }
-    };
 
     private final RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
         @Override
@@ -236,7 +177,46 @@ public class MilestoneActivity extends BaseActivity {
                 }
             }
         });
-        App.get().getGitLab().getMilestoneIssues(mProject.getId(), mMilestone.getId()).enqueue(mIssuesCallback);
+        App.get().getGitLab().getMilestoneIssues(mProject.getId(), mMilestone.getId())
+                .compose(this.<Response<List<Issue>>>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Response<List<Issue>>>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e);
+                        mLoading = false;
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        mMessageText.setVisibility(View.VISIBLE);
+                        mMessageText.setText(R.string.connection_error_issues);
+                        mMilestoneIssuesAdapter.setIssues(null);
+                    }
+
+                    @Override
+                    public void onNext(Response<List<Issue>> listResponse) {
+                        if (!listResponse.isSuccessful()) {
+                            onError(new HttpException(listResponse));
+                            return;
+                        }
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        mLoading = false;
+
+                        if (!listResponse.body().isEmpty()) {
+                            mMessageText.setVisibility(View.GONE);
+                        } else {
+                            Timber.d("No issues found");
+                            mMessageText.setVisibility(View.VISIBLE);
+                            mMessageText.setText(R.string.no_issues);
+                        }
+
+                        mNextPageUrl = LinkHeaderParser.parse(listResponse).getNext();
+                        mMilestoneIssuesAdapter.setIssues(listResponse.body());
+                    }
+                });
     }
 
     private void loadMore() {
@@ -248,18 +228,68 @@ public class MilestoneActivity extends BaseActivity {
         mLoading = true;
 
         Timber.d("loadMore called for %s", mNextPageUrl);
-        App.get().getGitLab().getMilestoneIssues(mNextPageUrl.toString()).enqueue(mMoreIssuesCallback);
+        App.get().getGitLab().getMilestoneIssues(mNextPageUrl.toString())
+                .compose(this.<Response<List<Issue>>>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Response<List<Issue>>>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e);
+                        mLoading = false;
+                    }
+
+                    @Override
+                    public void onNext(Response<List<Issue>> listResponse) {
+                        if (!listResponse.isSuccessful()) {
+                            onError(new HttpException(listResponse));
+                            return;
+                        }
+                        mLoading = false;
+                        mNextPageUrl = LinkHeaderParser.parse(listResponse).getNext();
+                        mMilestoneIssuesAdapter.addIssues(listResponse.body());
+                    }
+                });
     }
 
     private void closeOrOpenIssue() {
         mProgress.setVisibility(View.VISIBLE);
         if (mMilestone.getState().equals(Milestone.STATE_ACTIVE)) {
-            App.get().getGitLab().updateMilestoneStatus(mProject.getId(), mMilestone.getId(), Milestone.STATE_EVENT_CLOSE)
-                    .enqueue(mOpenCloseCallback);
+            updateMilestoneStatus(App.get().getGitLab().updateMilestoneStatus(mProject.getId(), mMilestone.getId(), Milestone.STATE_EVENT_CLOSE));
         } else {
-            App.get().getGitLab().updateMilestoneStatus(mProject.getId(), mMilestone.getId(), Milestone.STATE_EVENT_ACTIVATE)
-                    .enqueue(mOpenCloseCallback);
+            updateMilestoneStatus(App.get().getGitLab().updateMilestoneStatus(mProject.getId(), mMilestone.getId(), Milestone.STATE_EVENT_ACTIVATE));
         }
+    }
+
+    private void updateMilestoneStatus(Observable<Milestone> observable) {
+        observable.compose(this.<Milestone>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Milestone>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e);
+                        mProgress.setVisibility(View.GONE);
+                        Snackbar.make(mRoot, getString(R.string.failed_to_create_milestone), Snackbar.LENGTH_SHORT)
+                                .show();
+                    }
+
+                    @Override
+                    public void onNext(Milestone milestone) {
+                        mProgress.setVisibility(View.GONE);
+                        mMilestone = milestone;
+                        App.bus().post(new MilestoneChangedEvent(mMilestone));
+                        setOpenCloseMenuStatus();
+                    }
+                });
     }
 
     private void setOpenCloseMenuStatus() {

@@ -3,7 +3,6 @@ package com.commit451.gitlab.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -12,8 +11,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.commit451.easycallback.EasyCallback;
-import com.commit451.easycallback.HttpException;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.MergeRequestSectionsPagerAdapter;
@@ -25,6 +22,9 @@ import org.parceler.Parcels;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -56,38 +56,44 @@ public class MergeRequestActivity extends BaseActivity {
     Project mProject;
     MergeRequest mMergeRequest;
 
-    private final EasyCallback<MergeRequest> mMergeRequestCallback = new EasyCallback<MergeRequest>() {
-        @Override
-        public void success(@NonNull MergeRequest response) {
-            mProgress.setVisibility(View.GONE);
-            Snackbar.make(mRoot, R.string.merge_request_accepted, Snackbar.LENGTH_LONG)
-                    .show();
-            App.bus().post(new MergeRequestChangedEvent(response));
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t);
-            mProgress.setVisibility(View.GONE);
-            String message = getString(R.string.unable_to_merge);
-            if (t instanceof HttpException) {
-                int code = ((HttpException) t).response().code();
-                if (code == 406) {
-                    message = getString(R.string.merge_request_already_merged_or_closed);
-                }
-            }
-            Snackbar.make(mRoot, message, Snackbar.LENGTH_LONG)
-                    .show();
-        }
-    };
-
     private final Toolbar.OnMenuItemClickListener mOnMenuItemClickListener = new Toolbar.OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.action_merge:
                     mProgress.setVisibility(View.VISIBLE);
-                    App.get().getGitLab().acceptMergeRequest(mProject.getId(), mMergeRequest.getId()).enqueue(mMergeRequestCallback);
+                    App.get().getGitLab().acceptMergeRequest(mProject.getId(), mMergeRequest.getId())
+                            .compose(MergeRequestActivity.this.<MergeRequest>bindToLifecycle())
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new Subscriber<MergeRequest>() {
+                                @Override
+                                public void onCompleted() {
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+                                    Timber.e(e);
+                                    mProgress.setVisibility(View.GONE);
+                                    String message = getString(R.string.unable_to_merge);
+                                    if (e instanceof retrofit2.adapter.rxjava.HttpException) {
+                                        int code = ((retrofit2.adapter.rxjava.HttpException) e).response().code();
+                                        if (code == 406) {
+                                            message = getString(R.string.merge_request_already_merged_or_closed);
+                                        }
+                                    }
+                                    Snackbar.make(mRoot, message, Snackbar.LENGTH_LONG)
+                                            .show();
+                                }
+
+                                @Override
+                                public void onNext(MergeRequest mergeRequest) {
+                                    mProgress.setVisibility(View.GONE);
+                                    Snackbar.make(mRoot, R.string.merge_request_accepted, Snackbar.LENGTH_LONG)
+                                            .show();
+                                    App.bus().post(new MergeRequestChangedEvent(mergeRequest));
+                                }
+                            });
                     return true;
             }
             return false;

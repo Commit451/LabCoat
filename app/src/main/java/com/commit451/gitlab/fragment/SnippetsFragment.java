@@ -2,7 +2,6 @@ package com.commit451.gitlab.fragment;
 
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,18 +19,23 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.gitlab.adapter.SnippetAdapter;
-import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.Snippet;
 import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.LinkHeaderParser;
+
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import retrofit2.Response;
+import retrofit2.adapter.rxjava.HttpException;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class SnippetsFragment extends ButterKnifeFragment {
@@ -101,55 +105,6 @@ public class SnippetsFragment extends ButterKnifeFragment {
             if (firstVisibleItem + visibleItemCount >= totalItemCount && !mLoading && mNextPageUrl != null) {
                 loadMore();
             }
-        }
-    };
-
-    private final EasyCallback<List<Snippet>> mCallback = new EasyCallback<List<Snippet>>() {
-        @Override
-        public void success(@NonNull List<Snippet> response) {
-            mLoading = false;
-            if (getView() == null) {
-                return;
-            }
-            mSwipeRefreshLayout.setRefreshing(false);
-            if (response.isEmpty()) {
-                mMessageView.setVisibility(View.VISIBLE);
-                mMessageView.setText(R.string.no_milestones);
-            }
-            mSnippetAdapter.setData(response);
-            mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
-            Timber.d("Next page url %s", mNextPageUrl);
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            mLoading = false;
-            Timber.e(t);
-            if (getView() == null) {
-                return;
-            }
-            mSwipeRefreshLayout.setRefreshing(false);
-            mMessageView.setVisibility(View.VISIBLE);
-            mMessageView.setText(R.string.connection_error_milestones);
-            mSnippetAdapter.setData(null);
-            mNextPageUrl = null;
-        }
-    };
-
-    private final EasyCallback<List<Snippet>> mMoreMilestonesCallback = new EasyCallback<List<Snippet>>() {
-        @Override
-        public void success(@NonNull List<Snippet> response) {
-            mLoading = false;
-            mSnippetAdapter.setLoading(false);
-            mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
-            mSnippetAdapter.addData(response);
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t);
-            mSnippetAdapter.setLoading(false);
-            mLoading = false;
         }
     };
 
@@ -223,7 +178,43 @@ public class SnippetsFragment extends ButterKnifeFragment {
         });
         mNextPageUrl = null;
         mLoading = true;
-        App.get().getGitLab().getSnippets(mProject.getId()).enqueue(mCallback);
+        App.get().getGitLab().getSnippets(mProject.getId())
+                .compose(this.<Response<List<Snippet>>>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Response<List<Snippet>>>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mLoading = false;
+                        Timber.e(e);
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        mMessageView.setVisibility(View.VISIBLE);
+                        mMessageView.setText(R.string.connection_error_milestones);
+                        mSnippetAdapter.setData(null);
+                        mNextPageUrl = null;
+                    }
+
+                    @Override
+                    public void onNext(Response<List<Snippet>> listResponse) {
+                        if (!listResponse.isSuccessful()) {
+                            onError(new HttpException(listResponse));
+                            return;
+                        }
+                        mLoading = false;
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        if (listResponse.body().isEmpty()) {
+                            mMessageView.setVisibility(View.VISIBLE);
+                            mMessageView.setText(R.string.no_milestones);
+                        }
+                        mSnippetAdapter.setData(listResponse.body());
+                        mNextPageUrl = LinkHeaderParser.parse(listResponse).getNext();
+                        Timber.d("Next page url %s", mNextPageUrl);
+                    }
+                });
     }
 
     private void loadMore() {
@@ -239,7 +230,34 @@ public class SnippetsFragment extends ButterKnifeFragment {
         mSnippetAdapter.setLoading(true);
 
         Timber.d("loadMore called for %s", mNextPageUrl);
-        App.get().getGitLab().getSnippets(mNextPageUrl.toString()).enqueue(mMoreMilestonesCallback);
+        App.get().getGitLab().getSnippets(mNextPageUrl.toString())
+                .compose(this.<Response<List<Snippet>>>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Response<List<Snippet>>>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e);
+                        mSnippetAdapter.setLoading(false);
+                        mLoading = false;
+                    }
+
+                    @Override
+                    public void onNext(Response<List<Snippet>> listResponse) {
+                        if (!listResponse.isSuccessful()) {
+                            onError(new HttpException(listResponse));
+                            return;
+                        }
+                        mLoading = false;
+                        mSnippetAdapter.setLoading(false);
+                        mNextPageUrl = LinkHeaderParser.parse(listResponse).getNext();
+                        mSnippetAdapter.addData(listResponse.body());
+                    }
+                });
     }
 
     private class EventReceiver {

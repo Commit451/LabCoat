@@ -4,7 +4,6 @@ import android.app.ActivityOptions;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -14,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.AttachActivity;
@@ -35,6 +33,11 @@ import org.parceler.Parcels;
 import java.util.List;
 
 import butterknife.BindView;
+import retrofit2.Response;
+import retrofit2.adapter.rxjava.HttpException;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 import static android.app.Activity.RESULT_OK;
@@ -90,82 +93,6 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
             if (firstVisibleItem + visibleItemCount >= totalItemCount && !mLoading && mNextPageUrl != null) {
                 loadMoreNotes();
             }
-        }
-    };
-
-    private EasyCallback<List<Note>> mNotesCallback = new EasyCallback<List<Note>>() {
-
-        @Override
-        public void success(@NonNull List<Note> response) {
-            if (getView() == null) {
-                return;
-            }
-            mSwipeRefreshLayout.setRefreshing(false);
-            mLoading = false;
-            mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
-            mMergeRequestDetailAdapter.setNotes(response);
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            mLoading = false;
-            Timber.e(t);
-            if (getView() == null) {
-                return;
-            }
-            mSwipeRefreshLayout.setRefreshing(false);
-            Snackbar.make(mRoot, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
-                    .show();
-        }
-    };
-
-    private EasyCallback<List<Note>> mMoreNotesCallback = new EasyCallback<List<Note>>() {
-
-        @Override
-        public void success(@NonNull List<Note> response) {
-            if (getView() == null) {
-                return;
-            }
-            mMergeRequestDetailAdapter.setLoading(false);
-            mLoading = false;
-            mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
-            mMergeRequestDetailAdapter.addNotes(response);
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            if (getView() == null) {
-                return;
-            }
-            mLoading = false;
-            Timber.e(t);
-            mMergeRequestDetailAdapter.setLoading(false);
-            Snackbar.make(mRoot, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
-                    .show();
-        }
-    };
-
-    private EasyCallback<Note> mPostNoteCallback = new EasyCallback<Note>() {
-
-        @Override
-        public void success(@NonNull Note response) {
-            if (getView() == null) {
-                return;
-            }
-            mProgress.setVisibility(View.GONE);
-            mMergeRequestDetailAdapter.addNote(response);
-            mNotesRecyclerView.smoothScrollToPosition(MergeRequestDetailAdapter.getHeaderCount());
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            if (getView() == null) {
-                return;
-            }
-            Timber.e(t);
-            mProgress.setVisibility(View.GONE);
-            Snackbar.make(mRoot, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
-                    .show();
         }
     };
 
@@ -250,12 +177,66 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
                 }
             }
         });
-        App.get().getGitLab().getMergeRequestNotes(mProject.getId(), mMergeRequest.getId()).enqueue(mNotesCallback);
+        App.get().getGitLab().getMergeRequestNotes(mProject.getId(), mMergeRequest.getId())
+                .compose(this.<Response<List<Note>>>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Response<List<Note>>>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mLoading = false;
+                        Timber.e(e);
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        Snackbar.make(mRoot, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
+                                .show();
+                    }
+
+                    @Override
+                    public void onNext(Response<List<Note>> listResponse) {
+                        if (!listResponse.isSuccessful()) {
+                            onError(new HttpException(listResponse));
+                            return;
+                        }
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        mLoading = false;
+                        mNextPageUrl = LinkHeaderParser.parse(listResponse).getNext();
+                        mMergeRequestDetailAdapter.setNotes(listResponse.body());
+                    }
+                });
     }
 
     private void loadMoreNotes() {
         mMergeRequestDetailAdapter.setLoading(true);
-        App.get().getGitLab().getMergeRequestNotes(mNextPageUrl.toString()).enqueue(mMoreNotesCallback);
+        App.get().getGitLab().getMergeRequestNotes(mNextPageUrl.toString())
+                .compose(this.<Response<List<Note>>>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Response<List<Note>>>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mLoading = false;
+                        Timber.e(e);
+                        mMergeRequestDetailAdapter.setLoading(false);
+                        Snackbar.make(mRoot, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
+                                .show();
+                    }
+
+                    @Override
+                    public void onNext(Response<List<Note>> listResponse) {
+                        mMergeRequestDetailAdapter.setLoading(false);
+                        mLoading = false;
+                        mNextPageUrl = LinkHeaderParser.parse(listResponse).getNext();
+                        mMergeRequestDetailAdapter.addNotes(listResponse.body());
+                    }
+                });
     }
 
     private void postNote(String message) {
@@ -271,7 +252,30 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
         mTeleprinter.hideKeyboard();
         mSendMessageView.clearText();
 
-        App.get().getGitLab().addMergeRequestNote(mProject.getId(), mMergeRequest.getId(), message).enqueue(mPostNoteCallback);
+        App.get().getGitLab().addMergeRequestNote(mProject.getId(), mMergeRequest.getId(), message)
+                .compose(this.<Note>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Note>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e);
+                        mProgress.setVisibility(View.GONE);
+                        Snackbar.make(mRoot, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
+                                .show();
+                    }
+
+                    @Override
+                    public void onNext(Note note) {
+                        mProgress.setVisibility(View.GONE);
+                        mMergeRequestDetailAdapter.addNote(note);
+                        mNotesRecyclerView.smoothScrollToPosition(MergeRequestDetailAdapter.getHeaderCount());
+                    }
+                });
     }
 
     private class EventReceiver {

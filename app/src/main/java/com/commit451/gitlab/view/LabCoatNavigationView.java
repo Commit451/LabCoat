@@ -3,7 +3,6 @@ package com.commit451.gitlab.view;
 import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
-import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,7 +14,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.commit451.easel.Easel;
-import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ActivityActivity;
@@ -41,6 +39,10 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import retrofit2.Response;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -139,24 +141,6 @@ public class LabCoatNavigationView extends NavigationView {
         }
     };
 
-    private final EasyCallback<UserFull> mUserCallback = new EasyCallback<UserFull>() {
-
-        @Override
-        public void success(@NonNull UserFull response) {
-            //Store the newly retrieved user to the account so that it stays up to date
-            // in local storage
-            Account account = App.get().getAccount();
-            account.setUser(response);
-            App.get().getPrefs().updateAccount(account);
-            bindUser(response);
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t);
-        }
-    };
-
     @OnClick(R.id.profile_image)
     public void onUserImageClick(ImageView imageView) {
         Navigator.navigateToUser((Activity) getContext(), imageView, App.get().getAccount().getUser());
@@ -245,7 +229,31 @@ public class LabCoatNavigationView extends NavigationView {
     }
 
     private void loadCurrentUser() {
-        App.get().getGitLab().getThisUser().enqueue(mUserCallback);
+        App.get().getGitLab().getThisUser()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Response<UserFull>>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e);
+                    }
+
+                    @Override
+                    public void onNext(Response<UserFull> response) {
+                        if (response.isSuccessful()) {
+                            //Store the newly retrieved user to the account so that it stays up to date
+                            // in local storage
+                            Account account = App.get().getAccount();
+                            account.setUser(response.body());
+                            App.get().getPrefs().updateAccount(account);
+                            bindUser(response.body());
+                        }
+                    }
+                });
     }
 
     private void bindUser(UserFull user) {

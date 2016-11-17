@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -13,7 +12,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
 
-import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.GroupAdapter;
@@ -30,7 +28,11 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.adapter.rxjava.HttpException;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -65,47 +67,6 @@ public class GroupsActivity extends BaseActivity {
             if (firstVisibleItem + visibleItemCount >= totalItemCount && !mLoading && mNextPageUrl != null) {
                 loadMore();
             }
-        }
-    };
-
-    private final Callback<List<Group>> mGroupsCallback = new EasyCallback<List<Group>>() {
-        @Override
-        public void success(@NonNull List<Group> response) {
-            mLoading = false;
-            mSwipeRefreshLayout.setRefreshing(false);
-            if (response.isEmpty()) {
-                mMessageText.setText(R.string.no_groups);
-                mMessageText.setVisibility(View.VISIBLE);
-                mGroupRecyclerView.setVisibility(View.GONE);
-            } else {
-                mGroupAdapter.setGroups(response);
-                mMessageText.setVisibility(View.GONE);
-                mGroupRecyclerView.setVisibility(View.VISIBLE);
-            }
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t);
-            mSwipeRefreshLayout.setRefreshing(false);
-            mLoading = false;
-            mMessageText.setVisibility(View.VISIBLE);
-            mMessageText.setText(R.string.connection_error);
-        }
-    };
-
-    private final Callback<List<Group>> mMoreGroupsCallback = new EasyCallback<List<Group>>() {
-        @Override
-        public void success(@NonNull List<Group> response) {
-            mLoading = false;
-            mGroupAdapter.addGroups(response);
-            mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t);
-            mLoading = false;
         }
     };
 
@@ -173,7 +134,44 @@ public class GroupsActivity extends BaseActivity {
         mNextPageUrl = null;
         mLoading = true;
 
-        App.get().getGitLab().getGroups().enqueue(mGroupsCallback);
+        App.get().getGitLab().getGroups()
+                .compose(this.<Response<List<Group>>>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Response<List<Group>>>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e);
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        mLoading = false;
+                        mMessageText.setVisibility(View.VISIBLE);
+                        mMessageText.setText(R.string.connection_error);
+                    }
+
+                    @Override
+                    public void onNext(Response<List<Group>> listResponse) {
+                        if (!listResponse.isSuccessful()) {
+                            onError(new HttpException(listResponse));
+                            return;
+                        }
+                        mLoading = false;
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        if (listResponse.body().isEmpty()) {
+                            mMessageText.setText(R.string.no_groups);
+                            mMessageText.setVisibility(View.VISIBLE);
+                            mGroupRecyclerView.setVisibility(View.GONE);
+                        } else {
+                            mGroupAdapter.setGroups(listResponse.body());
+                            mMessageText.setVisibility(View.GONE);
+                            mGroupRecyclerView.setVisibility(View.VISIBLE);
+                            mNextPageUrl = LinkHeaderParser.parse(listResponse).getNext();
+                        }
+                    }
+                });
     }
 
     private void loadMore() {
@@ -193,7 +191,32 @@ public class GroupsActivity extends BaseActivity {
         mLoading = true;
 
         Timber.d("loadMore called for %s", mNextPageUrl);
-        App.get().getGitLab().getGroups(mNextPageUrl.toString()).enqueue(mMoreGroupsCallback);
+        App.get().getGitLab().getGroups(mNextPageUrl.toString())
+                .compose(this.<Response<List<Group>>>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Response<List<Group>>>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e);
+                        mLoading = false;
+                    }
+
+                    @Override
+                    public void onNext(Response<List<Group>> listResponse) {
+                        if (!listResponse.isSuccessful()) {
+                            onError(new HttpException(listResponse));
+                            return;
+                        }
+                        mLoading = false;
+                        mGroupAdapter.addGroups(listResponse.body());
+                        mNextPageUrl = LinkHeaderParser.parse(listResponse).getNext();
+                    }
+                });
     }
 
     private class EventReceiver {

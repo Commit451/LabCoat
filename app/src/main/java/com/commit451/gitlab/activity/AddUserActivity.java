@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
@@ -19,8 +18,6 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.commit451.easycallback.EasyCallback;
-import com.commit451.easycallback.HttpException;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.UsersAdapter;
@@ -41,7 +38,12 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.adapter.rxjava.HttpException;
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -168,76 +170,9 @@ public class AddUserActivity extends MorphActivity {
         public void onAccessApplied(int accessLevel) {
             mAccessDialog.showLoading();
             if (mGroup == null) {
-                App.get().getGitLab().addProjectMember(
-                        mProjectId,
-                        mSelectedUser.getId(),
-                        accessLevel).enqueue(mAddGroupMemeberCallback);
+                add(App.get().getGitLab().addProjectMember(mProjectId, mSelectedUser.getId(), accessLevel));
             } else {
-                App.get().getGitLab().addGroupMember(mGroup.getId(),
-                        mSelectedUser.getId(),
-                        accessLevel).enqueue(mAddGroupMemeberCallback);
-            }
-        }
-    };
-
-    private final Callback<List<UserBasic>> mUserCallback = new EasyCallback<List<UserBasic>>() {
-        @Override
-        public void success(@NonNull List<UserBasic> response) {
-            mSwipeRefreshLayout.setRefreshing(false);
-            mLoading = false;
-            mAdapter.setData(response);
-            mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
-            Timber.d("Next page url is %s", mNextPageUrl);
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t);
-            mSwipeRefreshLayout.setRefreshing(false);
-            mLoading = false;
-            Snackbar.make(mRoot, getString(R.string.connection_error_users), Snackbar.LENGTH_SHORT)
-                    .show();
-        }
-    };
-
-    private final Callback<List<UserBasic>> mMoreUsersCallback = new EasyCallback<List<UserBasic>>() {
-        @Override
-        public void success(@NonNull List<UserBasic> response) {
-            mLoading = false;
-            mAdapter.setLoading(false);
-            mAdapter.addData(response);
-            mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t);
-            mAdapter.setLoading(false);
-        }
-    };
-
-    private final Callback<Member> mAddGroupMemeberCallback = new EasyCallback<Member>() {
-        @Override
-        public void success(@NonNull Member response) {
-            Snackbar.make(mRoot, R.string.user_added_successfully, Snackbar.LENGTH_SHORT)
-                    .show();
-            mAccessDialog.dismiss();
-            dismiss();
-            App.bus().post(new MemberAddedEvent(response));
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t);
-            if (t instanceof HttpException) {
-                //Conflict
-                if (((HttpException) t).response().code() == 409) {
-                    Snackbar.make(mRoot, R.string.error_user_conflict, Snackbar.LENGTH_SHORT)
-                            .show();
-                }
-            } else {
-                Snackbar.make(mRoot, R.string.error_failed_to_add_user, Snackbar.LENGTH_SHORT)
-                        .show();
+                add(App.get().getGitLab().addGroupMember(mProjectId, mSelectedUser.getId(), accessLevel));
             }
         }
     };
@@ -275,13 +210,105 @@ public class AddUserActivity extends MorphActivity {
         mTeleprinter.hideKeyboard();
         mSwipeRefreshLayout.setRefreshing(true);
         mLoading = true;
-        App.get().getGitLab().searchUsers(mSearchQuery).enqueue(mUserCallback);
+        App.get().getGitLab().searchUsers(mSearchQuery)
+                .compose(this.<Response<List<UserBasic>>>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Response<List<UserBasic>>>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e);
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        mLoading = false;
+                        Snackbar.make(mRoot, getString(R.string.connection_error_users), Snackbar.LENGTH_SHORT)
+                                .show();
+                    }
+
+                    @Override
+                    public void onNext(Response<List<UserBasic>> response) {
+                        if (!response.isSuccessful()) {
+                            onError(new HttpException(response));
+                            return;
+                        }
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        mLoading = false;
+                        mAdapter.setData(response.body());
+                        mNextPageUrl = LinkHeaderParser.parse(response).getNext();
+                        Timber.d("Next page url is %s", mNextPageUrl);
+                    }
+                });
     }
 
     private void loadMore() {
         mLoading = true;
         mAdapter.setLoading(true);
         Timber.d("loadMore " + mNextPageUrl.toString() + " " + mSearchQuery);
-        App.get().getGitLab().searchUsers(mNextPageUrl.toString(), mSearchQuery).enqueue(mMoreUsersCallback);
+        App.get().getGitLab().searchUsers(mNextPageUrl.toString(), mSearchQuery)
+                .compose(this.<Response<List<UserBasic>>>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Response<List<UserBasic>>>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e);
+                        mAdapter.setLoading(false);
+                    }
+
+                    @Override
+                    public void onNext(Response<List<UserBasic>> response) {
+                        if (!response.isSuccessful()) {
+                            onError(new HttpException(response));
+                            return;
+                        }
+                        mLoading = false;
+                        mAdapter.setLoading(false);
+                        mAdapter.addData(response.body());
+                        mNextPageUrl = LinkHeaderParser.parse(response).getNext();
+                    }
+                });
+    }
+
+    private void add(Observable<Response<Member>> observable) {
+        observable.subscribeOn(Schedulers.io())
+                .compose(this.<Response<Member>>bindToLifecycle())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Response<Member>>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e);
+                        Snackbar.make(mRoot, R.string.error_failed_to_add_user, Snackbar.LENGTH_SHORT)
+                                .show();
+                    }
+
+                    @Override
+                    public void onNext(Response<Member> response) {
+                        if (response.isSuccessful()) {
+                            Snackbar.make(mRoot, R.string.user_added_successfully, Snackbar.LENGTH_SHORT)
+                                    .show();
+                            mAccessDialog.dismiss();
+                            dismiss();
+                            App.bus().post(new MemberAddedEvent(response.body()));
+                        } else {
+                            if (response.code() == 409) {
+                                Snackbar.make(mRoot, R.string.error_user_conflict, Snackbar.LENGTH_SHORT)
+                                        .show();
+                            } else {
+                                onError(new Exception("Does not matter"));
+                            }
+                        }
+                    }
+                });
     }
 }

@@ -31,7 +31,6 @@ import com.commit451.gitlab.model.api.UserLogin;
 import java.util.List;
 
 import okhttp3.MultipartBody;
-import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.http.DELETE;
 import retrofit2.http.Field;
@@ -72,220 +71,220 @@ public interface GitLab {
      * Get currently authenticated user
      */
     @GET(API_VERSION + "/user")
-    Call<UserFull> getThisUser();
+    Observable<Response<UserFull>> getThisUser();
 
     @GET(API_VERSION + "/users")
-    Call<List<UserBasic>> getUsers();
+    Observable<List<UserBasic>> getUsers();
 
     @GET
-    Call<List<UserBasic>> getUsers(@Url String url);
+    Observable<List<UserBasic>> getUsers(@Url String url);
 
     @GET(API_VERSION + "/users")
-    Call<List<UserBasic>> searchUsers(@Query("search") String query);
+    Observable<Response<List<UserBasic>>> searchUsers(@Query("search") String query);
 
     @GET
-    Call<List<UserBasic>> searchUsers(@Url String url, @Query("search") String query);
+    Observable<Response<List<UserBasic>>> searchUsers(@Url String url, @Query("search") String query);
 
     @GET(API_VERSION + "/users/{id}")
-    Call<User> getUser(@Path("id") long userId);
+    Observable<User> getUser(@Path("id") long userId);
 
     /* --- GROUPS --- */
 
     @GET(API_VERSION + "/groups")
-    Call<List<Group>> getGroups();
+    Observable<Response<List<Group>>> getGroups();
 
     @GET
-    Call<List<Group>> getGroups(@Url String url);
+    Observable<Response<List<Group>>> getGroups(@Url String url);
 
     @GET(API_VERSION + "/groups/{id}")
-    Call<GroupDetail> getGroup(@Path("id") long id);
+    Observable<GroupDetail> getGroup(@Path("id") long id);
 
     @GET(API_VERSION + "/groups/{id}/projects?order_by=last_activity_at")
-    Call<List<Project>> getGroupProjects(@Path("id") long id);
+    Observable<Response<List<Project>>> getGroupProjects(@Path("id") long id);
 
     @GET(API_VERSION + "/groups/{id}/members")
-    Call<List<Member>> getGroupMembers(@Path("id") long groupId);
+    Observable<Response<List<Member>>> getGroupMembers(@Path("id") long groupId);
 
     @FormUrlEncoded
     @POST(API_VERSION + "/groups/{id}/members")
-    Call<Member> addGroupMember(@Path("id") long groupId,
+    Observable<Response<Member>> addGroupMember(@Path("id") long groupId,
                                 @Field("user_id") long userId,
                                 @Field("access_level") int accessLevel);
 
     @FormUrlEncoded
     @PUT(API_VERSION + "/groups/{id}/members/{user_id}")
-    Call<Member> editGroupMember(@Path("id") long groupId,
+    Observable<Member> editGroupMember(@Path("id") long groupId,
                                  @Path("user_id") long userId,
                                  @Field("access_level") int accessLevel);
 
     @DELETE(API_VERSION + "/groups/{id}/members/{user_id}")
-    Call<Void> removeGroupMember(@Path("id") long groupId,
+    Observable<String> removeGroupMember(@Path("id") long groupId,
                                  @Path("user_id") long userId);
 
     /* --- PROJECTS --- */
 
     @GET(API_VERSION + "/projects?order_by=last_activity_at&archived=false")
-    Call<List<Project>> getAllProjects();
+    Observable<Response<List<Project>>> getAllProjects();
 
     @GET(API_VERSION + "/projects/owned?order_by=last_activity_at&archived=false")
-    Call<List<Project>> getMyProjects();
+    Observable<Response<List<Project>>> getMyProjects();
 
     @GET(API_VERSION + "/projects/starred")
-    Call<List<Project>> getStarredProjects();
+    Observable<Response<List<Project>>> getStarredProjects();
 
     @GET(API_VERSION + "/projects/{id}")
-    Call<Project> getProject(@Path("id") String projectId);
+    Observable<Project> getProject(@Path("id") String projectId);
 
     // see https://github.com/gitlabhq/gitlabhq/blob/master/doc/api/projects.md#get-single-project
     @GET(API_VERSION + "/projects/{namespace}%2F{project_name}")
-    Call<Project> getProject(@Path("namespace") String namespace,
+    Observable<Project> getProject(@Path("namespace") String namespace,
                              @Path("project_name") String projectName);
 
     @GET
-    Call<List<Project>> getProjects(@Url String url);
+    Observable<Response<List<Project>>> getProjects(@Url String url);
 
     @GET(API_VERSION + "/projects/search/{query}")
-    Call<List<Project>> searchAllProjects(@Path("query") String query);
+    Observable<Response<List<Project>>> searchAllProjects(@Path("query") String query);
 
     @GET(API_VERSION + "/projects/{id}/members")
-    Call<List<Member>> getProjectMembers(@Path("id") long projectId);
+    Observable<Response<List<Member>>> getProjectMembers(@Path("id") long projectId);
 
     @GET
-    Call<List<Member>> getProjectMembers(@Url String url);
+    Observable<Response<List<Member>>> getProjectMembers(@Url String url);
 
     @FormUrlEncoded
     @POST(API_VERSION + "/projects/{id}/members")
-    Call<Member> addProjectMember(@Path("id") long projectId,
+    Observable<Response<Member>> addProjectMember(@Path("id") long projectId,
                                   @Field("user_id") long userId,
                                   @Field("access_level") int accessLevel);
 
     @FormUrlEncoded
     @PUT(API_VERSION + "/projects/{id}/members/{user_id}")
-    Call<Member> editProjectMember(@Path("id") long projectId,
+    Observable<Member> editProjectMember(@Path("id") long projectId,
                                    @Path("user_id") long userId,
                                    @Field("access_level") int accessLevel);
 
     @DELETE(API_VERSION + "/projects/{id}/members/{user_id}")
-    Call<Void> removeProjectMember(@Path("id") long projectId,
+    Observable<Void> removeProjectMember(@Path("id") long projectId,
                                    @Path("user_id") long userId);
 
     @POST(API_VERSION + "/projects/fork/{id}")
-    Call<Void> forkProject(@Path("id") long projectId);
+    Observable<String> forkProject(@Path("id") long projectId);
 
     @POST(API_VERSION + "/projects/{id}/star")
-    Call<Project> starProject(@Path("id") long projectId);
+    Observable<Project> starProject(@Path("id") long projectId);
 
     @DELETE(API_VERSION + "/projects/{id}/star")
-    Call<Project> unstarProject(@Path("id") long projectId);
+    Observable<Project> unstarProject(@Path("id") long projectId);
 
     @Multipart
     @POST(API_VERSION + "/projects/{id}/uploads")
-    Call<FileUploadResponse> uploadFile(@Path("id") long projectId,
+    Observable<FileUploadResponse> uploadFile(@Path("id") long projectId,
                                         @Part MultipartBody.Part file);
 
     /* --- MILESTONES --- */
 
     @GET(API_VERSION + "/projects/{id}/milestones")
-    Call<List<Milestone>> getMilestones(@Path("id") long projectId,
+    Observable<Response<List<Milestone>>> getMilestones(@Path("id") long projectId,
                                         @Query("state") String state);
 
     @GET
-    Call<List<Milestone>> getMilestones(@Url String url);
+    Observable<Response<List<Milestone>>> getMilestones(@Url String url);
 
     @GET(API_VERSION + "/projects/{id}/issues")
-    Call<List<Milestone>> getMilestonesByIid(@Path("id") long projectId,
+    Observable<List<Milestone>> getMilestonesByIid(@Path("id") long projectId,
                                              @Query("iid") String internalMilestoneId);
 
     @GET(API_VERSION + "/projects/{id}/milestones/{milestone_id}/issues")
-    Call<List<Issue>> getMilestoneIssues(@Path("id") long projectId,
+    Observable<Response<List<Issue>>> getMilestoneIssues(@Path("id") long projectId,
                                          @Path("milestone_id") long milestoneId);
 
     @GET
-    Call<List<Issue>> getMilestoneIssues(@Url String url);
+    Observable<Response<List<Issue>>> getMilestoneIssues(@Url String url);
 
     @FormUrlEncoded
     @POST(API_VERSION + "/projects/{id}/milestones")
-    Call<Milestone> createMilestone(@Path("id") long projectId,
+    Observable<Milestone> createMilestone(@Path("id") long projectId,
                                     @Field("title") String title,
                                     @Field("description") String description,
                                     @Field("due_date") String dueDate);
 
     @FormUrlEncoded
     @PUT(API_VERSION + "/projects/{id}/milestones/{milestone_id}")
-    Call<Milestone> editMilestone(@Path("id") long projectId,
+    Observable<Milestone> editMilestone(@Path("id") long projectId,
                                   @Path("milestone_id") long milestoneId,
                                   @Field("title") String title,
                                   @Field("description") String description,
                                   @Field("due_date") String dueDate);
 
     @PUT(API_VERSION + "/projects/{id}/milestones/{milestone_id}")
-    Call<Milestone> updateMilestoneStatus(@Path("id") long projectId,
+    Observable<Milestone> updateMilestoneStatus(@Path("id") long projectId,
                                           @Path("milestone_id") long milestoneId,
                                           @Query("state_event") @Milestone.StateEvent String status);
 
     /* --- MERGE REQUESTS --- */
 
     @GET(API_VERSION + "/projects/{id}/merge_requests")
-    Call<List<MergeRequest>> getMergeRequests(@Path("id") long projectId,
+    Observable<Response<List<MergeRequest>>> getMergeRequests(@Path("id") long projectId,
                                               @Query("state") String state);
 
     @GET
-    Call<List<MergeRequest>> getMergeRequests(@Url String url,
+    Observable<Response<List<MergeRequest>>> getMergeRequests(@Url String url,
                                               @Query("state") String state);
 
     @GET(API_VERSION + "/projects/{id}/merge_requests")
-    Call<List<MergeRequest>> getMergeRequestsByIid(@Path("id") long projectId,
+    Observable<List<MergeRequest>> getMergeRequestsByIid(@Path("id") long projectId,
                                                    @Query("iid") String internalMergeRequestId);
 
     @GET(API_VERSION + "/projects/{id}/merge_request/{merge_request_id}")
-    Call<MergeRequest> getMergeRequest(@Path("id") long projectId,
+    Observable<MergeRequest> getMergeRequest(@Path("id") long projectId,
                                        @Path("merge_request_id") long mergeRequestId);
 
-    @GET(API_VERSION + "/projects/{id}/merge_requests/{merge_request_id}/notes")
-    Call<List<Note>> getMergeRequestNotes(@Path("id") long projectId,
-                                          @Path("merge_request_id") long mergeRequestId);
-
     @GET(API_VERSION + "/projects/{id}/merge_requests/{merge_request_id}/commits")
-    Call<List<RepositoryCommit>> getMergeRequestCommits(@Path("id") long projectId,
+    Observable<List<RepositoryCommit>> getMergeRequestCommits(@Path("id") long projectId,
                                                         @Path("merge_request_id") long mergeRequestId);
 
     @GET(API_VERSION + "/projects/{id}/merge_requests/{merge_request_id}/changes")
-    Call<MergeRequest> getMergeRequestChanges(@Path("id") long projectId,
+    Observable<MergeRequest> getMergeRequestChanges(@Path("id") long projectId,
                                               @Path("merge_request_id") long mergeRequestId);
 
+    @GET(API_VERSION + "/projects/{id}/merge_requests/{merge_request_id}/notes")
+    Observable<Response<List<Note>>> getMergeRequestNotes(@Path("id") long projectId,
+                                          @Path("merge_request_id") long mergeRequestId);
+
     @GET
-    Call<List<Note>> getMergeRequestNotes(@Url String url);
+    Observable<Response<List<Note>>> getMergeRequestNotes(@Url String url);
 
     @FormUrlEncoded
     @POST(API_VERSION + "/projects/{id}/merge_requests/{merge_request_id}/notes")
-    Call<Note> addMergeRequestNote(@Path("id") long projectId,
+    Observable<Note> addMergeRequestNote(@Path("id") long projectId,
                                    @Path("merge_request_id") long mergeRequestId,
                                    @Field("body") String body);
 
     @PUT(API_VERSION + "/projects/{id}/merge_requests/{merge_request_id}/merge")
-    Call<MergeRequest> acceptMergeRequest(@Path("id") long projectId,
+    Observable<MergeRequest> acceptMergeRequest(@Path("id") long projectId,
                                           @Path("merge_request_id") long mergeRequestId);
 
     /* --- ISSUES --- */
 
     @GET(API_VERSION + "/projects/{id}/issues")
-    Call<List<Issue>> getIssues(@Path("id") long projectId,
+    Observable<Response<List<Issue>>> getIssues(@Path("id") long projectId,
                                 @Query("state") String state);
 
     @GET
-    Call<List<Issue>> getIssues(@Url String url);
+    Observable<Response<List<Issue>>> getIssues(@Url String url);
 
     @GET(API_VERSION + "/projects/{id}/issues/{issue_id}")
-    Call<Issue> getIssue(@Path("id") long projectId,
+    Observable<Issue> getIssue(@Path("id") long projectId,
                          @Path("issue_id") String issueId);
 
     @GET(API_VERSION + "/projects/{id}/issues")
-    Call<List<Issue>> getIssuesByIid(@Path("id") long projectId,
+    Observable<List<Issue>> getIssuesByIid(@Path("id") long projectId,
                                      @Query("iid") String internalIssueId);
 
     @FormUrlEncoded
     @POST(API_VERSION + "/projects/{id}/issues")
-    Call<Issue> createIssue(@Path("id") long projectId,
+    Observable<Issue> createIssue(@Path("id") long projectId,
                             @Field("title") String title,
                             @Field("description") String description,
                             @Field("assignee_id") @Nullable Long assigneeId,
@@ -293,7 +292,7 @@ public interface GitLab {
                             @Field("labels") @Nullable String commaSeparatedLabelNames);
 
     @PUT(API_VERSION + "/projects/{id}/issues/{issue_id}")
-    Call<Issue> updateIssue(@Path("id") long projectId,
+    Observable<Issue> updateIssue(@Path("id") long projectId,
                             @Path("issue_id") long issueId,
                             @Query("title") String title,
                             @Query("description") String description,
@@ -302,56 +301,56 @@ public interface GitLab {
                             @Query("labels") @Nullable String commaSeparatedLabelNames);
 
     @PUT(API_VERSION + "/projects/{id}/issues/{issue_id}")
-    Call<Issue> updateIssueStatus(@Path("id") long projectId,
+    Observable<Issue> updateIssueStatus(@Path("id") long projectId,
                                   @Path("issue_id") long issueId,
                                   @Query("state_event") @Issue.EditState String status);
 
     @GET(API_VERSION + "/projects/{id}/issues/{issue_id}/notes")
-    Call<List<Note>> getIssueNotes(@Path("id") long projectId,
+    Observable<Response<List<Note>>> getIssueNotes(@Path("id") long projectId,
                                    @Path("issue_id") long issueId);
 
     @GET
-    Call<List<Note>> getIssueNotes(@Url String url);
+    Observable<Response<List<Note>>> getIssueNotes(@Url String url);
 
     @FormUrlEncoded
     @POST(API_VERSION + "/projects/{id}/issues/{issue_id}/notes")
-    Call<Note> addIssueNote(@Path("id") long projectId,
+    Observable<Note> addIssueNote(@Path("id") long projectId,
                             @Path("issue_id") long issueId,
                             @Field("body") String body);
 
     @DELETE(API_VERSION + "/projects/{id}/issues/{issue_id}")
-    Call<Void> deleteIssue(@Path("id") long projectId,
+    Observable<String> deleteIssue(@Path("id") long projectId,
                            @Path("issue_id") long issueId);
 
     /* --- REPOSITORY --- */
 
     @GET(API_VERSION + "/projects/{id}/repository/branches?order_by=last_activity_at")
-    Call<List<Branch>> getBranches(@Path("id") long projectId);
+    Observable<List<Branch>> getBranches(@Path("id") long projectId);
 
     @GET(API_VERSION + "/projects/{id}/repository/contributors")
-    Call<List<Contributor>> getContributors(@Path("id") String projectId);
+    Observable<List<Contributor>> getContributors(@Path("id") String projectId);
 
     @GET(API_VERSION + "/projects/{id}/repository/tree")
-    Call<List<RepositoryTreeObject>> getTree(@Path("id") long projectId,
+    Observable<List<RepositoryTreeObject>> getTree(@Path("id") long projectId,
                                              @Query("ref_name") String branchName,
                                              @Query("path") String path);
 
     @GET(API_VERSION + "/projects/{id}/repository/files")
-    Call<RepositoryFile> getFile(@Path("id") long projectId,
+    Observable<RepositoryFile> getFile(@Path("id") long projectId,
                                  @Query("file_path") String path,
                                  @Query("ref") String ref);
 
     @GET(API_VERSION + "/projects/{id}/repository/commits")
-    Call<List<RepositoryCommit>> getCommits(@Path("id") long projectId,
+    Observable<List<RepositoryCommit>> getCommits(@Path("id") long projectId,
                                             @Query("ref_name") String branchName,
                                             @Query("page") int page);
 
     @GET(API_VERSION + "/projects/{id}/repository/commits/{sha}")
-    Call<RepositoryCommit> getCommit(@Path("id") long projectId,
+    Observable<RepositoryCommit> getCommit(@Path("id") long projectId,
                                      @Path("sha") String commitSHA);
 
     @GET(API_VERSION + "/projects/{id}/repository/commits/{sha}/diff")
-    Call<List<Diff>> getCommitDiff(@Path("id") long projectId,
+    Observable<List<Diff>> getCommitDiff(@Path("id") long projectId,
                                    @Path("sha") String commitSHA);
 
     /**
@@ -361,7 +360,7 @@ public interface GitLab {
      * @return all the labels within a project
      */
     @GET(API_VERSION + "/projects/{id}/labels")
-    Call<List<Label>> getLabels(@Path("id") long projectId);
+    Observable<List<Label>> getLabels(@Path("id") long projectId);
 
     /**
      * Create a new label
@@ -369,10 +368,10 @@ public interface GitLab {
      * @param projectId id
      * @param name      the name of the label
      * @param color     the color, ex. #ff0000
-     * @return call onSuccess the newly created label
+     * @return observable
      */
     @POST(API_VERSION + "/projects/{id}/labels")
-    Call<Label> createLabel(@Path("id") long projectId,
+    Observable<Label> createLabel(@Path("id") long projectId,
                             @Query("name") String name,
                             @Query("color") String color,
                             @Query("description") @Nullable String description);
@@ -384,113 +383,113 @@ public interface GitLab {
      * @return all the labels within a project
      */
     @DELETE(API_VERSION + "/projects/{id}/labels")
-    Call<Label> deleteLabel(@Path("id") long projectId,
+    Observable<Label> deleteLabel(@Path("id") long projectId,
                             @Query("name") String name);
 
 
     /* --- BUILDS --- */
     @GET(API_VERSION + "/projects/{id}/builds")
-    Call<List<Build>> getBuilds(@Path("id") long projectId,
+    Observable<Response<List<Build>>> getBuilds(@Path("id") long projectId,
                                 @Query("scope") String scope);
 
     @GET
-    Call<List<Build>> getBuilds(@Url String url,
+    Observable<Response<List<Build>>> getBuilds(@Url String url,
                                 @Query("scope") String state);
 
     @GET(API_VERSION + "/projects/{id}/builds/{build_id}")
-    Call<Build> getBuild(@Path("id") long projectId,
+    Observable<Build> getBuild(@Path("id") long projectId,
                          @Path("build_id") long buildId);
 
     @POST(API_VERSION + "/projects/{id}/builds/{build_id}/retry")
-    Call<Build> retryBuild(@Path("id") long projectId,
+    Observable<Build> retryBuild(@Path("id") long projectId,
                            @Path("build_id") long buildId);
 
     @POST(API_VERSION + "/projects/{id}/builds/{build_id}/erase")
-    Call<Build> eraseBuild(@Path("id") long projectId,
+    Observable<Build> eraseBuild(@Path("id") long projectId,
                            @Path("build_id") long buildId);
 
     @POST(API_VERSION + "/projects/{id}/builds/{build_id}/cancel")
-    Call<Build> cancelBuild(@Path("id") long projectId,
+    Observable<Build> cancelBuild(@Path("id") long projectId,
                             @Path("build_id") long buildId);
 
     /* --- SNIPPETS --- */
     @GET(API_VERSION + "/projects/{id}/snippets")
-    Call<List<Snippet>> getSnippets(@Path("id") long projectId);
+    Observable<Response<List<Snippet>>> getSnippets(@Path("id") long projectId);
 
     @GET
-    Call<List<Snippet>> getSnippets(@Url String url);
+    Observable<Response<List<Snippet>>> getSnippets(@Url String url);
 
     /* --- TODOS --- */
     @GET(API_VERSION + "/todos")
-    Call<List<Todo>> getTodos(@Query("state") @Todo.State String state);
+    Observable<Response<List<Todo>>> getTodos(@Query("state") @Todo.State String state);
 
     @GET
-    Call<List<Todo>> getTodosByUrl(@Url String url);
+    Observable<Response<List<Todo>>> getTodosByUrl(@Url String url);
 
     /* --- TAGS --- */
     @GET(API_VERSION + "/projects/{id}/repository/tags")
-    Call<List<Tag>> getTags(@Path("id") long projectId);
+    Observable<List<Tag>> getTags(@Path("id") long projectId);
 
     /* --- AWARD EMOJI --- */
     @GET(API_VERSION + "/projects/{id}/issues/{issue_id}/award_emoji")
-    Call<List<AwardEmoji>> getAwardEmojiForIssue(@Path("id") long projectId,
+    Observable<List<AwardEmoji>> getAwardEmojiForIssue(@Path("id") long projectId,
                                                  @Path("issue_id") String issueId);
 
     @GET(API_VERSION + "/projects/{id}/merge_requests/{merge_request_id}/award_emoji")
-    Call<List<AwardEmoji>> getAwardEmojiForMergeRequest(@Path("id") long projectId,
+    Observable<List<AwardEmoji>> getAwardEmojiForMergeRequest(@Path("id") long projectId,
                                                         @Path("merge_request_id") String mergeRequestId);
 
     @GET(API_VERSION + "/projects/{id}/issues/{issue_id}/notes/{note_id}/award_emoji")
-    Call<List<AwardEmoji>> getAwardEmojiForIssueNote(@Path("id") long projectId,
+    Observable<List<AwardEmoji>> getAwardEmojiForIssueNote(@Path("id") long projectId,
                                                      @Path("issue_id") String issueId,
                                                      @Path("note_id") String noteId);
 
     @GET(API_VERSION + "/projects/{id}/merge_requests/{merge_request_id}/notes/{note_id}/award_emoji")
-    Call<List<AwardEmoji>> getAwardEmojiForMergeRequestNote(@Path("id") long projectId,
+    Observable<List<AwardEmoji>> getAwardEmojiForMergeRequestNote(@Path("id") long projectId,
                                                             @Path("merge_request_id") String mergeRequestId,
                                                             @Path("note_id") String noteId);
 
     @POST(API_VERSION + "/projects/{id}/issues/{issue_id}/award_emoji")
-    Call<AwardEmoji> postAwardEmojiForIssue(@Path("id") long projectId,
+    Observable<AwardEmoji> postAwardEmojiForIssue(@Path("id") long projectId,
                                             @Path("issue_id") String issueId);
 
     @GET(API_VERSION + "/projects/{id}/merge_requests/{merge_request_id}/award_emoji")
-    Call<AwardEmoji> postAwardEmojiForMergeRequest(@Path("id") long projectId,
+    Observable<AwardEmoji> postAwardEmojiForMergeRequest(@Path("id") long projectId,
                                                    @Path("merge_request_id") String mergeRequestId);
 
     @GET(API_VERSION + "/projects/{id}/merge_requests/{merge_request_id}/notes/{note_id}/award_emoji")
-    Call<AwardEmoji> postAwardEmojiForMergeRequestNote(@Path("id") long projectId,
+    Observable<AwardEmoji> postAwardEmojiForMergeRequestNote(@Path("id") long projectId,
                                                        @Path("merge_request_id") String mergeRequestId,
                                                        @Path("note_id") String noteId);
 
     @POST(API_VERSION + "/projects/{id}/issues/{issue_id}/notes/{note_id}/award_emoji")
-    Call<AwardEmoji> postAwardEmojiForIssueNote(@Path("id") long projectId,
+    Observable<AwardEmoji> postAwardEmojiForIssueNote(@Path("id") long projectId,
                                                 @Path("issue_id") String issueId,
                                                 @Path("note_id") String noteId);
 
     @DELETE(API_VERSION + "/projects/{id}/issues/{issue_id}/award_emoji/{award_id}")
-    Call<AwardEmoji> deleteAwardEmojiForIssue(@Path("id") long projectId,
+    Observable<AwardEmoji> deleteAwardEmojiForIssue(@Path("id") long projectId,
                                               @Path("issue_id") String issueId,
                                               @Path("award_id") String awardId);
 
     @DELETE(API_VERSION + "/projects/{id}/merge_requests/{merge_request_id}/award_emoji/{award_id}")
-    Call<AwardEmoji> deleteAwardEmojiForMergeRequest(@Path("id") long projectId,
+    Observable<AwardEmoji> deleteAwardEmojiForMergeRequest(@Path("id") long projectId,
                                                      @Path("merge_request_id") String mergeRequestId,
                                                      @Path("award_id") String awardId);
 
     @DELETE(API_VERSION + "/projects/{id}/issues/{issue_id}/notes/{note_id}/award_emoji/{award_id}")
-    Call<AwardEmoji> deleteAwardEmojiForIssueNote(@Path("id") long projectId,
+    Observable<AwardEmoji> deleteAwardEmojiForIssueNote(@Path("id") long projectId,
                                                   @Path("issue_id") String issueId,
                                                   @Path("note_id") String noteId,
                                                   @Path("award_id") String awardId);
 
     @DELETE(API_VERSION + "/projects/{id}/merge_requests/{merge_request_id}/notes/{note_id}/award_emoji/{award_id}")
-    Call<AwardEmoji> deleteAwardEmojiForMergeRequestNote(@Path("id") long projectId,
+    Observable<AwardEmoji> deleteAwardEmojiForMergeRequestNote(@Path("id") long projectId,
                                                          @Path("merge_request_id") String mergeRequestId,
                                                          @Path("note_id") String noteId,
                                                          @Path("award_id") String awardId);
 
     /* --- MISC --- */
     @GET
-    Call<String> getRaw(@Url String url);
+    Observable<String> getRaw(@Url String url);
 }

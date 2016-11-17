@@ -9,14 +9,12 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.commit451.easycallback.EasyCallback;
 import com.commit451.gimbal.Gimbal;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
@@ -37,7 +35,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
-import retrofit2.Callback;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -91,22 +91,6 @@ public class AboutActivity extends BaseActivity {
         }
     };
 
-    private Callback<List<Contributor>> mContributorResponseCallback = new EasyCallback<List<Contributor>>() {
-        @Override
-        public void success(@NonNull List<Contributor> response) {
-            mProgress.setVisibility(View.GONE);
-            addContributors(Contributor.groupContributors(response));
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t);
-            mProgress.setVisibility(View.GONE);
-            Snackbar.make(mRoot, R.string.failed_to_load_contributors, Snackbar.LENGTH_SHORT)
-                    .show();
-        }
-    };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -125,7 +109,29 @@ public class AboutActivity extends BaseActivity {
         mPhysicsLayout.getPhysics().enableFling();
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         gravitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
-        App.get().getGitLab().getContributors(REPO_ID).enqueue(mContributorResponseCallback);
+        App.get().getGitLab().getContributors(REPO_ID)
+                .compose(this.<List<Contributor>>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<List<Contributor>>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e);
+                        mProgress.setVisibility(View.GONE);
+                        Snackbar.make(mRoot, R.string.failed_to_load_contributors, Snackbar.LENGTH_SHORT)
+                                .show();
+                    }
+
+                    @Override
+                    public void onNext(List<Contributor> contributors) {
+                        mProgress.setVisibility(View.GONE);
+                        addContributors(Contributor.groupContributors(contributors));
+                    }
+                });
         mProgress.setVisibility(View.VISIBLE);
     }
 

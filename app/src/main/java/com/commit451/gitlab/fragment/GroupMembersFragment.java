@@ -2,7 +2,6 @@ package com.commit451.gitlab.fragment;
 
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
@@ -12,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.GroupMembersAdapter;
@@ -32,6 +30,12 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import retrofit2.Response;
+import retrofit2.adapter.rxjava.HttpException;
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class GroupMembersFragment extends ButterKnifeFragment {
@@ -85,63 +89,6 @@ public class GroupMembersFragment extends ButterKnifeFragment {
         }
     };
 
-    private final EasyCallback<List<Member>> mGroupMembersCallback = new EasyCallback<List<Member>>() {
-        @Override
-        public void success(@NonNull List<Member> response) {
-            if (getView() == null) {
-                return;
-            }
-            mSwipeRefreshLayout.setRefreshing(false);
-            if (response.isEmpty()) {
-                mMessageView.setVisibility(View.VISIBLE);
-                mMessageView.setText(R.string.no_project_members);
-            }
-            mAddUserButton.setVisibility(View.VISIBLE);
-            if (mNextPageUrl == null) {
-                mGroupMembersAdapter.setData(response);
-            } else {
-                mGroupMembersAdapter.addData(response);
-            }
-            mGroupMembersAdapter.setLoading(false);
-
-            mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
-            Timber.d("Next page url %s", mNextPageUrl);
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t);
-            if (getView() == null) {
-                return;
-            }
-            mSwipeRefreshLayout.setRefreshing(false);
-            mMessageView.setVisibility(View.VISIBLE);
-            mMessageView.setText(R.string.connection_error_users);
-            mAddUserButton.setVisibility(View.GONE);
-            mGroupMembersAdapter.setData(null);
-        }
-    };
-
-    private final EasyCallback<Void> mRemoveMemberCallback = new EasyCallback<Void>() {
-        @Override
-        public void success(@NonNull Void response) {
-            if (getView() == null) {
-                return;
-            }
-            mGroupMembersAdapter.removeMember(mMember);
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t);
-            if (getView() == null) {
-                return;
-            }
-            Snackbar.make(mRoot, R.string.failed_to_remove_member, Snackbar.LENGTH_SHORT)
-                    .show();
-        }
-    }.allowNullBodies(true);
-
     private final GroupMembersAdapter.Listener mListener = new GroupMembersAdapter.Listener() {
         @Override
         public void onUserClicked(Member member, ProjectMemberViewHolder holder) {
@@ -151,7 +98,28 @@ public class GroupMembersFragment extends ButterKnifeFragment {
         @Override
         public void onUserRemoveClicked(Member member) {
             mMember = member;
-            App.get().getGitLab().removeGroupMember(mGroup.getId(), member.getId()).enqueue(mRemoveMemberCallback);
+            App.get().getGitLab().removeGroupMember(mGroup.getId(), member.getId())
+                    .compose(GroupMembersFragment.this.<String>bindToLifecycle())
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Subscriber<String>() {
+                        @Override
+                        public void onCompleted() {
+
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Timber.e(e);
+                            Snackbar.make(mRoot, R.string.failed_to_remove_member, Snackbar.LENGTH_SHORT)
+                                    .show();
+                        }
+
+                        @Override
+                        public void onNext(String s) {
+                            mGroupMembersAdapter.removeMember(mMember);
+                        }
+                    });
         }
 
         @Override
@@ -233,7 +201,7 @@ public class GroupMembersFragment extends ButterKnifeFragment {
                 }
             }
         });
-        App.get().getGitLab().getGroupMembers(mGroup.getId()).enqueue(mGroupMembersCallback);
+        loadGroupMembers(App.get().getGitLab().getGroupMembers(mGroup.getId()));
     }
 
     private void loadMore() {
@@ -257,7 +225,52 @@ public class GroupMembersFragment extends ButterKnifeFragment {
         mGroupMembersAdapter.setLoading(true);
 
         Timber.d("loadMore called for %s", mNextPageUrl);
-        App.get().getGitLab().getProjectMembers(mNextPageUrl.toString()).enqueue(mGroupMembersCallback);
+        loadGroupMembers(App.get().getGitLab().getProjectMembers(mNextPageUrl.toString()));
+    }
+
+    private void loadGroupMembers(Observable<Response<List<Member>>> observable) {
+        observable
+                .compose(this.<Response<List<Member>>>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Response<List<Member>>>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e);
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        mMessageView.setVisibility(View.VISIBLE);
+                        mMessageView.setText(R.string.connection_error_users);
+                        mAddUserButton.setVisibility(View.GONE);
+                        mGroupMembersAdapter.setData(null);
+                    }
+
+                    @Override
+                    public void onNext(Response<List<Member>> listResponse) {
+                        if (!listResponse.isSuccessful()) {
+                            onError(new HttpException(listResponse));
+                            return;
+                        }
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        if (listResponse.body().isEmpty()) {
+                            mMessageView.setVisibility(View.VISIBLE);
+                            mMessageView.setText(R.string.no_project_members);
+                        }
+                        mAddUserButton.setVisibility(View.VISIBLE);
+                        if (mNextPageUrl == null) {
+                            mGroupMembersAdapter.setData(listResponse.body());
+                        } else {
+                            mGroupMembersAdapter.addData(listResponse.body());
+                        }
+                        mGroupMembersAdapter.setLoading(false);
+
+                        mNextPageUrl = LinkHeaderParser.parse(listResponse).getNext();
+                        Timber.d("Next page url %s", mNextPageUrl);
+                    }
+                });
     }
 
     @Subscribe

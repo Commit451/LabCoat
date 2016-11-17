@@ -5,7 +5,6 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -16,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.ProjectSectionsPagerAdapter;
@@ -32,7 +30,10 @@ import org.parceler.Parcels;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import retrofit2.Callback;
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class ProjectActivity extends BaseActivity {
@@ -79,26 +80,6 @@ public class ProjectActivity extends BaseActivity {
 
     Project mProject;
     Ref mRef;
-
-    private final Callback<Project> mProjectCallback = new EasyCallback<Project>() {
-        @Override
-        public void success(@NonNull Project response) {
-            mProgress.animate()
-                    .alpha(0.0f)
-                    .withEndAction(new HideRunnable(mProgress));
-            bindProject(response);
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t);
-            mProgress.animate()
-                    .alpha(0.0f)
-                    .withEndAction(new HideRunnable(mProgress));
-            Snackbar.make(mRoot, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
-                    .show();
-        }
-    };
 
     private final Toolbar.OnMenuItemClickListener mOnMenuItemClickListener = new Toolbar.OnMenuItemClickListener() {
         @Override
@@ -194,12 +175,41 @@ public class ProjectActivity extends BaseActivity {
 
     private void loadProject(String projectId) {
         showProgress();
-        App.get().getGitLab().getProject(projectId).enqueue(mProjectCallback);
+        loadProject(App.get().getGitLab().getProject(projectId));
     }
 
     private void loadProject(String projectNamespace, String projectName) {
         showProgress();
-        App.get().getGitLab().getProject(projectNamespace, projectName).enqueue(mProjectCallback);
+        loadProject(App.get().getGitLab().getProject(projectNamespace, projectName));
+    }
+
+    private void loadProject(Observable<Project> observable) {
+        observable.compose(this.<Project>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Project>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e);
+                        mProgress.animate()
+                                .alpha(0.0f)
+                                .withEndAction(new HideRunnable(mProgress));
+                        Snackbar.make(mRoot, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
+                                .show();
+                    }
+
+                    @Override
+                    public void onNext(Project project) {
+                        mProgress.animate()
+                                .alpha(0.0f)
+                                .withEndAction(new HideRunnable(mProgress));
+                        bindProject(project);
+                    }
+                });
     }
 
     private void showProgress() {

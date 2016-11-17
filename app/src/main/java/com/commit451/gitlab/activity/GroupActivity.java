@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -19,7 +18,6 @@ import android.widget.ImageView;
 
 import com.commit451.alakazam.Alakazam;
 import com.commit451.easel.Easel;
-import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.GroupPagerAdapter;
@@ -31,7 +29,9 @@ import org.parceler.Parcels;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import retrofit2.Callback;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -54,28 +54,20 @@ public class GroupActivity extends BaseActivity {
         return intent;
     }
 
-    @BindView(R.id.root) View mRoot;
-    @BindView(R.id.toolbar) Toolbar mToolbar;
-    @BindView(R.id.collapsing_toolbar) CollapsingToolbarLayout mCollapsingToolbarLayout;
-    @BindView(R.id.viewpager) ViewPager mViewPager;
-    @BindView(R.id.tabs) TabLayout mTabLayout;
-    @BindView(R.id.backdrop) ImageView mBackdrop;
-    @BindView(R.id.progress) View mProgress;
-
-    private final Callback<GroupDetail> mGroupCallback = new EasyCallback<GroupDetail>() {
-        @Override
-        public void success(@NonNull GroupDetail response) {
-            mProgress.setVisibility(View.GONE);
-            bind(response);
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t);
-            mProgress.setVisibility(View.GONE);
-            showError();
-        }
-    };
+    @BindView(R.id.root)
+    View mRoot;
+    @BindView(R.id.toolbar)
+    Toolbar mToolbar;
+    @BindView(R.id.collapsing_toolbar)
+    CollapsingToolbarLayout mCollapsingToolbarLayout;
+    @BindView(R.id.viewpager)
+    ViewPager mViewPager;
+    @BindView(R.id.tabs)
+    TabLayout mTabLayout;
+    @BindView(R.id.backdrop)
+    ImageView mBackdrop;
+    @BindView(R.id.progress)
+    View mProgress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,7 +91,28 @@ public class GroupActivity extends BaseActivity {
         } else {
             mProgress.setVisibility(View.VISIBLE);
             long groupId = getIntent().getLongExtra(KEY_GROUP_ID, -1);
-            App.get().getGitLab().getGroup(groupId).enqueue(mGroupCallback);
+            App.get().getGitLab().getGroup(groupId)
+                    .compose(this.<GroupDetail>bindToLifecycle())
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Subscriber<GroupDetail>() {
+                        @Override
+                        public void onCompleted() {
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Timber.e(e);
+                            mProgress.setVisibility(View.GONE);
+                            showError();
+                        }
+
+                        @Override
+                        public void onNext(GroupDetail groupDetail) {
+                            mProgress.setVisibility(View.GONE);
+                            bind(groupDetail);
+                        }
+                    });
         }
     }
 
@@ -119,7 +132,8 @@ public class GroupActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void onError() {}
+                    public void onError() {
+                    }
                 });
 
         mViewPager.setAdapter(new GroupPagerAdapter(this, getSupportFragmentManager(), group));

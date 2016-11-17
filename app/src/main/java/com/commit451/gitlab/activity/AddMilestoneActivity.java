@@ -4,7 +4,6 @@ package com.commit451.gitlab.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.widget.Toolbar;
@@ -16,7 +15,6 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 
 import com.commit451.easel.Easel;
-import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.event.MilestoneChangedEvent;
@@ -33,7 +31,10 @@ import java.util.Date;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import retrofit2.Callback;
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class AddMilestoneActivity extends MorphActivity {
@@ -109,27 +110,6 @@ public class AddMilestoneActivity extends MorphActivity {
         }
     };
 
-    private Callback<Milestone> mMilestoneCallback = new EasyCallback<Milestone>() {
-
-        @Override
-        public void success(@NonNull Milestone response) {
-            mProgress.setVisibility(View.GONE);
-            if (mMilestone == null) {
-                App.bus().post(new MilestoneCreatedEvent(response));
-            } else {
-                App.bus().post(new MilestoneChangedEvent(response));
-            }
-            finish();
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t);
-            mProgress.setVisibility(View.GONE);
-            showError();
-        }
-    };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -175,18 +155,47 @@ public class AddMilestoneActivity extends MorphActivity {
         }
 
         if (mMilestone == null) {
-            App.get().getGitLab().createMilestone(mProjectId,
+            createOrEditMilestone(App.get().getGitLab().createMilestone(mProjectId,
                     mTitle.getText().toString(),
                     mDescription.getText().toString(),
-                    dueDate).enqueue(mMilestoneCallback);
+                    dueDate));
         } else {
-            App.get().getGitLab().editMilestone(mProjectId,
+            createOrEditMilestone(App.get().getGitLab().editMilestone(mProjectId,
                     mMilestone.getId(),
                     mTitle.getText().toString(),
                     mDescription.getText().toString(),
-                    dueDate).enqueue(mMilestoneCallback);
+                    dueDate));
         }
 
+    }
+
+    private void createOrEditMilestone(Observable<Milestone> observable) {
+        observable.subscribeOn(Schedulers.io())
+                .compose(this.<Milestone>bindToLifecycle())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Milestone>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e);
+                        mProgress.setVisibility(View.GONE);
+                        showError();
+                    }
+
+                    @Override
+                    public void onNext(Milestone milestone) {
+                        mProgress.setVisibility(View.GONE);
+                        if (mMilestone == null) {
+                            App.bus().post(new MilestoneCreatedEvent(milestone));
+                        } else {
+                            App.bus().post(new MilestoneChangedEvent(milestone));
+                        }
+                        finish();
+                    }
+                });
     }
 
     private void showError() {

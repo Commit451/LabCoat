@@ -4,7 +4,6 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,18 +20,21 @@ import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.adapter.BreadcrumbAdapter;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.gitlab.adapter.FilesAdapter;
-import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryTreeObject;
 import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.IntentUtil;
+
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class FilesFragment extends ButterKnifeFragment {
@@ -53,48 +55,6 @@ public class FilesFragment extends ButterKnifeFragment {
     private FilesAdapter mFilesAdapter;
     private BreadcrumbAdapter mBreadcrumbAdapter;
     private String mCurrentPath = "";
-
-    private class FilesCallback extends EasyCallback<List<RepositoryTreeObject>> {
-        private final String mNewPath;
-
-        public FilesCallback(String newPath) {
-            this.mNewPath = newPath;
-        }
-
-        @Override
-        public void success(@NonNull List<RepositoryTreeObject> response) {
-            if (getView() == null) {
-                return;
-            }
-            mSwipeRefreshLayout.setRefreshing(false);
-            if (!response.isEmpty()) {
-                mMessageView.setVisibility(View.GONE);
-            } else {
-                Timber.d("No files found");
-                mMessageView.setVisibility(View.VISIBLE);
-                mMessageView.setText(R.string.no_files_found);
-            }
-
-            mFilesAdapter.setData(response);
-            mFilesListView.scrollToPosition(0);
-            mCurrentPath = mNewPath;
-            updateBreadcrumbs();
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t);
-            if (getView() == null) {
-                return;
-            }
-            mSwipeRefreshLayout.setRefreshing(false);
-            mMessageView.setVisibility(View.VISIBLE);
-            mMessageView.setText(R.string.connection_error_files);
-            mFilesAdapter.setData(null);
-            mCurrentPath = mNewPath;
-            updateBreadcrumbs();
-        }
-    }
 
     private final FilesAdapter.Listener mFilesAdapterListener = new FilesAdapter.Listener() {
         @Override
@@ -178,7 +138,7 @@ public class FilesFragment extends ButterKnifeFragment {
         loadData(mCurrentPath);
     }
 
-    public void loadData(String newPath) {
+    public void loadData(final String newPath) {
         if (getView() == null) {
             return;
         }
@@ -197,7 +157,47 @@ public class FilesFragment extends ButterKnifeFragment {
             }
         });
 
-        App.get().getGitLab().getTree(mProject.getId(), mBranchName, newPath).enqueue(new FilesCallback(newPath));
+        App.get().getGitLab().getTree(mProject.getId(), mBranchName, newPath)
+                .compose(this.<List<RepositoryTreeObject>>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<List<RepositoryTreeObject>>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e);
+                        if (getView() == null) {
+                            return;
+                        }
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        mMessageView.setVisibility(View.VISIBLE);
+                        mMessageView.setText(R.string.connection_error_files);
+                        mFilesAdapter.setData(null);
+                        mCurrentPath = newPath;
+                        updateBreadcrumbs();
+                    }
+
+                    @Override
+                    public void onNext(List<RepositoryTreeObject> repositoryTreeObjects) {
+
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        if (!repositoryTreeObjects.isEmpty()) {
+                            mMessageView.setVisibility(View.GONE);
+                        } else {
+                            Timber.d("No files found");
+                            mMessageView.setVisibility(View.VISIBLE);
+                            mMessageView.setText(R.string.no_files_found);
+                        }
+
+                        mFilesAdapter.setData(repositoryTreeObjects);
+                        mFilesListView.scrollToPosition(0);
+                        mCurrentPath = newPath;
+                        updateBreadcrumbs();
+                    }
+                });
     }
 
     @Override
