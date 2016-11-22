@@ -101,8 +101,8 @@ public class IssueDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public void addNotes(List<Note> notes) {
         if (!notes.isEmpty()) {
             mNotes.addAll(notes);
+            notifyItemRangeChanged(HEADER_COUNT, HEADER_COUNT + mNotes.size());
         }
-        notifyDataSetChanged();
     }
 
     public void addNote(Note note) {
@@ -111,8 +111,12 @@ public class IssueDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     public void updateIssue(Issue issue) {
+        List<String> oldLabels = mIssue.getLabels();
         mIssue = issue;
         notifyItemChanged(0);
+        if (oldLabels.size() != mIssue.getLabels().size()) {
+            notifyItemChanged(1);
+        }
     }
 
     public void setLoading(boolean loading) {
