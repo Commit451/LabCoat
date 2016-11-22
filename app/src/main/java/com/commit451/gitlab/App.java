@@ -17,6 +17,7 @@ import com.commit451.gitlab.api.converter.UriTypeConverter;
 import com.commit451.gitlab.data.Prefs;
 import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.util.FabricUtil;
+import com.commit451.lift.Lift;
 import com.novoda.simplechromecustomtabs.SimpleChromeCustomTabs;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.picasso.Picasso;
@@ -92,6 +93,13 @@ public class App extends Application {
         if(!accounts.isEmpty()) {
             setAccount(accounts.get(0));
         }
+
+        Lift.check(this, new Lift.Callback() {
+            @Override
+            public void onUpgrade(int oldVersion, int newVersion) {
+
+            }
+        });
     }
 
     @VisibleForTesting

@@ -6,7 +6,6 @@
         <item name="colorPrimary">@color/main_blue</item>
         <item name="colorAccent">@color/yellow</item>
         <item name="colorPrimaryDark">@color/main_blue_darker</item>
-        <item name="cardBackgroundColor">@color/card_background</item>
         <item name="android:navigationBarColor" tools:targetApi="lollipop">@color/main_blue_darker</item>
         <item name="android:windowContentTransitions" tools:ignore="NewApi">true</item>
         <item name="android:windowBackground">@color/window_background</item>
@@ -65,7 +64,6 @@
         <item name="cardUseCompatPadding">true</item>
         <item name="cardElevation">2dp</item>
         <item name="cardCornerRadius">1dp</item>
-        <item name="cardBackgroundColor">@color/card_background</item>
         <item name="android:foreground">?attr/selectableItemBackground</item>
     </style>
 
