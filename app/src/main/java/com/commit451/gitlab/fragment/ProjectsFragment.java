@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.commit451.easycallback.HttpException;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
@@ -20,6 +19,7 @@ import com.commit451.gitlab.api.GitLab;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.navigation.Navigator;
+import com.commit451.gitlab.rx.ResponseSubscriber;
 import com.commit451.gitlab.util.LinkHeaderParser;
 
 import org.parceler.Parcels;
@@ -193,11 +193,23 @@ public class ProjectsFragment extends ButterKnifeFragment {
     }
 
     private void actuallyLoadIt(Observable<Response<List<Project>>> observable) {
-        observable
-                .compose(this.<Response<List<Project>>>bindToLifecycle())
+        observable.compose(this.<Response<List<Project>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Response<List<Project>>>() {
+                .subscribe(new ResponseSubscriber<List<Project>>() {
+                    @Override
+                    protected void onNextSuccess(List<Project> response) {
+                        mLoading = false;
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        if (response.isEmpty()) {
+                            mMessageView.setVisibility(View.VISIBLE);
+                            mMessageView.setText(R.string.no_projects);
+                        }
+                        mProjectsAdapter.setData(response);
+                        mNextPageUrl = LinkHeaderParser.parse(getResponse()).getNext();
+                        Timber.d("Next page url " + mNextPageUrl);
+                    }
+
                     @Override
                     public void onCompleted() {
                     }
@@ -211,23 +223,6 @@ public class ProjectsFragment extends ButterKnifeFragment {
                         mMessageView.setText(R.string.connection_error);
                         mProjectsAdapter.setData(null);
                         mNextPageUrl = null;
-                    }
-
-                    @Override
-                    public void onNext(Response<List<Project>> response) {
-                        if (!response.isSuccessful()) {
-                            onError(new HttpException(response.raw()));
-                            return;
-                        }
-                        mLoading = false;
-                        mSwipeRefreshLayout.setRefreshing(false);
-                        if (response.body().isEmpty()) {
-                            mMessageView.setVisibility(View.VISIBLE);
-                            mMessageView.setText(R.string.no_projects);
-                        }
-                        mProjectsAdapter.setData(response.body());
-                        mNextPageUrl = LinkHeaderParser.parse(response).getNext();
-                        Timber.d("Next page url " + mNextPageUrl);
                     }
                 });
     }
