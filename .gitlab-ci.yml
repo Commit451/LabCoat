@@ -28,6 +28,3 @@ build:
   stage: build
   script:
     - ./gradlew testFdroidDebug
-  artifacts:
-    paths:
-    - app/build/outputs/
