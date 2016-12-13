@@ -24,6 +24,10 @@ import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.rx.DecodeObservableFactory;
 import com.commit451.gitlab.util.BypassImageGetterFactory;
 import com.commit451.gitlab.util.InternalLinkMovementMethod;
+import com.commit451.reptar.FocusedSingleObserver;
+import com.commit451.reptar.Result;
+import com.commit451.reptar.retrofit.ResponseSingleObserver;
+import com.jakewharton.retrofit2.adapter.rxjava2.HttpException;
 import com.vdurmont.emoji.EmojiParser;
 
 import org.greenrobot.eventbus.Subscribe;
@@ -33,9 +37,12 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import in.uncod.android.bypass.Bypass;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.Single;
+import io.reactivex.SingleSource;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
+import retrofit2.Response;
 import timber.log.Timber;
 
 /**
@@ -94,10 +101,7 @@ public class ProjectFragment extends ButterKnifeFragment {
                                     .compose(ProjectFragment.this.<String>bindToLifecycle())
                                     .subscribeOn(Schedulers.io())
                                     .observeOn(AndroidSchedulers.mainThread())
-                                    .subscribe(new Subscriber<String>() {
-                                        @Override
-                                        public void onCompleted() {
-                                        }
+                                    .subscribe(new FocusedSingleObserver<String>() {
 
                                         @Override
                                         public void onError(Throwable e) {
@@ -106,7 +110,7 @@ public class ProjectFragment extends ButterKnifeFragment {
                                         }
 
                                         @Override
-                                        public void onNext(String s) {
+                                        public void onSuccess(String value) {
                                             Snackbar.make(mSwipeRefreshLayout, R.string.project_forked, Snackbar.LENGTH_SHORT)
                                                     .show();
                                         }
@@ -121,19 +125,15 @@ public class ProjectFragment extends ButterKnifeFragment {
     void onStarClicked() {
         if (mProject != null) {
             App.get().getGitLab().starProject(mProject.getId())
-                    .compose(this.<Project>bindToLifecycle())
+                    .compose(this.<Response<Project>>bindToLifecycle())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Subscriber<Project>() {
-                        @Override
-                        public void onCompleted() {
-                        }
+                    .subscribe(new ResponseSingleObserver<Project>() {
 
                         @Override
                         public void onError(Throwable e) {
-
-                            if (e instanceof retrofit2.adapter.rxjava.HttpException) {
-                                if (((retrofit2.adapter.rxjava.HttpException) e).response().code() == 304) {
+                            if (e instanceof HttpException) {
+                                if (((HttpException) e).response().code() == 304) {
                                     Snackbar.make(mSwipeRefreshLayout, R.string.project_already_starred, Snackbar.LENGTH_SHORT)
                                             .setAction(R.string.project_unstar, new View.OnClickListener() {
                                                 @Override
@@ -150,7 +150,7 @@ public class ProjectFragment extends ButterKnifeFragment {
                         }
 
                         @Override
-                        public void onNext(Project project) {
+                        protected void onResponseSuccess(Project project) {
                             Snackbar.make(mSwipeRefreshLayout, R.string.project_starred, Snackbar.LENGTH_SHORT)
                                     .show();
                         }
@@ -222,14 +222,46 @@ public class ProjectFragment extends ButterKnifeFragment {
             }
         });
 
+        final ReadmeResult result = new ReadmeResult();
         App.get().getGitLab().getTree(mProject.getId(), mBranchName, null)
-                .compose(this.<List<RepositoryTreeObject>>bindToLifecycle())
+                .flatMap(new Function<List<RepositoryTreeObject>, SingleSource<Result<RepositoryTreeObject>>>() {
+                    @Override
+                    public SingleSource<Result<RepositoryTreeObject>> apply(List<RepositoryTreeObject> repositoryTreeObjects) throws Exception {
+                        for (RepositoryTreeObject treeItem : repositoryTreeObjects) {
+                            if (getReadmeType(treeItem.getName()) != README_TYPE_UNKNOWN) {
+                                return Single.just(new Result<>(treeItem));
+                            }
+                        }
+                        return Single.just(Result.<RepositoryTreeObject>empty());
+                    }
+                })
+                .flatMap(new Function<Result<RepositoryTreeObject>, SingleSource<Result<RepositoryFile>>>() {
+                    @Override
+                    public SingleSource<Result<RepositoryFile>> apply(Result<RepositoryTreeObject> repositoryTreeObjectResult) throws Exception {
+                        if (repositoryTreeObjectResult.hasValue()) {
+                            RepositoryFile repositoryFile = App.get().getGitLab().getFile(mProject.getId(), repositoryTreeObjectResult.value().getName(), mBranchName)
+                                    .blockingGet();
+                            result.repositoryFile = repositoryFile;
+                            return Single.just(new Result<>(repositoryFile));
+                        }
+                        return Single.just(Result.<RepositoryFile>empty());
+                    }
+                })
+                .flatMap(new Function<Result<RepositoryFile>, SingleSource<ReadmeResult>>() {
+                    @Override
+                    public SingleSource<ReadmeResult> apply(Result<RepositoryFile> repositoryFileResult) throws Exception {
+                        if (repositoryFileResult.hasValue()) {
+                            result.bytes = DecodeObservableFactory.newDecode(repositoryFileResult.value().getContent())
+                                    .blockingGet();
+                            return Single.just(result);
+                        }
+                        return Single.just(result);
+                    }
+                })
+                .compose(this.<ReadmeResult>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<List<RepositoryTreeObject>>() {
-                    @Override
-                    public void onCompleted() {
-                    }
+                .subscribe(new FocusedSingleObserver<ReadmeResult>() {
 
                     @Override
                     public void onError(Throwable e) {
@@ -239,79 +271,32 @@ public class ProjectFragment extends ButterKnifeFragment {
                     }
 
                     @Override
-                    public void onNext(List<RepositoryTreeObject> repositoryTreeObjects) {
-
-                        for (RepositoryTreeObject treeItem : repositoryTreeObjects) {
-                            if (getReadmeType(treeItem.getName()) != README_TYPE_UNKNOWN) {
-                                App.get().getGitLab().getFile(mProject.getId(), treeItem.getName(), mBranchName)
-                                        .compose(ProjectFragment.this.<RepositoryFile>bindToLifecycle())
-                                        .subscribeOn(Schedulers.io())
-                                        .observeOn(AndroidSchedulers.mainThread())
-                                        .subscribe(new Subscriber<RepositoryFile>() {
-                                            @Override
-                                            public void onCompleted() {
-                                            }
-
-                                            @Override
-                                            public void onError(Throwable e) {
-                                                Timber.e(e);
-                                                mSwipeRefreshLayout.setRefreshing(false);
-                                                mOverviewVew.setText(R.string.connection_error_readme);
-                                            }
-
-                                            @Override
-                                            public void onNext(final RepositoryFile repositoryFile) {
-                                                mSwipeRefreshLayout.setRefreshing(false);
-                                                DecodeObservableFactory.newDecode(repositoryFile.getContent())
-                                                        .compose(ProjectFragment.this.<byte[]>bindToLifecycle())
-                                                        .subscribeOn(Schedulers.io())
-                                                        .observeOn(AndroidSchedulers.mainThread())
-                                                        .subscribe(new Subscriber<byte[]>() {
-                                                            @Override
-                                                            public void onCompleted() {
-                                                            }
-
-                                                            @Override
-                                                            public void onError(Throwable e) {
-                                                                if (getView() != null) {
-                                                                    Snackbar.make(mSwipeRefreshLayout, R.string.failed_to_load, Snackbar.LENGTH_SHORT)
-                                                                            .show();
-                                                                }
-                                                            }
-
-                                                            @Override
-                                                            public void onNext(byte[] bytes) {
-                                                                if (getView() != null) {
-                                                                    String text = new String(bytes);
-                                                                    switch (getReadmeType(repositoryFile.getFileName())) {
-                                                                        case README_TYPE_MARKDOWN:
-                                                                            text = EmojiParser.parseToUnicode(text);
-                                                                            mOverviewVew.setText(mBypass.markdownToSpannable(text,
-                                                                                    BypassImageGetterFactory.create(mOverviewVew,
-                                                                                            App.get().getPicasso(),
-                                                                                            App.get().getAccount().getServerUrl().toString(),
-                                                                                            mProject)));
-                                                                            break;
-                                                                        case README_TYPE_HTML:
-                                                                            mOverviewVew.setText(Html.fromHtml(text));
-                                                                            break;
-                                                                        case README_TYPE_TEXT:
-                                                                            mOverviewVew.setText(text);
-                                                                            break;
-                                                                        case README_TYPE_NO_EXTENSION:
-                                                                            mOverviewVew.setText(text);
-                                                                            break;
-                                                                    }
-                                                                }
-                                                            }
-                                                        });
-                                            }
-                                        });
-                                return;
-                            }
-                        }
+                    public void onSuccess(ReadmeResult result) {
                         mSwipeRefreshLayout.setRefreshing(false);
-                        mOverviewVew.setText(R.string.no_readme_found);
+                        if (result.repositoryFile != null && result.bytes != null) {
+                            String text = new String(result.bytes);
+                            switch (getReadmeType(result.repositoryFile.getFileName())) {
+                                case README_TYPE_MARKDOWN:
+                                    text = EmojiParser.parseToUnicode(text);
+                                    mOverviewVew.setText(mBypass.markdownToSpannable(text,
+                                            BypassImageGetterFactory.create(mOverviewVew,
+                                                    App.get().getPicasso(),
+                                                    App.get().getAccount().getServerUrl().toString(),
+                                                    mProject)));
+                                    break;
+                                case README_TYPE_HTML:
+                                    mOverviewVew.setText(Html.fromHtml(text));
+                                    break;
+                                case README_TYPE_TEXT:
+                                    mOverviewVew.setText(text);
+                                    break;
+                                case README_TYPE_NO_EXTENSION:
+                                    mOverviewVew.setText(text);
+                                    break;
+                            }
+                        } else {
+                            mOverviewVew.setText(R.string.no_readme_found);
+                        }
                     }
                 });
     }
@@ -350,10 +335,7 @@ public class ProjectFragment extends ButterKnifeFragment {
                 .compose(this.<Project>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Project>() {
-                    @Override
-                    public void onCompleted() {
-                    }
+                .subscribe(new FocusedSingleObserver<Project>() {
 
                     @Override
                     public void onError(Throwable e) {
@@ -362,11 +344,16 @@ public class ProjectFragment extends ButterKnifeFragment {
                     }
 
                     @Override
-                    public void onNext(Project project) {
-                        Snackbar.make(mSwipeRefreshLayout, R.string.project_unstarred, Snackbar.LENGTH_SHORT)
+                    public void onSuccess(Project value) {
+                        Snackbar.make(mSwipeRefreshLayout, com.commit451.gitlab.R.string.project_unstarred, Snackbar.LENGTH_SHORT)
                                 .show();
                     }
                 });
+    }
+
+    private static class ReadmeResult {
+        byte[] bytes;
+        RepositoryFile repositoryFile;
     }
 
     private class EventReceiver {

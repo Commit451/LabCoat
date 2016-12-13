@@ -23,6 +23,7 @@ import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.ImageUtil;
 import com.commit451.gitlab.util.IntentUtil;
 import com.commit451.gitlab.view.PhysicsFlowLayout;
+import com.commit451.reptar.FocusedSingleObserver;
 import com.jawnnypoo.physicslayout.Physics;
 import com.jawnnypoo.physicslayout.PhysicsConfig;
 import com.wefika.flowlayout.FlowLayout;
@@ -35,9 +36,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -113,10 +113,7 @@ public class AboutActivity extends BaseActivity {
                 .compose(this.<List<Contributor>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<List<Contributor>>() {
-                    @Override
-                    public void onCompleted() {
-                    }
+                .subscribe(new FocusedSingleObserver<List<Contributor>>() {
 
                     @Override
                     public void onError(Throwable e) {
@@ -127,7 +124,7 @@ public class AboutActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void onNext(List<Contributor> contributors) {
+                    public void onSuccess(List<Contributor> contributors) {
                         mProgress.setVisibility(View.GONE);
                         addContributors(Contributor.groupContributors(contributors));
                     }

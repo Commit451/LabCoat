@@ -18,6 +18,7 @@ import com.commit451.gitlab.adapter.LabelAdapter;
 import com.commit451.gitlab.model.api.Label;
 import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.viewHolder.LabelViewHolder;
+import com.commit451.reptar.FocusedSingleObserver;
 
 import org.parceler.Parcels;
 
@@ -25,10 +26,11 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
+
+import static com.commit451.gitlab.R.string.labels;
 
 /**
  * Add labels!
@@ -67,7 +69,7 @@ public class AddLabelActivity extends BaseActivity {
         ButterKnife.bind(this);
 
         mProjectId = getIntent().getLongExtra(KEY_PROJECT_ID, -1);
-        mToolbar.setTitle(R.string.labels);
+        mToolbar.setTitle(labels);
         mToolbar.inflateMenu(R.menu.menu_add_label);
         mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
@@ -123,10 +125,7 @@ public class AddLabelActivity extends BaseActivity {
                 .compose(this.<List<Label>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<List<Label>>() {
-                    @Override
-                    public void onCompleted() {
-                    }
+                .subscribe(new FocusedSingleObserver<List<Label>>() {
 
                     @Override
                     public void onError(Throwable e) {
@@ -136,7 +135,7 @@ public class AddLabelActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void onNext(List<Label> labels) {
+                    public void onSuccess(List<Label> labels) {
                         mSwipeRefreshLayout.setRefreshing(false);
                         if (labels.isEmpty()) {
                             mTextMessage.setVisibility(View.VISIBLE);

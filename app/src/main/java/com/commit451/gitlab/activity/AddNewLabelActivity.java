@@ -23,15 +23,17 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.api.Label;
 import com.commit451.gitlab.util.ColorUtil;
 import com.commit451.gitlab.util.Validator;
+import com.commit451.reptar.retrofit.ResponseSingleObserver;
+import com.jakewharton.retrofit2.adapter.rxjava2.HttpException;
 
 import org.parceler.Parcels;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
+import retrofit2.Response;
 import timber.log.Timber;
 
 /**
@@ -131,19 +133,16 @@ public class AddNewLabelActivity extends BaseActivity implements ColorChooserDia
             mProgress.setAlpha(0.0f);
             mProgress.animate().alpha(1.0f);
             App.get().getGitLab().createLabel(getProjectId(), title, color, description)
-                    .compose(this.<Label>bindToLifecycle())
+                    .compose(this.<Response<Label>>bindToLifecycle())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Subscriber<Label>() {
-                        @Override
-                        public void onCompleted() {
-                        }
+                    .subscribe(new ResponseSingleObserver<Label>() {
 
                         @Override
                         public void onError(Throwable e) {
                             Timber.e(e);
                             mProgress.setVisibility(View.GONE);
-                            if (e instanceof retrofit2.adapter.rxjava.HttpException && ((retrofit2.adapter.rxjava.HttpException) e).response().code() == 409) {
+                            if (e instanceof HttpException && ((HttpException) e).response().code() == 409) {
                                 Snackbar.make(mRoot, R.string.label_already_exists, Snackbar.LENGTH_SHORT)
                                         .show();
                             } else {
@@ -153,7 +152,7 @@ public class AddNewLabelActivity extends BaseActivity implements ColorChooserDia
                         }
 
                         @Override
-                        public void onNext(Label label) {
+                        protected void onResponseSuccess(Label label) {
                             Intent data = new Intent();
                             data.putExtra(KEY_NEW_LABEL, Parcels.wrap(label));
                             setResult(RESULT_OK, data);

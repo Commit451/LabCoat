@@ -22,6 +22,8 @@ import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.DynamicGridLayoutManager;
 import com.commit451.gitlab.util.LinkHeaderParser;
 import com.commit451.gitlab.viewHolder.ProjectMemberViewHolder;
+import com.commit451.reptar.FocusedSingleObserver;
+import com.commit451.reptar.retrofit.ResponseSingleObserver;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.parceler.Parcels;
@@ -30,12 +32,10 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Response;
-import retrofit2.adapter.rxjava.HttpException;
-import rx.Observable;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class GroupMembersFragment extends ButterKnifeFragment {
@@ -102,11 +102,7 @@ public class GroupMembersFragment extends ButterKnifeFragment {
                     .compose(GroupMembersFragment.this.<String>bindToLifecycle())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Subscriber<String>() {
-                        @Override
-                        public void onCompleted() {
-
-                        }
+                    .subscribe(new FocusedSingleObserver<String>() {
 
                         @Override
                         public void onError(Throwable e) {
@@ -116,7 +112,7 @@ public class GroupMembersFragment extends ButterKnifeFragment {
                         }
 
                         @Override
-                        public void onNext(String s) {
+                        public void onSuccess(String value) {
                             mGroupMembersAdapter.removeMember(mMember);
                         }
                     });
@@ -228,15 +224,12 @@ public class GroupMembersFragment extends ButterKnifeFragment {
         loadGroupMembers(App.get().getGitLab().getProjectMembers(mNextPageUrl.toString()));
     }
 
-    private void loadGroupMembers(Observable<Response<List<Member>>> observable) {
+    private void loadGroupMembers(Single<Response<List<Member>>> observable) {
         observable
                 .compose(this.<Response<List<Member>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Response<List<Member>>>() {
-                    @Override
-                    public void onCompleted() {
-                    }
+                .subscribe(new ResponseSingleObserver<List<Member>>() {
 
                     @Override
                     public void onError(Throwable e) {
@@ -249,25 +242,21 @@ public class GroupMembersFragment extends ButterKnifeFragment {
                     }
 
                     @Override
-                    public void onNext(Response<List<Member>> listResponse) {
-                        if (!listResponse.isSuccessful()) {
-                            onError(new HttpException(listResponse));
-                            return;
-                        }
+                    protected void onResponseSuccess(List<Member> members) {
                         mSwipeRefreshLayout.setRefreshing(false);
-                        if (listResponse.body().isEmpty()) {
+                        if (members.isEmpty()) {
                             mMessageView.setVisibility(View.VISIBLE);
                             mMessageView.setText(R.string.no_project_members);
                         }
                         mAddUserButton.setVisibility(View.VISIBLE);
                         if (mNextPageUrl == null) {
-                            mGroupMembersAdapter.setData(listResponse.body());
+                            mGroupMembersAdapter.setData(members);
                         } else {
-                            mGroupMembersAdapter.addData(listResponse.body());
+                            mGroupMembersAdapter.addData(members);
                         }
                         mGroupMembersAdapter.setLoading(false);
 
-                        mNextPageUrl = LinkHeaderParser.parse(listResponse).getNext();
+                        mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
                         Timber.d("Next page url %s", mNextPageUrl);
                     }
                 });

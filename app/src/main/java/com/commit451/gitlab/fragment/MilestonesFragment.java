@@ -26,6 +26,7 @@ import com.commit451.gitlab.model.api.Milestone;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.LinkHeaderParser;
+import com.commit451.reptar.retrofit.ResponseSingleObserver;
 
 import org.greenrobot.eventbus.Subscribe;
 
@@ -33,11 +34,9 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Response;
-import retrofit2.adapter.rxjava.HttpException;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class MilestonesFragment extends ButterKnifeFragment {
@@ -183,10 +182,7 @@ public class MilestonesFragment extends ButterKnifeFragment {
                 .compose(this.<Response<List<Milestone>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Response<List<Milestone>>>() {
-                    @Override
-                    public void onCompleted() {
-                    }
+                .subscribe(new ResponseSingleObserver<List<Milestone>>() {
 
                     @Override
                     public void onError(Throwable e) {
@@ -200,19 +196,15 @@ public class MilestonesFragment extends ButterKnifeFragment {
                     }
 
                     @Override
-                    public void onNext(Response<List<Milestone>> listResponse) {
-                        if (!listResponse.isSuccessful()) {
-                            onError(new HttpException(listResponse));
-                            return;
-                        }
+                    protected void onResponseSuccess(List<Milestone> milestones) {
                         mLoading = false;
                         mSwipeRefreshLayout.setRefreshing(false);
-                        if (listResponse.body().isEmpty()) {
+                        if (milestones.isEmpty()) {
                             mMessageView.setVisibility(View.VISIBLE);
                             mMessageView.setText(R.string.no_milestones);
                         }
-                        mMilestoneAdapter.setData(listResponse.body());
-                        mNextPageUrl = LinkHeaderParser.parse(listResponse).getNext();
+                        mMilestoneAdapter.setData(milestones);
+                        mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
                         Timber.d("Next page url " + mNextPageUrl);
                     }
                 });
@@ -235,10 +227,7 @@ public class MilestonesFragment extends ButterKnifeFragment {
                 .compose(this.<Response<List<Milestone>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Response<List<Milestone>>>() {
-                    @Override
-                    public void onCompleted() {
-                    }
+                .subscribe(new ResponseSingleObserver<List<Milestone>>() {
 
                     @Override
                     public void onError(Throwable e) {
@@ -248,11 +237,11 @@ public class MilestonesFragment extends ButterKnifeFragment {
                     }
 
                     @Override
-                    public void onNext(Response<List<Milestone>> listResponse) {
+                    protected void onResponseSuccess(List<Milestone> milestones) {
                         mLoading = false;
                         mMilestoneAdapter.setLoading(false);
-                        mNextPageUrl = LinkHeaderParser.parse(listResponse).getNext();
-                        mMilestoneAdapter.addData(listResponse.body());
+                        mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
+                        mMilestoneAdapter.addData(milestones);
                     }
                 });
     }

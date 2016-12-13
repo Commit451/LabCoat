@@ -25,6 +25,8 @@ import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.navigation.TransitionFactory;
 import com.commit451.gitlab.util.LinkHeaderParser;
 import com.commit451.gitlab.view.SendMessageView;
+import com.commit451.reptar.FocusedSingleObserver;
+import com.commit451.reptar.retrofit.ResponseSingleObserver;
 import com.commit451.teleprinter.Teleprinter;
 
 import org.greenrobot.eventbus.Subscribe;
@@ -33,11 +35,9 @@ import org.parceler.Parcels;
 import java.util.List;
 
 import butterknife.BindView;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Response;
-import retrofit2.adapter.rxjava.HttpException;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 import static android.app.Activity.RESULT_OK;
@@ -181,10 +181,7 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
                 .compose(this.<Response<List<Note>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Response<List<Note>>>() {
-                    @Override
-                    public void onCompleted() {
-                    }
+                .subscribe(new ResponseSingleObserver<List<Note>>() {
 
                     @Override
                     public void onError(Throwable e) {
@@ -196,15 +193,11 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
                     }
 
                     @Override
-                    public void onNext(Response<List<Note>> listResponse) {
-                        if (!listResponse.isSuccessful()) {
-                            onError(new HttpException(listResponse));
-                            return;
-                        }
+                    protected void onResponseSuccess(List<Note> notes) {
                         mSwipeRefreshLayout.setRefreshing(false);
                         mLoading = false;
-                        mNextPageUrl = LinkHeaderParser.parse(listResponse).getNext();
-                        mMergeRequestDetailAdapter.setNotes(listResponse.body());
+                        mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
+                        mMergeRequestDetailAdapter.setNotes(notes);
                     }
                 });
     }
@@ -215,10 +208,7 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
                 .compose(this.<Response<List<Note>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Response<List<Note>>>() {
-                    @Override
-                    public void onCompleted() {
-                    }
+                .subscribe(new ResponseSingleObserver<List<Note>>() {
 
                     @Override
                     public void onError(Throwable e) {
@@ -230,11 +220,11 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
                     }
 
                     @Override
-                    public void onNext(Response<List<Note>> listResponse) {
+                    protected void onResponseSuccess(List<Note> notes) {
                         mMergeRequestDetailAdapter.setLoading(false);
                         mLoading = false;
-                        mNextPageUrl = LinkHeaderParser.parse(listResponse).getNext();
-                        mMergeRequestDetailAdapter.addNotes(listResponse.body());
+                        mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
+                        mMergeRequestDetailAdapter.addNotes(notes);
                     }
                 });
     }
@@ -256,10 +246,7 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
                 .compose(this.<Note>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Note>() {
-                    @Override
-                    public void onCompleted() {
-                    }
+                .subscribe(new FocusedSingleObserver<Note>() {
 
                     @Override
                     public void onError(Throwable e) {
@@ -270,7 +257,7 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
                     }
 
                     @Override
-                    public void onNext(Note note) {
+                    public void onSuccess(Note note) {
                         mProgress.setVisibility(View.GONE);
                         mMergeRequestDetailAdapter.addNote(note);
                         mNotesRecyclerView.smoothScrollToPosition(MergeRequestDetailAdapter.getHeaderCount());

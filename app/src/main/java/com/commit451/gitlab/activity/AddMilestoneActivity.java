@@ -20,6 +20,7 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.event.MilestoneChangedEvent;
 import com.commit451.gitlab.event.MilestoneCreatedEvent;
 import com.commit451.gitlab.model.api.Milestone;
+import com.commit451.reptar.FocusedSingleObserver;
 import com.commit451.teleprinter.Teleprinter;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
@@ -31,10 +32,9 @@ import java.util.Date;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import rx.Observable;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class AddMilestoneActivity extends MorphActivity {
@@ -169,14 +169,11 @@ public class AddMilestoneActivity extends MorphActivity {
 
     }
 
-    private void createOrEditMilestone(Observable<Milestone> observable) {
+    private void createOrEditMilestone(Single<Milestone> observable) {
         observable.subscribeOn(Schedulers.io())
                 .compose(this.<Milestone>bindToLifecycle())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Milestone>() {
-                    @Override
-                    public void onCompleted() {
-                    }
+                .subscribe(new FocusedSingleObserver<Milestone>() {
 
                     @Override
                     public void onError(Throwable e) {
@@ -186,7 +183,7 @@ public class AddMilestoneActivity extends MorphActivity {
                     }
 
                     @Override
-                    public void onNext(Milestone milestone) {
+                    public void onSuccess(Milestone milestone) {
                         mProgress.setVisibility(View.GONE);
                         if (mMilestone == null) {
                             App.bus().post(new MilestoneCreatedEvent(milestone));

@@ -6,7 +6,7 @@ import android.view.View;
 
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.event.ReloadDataEvent;
-import com.trello.rxlifecycle.components.support.RxFragment;
+import com.trello.rxlifecycle2.components.support.RxFragment;
 
 import org.greenrobot.eventbus.Subscribe;
 

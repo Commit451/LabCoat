@@ -11,13 +11,13 @@ import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.model.api.Member;
+import com.commit451.reptar.FocusedSingleObserver;
 
 import java.util.Arrays;
 
-import rx.Observable;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -117,14 +117,11 @@ public class AccessDialog extends MaterialDialog {
         }
     }
 
-    private void editGroupOrProjectMember(Observable<Member> observable) {
+    private void editGroupOrProjectMember(Single<Member> observable) {
         observable
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Member>() {
-                    @Override
-                    public void onCompleted() {
-                    }
+                .subscribe(new FocusedSingleObserver<Member>() {
 
                     @Override
                     public void onError(Throwable e) {
@@ -133,7 +130,7 @@ public class AccessDialog extends MaterialDialog {
                     }
 
                     @Override
-                    public void onNext(Member member) {
+                    public void onSuccess(Member member) {
                         if (mAccessChangedListener != null) {
                             mAccessChangedListener.onAccessChanged(mMember, mRoleNames[getSelectedIndex()]);
                         }

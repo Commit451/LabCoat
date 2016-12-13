@@ -19,6 +19,7 @@ import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryCommit;
 import com.commit451.gitlab.navigation.Navigator;
+import com.commit451.reptar.FocusedSingleObserver;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.parceler.Parcels;
@@ -26,9 +27,8 @@ import org.parceler.Parcels;
 import java.util.List;
 
 import butterknife.BindView;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -143,10 +143,7 @@ public class MergeRequestCommitsFragment extends ButterKnifeFragment {
                 .compose(this.<List<RepositoryCommit>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<List<RepositoryCommit>>() {
-                    @Override
-                    public void onCompleted() {
-                    }
+                .subscribe(new FocusedSingleObserver<List<RepositoryCommit>>() {
 
                     @Override
                     public void onError(Throwable e) {
@@ -160,7 +157,7 @@ public class MergeRequestCommitsFragment extends ButterKnifeFragment {
                     }
 
                     @Override
-                    public void onNext(List<RepositoryCommit> repositoryCommits) {
+                    public void onSuccess(List<RepositoryCommit> repositoryCommits) {
                         mLoading = false;
                         mSwipeRefreshLayout.setRefreshing(false);
                         if (!repositoryCommits.isEmpty()) {

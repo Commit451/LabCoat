@@ -17,14 +17,16 @@ import com.commit451.gitlab.adapter.MergeRequestSectionsPagerAdapter;
 import com.commit451.gitlab.event.MergeRequestChangedEvent;
 import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.model.api.Project;
+import com.commit451.reptar.retrofit.ResponseSingleObserver;
+import com.jakewharton.retrofit2.adapter.rxjava2.HttpException;
 
 import org.parceler.Parcels;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
+import retrofit2.Response;
 import timber.log.Timber;
 
 /**
@@ -63,21 +65,18 @@ public class MergeRequestActivity extends BaseActivity {
                 case R.id.action_merge:
                     mProgress.setVisibility(View.VISIBLE);
                     App.get().getGitLab().acceptMergeRequest(mProject.getId(), mMergeRequest.getId())
-                            .compose(MergeRequestActivity.this.<MergeRequest>bindToLifecycle())
+                            .compose(MergeRequestActivity.this.<Response<MergeRequest>>bindToLifecycle())
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(new Subscriber<MergeRequest>() {
-                                @Override
-                                public void onCompleted() {
-                                }
+                            .subscribe(new ResponseSingleObserver<MergeRequest>() {
 
                                 @Override
                                 public void onError(Throwable e) {
                                     Timber.e(e);
                                     mProgress.setVisibility(View.GONE);
                                     String message = getString(R.string.unable_to_merge);
-                                    if (e instanceof retrofit2.adapter.rxjava.HttpException) {
-                                        int code = ((retrofit2.adapter.rxjava.HttpException) e).response().code();
+                                    if (e instanceof HttpException) {
+                                        int code = ((HttpException) e).response().code();
                                         if (code == 406) {
                                             message = getString(R.string.merge_request_already_merged_or_closed);
                                         }
@@ -87,7 +86,7 @@ public class MergeRequestActivity extends BaseActivity {
                                 }
 
                                 @Override
-                                public void onNext(MergeRequest mergeRequest) {
+                                protected void onResponseSuccess(MergeRequest mergeRequest) {
                                     mProgress.setVisibility(View.GONE);
                                     Snackbar.make(mRoot, R.string.merge_request_accepted, Snackbar.LENGTH_LONG)
                                             .show();

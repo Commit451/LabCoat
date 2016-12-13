@@ -24,6 +24,7 @@ import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.Snippet;
 import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.LinkHeaderParser;
+import com.commit451.reptar.retrofit.ResponseSingleObserver;
 
 import org.greenrobot.eventbus.Subscribe;
 
@@ -31,11 +32,9 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Response;
-import retrofit2.adapter.rxjava.HttpException;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class SnippetsFragment extends ButterKnifeFragment {
@@ -182,10 +181,7 @@ public class SnippetsFragment extends ButterKnifeFragment {
                 .compose(this.<Response<List<Snippet>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Response<List<Snippet>>>() {
-                    @Override
-                    public void onCompleted() {
-                    }
+                .subscribe(new ResponseSingleObserver<List<Snippet>>() {
 
                     @Override
                     public void onError(Throwable e) {
@@ -199,19 +195,15 @@ public class SnippetsFragment extends ButterKnifeFragment {
                     }
 
                     @Override
-                    public void onNext(Response<List<Snippet>> listResponse) {
-                        if (!listResponse.isSuccessful()) {
-                            onError(new HttpException(listResponse));
-                            return;
-                        }
+                    protected void onResponseSuccess(List<Snippet> snippets) {
                         mLoading = false;
                         mSwipeRefreshLayout.setRefreshing(false);
-                        if (listResponse.body().isEmpty()) {
+                        if (snippets.isEmpty()) {
                             mMessageView.setVisibility(View.VISIBLE);
                             mMessageView.setText(R.string.no_milestones);
                         }
-                        mSnippetAdapter.setData(listResponse.body());
-                        mNextPageUrl = LinkHeaderParser.parse(listResponse).getNext();
+                        mSnippetAdapter.setData(snippets);
+                        mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
                         Timber.d("Next page url %s", mNextPageUrl);
                     }
                 });
@@ -234,10 +226,7 @@ public class SnippetsFragment extends ButterKnifeFragment {
                 .compose(this.<Response<List<Snippet>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Response<List<Snippet>>>() {
-                    @Override
-                    public void onCompleted() {
-                    }
+                .subscribe(new ResponseSingleObserver<List<Snippet>>() {
 
                     @Override
                     public void onError(Throwable e) {
@@ -247,15 +236,11 @@ public class SnippetsFragment extends ButterKnifeFragment {
                     }
 
                     @Override
-                    public void onNext(Response<List<Snippet>> listResponse) {
-                        if (!listResponse.isSuccessful()) {
-                            onError(new HttpException(listResponse));
-                            return;
-                        }
+                    protected void onResponseSuccess(List<Snippet> snippets) {
                         mLoading = false;
                         mSnippetAdapter.setLoading(false);
-                        mNextPageUrl = LinkHeaderParser.parse(listResponse).getNext();
-                        mSnippetAdapter.addData(listResponse.body());
+                        mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
+                        mSnippetAdapter.addData(snippets);
                     }
                 });
     }

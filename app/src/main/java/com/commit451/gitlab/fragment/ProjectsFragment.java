@@ -19,19 +19,18 @@ import com.commit451.gitlab.api.GitLab;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.navigation.Navigator;
-import com.commit451.gitlab.rx.ResponseSubscriber;
 import com.commit451.gitlab.util.LinkHeaderParser;
+import com.commit451.reptar.retrofit.ResponseSingleObserver;
 
 import org.parceler.Parcels;
 
 import java.util.List;
 
 import butterknife.BindView;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Response;
-import rx.Observable;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class ProjectsFragment extends ButterKnifeFragment {
@@ -192,27 +191,11 @@ public class ProjectsFragment extends ButterKnifeFragment {
         }
     }
 
-    private void actuallyLoadIt(Observable<Response<List<Project>>> observable) {
+    private void actuallyLoadIt(Single<Response<List<Project>>> observable) {
         observable.compose(this.<Response<List<Project>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new ResponseSubscriber<List<Project>>() {
-                    @Override
-                    protected void onNextSuccess(List<Project> response) {
-                        mLoading = false;
-                        mSwipeRefreshLayout.setRefreshing(false);
-                        if (response.isEmpty()) {
-                            mMessageView.setVisibility(View.VISIBLE);
-                            mMessageView.setText(R.string.no_projects);
-                        }
-                        mProjectsAdapter.setData(response);
-                        mNextPageUrl = LinkHeaderParser.parse(getResponse()).getNext();
-                        Timber.d("Next page url " + mNextPageUrl);
-                    }
-
-                    @Override
-                    public void onCompleted() {
-                    }
+                .subscribe(new ResponseSingleObserver<List<Project>>() {
 
                     @Override
                     public void onError(Throwable e) {
@@ -223,6 +206,19 @@ public class ProjectsFragment extends ButterKnifeFragment {
                         mMessageView.setText(R.string.connection_error);
                         mProjectsAdapter.setData(null);
                         mNextPageUrl = null;
+                    }
+
+                    @Override
+                    protected void onResponseSuccess(List<Project> projects) {
+                        mLoading = false;
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        if (projects.isEmpty()) {
+                            mMessageView.setVisibility(View.VISIBLE);
+                            mMessageView.setText(R.string.no_projects);
+                        }
+                        mProjectsAdapter.setData(projects);
+                        mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
+                        Timber.d("Next page url " + mNextPageUrl);
                     }
                 });
     }
@@ -242,10 +238,7 @@ public class ProjectsFragment extends ButterKnifeFragment {
                 .compose(this.<Response<List<Project>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Response<List<Project>>>() {
-                    @Override
-                    public void onCompleted() {
-                    }
+                .subscribe(new ResponseSingleObserver<List<Project>>() {
 
                     @Override
                     public void onError(Throwable e) {
@@ -255,15 +248,11 @@ public class ProjectsFragment extends ButterKnifeFragment {
                     }
 
                     @Override
-                    public void onNext(Response<List<Project>> response) {
-                        if (!response.isSuccessful()) {
-                            onError(new retrofit2.adapter.rxjava.HttpException(response));
-                            return;
-                        }
+                    protected void onResponseSuccess(List<Project> projects) {
                         mLoading = false;
                         mProjectsAdapter.setLoading(false);
-                        mProjectsAdapter.addData(response.body());
-                        mNextPageUrl = LinkHeaderParser.parse(response).getNext();
+                        mProjectsAdapter.addData(projects);
+                        mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
                         Timber.d("Next page url " + mNextPageUrl);
                     }
                 });

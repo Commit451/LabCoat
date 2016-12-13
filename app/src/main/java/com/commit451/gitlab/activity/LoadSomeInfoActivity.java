@@ -14,15 +14,15 @@ import com.commit451.gitlab.model.api.Milestone;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryCommit;
 import com.commit451.gitlab.navigation.Navigator;
+import com.commit451.reptar.FocusedSingleObserver;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -110,10 +110,7 @@ public class LoadSomeInfoActivity extends BaseActivity {
                 App.get().getGitLab().getProject(namespace, project)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Subscriber<Project>() {
-                            @Override
-                            public void onCompleted() {
-                            }
+                        .subscribe(new FocusedSingleObserver<Project>() {
 
                             @Override
                             public void onError(Throwable e) {
@@ -122,7 +119,7 @@ public class LoadSomeInfoActivity extends BaseActivity {
                             }
 
                             @Override
-                            public void onNext(Project project) {
+                            public void onSuccess(Project project) {
                                 loadNextPart(project);
                             }
                         });
@@ -139,10 +136,7 @@ public class LoadSomeInfoActivity extends BaseActivity {
                         .compose(LoadSomeInfoActivity.this.<RepositoryCommit>bindToLifecycle())
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Subscriber<RepositoryCommit>() {
-                            @Override
-                            public void onCompleted() {
-                            }
+                        .subscribe(new FocusedSingleObserver<RepositoryCommit>() {
 
                             @Override
                             public void onError(Throwable e) {
@@ -151,7 +145,7 @@ public class LoadSomeInfoActivity extends BaseActivity {
                             }
 
                             @Override
-                            public void onNext(RepositoryCommit repositoryCommit) {
+                            public void onSuccess(RepositoryCommit repositoryCommit) {
                                 Navigator.navigateToDiffActivity(LoadSomeInfoActivity.this, mProject, repositoryCommit);
                                 finish();
                             }
@@ -163,10 +157,7 @@ public class LoadSomeInfoActivity extends BaseActivity {
                         .compose(LoadSomeInfoActivity.this.<List<MergeRequest>>bindToLifecycle())
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Subscriber<List<MergeRequest>>() {
-                            @Override
-                            public void onCompleted() {
-                            }
+                        .subscribe(new FocusedSingleObserver<List<MergeRequest>>() {
 
                             @Override
                             public void onError(Throwable e) {
@@ -175,7 +166,7 @@ public class LoadSomeInfoActivity extends BaseActivity {
                             }
 
                             @Override
-                            public void onNext(List<MergeRequest> mergeRequests) {
+                            public void onSuccess(List<MergeRequest> mergeRequests) {
                                 if (!mergeRequests.isEmpty()) {
                                     Navigator.navigateToMergeRequest(LoadSomeInfoActivity.this, mProject, mergeRequests.get(0));
                                     finish();
@@ -191,10 +182,7 @@ public class LoadSomeInfoActivity extends BaseActivity {
                         .compose(LoadSomeInfoActivity.this.<Build>bindToLifecycle())
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Subscriber<Build>() {
-                            @Override
-                            public void onCompleted() {
-                            }
+                        .subscribe(new FocusedSingleObserver<Build>() {
 
                             @Override
                             public void onError(Throwable e) {
@@ -203,7 +191,7 @@ public class LoadSomeInfoActivity extends BaseActivity {
                             }
 
                             @Override
-                            public void onNext(Build build) {
+                            public void onSuccess(Build build) {
                                 Navigator.navigateToBuild(LoadSomeInfoActivity.this, mProject, build);
                                 finish();
                             }
@@ -215,10 +203,7 @@ public class LoadSomeInfoActivity extends BaseActivity {
                         .compose(LoadSomeInfoActivity.this.<List<Milestone>>bindToLifecycle())
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Subscriber<List<Milestone>>() {
-                            @Override
-                            public void onCompleted() {
-                            }
+                        .subscribe(new FocusedSingleObserver<List<Milestone>>() {
 
                             @Override
                             public void onError(Throwable e) {
@@ -227,7 +212,7 @@ public class LoadSomeInfoActivity extends BaseActivity {
                             }
 
                             @Override
-                            public void onNext(List<Milestone> milestones) {
+                            public void onSuccess(List<Milestone> milestones) {
                                 if (!milestones.isEmpty()) {
                                     Navigator.navigateToMilestone(LoadSomeInfoActivity.this, mProject, milestones.get(0));
                                     finish();

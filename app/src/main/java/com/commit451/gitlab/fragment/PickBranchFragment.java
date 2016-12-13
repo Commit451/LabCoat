@@ -17,15 +17,15 @@ import com.commit451.gitlab.activity.PickBranchOrTagActivity;
 import com.commit451.gitlab.adapter.BranchesAdapter;
 import com.commit451.gitlab.model.Ref;
 import com.commit451.gitlab.model.api.Branch;
+import com.commit451.reptar.FocusedSingleObserver;
 
 import org.parceler.Parcels;
 
 import java.util.List;
 
 import butterknife.BindView;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -100,10 +100,7 @@ public class PickBranchFragment extends ButterKnifeFragment {
                 .compose(this.<List<Branch>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<List<Branch>>() {
-                    @Override
-                    public void onCompleted() {
-                    }
+                .subscribe(new FocusedSingleObserver<List<Branch>>() {
 
                     @Override
                     public void onError(Throwable e) {
@@ -113,7 +110,7 @@ public class PickBranchFragment extends ButterKnifeFragment {
                     }
 
                     @Override
-                    public void onNext(List<Branch> branches) {
+                    public void onSuccess(List<Branch> branches) {
                         mProgress.setVisibility(View.GONE);
                         mBranchesAdapter.setEntries(branches);
                     }

@@ -24,6 +24,8 @@ import com.commit451.gitlab.model.api.Milestone;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.LinkHeaderParser;
+import com.commit451.reptar.FocusedSingleObserver;
+import com.commit451.reptar.retrofit.ResponseSingleObserver;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.parceler.Parcels;
@@ -33,12 +35,10 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Response;
-import retrofit2.adapter.rxjava.HttpException;
-import rx.Observable;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class MilestoneActivity extends BaseActivity {
@@ -181,10 +181,7 @@ public class MilestoneActivity extends BaseActivity {
                 .compose(this.<Response<List<Issue>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Response<List<Issue>>>() {
-                    @Override
-                    public void onCompleted() {
-                    }
+                .subscribe(new ResponseSingleObserver<List<Issue>>() {
 
                     @Override
                     public void onError(Throwable e) {
@@ -197,15 +194,11 @@ public class MilestoneActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void onNext(Response<List<Issue>> listResponse) {
-                        if (!listResponse.isSuccessful()) {
-                            onError(new HttpException(listResponse));
-                            return;
-                        }
+                    protected void onResponseSuccess(List<Issue> issues) {
                         mSwipeRefreshLayout.setRefreshing(false);
                         mLoading = false;
 
-                        if (!listResponse.body().isEmpty()) {
+                        if (!issues.isEmpty()) {
                             mMessageText.setVisibility(View.GONE);
                         } else {
                             Timber.d("No issues found");
@@ -213,8 +206,8 @@ public class MilestoneActivity extends BaseActivity {
                             mMessageText.setText(R.string.no_issues);
                         }
 
-                        mNextPageUrl = LinkHeaderParser.parse(listResponse).getNext();
-                        mMilestoneIssuesAdapter.setIssues(listResponse.body());
+                        mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
+                        mMilestoneIssuesAdapter.setIssues(issues);
                     }
                 });
     }
@@ -232,10 +225,7 @@ public class MilestoneActivity extends BaseActivity {
                 .compose(this.<Response<List<Issue>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Response<List<Issue>>>() {
-                    @Override
-                    public void onCompleted() {
-                    }
+                .subscribe(new ResponseSingleObserver<List<Issue>>() {
 
                     @Override
                     public void onError(Throwable e) {
@@ -244,14 +234,10 @@ public class MilestoneActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void onNext(Response<List<Issue>> listResponse) {
-                        if (!listResponse.isSuccessful()) {
-                            onError(new HttpException(listResponse));
-                            return;
-                        }
+                    protected void onResponseSuccess(List<Issue> issues) {
                         mLoading = false;
-                        mNextPageUrl = LinkHeaderParser.parse(listResponse).getNext();
-                        mMilestoneIssuesAdapter.addIssues(listResponse.body());
+                        mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
+                        mMilestoneIssuesAdapter.addIssues(issues);
                     }
                 });
     }
@@ -265,14 +251,11 @@ public class MilestoneActivity extends BaseActivity {
         }
     }
 
-    private void updateMilestoneStatus(Observable<Milestone> observable) {
+    private void updateMilestoneStatus(Single<Milestone> observable) {
         observable.compose(this.<Milestone>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Milestone>() {
-                    @Override
-                    public void onCompleted() {
-                    }
+                .subscribe(new FocusedSingleObserver<Milestone>() {
 
                     @Override
                     public void onError(Throwable e) {
@@ -283,7 +266,7 @@ public class MilestoneActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void onNext(Milestone milestone) {
+                    public void onSuccess(Milestone milestone) {
                         mProgress.setVisibility(View.GONE);
                         mMilestone = milestone;
                         App.bus().post(new MilestoneChangedEvent(mMilestone));

@@ -17,6 +17,7 @@ import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryCommit;
 import com.commit451.gitlab.model.api.Runner;
 import com.commit451.gitlab.util.DateUtil;
+import com.commit451.reptar.FocusedSingleObserver;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.parceler.Parcels;
@@ -24,9 +25,8 @@ import org.parceler.Parcels;
 import java.util.Date;
 
 import butterknife.BindView;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -104,11 +104,7 @@ public class BuildDescriptionFragment extends ButterKnifeFragment {
                 .compose(this.<Build>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Build>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
+                .subscribe(new FocusedSingleObserver<Build>() {
 
                     @Override
                     public void onError(Throwable e) {
@@ -118,7 +114,7 @@ public class BuildDescriptionFragment extends ButterKnifeFragment {
                     }
 
                     @Override
-                    public void onNext(Build build) {
+                    public void onSuccess(Build build) {
                         mSwipeRefreshLayout.setRefreshing(false);
                         mBuild = build;
                         bindBuild(build);

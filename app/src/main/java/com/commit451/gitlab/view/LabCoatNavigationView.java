@@ -29,6 +29,7 @@ import com.commit451.gitlab.model.api.UserFull;
 import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.transformation.CircleTransformation;
 import com.commit451.gitlab.util.ImageUtil;
+import com.commit451.reptar.retrofit.ResponseSingleObserver;
 
 import org.greenrobot.eventbus.Subscribe;
 
@@ -39,10 +40,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import retrofit2.Response;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -232,10 +231,7 @@ public class LabCoatNavigationView extends NavigationView {
         App.get().getGitLab().getThisUser()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Response<UserFull>>() {
-                    @Override
-                    public void onCompleted() {
-                    }
+                .subscribe(new ResponseSingleObserver<UserFull>() {
 
                     @Override
                     public void onError(Throwable e) {
@@ -243,15 +239,13 @@ public class LabCoatNavigationView extends NavigationView {
                     }
 
                     @Override
-                    public void onNext(Response<UserFull> response) {
-                        if (response.isSuccessful()) {
-                            //Store the newly retrieved user to the account so that it stays up to date
-                            // in local storage
-                            Account account = App.get().getAccount();
-                            account.setUser(response.body());
-                            App.get().getPrefs().updateAccount(account);
-                            bindUser(response.body());
-                        }
+                    protected void onResponseSuccess(UserFull userFull) {
+                        //Store the newly retrieved user to the account so that it stays up to date
+                        // in local storage
+                        Account account = App.get().getAccount();
+                        account.setUser(userFull);
+                        App.get().getPrefs().updateAccount(account);
+                        bindUser(userFull);
                     }
                 });
     }

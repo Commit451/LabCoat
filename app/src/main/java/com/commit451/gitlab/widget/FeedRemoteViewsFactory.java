@@ -24,7 +24,6 @@ import java.util.ArrayList;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
-import retrofit2.Response;
 
 /**
  * Remote all the views
@@ -135,14 +134,13 @@ public class FeedRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
         // locking up the widget.
 
         try {
-            Response<Feed> feedResponse = mRssClient.getFeed(mFeedUrl).execute();
-            if (feedResponse.isSuccessful()) {
-                if (feedResponse.body().getEntries() != null) {
-                    mEntries.addAll(feedResponse.body().getEntries());
-                }
+            Feed feed = mRssClient.getFeed(mFeedUrl)
+                    .blockingGet();
+            if (feed.getEntries() != null) {
+                mEntries.addAll(feed.getEntries());
             }
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             //maybe let the user know somehow?
         }
     }

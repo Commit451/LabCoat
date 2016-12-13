@@ -15,6 +15,7 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.api.FileUploadResponse;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.rx.FileObservableFactory;
+import com.commit451.reptar.FocusedSingleObserver;
 
 import org.parceler.Parcels;
 
@@ -25,13 +26,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.codetail.animation.ViewAnimationUtils;
+import io.reactivex.SingleSource;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 import okhttp3.MultipartBody;
 import pl.aprilapps.easyphotopicker.DefaultCallback;
 import pl.aprilapps.easyphotopicker.EasyImage;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -134,42 +135,34 @@ public class AttachActivity extends BaseActivity {
     public void finish() {
         super.finish();
         overridePendingTransition(R.anim.do_nothing, R.anim.fade_out);
-
     }
 
     private void onPhotoReturned(File photo) {
         mProgress.setVisibility(View.VISIBLE);
         mRootButtons.setVisibility(View.INVISIBLE);
         FileObservableFactory.toPart(photo)
-                .compose(this.<MultipartBody.Part>bindToLifecycle())
+                .flatMap(new Function<MultipartBody.Part, SingleSource<FileUploadResponse>>() {
+                    @Override
+                    public SingleSource<FileUploadResponse> apply(MultipartBody.Part part) throws Exception {
+                        return App.get().getGitLab().uploadFile(mProject.getId(), part);
+                    }
+                })
+                .compose(this.<FileUploadResponse>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<MultipartBody.Part>() {
+                .subscribe(new FocusedSingleObserver<FileUploadResponse>() {
                     @Override
-                    public void call(MultipartBody.Part part) {
-                        App.get().getGitLab().uploadFile(mProject.getId(), part)
-                                .compose(AttachActivity.this.<FileUploadResponse>bindToLifecycle())
-                                .subscribeOn(Schedulers.io())
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe(new Subscriber<FileUploadResponse>() {
-                                    @Override
-                                    public void onCompleted() {
-                                    }
+                    public void onSuccess(FileUploadResponse fileUploadResponse) {
+                        Intent data = new Intent();
+                        data.putExtra(KEY_FILE_UPLOAD_RESPONSE, Parcels.wrap(fileUploadResponse));
+                        setResult(RESULT_OK, data);
+                        finish();
+                    }
 
-                                    @Override
-                                    public void onError(Throwable e) {
-                                        Timber.e(e);
-                                        finish();
-                                    }
-
-                                    @Override
-                                    public void onNext(FileUploadResponse fileUploadResponse) {
-                                        Intent data = new Intent();
-                                        data.putExtra(KEY_FILE_UPLOAD_RESPONSE, Parcels.wrap(fileUploadResponse));
-                                        setResult(RESULT_OK, data);
-                                        finish();
-                                    }
-                                });
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e);
+                        finish();
                     }
                 });
     }

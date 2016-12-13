@@ -14,14 +14,14 @@ import com.commit451.gitlab.event.BuildChangedEvent;
 import com.commit451.gitlab.model.api.Build;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.util.BuildUtil;
+import com.commit451.reptar.FocusedSingleObserver;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.parceler.Parcels;
 
 import butterknife.BindView;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -107,10 +107,7 @@ public class BuildLogFragment extends ButterKnifeFragment {
                 .compose(this.<String>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<String>() {
-                    @Override
-                    public void onCompleted() {
-                    }
+                .subscribe(new FocusedSingleObserver<String>() {
 
                     @Override
                     public void onError(Throwable e) {
@@ -120,7 +117,7 @@ public class BuildLogFragment extends ButterKnifeFragment {
                     }
 
                     @Override
-                    public void onNext(String response) {
+                    public void onSuccess(String response) {
                         mSwipeRefreshLayout.setRefreshing(false);
                         mTextLog.setText(response);
                     }

@@ -19,15 +19,14 @@ import com.commit451.gitlab.model.api.UserBasic;
 import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.LinkHeaderParser;
 import com.commit451.gitlab.viewHolder.UserViewHolder;
+import com.commit451.reptar.retrofit.ResponseSingleObserver;
 
 import java.util.List;
 
 import butterknife.BindView;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Response;
-import retrofit2.adapter.rxjava.HttpException;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class UsersFragment extends ButterKnifeFragment {
@@ -143,10 +142,7 @@ public class UsersFragment extends ButterKnifeFragment {
                 .compose(this.<Response<List<UserBasic>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Response<List<UserBasic>>>() {
-                    @Override
-                    public void onCompleted() {
-                    }
+                .subscribe(new ResponseSingleObserver<List<UserBasic>>() {
 
                     @Override
                     public void onError(Throwable e) {
@@ -159,19 +155,15 @@ public class UsersFragment extends ButterKnifeFragment {
                     }
 
                     @Override
-                    public void onNext(Response<List<UserBasic>> response) {
-                        if (!response.isSuccessful()) {
-                            onError(new HttpException(response));
-                            return;
-                        }
+                    protected void onResponseSuccess(List<UserBasic> users) {
                         mSwipeRefreshLayout.setRefreshing(false);
                         mLoading = false;
-                        if (response.body().isEmpty()) {
+                        if (users.isEmpty()) {
                             mMessageView.setVisibility(View.VISIBLE);
                             mMessageView.setText(R.string.no_users_found);
                         }
-                        mUsersAdapter.setData(response.body());
-                        mNextPageUrl = LinkHeaderParser.parse(response).getNext();
+                        mUsersAdapter.setData(users);
+                        mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
                     }
                 });
     }
@@ -184,10 +176,7 @@ public class UsersFragment extends ButterKnifeFragment {
                 .compose(this.<Response<List<UserBasic>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Response<List<UserBasic>>>() {
-                    @Override
-                    public void onCompleted() {
-                    }
+                .subscribe(new ResponseSingleObserver<List<UserBasic>>() {
 
                     @Override
                     public void onError(Throwable e) {
@@ -198,15 +187,11 @@ public class UsersFragment extends ButterKnifeFragment {
                     }
 
                     @Override
-                    public void onNext(Response<List<UserBasic>> response) {
-                        if (!response.isSuccessful()) {
-                            onError(new HttpException(response));
-                            return;
-                        }
+                    protected void onResponseSuccess(List<UserBasic> users) {
                         mLoading = false;
                         mSwipeRefreshLayout.setRefreshing(false);
-                        mUsersAdapter.addData(response.body());
-                        mNextPageUrl = LinkHeaderParser.parse(response).getNext();
+                        mUsersAdapter.addData(users);
+                        mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
                         mUsersAdapter.setLoading(false);
                     }
                 });

@@ -25,6 +25,7 @@ import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.api.RepositoryFile;
 import com.commit451.gitlab.rx.DecodeObservableFactory;
+import com.commit451.reptar.FocusedSingleObserver;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -35,9 +36,8 @@ import java.nio.charset.Charset;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class FileActivity extends BaseActivity {
@@ -127,10 +127,7 @@ public class FileActivity extends BaseActivity {
                 .compose(this.<RepositoryFile>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<RepositoryFile>() {
-                    @Override
-                    public void onCompleted() {
-                    }
+                .subscribe(new FocusedSingleObserver<RepositoryFile>() {
 
                     @Override
                     public void onError(Throwable e) {
@@ -141,7 +138,7 @@ public class FileActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void onNext(RepositoryFile repositoryFile) {
+                    public void onSuccess(RepositoryFile repositoryFile) {
                         mProgressView.setVisibility(View.GONE);
                         bindFile(repositoryFile);
                     }
@@ -165,10 +162,7 @@ public class FileActivity extends BaseActivity {
                 .compose(this.<byte[]>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<byte[]>() {
-                    @Override
-                    public void onCompleted() {
-                    }
+                .subscribe(new FocusedSingleObserver<byte[]>() {
 
                     @Override
                     public void onError(Throwable e) {
@@ -177,7 +171,7 @@ public class FileActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void onNext(byte[] bytes) {
+                    public void onSuccess(byte[] bytes) {
                         bindBlob(bytes);
                     }
                 });

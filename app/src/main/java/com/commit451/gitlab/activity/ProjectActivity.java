@@ -25,15 +25,15 @@ import com.commit451.gitlab.model.Ref;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.IntentUtil;
+import com.commit451.reptar.FocusedSingleObserver;
 
 import org.parceler.Parcels;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import rx.Observable;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class ProjectActivity extends BaseActivity {
@@ -183,14 +183,11 @@ public class ProjectActivity extends BaseActivity {
         loadProject(App.get().getGitLab().getProject(projectNamespace, projectName));
     }
 
-    private void loadProject(Observable<Project> observable) {
+    private void loadProject(Single<Project> observable) {
         observable.compose(this.<Project>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Project>() {
-                    @Override
-                    public void onCompleted() {
-                    }
+                .subscribe(new FocusedSingleObserver<Project>() {
 
                     @Override
                     public void onError(Throwable e) {
@@ -203,7 +200,7 @@ public class ProjectActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void onNext(Project project) {
+                    public void onSuccess(Project project) {
                         mProgress.animate()
                                 .alpha(0.0f)
                                 .withEndAction(new HideRunnable(mProgress));

@@ -55,8 +55,7 @@ public class ApiTests {
 
         Project projectResponse = gitLab
                 .getProject(String.valueOf(FAKE_GROUP_PROJECT_ID))
-                .toBlocking()
-                .first();
+                .blockingGet();
         assertNotNull(projectResponse);
 
         sFakeProject = projectResponse;
@@ -66,8 +65,7 @@ public class ApiTests {
     public void getProjects() throws Exception {
         Response<List<Project>> projectsResponse = gitLab
                 .getAllProjects()
-                .toBlocking()
-                .first();
+                .blockingGet();
         TestUtil.assertRetrofitResponseSuccess(projectsResponse);
         assertNotNull(projectsResponse.body());
     }
@@ -76,8 +74,7 @@ public class ApiTests {
     public void getGroups() throws Exception {
         Response<List<Group>> groupResponse = gitLab
                 .getGroups()
-                .toBlocking()
-                .first();
+                .blockingGet();
         TestUtil.assertRetrofitResponseSuccess(groupResponse);
         assertNotNull(groupResponse.body());
     }
@@ -88,8 +85,7 @@ public class ApiTests {
         long gitLabGroupId = 9970;
         Response<List<Member>> groupResponse = gitLab
                 .getGroupMembers(gitLabGroupId)
-                .toBlocking()
-                .first();
+                .blockingGet();
         TestUtil.assertRetrofitResponseSuccess(groupResponse);
         assertNotNull(groupResponse.body());
     }
@@ -99,8 +95,7 @@ public class ApiTests {
         String defaultState = RuntimeEnvironment.application.getResources().getString(R.string.issue_state_value_default);
         Response<List<Issue>> issuesResponse = gitLab
                 .getIssues(sFakeProject.getId(), defaultState)
-                .toBlocking()
-                .first();
+                .blockingGet();
         TestUtil.assertRetrofitResponseSuccess(issuesResponse);
         assertNotNull(issuesResponse.body());
     }
@@ -111,8 +106,7 @@ public class ApiTests {
         String currentPath = "";
         List<RepositoryTreeObject> treeResponse = gitLab
                 .getTree(sFakeProject.getId(), defaultBranch, currentPath)
-                .toBlocking()
-                .first();
+                .blockingGet();
         assertNotNull(treeResponse);
     }
 
@@ -121,8 +115,7 @@ public class ApiTests {
         String defaultBranch = "master";
         List<RepositoryCommit> commitsResponse = gitLab
                 .getCommits(sFakeProject.getId(), defaultBranch, 0)
-                .toBlocking()
-                .first();
+                .blockingGet();
         assertNotNull(commitsResponse);
     }
 
@@ -131,8 +124,7 @@ public class ApiTests {
         String defaultState = RuntimeEnvironment.application.getResources().getString(R.string.merge_request_state_value_default);
         Response<List<MergeRequest>> mergeRequestResponse = gitLab
                 .getMergeRequests(sFakeProject.getId(), defaultState)
-                .toBlocking()
-                .first();
+                .blockingGet();
         TestUtil.assertRetrofitResponseSuccess(mergeRequestResponse);
         assertNotNull(mergeRequestResponse.body());
     }
@@ -141,20 +133,19 @@ public class ApiTests {
     public void getCurrentUser() throws Exception {
         Response<UserFull> userFullResponse = gitLab
                 .getThisUser()
-                .toBlocking()
-                .first();
+                .blockingGet();
         TestUtil.assertRetrofitResponseSuccess(userFullResponse);
         assertNotNull(userFullResponse.body());
     }
 
-//    @Test
+    //    @Test
     public void uploadFile() throws Exception {
         Bitmap bitmap = BitmapFactory.decodeResource(RuntimeEnvironment.application.getResources(), R.drawable.ic_fork);
         MultipartBody.Part part = FileUtil.toPart(bitmap, "fork.png");
 
         FileUploadResponse uploadResponseResponse =
                 gitLab.uploadFile(sFakeProject.getId(), part)
-                        .toBlocking().first();
+                        .blockingGet();
         assertNotNull(uploadResponseResponse);
     }
 

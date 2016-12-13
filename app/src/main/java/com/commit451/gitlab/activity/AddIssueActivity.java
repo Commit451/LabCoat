@@ -32,6 +32,8 @@ import com.commit451.gitlab.model.api.Member;
 import com.commit451.gitlab.model.api.Milestone;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.navigation.Navigator;
+import com.commit451.reptar.FocusedSingleObserver;
+import com.commit451.reptar.retrofit.ResponseSingleObserver;
 import com.commit451.teleprinter.Teleprinter;
 
 import org.parceler.Parcels;
@@ -43,12 +45,10 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Response;
-import retrofit2.adapter.rxjava.HttpException;
-import rx.Observable;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -178,10 +178,7 @@ public class AddIssueActivity extends MorphActivity {
                 .compose(this.<Response<List<Milestone>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Response<List<Milestone>>>() {
-                    @Override
-                    public void onCompleted() {
-                    }
+                .subscribe(new ResponseSingleObserver<List<Milestone>>() {
 
                     @Override
                     public void onError(Throwable e) {
@@ -191,28 +188,22 @@ public class AddIssueActivity extends MorphActivity {
                     }
 
                     @Override
-                    public void onNext(Response<List<Milestone>> listResponse) {
-                        if (!listResponse.isSuccessful()) {
-                            onError(new HttpException(listResponse));
-                            return;
-                        }
+                    protected void onResponseSuccess(List<Milestone> milestones) {
                         mMilestoneProgress.setVisibility(View.GONE);
                         mMilestoneSpinner.setVisibility(View.VISIBLE);
-                        MilestoneSpinnerAdapter milestoneSpinnerAdapter = new MilestoneSpinnerAdapter(AddIssueActivity.this, listResponse.body());
+                        MilestoneSpinnerAdapter milestoneSpinnerAdapter = new MilestoneSpinnerAdapter(AddIssueActivity.this, milestones);
                         mMilestoneSpinner.setAdapter(milestoneSpinnerAdapter);
                         if (mIssue != null) {
                             mMilestoneSpinner.setSelection(milestoneSpinnerAdapter.getSelectedItemPosition(mIssue.getMilestone()));
                         }
                     }
+
                 });
         App.get().getGitLab().getProjectMembers(mProject.getId())
                 .compose(this.<Response<List<Member>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Response<List<Member>>>() {
-                    @Override
-                    public void onCompleted() {
-                    }
+                .subscribe(new ResponseSingleObserver<List<Member>>() {
 
                     @Override
                     public void onError(Throwable e) {
@@ -222,21 +213,14 @@ public class AddIssueActivity extends MorphActivity {
                     }
 
                     @Override
-                    public void onNext(Response<List<Member>> listResponse) {
-                        if (!listResponse.isSuccessful()) {
-                            onError(new HttpException(listResponse));
-                            return;
-                        }
-                        mMembers.addAll(listResponse.body());
+                    protected void onResponseSuccess(List<Member> members) {
+                        mMembers.addAll(members);
                         if (mProject.belongsToGroup()) {
                             Timber.d("Project belongs to a group, loading those users too");
                             App.get().getGitLab().getGroupMembers(mProject.getNamespace().getId())
                                     .subscribeOn(Schedulers.io())
                                     .observeOn(AndroidSchedulers.mainThread())
-                                    .subscribe(new Subscriber<Response<List<Member>>>() {
-                                        @Override
-                                        public void onCompleted() {
-                                        }
+                                    .subscribe(new ResponseSingleObserver<List<Member>>() {
 
                                         @Override
                                         public void onError(Throwable e) {
@@ -246,12 +230,8 @@ public class AddIssueActivity extends MorphActivity {
                                         }
 
                                         @Override
-                                        public void onNext(Response<List<Member>> listResponse) {
-                                            if (!listResponse.isSuccessful()) {
-                                                onError(new HttpException(listResponse));
-                                                return;
-                                            }
-                                            mMembers.addAll(listResponse.body());
+                                        protected void onResponseSuccess(List<Member> members) {
+                                            mMembers.addAll(members);
                                             setAssignees();
                                         }
                                     });
@@ -264,10 +244,7 @@ public class AddIssueActivity extends MorphActivity {
                 .compose(this.<List<Label>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<List<Label>>() {
-                    @Override
-                    public void onCompleted() {
-                    }
+                .subscribe(new FocusedSingleObserver<List<Label>>() {
 
                     @Override
                     public void onError(Throwable e) {
@@ -278,7 +255,7 @@ public class AddIssueActivity extends MorphActivity {
                     }
 
                     @Override
-                    public void onNext(List<Label> labels) {
+                    public void onSuccess(List<Label> labels) {
                         mLabelsProgress.setVisibility(View.GONE);
                         mRootAddLabels.setVisibility(View.VISIBLE);
                         setLabels(labels);
@@ -425,13 +402,10 @@ public class AddIssueActivity extends MorphActivity {
         }
     }
 
-    private void observeUpdate(Observable<Issue> observable) {
+    private void observeUpdate(Single<Issue> observable) {
         observable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Issue>() {
-                    @Override
-                    public void onCompleted() {
-                    }
+                .subscribe(new FocusedSingleObserver<Issue>() {
 
                     @Override
                     public void onError(Throwable e) {
@@ -441,7 +415,7 @@ public class AddIssueActivity extends MorphActivity {
                     }
 
                     @Override
-                    public void onNext(Issue issue) {
+                    public void onSuccess(Issue issue) {
                         if (mIssue == null) {
                             App.bus().post(new IssueCreatedEvent(issue));
                         } else {

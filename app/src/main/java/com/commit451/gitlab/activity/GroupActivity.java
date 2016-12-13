@@ -24,14 +24,14 @@ import com.commit451.gitlab.adapter.GroupPagerAdapter;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.model.api.GroupDetail;
 import com.commit451.gitlab.transformation.PaletteTransformation;
+import com.commit451.reptar.FocusedSingleObserver;
 
 import org.parceler.Parcels;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -95,10 +95,7 @@ public class GroupActivity extends BaseActivity {
                     .compose(this.<GroupDetail>bindToLifecycle())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Subscriber<GroupDetail>() {
-                        @Override
-                        public void onCompleted() {
-                        }
+                    .subscribe(new FocusedSingleObserver<GroupDetail>() {
 
                         @Override
                         public void onError(Throwable e) {
@@ -108,7 +105,7 @@ public class GroupActivity extends BaseActivity {
                         }
 
                         @Override
-                        public void onNext(GroupDetail groupDetail) {
+                        public void onSuccess(GroupDetail groupDetail) {
                             mProgress.setVisibility(View.GONE);
                             bind(groupDetail);
                         }

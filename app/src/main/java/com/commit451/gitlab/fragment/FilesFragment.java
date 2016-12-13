@@ -25,6 +25,7 @@ import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryTreeObject;
 import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.IntentUtil;
+import com.commit451.reptar.FocusedSingleObserver;
 
 import org.greenrobot.eventbus.Subscribe;
 
@@ -32,9 +33,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class FilesFragment extends ButterKnifeFragment {
@@ -161,17 +161,11 @@ public class FilesFragment extends ButterKnifeFragment {
                 .compose(this.<List<RepositoryTreeObject>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<List<RepositoryTreeObject>>() {
-                    @Override
-                    public void onCompleted() {
-                    }
+                .subscribe(new FocusedSingleObserver<List<RepositoryTreeObject>>() {
 
                     @Override
                     public void onError(Throwable e) {
                         Timber.e(e);
-                        if (getView() == null) {
-                            return;
-                        }
                         mSwipeRefreshLayout.setRefreshing(false);
                         mMessageView.setVisibility(View.VISIBLE);
                         mMessageView.setText(R.string.connection_error_files);
@@ -181,8 +175,7 @@ public class FilesFragment extends ButterKnifeFragment {
                     }
 
                     @Override
-                    public void onNext(List<RepositoryTreeObject> repositoryTreeObjects) {
-
+                    public void onSuccess(List<RepositoryTreeObject> repositoryTreeObjects) {
                         mSwipeRefreshLayout.setRefreshing(false);
                         if (!repositoryTreeObjects.isEmpty()) {
                             mMessageView.setVisibility(View.GONE);

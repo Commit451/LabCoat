@@ -2,7 +2,6 @@ package com.commit451.gitlab.fragment;
 
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
@@ -19,9 +17,12 @@ import com.commit451.gitlab.adapter.FeedAdapter;
 import com.commit451.gitlab.model.rss.Entry;
 import com.commit451.gitlab.model.rss.Feed;
 import com.commit451.gitlab.navigation.Navigator;
+import com.commit451.reptar.FocusedSingleObserver;
 import com.novoda.simplechromecustomtabs.SimpleChromeCustomTabs;
 
 import butterknife.BindView;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -49,36 +50,6 @@ public class FeedFragment extends ButterKnifeFragment {
 
     private Uri mFeedUrl;
     private FeedAdapter mFeedAdapter;
-
-    private final EasyCallback<Feed> mUserFeedCallback = new EasyCallback<Feed>() {
-        @Override
-        public void success(@NonNull Feed response) {
-            if (getView() == null) {
-                return;
-            }
-            mSwipeRefreshLayout.setRefreshing(false);
-            if (response.getEntries() != null && !response.getEntries().isEmpty()) {
-                mMessageView.setVisibility(View.GONE);
-            } else {
-                Timber.d("No activity in the feed");
-                mMessageView.setVisibility(View.VISIBLE);
-                mMessageView.setText(R.string.no_activity);
-            }
-            mFeedAdapter.setEntries(response.getEntries());
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t);
-            if (getView() == null) {
-                return;
-            }
-            mSwipeRefreshLayout.setRefreshing(false);
-            mMessageView.setVisibility(View.VISIBLE);
-            mMessageView.setText(R.string.connection_error_feed);
-            mFeedAdapter.setEntries(null);
-        }
-    };
 
     private final FeedAdapter.Listener mFeedAdapterListener = new FeedAdapter.Listener() {
         @Override
@@ -150,6 +121,32 @@ public class FeedFragment extends ButterKnifeFragment {
                 }
             }
         });
-        App.get().getGitLabRss().getFeed(mFeedUrl.toString()).enqueue(mUserFeedCallback);
+        App.get().getGitLabRss().getFeed(mFeedUrl.toString())
+                .compose(this.<Feed>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new FocusedSingleObserver<Feed>() {
+                    @Override
+                    public void onSuccess(Feed feed) {
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        if (feed.getEntries() != null && !feed.getEntries().isEmpty()) {
+                            mMessageView.setVisibility(View.GONE);
+                        } else {
+                            Timber.d("No activity in the feed");
+                            mMessageView.setVisibility(View.VISIBLE);
+                            mMessageView.setText(R.string.no_activity);
+                        }
+                        mFeedAdapter.setEntries(feed.getEntries());
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e);
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        mMessageView.setVisibility(View.VISIBLE);
+                        mMessageView.setText(R.string.connection_error_feed);
+                        mFeedAdapter.setEntries(null);
+                    }
+                });
     }
 }

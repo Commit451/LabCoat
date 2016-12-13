@@ -24,17 +24,16 @@ import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.LinkHeaderParser;
+import com.commit451.reptar.retrofit.ResponseSingleObserver;
 
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.List;
 
 import butterknife.BindView;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Response;
-import retrofit2.adapter.rxjava.HttpException;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class MergeRequestsFragment extends ButterKnifeFragment {
@@ -163,10 +162,7 @@ public class MergeRequestsFragment extends ButterKnifeFragment {
                 .compose(this.<Response<List<MergeRequest>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Response<List<MergeRequest>>>() {
-                    @Override
-                    public void onCompleted() {
-                    }
+                .subscribe(new ResponseSingleObserver<List<MergeRequest>>() {
 
                     @Override
                     public void onError(Throwable e) {
@@ -180,19 +176,15 @@ public class MergeRequestsFragment extends ButterKnifeFragment {
                     }
 
                     @Override
-                    public void onNext(Response<List<MergeRequest>> listResponse) {
-                        if (!listResponse.isSuccessful()) {
-                            onError(new HttpException(listResponse));
-                            return;
-                        }
+                    protected void onResponseSuccess(List<MergeRequest> mergeRequests) {
                         mLoading = false;
                         mSwipeRefreshLayout.setRefreshing(false);
-                        if (listResponse.body().isEmpty()) {
+                        if (mergeRequests.isEmpty()) {
                             mMessageView.setVisibility(View.VISIBLE);
                             mMessageView.setText(R.string.no_merge_requests);
                         }
-                        mMergeRequestAdapter.setData(listResponse.body());
-                        mNextPageUrl = LinkHeaderParser.parse(listResponse).getNext();
+                        mMergeRequestAdapter.setData(mergeRequests);
+                        mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
                         Timber.d("Next page url " + mNextPageUrl);
                     }
                 });
@@ -212,10 +204,7 @@ public class MergeRequestsFragment extends ButterKnifeFragment {
                 .compose(this.<Response<List<MergeRequest>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Response<List<MergeRequest>>>() {
-                    @Override
-                    public void onCompleted() {
-                    }
+                .subscribe(new ResponseSingleObserver<List<MergeRequest>>() {
 
                     @Override
                     public void onError(Throwable e) {
@@ -225,11 +214,11 @@ public class MergeRequestsFragment extends ButterKnifeFragment {
                     }
 
                     @Override
-                    public void onNext(Response<List<MergeRequest>> listResponse) {
+                    protected void onResponseSuccess(List<MergeRequest> mergeRequests) {
                         mLoading = false;
                         mMergeRequestAdapter.setLoading(false);
-                        mNextPageUrl = LinkHeaderParser.parse(listResponse).getNext();
-                        mMergeRequestAdapter.addData(listResponse.body());
+                        mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
+                        mMergeRequestAdapter.addData(mergeRequests);
                     }
                 });
     }

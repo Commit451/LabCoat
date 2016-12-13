@@ -17,6 +17,7 @@ import com.commit451.gitlab.adapter.DiffAdapter;
 import com.commit451.gitlab.model.api.Diff;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryCommit;
+import com.commit451.reptar.FocusedSingleObserver;
 
 import org.parceler.Parcels;
 
@@ -24,9 +25,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -104,10 +104,7 @@ public class DiffActivity extends BaseActivity {
                 .compose(this.<List<Diff>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<List<Diff>>() {
-                    @Override
-                    public void onCompleted() {
-                    }
+                .subscribe(new FocusedSingleObserver<List<Diff>>() {
 
                     @Override
                     public void onError(Throwable e) {
@@ -118,7 +115,7 @@ public class DiffActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void onNext(List<Diff> diffs) {
+                    public void onSuccess(List<Diff> diffs) {
                         mSwipeRefreshLayout.setRefreshing(false);
                         mDiffAdapter.setData(diffs);
                     }

@@ -16,16 +16,15 @@ import com.commit451.gitlab.adapter.TodoAdapter;
 import com.commit451.gitlab.model.api.Todo;
 import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.LinkHeaderParser;
+import com.commit451.reptar.retrofit.ResponseSingleObserver;
 
 import java.util.List;
 
 import butterknife.BindView;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Response;
-import retrofit2.adapter.rxjava.HttpException;
-import rx.Observable;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class TodoFragment extends ButterKnifeFragment {
@@ -133,15 +132,12 @@ public class TodoFragment extends ButterKnifeFragment {
         }
     }
 
-    private void getTodos(Observable<Response<List<Todo>>> observable) {
+    private void getTodos(Single<Response<List<Todo>>> observable) {
         observable
                 .compose(this.<Response<List<Todo>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Response<List<Todo>>>() {
-                    @Override
-                    public void onCompleted() {
-                    }
+                .subscribe(new ResponseSingleObserver<List<Todo>>() {
 
                     @Override
                     public void onError(Throwable e) {
@@ -155,20 +151,16 @@ public class TodoFragment extends ButterKnifeFragment {
                     }
 
                     @Override
-                    public void onNext(Response<List<Todo>> listResponse) {
-                        if (!listResponse.isSuccessful()) {
-                            onError(new HttpException(listResponse));
-                            return;
-                        }
+                    protected void onResponseSuccess(List<Todo> todos) {
                         mLoading = false;
 
                         mSwipeRefreshLayout.setRefreshing(false);
-                        if (listResponse.body().isEmpty()) {
+                        if (todos.isEmpty()) {
                             mMessageView.setVisibility(View.VISIBLE);
                             mMessageView.setText(R.string.no_todos);
                         }
-                        mTodoAdapter.setData(listResponse.body());
-                        mNextPageUrl = LinkHeaderParser.parse(listResponse).getNext();
+                        mTodoAdapter.setData(todos);
+                        mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
                         Timber.d("Next page url " + mNextPageUrl);
                     }
                 });
@@ -189,10 +181,7 @@ public class TodoFragment extends ButterKnifeFragment {
                 .compose(this.<Response<List<Todo>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Response<List<Todo>>>() {
-                    @Override
-                    public void onCompleted() {
-                    }
+                .subscribe(new ResponseSingleObserver<List<Todo>>() {
 
                     @Override
                     public void onError(Throwable e) {
@@ -202,15 +191,11 @@ public class TodoFragment extends ButterKnifeFragment {
                     }
 
                     @Override
-                    public void onNext(Response<List<Todo>> listResponse) {
-                        if (!listResponse.isSuccessful()) {
-                            onError(new HttpException(listResponse));
-                            return;
-                        }
+                    protected void onResponseSuccess(List<Todo> todos) {
                         mLoading = false;
                         mTodoAdapter.setLoading(false);
-                        mTodoAdapter.addData(listResponse.body());
-                        mNextPageUrl = LinkHeaderParser.parse(listResponse).getNext();
+                        mTodoAdapter.addData(todos);
+                        mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
                         Timber.d("Next page url " + mNextPageUrl);
                     }
                 });

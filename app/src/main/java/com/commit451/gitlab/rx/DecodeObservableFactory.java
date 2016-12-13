@@ -2,19 +2,21 @@ package com.commit451.gitlab.rx;
 
 import android.util.Base64;
 
-import rx.Observable;
-import rx.functions.Func0;
+import java.util.concurrent.Callable;
+
+import io.reactivex.Single;
+import io.reactivex.SingleSource;
 
 /**
  * Observable that decodes a byte array
  */
 public class DecodeObservableFactory {
 
-    public static Observable<byte[]> newDecode(final String string) {
-        return Observable.defer(new Func0<Observable<byte[]>>() {
+    public static Single<byte[]> newDecode(final String string) {
+        return Single.defer(new Callable<SingleSource<? extends byte[]>>() {
             @Override
-            public Observable<byte[]> call() {
-                return Observable.just(decode(string));
+            public SingleSource<? extends byte[]> call() throws Exception {
+                return Single.just(decode(string));
             }
         });
     }

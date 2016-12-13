@@ -21,6 +21,7 @@ import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.DynamicGridLayoutManager;
 import com.commit451.gitlab.util.LinkHeaderParser;
 import com.commit451.gitlab.viewHolder.GroupViewHolder;
+import com.commit451.reptar.retrofit.ResponseSingleObserver;
 
 import org.greenrobot.eventbus.Subscribe;
 
@@ -28,11 +29,9 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Response;
-import retrofit2.adapter.rxjava.HttpException;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -138,10 +137,7 @@ public class GroupsActivity extends BaseActivity {
                 .compose(this.<Response<List<Group>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Response<List<Group>>>() {
-                    @Override
-                    public void onCompleted() {
-                    }
+                .subscribe(new ResponseSingleObserver<List<Group>>() {
 
                     @Override
                     public void onError(Throwable e) {
@@ -153,22 +149,18 @@ public class GroupsActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void onNext(Response<List<Group>> listResponse) {
-                        if (!listResponse.isSuccessful()) {
-                            onError(new HttpException(listResponse));
-                            return;
-                        }
+                    protected void onResponseSuccess(List<Group> groups) {
                         mLoading = false;
                         mSwipeRefreshLayout.setRefreshing(false);
-                        if (listResponse.body().isEmpty()) {
+                        if (groups.isEmpty()) {
                             mMessageText.setText(R.string.no_groups);
                             mMessageText.setVisibility(View.VISIBLE);
                             mGroupRecyclerView.setVisibility(View.GONE);
                         } else {
-                            mGroupAdapter.setGroups(listResponse.body());
+                            mGroupAdapter.setGroups(groups);
                             mMessageText.setVisibility(View.GONE);
                             mGroupRecyclerView.setVisibility(View.VISIBLE);
-                            mNextPageUrl = LinkHeaderParser.parse(listResponse).getNext();
+                            mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
                         }
                     }
                 });
@@ -195,10 +187,7 @@ public class GroupsActivity extends BaseActivity {
                 .compose(this.<Response<List<Group>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Response<List<Group>>>() {
-                    @Override
-                    public void onCompleted() {
-                    }
+                .subscribe(new ResponseSingleObserver<List<Group>>() {
 
                     @Override
                     public void onError(Throwable e) {
@@ -207,14 +196,10 @@ public class GroupsActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void onNext(Response<List<Group>> listResponse) {
-                        if (!listResponse.isSuccessful()) {
-                            onError(new HttpException(listResponse));
-                            return;
-                        }
+                    protected void onResponseSuccess(List<Group> groups) {
                         mLoading = false;
-                        mGroupAdapter.addGroups(listResponse.body());
-                        mNextPageUrl = LinkHeaderParser.parse(listResponse).getNext();
+                        mGroupAdapter.addGroups(groups);
+                        mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
                     }
                 });
     }

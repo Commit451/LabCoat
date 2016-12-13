@@ -47,7 +47,11 @@ import com.commit451.gitlab.ssl.CustomHostnameVerifier;
 import com.commit451.gitlab.ssl.CustomKeyManager;
 import com.commit451.gitlab.ssl.X509CertificateException;
 import com.commit451.gitlab.ssl.X509Util;
+import com.commit451.reptar.retrofit.ResponseSingleObserver;
 import com.commit451.teleprinter.Teleprinter;
+import com.jakewharton.retrofit2.adapter.rxjava2.HttpException;
+
+import org.reactivestreams.Subscriber;
 
 import java.io.IOException;
 import java.net.ConnectException;
@@ -66,17 +70,14 @@ import javax.net.ssl.SSLPeerUnverifiedException;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import okhttp3.Credentials;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
-import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
-import rx.Observable;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class LoginActivity extends BaseActivity {
@@ -304,30 +305,26 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
-    private void attemptLogin(Observable<Response<UserLogin>> observable) {
+    private void attemptLogin(Single<Response<UserLogin>> observable) {
         observable
                 .compose(this.<Response<UserLogin>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Response<UserLogin>>() {
-                    @Override
-                    public void onCompleted() {
-                    }
+                .subscribe(new ResponseSingleObserver<UserLogin>() {
 
                     @Override
                     public void onError(Throwable e) {
                         Timber.e(e);
-                        handleConnectionError(e);
+                        if (e instanceof HttpException) {
+                            handleConnectionResponse(response());
+                        } else {
+                            handleConnectionError(e);
+                        }
                     }
 
                     @Override
-                    public void onNext(Response<UserLogin> response) {
-                        if (!response.isSuccessful() || response.body() == null) {
-                            handleConnectionResponse(response);
-                            return;
-                        }
-
-                        mAccount.setPrivateToken(response.body().getPrivateToken());
+                    protected void onResponseSuccess(UserLogin userLogin) {
+                        mAccount.setPrivateToken(userLogin.getPrivateToken());
                         loadUser();
                     }
                 });
@@ -431,25 +428,22 @@ public class LoginActivity extends BaseActivity {
                 .compose(this.<Response<UserFull>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Response<UserFull>>() {
-                    @Override
-                    public void onCompleted() {
-                    }
+                .subscribe(new ResponseSingleObserver<UserFull>() {
 
                     @Override
                     public void onError(Throwable e) {
                         Timber.e(e);
-                        handleConnectionError(e);
+                        if (e instanceof HttpException) {
+                            handleConnectionResponse(response());
+                        } else {
+                            handleConnectionError(e);
+                        }
                     }
 
                     @Override
-                    public void onNext(Response<UserFull> response) {
+                    protected void onResponseSuccess(UserFull userFull) {
                         mProgress.setVisibility(View.GONE);
-                        if (!response.isSuccessful() || response.body() == null) {
-                            handleConnectionResponse(response);
-                            return;
-                        }
-                        mAccount.setUser(response.body());
+                        mAccount.setUser(userFull);
                         mAccount.setLastUsed(new Date());
                         App.get().getPrefs().addAccount(mAccount);
                         App.get().setAccount(mAccount);

@@ -25,14 +25,14 @@ import com.commit451.gitlab.model.api.Build;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.util.BuildUtil;
 import com.commit451.gitlab.util.DownloadUtil;
+import com.commit451.reptar.FocusedSingleObserver;
 
 import org.parceler.Parcels;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -78,10 +78,7 @@ public class BuildActivity extends BaseActivity {
                             .compose(BuildActivity.this.<Build>bindToLifecycle())
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(new Subscriber<Build>() {
-                                @Override
-                                public void onCompleted() {
-                                }
+                            .subscribe(new FocusedSingleObserver<Build>() {
 
                                 @Override
                                 public void onError(Throwable e) {
@@ -92,7 +89,7 @@ public class BuildActivity extends BaseActivity {
                                 }
 
                                 @Override
-                                public void onNext(Build build) {
+                                public void onSuccess(Build build) {
                                     mProgress.setVisibility(View.GONE);
                                     Snackbar.make(mRoot, R.string.build_started, Snackbar.LENGTH_LONG)
                                             .show();
@@ -106,10 +103,7 @@ public class BuildActivity extends BaseActivity {
                             .compose(BuildActivity.this.<Build>bindToLifecycle())
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(new Subscriber<Build>() {
-                                @Override
-                                public void onCompleted() {
-                                }
+                            .subscribe(new FocusedSingleObserver<Build>() {
 
                                 @Override
                                 public void onError(Throwable e) {
@@ -120,7 +114,7 @@ public class BuildActivity extends BaseActivity {
                                 }
 
                                 @Override
-                                public void onNext(Build build) {
+                                public void onSuccess(Build build) {
                                     mProgress.setVisibility(View.GONE);
                                     Snackbar.make(mRoot, R.string.build_erased, Snackbar.LENGTH_LONG)
                                             .show();
@@ -134,10 +128,7 @@ public class BuildActivity extends BaseActivity {
                             .compose(BuildActivity.this.<Build>bindToLifecycle())
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(new Subscriber<Build>() {
-                                @Override
-                                public void onCompleted() {
-                                }
+                            .subscribe(new FocusedSingleObserver<Build>() {
 
                                 @Override
                                 public void onError(Throwable e) {
@@ -148,7 +139,7 @@ public class BuildActivity extends BaseActivity {
                                 }
 
                                 @Override
-                                public void onNext(Build build) {
+                                public void onSuccess(Build build) {
                                     mProgress.setVisibility(View.GONE);
                                     Snackbar.make(mRoot, R.string.build_canceled, Snackbar.LENGTH_LONG)
                                             .show();

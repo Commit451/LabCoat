@@ -5,12 +5,12 @@ import android.support.annotation.VisibleForTesting;
 
 import com.commit451.gitlab.model.Account;
 import com.github.aurae.retrofit2.LoganSquareConverterFactory;
+import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
 import java.util.concurrent.Executor;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 /**
@@ -32,7 +32,7 @@ public final class GitLabFactory {
         Retrofit.Builder retrofitBuilder = new Retrofit.Builder()
                 .baseUrl(account.getServerUrl().toString())
                 .client(client)
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(LoganSquareConverterFactory.create());
         if (dummyExecutor) {

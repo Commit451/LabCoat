@@ -4,7 +4,7 @@ import android.support.design.widget.TextInputLayout;
 import android.text.TextUtils;
 
 import com.commit451.gitlab.R;
-import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
+import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
 
 /**
  * Base activity for others to derive from

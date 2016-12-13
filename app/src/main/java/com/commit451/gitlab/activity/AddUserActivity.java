@@ -29,6 +29,8 @@ import com.commit451.gitlab.model.api.Member;
 import com.commit451.gitlab.model.api.UserBasic;
 import com.commit451.gitlab.util.LinkHeaderParser;
 import com.commit451.gitlab.viewHolder.UserViewHolder;
+import com.commit451.reptar.FocusedSingleObserver;
+import com.commit451.reptar.retrofit.ResponseSingleObserver;
 import com.commit451.teleprinter.Teleprinter;
 
 import org.parceler.Parcels;
@@ -38,12 +40,10 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Response;
-import retrofit2.adapter.rxjava.HttpException;
-import rx.Observable;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -214,10 +214,7 @@ public class AddUserActivity extends MorphActivity {
                 .compose(this.<Response<List<UserBasic>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Response<List<UserBasic>>>() {
-                    @Override
-                    public void onCompleted() {
-                    }
+                .subscribe(new ResponseSingleObserver<List<UserBasic>>() {
 
                     @Override
                     public void onError(Throwable e) {
@@ -229,15 +226,11 @@ public class AddUserActivity extends MorphActivity {
                     }
 
                     @Override
-                    public void onNext(Response<List<UserBasic>> response) {
-                        if (!response.isSuccessful()) {
-                            onError(new HttpException(response));
-                            return;
-                        }
+                    protected void onResponseSuccess(List<UserBasic> users) {
                         mSwipeRefreshLayout.setRefreshing(false);
                         mLoading = false;
-                        mAdapter.setData(response.body());
-                        mNextPageUrl = LinkHeaderParser.parse(response).getNext();
+                        mAdapter.setData(users);
+                        mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
                         Timber.d("Next page url is %s", mNextPageUrl);
                     }
                 });
@@ -251,10 +244,7 @@ public class AddUserActivity extends MorphActivity {
                 .compose(this.<Response<List<UserBasic>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Response<List<UserBasic>>>() {
-                    @Override
-                    public void onCompleted() {
-                    }
+                .subscribe(new ResponseSingleObserver<List<UserBasic>>() {
 
                     @Override
                     public void onError(Throwable e) {
@@ -263,27 +253,20 @@ public class AddUserActivity extends MorphActivity {
                     }
 
                     @Override
-                    public void onNext(Response<List<UserBasic>> response) {
-                        if (!response.isSuccessful()) {
-                            onError(new HttpException(response));
-                            return;
-                        }
+                    protected void onResponseSuccess(List<UserBasic> users) {
                         mLoading = false;
                         mAdapter.setLoading(false);
-                        mAdapter.addData(response.body());
-                        mNextPageUrl = LinkHeaderParser.parse(response).getNext();
+                        mAdapter.addData(users);
+                        mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
                     }
                 });
     }
 
-    private void add(Observable<Response<Member>> observable) {
+    private void add(Single<Response<Member>> observable) {
         observable.subscribeOn(Schedulers.io())
                 .compose(this.<Response<Member>>bindToLifecycle())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Response<Member>>() {
-                    @Override
-                    public void onCompleted() {
-                    }
+                .subscribe(new FocusedSingleObserver<Response<Member>>() {
 
                     @Override
                     public void onError(Throwable e) {
@@ -293,7 +276,7 @@ public class AddUserActivity extends MorphActivity {
                     }
 
                     @Override
-                    public void onNext(Response<Member> response) {
+                    public void onSuccess(Response<Member> response) {
                         if (response.isSuccessful()) {
                             Snackbar.make(mRoot, R.string.user_added_successfully, Snackbar.LENGTH_SHORT)
                                     .show();
