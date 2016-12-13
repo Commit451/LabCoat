@@ -34,8 +34,7 @@ public class TestUtil {
         GitLab gitLab = GitLabFactory.create(account, gitlabClientBuilder.build(), true);
         Response<UserLogin> loginResponse = gitLab
                 .loginWithUsername("TestAllTheThings", "testing123")
-                .toBlocking()
-                .first();
+                .blockingGet();
         assertTrue(loginResponse.isSuccessful());
         assertNotNull(loginResponse.body().getPrivateToken());
         //attach the newly retrieved private token
