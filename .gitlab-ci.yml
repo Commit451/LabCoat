@@ -23,17 +23,11 @@ before_script:
 
 stages:
   - build
-  - test
 
 build:
   stage: build
   script:
-    - ./gradlew assembleDebug
+    - ./gradlew testFdroidDebug
   artifacts:
     paths:
     - app/build/outputs/
-
-unitTests:
-  stage: test
-  script:
-    - ./gradlew test
