@@ -2,6 +2,7 @@ package com.commit451.gitlab.fragment;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -127,7 +128,7 @@ public class FeedFragment extends ButterKnifeFragment {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new CustomSingleObserver<Feed>() {
                     @Override
-                    public void success(Feed feed) {
+                    public void success(@NonNull Feed feed) {
                         mSwipeRefreshLayout.setRefreshing(false);
                         if (feed.getEntries() != null && !feed.getEntries().isEmpty()) {
                             mMessageView.setVisibility(View.GONE);
@@ -140,7 +141,7 @@ public class FeedFragment extends ButterKnifeFragment {
                     }
 
                     @Override
-                    public void error(Throwable e) {
+                    public void error(@NonNull Throwable e) {
                         Timber.e(e);
                         mSwipeRefreshLayout.setRefreshing(false);
                         mMessageView.setVisibility(View.VISIBLE);

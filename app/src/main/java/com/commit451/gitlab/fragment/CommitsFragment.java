@@ -1,6 +1,7 @@
 package com.commit451.gitlab.fragment;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -36,13 +37,15 @@ public class CommitsFragment extends ButterKnifeFragment {
         return new CommitsFragment();
     }
 
-    @BindView(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
-    @BindView(R.id.list) RecyclerView mCommitsListView;
-    @BindView(R.id.message_text) TextView mMessageView;
+    @BindView(R.id.swipe_layout)
+    SwipeRefreshLayout mSwipeRefreshLayout;
+    @BindView(R.id.list)
+    RecyclerView mCommitsListView;
+    @BindView(R.id.message_text)
+    TextView mMessageView;
 
     private Project mProject;
     private String mBranchName;
-    private EventReceiver mEventReceiver;
     private LinearLayoutManager mCommitsLayoutManager;
     private CommitsAdapter mCommitsAdapter;
     private int mPage = -1;
@@ -77,8 +80,7 @@ public class CommitsFragment extends ButterKnifeFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mEventReceiver = new EventReceiver();
-        App.bus().register(mEventReceiver);
+        App.bus().register(this);
 
         mCommitsAdapter = new CommitsAdapter(mCommitsAdapterListener);
         mCommitsLayoutManager = new LinearLayoutManager(getActivity());
@@ -105,8 +107,8 @@ public class CommitsFragment extends ButterKnifeFragment {
 
     @Override
     public void onDestroyView() {
+        App.bus().unregister(this);
         super.onDestroyView();
-        App.bus().unregister(mEventReceiver);
     }
 
     @Override
@@ -139,7 +141,7 @@ public class CommitsFragment extends ButterKnifeFragment {
                 .subscribe(new CustomSingleObserver<List<RepositoryCommit>>() {
 
                     @Override
-                    public void error(Throwable t) {
+                    public void error(@NonNull Throwable t) {
                         mLoading = false;
                         Timber.e(t);
                         mSwipeRefreshLayout.setRefreshing(false);
@@ -150,7 +152,7 @@ public class CommitsFragment extends ButterKnifeFragment {
                     }
 
                     @Override
-                    public void success(List<RepositoryCommit> repositoryCommits) {
+                    public void success(@NonNull List<RepositoryCommit> repositoryCommits) {
                         mLoading = false;
                         mSwipeRefreshLayout.setRefreshing(false);
                         if (!repositoryCommits.isEmpty()) {
@@ -188,14 +190,14 @@ public class CommitsFragment extends ButterKnifeFragment {
                 .subscribe(new CustomSingleObserver<List<RepositoryCommit>>() {
 
                     @Override
-                    public void error(Throwable e) {
+                    public void error(@NonNull Throwable e) {
                         mLoading = false;
                         Timber.e(e);
                         mCommitsAdapter.setLoading(false);
                     }
 
                     @Override
-                    public void success(List<RepositoryCommit> repositoryCommits) {
+                    public void success(@NonNull List<RepositoryCommit> repositoryCommits) {
                         mLoading = false;
                         mCommitsAdapter.setLoading(false);
                         if (repositoryCommits.isEmpty()) {
@@ -207,12 +209,10 @@ public class CommitsFragment extends ButterKnifeFragment {
                 });
     }
 
-    private class EventReceiver {
-        @Subscribe
-        public void onProjectReload(ProjectReloadEvent event) {
-            mProject = event.mProject;
-            mBranchName = event.mBranchName;
-            loadData();
-        }
+    @Subscribe
+    public void onProjectReload(ProjectReloadEvent event) {
+        mProject = event.mProject;
+        mBranchName = event.mBranchName;
+        loadData();
     }
 }

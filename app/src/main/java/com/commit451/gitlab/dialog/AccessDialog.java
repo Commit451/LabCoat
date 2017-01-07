@@ -1,6 +1,7 @@
 package com.commit451.gitlab.dialog;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.Toast;
 
@@ -124,13 +125,13 @@ public class AccessDialog extends MaterialDialog {
                 .subscribe(new CustomSingleObserver<Member>() {
 
                     @Override
-                    public void error(Throwable t) {
+                    public void error(@NonNull Throwable t) {
                         Timber.e(t);
                         AccessDialog.this.onError();
                     }
 
                     @Override
-                    public void success(Member member) {
+                    public void success(@NonNull Member member) {
                         if (mAccessChangedListener != null) {
                             mAccessChangedListener.onAccessChanged(mMember, mRoleNames[getSelectedIndex()]);
                         }

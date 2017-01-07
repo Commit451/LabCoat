@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -133,14 +134,14 @@ public class IssueActivity extends BaseActivity {
                             .subscribe(new CustomSingleObserver<String>() {
 
                                 @Override
-                                public void error(Throwable t) {
+                                public void error(@NonNull Throwable t) {
                                     Timber.e(t);
                                     Snackbar.make(root, getString(R.string.failed_to_delete_issue), Snackbar.LENGTH_SHORT)
                                             .show();
                                 }
 
                                 @Override
-                                public void success(String s) {
+                                public void success(@NonNull String s) {
                                     App.bus().post(new IssueReloadEvent());
                                     Toast.makeText(IssueActivity.this, R.string.issue_deleted, Toast.LENGTH_SHORT)
                                             .show();
@@ -234,7 +235,7 @@ public class IssueActivity extends BaseActivity {
                     .subscribe(new CustomSingleObserver<List<Issue>>() {
 
                         @Override
-                        public void error(Throwable t) {
+                        public void error(@NonNull Throwable t) {
                             Timber.e(t);
                             swipeRefreshLayout.setRefreshing(false);
                             Snackbar.make(root, getString(R.string.failed_to_load), Snackbar.LENGTH_SHORT)
@@ -242,7 +243,7 @@ public class IssueActivity extends BaseActivity {
                         }
 
                         @Override
-                        public void success(List<Issue> issues) {
+                        public void success(@NonNull List<Issue> issues) {
                             if (issues.isEmpty()) {
                                 swipeRefreshLayout.setRefreshing(false);
                                 Snackbar.make(root, getString(R.string.failed_to_load), Snackbar.LENGTH_SHORT)
@@ -311,7 +312,7 @@ public class IssueActivity extends BaseActivity {
                 .subscribe(new CustomResponseSingleObserver<List<Note>>() {
 
                     @Override
-                    public void error(Throwable t) {
+                    public void error(@NonNull Throwable t) {
                         loading = false;
                         Timber.e(t);
                         swipeRefreshLayout.setRefreshing(false);
@@ -320,7 +321,7 @@ public class IssueActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void responseSuccess(List<Note> notes) {
+                    public void responseSuccess(@NonNull List<Note> notes) {
                         loading = false;
                         swipeRefreshLayout.setRefreshing(false);
                         nextPageUrl = LinkHeaderParser.parse(response()).getNext();
@@ -339,14 +340,14 @@ public class IssueActivity extends BaseActivity {
                 .subscribe(new CustomResponseSingleObserver<List<Note>>() {
 
                     @Override
-                    public void error(Throwable t) {
+                    public void error(@NonNull Throwable t) {
                         loading = false;
                         Timber.e(t);
                         adapterIssueDetails.setLoading(false);
                     }
 
                     @Override
-                    public void responseSuccess(List<Note> notes) {
+                    public void responseSuccess(@NonNull List<Note> notes) {
                         loading = false;
                         adapterIssueDetails.setLoading(false);
                         nextPageUrl = LinkHeaderParser.parse(response()).getNext();
@@ -375,7 +376,7 @@ public class IssueActivity extends BaseActivity {
                 .subscribe(new CustomSingleObserver<Note>() {
 
                     @Override
-                    public void error(Throwable t) {
+                    public void error(@NonNull Throwable t) {
                         Timber.e(t);
                         progress.setVisibility(View.GONE);
                         Snackbar.make(root, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
@@ -383,7 +384,7 @@ public class IssueActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void success(Note note) {
+                    public void success(@NonNull Note note) {
                         progress.setVisibility(View.GONE);
                         adapterIssueDetails.addNote(note);
                         listNotes.smoothScrollToPosition(IssueDetailsAdapter.getHeaderCount());
@@ -408,7 +409,7 @@ public class IssueActivity extends BaseActivity {
                 .subscribe(new CustomSingleObserver<Issue>() {
 
                     @Override
-                    public void error(Throwable t) {
+                    public void error(@NonNull Throwable t) {
                         Timber.e(t);
                         progress.setVisibility(View.GONE);
                         Snackbar.make(root, getString(R.string.error_changing_issue), Snackbar.LENGTH_SHORT)
@@ -416,7 +417,7 @@ public class IssueActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void success(Issue issue) {
+                    public void success(@NonNull Issue issue) {
                         progress.setVisibility(View.GONE);
                         IssueActivity.this.issue = issue;
                         App.bus().post(new IssueChangedEvent(IssueActivity.this.issue));

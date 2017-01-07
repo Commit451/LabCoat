@@ -2,6 +2,7 @@ package com.commit451.gitlab.fragment;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -48,7 +49,6 @@ public class MergeRequestsFragment extends ButterKnifeFragment {
     @BindView(R.id.state_spinner) Spinner mSpinner;
 
     private Project mProject;
-    private EventReceiver mEventReceiver;
     private MergeRequestAdapter mMergeRequestAdapter;
     private LinearLayoutManager mMergeLayoutManager;
 
@@ -104,8 +104,7 @@ public class MergeRequestsFragment extends ButterKnifeFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mEventReceiver = new EventReceiver();
-        App.bus().register(mEventReceiver);
+        App.bus().register(this);
 
         mMergeRequestAdapter = new MergeRequestAdapter(mMergeRequestAdapterListener);
         mMergeLayoutManager = new LinearLayoutManager(getActivity());
@@ -134,8 +133,8 @@ public class MergeRequestsFragment extends ButterKnifeFragment {
 
     @Override
     public void onDestroyView() {
+        App.bus().unregister(this);
         super.onDestroyView();
-        App.bus().unregister(mEventReceiver);
     }
 
     @Override
@@ -165,7 +164,7 @@ public class MergeRequestsFragment extends ButterKnifeFragment {
                 .subscribe(new CustomResponseSingleObserver<List<MergeRequest>>() {
 
                     @Override
-                    public void error(Throwable e) {
+                    public void error(@NonNull Throwable e) {
                         mLoading = false;
                         Timber.e(e);
                         mSwipeRefreshLayout.setRefreshing(false);
@@ -176,7 +175,7 @@ public class MergeRequestsFragment extends ButterKnifeFragment {
                     }
 
                     @Override
-                    public void responseSuccess(List<MergeRequest> mergeRequests) {
+                    public void responseSuccess(@NonNull List<MergeRequest> mergeRequests) {
                         mLoading = false;
                         mSwipeRefreshLayout.setRefreshing(false);
                         if (mergeRequests.isEmpty()) {
@@ -207,14 +206,14 @@ public class MergeRequestsFragment extends ButterKnifeFragment {
                 .subscribe(new CustomResponseSingleObserver<List<MergeRequest>>() {
 
                     @Override
-                    public void error(Throwable e) {
+                    public void error(@NonNull Throwable e) {
                         Timber.e(e);
                         mMergeRequestAdapter.setLoading(false);
                         mLoading = false;
                     }
 
                     @Override
-                    public void responseSuccess(List<MergeRequest> mergeRequests) {
+                    public void responseSuccess(@NonNull List<MergeRequest> mergeRequests) {
                         mLoading = false;
                         mMergeRequestAdapter.setLoading(false);
                         mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
@@ -223,7 +222,6 @@ public class MergeRequestsFragment extends ButterKnifeFragment {
                 });
     }
 
-    private class EventReceiver {
         @Subscribe
         public void onProjectReload(ProjectReloadEvent event) {
             mProject = event.mProject;
@@ -234,5 +232,4 @@ public class MergeRequestsFragment extends ButterKnifeFragment {
         public void onMergeRequestChanged(MergeRequestChangedEvent event) {
             loadData();
         }
-    }
 }

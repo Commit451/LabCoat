@@ -5,6 +5,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -190,7 +191,7 @@ public class ProjectActivity extends BaseActivity {
                 .subscribe(new CustomSingleObserver<Project>() {
 
                     @Override
-                    public void error(Throwable t) {
+                    public void error(@NonNull Throwable t) {
                         Timber.e(t);
                         progress.animate()
                                 .alpha(0.0f)
@@ -200,7 +201,7 @@ public class ProjectActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void success(Project project) {
+                    public void success(@NonNull Project project) {
                         progress.animate()
                                 .alpha(0.0f)
                                 .withEndAction(new HideRunnable(progress));

@@ -2,6 +2,7 @@ package com.commit451.gitlab.fragment;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -45,14 +46,18 @@ public class ProjectMembersFragment extends ButterKnifeFragment {
         return new ProjectMembersFragment();
     }
 
-    @BindView(R.id.root) View mRoot;
-    @BindView(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
-    @BindView(R.id.list) RecyclerView mMembersListView;
-    @BindView(R.id.message_text) TextView mMessageView;
-    @BindView(R.id.add_user_button) FloatingActionButton mAddUserButton;
+    @BindView(R.id.root)
+    View mRoot;
+    @BindView(R.id.swipe_layout)
+    SwipeRefreshLayout mSwipeRefreshLayout;
+    @BindView(R.id.list)
+    RecyclerView mMembersListView;
+    @BindView(R.id.message_text)
+    TextView mMessageView;
+    @BindView(R.id.add_user_button)
+    FloatingActionButton mAddUserButton;
 
     Project mProject;
-    EventReceiver mEventReceiver;
     ProjectMembersAdapter mAdapter;
     GridLayoutManager mProjectLayoutManager;
     Member mMember;
@@ -95,14 +100,14 @@ public class ProjectMembersFragment extends ButterKnifeFragment {
                     .subscribe(new CustomSingleObserver<String>() {
 
                         @Override
-                        public void error(Throwable t) {
+                        public void error(@NonNull Throwable t) {
                             Timber.e(t);
                             Snackbar.make(mRoot, R.string.failed_to_remove_member, Snackbar.LENGTH_SHORT)
                                     .show();
                         }
 
                         @Override
-                        public void success(String s) {
+                        public void success(@NonNull String s) {
                             mAdapter.removeMember(mMember);
                         }
                     });
@@ -130,8 +135,7 @@ public class ProjectMembersFragment extends ButterKnifeFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mEventReceiver = new EventReceiver();
-        App.bus().register(mEventReceiver);
+        App.bus().register(this);
 
         mAdapter = new ProjectMembersAdapter(mMemberAdapterListener);
         mProjectLayoutManager = new GridLayoutManager(getActivity(), 2);
@@ -158,8 +162,8 @@ public class ProjectMembersFragment extends ButterKnifeFragment {
 
     @Override
     public void onDestroyView() {
+        App.bus().unregister(this);
         super.onDestroyView();
-        App.bus().unregister(mEventReceiver);
     }
 
     @OnClick(R.id.add_user_button)
@@ -225,7 +229,7 @@ public class ProjectMembersFragment extends ButterKnifeFragment {
                 .subscribe(new CustomResponseSingleObserver<List<Member>>() {
 
                     @Override
-                    public void error(Throwable t) {
+                    public void error(@NonNull Throwable t) {
                         mLoading = false;
                         Timber.e(t);
                         mSwipeRefreshLayout.setRefreshing(false);
@@ -237,7 +241,7 @@ public class ProjectMembersFragment extends ButterKnifeFragment {
                     }
 
                     @Override
-                    public void responseSuccess(List<Member> members) {
+                    public void responseSuccess(@NonNull List<Member> members) {
                         mLoading = false;
                         mSwipeRefreshLayout.setRefreshing(false);
                         if (!members.isEmpty()) {
@@ -275,22 +279,20 @@ public class ProjectMembersFragment extends ButterKnifeFragment {
         }
     }
 
-    private class EventReceiver {
-        @Subscribe
-        public void onProjectReload(ProjectReloadEvent event) {
-            mProject = event.mProject;
-            setNamespace();
-            loadData();
-        }
+    @Subscribe
+    public void onProjectReload(ProjectReloadEvent event) {
+        mProject = event.mProject;
+        setNamespace();
+        loadData();
+    }
 
-        @Subscribe
-        public void onMemberAdded(MemberAddedEvent event) {
-            if (mAdapter != null) {
-                mAdapter.addMember(event.mMember);
+    @Subscribe
+    public void onMemberAdded(MemberAddedEvent event) {
+        if (mAdapter != null) {
+            mAdapter.addMember(event.mMember);
 
-                if (getView() != null) {
-                    mMessageView.setVisibility(View.GONE);
-                }
+            if (getView() != null) {
+                mMessageView.setVisibility(View.GONE);
             }
         }
     }

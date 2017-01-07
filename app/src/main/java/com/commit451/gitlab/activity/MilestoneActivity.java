@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -181,7 +182,7 @@ public class MilestoneActivity extends BaseActivity {
                 .subscribe(new CustomResponseSingleObserver<List<Issue>>() {
 
                     @Override
-                    public void error(Throwable t) {
+                    public void error(@NonNull Throwable t) {
                         Timber.e(t);
                         loading = false;
                         swipeRefreshLayout.setRefreshing(false);
@@ -191,7 +192,7 @@ public class MilestoneActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void responseSuccess(List<Issue> issues) {
+                    public void responseSuccess(@NonNull List<Issue> issues) {
                         swipeRefreshLayout.setRefreshing(false);
                         loading = false;
 
@@ -225,13 +226,13 @@ public class MilestoneActivity extends BaseActivity {
                 .subscribe(new CustomResponseSingleObserver<List<Issue>>() {
 
                     @Override
-                    public void error(Throwable e) {
+                    public void error(@NonNull Throwable e) {
                         Timber.e(e);
                         loading = false;
                     }
 
                     @Override
-                    public void responseSuccess(List<Issue> issues) {
+                    public void responseSuccess(@NonNull List<Issue> issues) {
                         loading = false;
                         nextPageUrl = LinkHeaderParser.parse(response()).getNext();
                         adapterMilestoneIssues.addIssues(issues);
@@ -255,7 +256,7 @@ public class MilestoneActivity extends BaseActivity {
                 .subscribe(new CustomSingleObserver<Milestone>() {
 
                     @Override
-                    public void error(Throwable e) {
+                    public void error(@NonNull Throwable e) {
                         Timber.e(e);
                         progress.setVisibility(View.GONE);
                         Snackbar.make(root, getString(R.string.failed_to_create_milestone), Snackbar.LENGTH_SHORT)
@@ -263,7 +264,7 @@ public class MilestoneActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void success(Milestone milestone) {
+                    public void success(@NonNull Milestone milestone) {
                         progress.setVisibility(View.GONE);
                         MilestoneActivity.this.milestone = milestone;
                         App.bus().post(new MilestoneChangedEvent(MilestoneActivity.this.milestone));

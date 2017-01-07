@@ -3,6 +3,7 @@ package com.commit451.gitlab.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.Toast;
 
@@ -114,13 +115,13 @@ public class LoadSomeInfoActivity extends BaseActivity {
                         .subscribe(new CustomSingleObserver<Project>() {
 
                             @Override
-                            public void error(Throwable t) {
+                            public void error(@NonNull Throwable t) {
                                 Timber.e(t);
                                 LoadSomeInfoActivity.this.onError();
                             }
 
                             @Override
-                            public void success(Project project) {
+                            public void success(@NonNull Project project) {
                                 loadNextPart(project);
                             }
                         });
@@ -140,13 +141,13 @@ public class LoadSomeInfoActivity extends BaseActivity {
                         .subscribe(new CustomSingleObserver<RepositoryCommit>() {
 
                             @Override
-                            public void error(Throwable t) {
+                            public void error(@NonNull Throwable t) {
                                 Timber.e(t);
                                 LoadSomeInfoActivity.this.onError();
                             }
 
                             @Override
-                            public void success(RepositoryCommit repositoryCommit) {
+                            public void success(@NonNull RepositoryCommit repositoryCommit) {
                                 Navigator.navigateToDiffActivity(LoadSomeInfoActivity.this, project, repositoryCommit);
                                 finish();
                             }
@@ -161,13 +162,13 @@ public class LoadSomeInfoActivity extends BaseActivity {
                         .subscribe(new CustomSingleObserver<List<MergeRequest>>() {
 
                             @Override
-                            public void error(Throwable t) {
+                            public void error(@NonNull Throwable t) {
                                 Timber.e(t);
                                 LoadSomeInfoActivity.this.onError();
                             }
 
                             @Override
-                            public void success(List<MergeRequest> mergeRequests) {
+                            public void success(@NonNull List<MergeRequest> mergeRequests) {
                                 if (!mergeRequests.isEmpty()) {
                                     Navigator.navigateToMergeRequest(LoadSomeInfoActivity.this, project, mergeRequests.get(0));
                                     finish();
@@ -186,13 +187,13 @@ public class LoadSomeInfoActivity extends BaseActivity {
                         .subscribe(new CustomSingleObserver<Build>() {
 
                             @Override
-                            public void error(Throwable t) {
+                            public void error(@NonNull Throwable t) {
                                 Timber.e(t);
                                 LoadSomeInfoActivity.this.onError();
                             }
 
                             @Override
-                            public void success(Build build) {
+                            public void success(@NonNull Build build) {
                                 Navigator.navigateToBuild(LoadSomeInfoActivity.this, project, build);
                                 finish();
                             }
@@ -207,13 +208,13 @@ public class LoadSomeInfoActivity extends BaseActivity {
                         .subscribe(new CustomSingleObserver<List<Milestone>>() {
 
                             @Override
-                            public void error(Throwable t) {
+                            public void error(@NonNull Throwable t) {
                                 Timber.e(t);
                                 LoadSomeInfoActivity.this.onError();
                             }
 
                             @Override
-                            public void success(List<Milestone> milestones) {
+                            public void success(@NonNull List<Milestone> milestones) {
                                 if (!milestones.isEmpty()) {
                                     Navigator.navigateToMilestone(LoadSomeInfoActivity.this, project, milestones.get(0));
                                     finish();

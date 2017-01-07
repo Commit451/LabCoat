@@ -3,6 +3,7 @@ package com.commit451.gitlab.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -113,7 +114,7 @@ public class DiffActivity extends BaseActivity {
                 .subscribe(new CustomSingleObserver<List<Diff>>() {
 
                     @Override
-                    public void error(Throwable t) {
+                    public void error(@NonNull Throwable t) {
                         swipeRefreshLayout.setRefreshing(false);
                         Timber.e(t);
                         textMessage.setText(R.string.connection_error);
@@ -121,7 +122,7 @@ public class DiffActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void success(List<Diff> diffs) {
+                    public void success(@NonNull List<Diff> diffs) {
                         swipeRefreshLayout.setRefreshing(false);
                         adapterDiff.setData(diffs);
                     }

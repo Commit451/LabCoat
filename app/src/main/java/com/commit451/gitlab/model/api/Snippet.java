@@ -15,7 +15,7 @@ import java.util.Date;
 public class Snippet {
     @JsonField(name = "id")
     long id;
-    @JsonField(name = "title")
+    @JsonField(name = "textTitle")
     String title;
     @JsonField(name = "file_name")
     String fileName;

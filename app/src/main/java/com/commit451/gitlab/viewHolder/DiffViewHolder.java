@@ -24,8 +24,10 @@ public class DiffViewHolder extends RecyclerView.ViewHolder {
         return new DiffViewHolder(view);
     }
 
-    @BindView(R.id.file_title) TextView mFileTitle;
-    @BindView(R.id.diff) DiffTextView mDiffTextView;
+    @BindView(R.id.file_title)
+    TextView textFileTitle;
+    @BindView(R.id.diff)
+    DiffTextView textDiff;
 
     public DiffViewHolder(View view) {
         super(view);
@@ -33,7 +35,7 @@ public class DiffViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(Diff diff) {
-        mFileTitle.setText(diff.getFileName());
-        mDiffTextView.setText(diff.getDiff());
+        textFileTitle.setText(diff.getFileName());
+        textDiff.setText(diff.getDiff());
     }
 }

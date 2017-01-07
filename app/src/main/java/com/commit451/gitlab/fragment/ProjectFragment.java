@@ -2,6 +2,7 @@ package com.commit451.gitlab.fragment;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -72,7 +73,6 @@ public class ProjectFragment extends ButterKnifeFragment {
 
     private Project mProject;
     private String mBranchName;
-    private EventReceiver mEventReceiver;
     private Bypass mBypass;
 
     @OnClick(R.id.creator)
@@ -103,13 +103,13 @@ public class ProjectFragment extends ButterKnifeFragment {
                                     .subscribe(new CustomSingleObserver<String>() {
 
                                         @Override
-                                        public void error(Throwable t) {
+                                        public void error(@NonNull Throwable t) {
                                             Snackbar.make(mSwipeRefreshLayout, R.string.fork_failed, Snackbar.LENGTH_SHORT)
                                                     .show();
                                         }
 
                                         @Override
-                                        public void success(String s) {
+                                        public void success(@NonNull String s) {
                                             Snackbar.make(mSwipeRefreshLayout, R.string.project_forked, Snackbar.LENGTH_SHORT)
                                                     .show();
                                         }
@@ -130,7 +130,7 @@ public class ProjectFragment extends ButterKnifeFragment {
                     .subscribe(new CustomSingleObserver<Response<Project>>() {
 
                         @Override
-                        public void error(Throwable t) {
+                        public void error(@NonNull Throwable t) {
                             if (t instanceof HttpException) {
                                 if (((HttpException) t).response().code() == 304) {
                                     Snackbar.make(mSwipeRefreshLayout, R.string.project_already_starred, Snackbar.LENGTH_SHORT)
@@ -149,7 +149,7 @@ public class ProjectFragment extends ButterKnifeFragment {
                         }
 
                         @Override
-                        public void success(Response<Project> projectResponse) {
+                        public void success(@NonNull Response<Project> projectResponse) {
                             Snackbar.make(mSwipeRefreshLayout, R.string.project_starred, Snackbar.LENGTH_SHORT)
                                     .show();
                         }
@@ -173,8 +173,7 @@ public class ProjectFragment extends ButterKnifeFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mEventReceiver = new EventReceiver();
-        App.bus().register(mEventReceiver);
+        App.bus().register(this);
 
         mOverviewVew.setMovementMethod(new InternalLinkMovementMethod(App.get().getAccount().getServerUrl()));
 
@@ -197,8 +196,8 @@ public class ProjectFragment extends ButterKnifeFragment {
 
     @Override
     public void onDestroyView() {
+        App.bus().unregister(this);
         super.onDestroyView();
-        App.bus().unregister(mEventReceiver);
     }
 
     @Override
@@ -263,14 +262,14 @@ public class ProjectFragment extends ButterKnifeFragment {
                 .subscribe(new CustomSingleObserver<ReadmeResult>() {
 
                     @Override
-                    public void error(Throwable t) {
+                    public void error(@NonNull Throwable t) {
                         Timber.e(t);
                         mSwipeRefreshLayout.setRefreshing(false);
                         mOverviewVew.setText(R.string.connection_error_readme);
                     }
 
                     @Override
-                    public void success(ReadmeResult readmeResult) {
+                    public void success(@NonNull ReadmeResult readmeResult) {
                         mSwipeRefreshLayout.setRefreshing(false);
                         if (result.repositoryFile != null && result.bytes != null) {
                             String text = new String(result.bytes);
@@ -337,13 +336,13 @@ public class ProjectFragment extends ButterKnifeFragment {
                 .subscribe(new CustomSingleObserver<Project>() {
 
                     @Override
-                    public void error(Throwable t) {
+                    public void error(@NonNull Throwable t) {
                         Snackbar.make(mSwipeRefreshLayout, R.string.unstar_failed, Snackbar.LENGTH_SHORT)
                                 .show();
                     }
 
                     @Override
-                    public void success(Project project) {
+                    public void success(@NonNull Project project) {
                         Snackbar.make(mSwipeRefreshLayout, com.commit451.gitlab.R.string.project_unstarred, Snackbar.LENGTH_SHORT)
                                 .show();
                     }
@@ -355,12 +354,11 @@ public class ProjectFragment extends ButterKnifeFragment {
         RepositoryFile repositoryFile;
     }
 
-    private class EventReceiver {
-        @Subscribe
-        public void onProjectReload(ProjectReloadEvent event) {
-            mProject = event.mProject;
-            mBranchName = event.mBranchName;
-            loadData();
-        }
+    @Subscribe
+    public void onProjectReload(ProjectReloadEvent event) {
+        mProject = event.mProject;
+        mBranchName = event.mBranchName;
+        loadData();
     }
+
 }

@@ -68,7 +68,7 @@ public class AddNewLabelActivity extends BaseActivity implements ColorChooserDia
 
     @OnClick(R.id.root_color)
     void onChooseColorClicked() {
-        // Pass AppCompatActivity which implements ColorCallback, along with the title of the dialog
+        // Pass AppCompatActivity which implements ColorCallback, along with the textTitle of the dialog
         new ColorChooserDialog.Builder(this, R.string.add_new_label_choose_color)
                 .preselect(chosenColor)
                 .show();

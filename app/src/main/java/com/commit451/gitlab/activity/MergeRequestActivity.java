@@ -3,6 +3,7 @@ package com.commit451.gitlab.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -71,7 +72,7 @@ public class MergeRequestActivity extends BaseActivity {
                             .subscribe(new CustomResponseSingleObserver<MergeRequest>() {
 
                                 @Override
-                                public void error(Throwable e) {
+                                public void error(@NonNull Throwable e) {
                                     Timber.e(e);
                                     progress.setVisibility(View.GONE);
                                     String message = getString(R.string.unable_to_merge);
@@ -86,7 +87,7 @@ public class MergeRequestActivity extends BaseActivity {
                                 }
 
                                 @Override
-                                public void responseSuccess(MergeRequest mergeRequest) {
+                                public void responseSuccess(@NonNull MergeRequest mergeRequest) {
                                     progress.setVisibility(View.GONE);
                                     Snackbar.make(root, R.string.merge_request_accepted, Snackbar.LENGTH_LONG)
                                             .show();

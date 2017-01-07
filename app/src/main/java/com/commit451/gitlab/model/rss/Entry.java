@@ -11,7 +11,7 @@ import java.util.Date;
 public class Entry {
     @Element(name = "link", required = true)
     Link link;
-    @Element(name = "title", required = true)
+    @Element(name = "textTitle", required = true)
     String title;
     @Element(name = "updated", required = true)
     Date updated;

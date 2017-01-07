@@ -27,9 +27,6 @@
 # Picasso rules
 -dontwarn com.squareup.okhttp.**
 
-# Okio
--dontwarn okio.**
-
 # Simple-Xml Proguard Config
 # Keep public classes and methods.
 -dontwarn com.bea.xml.stream.**
@@ -40,18 +37,6 @@
 }
 -dontwarn javax.xml.stream.events.**
 -dontwarn javax.xml.**
-
-# EventBus
--keepattributes *Annotation*
--keepclassmembers class ** {
-    @org.greenrobot.eventbus.Subscribe <methods>;
-}
--keep enum org.greenrobot.eventbus.ThreadMode { *; }
-
-# Only required if you use AsyncExecutor
--keepclassmembers class * extends org.greenrobot.eventbus.util.ThrowableFailureEvent {
-    <init>(java.lang.Throwable);
-}
 
 ## joda-time-android 2.8.0
 # This is only necessary if you are not including the optional joda-convert dependency
@@ -65,11 +50,6 @@
 }
 
 -keep class org.parceler.Parceler$$Parcels
-
-# LoganSquare
--keep class com.bluelinelabs.logansquare.** { *; }
--keep @com.bluelinelabs.logansquare.annotation.JsonObject class *
--keep class **$$JsonObjectMapper { *; }
 
 # Custom rules
 -keep class com.commit451.gitlab.ssl.CustomSSLSocketFactory

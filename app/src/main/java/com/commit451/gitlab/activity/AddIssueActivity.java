@@ -180,14 +180,14 @@ public class AddIssueActivity extends MorphActivity {
                 .subscribe(new CustomResponseSingleObserver<List<Milestone>>() {
 
                     @Override
-                    public void error(Throwable t) {
+                    public void error(@NonNull Throwable t) {
                         Timber.e(t);
                         progressMilestone.setVisibility(View.GONE);
                         spinnerMilestone.setVisibility(View.GONE);
                     }
 
                     @Override
-                    public void responseSuccess(List<Milestone> milestones) {
+                    public void responseSuccess(@NonNull List<Milestone> milestones) {
                         progressMilestone.setVisibility(View.GONE);
                         spinnerMilestone.setVisibility(View.VISIBLE);
                         MilestoneSpinnerAdapter milestoneSpinnerAdapter = new MilestoneSpinnerAdapter(AddIssueActivity.this, milestones);
@@ -204,14 +204,14 @@ public class AddIssueActivity extends MorphActivity {
                 .subscribe(new CustomResponseSingleObserver<List<Member>>() {
 
                     @Override
-                    public void error(Throwable t) {
+                    public void error(@NonNull Throwable t) {
                         Timber.e(t);
                         spinnerAssignee.setVisibility(View.GONE);
                         progressAssignee.setVisibility(View.GONE);
                     }
 
                     @Override
-                    public void responseSuccess(List<Member> members) {
+                    public void responseSuccess(@NonNull List<Member> members) {
                         AddIssueActivity.this.members.addAll(members);
                         if (project.belongsToGroup()) {
                             Timber.d("Project belongs to a group, loading those users too");
@@ -221,14 +221,14 @@ public class AddIssueActivity extends MorphActivity {
                                     .subscribe(new CustomResponseSingleObserver<List<Member>>() {
 
                                         @Override
-                                        public void error(Throwable t) {
+                                        public void error(@NonNull Throwable t) {
                                             Timber.e(t);
                                             spinnerAssignee.setVisibility(View.GONE);
                                             progressAssignee.setVisibility(View.GONE);
                                         }
 
                                         @Override
-                                        public void responseSuccess(List<Member> members) {
+                                        public void responseSuccess(@NonNull List<Member> members) {
                                             AddIssueActivity.this.members.addAll(members);
                                             setAssignees();
                                         }
@@ -245,7 +245,7 @@ public class AddIssueActivity extends MorphActivity {
                 .subscribe(new CustomSingleObserver<List<Label>>() {
 
                     @Override
-                    public void error(Throwable t) {
+                    public void error(@NonNull Throwable t) {
                         Timber.e(t);
                         listLabels.setVisibility(View.GONE);
                         progressLabels.setVisibility(View.GONE);
@@ -253,7 +253,7 @@ public class AddIssueActivity extends MorphActivity {
                     }
 
                     @Override
-                    public void success(List<Label> labels) {
+                    public void success(@NonNull List<Label> labels) {
                         progressLabels.setVisibility(View.GONE);
                         rootAddLabels.setVisibility(View.VISIBLE);
                         setLabels(labels);

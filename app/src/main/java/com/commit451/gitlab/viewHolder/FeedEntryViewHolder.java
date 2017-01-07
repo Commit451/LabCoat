@@ -27,9 +27,12 @@ public class FeedEntryViewHolder extends RecyclerView.ViewHolder {
         return new FeedEntryViewHolder(view);
     }
 
-    @BindView(R.id.image) ImageView mImageView;
-    @BindView(R.id.title) TextView mTitleView;
-    @BindView(R.id.description) TextView mSummaryView;
+    @BindView(R.id.image)
+    ImageView image;
+    @BindView(R.id.title)
+    TextView textTitle;
+    @BindView(R.id.description)
+    TextView textSummary;
 
     public FeedEntryViewHolder(View view) {
         super(view);
@@ -40,9 +43,9 @@ public class FeedEntryViewHolder extends RecyclerView.ViewHolder {
         App.get().getPicasso()
                 .load(entry.getThumbnail().getUrl())
                 .transform(new CircleTransformation())
-                .into(mImageView);
+                .into(image);
 
-        mTitleView.setText(Html.fromHtml(entry.getTitle()));
-        mSummaryView.setText(Html.fromHtml(entry.getSummary()));
+        textTitle.setText(Html.fromHtml(entry.getTitle()));
+        textSummary.setText(Html.fromHtml(entry.getSummary()));
     }
 }

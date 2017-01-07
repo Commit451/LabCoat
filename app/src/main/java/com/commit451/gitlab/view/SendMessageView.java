@@ -22,23 +22,23 @@ import butterknife.OnClick;
 public class SendMessageView extends LinearLayout {
 
     @BindView(R.id.text_note)
-    EditText mTextNote;
+    EditText textNote;
 
     @OnClick(R.id.button_send)
     void onSend() {
-        if (mCallbacks != null) {
-            mCallbacks.onSendClicked(mTextNote.getText().toString());
+        if (callbacks != null) {
+            callbacks.onSendClicked(textNote.getText().toString());
         }
     }
 
     @OnClick(R.id.button_attach)
     void onAttachClicked() {
-        if (mCallbacks != null) {
-            mCallbacks.onAttachmentClicked();
+        if (callbacks != null) {
+            callbacks.onAttachmentClicked();
         }
     }
 
-    private Callbacks mCallbacks;
+    private Callbacks callbacks;
 
     public SendMessageView(Context context) {
         super(context);
@@ -70,7 +70,7 @@ public class SendMessageView extends LinearLayout {
             setElevation(getResources().getDimensionPixelSize(R.dimen.toolbar_elevation));
         }
 
-        mTextNote.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        textNote.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 onSend();
@@ -80,15 +80,15 @@ public class SendMessageView extends LinearLayout {
     }
 
     public void setCallbacks(Callbacks callbacks) {
-        mCallbacks = callbacks;
+        this.callbacks = callbacks;
     }
 
     public void clearText() {
-        mTextNote.setText("");
+        textNote.setText("");
     }
 
     public void appendText(CharSequence text) {
-        mTextNote.append(text);
+        textNote.append(text);
     }
 
     public interface Callbacks {

@@ -81,7 +81,7 @@ public class BuildActivity extends BaseActivity {
                             .subscribe(new CustomSingleObserver<Build>() {
 
                                 @Override
-                                public void error(Throwable t) {
+                                public void error(@NonNull Throwable t) {
                                     Timber.e(t);
                                     progress.setVisibility(View.GONE);
                                     Snackbar.make(root, R.string.unable_to_retry_build, Snackbar.LENGTH_LONG)
@@ -89,7 +89,7 @@ public class BuildActivity extends BaseActivity {
                                 }
 
                                 @Override
-                                public void success(Build build) {
+                                public void success(@NonNull Build build) {
                                     progress.setVisibility(View.GONE);
                                     Snackbar.make(root, R.string.build_started, Snackbar.LENGTH_LONG)
                                             .show();
@@ -106,7 +106,7 @@ public class BuildActivity extends BaseActivity {
                             .subscribe(new CustomSingleObserver<Build>() {
 
                                 @Override
-                                public void error(Throwable t) {
+                                public void error(@NonNull Throwable t) {
                                     Timber.e(t);
                                     progress.setVisibility(View.GONE);
                                     Snackbar.make(root, R.string.unable_to_erase_build, Snackbar.LENGTH_LONG)
@@ -114,7 +114,7 @@ public class BuildActivity extends BaseActivity {
                                 }
 
                                 @Override
-                                public void success(Build build) {
+                                public void success(@NonNull Build build) {
                                     progress.setVisibility(View.GONE);
                                     Snackbar.make(root, R.string.build_erased, Snackbar.LENGTH_LONG)
                                             .show();
@@ -131,7 +131,7 @@ public class BuildActivity extends BaseActivity {
                             .subscribe(new CustomSingleObserver<Build>() {
 
                                 @Override
-                                public void error(Throwable t) {
+                                public void error(@NonNull Throwable t) {
                                     Timber.e(t);
                                     progress.setVisibility(View.GONE);
                                     Snackbar.make(root, R.string.unable_to_cancel_build, Snackbar.LENGTH_LONG)
@@ -139,7 +139,7 @@ public class BuildActivity extends BaseActivity {
                                 }
 
                                 @Override
-                                public void success(Build build) {
+                                public void success(@NonNull Build build) {
                                     progress.setVisibility(View.GONE);
                                     Snackbar.make(root, R.string.build_canceled, Snackbar.LENGTH_LONG)
                                             .show();

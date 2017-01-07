@@ -1,6 +1,7 @@
 package com.commit451.gitlab.fragment;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -48,9 +49,12 @@ public class MergeRequestCommitsFragment extends ButterKnifeFragment {
         return fragment;
     }
 
-    @BindView(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
-    @BindView(R.id.list) RecyclerView mCommitsListView;
-    @BindView(R.id.message_text) TextView mMessageView;
+    @BindView(R.id.swipe_layout)
+    SwipeRefreshLayout mSwipeRefreshLayout;
+    @BindView(R.id.list)
+    RecyclerView mCommitsListView;
+    @BindView(R.id.message_text)
+    TextView mMessageView;
 
     private Project mProject;
     private MergeRequest mMergeRequest;
@@ -58,8 +62,6 @@ public class MergeRequestCommitsFragment extends ButterKnifeFragment {
     private CommitsAdapter mCommitsAdapter;
     private int mPage = -1;
     private boolean mLoading = false;
-
-    EventReceiver mEventReceiver;
 
     private final RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
         @Override
@@ -111,14 +113,13 @@ public class MergeRequestCommitsFragment extends ButterKnifeFragment {
             }
         });
         loadData();
-        mEventReceiver = new EventReceiver();
-        App.bus().register(mEventReceiver);
+        App.bus().register(this);
     }
 
     @Override
     public void onDestroyView() {
+        App.bus().unregister(this);
         super.onDestroyView();
-        App.bus().unregister(mEventReceiver);
     }
 
     @Override
@@ -146,7 +147,7 @@ public class MergeRequestCommitsFragment extends ButterKnifeFragment {
                 .subscribe(new CustomSingleObserver<List<RepositoryCommit>>() {
 
                     @Override
-                    public void error(Throwable e) {
+                    public void error(@NonNull Throwable e) {
                         mLoading = false;
                         Timber.e(e);
                         mSwipeRefreshLayout.setRefreshing(false);
@@ -157,7 +158,7 @@ public class MergeRequestCommitsFragment extends ButterKnifeFragment {
                     }
 
                     @Override
-                    public void success(List<RepositoryCommit> repositoryCommits) {
+                    public void success(@NonNull List<RepositoryCommit> repositoryCommits) {
                         mLoading = false;
                         mSwipeRefreshLayout.setRefreshing(false);
                         if (!repositoryCommits.isEmpty()) {
@@ -187,14 +188,12 @@ public class MergeRequestCommitsFragment extends ButterKnifeFragment {
         //TODO is this even a thing?
     }
 
-    private class EventReceiver {
-
-        @Subscribe
-        public void onMergeRequestChangedEvent(MergeRequestChangedEvent event) {
-            if (mMergeRequest.getId() == event.mergeRequest.getId()) {
-                mMergeRequest = event.mergeRequest;
-                loadData();
-            }
+    @Subscribe
+    public void onMergeRequestChangedEvent(MergeRequestChangedEvent event) {
+        if (mMergeRequest.getId() == event.mergeRequest.getId()) {
+            mMergeRequest = event.mergeRequest;
+            loadData();
         }
     }
+
 }

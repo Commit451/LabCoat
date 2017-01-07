@@ -2,6 +2,7 @@ package com.commit451.gitlab.fragment;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.alexgwyn.recyclerviewsquire.DynamicGridLayoutManager;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.GroupMembersAdapter;
@@ -21,7 +23,6 @@ import com.commit451.gitlab.model.api.Member;
 import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.rx.CustomResponseSingleObserver;
 import com.commit451.gitlab.rx.CustomSingleObserver;
-import com.commit451.gitlab.util.DynamicGridLayoutManager;
 import com.commit451.gitlab.util.LinkHeaderParser;
 import com.commit451.gitlab.viewHolder.ProjectMemberViewHolder;
 
@@ -105,14 +106,14 @@ public class GroupMembersFragment extends ButterKnifeFragment {
                     .subscribe(new CustomSingleObserver<String>() {
 
                         @Override
-                        public void error(Throwable e) {
+                        public void error(@NonNull Throwable e) {
                             Timber.e(e);
                             Snackbar.make(mRoot, R.string.failed_to_remove_member, Snackbar.LENGTH_SHORT)
                                     .show();
                         }
 
                         @Override
-                        public void success(String value) {
+                        public void success(@NonNull String value) {
                             mGroupMembersAdapter.removeMember(mMember);
                         }
                     });
@@ -232,7 +233,7 @@ public class GroupMembersFragment extends ButterKnifeFragment {
                 .subscribe(new CustomResponseSingleObserver<List<Member>>() {
 
                     @Override
-                    public void error(Throwable e) {
+                    public void error(@NonNull Throwable e) {
                         Timber.e(e);
                         mSwipeRefreshLayout.setRefreshing(false);
                         mMessageView.setVisibility(View.VISIBLE);
@@ -242,7 +243,7 @@ public class GroupMembersFragment extends ButterKnifeFragment {
                     }
 
                     @Override
-                    public void responseSuccess(List<Member> members) {
+                    public void responseSuccess(@NonNull List<Member> members) {
                         mSwipeRefreshLayout.setRefreshing(false);
                         if (members.isEmpty()) {
                             mMessageView.setVisibility(View.VISIBLE);

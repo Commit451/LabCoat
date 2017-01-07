@@ -48,6 +48,7 @@ import com.commit451.gitlab.ssl.CustomHostnameVerifier;
 import com.commit451.gitlab.ssl.CustomKeyManager;
 import com.commit451.gitlab.ssl.X509CertificateException;
 import com.commit451.gitlab.ssl.X509Util;
+import com.commit451.reptar.retrofit.ResponseSingleObserver;
 import com.commit451.teleprinter.Teleprinter;
 import com.jakewharton.retrofit2.adapter.rxjava2.HttpException;
 
@@ -312,7 +313,7 @@ public class LoginActivity extends BaseActivity {
                 .subscribe(new CustomResponseSingleObserver<UserLogin>() {
 
                     @Override
-                    public void error(Throwable e) {
+                    public void error(@NonNull Throwable e) {
                         Timber.e(e);
                         if (e instanceof HttpException) {
                             handleConnectionResponse(response());
@@ -322,7 +323,7 @@ public class LoginActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void responseSuccess(UserLogin userLogin) {
+                    public void responseSuccess(@NonNull UserLogin userLogin) {
                         account.setPrivateToken(userLogin.getPrivateToken());
                         loadUser();
                     }
@@ -430,7 +431,7 @@ public class LoginActivity extends BaseActivity {
                 .subscribe(new CustomResponseSingleObserver<UserFull>() {
 
                     @Override
-                    public void error(Throwable e) {
+                    public void error(@NonNull Throwable e) {
                         Timber.e(e);
                         if (e instanceof HttpException) {
                             handleConnectionResponse(response());
@@ -440,7 +441,7 @@ public class LoginActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void responseSuccess(UserFull userFull) {
+                    public void responseSuccess(@NonNull UserFull userFull) {
                         progress.setVisibility(View.GONE);
                         account.setUser(userFull);
                         account.setLastUsed(new Date());

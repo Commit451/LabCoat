@@ -3,6 +3,7 @@ package com.commit451.gitlab.fragment;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -198,7 +199,7 @@ public class ProjectsFragment extends ButterKnifeFragment {
                 .subscribe(new CustomResponseSingleObserver<List<Project>>() {
 
                     @Override
-                    public void error(Throwable e) {
+                    public void error(@NonNull Throwable e) {
                         mLoading = false;
                         Timber.e(e);
                         mSwipeRefreshLayout.setRefreshing(false);
@@ -209,7 +210,7 @@ public class ProjectsFragment extends ButterKnifeFragment {
                     }
 
                     @Override
-                    public void responseSuccess(List<Project> projects) {
+                    public void responseSuccess(@NonNull List<Project> projects) {
                         mLoading = false;
                         mSwipeRefreshLayout.setRefreshing(false);
                         if (projects.isEmpty()) {
@@ -241,14 +242,14 @@ public class ProjectsFragment extends ButterKnifeFragment {
                 .subscribe(new CustomResponseSingleObserver<List<Project>>() {
 
                     @Override
-                    public void error(Throwable e) {
+                    public void error(@NonNull Throwable e) {
                         mLoading = false;
                         Timber.e(e);
                         mProjectsAdapter.setLoading(false);
                     }
 
                     @Override
-                    public void responseSuccess(List<Project> projects) {
+                    public void responseSuccess(@NonNull List<Project> projects) {
                         mLoading = false;
                         mProjectsAdapter.setLoading(false);
                         mProjectsAdapter.addData(projects);

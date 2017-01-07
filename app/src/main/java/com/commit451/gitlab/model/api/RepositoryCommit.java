@@ -15,7 +15,7 @@ public class RepositoryCommit {
     String id;
     @JsonField(name = "short_id")
     String shortId;
-    @JsonField(name = "title")
+    @JsonField(name = "textTitle")
     String title;
     @JsonField(name = "author_name")
     String authorName;

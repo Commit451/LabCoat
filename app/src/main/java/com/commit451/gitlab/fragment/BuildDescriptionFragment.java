@@ -1,6 +1,7 @@
 package com.commit451.gitlab.fragment;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -70,8 +71,6 @@ public class BuildDescriptionFragment extends ButterKnifeFragment {
     Project mProject;
     Build mBuild;
 
-    EventReceiver mEventReceiver;
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,8 +94,7 @@ public class BuildDescriptionFragment extends ButterKnifeFragment {
             }
         });
         bindBuild(mBuild);
-        mEventReceiver = new EventReceiver();
-        App.bus().register(mEventReceiver);
+        App.bus().register(this);
     }
 
     private void load() {
@@ -107,14 +105,14 @@ public class BuildDescriptionFragment extends ButterKnifeFragment {
                 .subscribe(new CustomSingleObserver<Build>() {
 
                     @Override
-                    public void error(Throwable t) {
+                    public void error(@NonNull Throwable t) {
                         Timber.e(t);
                         Snackbar.make(mRoot, R.string.unable_to_load_build, Snackbar.LENGTH_LONG)
                                 .show();
                     }
 
                     @Override
-                    public void success(Build build) {
+                    public void success(@NonNull Build build) {
                         mSwipeRefreshLayout.setRefreshing(false);
                         mBuild = build;
                         bindBuild(build);
@@ -151,7 +149,7 @@ public class BuildDescriptionFragment extends ButterKnifeFragment {
         if (build.getRunner() != null) {
             bindRunner(build.getRunner());
         }
-        if(build.getCommit() != null) {
+        if (build.getCommit() != null) {
             bindCommit(build.getCommit());
         }
     }
@@ -170,18 +168,16 @@ public class BuildDescriptionFragment extends ButterKnifeFragment {
 
     @Override
     public void onDestroyView() {
+        App.bus().unregister(this);
         super.onDestroyView();
-        App.bus().unregister(mEventReceiver);
     }
 
-    private class EventReceiver {
 
-        @Subscribe
-        public void onBuildChangedEvent(BuildChangedEvent event) {
-            if (mBuild.getId() == event.build.getId()) {
-                mBuild = event.build;
-                bindBuild(mBuild);
-            }
+    @Subscribe
+    public void onBuildChangedEvent(BuildChangedEvent event) {
+        if (mBuild.getId() == event.build.getId()) {
+            mBuild = event.build;
+            bindBuild(mBuild);
         }
     }
 

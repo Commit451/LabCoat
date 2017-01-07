@@ -2,6 +2,7 @@ package com.commit451.gitlab.fragment;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -61,7 +62,6 @@ public class IssuesFragment extends ButterKnifeFragment {
     private Project mProject;
     private IssuesAdapter mIssuesAdapter;
     private LinearLayoutManager mIssuesLayoutManager;
-    private EventReceiver mEventReceiver;
 
     String mState;
     private String[] mStates;
@@ -121,8 +121,7 @@ public class IssuesFragment extends ButterKnifeFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mEventReceiver = new EventReceiver();
-        App.bus().register(mEventReceiver);
+        App.bus().register(this);
 
         mIssuesAdapter = new IssuesAdapter(mIssuesAdapterListener);
         mIssuesLayoutManager = new LinearLayoutManager(getActivity());
@@ -151,8 +150,8 @@ public class IssuesFragment extends ButterKnifeFragment {
 
     @Override
     public void onDestroyView() {
+        App.bus().unregister(this);
         super.onDestroyView();
-        App.bus().unregister(mEventReceiver);
     }
 
     @OnClick(R.id.add_issue_button)
@@ -192,7 +191,7 @@ public class IssuesFragment extends ButterKnifeFragment {
                 .subscribe(new CustomResponseSingleObserver<List<Issue>>() {
 
                     @Override
-                    public void error(Throwable e) {
+                    public void error(@NonNull Throwable e) {
                         mLoading = false;
                         Timber.e(e);
                         mSwipeRefreshLayout.setRefreshing(false);
@@ -203,7 +202,7 @@ public class IssuesFragment extends ButterKnifeFragment {
                     }
 
                     @Override
-                    public void responseSuccess(List<Issue> issues) {
+                    public void responseSuccess(@NonNull List<Issue> issues) {
                         mLoading = false;
                         mSwipeRefreshLayout.setRefreshing(false);
                         if (issues.isEmpty()) {
@@ -237,14 +236,14 @@ public class IssuesFragment extends ButterKnifeFragment {
                 .subscribe(new CustomSingleObserver<Response<List<Issue>>>() {
 
                     @Override
-                    public void error(Throwable e) {
+                    public void error(@NonNull Throwable e) {
                         Timber.e(e);
                         mLoading = false;
                         mIssuesAdapter.setLoading(false);
                     }
 
                     @Override
-                    public void success(Response<List<Issue>> listResponse) {
+                    public void success(@NonNull Response<List<Issue>> listResponse) {
                         mLoading = false;
                         mIssuesAdapter.setLoading(false);
                         mNextPageUrl = LinkHeaderParser.parse(listResponse).getNext();
@@ -253,30 +252,28 @@ public class IssuesFragment extends ButterKnifeFragment {
                 });
     }
 
-    private class EventReceiver {
-        @Subscribe
-        public void onProjectReload(ProjectReloadEvent event) {
-            mProject = event.mProject;
-            loadData();
-        }
+    @Subscribe
+    public void onProjectReload(ProjectReloadEvent event) {
+        mProject = event.mProject;
+        loadData();
+    }
 
-        @Subscribe
-        public void onIssueCreated(IssueCreatedEvent event) {
-            mIssuesAdapter.addIssue(event.mIssue);
-            if (getView() != null) {
-                mMessageView.setVisibility(View.GONE);
-                mIssueListView.smoothScrollToPosition(0);
-            }
+    @Subscribe
+    public void onIssueCreated(IssueCreatedEvent event) {
+        mIssuesAdapter.addIssue(event.mIssue);
+        if (getView() != null) {
+            mMessageView.setVisibility(View.GONE);
+            mIssueListView.smoothScrollToPosition(0);
         }
+    }
 
-        @Subscribe
-        public void onIssueChanged(IssueChangedEvent event) {
-            mIssuesAdapter.updateIssue(event.mIssue);
-        }
+    @Subscribe
+    public void onIssueChanged(IssueChangedEvent event) {
+        mIssuesAdapter.updateIssue(event.mIssue);
+    }
 
-        @Subscribe
-        public void onIssueReload(IssueReloadEvent event) {
-            loadData();
-        }
+    @Subscribe
+    public void onIssueReload(IssueReloadEvent event) {
+        loadData();
     }
 }

@@ -28,10 +28,14 @@ public class CommitViewHolder extends RecyclerView.ViewHolder {
         return new CommitViewHolder(view);
     }
 
-    @BindView(R.id.commit_image) ImageView mImageView;
-    @BindView(R.id.commit_message) TextView mMessageView;
-    @BindView(R.id.commit_author) TextView mAuthorView;
-    @BindView(R.id.commit_time) TextView mTimeView;
+    @BindView(R.id.commit_image)
+    ImageView image;
+    @BindView(R.id.commit_message)
+    TextView textMessage;
+    @BindView(R.id.commit_author)
+    TextView textAuthor;
+    @BindView(R.id.commit_time)
+    TextView textTime;
 
     public CommitViewHolder(View view) {
         super(view);
@@ -42,14 +46,14 @@ public class CommitViewHolder extends RecyclerView.ViewHolder {
         App.get().getPicasso()
                 .load(ImageUtil.getAvatarUrl(commit.getAuthorEmail(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size)))
                 .transform(new CircleTransformation())
-                .into(mImageView);
+                .into(image);
 
-        mMessageView.setText(commit.getTitle());
-        mAuthorView.setText(commit.getAuthorName());
+        textMessage.setText(commit.getTitle());
+        textAuthor.setText(commit.getAuthorName());
         if (commit.getCreatedAt() != null) {
-            mTimeView.setText(DateUtil.getRelativeTimeSpanString(itemView.getContext(), commit.getCreatedAt()));
+            textTime.setText(DateUtil.getRelativeTimeSpanString(itemView.getContext(), commit.getCreatedAt()));
         } else {
-            mTimeView.setText(R.string.unknown);
+            textTime.setText(R.string.unknown);
         }
     }
 }

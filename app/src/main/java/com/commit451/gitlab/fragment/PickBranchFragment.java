@@ -3,6 +3,7 @@ package com.commit451.gitlab.fragment;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -103,14 +104,14 @@ public class PickBranchFragment extends ButterKnifeFragment {
                 .subscribe(new CustomSingleObserver<List<Branch>>() {
 
                     @Override
-                    public void error(Throwable e) {
+                    public void error(@NonNull Throwable e) {
                         Timber.e(e);
                         mProgress.setVisibility(View.GONE);
                         mMessageView.setVisibility(View.VISIBLE);
                     }
 
                     @Override
-                    public void success(List<Branch> branches) {
+                    public void success(@NonNull List<Branch> branches) {
                         mProgress.setVisibility(View.GONE);
                         mBranchesAdapter.setEntries(branches);
                     }

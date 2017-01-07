@@ -3,6 +3,7 @@ package com.commit451.gitlab.view;
 import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -234,12 +235,12 @@ public class LabCoatNavigationView extends NavigationView {
                 .subscribe(new CustomResponseSingleObserver<UserFull>() {
 
                     @Override
-                    public void error(Throwable e) {
+                    public void error(@NonNull Throwable e) {
                         Timber.e(e);
                     }
 
                     @Override
-                    public void responseSuccess(UserFull userFull) {
+                    public void responseSuccess(@NonNull UserFull userFull) {
                         //Store the newly retrieved user to the account so that it stays up to date
                         // in local storage
                         Account account = App.get().getAccount();

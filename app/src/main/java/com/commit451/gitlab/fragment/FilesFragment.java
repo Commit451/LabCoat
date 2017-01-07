@@ -4,6 +4,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -43,15 +44,19 @@ public class FilesFragment extends ButterKnifeFragment {
         return new FilesFragment();
     }
 
-    @BindView(R.id.root) View mRoot;
-    @BindView(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
-    @BindView(R.id.list) RecyclerView mFilesListView;
-    @BindView(R.id.breadcrumb) RecyclerView mBreadcrumbListView;
-    @BindView(R.id.message_text) TextView mMessageView;
+    @BindView(R.id.root)
+    View mRoot;
+    @BindView(R.id.swipe_layout)
+    SwipeRefreshLayout mSwipeRefreshLayout;
+    @BindView(R.id.list)
+    RecyclerView mFilesListView;
+    @BindView(R.id.breadcrumb)
+    RecyclerView mBreadcrumbListView;
+    @BindView(R.id.message_text)
+    TextView mMessageView;
 
     private Project mProject;
     private String mBranchName;
-    private EventReceiver mEventReceiver;
     private FilesAdapter mFilesAdapter;
     private BreadcrumbAdapter mBreadcrumbAdapter;
     private String mCurrentPath = "";
@@ -80,12 +85,12 @@ public class FilesFragment extends ButterKnifeFragment {
         }
 
         @Override
-        public void onShareClicked(RepositoryTreeObject treeItem){
+        public void onShareClicked(RepositoryTreeObject treeItem) {
             IntentUtil.share(getView(), treeItem.getUrl(mProject, mBranchName, mCurrentPath));
         }
 
         @Override
-        public void onOpenInBrowserClicked(RepositoryTreeObject treeItem){
+        public void onOpenInBrowserClicked(RepositoryTreeObject treeItem) {
             IntentUtil.openPage(getActivity(), treeItem.getUrl(mProject, mBranchName, mCurrentPath).toString());
         }
     };
@@ -99,8 +104,7 @@ public class FilesFragment extends ButterKnifeFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mEventReceiver = new EventReceiver();
-        App.bus().register(mEventReceiver);
+        App.bus().register(this);
 
         mFilesAdapter = new FilesAdapter(mFilesAdapterListener);
         mFilesListView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -129,8 +133,8 @@ public class FilesFragment extends ButterKnifeFragment {
 
     @Override
     public void onDestroyView() {
+        App.bus().unregister(this);
         super.onDestroyView();
-        App.bus().unregister(mEventReceiver);
     }
 
     @Override
@@ -164,7 +168,7 @@ public class FilesFragment extends ButterKnifeFragment {
                 .subscribe(new CustomSingleObserver<List<RepositoryTreeObject>>() {
 
                     @Override
-                    public void error(Throwable e) {
+                    public void error(@NonNull Throwable e) {
                         Timber.e(e);
                         mSwipeRefreshLayout.setRefreshing(false);
                         mMessageView.setVisibility(View.VISIBLE);
@@ -175,7 +179,7 @@ public class FilesFragment extends ButterKnifeFragment {
                     }
 
                     @Override
-                    public void success(List<RepositoryTreeObject> repositoryTreeObjects) {
+                    public void success(@NonNull List<RepositoryTreeObject> repositoryTreeObjects) {
                         mSwipeRefreshLayout.setRefreshing(false);
                         if (!repositoryTreeObjects.isEmpty()) {
                             mMessageView.setVisibility(View.GONE);
@@ -238,13 +242,12 @@ public class FilesFragment extends ButterKnifeFragment {
         mBreadcrumbListView.scrollToPosition(mBreadcrumbAdapter.getItemCount() - 1);
     }
 
-    private class EventReceiver {
-        @Subscribe
-        public void onProjectReload(ProjectReloadEvent event) {
-            mProject = event.mProject;
-            mBranchName = event.mBranchName;
 
-            loadData("");
-        }
+    @Subscribe
+    public void onProjectReload(ProjectReloadEvent event) {
+        mProject = event.mProject;
+        mBranchName = event.mBranchName;
+
+        loadData("");
     }
 }

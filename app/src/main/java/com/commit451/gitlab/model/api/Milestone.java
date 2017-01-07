@@ -43,7 +43,7 @@ public class Milestone {
     long iId;
     @JsonField(name = "project_id")
     long projectId;
-    @JsonField(name = "title")
+    @JsonField(name = "textTitle")
     String title;
     @JsonField(name = "description")
     String description;

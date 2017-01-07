@@ -2,6 +2,7 @@ package com.commit451.gitlab.fragment;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -57,7 +58,6 @@ public class MilestonesFragment extends ButterKnifeFragment {
     Spinner mSpinner;
 
     private Project mProject;
-    private EventReceiver mEventReceiver;
     private MilestoneAdapter mMilestoneAdapter;
     private LinearLayoutManager mMilestoneLayoutManager;
 
@@ -124,8 +124,7 @@ public class MilestonesFragment extends ButterKnifeFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mEventReceiver = new EventReceiver();
-        App.bus().register(mEventReceiver);
+        App.bus().register(this);
 
         mMilestoneAdapter = new MilestoneAdapter(mMilestoneListener);
         mMilestoneLayoutManager = new LinearLayoutManager(getActivity());
@@ -154,8 +153,8 @@ public class MilestonesFragment extends ButterKnifeFragment {
 
     @Override
     public void onDestroyView() {
+        App.bus().unregister(this);
         super.onDestroyView();
-        App.bus().unregister(mEventReceiver);
     }
 
     @Override
@@ -185,7 +184,7 @@ public class MilestonesFragment extends ButterKnifeFragment {
                 .subscribe(new CustomResponseSingleObserver<List<Milestone>>() {
 
                     @Override
-                    public void error(Throwable e) {
+                    public void error(@NonNull Throwable e) {
                         mLoading = false;
                         Timber.e(e);
                         mSwipeRefreshLayout.setRefreshing(false);
@@ -196,7 +195,7 @@ public class MilestonesFragment extends ButterKnifeFragment {
                     }
 
                     @Override
-                    public void responseSuccess(List<Milestone> milestones) {
+                    public void responseSuccess(@NonNull List<Milestone> milestones) {
                         mLoading = false;
                         mSwipeRefreshLayout.setRefreshing(false);
                         if (milestones.isEmpty()) {
@@ -230,14 +229,14 @@ public class MilestonesFragment extends ButterKnifeFragment {
                 .subscribe(new CustomResponseSingleObserver<List<Milestone>>() {
 
                     @Override
-                    public void error(Throwable e) {
+                    public void error(@NonNull Throwable e) {
                         Timber.e(e);
                         mMilestoneAdapter.setLoading(false);
                         mLoading = false;
                     }
 
                     @Override
-                    public void responseSuccess(List<Milestone> milestones) {
+                    public void responseSuccess(@NonNull List<Milestone> milestones) {
                         mLoading = false;
                         mMilestoneAdapter.setLoading(false);
                         mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
@@ -246,7 +245,6 @@ public class MilestonesFragment extends ButterKnifeFragment {
                 });
     }
 
-    private class EventReceiver {
         @Subscribe
         public void onProjectReload(ProjectReloadEvent event) {
             mProject = event.mProject;
@@ -266,5 +264,4 @@ public class MilestonesFragment extends ButterKnifeFragment {
         public void onMilestoneChanged(MilestoneChangedEvent event) {
             mMilestoneAdapter.updateIssue(event.mMilestone);
         }
-    }
 }

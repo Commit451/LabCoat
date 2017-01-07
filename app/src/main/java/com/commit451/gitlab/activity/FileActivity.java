@@ -129,7 +129,7 @@ public class FileActivity extends BaseActivity {
                 .subscribe(new CustomSingleObserver<RepositoryFile>() {
 
                     @Override
-                    public void error(Throwable t) {
+                    public void error(@NonNull Throwable t) {
                         Timber.e(t);
                         progress.setVisibility(View.GONE);
                         Snackbar.make(root, R.string.file_load_error, Snackbar.LENGTH_SHORT)
@@ -137,7 +137,7 @@ public class FileActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void success(RepositoryFile repositoryFile) {
+                    public void success(@NonNull RepositoryFile repositoryFile) {
                         progress.setVisibility(View.GONE);
                         bindFile(repositoryFile);
                     }
@@ -164,13 +164,13 @@ public class FileActivity extends BaseActivity {
                 .subscribe(new CustomSingleObserver<byte[]>() {
 
                     @Override
-                    public void error(Throwable t) {
+                    public void error(@NonNull Throwable t) {
                         Snackbar.make(root, R.string.failed_to_load, Snackbar.LENGTH_SHORT)
                                 .show();
                     }
 
                     @Override
-                    public void success(byte[] bytes) {
+                    public void success(@NonNull byte[] bytes) {
                         bindBlob(bytes);
                     }
                 });

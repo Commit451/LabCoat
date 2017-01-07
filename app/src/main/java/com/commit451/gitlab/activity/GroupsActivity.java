@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -12,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
 
+import com.alexgwyn.recyclerviewsquire.DynamicGridLayoutManager;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.GroupAdapter;
@@ -20,7 +22,6 @@ import com.commit451.gitlab.event.ReloadDataEvent;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.rx.CustomResponseSingleObserver;
-import com.commit451.gitlab.util.DynamicGridLayoutManager;
 import com.commit451.gitlab.util.LinkHeaderParser;
 import com.commit451.gitlab.viewHolder.GroupViewHolder;
 
@@ -145,7 +146,7 @@ public class GroupsActivity extends BaseActivity {
                 .subscribe(new CustomResponseSingleObserver<List<Group>>() {
 
                     @Override
-                    public void error(Throwable e) {
+                    public void error(@NonNull Throwable e) {
                         Timber.e(e);
                         swipeRefreshLayout.setRefreshing(false);
                         loading = false;
@@ -154,7 +155,7 @@ public class GroupsActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void responseSuccess(List<Group> groups) {
+                    public void responseSuccess(@NonNull List<Group> groups) {
                         loading = false;
                         swipeRefreshLayout.setRefreshing(false);
                         if (groups.isEmpty()) {
@@ -195,13 +196,13 @@ public class GroupsActivity extends BaseActivity {
                 .subscribe(new CustomResponseSingleObserver<List<Group>>() {
 
                     @Override
-                    public void error(Throwable e) {
+                    public void error(@NonNull Throwable e) {
                         Timber.e(e);
                         loading = false;
                     }
 
                     @Override
-                    public void responseSuccess(List<Group> groups) {
+                    public void responseSuccess(@NonNull List<Group> groups) {
                         loading = false;
                         adapterGroup.addGroups(groups);
                         nextPageUrl = LinkHeaderParser.parse(response()).getNext();

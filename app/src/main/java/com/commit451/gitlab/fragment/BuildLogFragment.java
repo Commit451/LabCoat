@@ -1,6 +1,7 @@
 package com.commit451.gitlab.fragment;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
@@ -51,8 +52,6 @@ public class BuildLogFragment extends ButterKnifeFragment {
     Project mProject;
     Build mBuild;
 
-    EventReceiver mEventReceiver;
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,14 +75,13 @@ public class BuildLogFragment extends ButterKnifeFragment {
             }
         });
         loadData();
-        mEventReceiver = new EventReceiver();
-        App.bus().register(mEventReceiver);
+        App.bus().register(this);
     }
 
     @Override
     public void onDestroyView() {
+        App.bus().unregister(this);
         super.onDestroyView();
-        App.bus().unregister(mEventReceiver);
     }
 
     @Override
@@ -110,28 +108,25 @@ public class BuildLogFragment extends ButterKnifeFragment {
                 .subscribe(new CustomSingleObserver<String>() {
 
                     @Override
-                    public void error(Throwable t) {
+                    public void error(@NonNull Throwable t) {
                         Timber.e(t);
                         mSwipeRefreshLayout.setRefreshing(false);
                         mMessageView.setVisibility(View.VISIBLE);
                     }
 
                     @Override
-                    public void success(String s) {
+                    public void success(@NonNull String s) {
                         mSwipeRefreshLayout.setRefreshing(false);
                         mTextLog.setText(s);
                     }
                 });
     }
 
-    private class EventReceiver {
-
-        @Subscribe
-        public void onBuildChanged(BuildChangedEvent event) {
-            if (mBuild.getId() == event.build.getId()) {
-                mBuild = event.build;
-                loadData();
-            }
+    @Subscribe
+    public void onBuildChanged(BuildChangedEvent event) {
+        if (mBuild.getId() == event.build.getId()) {
+            mBuild = event.build;
+            loadData();
         }
     }
 }

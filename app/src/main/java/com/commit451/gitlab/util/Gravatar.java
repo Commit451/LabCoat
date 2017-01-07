@@ -11,7 +11,8 @@ import java.security.NoSuchAlgorithmException;
 public final class Gravatar {
     private static final char[] HEX_ARRAY = "0123456789abcdef".toCharArray();
 
-    private Gravatar() {}
+    private Gravatar() {
+    }
 
     public static Builder init() {
         return init(null);

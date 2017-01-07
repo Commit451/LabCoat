@@ -46,25 +46,25 @@ public class App extends Application {
         LoganSquare.registerTypeConverter(Uri.class, new UriTypeConverter());
     }
 
-    private static EventBus sBus;
-    private static App sInstance;
+    private static EventBus bus;
+    private static App instance;
 
     public static EventBus bus() {
-        if (sBus == null) {
-            sBus = EventBus.getDefault();
+        if (bus == null) {
+            bus = EventBus.getDefault();
         }
-        return sBus;
+        return bus;
     }
 
     public static App get() {
-        return sInstance;
+        return instance;
     }
 
-    private Account mAccount;
-    private GitLab mGitLab;
-    private GitLabRss mGitLabRss;
-    private Picasso mPicasso;
-    private Prefs mPrefs;
+    private Account account;
+    private GitLab gitLab;
+    private GitLabRss gitLabRss;
+    private Picasso picasso;
+    private Prefs prefs;
 
     @Override
     public void onCreate() {
@@ -75,9 +75,9 @@ public class App extends Application {
             return;
         }
         setupLeakCanary();
-        sInstance = this;
+        instance = this;
 
-        mPrefs = new Prefs(this);
+        prefs = new Prefs(this);
         //So that we don't get weird half translations
         forceLocale(Locale.ENGLISH);
         setupCrashReporting();
@@ -131,23 +131,23 @@ public class App extends Application {
     }
 
     public GitLab getGitLab() {
-        return mGitLab;
+        return gitLab;
     }
 
     public GitLabRss getGitLabRss() {
-        return mGitLabRss;
+        return gitLabRss;
     }
 
     public Picasso getPicasso() {
-        return mPicasso;
+        return picasso;
     }
 
     public Account getAccount() {
-        return mAccount;
+        return account;
     }
 
     public void setAccount(Account account) {
-        mAccount = account;
+        this.account = account;
         OkHttpClient.Builder clientBuilder = OkHttpClientFactory.create(account);
         if (BuildConfig.DEBUG) {
             clientBuilder.addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
@@ -166,18 +166,18 @@ public class App extends Application {
     }
 
     public Prefs getPrefs() {
-        return mPrefs;
+        return prefs;
     }
 
     private void initGitLab(Account account, OkHttpClient client) {
-        mGitLab = GitLabFactory.create(account, client);
+        gitLab = GitLabFactory.create(account, client);
     }
 
     private void initGitLabRss(Account account, OkHttpClient client) {
-        mGitLabRss = GitLabRssFactory.create(account, client);
+        gitLabRss = GitLabRssFactory.create(account, client);
     }
 
     private void initPicasso(OkHttpClient client) {
-        mPicasso = PicassoFactory.createPicasso(client);
+        picasso = PicassoFactory.createPicasso(client);
     }
 }

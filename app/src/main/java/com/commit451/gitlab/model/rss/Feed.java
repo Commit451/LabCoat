@@ -10,7 +10,7 @@ import java.util.List;
 @Parcel
 @Root(strict = false)
 public class Feed {
-    @Element(name = "title", required = false)
+    @Element(name = "textTitle", required = false)
     String title;
     @ElementList(name = "entry", required = false, inline = true)
     List<Entry> entryList;

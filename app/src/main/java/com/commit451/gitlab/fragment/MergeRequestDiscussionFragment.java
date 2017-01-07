@@ -4,6 +4,7 @@ import android.app.ActivityOptions;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -81,8 +82,6 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
     boolean mLoading;
     Teleprinter mTeleprinter;
 
-    EventReceiver mEventReceiver;
-
     private final RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -141,8 +140,7 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
         });
         loadNotes();
 
-        mEventReceiver = new EventReceiver();
-        App.bus().register(mEventReceiver);
+        App.bus().register(this);
     }
 
     @Override
@@ -164,8 +162,8 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
 
     @Override
     public void onDestroyView() {
+        App.bus().unregister(this);
         super.onDestroyView();
-        App.bus().unregister(mEventReceiver);
     }
 
     private void loadNotes() {
@@ -184,7 +182,7 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
                 .subscribe(new CustomResponseSingleObserver<List<Note>>() {
 
                     @Override
-                    public void error(Throwable e) {
+                    public void error(@NonNull Throwable e) {
                         mLoading = false;
                         Timber.e(e);
                         mSwipeRefreshLayout.setRefreshing(false);
@@ -193,7 +191,7 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
                     }
 
                     @Override
-                    public void responseSuccess(List<Note> notes) {
+                    public void responseSuccess(@NonNull List<Note> notes) {
                         mSwipeRefreshLayout.setRefreshing(false);
                         mLoading = false;
                         mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
@@ -211,7 +209,7 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
                 .subscribe(new CustomResponseSingleObserver<List<Note>>() {
 
                     @Override
-                    public void error(Throwable e) {
+                    public void error(@NonNull Throwable e) {
                         mLoading = false;
                         Timber.e(e);
                         mMergeRequestDetailAdapter.setLoading(false);
@@ -220,7 +218,7 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
                     }
 
                     @Override
-                    public void responseSuccess(List<Note> notes) {
+                    public void responseSuccess(@NonNull List<Note> notes) {
                         mMergeRequestDetailAdapter.setLoading(false);
                         mLoading = false;
                         mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
@@ -249,7 +247,7 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
                 .subscribe(new CustomSingleObserver<Note>() {
 
                     @Override
-                    public void error(Throwable e) {
+                    public void error(@NonNull Throwable e) {
                         Timber.e(e);
                         mProgress.setVisibility(View.GONE);
                         Snackbar.make(mRoot, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
@@ -257,7 +255,7 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
                     }
 
                     @Override
-                    public void success(Note note) {
+                    public void success(@NonNull Note note) {
                         mProgress.setVisibility(View.GONE);
                         mMergeRequestDetailAdapter.addNote(note);
                         mNotesRecyclerView.smoothScrollToPosition(MergeRequestDetailAdapter.getHeaderCount());
@@ -265,14 +263,11 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
                 });
     }
 
-    private class EventReceiver {
-
-        @Subscribe
-        public void onMergeRequestChangedEvent(MergeRequestChangedEvent event) {
-            if (mMergeRequest.getId() == event.mergeRequest.getId()) {
-                mMergeRequest = event.mergeRequest;
-                loadNotes();
-            }
+    @Subscribe
+    public void onMergeRequestChangedEvent(MergeRequestChangedEvent event) {
+        if (mMergeRequest.getId() == event.mergeRequest.getId()) {
+            mMergeRequest = event.mergeRequest;
+            loadNotes();
         }
     }
 

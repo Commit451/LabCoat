@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -98,14 +99,14 @@ public class GroupActivity extends BaseActivity {
                     .subscribe(new CustomSingleObserver<GroupDetail>() {
 
                         @Override
-                        public void error(Throwable t) {
+                        public void error(@NonNull Throwable t) {
                             Timber.e(t);
                             progress.setVisibility(View.GONE);
                             showError();
                         }
 
                         @Override
-                        public void success(GroupDetail groupDetail) {
+                        public void success(@NonNull GroupDetail groupDetail) {
                             progress.setVisibility(View.GONE);
                             bind(groupDetail);
                         }

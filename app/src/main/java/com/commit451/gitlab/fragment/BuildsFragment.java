@@ -2,6 +2,7 @@ package com.commit451.gitlab.fragment;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -182,7 +183,7 @@ public class BuildsFragment extends ButterKnifeFragment {
                 .subscribe(new CustomResponseSingleObserver<List<Build>>() {
 
                     @Override
-                    public void error(Throwable e) {
+                    public void error(@NonNull Throwable e) {
                         mLoading = false;
                         Timber.e(e);
                         mSwipeRefreshLayout.setRefreshing(false);
@@ -193,7 +194,7 @@ public class BuildsFragment extends ButterKnifeFragment {
                     }
 
                     @Override
-                    public void responseSuccess(List<Build> builds) {
+                    public void responseSuccess(@NonNull List<Build> builds) {
                         mLoading = false;
 
                         mSwipeRefreshLayout.setRefreshing(false);
@@ -228,14 +229,14 @@ public class BuildsFragment extends ButterKnifeFragment {
                 .subscribe(new CustomResponseSingleObserver<List<Build>>() {
 
                     @Override
-                    public void error(Throwable e) {
+                    public void error(@NonNull Throwable e) {
                         Timber.e(e);
                         mLoading = false;
                         mBuildsAdapter.setLoading(false);
                     }
 
                     @Override
-                    public void responseSuccess(List<Build> builds) {
+                    public void responseSuccess(@NonNull List<Build> builds) {
                         mLoading = false;
                         mBuildsAdapter.setLoading(false);
                         mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
