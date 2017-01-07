@@ -16,6 +16,7 @@ import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.GroupAdapter;
 import com.commit451.gitlab.event.CloseDrawerEvent;
+import com.commit451.gitlab.event.ReloadDataEvent;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.util.DynamicGridLayoutManager;
@@ -209,6 +210,11 @@ public class GroupsActivity extends BaseActivity {
         @Subscribe
         public void onCloseDrawerEvent(CloseDrawerEvent event) {
             mDrawerLayout.closeDrawers();
+        }
+
+        @Subscribe
+        public void onReloadData(ReloadDataEvent event) {
+            load();
         }
     }
 }
