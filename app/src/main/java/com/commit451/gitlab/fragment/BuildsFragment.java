@@ -24,8 +24,8 @@ import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Build;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.navigation.Navigator;
+import com.commit451.gitlab.rx.CustomResponseSingleObserver;
 import com.commit451.gitlab.util.LinkHeaderParser;
-import com.commit451.reptar.retrofit.ResponseSingleObserver;
 
 import org.greenrobot.eventbus.Subscribe;
 
@@ -179,10 +179,10 @@ public class BuildsFragment extends ButterKnifeFragment {
                 .compose(this.<Response<List<Build>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new ResponseSingleObserver<List<Build>>() {
+                .subscribe(new CustomResponseSingleObserver<List<Build>>() {
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void error(Throwable e) {
                         mLoading = false;
                         Timber.e(e);
                         mSwipeRefreshLayout.setRefreshing(false);
@@ -193,7 +193,7 @@ public class BuildsFragment extends ButterKnifeFragment {
                     }
 
                     @Override
-                    protected void onResponseSuccess(List<Build> builds) {
+                    public void responseSuccess(List<Build> builds) {
                         mLoading = false;
 
                         mSwipeRefreshLayout.setRefreshing(false);
@@ -225,17 +225,17 @@ public class BuildsFragment extends ButterKnifeFragment {
                 .compose(this.<Response<List<Build>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new ResponseSingleObserver<List<Build>>() {
+                .subscribe(new CustomResponseSingleObserver<List<Build>>() {
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void error(Throwable e) {
                         Timber.e(e);
                         mLoading = false;
                         mBuildsAdapter.setLoading(false);
                     }
 
                     @Override
-                    protected void onResponseSuccess(List<Build> builds) {
+                    public void responseSuccess(List<Build> builds) {
                         mLoading = false;
                         mBuildsAdapter.setLoading(false);
                         mNextPageUrl = LinkHeaderParser.parse(response()).getNext();

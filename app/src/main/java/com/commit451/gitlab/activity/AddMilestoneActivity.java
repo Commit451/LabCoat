@@ -20,7 +20,7 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.event.MilestoneChangedEvent;
 import com.commit451.gitlab.event.MilestoneCreatedEvent;
 import com.commit451.gitlab.model.api.Milestone;
-import com.commit451.reptar.FocusedSingleObserver;
+import com.commit451.gitlab.rx.CustomSingleObserver;
 import com.commit451.teleprinter.Teleprinter;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
@@ -173,17 +173,17 @@ public class AddMilestoneActivity extends MorphActivity {
         observable.subscribeOn(Schedulers.io())
                 .compose(this.<Milestone>bindToLifecycle())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new FocusedSingleObserver<Milestone>() {
+                .subscribe(new CustomSingleObserver<Milestone>() {
 
                     @Override
-                    public void onError(Throwable e) {
-                        Timber.e(e);
+                    public void error(Throwable t) {
+                        Timber.e(t);
                         mProgress.setVisibility(View.GONE);
                         showError();
                     }
 
                     @Override
-                    public void onSuccess(Milestone milestone) {
+                    public void success(Milestone milestone) {
                         mProgress.setVisibility(View.GONE);
                         if (mMilestone == null) {
                             App.bus().post(new MilestoneCreatedEvent(milestone));

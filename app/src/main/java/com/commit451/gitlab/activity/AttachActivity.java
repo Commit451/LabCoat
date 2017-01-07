@@ -14,8 +14,8 @@ import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.api.FileUploadResponse;
 import com.commit451.gitlab.model.api.Project;
+import com.commit451.gitlab.rx.CustomSingleObserver;
 import com.commit451.gitlab.rx.FileObservableFactory;
-import com.commit451.reptar.FocusedSingleObserver;
 
 import org.parceler.Parcels;
 
@@ -150,9 +150,10 @@ public class AttachActivity extends BaseActivity {
                 .compose(this.<FileUploadResponse>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new FocusedSingleObserver<FileUploadResponse>() {
+                .subscribe(new CustomSingleObserver<FileUploadResponse>() {
+
                     @Override
-                    public void onSuccess(FileUploadResponse fileUploadResponse) {
+                    public void success(FileUploadResponse fileUploadResponse) {
                         Intent data = new Intent();
                         data.putExtra(KEY_FILE_UPLOAD_RESPONSE, Parcels.wrap(fileUploadResponse));
                         setResult(RESULT_OK, data);
@@ -160,8 +161,8 @@ public class AttachActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void onError(Throwable e) {
-                        Timber.e(e);
+                    public void error(Throwable t) {
+                        Timber.e(t);
                         finish();
                     }
                 });

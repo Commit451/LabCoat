@@ -19,11 +19,11 @@ import com.commit451.gitlab.event.MemberAddedEvent;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.model.api.Member;
 import com.commit451.gitlab.navigation.Navigator;
+import com.commit451.gitlab.rx.CustomResponseSingleObserver;
+import com.commit451.gitlab.rx.CustomSingleObserver;
 import com.commit451.gitlab.util.DynamicGridLayoutManager;
 import com.commit451.gitlab.util.LinkHeaderParser;
 import com.commit451.gitlab.viewHolder.ProjectMemberViewHolder;
-import com.commit451.reptar.FocusedSingleObserver;
-import com.commit451.reptar.retrofit.ResponseSingleObserver;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.parceler.Parcels;
@@ -102,17 +102,17 @@ public class GroupMembersFragment extends ButterKnifeFragment {
                     .compose(GroupMembersFragment.this.<String>bindToLifecycle())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new FocusedSingleObserver<String>() {
+                    .subscribe(new CustomSingleObserver<String>() {
 
                         @Override
-                        public void onError(Throwable e) {
+                        public void error(Throwable e) {
                             Timber.e(e);
                             Snackbar.make(mRoot, R.string.failed_to_remove_member, Snackbar.LENGTH_SHORT)
                                     .show();
                         }
 
                         @Override
-                        public void onSuccess(String value) {
+                        public void success(String value) {
                             mGroupMembersAdapter.removeMember(mMember);
                         }
                     });
@@ -229,10 +229,10 @@ public class GroupMembersFragment extends ButterKnifeFragment {
                 .compose(this.<Response<List<Member>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new ResponseSingleObserver<List<Member>>() {
+                .subscribe(new CustomResponseSingleObserver<List<Member>>() {
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void error(Throwable e) {
                         Timber.e(e);
                         mSwipeRefreshLayout.setRefreshing(false);
                         mMessageView.setVisibility(View.VISIBLE);
@@ -242,7 +242,7 @@ public class GroupMembersFragment extends ButterKnifeFragment {
                     }
 
                     @Override
-                    protected void onResponseSuccess(List<Member> members) {
+                    public void responseSuccess(List<Member> members) {
                         mSwipeRefreshLayout.setRefreshing(false);
                         if (members.isEmpty()) {
                             mMessageView.setVisibility(View.VISIBLE);

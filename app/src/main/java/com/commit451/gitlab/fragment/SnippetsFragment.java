@@ -23,8 +23,8 @@ import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.Snippet;
 import com.commit451.gitlab.navigation.Navigator;
+import com.commit451.gitlab.rx.CustomResponseSingleObserver;
 import com.commit451.gitlab.util.LinkHeaderParser;
-import com.commit451.reptar.retrofit.ResponseSingleObserver;
 
 import org.greenrobot.eventbus.Subscribe;
 
@@ -181,10 +181,10 @@ public class SnippetsFragment extends ButterKnifeFragment {
                 .compose(this.<Response<List<Snippet>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new ResponseSingleObserver<List<Snippet>>() {
+                .subscribe(new CustomResponseSingleObserver<List<Snippet>>() {
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void error(Throwable e) {
                         mLoading = false;
                         Timber.e(e);
                         mSwipeRefreshLayout.setRefreshing(false);
@@ -195,7 +195,7 @@ public class SnippetsFragment extends ButterKnifeFragment {
                     }
 
                     @Override
-                    protected void onResponseSuccess(List<Snippet> snippets) {
+                    public void responseSuccess(List<Snippet> snippets) {
                         mLoading = false;
                         mSwipeRefreshLayout.setRefreshing(false);
                         if (snippets.isEmpty()) {
@@ -226,17 +226,17 @@ public class SnippetsFragment extends ButterKnifeFragment {
                 .compose(this.<Response<List<Snippet>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new ResponseSingleObserver<List<Snippet>>() {
+                .subscribe(new CustomResponseSingleObserver<List<Snippet>>() {
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void error(Throwable e) {
                         Timber.e(e);
                         mSnippetAdapter.setLoading(false);
                         mLoading = false;
                     }
 
                     @Override
-                    protected void onResponseSuccess(List<Snippet> snippets) {
+                    public void responseSuccess(List<Snippet> snippets) {
                         mLoading = false;
                         mSnippetAdapter.setLoading(false);
                         mNextPageUrl = LinkHeaderParser.parse(response()).getNext();

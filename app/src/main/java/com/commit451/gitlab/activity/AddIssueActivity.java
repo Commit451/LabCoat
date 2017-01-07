@@ -32,8 +32,8 @@ import com.commit451.gitlab.model.api.Member;
 import com.commit451.gitlab.model.api.Milestone;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.navigation.Navigator;
-import com.commit451.reptar.FocusedSingleObserver;
-import com.commit451.reptar.retrofit.ResponseSingleObserver;
+import com.commit451.gitlab.rx.CustomResponseSingleObserver;
+import com.commit451.gitlab.rx.CustomSingleObserver;
 import com.commit451.teleprinter.Teleprinter;
 
 import org.parceler.Parcels;
@@ -178,17 +178,17 @@ public class AddIssueActivity extends MorphActivity {
                 .compose(this.<Response<List<Milestone>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new ResponseSingleObserver<List<Milestone>>() {
+                .subscribe(new CustomResponseSingleObserver<List<Milestone>>() {
 
                     @Override
-                    public void onError(Throwable e) {
-                        Timber.e(e);
+                    public void error(Throwable t) {
+                        Timber.e(t);
                         mMilestoneProgress.setVisibility(View.GONE);
                         mMilestoneSpinner.setVisibility(View.GONE);
                     }
 
                     @Override
-                    protected void onResponseSuccess(List<Milestone> milestones) {
+                    public void responseSuccess(List<Milestone> milestones) {
                         mMilestoneProgress.setVisibility(View.GONE);
                         mMilestoneSpinner.setVisibility(View.VISIBLE);
                         MilestoneSpinnerAdapter milestoneSpinnerAdapter = new MilestoneSpinnerAdapter(AddIssueActivity.this, milestones);
@@ -197,40 +197,39 @@ public class AddIssueActivity extends MorphActivity {
                             mMilestoneSpinner.setSelection(milestoneSpinnerAdapter.getSelectedItemPosition(mIssue.getMilestone()));
                         }
                     }
-
                 });
         App.get().getGitLab().getProjectMembers(mProject.getId())
                 .compose(this.<Response<List<Member>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new ResponseSingleObserver<List<Member>>() {
+                .subscribe(new CustomResponseSingleObserver<List<Member>>() {
 
                     @Override
-                    public void onError(Throwable e) {
-                        Timber.e(e);
+                    public void error(Throwable t) {
+                        Timber.e(t);
                         mAssigneeSpinner.setVisibility(View.GONE);
                         mAssigneeProgress.setVisibility(View.GONE);
                     }
 
                     @Override
-                    protected void onResponseSuccess(List<Member> members) {
+                    public void responseSuccess(List<Member> members) {
                         mMembers.addAll(members);
                         if (mProject.belongsToGroup()) {
                             Timber.d("Project belongs to a group, loading those users too");
                             App.get().getGitLab().getGroupMembers(mProject.getNamespace().getId())
                                     .subscribeOn(Schedulers.io())
                                     .observeOn(AndroidSchedulers.mainThread())
-                                    .subscribe(new ResponseSingleObserver<List<Member>>() {
+                                    .subscribe(new CustomResponseSingleObserver<List<Member>>() {
 
                                         @Override
-                                        public void onError(Throwable e) {
-                                            Timber.e(e);
+                                        public void error(Throwable t) {
+                                            Timber.e(t);
                                             mAssigneeSpinner.setVisibility(View.GONE);
                                             mAssigneeProgress.setVisibility(View.GONE);
                                         }
 
                                         @Override
-                                        protected void onResponseSuccess(List<Member> members) {
+                                        public void responseSuccess(List<Member> members) {
                                             mMembers.addAll(members);
                                             setAssignees();
                                         }
@@ -244,18 +243,18 @@ public class AddIssueActivity extends MorphActivity {
                 .compose(this.<List<Label>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new FocusedSingleObserver<List<Label>>() {
+                .subscribe(new CustomSingleObserver<List<Label>>() {
 
                     @Override
-                    public void onError(Throwable e) {
-                        Timber.e(e);
+                    public void error(Throwable t) {
+                        Timber.e(t);
                         mListLabels.setVisibility(View.GONE);
                         mLabelsProgress.setVisibility(View.GONE);
                         mLabelLabel.setVisibility(View.GONE);
                     }
 
                     @Override
-                    public void onSuccess(List<Label> labels) {
+                    public void success(List<Label> labels) {
                         mLabelsProgress.setVisibility(View.GONE);
                         mRootAddLabels.setVisibility(View.VISIBLE);
                         setLabels(labels);
@@ -405,17 +404,17 @@ public class AddIssueActivity extends MorphActivity {
     private void observeUpdate(Single<Issue> observable) {
         observable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new FocusedSingleObserver<Issue>() {
+                .subscribe(new CustomSingleObserver<Issue>() {
 
                     @Override
-                    public void onError(Throwable e) {
-                        Timber.e(e);
+                    public void error(Throwable t) {
+                        Timber.e(t);
                         Snackbar.make(mRoot, getString(R.string.failed_to_create_issue), Snackbar.LENGTH_SHORT)
                                 .show();
                     }
 
                     @Override
-                    public void onSuccess(Issue issue) {
+                    public void success(Issue issue) {
                         if (mIssue == null) {
                             App.bus().post(new IssueCreatedEvent(issue));
                         } else {

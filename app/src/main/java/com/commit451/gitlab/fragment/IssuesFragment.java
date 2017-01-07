@@ -26,9 +26,9 @@ import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Issue;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.navigation.Navigator;
+import com.commit451.gitlab.rx.CustomResponseSingleObserver;
+import com.commit451.gitlab.rx.CustomSingleObserver;
 import com.commit451.gitlab.util.LinkHeaderParser;
-import com.commit451.reptar.FocusedSingleObserver;
-import com.commit451.reptar.retrofit.ResponseSingleObserver;
 
 import org.greenrobot.eventbus.Subscribe;
 
@@ -189,10 +189,10 @@ public class IssuesFragment extends ButterKnifeFragment {
                 .compose(this.<Response<List<Issue>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new ResponseSingleObserver<List<Issue>>() {
+                .subscribe(new CustomResponseSingleObserver<List<Issue>>() {
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void error(Throwable e) {
                         mLoading = false;
                         Timber.e(e);
                         mSwipeRefreshLayout.setRefreshing(false);
@@ -203,7 +203,7 @@ public class IssuesFragment extends ButterKnifeFragment {
                     }
 
                     @Override
-                    protected void onResponseSuccess(List<Issue> issues) {
+                    public void responseSuccess(List<Issue> issues) {
                         mLoading = false;
                         mSwipeRefreshLayout.setRefreshing(false);
                         if (issues.isEmpty()) {
@@ -234,17 +234,17 @@ public class IssuesFragment extends ButterKnifeFragment {
                 .compose(this.<Response<List<Issue>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new FocusedSingleObserver<Response<List<Issue>>>() {
+                .subscribe(new CustomSingleObserver<Response<List<Issue>>>() {
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void error(Throwable e) {
                         Timber.e(e);
                         mLoading = false;
                         mIssuesAdapter.setLoading(false);
                     }
 
                     @Override
-                    public void onSuccess(Response<List<Issue>> listResponse) {
+                    public void success(Response<List<Issue>> listResponse) {
                         mLoading = false;
                         mIssuesAdapter.setLoading(false);
                         mNextPageUrl = LinkHeaderParser.parse(listResponse).getNext();

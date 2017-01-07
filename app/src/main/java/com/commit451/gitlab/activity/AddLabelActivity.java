@@ -17,8 +17,8 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.LabelAdapter;
 import com.commit451.gitlab.model.api.Label;
 import com.commit451.gitlab.navigation.Navigator;
+import com.commit451.gitlab.rx.CustomSingleObserver;
 import com.commit451.gitlab.viewHolder.LabelViewHolder;
-import com.commit451.reptar.FocusedSingleObserver;
 
 import org.parceler.Parcels;
 
@@ -125,17 +125,17 @@ public class AddLabelActivity extends BaseActivity {
                 .compose(this.<List<Label>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new FocusedSingleObserver<List<Label>>() {
+                .subscribe(new CustomSingleObserver<List<Label>>() {
 
                     @Override
-                    public void onError(Throwable e) {
-                        Timber.e(e);
+                    public void error(Throwable t) {
+                        Timber.e(t);
                         mSwipeRefreshLayout.setRefreshing(false);
                         mTextMessage.setVisibility(View.VISIBLE);
                     }
 
                     @Override
-                    public void onSuccess(List<Label> labels) {
+                    public void success(List<Label> labels) {
                         mSwipeRefreshLayout.setRefreshing(false);
                         if (labels.isEmpty()) {
                             mTextMessage.setVisibility(View.VISIBLE);

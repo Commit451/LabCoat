@@ -19,10 +19,10 @@ import com.commit451.gitlab.event.CloseDrawerEvent;
 import com.commit451.gitlab.event.ReloadDataEvent;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.navigation.Navigator;
+import com.commit451.gitlab.rx.CustomResponseSingleObserver;
 import com.commit451.gitlab.util.DynamicGridLayoutManager;
 import com.commit451.gitlab.util.LinkHeaderParser;
 import com.commit451.gitlab.viewHolder.GroupViewHolder;
-import com.commit451.reptar.retrofit.ResponseSingleObserver;
 
 import org.greenrobot.eventbus.Subscribe;
 
@@ -138,10 +138,10 @@ public class GroupsActivity extends BaseActivity {
                 .compose(this.<Response<List<Group>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new ResponseSingleObserver<List<Group>>() {
+                .subscribe(new CustomResponseSingleObserver<List<Group>>() {
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void error(Throwable e) {
                         Timber.e(e);
                         mSwipeRefreshLayout.setRefreshing(false);
                         mLoading = false;
@@ -150,7 +150,7 @@ public class GroupsActivity extends BaseActivity {
                     }
 
                     @Override
-                    protected void onResponseSuccess(List<Group> groups) {
+                    public void responseSuccess(List<Group> groups) {
                         mLoading = false;
                         mSwipeRefreshLayout.setRefreshing(false);
                         if (groups.isEmpty()) {
@@ -188,16 +188,16 @@ public class GroupsActivity extends BaseActivity {
                 .compose(this.<Response<List<Group>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new ResponseSingleObserver<List<Group>>() {
+                .subscribe(new CustomResponseSingleObserver<List<Group>>() {
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void error(Throwable e) {
                         Timber.e(e);
                         mLoading = false;
                     }
 
                     @Override
-                    protected void onResponseSuccess(List<Group> groups) {
+                    public void responseSuccess(List<Group> groups) {
                         mLoading = false;
                         mGroupAdapter.addGroups(groups);
                         mNextPageUrl = LinkHeaderParser.parse(response()).getNext();

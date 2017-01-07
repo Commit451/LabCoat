@@ -13,8 +13,8 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.event.BuildChangedEvent;
 import com.commit451.gitlab.model.api.Build;
 import com.commit451.gitlab.model.api.Project;
+import com.commit451.gitlab.rx.CustomSingleObserver;
 import com.commit451.gitlab.util.BuildUtil;
-import com.commit451.reptar.FocusedSingleObserver;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.parceler.Parcels;
@@ -107,19 +107,19 @@ public class BuildLogFragment extends ButterKnifeFragment {
                 .compose(this.<String>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new FocusedSingleObserver<String>() {
+                .subscribe(new CustomSingleObserver<String>() {
 
                     @Override
-                    public void onError(Throwable e) {
-                        Timber.e(e);
+                    public void error(Throwable t) {
+                        Timber.e(t);
                         mSwipeRefreshLayout.setRefreshing(false);
                         mMessageView.setVisibility(View.VISIBLE);
                     }
 
                     @Override
-                    public void onSuccess(String response) {
+                    public void success(String s) {
                         mSwipeRefreshLayout.setRefreshing(false);
-                        mTextLog.setText(response);
+                        mTextLog.setText(s);
                     }
                 });
     }

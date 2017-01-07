@@ -27,9 +27,9 @@ import com.commit451.gitlab.event.ReloadDataEvent;
 import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.model.api.UserFull;
 import com.commit451.gitlab.navigation.Navigator;
+import com.commit451.gitlab.rx.CustomResponseSingleObserver;
 import com.commit451.gitlab.transformation.CircleTransformation;
 import com.commit451.gitlab.util.ImageUtil;
-import com.commit451.reptar.retrofit.ResponseSingleObserver;
 
 import org.greenrobot.eventbus.Subscribe;
 
@@ -231,15 +231,15 @@ public class LabCoatNavigationView extends NavigationView {
         App.get().getGitLab().getThisUser()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new ResponseSingleObserver<UserFull>() {
+                .subscribe(new CustomResponseSingleObserver<UserFull>() {
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void error(Throwable e) {
                         Timber.e(e);
                     }
 
                     @Override
-                    protected void onResponseSuccess(UserFull userFull) {
+                    public void responseSuccess(UserFull userFull) {
                         //Store the newly retrieved user to the account so that it stays up to date
                         // in local storage
                         Account account = App.get().getAccount();

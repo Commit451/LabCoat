@@ -23,9 +23,9 @@ import com.commit451.gitlab.model.api.Issue;
 import com.commit451.gitlab.model.api.Milestone;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.navigation.Navigator;
+import com.commit451.gitlab.rx.CustomResponseSingleObserver;
+import com.commit451.gitlab.rx.CustomSingleObserver;
 import com.commit451.gitlab.util.LinkHeaderParser;
-import com.commit451.reptar.FocusedSingleObserver;
-import com.commit451.reptar.retrofit.ResponseSingleObserver;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.parceler.Parcels;
@@ -181,11 +181,11 @@ public class MilestoneActivity extends BaseActivity {
                 .compose(this.<Response<List<Issue>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new ResponseSingleObserver<List<Issue>>() {
+                .subscribe(new CustomResponseSingleObserver<List<Issue>>() {
 
                     @Override
-                    public void onError(Throwable e) {
-                        Timber.e(e);
+                    public void error(Throwable t) {
+                        Timber.e(t);
                         mLoading = false;
                         mSwipeRefreshLayout.setRefreshing(false);
                         mMessageText.setVisibility(View.VISIBLE);
@@ -194,7 +194,7 @@ public class MilestoneActivity extends BaseActivity {
                     }
 
                     @Override
-                    protected void onResponseSuccess(List<Issue> issues) {
+                    public void responseSuccess(List<Issue> issues) {
                         mSwipeRefreshLayout.setRefreshing(false);
                         mLoading = false;
 
@@ -225,16 +225,16 @@ public class MilestoneActivity extends BaseActivity {
                 .compose(this.<Response<List<Issue>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new ResponseSingleObserver<List<Issue>>() {
+                .subscribe(new CustomResponseSingleObserver<List<Issue>>() {
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void error(Throwable e) {
                         Timber.e(e);
                         mLoading = false;
                     }
 
                     @Override
-                    protected void onResponseSuccess(List<Issue> issues) {
+                    public void responseSuccess(List<Issue> issues) {
                         mLoading = false;
                         mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
                         mMilestoneIssuesAdapter.addIssues(issues);
@@ -255,10 +255,10 @@ public class MilestoneActivity extends BaseActivity {
         observable.compose(this.<Milestone>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new FocusedSingleObserver<Milestone>() {
+                .subscribe(new CustomSingleObserver<Milestone>() {
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void error(Throwable e) {
                         Timber.e(e);
                         mProgress.setVisibility(View.GONE);
                         Snackbar.make(mRoot, getString(R.string.failed_to_create_milestone), Snackbar.LENGTH_SHORT)
@@ -266,7 +266,7 @@ public class MilestoneActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void onSuccess(Milestone milestone) {
+                    public void success(Milestone milestone) {
                         mProgress.setVisibility(View.GONE);
                         mMilestone = milestone;
                         App.bus().post(new MilestoneChangedEvent(mMilestone));

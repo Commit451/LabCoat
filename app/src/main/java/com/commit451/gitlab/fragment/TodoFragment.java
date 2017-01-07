@@ -15,8 +15,8 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.TodoAdapter;
 import com.commit451.gitlab.model.api.Todo;
 import com.commit451.gitlab.navigation.Navigator;
+import com.commit451.gitlab.rx.CustomResponseSingleObserver;
 import com.commit451.gitlab.util.LinkHeaderParser;
-import com.commit451.reptar.retrofit.ResponseSingleObserver;
 
 import java.util.List;
 
@@ -137,10 +137,10 @@ public class TodoFragment extends ButterKnifeFragment {
                 .compose(this.<Response<List<Todo>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new ResponseSingleObserver<List<Todo>>() {
+                .subscribe(new CustomResponseSingleObserver<List<Todo>>() {
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void error(Throwable e) {
                         mLoading = false;
                         Timber.e(e);
                         mSwipeRefreshLayout.setRefreshing(false);
@@ -151,7 +151,7 @@ public class TodoFragment extends ButterKnifeFragment {
                     }
 
                     @Override
-                    protected void onResponseSuccess(List<Todo> todos) {
+                    public void responseSuccess(List<Todo> todos) {
                         mLoading = false;
 
                         mSwipeRefreshLayout.setRefreshing(false);
@@ -181,17 +181,17 @@ public class TodoFragment extends ButterKnifeFragment {
                 .compose(this.<Response<List<Todo>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new ResponseSingleObserver<List<Todo>>() {
+                .subscribe(new CustomResponseSingleObserver<List<Todo>>() {
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void error(Throwable e) {
                         mLoading = false;
                         Timber.e(e);
                         mTodoAdapter.setLoading(false);
                     }
 
                     @Override
-                    protected void onResponseSuccess(List<Todo> todos) {
+                    public void responseSuccess(List<Todo> todos) {
                         mLoading = false;
                         mTodoAdapter.setLoading(false);
                         mTodoAdapter.addData(todos);

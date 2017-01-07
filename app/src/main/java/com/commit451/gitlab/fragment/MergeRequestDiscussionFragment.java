@@ -23,10 +23,10 @@ import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.model.api.Note;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.navigation.TransitionFactory;
+import com.commit451.gitlab.rx.CustomResponseSingleObserver;
+import com.commit451.gitlab.rx.CustomSingleObserver;
 import com.commit451.gitlab.util.LinkHeaderParser;
 import com.commit451.gitlab.view.SendMessageView;
-import com.commit451.reptar.FocusedSingleObserver;
-import com.commit451.reptar.retrofit.ResponseSingleObserver;
 import com.commit451.teleprinter.Teleprinter;
 
 import org.greenrobot.eventbus.Subscribe;
@@ -181,10 +181,10 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
                 .compose(this.<Response<List<Note>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new ResponseSingleObserver<List<Note>>() {
+                .subscribe(new CustomResponseSingleObserver<List<Note>>() {
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void error(Throwable e) {
                         mLoading = false;
                         Timber.e(e);
                         mSwipeRefreshLayout.setRefreshing(false);
@@ -193,7 +193,7 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
                     }
 
                     @Override
-                    protected void onResponseSuccess(List<Note> notes) {
+                    public void responseSuccess(List<Note> notes) {
                         mSwipeRefreshLayout.setRefreshing(false);
                         mLoading = false;
                         mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
@@ -208,10 +208,10 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
                 .compose(this.<Response<List<Note>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new ResponseSingleObserver<List<Note>>() {
+                .subscribe(new CustomResponseSingleObserver<List<Note>>() {
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void error(Throwable e) {
                         mLoading = false;
                         Timber.e(e);
                         mMergeRequestDetailAdapter.setLoading(false);
@@ -220,7 +220,7 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
                     }
 
                     @Override
-                    protected void onResponseSuccess(List<Note> notes) {
+                    public void responseSuccess(List<Note> notes) {
                         mMergeRequestDetailAdapter.setLoading(false);
                         mLoading = false;
                         mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
@@ -246,10 +246,10 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
                 .compose(this.<Note>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new FocusedSingleObserver<Note>() {
+                .subscribe(new CustomSingleObserver<Note>() {
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void error(Throwable e) {
                         Timber.e(e);
                         mProgress.setVisibility(View.GONE);
                         Snackbar.make(mRoot, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
@@ -257,7 +257,7 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
                     }
 
                     @Override
-                    public void onSuccess(Note note) {
+                    public void success(Note note) {
                         mProgress.setVisibility(View.GONE);
                         mMergeRequestDetailAdapter.addNote(note);
                         mNotesRecyclerView.smoothScrollToPosition(MergeRequestDetailAdapter.getHeaderCount());

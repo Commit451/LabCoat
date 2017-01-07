@@ -25,11 +25,11 @@ import com.commit451.gitlab.model.api.Issue;
 import com.commit451.gitlab.model.api.Note;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.navigation.Navigator;
+import com.commit451.gitlab.rx.CustomResponseSingleObserver;
+import com.commit451.gitlab.rx.CustomSingleObserver;
 import com.commit451.gitlab.util.IntentUtil;
 import com.commit451.gitlab.util.LinkHeaderParser;
 import com.commit451.gitlab.view.SendMessageView;
-import com.commit451.reptar.FocusedSingleObserver;
-import com.commit451.reptar.retrofit.ResponseSingleObserver;
 import com.commit451.teleprinter.Teleprinter;
 
 import org.greenrobot.eventbus.Subscribe;
@@ -132,17 +132,17 @@ public class IssueActivity extends BaseActivity {
                             .compose(IssueActivity.this.<String>bindToLifecycle())
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(new FocusedSingleObserver<String>() {
+                            .subscribe(new CustomSingleObserver<String>() {
 
                                 @Override
-                                public void onError(Throwable e) {
-                                    Timber.e(e);
+                                public void error(Throwable t) {
+                                    Timber.e(t);
                                     Snackbar.make(mRoot, getString(R.string.failed_to_delete_issue), Snackbar.LENGTH_SHORT)
                                             .show();
                                 }
 
                                 @Override
-                                public void onSuccess(String value) {
+                                public void success(String s) {
                                     App.bus().post(new IssueReloadEvent());
                                     Toast.makeText(IssueActivity.this, R.string.issue_deleted, Toast.LENGTH_SHORT)
                                             .show();
@@ -234,18 +234,18 @@ public class IssueActivity extends BaseActivity {
                     .compose(this.<List<Issue>>bindToLifecycle())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new FocusedSingleObserver<List<Issue>>() {
+                    .subscribe(new CustomSingleObserver<List<Issue>>() {
 
                         @Override
-                        public void onError(Throwable e) {
-                            Timber.e(e);
+                        public void error(Throwable t) {
+                            Timber.e(t);
                             mSwipeRefreshLayout.setRefreshing(false);
                             Snackbar.make(mRoot, getString(R.string.failed_to_load), Snackbar.LENGTH_SHORT)
                                     .show();
                         }
 
                         @Override
-                        public void onSuccess(List<Issue> issues) {
+                        public void success(List<Issue> issues) {
                             if (issues.isEmpty()) {
                                 mSwipeRefreshLayout.setRefreshing(false);
                                 Snackbar.make(mRoot, getString(R.string.failed_to_load), Snackbar.LENGTH_SHORT)
@@ -311,20 +311,19 @@ public class IssueActivity extends BaseActivity {
                 .compose(this.<Response<List<Note>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new ResponseSingleObserver<List<Note>>() {
-
+                .subscribe(new CustomResponseSingleObserver<List<Note>>() {
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void error(Throwable t) {
                         mLoading = false;
-                        Timber.e(e);
+                        Timber.e(t);
                         mSwipeRefreshLayout.setRefreshing(false);
                         Snackbar.make(mRoot, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
                                 .show();
                     }
 
                     @Override
-                    protected void onResponseSuccess(List<Note> notes) {
+                    public void responseSuccess(List<Note> notes) {
                         mLoading = false;
                         mSwipeRefreshLayout.setRefreshing(false);
                         mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
@@ -340,17 +339,17 @@ public class IssueActivity extends BaseActivity {
                 .compose(this.<Response<List<Note>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new ResponseSingleObserver<List<Note>>() {
+                .subscribe(new CustomResponseSingleObserver<List<Note>>() {
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void error(Throwable t) {
                         mLoading = false;
-                        Timber.e(e);
+                        Timber.e(t);
                         mIssueDetailsAdapter.setLoading(false);
                     }
 
                     @Override
-                    protected void onResponseSuccess(List<Note> notes) {
+                    public void responseSuccess(List<Note> notes) {
                         mLoading = false;
                         mIssueDetailsAdapter.setLoading(false);
                         mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
@@ -376,18 +375,18 @@ public class IssueActivity extends BaseActivity {
                 .compose(this.<Note>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new FocusedSingleObserver<Note>() {
+                .subscribe(new CustomSingleObserver<Note>() {
 
                     @Override
-                    public void onError(Throwable e) {
-                        Timber.e(e);
+                    public void error(Throwable t) {
+                        Timber.e(t);
                         mProgress.setVisibility(View.GONE);
                         Snackbar.make(mRoot, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
                                 .show();
                     }
 
                     @Override
-                    public void onSuccess(Note note) {
+                    public void success(Note note) {
                         mProgress.setVisibility(View.GONE);
                         mIssueDetailsAdapter.addNote(note);
                         mNotesRecyclerView.smoothScrollToPosition(IssueDetailsAdapter.getHeaderCount());
@@ -409,18 +408,18 @@ public class IssueActivity extends BaseActivity {
                 .compose(this.<Issue>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new FocusedSingleObserver<Issue>() {
+                .subscribe(new CustomSingleObserver<Issue>() {
 
                     @Override
-                    public void onError(Throwable e) {
-                        Timber.e(e);
+                    public void error(Throwable t) {
+                        Timber.e(t);
                         mProgress.setVisibility(View.GONE);
                         Snackbar.make(mRoot, getString(R.string.error_changing_issue), Snackbar.LENGTH_SHORT)
                                 .show();
                     }
 
                     @Override
-                    public void onSuccess(Issue issue) {
+                    public void success(Issue issue) {
                         mProgress.setVisibility(View.GONE);
                         mIssue = issue;
                         App.bus().post(new IssueChangedEvent(mIssue));

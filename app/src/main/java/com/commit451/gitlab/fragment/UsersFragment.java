@@ -17,9 +17,9 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.UsersAdapter;
 import com.commit451.gitlab.model.api.UserBasic;
 import com.commit451.gitlab.navigation.Navigator;
+import com.commit451.gitlab.rx.CustomResponseSingleObserver;
 import com.commit451.gitlab.util.LinkHeaderParser;
 import com.commit451.gitlab.viewHolder.UserViewHolder;
-import com.commit451.reptar.retrofit.ResponseSingleObserver;
 
 import java.util.List;
 
@@ -142,10 +142,10 @@ public class UsersFragment extends ButterKnifeFragment {
                 .compose(this.<Response<List<UserBasic>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new ResponseSingleObserver<List<UserBasic>>() {
+                .subscribe(new CustomResponseSingleObserver<List<UserBasic>>() {
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void error(Throwable e) {
                         Timber.e(e);
                         mLoading = false;
                         mSwipeRefreshLayout.setRefreshing(false);
@@ -155,7 +155,7 @@ public class UsersFragment extends ButterKnifeFragment {
                     }
 
                     @Override
-                    protected void onResponseSuccess(List<UserBasic> users) {
+                    public void responseSuccess(List<UserBasic> users) {
                         mSwipeRefreshLayout.setRefreshing(false);
                         mLoading = false;
                         if (users.isEmpty()) {
@@ -176,10 +176,10 @@ public class UsersFragment extends ButterKnifeFragment {
                 .compose(this.<Response<List<UserBasic>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new ResponseSingleObserver<List<UserBasic>>() {
+                .subscribe(new CustomResponseSingleObserver<List<UserBasic>>() {
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void error(Throwable e) {
                         Timber.e(e);
                         mLoading = false;
                         mSwipeRefreshLayout.setRefreshing(false);
@@ -187,7 +187,7 @@ public class UsersFragment extends ButterKnifeFragment {
                     }
 
                     @Override
-                    protected void onResponseSuccess(List<UserBasic> users) {
+                    public void responseSuccess(List<UserBasic> users) {
                         mLoading = false;
                         mSwipeRefreshLayout.setRefreshing(false);
                         mUsersAdapter.addData(users);

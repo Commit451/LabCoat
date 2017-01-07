@@ -21,12 +21,11 @@ import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryFile;
 import com.commit451.gitlab.model.api.RepositoryTreeObject;
 import com.commit451.gitlab.navigation.Navigator;
+import com.commit451.gitlab.rx.CustomSingleObserver;
 import com.commit451.gitlab.rx.DecodeObservableFactory;
 import com.commit451.gitlab.util.BypassImageGetterFactory;
 import com.commit451.gitlab.util.InternalLinkMovementMethod;
-import com.commit451.reptar.FocusedSingleObserver;
 import com.commit451.reptar.Result;
-import com.commit451.reptar.retrofit.ResponseSingleObserver;
 import com.jakewharton.retrofit2.adapter.rxjava2.HttpException;
 import com.vdurmont.emoji.EmojiParser;
 
@@ -101,16 +100,16 @@ public class ProjectFragment extends ButterKnifeFragment {
                                     .compose(ProjectFragment.this.<String>bindToLifecycle())
                                     .subscribeOn(Schedulers.io())
                                     .observeOn(AndroidSchedulers.mainThread())
-                                    .subscribe(new FocusedSingleObserver<String>() {
+                                    .subscribe(new CustomSingleObserver<String>() {
 
                                         @Override
-                                        public void onError(Throwable e) {
+                                        public void error(Throwable t) {
                                             Snackbar.make(mSwipeRefreshLayout, R.string.fork_failed, Snackbar.LENGTH_SHORT)
                                                     .show();
                                         }
 
                                         @Override
-                                        public void onSuccess(String value) {
+                                        public void success(String s) {
                                             Snackbar.make(mSwipeRefreshLayout, R.string.project_forked, Snackbar.LENGTH_SHORT)
                                                     .show();
                                         }
@@ -128,12 +127,12 @@ public class ProjectFragment extends ButterKnifeFragment {
                     .compose(this.<Response<Project>>bindToLifecycle())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new ResponseSingleObserver<Project>() {
+                    .subscribe(new CustomSingleObserver<Response<Project>>() {
 
                         @Override
-                        public void onError(Throwable e) {
-                            if (e instanceof HttpException) {
-                                if (((HttpException) e).response().code() == 304) {
+                        public void error(Throwable t) {
+                            if (t instanceof HttpException) {
+                                if (((HttpException) t).response().code() == 304) {
                                     Snackbar.make(mSwipeRefreshLayout, R.string.project_already_starred, Snackbar.LENGTH_SHORT)
                                             .setAction(R.string.project_unstar, new View.OnClickListener() {
                                                 @Override
@@ -150,7 +149,7 @@ public class ProjectFragment extends ButterKnifeFragment {
                         }
 
                         @Override
-                        protected void onResponseSuccess(Project project) {
+                        public void success(Response<Project> projectResponse) {
                             Snackbar.make(mSwipeRefreshLayout, R.string.project_starred, Snackbar.LENGTH_SHORT)
                                     .show();
                         }
@@ -238,8 +237,8 @@ public class ProjectFragment extends ButterKnifeFragment {
                 .flatMap(new Function<Result<RepositoryTreeObject>, SingleSource<Result<RepositoryFile>>>() {
                     @Override
                     public SingleSource<Result<RepositoryFile>> apply(Result<RepositoryTreeObject> repositoryTreeObjectResult) throws Exception {
-                        if (repositoryTreeObjectResult.hasValue()) {
-                            RepositoryFile repositoryFile = App.get().getGitLab().getFile(mProject.getId(), repositoryTreeObjectResult.value().getName(), mBranchName)
+                        if (repositoryTreeObjectResult.isPresent()) {
+                            RepositoryFile repositoryFile = App.get().getGitLab().getFile(mProject.getId(), repositoryTreeObjectResult.get().getName(), mBranchName)
                                     .blockingGet();
                             result.repositoryFile = repositoryFile;
                             return Single.just(new Result<>(repositoryFile));
@@ -250,8 +249,8 @@ public class ProjectFragment extends ButterKnifeFragment {
                 .flatMap(new Function<Result<RepositoryFile>, SingleSource<ReadmeResult>>() {
                     @Override
                     public SingleSource<ReadmeResult> apply(Result<RepositoryFile> repositoryFileResult) throws Exception {
-                        if (repositoryFileResult.hasValue()) {
-                            result.bytes = DecodeObservableFactory.newDecode(repositoryFileResult.value().getContent())
+                        if (repositoryFileResult.isPresent()) {
+                            result.bytes = DecodeObservableFactory.newDecode(repositoryFileResult.get().getContent())
                                     .blockingGet();
                             return Single.just(result);
                         }
@@ -261,17 +260,17 @@ public class ProjectFragment extends ButterKnifeFragment {
                 .compose(this.<ReadmeResult>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new FocusedSingleObserver<ReadmeResult>() {
+                .subscribe(new CustomSingleObserver<ReadmeResult>() {
 
                     @Override
-                    public void onError(Throwable e) {
-                        Timber.e(e);
+                    public void error(Throwable t) {
+                        Timber.e(t);
                         mSwipeRefreshLayout.setRefreshing(false);
                         mOverviewVew.setText(R.string.connection_error_readme);
                     }
 
                     @Override
-                    public void onSuccess(ReadmeResult result) {
+                    public void success(ReadmeResult readmeResult) {
                         mSwipeRefreshLayout.setRefreshing(false);
                         if (result.repositoryFile != null && result.bytes != null) {
                             String text = new String(result.bytes);
@@ -335,16 +334,16 @@ public class ProjectFragment extends ButterKnifeFragment {
                 .compose(this.<Project>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new FocusedSingleObserver<Project>() {
+                .subscribe(new CustomSingleObserver<Project>() {
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void error(Throwable t) {
                         Snackbar.make(mSwipeRefreshLayout, R.string.unstar_failed, Snackbar.LENGTH_SHORT)
                                 .show();
                     }
 
                     @Override
-                    public void onSuccess(Project value) {
+                    public void success(Project project) {
                         Snackbar.make(mSwipeRefreshLayout, com.commit451.gitlab.R.string.project_unstarred, Snackbar.LENGTH_SHORT)
                                 .show();
                     }

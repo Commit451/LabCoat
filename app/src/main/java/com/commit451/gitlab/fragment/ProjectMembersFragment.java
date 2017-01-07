@@ -22,10 +22,10 @@ import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Member;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.navigation.Navigator;
+import com.commit451.gitlab.rx.CustomResponseSingleObserver;
+import com.commit451.gitlab.rx.CustomSingleObserver;
 import com.commit451.gitlab.util.LinkHeaderParser;
 import com.commit451.gitlab.viewHolder.ProjectMemberViewHolder;
-import com.commit451.reptar.FocusedSingleObserver;
-import com.commit451.reptar.retrofit.ResponseSingleObserver;
 
 import org.greenrobot.eventbus.Subscribe;
 
@@ -92,17 +92,17 @@ public class ProjectMembersFragment extends ButterKnifeFragment {
                     .compose(ProjectMembersFragment.this.<String>bindToLifecycle())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new FocusedSingleObserver<String>() {
+                    .subscribe(new CustomSingleObserver<String>() {
 
                         @Override
-                        public void onError(Throwable e) {
-                            Timber.e(e);
+                        public void error(Throwable t) {
+                            Timber.e(t);
                             Snackbar.make(mRoot, R.string.failed_to_remove_member, Snackbar.LENGTH_SHORT)
                                     .show();
                         }
 
                         @Override
-                        public void onSuccess(String value) {
+                        public void success(String s) {
                             mAdapter.removeMember(mMember);
                         }
                     });
@@ -222,12 +222,12 @@ public class ProjectMembersFragment extends ButterKnifeFragment {
                 .compose(this.<Response<List<Member>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new ResponseSingleObserver<List<Member>>() {
+                .subscribe(new CustomResponseSingleObserver<List<Member>>() {
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void error(Throwable t) {
                         mLoading = false;
-                        Timber.e(e);
+                        Timber.e(t);
                         mSwipeRefreshLayout.setRefreshing(false);
                         mMessageView.setVisibility(View.VISIBLE);
                         mMessageView.setText(R.string.connection_error_users);
@@ -237,7 +237,7 @@ public class ProjectMembersFragment extends ButterKnifeFragment {
                     }
 
                     @Override
-                    protected void onResponseSuccess(List<Member> members) {
+                    public void responseSuccess(List<Member> members) {
                         mLoading = false;
                         mSwipeRefreshLayout.setRefreshing(false);
                         if (!members.isEmpty()) {

@@ -19,8 +19,8 @@ import com.commit451.gitlab.api.GitLab;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.navigation.Navigator;
+import com.commit451.gitlab.rx.CustomResponseSingleObserver;
 import com.commit451.gitlab.util.LinkHeaderParser;
-import com.commit451.reptar.retrofit.ResponseSingleObserver;
 
 import org.parceler.Parcels;
 
@@ -195,10 +195,10 @@ public class ProjectsFragment extends ButterKnifeFragment {
         observable.compose(this.<Response<List<Project>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new ResponseSingleObserver<List<Project>>() {
+                .subscribe(new CustomResponseSingleObserver<List<Project>>() {
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void error(Throwable e) {
                         mLoading = false;
                         Timber.e(e);
                         mSwipeRefreshLayout.setRefreshing(false);
@@ -209,7 +209,7 @@ public class ProjectsFragment extends ButterKnifeFragment {
                     }
 
                     @Override
-                    protected void onResponseSuccess(List<Project> projects) {
+                    public void responseSuccess(List<Project> projects) {
                         mLoading = false;
                         mSwipeRefreshLayout.setRefreshing(false);
                         if (projects.isEmpty()) {
@@ -238,17 +238,17 @@ public class ProjectsFragment extends ButterKnifeFragment {
                 .compose(this.<Response<List<Project>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new ResponseSingleObserver<List<Project>>() {
+                .subscribe(new CustomResponseSingleObserver<List<Project>>() {
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void error(Throwable e) {
                         mLoading = false;
                         Timber.e(e);
                         mProjectsAdapter.setLoading(false);
                     }
 
                     @Override
-                    protected void onResponseSuccess(List<Project> projects) {
+                    public void responseSuccess(List<Project> projects) {
                         mLoading = false;
                         mProjectsAdapter.setLoading(false);
                         mProjectsAdapter.addData(projects);

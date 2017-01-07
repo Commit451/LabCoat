@@ -17,7 +17,7 @@ import com.commit451.gitlab.adapter.DiffAdapter;
 import com.commit451.gitlab.model.api.Diff;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryCommit;
-import com.commit451.reptar.FocusedSingleObserver;
+import com.commit451.gitlab.rx.CustomSingleObserver;
 
 import org.parceler.Parcels;
 
@@ -104,18 +104,18 @@ public class DiffActivity extends BaseActivity {
                 .compose(this.<List<Diff>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new FocusedSingleObserver<List<Diff>>() {
+                .subscribe(new CustomSingleObserver<List<Diff>>() {
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void error(Throwable t) {
                         mSwipeRefreshLayout.setRefreshing(false);
-                        Timber.e(e);
+                        Timber.e(t);
                         mMessageText.setText(R.string.connection_error);
                         mMessageText.setVisibility(View.VISIBLE);
                     }
 
                     @Override
-                    public void onSuccess(List<Diff> diffs) {
+                    public void success(List<Diff> diffs) {
                         mSwipeRefreshLayout.setRefreshing(false);
                         mDiffAdapter.setData(diffs);
                     }

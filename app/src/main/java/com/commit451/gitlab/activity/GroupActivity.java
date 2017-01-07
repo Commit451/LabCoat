@@ -23,8 +23,8 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.GroupPagerAdapter;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.model.api.GroupDetail;
+import com.commit451.gitlab.rx.CustomSingleObserver;
 import com.commit451.gitlab.transformation.PaletteTransformation;
-import com.commit451.reptar.FocusedSingleObserver;
 
 import org.parceler.Parcels;
 
@@ -95,17 +95,17 @@ public class GroupActivity extends BaseActivity {
                     .compose(this.<GroupDetail>bindToLifecycle())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new FocusedSingleObserver<GroupDetail>() {
+                    .subscribe(new CustomSingleObserver<GroupDetail>() {
 
                         @Override
-                        public void onError(Throwable e) {
-                            Timber.e(e);
+                        public void error(Throwable t) {
+                            Timber.e(t);
                             mProgress.setVisibility(View.GONE);
                             showError();
                         }
 
                         @Override
-                        public void onSuccess(GroupDetail groupDetail) {
+                        public void success(GroupDetail groupDetail) {
                             mProgress.setVisibility(View.GONE);
                             bind(groupDetail);
                         }

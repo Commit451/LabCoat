@@ -43,6 +43,7 @@ import com.commit451.gitlab.model.api.Message;
 import com.commit451.gitlab.model.api.UserFull;
 import com.commit451.gitlab.model.api.UserLogin;
 import com.commit451.gitlab.navigation.Navigator;
+import com.commit451.gitlab.rx.CustomResponseSingleObserver;
 import com.commit451.gitlab.ssl.CustomHostnameVerifier;
 import com.commit451.gitlab.ssl.CustomKeyManager;
 import com.commit451.gitlab.ssl.X509CertificateException;
@@ -310,10 +311,10 @@ public class LoginActivity extends BaseActivity {
                 .compose(this.<Response<UserLogin>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new ResponseSingleObserver<UserLogin>() {
+                .subscribe(new CustomResponseSingleObserver<UserLogin>() {
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void error(Throwable e) {
                         Timber.e(e);
                         if (e instanceof HttpException) {
                             handleConnectionResponse(response());
@@ -323,7 +324,7 @@ public class LoginActivity extends BaseActivity {
                     }
 
                     @Override
-                    protected void onResponseSuccess(UserLogin userLogin) {
+                    public void responseSuccess(UserLogin userLogin) {
                         mAccount.setPrivateToken(userLogin.getPrivateToken());
                         loadUser();
                     }
@@ -428,10 +429,10 @@ public class LoginActivity extends BaseActivity {
                 .compose(this.<Response<UserFull>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new ResponseSingleObserver<UserFull>() {
+                .subscribe(new CustomResponseSingleObserver<UserFull>() {
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void error(Throwable e) {
                         Timber.e(e);
                         if (e instanceof HttpException) {
                             handleConnectionResponse(response());
@@ -441,7 +442,7 @@ public class LoginActivity extends BaseActivity {
                     }
 
                     @Override
-                    protected void onResponseSuccess(UserFull userFull) {
+                    public void responseSuccess(UserFull userFull) {
                         mProgress.setVisibility(View.GONE);
                         mAccount.setUser(userFull);
                         mAccount.setLastUsed(new Date());

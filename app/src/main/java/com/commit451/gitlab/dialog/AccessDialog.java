@@ -11,7 +11,7 @@ import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.model.api.Member;
-import com.commit451.reptar.FocusedSingleObserver;
+import com.commit451.gitlab.rx.CustomSingleObserver;
 
 import java.util.Arrays;
 
@@ -121,16 +121,16 @@ public class AccessDialog extends MaterialDialog {
         observable
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new FocusedSingleObserver<Member>() {
+                .subscribe(new CustomSingleObserver<Member>() {
 
                     @Override
-                    public void onError(Throwable e) {
-                        Timber.e(e);
+                    public void error(Throwable t) {
+                        Timber.e(t);
                         AccessDialog.this.onError();
                     }
 
                     @Override
-                    public void onSuccess(Member member) {
+                    public void success(Member member) {
                         if (mAccessChangedListener != null) {
                             mAccessChangedListener.onAccessChanged(mMember, mRoleNames[getSelectedIndex()]);
                         }

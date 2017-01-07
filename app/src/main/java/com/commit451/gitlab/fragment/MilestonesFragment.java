@@ -25,8 +25,8 @@ import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Milestone;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.navigation.Navigator;
+import com.commit451.gitlab.rx.CustomResponseSingleObserver;
 import com.commit451.gitlab.util.LinkHeaderParser;
-import com.commit451.reptar.retrofit.ResponseSingleObserver;
 
 import org.greenrobot.eventbus.Subscribe;
 
@@ -182,10 +182,10 @@ public class MilestonesFragment extends ButterKnifeFragment {
                 .compose(this.<Response<List<Milestone>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new ResponseSingleObserver<List<Milestone>>() {
+                .subscribe(new CustomResponseSingleObserver<List<Milestone>>() {
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void error(Throwable e) {
                         mLoading = false;
                         Timber.e(e);
                         mSwipeRefreshLayout.setRefreshing(false);
@@ -196,7 +196,7 @@ public class MilestonesFragment extends ButterKnifeFragment {
                     }
 
                     @Override
-                    protected void onResponseSuccess(List<Milestone> milestones) {
+                    public void responseSuccess(List<Milestone> milestones) {
                         mLoading = false;
                         mSwipeRefreshLayout.setRefreshing(false);
                         if (milestones.isEmpty()) {
@@ -227,17 +227,17 @@ public class MilestonesFragment extends ButterKnifeFragment {
                 .compose(this.<Response<List<Milestone>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new ResponseSingleObserver<List<Milestone>>() {
+                .subscribe(new CustomResponseSingleObserver<List<Milestone>>() {
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void error(Throwable e) {
                         Timber.e(e);
                         mMilestoneAdapter.setLoading(false);
                         mLoading = false;
                     }
 
                     @Override
-                    protected void onResponseSuccess(List<Milestone> milestones) {
+                    public void responseSuccess(List<Milestone> milestones) {
                         mLoading = false;
                         mMilestoneAdapter.setLoading(false);
                         mNextPageUrl = LinkHeaderParser.parse(response()).getNext();

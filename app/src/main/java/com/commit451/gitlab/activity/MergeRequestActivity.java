@@ -17,7 +17,7 @@ import com.commit451.gitlab.adapter.MergeRequestSectionsPagerAdapter;
 import com.commit451.gitlab.event.MergeRequestChangedEvent;
 import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.model.api.Project;
-import com.commit451.reptar.retrofit.ResponseSingleObserver;
+import com.commit451.gitlab.rx.CustomResponseSingleObserver;
 import com.jakewharton.retrofit2.adapter.rxjava2.HttpException;
 
 import org.parceler.Parcels;
@@ -68,10 +68,10 @@ public class MergeRequestActivity extends BaseActivity {
                             .compose(MergeRequestActivity.this.<Response<MergeRequest>>bindToLifecycle())
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(new ResponseSingleObserver<MergeRequest>() {
+                            .subscribe(new CustomResponseSingleObserver<MergeRequest>() {
 
                                 @Override
-                                public void onError(Throwable e) {
+                                public void error(Throwable e) {
                                     Timber.e(e);
                                     mProgress.setVisibility(View.GONE);
                                     String message = getString(R.string.unable_to_merge);
@@ -86,7 +86,7 @@ public class MergeRequestActivity extends BaseActivity {
                                 }
 
                                 @Override
-                                protected void onResponseSuccess(MergeRequest mergeRequest) {
+                                public void responseSuccess(MergeRequest mergeRequest) {
                                     mProgress.setVisibility(View.GONE);
                                     Snackbar.make(mRoot, R.string.merge_request_accepted, Snackbar.LENGTH_LONG)
                                             .show();

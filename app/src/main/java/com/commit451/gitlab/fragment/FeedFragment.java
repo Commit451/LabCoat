@@ -17,7 +17,7 @@ import com.commit451.gitlab.adapter.FeedAdapter;
 import com.commit451.gitlab.model.rss.Entry;
 import com.commit451.gitlab.model.rss.Feed;
 import com.commit451.gitlab.navigation.Navigator;
-import com.commit451.reptar.FocusedSingleObserver;
+import com.commit451.gitlab.rx.CustomSingleObserver;
 import com.novoda.simplechromecustomtabs.SimpleChromeCustomTabs;
 
 import butterknife.BindView;
@@ -125,9 +125,9 @@ public class FeedFragment extends ButterKnifeFragment {
                 .compose(this.<Feed>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new FocusedSingleObserver<Feed>() {
+                .subscribe(new CustomSingleObserver<Feed>() {
                     @Override
-                    public void onSuccess(Feed feed) {
+                    public void success(Feed feed) {
                         mSwipeRefreshLayout.setRefreshing(false);
                         if (feed.getEntries() != null && !feed.getEntries().isEmpty()) {
                             mMessageView.setVisibility(View.GONE);
@@ -140,7 +140,7 @@ public class FeedFragment extends ButterKnifeFragment {
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void error(Throwable e) {
                         Timber.e(e);
                         mSwipeRefreshLayout.setRefreshing(false);
                         mMessageView.setVisibility(View.VISIBLE);

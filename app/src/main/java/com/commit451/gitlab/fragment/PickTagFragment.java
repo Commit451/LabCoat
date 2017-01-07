@@ -17,7 +17,7 @@ import com.commit451.gitlab.activity.PickBranchOrTagActivity;
 import com.commit451.gitlab.adapter.TagsAdapter;
 import com.commit451.gitlab.model.Ref;
 import com.commit451.gitlab.model.api.Tag;
-import com.commit451.reptar.FocusedSingleObserver;
+import com.commit451.gitlab.rx.CustomSingleObserver;
 
 import org.parceler.Parcels;
 
@@ -101,17 +101,17 @@ public class PickTagFragment extends ButterKnifeFragment {
                 .compose(this.<List<Tag>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new FocusedSingleObserver<List<Tag>>() {
+                .subscribe(new CustomSingleObserver<List<Tag>>() {
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void error(Throwable e) {
                         Timber.e(e);
                         mProgress.setVisibility(View.GONE);
                         mMessageView.setVisibility(View.VISIBLE);
                     }
 
                     @Override
-                    public void onSuccess(List<Tag> tags) {
+                    public void success(List<Tag> tags) {
                         mProgress.setVisibility(View.GONE);
                         mTagsAdapter.setEntries(tags);
                     }

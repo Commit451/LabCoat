@@ -24,8 +24,8 @@ import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryTreeObject;
 import com.commit451.gitlab.navigation.Navigator;
+import com.commit451.gitlab.rx.CustomSingleObserver;
 import com.commit451.gitlab.util.IntentUtil;
-import com.commit451.reptar.FocusedSingleObserver;
 
 import org.greenrobot.eventbus.Subscribe;
 
@@ -161,10 +161,10 @@ public class FilesFragment extends ButterKnifeFragment {
                 .compose(this.<List<RepositoryTreeObject>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new FocusedSingleObserver<List<RepositoryTreeObject>>() {
+                .subscribe(new CustomSingleObserver<List<RepositoryTreeObject>>() {
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void error(Throwable e) {
                         Timber.e(e);
                         mSwipeRefreshLayout.setRefreshing(false);
                         mMessageView.setVisibility(View.VISIBLE);
@@ -175,7 +175,7 @@ public class FilesFragment extends ButterKnifeFragment {
                     }
 
                     @Override
-                    public void onSuccess(List<RepositoryTreeObject> repositoryTreeObjects) {
+                    public void success(List<RepositoryTreeObject> repositoryTreeObjects) {
                         mSwipeRefreshLayout.setRefreshing(false);
                         if (!repositoryTreeObjects.isEmpty()) {
                             mMessageView.setVisibility(View.GONE);

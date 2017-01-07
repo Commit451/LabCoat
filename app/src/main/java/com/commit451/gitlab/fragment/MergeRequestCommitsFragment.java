@@ -19,7 +19,7 @@ import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryCommit;
 import com.commit451.gitlab.navigation.Navigator;
-import com.commit451.reptar.FocusedSingleObserver;
+import com.commit451.gitlab.rx.CustomSingleObserver;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.parceler.Parcels;
@@ -143,10 +143,10 @@ public class MergeRequestCommitsFragment extends ButterKnifeFragment {
                 .compose(this.<List<RepositoryCommit>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new FocusedSingleObserver<List<RepositoryCommit>>() {
+                .subscribe(new CustomSingleObserver<List<RepositoryCommit>>() {
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void error(Throwable e) {
                         mLoading = false;
                         Timber.e(e);
                         mSwipeRefreshLayout.setRefreshing(false);
@@ -157,7 +157,7 @@ public class MergeRequestCommitsFragment extends ButterKnifeFragment {
                     }
 
                     @Override
-                    public void onSuccess(List<RepositoryCommit> repositoryCommits) {
+                    public void success(List<RepositoryCommit> repositoryCommits) {
                         mLoading = false;
                         mSwipeRefreshLayout.setRefreshing(false);
                         if (!repositoryCommits.isEmpty()) {

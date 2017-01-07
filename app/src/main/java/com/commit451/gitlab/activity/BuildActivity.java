@@ -23,9 +23,9 @@ import com.commit451.gitlab.event.BuildChangedEvent;
 import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.model.api.Build;
 import com.commit451.gitlab.model.api.Project;
+import com.commit451.gitlab.rx.CustomSingleObserver;
 import com.commit451.gitlab.util.BuildUtil;
 import com.commit451.gitlab.util.DownloadUtil;
-import com.commit451.reptar.FocusedSingleObserver;
 
 import org.parceler.Parcels;
 
@@ -78,18 +78,18 @@ public class BuildActivity extends BaseActivity {
                             .compose(BuildActivity.this.<Build>bindToLifecycle())
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(new FocusedSingleObserver<Build>() {
+                            .subscribe(new CustomSingleObserver<Build>() {
 
                                 @Override
-                                public void onError(Throwable e) {
-                                    Timber.e(e);
+                                public void error(Throwable t) {
+                                    Timber.e(t);
                                     mProgress.setVisibility(View.GONE);
                                     Snackbar.make(mRoot, R.string.unable_to_retry_build, Snackbar.LENGTH_LONG)
                                             .show();
                                 }
 
                                 @Override
-                                public void onSuccess(Build build) {
+                                public void success(Build build) {
                                     mProgress.setVisibility(View.GONE);
                                     Snackbar.make(mRoot, R.string.build_started, Snackbar.LENGTH_LONG)
                                             .show();
@@ -103,18 +103,18 @@ public class BuildActivity extends BaseActivity {
                             .compose(BuildActivity.this.<Build>bindToLifecycle())
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(new FocusedSingleObserver<Build>() {
+                            .subscribe(new CustomSingleObserver<Build>() {
 
                                 @Override
-                                public void onError(Throwable e) {
-                                    Timber.e(e);
+                                public void error(Throwable t) {
+                                    Timber.e(t);
                                     mProgress.setVisibility(View.GONE);
                                     Snackbar.make(mRoot, R.string.unable_to_erase_build, Snackbar.LENGTH_LONG)
                                             .show();
                                 }
 
                                 @Override
-                                public void onSuccess(Build build) {
+                                public void success(Build build) {
                                     mProgress.setVisibility(View.GONE);
                                     Snackbar.make(mRoot, R.string.build_erased, Snackbar.LENGTH_LONG)
                                             .show();
@@ -128,18 +128,18 @@ public class BuildActivity extends BaseActivity {
                             .compose(BuildActivity.this.<Build>bindToLifecycle())
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(new FocusedSingleObserver<Build>() {
+                            .subscribe(new CustomSingleObserver<Build>() {
 
                                 @Override
-                                public void onError(Throwable e) {
-                                    Timber.e(e);
+                                public void error(Throwable t) {
+                                    Timber.e(t);
                                     mProgress.setVisibility(View.GONE);
                                     Snackbar.make(mRoot, R.string.unable_to_cancel_build, Snackbar.LENGTH_LONG)
                                             .show();
                                 }
 
                                 @Override
-                                public void onSuccess(Build build) {
+                                public void success(Build build) {
                                     mProgress.setVisibility(View.GONE);
                                     Snackbar.make(mRoot, R.string.build_canceled, Snackbar.LENGTH_LONG)
                                             .show();

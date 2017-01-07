@@ -24,8 +24,8 @@ import android.webkit.WebView;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.api.RepositoryFile;
+import com.commit451.gitlab.rx.CustomSingleObserver;
 import com.commit451.gitlab.rx.DecodeObservableFactory;
-import com.commit451.reptar.FocusedSingleObserver;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -127,18 +127,18 @@ public class FileActivity extends BaseActivity {
                 .compose(this.<RepositoryFile>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new FocusedSingleObserver<RepositoryFile>() {
+                .subscribe(new CustomSingleObserver<RepositoryFile>() {
 
                     @Override
-                    public void onError(Throwable e) {
-                        Timber.e(e);
+                    public void error(Throwable t) {
+                        Timber.e(t);
                         mProgressView.setVisibility(View.GONE);
                         Snackbar.make(mRoot, R.string.file_load_error, Snackbar.LENGTH_SHORT)
                                 .show();
                     }
 
                     @Override
-                    public void onSuccess(RepositoryFile repositoryFile) {
+                    public void success(RepositoryFile repositoryFile) {
                         mProgressView.setVisibility(View.GONE);
                         bindFile(repositoryFile);
                     }
@@ -162,16 +162,16 @@ public class FileActivity extends BaseActivity {
                 .compose(this.<byte[]>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new FocusedSingleObserver<byte[]>() {
+                .subscribe(new CustomSingleObserver<byte[]>() {
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void error(Throwable t) {
                         Snackbar.make(mRoot, R.string.failed_to_load, Snackbar.LENGTH_SHORT)
                                 .show();
                     }
 
                     @Override
-                    public void onSuccess(byte[] bytes) {
+                    public void success(byte[] bytes) {
                         bindBlob(bytes);
                     }
                 });

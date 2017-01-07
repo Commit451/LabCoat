@@ -16,8 +16,8 @@ import com.commit451.gitlab.model.api.Build;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryCommit;
 import com.commit451.gitlab.model.api.Runner;
+import com.commit451.gitlab.rx.CustomSingleObserver;
 import com.commit451.gitlab.util.DateUtil;
-import com.commit451.reptar.FocusedSingleObserver;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.parceler.Parcels;
@@ -104,17 +104,17 @@ public class BuildDescriptionFragment extends ButterKnifeFragment {
                 .compose(this.<Build>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new FocusedSingleObserver<Build>() {
+                .subscribe(new CustomSingleObserver<Build>() {
 
                     @Override
-                    public void onError(Throwable e) {
-                        Timber.e(e);
+                    public void error(Throwable t) {
+                        Timber.e(t);
                         Snackbar.make(mRoot, R.string.unable_to_load_build, Snackbar.LENGTH_LONG)
                                 .show();
                     }
 
                     @Override
-                    public void onSuccess(Build build) {
+                    public void success(Build build) {
                         mSwipeRefreshLayout.setRefreshing(false);
                         mBuild = build;
                         bindBuild(build);

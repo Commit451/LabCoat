@@ -24,8 +24,8 @@ import com.commit451.gitlab.fragment.BaseFragment;
 import com.commit451.gitlab.model.Ref;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.navigation.Navigator;
+import com.commit451.gitlab.rx.CustomSingleObserver;
 import com.commit451.gitlab.util.IntentUtil;
-import com.commit451.reptar.FocusedSingleObserver;
 
 import org.parceler.Parcels;
 
@@ -187,11 +187,11 @@ public class ProjectActivity extends BaseActivity {
         observable.compose(this.<Project>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new FocusedSingleObserver<Project>() {
+                .subscribe(new CustomSingleObserver<Project>() {
 
                     @Override
-                    public void onError(Throwable e) {
-                        Timber.e(e);
+                    public void error(Throwable t) {
+                        Timber.e(t);
                         mProgress.animate()
                                 .alpha(0.0f)
                                 .withEndAction(new HideRunnable(mProgress));
@@ -200,7 +200,7 @@ public class ProjectActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void onSuccess(Project project) {
+                    public void success(Project project) {
                         mProgress.animate()
                                 .alpha(0.0f)
                                 .withEndAction(new HideRunnable(mProgress));

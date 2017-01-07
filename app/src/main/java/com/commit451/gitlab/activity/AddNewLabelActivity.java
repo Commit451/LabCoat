@@ -21,9 +21,9 @@ import com.afollestad.materialdialogs.color.ColorChooserDialog;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.api.Label;
+import com.commit451.gitlab.rx.CustomResponseSingleObserver;
 import com.commit451.gitlab.util.ColorUtil;
 import com.commit451.gitlab.util.Validator;
-import com.commit451.reptar.retrofit.ResponseSingleObserver;
 import com.jakewharton.retrofit2.adapter.rxjava2.HttpException;
 
 import org.parceler.Parcels;
@@ -136,10 +136,10 @@ public class AddNewLabelActivity extends BaseActivity implements ColorChooserDia
                     .compose(this.<Response<Label>>bindToLifecycle())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new ResponseSingleObserver<Label>() {
+                    .subscribe(new CustomResponseSingleObserver<Label>() {
 
                         @Override
-                        public void onError(Throwable e) {
+                        public void error(Throwable e) {
                             Timber.e(e);
                             mProgress.setVisibility(View.GONE);
                             if (e instanceof HttpException && ((HttpException) e).response().code() == 409) {
@@ -152,7 +152,7 @@ public class AddNewLabelActivity extends BaseActivity implements ColorChooserDia
                         }
 
                         @Override
-                        protected void onResponseSuccess(Label label) {
+                        public void responseSuccess(Label label) {
                             Intent data = new Intent();
                             data.putExtra(KEY_NEW_LABEL, Parcels.wrap(label));
                             setResult(RESULT_OK, data);

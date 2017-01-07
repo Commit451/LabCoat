@@ -20,10 +20,10 @@ import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.api.Contributor;
 import com.commit451.gitlab.navigation.Navigator;
+import com.commit451.gitlab.rx.CustomSingleObserver;
 import com.commit451.gitlab.util.ImageUtil;
 import com.commit451.gitlab.util.IntentUtil;
 import com.commit451.gitlab.view.PhysicsFlowLayout;
-import com.commit451.reptar.FocusedSingleObserver;
 import com.jawnnypoo.physicslayout.Physics;
 import com.jawnnypoo.physicslayout.PhysicsConfig;
 import com.wefika.flowlayout.FlowLayout;
@@ -113,18 +113,18 @@ public class AboutActivity extends BaseActivity {
                 .compose(this.<List<Contributor>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new FocusedSingleObserver<List<Contributor>>() {
+                .subscribe(new CustomSingleObserver<List<Contributor>>() {
 
                     @Override
-                    public void onError(Throwable e) {
-                        Timber.e(e);
+                    public void error(Throwable t) {
+                        Timber.e(t);
                         mProgress.setVisibility(View.GONE);
                         Snackbar.make(mRoot, R.string.failed_to_load_contributors, Snackbar.LENGTH_SHORT)
                                 .show();
                     }
 
                     @Override
-                    public void onSuccess(List<Contributor> contributors) {
+                    public void success(List<Contributor> contributors) {
                         mProgress.setVisibility(View.GONE);
                         addContributors(Contributor.groupContributors(contributors));
                     }

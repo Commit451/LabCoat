@@ -27,11 +27,11 @@ import com.commit451.gitlab.event.MemberAddedEvent;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.model.api.Member;
 import com.commit451.gitlab.model.api.UserBasic;
+import com.commit451.gitlab.rx.CustomResponseSingleObserver;
 import com.commit451.gitlab.util.LinkHeaderParser;
 import com.commit451.gitlab.viewHolder.UserViewHolder;
-import com.commit451.reptar.FocusedSingleObserver;
-import com.commit451.reptar.retrofit.ResponseSingleObserver;
 import com.commit451.teleprinter.Teleprinter;
+import com.jakewharton.retrofit2.adapter.rxjava2.HttpException;
 
 import org.parceler.Parcels;
 
@@ -214,11 +214,11 @@ public class AddUserActivity extends MorphActivity {
                 .compose(this.<Response<List<UserBasic>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new ResponseSingleObserver<List<UserBasic>>() {
+                .subscribe(new CustomResponseSingleObserver<List<UserBasic>>() {
 
                     @Override
-                    public void onError(Throwable e) {
-                        Timber.e(e);
+                    public void error(Throwable t) {
+                        Timber.e(t);
                         mSwipeRefreshLayout.setRefreshing(false);
                         mLoading = false;
                         Snackbar.make(mRoot, getString(R.string.connection_error_users), Snackbar.LENGTH_SHORT)
@@ -226,7 +226,7 @@ public class AddUserActivity extends MorphActivity {
                     }
 
                     @Override
-                    protected void onResponseSuccess(List<UserBasic> users) {
+                    public void responseSuccess(List<UserBasic> users) {
                         mSwipeRefreshLayout.setRefreshing(false);
                         mLoading = false;
                         mAdapter.setData(users);
@@ -244,16 +244,16 @@ public class AddUserActivity extends MorphActivity {
                 .compose(this.<Response<List<UserBasic>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new ResponseSingleObserver<List<UserBasic>>() {
+                .subscribe(new CustomResponseSingleObserver<List<UserBasic>>() {
 
                     @Override
-                    public void onError(Throwable e) {
-                        Timber.e(e);
+                    public void error(Throwable t) {
+                        Timber.e(t);
                         mAdapter.setLoading(false);
                     }
 
                     @Override
-                    protected void onResponseSuccess(List<UserBasic> users) {
+                    public void responseSuccess(List<UserBasic> users) {
                         mLoading = false;
                         mAdapter.setLoading(false);
                         mAdapter.addData(users);
@@ -266,31 +266,29 @@ public class AddUserActivity extends MorphActivity {
         observable.subscribeOn(Schedulers.io())
                 .compose(this.<Response<Member>>bindToLifecycle())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new FocusedSingleObserver<Response<Member>>() {
+                .subscribe(new CustomResponseSingleObserver<Member>() {
 
                     @Override
-                    public void onError(Throwable e) {
-                        Timber.e(e);
-                        Snackbar.make(mRoot, R.string.error_failed_to_add_user, Snackbar.LENGTH_SHORT)
+                    public void error(Throwable t) {
+                        Timber.e(t);
+                        String message = getString(R.string.error_failed_to_add_user);
+                        if (t instanceof HttpException) {
+                            switch (((HttpException) t).code()) {
+                                case 409:
+                                    message = getString(R.string.error_user_conflict);
+                            }
+                        }
+                        Snackbar.make(mRoot, message, Snackbar.LENGTH_SHORT)
                                 .show();
                     }
 
                     @Override
-                    public void onSuccess(Response<Member> response) {
-                        if (response.isSuccessful()) {
-                            Snackbar.make(mRoot, R.string.user_added_successfully, Snackbar.LENGTH_SHORT)
-                                    .show();
-                            mAccessDialog.dismiss();
-                            dismiss();
-                            App.bus().post(new MemberAddedEvent(response.body()));
-                        } else {
-                            if (response.code() == 409) {
-                                Snackbar.make(mRoot, R.string.error_user_conflict, Snackbar.LENGTH_SHORT)
-                                        .show();
-                            } else {
-                                onError(new Exception("Does not matter"));
-                            }
-                        }
+                    public void responseSuccess(Member member) {
+                        Snackbar.make(mRoot, R.string.user_added_successfully, Snackbar.LENGTH_SHORT)
+                                .show();
+                        mAccessDialog.dismiss();
+                        dismiss();
+                        App.bus().post(new MemberAddedEvent(member));
                     }
                 });
     }
