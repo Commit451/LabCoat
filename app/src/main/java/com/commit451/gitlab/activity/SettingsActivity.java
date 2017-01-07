@@ -32,9 +32,9 @@ public class SettingsActivity extends BaseActivity {
     }
 
     @BindView(R.id.toolbar)
-    Toolbar mToolbar;
+    Toolbar toolbar;
     @BindView(R.id.text_launch_activity)
-    TextView mTextLaunchActivity;
+    TextView textLaunchActivity;
     @BindView(R.id.root_require_device_auth)
     ViewGroup rootRequireDeviceAuth;
     @BindView(R.id.switch_require_auth)
@@ -70,9 +70,9 @@ public class SettingsActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
         ButterKnife.bind(this);
-        mToolbar.setTitle(R.string.settings);
-        mToolbar.setNavigationIcon(R.drawable.ic_back_24dp);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        toolbar.setTitle(R.string.settings);
+        toolbar.setNavigationIcon(R.drawable.ic_back_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
@@ -101,16 +101,16 @@ public class SettingsActivity extends BaseActivity {
         int startinView = App.get().getPrefs().getStartingView();
         switch (startinView) {
             case Prefs.STARTING_VIEW_PROJECTS:
-                mTextLaunchActivity.setText(R.string.setting_starting_view_projects);
+                textLaunchActivity.setText(R.string.setting_starting_view_projects);
                 break;
             case Prefs.STARTING_VIEW_GROUPS:
-                mTextLaunchActivity.setText(R.string.setting_starting_view_groups);
+                textLaunchActivity.setText(R.string.setting_starting_view_groups);
                 break;
             case Prefs.STARTING_VIEW_ACTIVITY:
-                mTextLaunchActivity.setText(R.string.setting_starting_view_activity);
+                textLaunchActivity.setText(R.string.setting_starting_view_activity);
                 break;
             case Prefs.STARTING_VIEW_TODOS:
-                mTextLaunchActivity.setText(R.string.setting_starting_view_todos);
+                textLaunchActivity.setText(R.string.setting_starting_view_todos);
                 break;
 
         }

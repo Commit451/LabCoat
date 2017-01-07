@@ -13,31 +13,31 @@ import org.parceler.Parcel;
 public class FileUploadResponse {
 
     @JsonField(name = "alt")
-    String mAlt;
+    String alt;
     @JsonField(name = "url")
-    String mUrl;
+    String url;
     @JsonField(name = "is_image")
-    boolean mIsImage;
+    boolean isImage;
     @JsonField(name = "markdown")
-    String mMarkdown;
+    String markdown;
 
     protected FileUploadResponse() {
         //for json
     }
 
     public String getAlt() {
-        return mAlt;
+        return alt;
     }
 
     public String getUrl() {
-        return mUrl;
+        return url;
     }
 
     public boolean isImage() {
-        return mIsImage;
+        return isImage;
     }
 
     public String getMarkdown() {
-        return mMarkdown;
+        return markdown;
     }
 }

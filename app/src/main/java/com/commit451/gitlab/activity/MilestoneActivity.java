@@ -54,73 +54,70 @@ public class MilestoneActivity extends BaseActivity {
     }
 
     @BindView(R.id.root)
-    View mRoot;
+    View root;
     @BindView(R.id.toolbar)
-    Toolbar mToolbar;
+    Toolbar toolbar;
     @BindView(R.id.swipe_layout)
-    SwipeRefreshLayout mSwipeRefreshLayout;
+    SwipeRefreshLayout swipeRefreshLayout;
     @BindView(R.id.list)
-    RecyclerView mIssuesRecyclerView;
-    MilestoneIssuesAdapter mMilestoneIssuesAdapter;
-    LinearLayoutManager mIssuesLayoutManager;
+    RecyclerView listIssues;
     @BindView(R.id.message_text)
-    TextView mMessageText;
+    TextView textMessage;
     @BindView(R.id.progress)
-    View mProgress;
+    View progress;
 
-    MenuItem mOpenCloseMenuItem;
+    MilestoneIssuesAdapter adapterMilestoneIssues;
+    LinearLayoutManager layoutManagerIssues;
+    MenuItem menuItemOpenClose;
 
-    Project mProject;
-    Milestone mMilestone;
-    Uri mNextPageUrl;
-    boolean mLoading = false;
+    Project project;
+    Milestone milestone;
+    Uri nextPageUrl;
+    boolean loading = false;
 
-    EventReceiver mEventReceiver;
-
-    @OnClick(R.id.add)
-    void onAddClick(View fab) {
-        Navigator.navigateToAddIssue(MilestoneActivity.this, fab, mProject);
-    }
-
-    @OnClick(R.id.edit)
-    void onEditClicked(View fab) {
-        Navigator.navigateToEditMilestone(MilestoneActivity.this, fab, mProject, mMilestone);
-    }
-
-    private final RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
+    private final RecyclerView.OnScrollListener onScrollListener = new RecyclerView.OnScrollListener() {
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
             super.onScrolled(recyclerView, dx, dy);
-            int visibleItemCount = mIssuesLayoutManager.getChildCount();
-            int totalItemCount = mIssuesLayoutManager.getItemCount();
-            int firstVisibleItem = mIssuesLayoutManager.findFirstVisibleItemPosition();
-            if (firstVisibleItem + visibleItemCount >= totalItemCount && !mLoading && mNextPageUrl != null) {
+            int visibleItemCount = layoutManagerIssues.getChildCount();
+            int totalItemCount = layoutManagerIssues.getItemCount();
+            int firstVisibleItem = layoutManagerIssues.findFirstVisibleItemPosition();
+            if (firstVisibleItem + visibleItemCount >= totalItemCount && !loading && nextPageUrl != null) {
                 loadMore();
             }
         }
     };
+
+    @OnClick(R.id.add)
+    void onAddClick(View fab) {
+        Navigator.navigateToAddIssue(MilestoneActivity.this, fab, project);
+    }
+
+    @OnClick(R.id.edit)
+    void onEditClicked(View fab) {
+        Navigator.navigateToEditMilestone(MilestoneActivity.this, fab, project, milestone);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_milestone);
         ButterKnife.bind(this);
-        mEventReceiver = new EventReceiver();
-        App.bus().register(mEventReceiver);
+        App.bus().register(this);
 
-        mProject = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_PROJECT));
-        mMilestone = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_MILESTONE));
+        project = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_PROJECT));
+        milestone = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_MILESTONE));
 
-        mToolbar.setNavigationIcon(R.drawable.ic_back_24dp);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        toolbar.setNavigationIcon(R.drawable.ic_back_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
             }
         });
-        mToolbar.inflateMenu(R.menu.menu_milestone);
-        mOpenCloseMenuItem = mToolbar.getMenu().findItem(R.id.action_close);
-        mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+        toolbar.inflateMenu(R.menu.menu_milestone);
+        menuItemOpenClose = toolbar.getMenu().findItem(R.id.action_close);
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
@@ -132,19 +129,19 @@ public class MilestoneActivity extends BaseActivity {
             }
         });
 
-        mMilestoneIssuesAdapter = new MilestoneIssuesAdapter(new MilestoneIssuesAdapter.Listener() {
+        adapterMilestoneIssues = new MilestoneIssuesAdapter(new MilestoneIssuesAdapter.Listener() {
             @Override
             public void onIssueClicked(Issue issue) {
-                Navigator.navigateToIssue(MilestoneActivity.this, mProject, issue);
+                Navigator.navigateToIssue(MilestoneActivity.this, project, issue);
             }
         });
-        bind(mMilestone);
-        mIssuesRecyclerView.setAdapter(mMilestoneIssuesAdapter);
-        mIssuesLayoutManager = new LinearLayoutManager(this);
-        mIssuesRecyclerView.setLayoutManager(mIssuesLayoutManager);
-        mIssuesRecyclerView.addItemDecoration(new DividerItemDecoration(this));
-        mIssuesRecyclerView.addOnScrollListener(mOnScrollListener);
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        bind(milestone);
+        listIssues.setAdapter(adapterMilestoneIssues);
+        layoutManagerIssues = new LinearLayoutManager(this);
+        listIssues.setLayoutManager(layoutManagerIssues);
+        listIssues.addItemDecoration(new DividerItemDecoration(this));
+        listIssues.addOnScrollListener(onScrollListener);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 loadData();
@@ -157,27 +154,27 @@ public class MilestoneActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        App.bus().unregister(mEventReceiver);
+        App.bus().unregister(this);
     }
 
     private void bind(Milestone milestone) {
-        mToolbar.setTitle(milestone.getTitle());
-        mMilestoneIssuesAdapter.setMilestone(milestone);
+        toolbar.setTitle(milestone.getTitle());
+        adapterMilestoneIssues.setMilestone(milestone);
         setOpenCloseMenuStatus();
     }
 
     private void loadData() {
-        mMessageText.setVisibility(View.GONE);
-        mLoading = true;
-        mSwipeRefreshLayout.post(new Runnable() {
+        textMessage.setVisibility(View.GONE);
+        loading = true;
+        swipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
-                if (mSwipeRefreshLayout != null) {
-                    mSwipeRefreshLayout.setRefreshing(true);
+                if (swipeRefreshLayout != null) {
+                    swipeRefreshLayout.setRefreshing(true);
                 }
             }
         });
-        App.get().getGitLab().getMilestoneIssues(mProject.getId(), mMilestone.getId())
+        App.get().getGitLab().getMilestoneIssues(project.getId(), milestone.getId())
                 .compose(this.<Response<List<Issue>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -186,42 +183,42 @@ public class MilestoneActivity extends BaseActivity {
                     @Override
                     public void error(Throwable t) {
                         Timber.e(t);
-                        mLoading = false;
-                        mSwipeRefreshLayout.setRefreshing(false);
-                        mMessageText.setVisibility(View.VISIBLE);
-                        mMessageText.setText(R.string.connection_error_issues);
-                        mMilestoneIssuesAdapter.setIssues(null);
+                        loading = false;
+                        swipeRefreshLayout.setRefreshing(false);
+                        textMessage.setVisibility(View.VISIBLE);
+                        textMessage.setText(R.string.connection_error_issues);
+                        adapterMilestoneIssues.setIssues(null);
                     }
 
                     @Override
                     public void responseSuccess(List<Issue> issues) {
-                        mSwipeRefreshLayout.setRefreshing(false);
-                        mLoading = false;
+                        swipeRefreshLayout.setRefreshing(false);
+                        loading = false;
 
                         if (!issues.isEmpty()) {
-                            mMessageText.setVisibility(View.GONE);
+                            textMessage.setVisibility(View.GONE);
                         } else {
                             Timber.d("No issues found");
-                            mMessageText.setVisibility(View.VISIBLE);
-                            mMessageText.setText(R.string.no_issues);
+                            textMessage.setVisibility(View.VISIBLE);
+                            textMessage.setText(R.string.no_issues);
                         }
 
-                        mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
-                        mMilestoneIssuesAdapter.setIssues(issues);
+                        nextPageUrl = LinkHeaderParser.parse(response()).getNext();
+                        adapterMilestoneIssues.setIssues(issues);
                     }
                 });
     }
 
     private void loadMore() {
 
-        if (mNextPageUrl == null) {
+        if (nextPageUrl == null) {
             return;
         }
 
-        mLoading = true;
+        loading = true;
 
-        Timber.d("loadMore called for %s", mNextPageUrl);
-        App.get().getGitLab().getMilestoneIssues(mNextPageUrl.toString())
+        Timber.d("loadMore called for %s", nextPageUrl);
+        App.get().getGitLab().getMilestoneIssues(nextPageUrl.toString())
                 .compose(this.<Response<List<Issue>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -230,24 +227,24 @@ public class MilestoneActivity extends BaseActivity {
                     @Override
                     public void error(Throwable e) {
                         Timber.e(e);
-                        mLoading = false;
+                        loading = false;
                     }
 
                     @Override
                     public void responseSuccess(List<Issue> issues) {
-                        mLoading = false;
-                        mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
-                        mMilestoneIssuesAdapter.addIssues(issues);
+                        loading = false;
+                        nextPageUrl = LinkHeaderParser.parse(response()).getNext();
+                        adapterMilestoneIssues.addIssues(issues);
                     }
                 });
     }
 
     private void closeOrOpenIssue() {
-        mProgress.setVisibility(View.VISIBLE);
-        if (mMilestone.getState().equals(Milestone.STATE_ACTIVE)) {
-            updateMilestoneStatus(App.get().getGitLab().updateMilestoneStatus(mProject.getId(), mMilestone.getId(), Milestone.STATE_EVENT_CLOSE));
+        progress.setVisibility(View.VISIBLE);
+        if (milestone.getState().equals(Milestone.STATE_ACTIVE)) {
+            updateMilestoneStatus(App.get().getGitLab().updateMilestoneStatus(project.getId(), milestone.getId(), Milestone.STATE_EVENT_CLOSE));
         } else {
-            updateMilestoneStatus(App.get().getGitLab().updateMilestoneStatus(mProject.getId(), mMilestone.getId(), Milestone.STATE_EVENT_ACTIVATE));
+            updateMilestoneStatus(App.get().getGitLab().updateMilestoneStatus(project.getId(), milestone.getId(), Milestone.STATE_EVENT_ACTIVATE));
         }
     }
 
@@ -260,33 +257,30 @@ public class MilestoneActivity extends BaseActivity {
                     @Override
                     public void error(Throwable e) {
                         Timber.e(e);
-                        mProgress.setVisibility(View.GONE);
-                        Snackbar.make(mRoot, getString(R.string.failed_to_create_milestone), Snackbar.LENGTH_SHORT)
+                        progress.setVisibility(View.GONE);
+                        Snackbar.make(root, getString(R.string.failed_to_create_milestone), Snackbar.LENGTH_SHORT)
                                 .show();
                     }
 
                     @Override
                     public void success(Milestone milestone) {
-                        mProgress.setVisibility(View.GONE);
-                        mMilestone = milestone;
-                        App.bus().post(new MilestoneChangedEvent(mMilestone));
+                        progress.setVisibility(View.GONE);
+                        MilestoneActivity.this.milestone = milestone;
+                        App.bus().post(new MilestoneChangedEvent(MilestoneActivity.this.milestone));
                         setOpenCloseMenuStatus();
                     }
                 });
     }
 
     private void setOpenCloseMenuStatus() {
-        mOpenCloseMenuItem.setTitle(mMilestone.getState().equals(Milestone.STATE_CLOSED) ? R.string.reopen : R.string.close);
+        menuItemOpenClose.setTitle(milestone.getState().equals(Milestone.STATE_CLOSED) ? R.string.reopen : R.string.close);
     }
 
-    private class EventReceiver {
-
-        @Subscribe
-        public void onMilestoneChanged(MilestoneChangedEvent event) {
-            if (mMilestone.getId() == event.mMilestone.getId()) {
-                mMilestone = event.mMilestone;
-                bind(mMilestone);
-            }
+    @Subscribe
+    public void onMilestoneChanged(MilestoneChangedEvent event) {
+        if (milestone.getId() == event.mMilestone.getId()) {
+            milestone = event.mMilestone;
+            bind(milestone);
         }
     }
 }

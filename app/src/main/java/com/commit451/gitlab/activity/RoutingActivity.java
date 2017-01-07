@@ -18,12 +18,13 @@ import com.novoda.simplechromecustomtabs.SimpleChromeCustomTabs;
 
 import timber.log.Timber;
 
+
 /**
  * The easy way to do deep links. Just route everything here, and it does all the work.
  */
 public class RoutingActivity extends Activity {
 
-    RoutingRouter mRouter;
+    RoutingRouter router;
 
     private final RoutingNavigator mNavigator = new RoutingNavigator() {
         @Override
@@ -69,7 +70,7 @@ public class RoutingActivity extends Activity {
         @Override
         public void onRouteUnknown(Uri uri) {
             Timber.d("Route unknown. Opening original Uri if it exists");
-            if (mOriginalUri != null) {
+            if (originalUri != null) {
                 IntentUtil.openPage(RoutingActivity.this, uri.toString());
             } else {
                 Toast.makeText(RoutingActivity.this, R.string.deeplink_navigate_error, Toast.LENGTH_SHORT)
@@ -78,7 +79,7 @@ public class RoutingActivity extends Activity {
         }
     };
 
-    Uri mOriginalUri;
+    Uri originalUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,10 +115,10 @@ public class RoutingActivity extends Activity {
         }
         //If it has an original uri, this means that it is an internal deep link and we
         //can still fall back to what the original uri was and just show it
-        mOriginalUri = intent.getParcelableExtra(DeepLinker.EXTRA_ORIGINAL_URI);
+        originalUri = intent.getParcelableExtra(DeepLinker.EXTRA_ORIGINAL_URI);
         Uri link = intent.getData();
         Timber.d("Received deep link %s", link);
-        Timber.d("Original link was %s", mOriginalUri);
+        Timber.d("Original link was %s", originalUri);
 
         //okay so last thing, if the user has followed a link, but the user
         //is not actually signed in, we want to direct them to signin
@@ -126,8 +127,8 @@ public class RoutingActivity extends Activity {
             finish();
             return;
         }
-        mRouter = new RoutingRouter(mNavigator);
-        mRouter.route(link);
+        router = new RoutingRouter(mNavigator);
+        router.route(link);
         finish();
     }
 }

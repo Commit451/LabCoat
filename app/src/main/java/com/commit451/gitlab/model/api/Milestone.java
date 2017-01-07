@@ -38,67 +38,67 @@ public class Milestone {
     public static final SimpleDateFormat DUE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-d", Locale.US);
 
     @JsonField(name = "id")
-    long mId;
+    long id;
     @JsonField(name = "iid")
-    long mIid;
+    long iId;
     @JsonField(name = "project_id")
-    long mProjectId;
+    long projectId;
     @JsonField(name = "title")
-    String mTitle;
+    String title;
     @JsonField(name = "description")
-    String mDescription;
+    String description;
     @JsonField(name = "state")
-    String mState;
+    String state;
     @JsonField(name = "created_at")
-    Date mCreatedAt;
+    Date createdAt;
     @JsonField(name = "updated_at")
-    Date mUpdatedAt;
+    Date updatedAt;
     @JsonField(name = "due_date")
-    String mDueDate;
+    String dueDate;
 
     public Milestone() {}
 
     public long getId() {
-        return mId;
+        return id;
     }
 
     public long getIid() {
-        return mIid;
+        return iId;
     }
 
     public long getProjectId() {
-        return mProjectId;
+        return projectId;
     }
 
     public String getTitle() {
-        return mTitle;
+        return title;
     }
 
     public String getDescription() {
-        return mDescription;
+        return description;
     }
 
 
     @State
     public String getState() {
-        return mState;
+        return state;
     }
 
     public Date getCreatedAt() {
-        return mCreatedAt;
+        return createdAt;
     }
 
     public Date getUpdatedAt() {
-        return mUpdatedAt;
+        return updatedAt;
     }
 
     @Nullable
     public Date getDueDate() {
-        if (TextUtils.isEmpty(mDueDate)) {
+        if (TextUtils.isEmpty(dueDate)) {
             return null;
         }
         try {
-            return DUE_DATE_FORMAT.parse(mDueDate);
+            return DUE_DATE_FORMAT.parse(dueDate);
         } catch (ParseException e) {
             Timber.e(e);
         }
@@ -112,16 +112,16 @@ public class Milestone {
         }
 
         Milestone milestone = (Milestone) o;
-        return mId == milestone.mId;
+        return id == milestone.id;
     }
 
     @Override
     public int hashCode() {
-        return (int) (mId ^ (mId >>> 32));
+        return (int) (id ^ (id >>> 32));
     }
 
     @Override
     public String toString() {
-        return mTitle;
+        return title;
     }
 }

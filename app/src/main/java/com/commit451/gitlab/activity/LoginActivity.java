@@ -48,11 +48,8 @@ import com.commit451.gitlab.ssl.CustomHostnameVerifier;
 import com.commit451.gitlab.ssl.CustomKeyManager;
 import com.commit451.gitlab.ssl.X509CertificateException;
 import com.commit451.gitlab.ssl.X509Util;
-import com.commit451.reptar.retrofit.ResponseSingleObserver;
 import com.commit451.teleprinter.Teleprinter;
 import com.jakewharton.retrofit2.adapter.rxjava2.HttpException;
-
-import org.reactivestreams.Subscriber;
 
 import java.io.IOException;
 import java.net.ConnectException;
@@ -81,6 +78,7 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Response;
 import timber.log.Timber;
 
+
 public class LoginActivity extends BaseActivity {
 
     private static final String EXTRA_SHOW_CLOSE = "show_close";
@@ -100,35 +98,35 @@ public class LoginActivity extends BaseActivity {
     }
 
     @BindView(R.id.root)
-    View mRoot;
+    View root;
     @BindView(R.id.toolbar)
-    Toolbar mToolbar;
+    Toolbar toolbar;
     @BindView(R.id.url_hint)
-    TextInputLayout mUrlHint;
+    TextInputLayout textInputLayoutUrl;
     @BindView(R.id.url_input)
-    TextView mUrlInput;
+    TextView textUrl;
     @BindView(R.id.user_input_hint)
-    TextInputLayout mUserHint;
+    TextInputLayout textInputLayoutUser;
     @BindView(R.id.user_input)
-    AppCompatAutoCompleteTextView mUserInput;
+    AppCompatAutoCompleteTextView textUser;
     @BindView(R.id.password_hint)
-    TextInputLayout mPasswordHint;
+    TextInputLayout textInputLayoutPassword;
     @BindView(R.id.password_input)
-    TextView mPasswordInput;
+    TextView textPassword;
     @BindView(R.id.token_hint)
-    TextInputLayout mTokenHint;
+    TextInputLayout textInputLayoutToken;
     @BindView(R.id.token_input)
-    TextView mTokenInput;
+    TextView textToken;
     @BindView(R.id.normal_login)
-    View mNormalLogin;
+    View rootNormalLogin;
     @BindView(R.id.token_login)
-    View mTokenLogin;
+    View rootTokenLogin;
     @BindView(R.id.progress)
-    View mProgress;
+    View progress;
 
-    private boolean mIsNormalLogin = true;
-    private Account mAccount;
-    private Teleprinter mTeleprinter;
+    private boolean isNormalLogin = true;
+    private Account account;
+    private Teleprinter teleprinter;
 
     private final TextView.OnEditorActionListener onEditorActionListener = new TextView.OnEditorActionListener() {
         @Override
@@ -140,41 +138,41 @@ public class LoginActivity extends BaseActivity {
 
     @OnClick(R.id.login_button)
     public void onLoginClick() {
-        mTeleprinter.hideKeyboard();
+        teleprinter.hideKeyboard();
 
-        if (hasEmptyFields(mUrlHint)) {
+        if (hasEmptyFields(textInputLayoutUrl)) {
             return;
         }
 
         if (!verifyUrl()) {
             return;
         }
-        Uri uri = Uri.parse(mUrlHint.getEditText().getText().toString());
+        Uri uri = Uri.parse(textInputLayoutUrl.getEditText().getText().toString());
 
-        if (mIsNormalLogin) {
-            if (hasEmptyFields(mUserHint, mPasswordHint)) {
+        if (isNormalLogin) {
+            if (hasEmptyFields(textInputLayoutUser, textInputLayoutPassword)) {
                 return;
             }
         } else {
-            if (hasEmptyFields(mTokenHint)) {
+            if (hasEmptyFields(textInputLayoutToken)) {
                 return;
             }
-            if (!sTokenPattern.matcher(mTokenInput.getText()).matches()) {
-                mTokenHint.setError(getString(R.string.not_a_valid_private_token));
+            if (!sTokenPattern.matcher(textToken.getText()).matches()) {
+                textInputLayoutToken.setError(getString(R.string.not_a_valid_private_token));
                 return;
             } else {
-                mTokenHint.setError(null);
+                textInputLayoutToken.setError(null);
             }
         }
 
-        if (isAlreadySignedIn(uri.toString(), mIsNormalLogin ? mUserInput.getText().toString() : mTokenInput.getText().toString())) {
-            Snackbar.make(mRoot, getString(R.string.already_logged_in), Snackbar.LENGTH_LONG)
+        if (isAlreadySignedIn(uri.toString(), isNormalLogin ? textUser.getText().toString() : textToken.getText().toString())) {
+            Snackbar.make(root, getString(R.string.already_logged_in), Snackbar.LENGTH_LONG)
                     .show();
             return;
         }
 
-        mAccount = new Account();
-        mAccount.setServerUrl(uri);
+        account = new Account();
+        account.setServerUrl(uri);
 
         login();
     }
@@ -182,7 +180,7 @@ public class LoginActivity extends BaseActivity {
     @OnClick(R.id.button_open_login_page)
     void onOpenLoginPageClicked() {
         if (verifyUrl()) {
-            String url = mUrlHint.getEditText().getText().toString();
+            String url = textInputLayoutUrl.getEditText().getText().toString();
             Navigator.navigateToWebSignin(this, url, true, REQUEST_PRIVATE_TOKEN);
         }
     }
@@ -190,7 +188,7 @@ public class LoginActivity extends BaseActivity {
     @OnClick(R.id.button_open_login_page_for_personal_access)
     void onOpenLoginPageForPersonalAccessTokenClicked() {
         if (verifyUrl()) {
-            String url = mUrlHint.getEditText().getText().toString();
+            String url = textInputLayoutUrl.getEditText().getText().toString();
             Navigator.navigateToWebSignin(this, url, false, REQUEST_PRIVATE_TOKEN);
         }
     }
@@ -201,26 +199,26 @@ public class LoginActivity extends BaseActivity {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
 
-        mTeleprinter = new Teleprinter(this);
+        teleprinter = new Teleprinter(this);
         boolean showClose = getIntent().getBooleanExtra(EXTRA_SHOW_CLOSE, false);
 
-        mToolbar.inflateMenu(R.menu.menu_login);
-        mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+        toolbar.inflateMenu(R.menu.menu_login);
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.action_advanced_login:
-                        boolean isNormalLogin = mNormalLogin.getVisibility() == View.VISIBLE;
+                        boolean isNormalLogin = rootNormalLogin.getVisibility() == View.VISIBLE;
                         if (isNormalLogin) {
-                            mNormalLogin.setVisibility(View.GONE);
-                            mTokenLogin.setVisibility(View.VISIBLE);
+                            rootNormalLogin.setVisibility(View.GONE);
+                            rootTokenLogin.setVisibility(View.VISIBLE);
                             item.setTitle(R.string.normal_link);
-                            mIsNormalLogin = false;
+                            LoginActivity.this.isNormalLogin = false;
                         } else {
-                            mNormalLogin.setVisibility(View.VISIBLE);
-                            mTokenLogin.setVisibility(View.GONE);
+                            rootNormalLogin.setVisibility(View.VISIBLE);
+                            rootTokenLogin.setVisibility(View.GONE);
                             item.setTitle(R.string.advanced_login);
-                            mIsNormalLogin = true;
+                            LoginActivity.this.isNormalLogin = true;
                         }
                         return true;
                 }
@@ -228,17 +226,17 @@ public class LoginActivity extends BaseActivity {
             }
         });
         if (showClose) {
-            mToolbar.setNavigationIcon(R.drawable.ic_close_24dp);
-            mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            toolbar.setNavigationIcon(R.drawable.ic_close_24dp);
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     onBackPressed();
                 }
             });
         }
-        mPasswordInput.setOnEditorActionListener(onEditorActionListener);
-        mTokenInput.setOnEditorActionListener(onEditorActionListener);
-        mUserInput.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        textPassword.setOnEditorActionListener(onEditorActionListener);
+        textToken.setOnEditorActionListener(onEditorActionListener);
+        textUser.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
@@ -275,16 +273,16 @@ public class LoginActivity extends BaseActivity {
             case REQUEST_PRIVATE_TOKEN:
                 if (resultCode == RESULT_OK) {
                     String token = data.getStringExtra(WebviewLoginActivity.EXTRA_TOKEN);
-                    mTokenHint.getEditText().setText(token);
+                    textInputLayoutToken.getEditText().setText(token);
                 }
                 break;
         }
     }
 
     private void connect(boolean byAuth) {
-        mProgress.setVisibility(View.VISIBLE);
-        mProgress.setAlpha(0.0f);
-        mProgress.animate().alpha(1.0f);
+        progress.setVisibility(View.VISIBLE);
+        progress.setAlpha(0.0f);
+        progress.animate().alpha(1.0f);
 
         if (byAuth) {
             connectByAuth();
@@ -294,15 +292,15 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void connectByAuth() {
-        OkHttpClient.Builder gitlabClientBuilder = OkHttpClientFactory.create(mAccount);
+        OkHttpClient.Builder gitlabClientBuilder = OkHttpClientFactory.create(account);
         if (BuildConfig.DEBUG) {
             gitlabClientBuilder.addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
         }
-        GitLab gitLab = GitLabFactory.create(mAccount, gitlabClientBuilder.build());
-        if (mUserInput.getText().toString().contains("@")) {
-            attemptLogin(gitLab.loginWithEmail(mUserInput.getText().toString(), mPasswordInput.getText().toString()));
+        GitLab gitLab = GitLabFactory.create(account, gitlabClientBuilder.build());
+        if (textUser.getText().toString().contains("@")) {
+            attemptLogin(gitLab.loginWithEmail(textUser.getText().toString(), textPassword.getText().toString()));
         } else {
-            attemptLogin(gitLab.loginWithEmail(mUserInput.getText().toString(), mPasswordInput.getText().toString()));
+            attemptLogin(gitLab.loginWithEmail(textUser.getText().toString(), textPassword.getText().toString()));
         }
     }
 
@@ -325,14 +323,14 @@ public class LoginActivity extends BaseActivity {
 
                     @Override
                     public void responseSuccess(UserLogin userLogin) {
-                        mAccount.setPrivateToken(userLogin.getPrivateToken());
+                        account.setPrivateToken(userLogin.getPrivateToken());
                         loadUser();
                     }
                 });
     }
 
     private void connectByToken() {
-        mAccount.setPrivateToken(mTokenInput.getText().toString());
+        account.setPrivateToken(textToken.getText().toString());
         loadUser();
     }
 
@@ -340,7 +338,7 @@ public class LoginActivity extends BaseActivity {
         KeyChain.choosePrivateKeyAlias(this, new KeyChainAliasCallback() {
             @Override
             public void alias(String alias) {
-                mAccount.setPrivateKeyAlias(alias);
+                account.setPrivateKeyAlias(alias);
 
                 if (alias != null) {
                     if (!CustomKeyManager.isCached(alias)) {
@@ -357,7 +355,7 @@ public class LoginActivity extends BaseActivity {
 
                             @Override
                             public void onError(Exception e) {
-                                mAccount.setPrivateKeyAlias(null);
+                                account.setPrivateKeyAlias(null);
                                 Timber.e(e, "Failed to load private key");
                             }
                         });
@@ -371,11 +369,11 @@ public class LoginActivity extends BaseActivity {
                     }
                 }
             }
-        }, null, null, mAccount.getServerUrl().getHost(), mAccount.getServerUrl().getPort(), null);
+        }, null, null, account.getServerUrl().getHost(), account.getServerUrl().getPort(), null);
     }
 
     private boolean verifyUrl() {
-        String url = mUrlInput.getText().toString();
+        String url = textUrl.getText().toString();
         Uri uri = null;
         try {
             if (HttpUrl.parse(url) != null) {
@@ -386,16 +384,16 @@ public class LoginActivity extends BaseActivity {
         }
 
         if (uri == null) {
-            mUrlHint.setError(getString(R.string.not_a_valid_url));
+            textInputLayoutUrl.setError(getString(R.string.not_a_valid_url));
             return false;
         } else {
-            mUrlHint.setError(null);
+            textInputLayoutUrl.setError(null);
         }
         if (url.charAt(url.length() - 1) != '/') {
-            mUrlHint.setError(getString(R.string.please_end_your_url_with_a_slash));
+            textInputLayoutUrl.setError(getString(R.string.please_end_your_url_with_a_slash));
             return false;
         } else {
-            mUrlHint.setError(null);
+            textInputLayoutUrl.setError(null);
         }
         return true;
     }
@@ -405,14 +403,14 @@ public class LoginActivity extends BaseActivity {
         // (OkHttpClientFactory caches the clients and needs a new account to recreate them)
 
         Account newAccount = new Account();
-        newAccount.setServerUrl(mAccount.getServerUrl());
-        newAccount.setTrustedCertificate(mAccount.getTrustedCertificate());
-        newAccount.setTrustedHostname(mAccount.getTrustedHostname());
-        newAccount.setPrivateKeyAlias(mAccount.getPrivateKeyAlias());
-        newAccount.setAuthorizationHeader(mAccount.getAuthorizationHeader());
-        mAccount = newAccount;
+        newAccount.setServerUrl(account.getServerUrl());
+        newAccount.setTrustedCertificate(account.getTrustedCertificate());
+        newAccount.setTrustedHostname(account.getTrustedHostname());
+        newAccount.setPrivateKeyAlias(account.getPrivateKeyAlias());
+        newAccount.setAuthorizationHeader(account.getAuthorizationHeader());
+        account = newAccount;
 
-        if (mIsNormalLogin) {
+        if (isNormalLogin) {
             connect(true);
         } else {
             connect(false);
@@ -420,11 +418,11 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void loadUser() {
-        OkHttpClient.Builder gitlabClientBuilder = OkHttpClientFactory.create(mAccount, false);
+        OkHttpClient.Builder gitlabClientBuilder = OkHttpClientFactory.create(account, false);
         if (BuildConfig.DEBUG) {
             gitlabClientBuilder.addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
         }
-        GitLab gitLab = GitLabFactory.create(mAccount, gitlabClientBuilder.build());
+        GitLab gitLab = GitLabFactory.create(account, gitlabClientBuilder.build());
         gitLab.getThisUser()
                 .compose(this.<Response<UserFull>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
@@ -443,12 +441,12 @@ public class LoginActivity extends BaseActivity {
 
                     @Override
                     public void responseSuccess(UserFull userFull) {
-                        mProgress.setVisibility(View.GONE);
-                        mAccount.setUser(userFull);
-                        mAccount.setLastUsed(new Date());
-                        App.get().getPrefs().addAccount(mAccount);
-                        App.get().setAccount(mAccount);
-                        App.bus().post(new LoginEvent(mAccount));
+                        progress.setVisibility(View.GONE);
+                        account.setUser(userFull);
+                        account.setLastUsed(new Date());
+                        App.get().getPrefs().addAccount(account);
+                        App.get().setAccount(account);
+                        App.bus().post(new LoginEvent(account));
                         //This is mostly for if projects already exists, then we will reload the data
                         App.bus().post(new ReloadDataEvent());
                         Navigator.navigateToStartingActivity(LoginActivity.this);
@@ -458,10 +456,10 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void handleConnectionError(Throwable t) {
-        mProgress.setVisibility(View.GONE);
+        progress.setVisibility(View.GONE);
 
         if (t instanceof SSLHandshakeException && t.getCause() instanceof X509CertificateException) {
-            mAccount.setTrustedCertificate(null);
+            account.setTrustedCertificate(null);
             String fingerprint = null;
             try {
                 fingerprint = X509Util.getFingerPrint(((X509CertificateException) t.getCause()).getChain()[0]);
@@ -477,7 +475,7 @@ public class LoginActivity extends BaseActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             if (finalFingerprint != null) {
-                                mAccount.setTrustedCertificate(finalFingerprint);
+                                account.setTrustedCertificate(finalFingerprint);
                                 login();
                             }
 
@@ -494,7 +492,7 @@ public class LoginActivity extends BaseActivity {
 
             ((TextView) d.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
         } else if (t instanceof SSLPeerUnverifiedException && t.getMessage().toLowerCase().contains("hostname")) {
-            mAccount.setTrustedHostname(null);
+            account.setTrustedHostname(null);
             final String finalHostname = CustomHostnameVerifier.getLastFailedHostname();
             Dialog d = new AlertDialog.Builder(this)
                     .setTitle(R.string.hostname_title)
@@ -503,7 +501,7 @@ public class LoginActivity extends BaseActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             if (finalHostname != null) {
-                                mAccount.setTrustedHostname(finalHostname);
+                                account.setTrustedHostname(finalHostname);
                                 login();
                             }
 
@@ -520,19 +518,19 @@ public class LoginActivity extends BaseActivity {
 
             ((TextView) d.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
         } else if (t instanceof ConnectException) {
-            Snackbar.make(mRoot, t.getLocalizedMessage(), Snackbar.LENGTH_LONG)
+            Snackbar.make(root, t.getLocalizedMessage(), Snackbar.LENGTH_LONG)
                     .show();
         } else {
-            Snackbar.make(mRoot, getString(R.string.login_error), Snackbar.LENGTH_LONG)
+            Snackbar.make(root, getString(R.string.login_error), Snackbar.LENGTH_LONG)
                     .show();
         }
     }
 
     private void handleConnectionResponse(Response response) {
-        mProgress.setVisibility(View.GONE);
+        progress.setVisibility(View.GONE);
         switch (response.code()) {
             case 401:
-                mAccount.setAuthorizationHeader(null);
+                account.setAuthorizationHeader(null);
 
                 String header = response.headers().get("WWW-Authenticate");
                 if (header != null) {
@@ -548,14 +546,14 @@ public class LoginActivity extends BaseActivity {
                 } catch (IOException e) {
                     Timber.e(e);
                 }
-                Snackbar.make(mRoot, errorMessage, Snackbar.LENGTH_LONG)
+                Snackbar.make(root, errorMessage, Snackbar.LENGTH_LONG)
                         .show();
                 return;
             case 404:
-                Snackbar.make(mRoot, getString(R.string.login_404_error), Snackbar.LENGTH_LONG)
+                Snackbar.make(root, getString(R.string.login_404_error), Snackbar.LENGTH_LONG)
                         .show();
             default:
-                Snackbar.make(mRoot, getString(R.string.login_error), Snackbar.LENGTH_LONG)
+                Snackbar.make(root, getString(R.string.login_error), Snackbar.LENGTH_LONG)
                         .show();
         }
     }
@@ -563,7 +561,7 @@ public class LoginActivity extends BaseActivity {
     private void handleBasicAuthentication(Response response) {
         String header = response.headers().get("WWW-Authenticate").trim();
         if (!header.startsWith("Basic")) {
-            Snackbar.make(mRoot, getString(R.string.login_unsupported_authentication), Snackbar.LENGTH_LONG)
+            Snackbar.make(root, getString(R.string.login_unsupported_authentication), Snackbar.LENGTH_LONG)
                     .show();
             return;
         }
@@ -578,7 +576,7 @@ public class LoginActivity extends BaseActivity {
         HttpLoginDialog dialog = new HttpLoginDialog(this, realm, new HttpLoginDialog.LoginListener() {
             @Override
             public void onLogin(String username, String password) {
-                mAccount.setAuthorizationHeader(Credentials.basic(username, password));
+                account.setAuthorizationHeader(Credentials.basic(username, password));
                 login();
             }
 
@@ -613,7 +611,7 @@ public class LoginActivity extends BaseActivity {
             ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                     R.layout.support_simple_spinner_dropdown_item,
                     new ArrayList<>(accounts));
-            mUserInput.setAdapter(adapter);
+            textUser.setAdapter(adapter);
         }
     }
 

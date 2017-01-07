@@ -23,61 +23,61 @@ public class Note {
     public @interface Type {}
 
     @JsonField(name = "id")
-    long mId;
+    long id;
     @JsonField(name = "body")
-    String mBody;
+    String body;
     @JsonField(name = "author")
-    UserBasic mAuthor;
+    UserBasic author;
     @JsonField(name = "created_at")
-    Date mCreatedAt;
+    Date createdAt;
     @JsonField(name = "system")
-    boolean mSystem;
+    boolean system;
     @JsonField(name = "noteable_id")
-    long mNoteableId;
+    long noteableId;
     @JsonField(name = "noteable_type")
     @Type
-    String mNoteableType;
+    String noteableType;
     @JsonField(name = "upvote?")
-    boolean mUpvote;
+    boolean upvote;
     @JsonField(name = "downvote?")
-    boolean mDownvote;
+    boolean downvote;
 
     public Note() {}
 
     public long getId() {
-        return mId;
+        return id;
     }
 
     public String getBody() {
-        return mBody;
+        return body;
     }
 
     public UserBasic getAuthor() {
-        return mAuthor;
+        return author;
     }
 
     public Date getCreatedAt() {
-        return mCreatedAt;
+        return createdAt;
     }
 
     public boolean isSystem() {
-        return mSystem;
+        return system;
     }
 
     public long getNoteableId() {
-        return mNoteableId;
+        return noteableId;
     }
 
     public @Type String getNoteableType() {
-        return mNoteableType;
+        return noteableType;
     }
 
     public boolean isUpvote() {
-        return mUpvote;
+        return upvote;
     }
 
     public boolean isDownvote() {
-        return mDownvote;
+        return downvote;
     }
 
     @Override
@@ -87,11 +87,11 @@ public class Note {
         }
 
         Note note = (Note) o;
-        return mId == note.mId;
+        return id == note.id;
     }
 
     @Override
     public int hashCode() {
-        return (int) (mId ^ (mId >>> 32));
+        return (int) (id ^ (id >>> 32));
     }
 }

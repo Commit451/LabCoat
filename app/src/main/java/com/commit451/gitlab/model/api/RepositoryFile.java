@@ -9,59 +9,59 @@ import org.parceler.Parcel;
 @JsonObject
 public class RepositoryFile {
     @JsonField(name = "file_name")
-    String mFileName;
+    String fileName;
     @JsonField(name = "file_path")
-    String mFilePath;
+    String filePath;
     @JsonField(name = "size")
-    long mSize;
+    long size;
     @JsonField(name = "encoding")
-    String mEncoding;
+    String encoding;
     @JsonField(name = "content")
-    String mContent;
+    String content;
     @JsonField(name = "ref")
-    String mRef;
+    String ref;
     @JsonField(name = "blob_id")
-    String mBlobId;
+    String blobId;
     @JsonField(name = "commit_id")
-    String mCommitId;
+    String commitId;
     @JsonField(name = "last_commit_id")
-    String mLastCommitId;
+    String lastCommitId;
 
     public RepositoryFile() {}
 
     public String getFileName() {
-        return mFileName;
+        return fileName;
     }
 
     public String getFilePath() {
-        return mFilePath;
+        return filePath;
     }
 
     public long getSize() {
-        return mSize;
+        return size;
     }
 
     public String getEncoding() {
-        return mEncoding;
+        return encoding;
     }
 
     public String getContent() {
-        return mContent;
+        return content;
     }
 
     public String getRef() {
-        return mRef;
+        return ref;
     }
 
     public String getBlobId() {
-        return mBlobId;
+        return blobId;
     }
 
     public String getCommitId() {
-        return mCommitId;
+        return commitId;
     }
 
     public String getLastCommitId() {
-        return mLastCommitId;
+        return lastCommitId;
     }
 }

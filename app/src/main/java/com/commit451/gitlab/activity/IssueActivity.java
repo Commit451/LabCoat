@@ -77,58 +77,56 @@ public class IssueActivity extends BaseActivity {
     }
 
     @BindView(R.id.root)
-    ViewGroup mRoot;
+    ViewGroup root;
     @BindView(R.id.toolbar)
-    Toolbar mToolbar;
+    Toolbar toolbar;
     @BindView(R.id.issue_title)
-    TextView mIssueTitle;
+    TextView textTitle;
     @BindView(R.id.swipe_layout)
-    SwipeRefreshLayout mSwipeRefreshLayout;
+    SwipeRefreshLayout swipeRefreshLayout;
     @BindView(R.id.list)
-    RecyclerView mNotesRecyclerView;
+    RecyclerView listNotes;
     @BindView(R.id.send_message_view)
-    SendMessageView mSendMessageView;
+    SendMessageView sendMessageView;
     @BindView(R.id.progress)
-    View mProgress;
+    View progress;
 
-    MenuItem mOpenCloseMenuItem;
-    IssueDetailsAdapter mIssueDetailsAdapter;
-    LinearLayoutManager mNotesLayoutManager;
+    MenuItem menuItemOpenClose;
+    IssueDetailsAdapter adapterIssueDetails;
+    LinearLayoutManager layoutManagerNotes;
 
-    Project mProject;
-    Issue mIssue;
-    String mIssueIid;
-    boolean mLoading;
-    Uri mNextPageUrl;
-    Teleprinter mTeleprinter;
+    Project project;
+    Issue issue;
+    String issueIid;
+    boolean loading;
+    Uri nextPageUrl;
+    Teleprinter teleprinter;
 
-    EventReceiver mEventReceiver;
-
-    private final RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
+    private final RecyclerView.OnScrollListener onScrollListener = new RecyclerView.OnScrollListener() {
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
             super.onScrolled(recyclerView, dx, dy);
-            int visibleItemCount = mNotesLayoutManager.getChildCount();
-            int totalItemCount = mNotesLayoutManager.getItemCount();
-            int firstVisibleItem = mNotesLayoutManager.findFirstVisibleItemPosition();
-            if (firstVisibleItem + visibleItemCount >= totalItemCount && !mLoading && mNextPageUrl != null) {
+            int visibleItemCount = layoutManagerNotes.getChildCount();
+            int totalItemCount = layoutManagerNotes.getItemCount();
+            int firstVisibleItem = layoutManagerNotes.findFirstVisibleItemPosition();
+            if (firstVisibleItem + visibleItemCount >= totalItemCount && !loading && nextPageUrl != null) {
                 loadMoreNotes();
             }
         }
     };
 
-    private final Toolbar.OnMenuItemClickListener mOnMenuItemClickListener = new Toolbar.OnMenuItemClickListener() {
+    private final Toolbar.OnMenuItemClickListener onMenuItemClickListener = new Toolbar.OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.action_share:
-                    IntentUtil.share(mRoot, mIssue.getUrl(mProject));
+                    IntentUtil.share(root, issue.getUrl(project));
                     return true;
                 case R.id.action_close:
                     closeOrOpenIssue();
                     return true;
                 case R.id.action_delete:
-                    App.get().getGitLab().deleteIssue(mProject.getId(), mIssue.getId())
+                    App.get().getGitLab().deleteIssue(project.getId(), issue.getId())
                             .compose(IssueActivity.this.<String>bindToLifecycle())
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
@@ -137,7 +135,7 @@ public class IssueActivity extends BaseActivity {
                                 @Override
                                 public void error(Throwable t) {
                                     Timber.e(t);
-                                    Snackbar.make(mRoot, getString(R.string.failed_to_delete_issue), Snackbar.LENGTH_SHORT)
+                                    Snackbar.make(root, getString(R.string.failed_to_delete_issue), Snackbar.LENGTH_SHORT)
                                             .show();
                                 }
 
@@ -157,7 +155,7 @@ public class IssueActivity extends BaseActivity {
 
     @OnClick(R.id.fab_edit_issue)
     public void onEditIssueClick(View fab) {
-        Navigator.navigateToEditIssue(IssueActivity.this, fab, mProject, mIssue);
+        Navigator.navigateToEditIssue(IssueActivity.this, fab, project, issue);
     }
 
     @Override
@@ -165,26 +163,25 @@ public class IssueActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_issue);
         ButterKnife.bind(this);
-        mTeleprinter = new Teleprinter(this);
-        mEventReceiver = new EventReceiver();
-        App.bus().register(mEventReceiver);
+        teleprinter = new Teleprinter(this);
+        App.bus().register(this);
 
-        mToolbar.setNavigationIcon(R.drawable.ic_back_24dp);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        toolbar.setNavigationIcon(R.drawable.ic_back_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
             }
         });
-        mToolbar.inflateMenu(R.menu.menu_issue);
-        mOpenCloseMenuItem = mToolbar.getMenu().findItem(R.id.action_close);
-        mToolbar.setOnMenuItemClickListener(mOnMenuItemClickListener);
+        toolbar.inflateMenu(R.menu.menu_issue);
+        menuItemOpenClose = toolbar.getMenu().findItem(R.id.action_close);
+        toolbar.setOnMenuItemClickListener(onMenuItemClickListener);
 
-        mNotesLayoutManager = new LinearLayoutManager(this);
-        mNotesRecyclerView.setLayoutManager(mNotesLayoutManager);
-        mNotesRecyclerView.addOnScrollListener(mOnScrollListener);
+        layoutManagerNotes = new LinearLayoutManager(this);
+        listNotes.setLayoutManager(layoutManagerNotes);
+        listNotes.addOnScrollListener(onScrollListener);
 
-        mSendMessageView.setCallbacks(new SendMessageView.Callbacks() {
+        sendMessageView.setCallbacks(new SendMessageView.Callbacks() {
             @Override
             public void onSendClicked(String message) {
                 postNote(message);
@@ -192,11 +189,11 @@ public class IssueActivity extends BaseActivity {
 
             @Override
             public void onAttachmentClicked() {
-                Navigator.navigateToAttach(IssueActivity.this, mProject, REQUEST_ATTACH);
+                Navigator.navigateToAttach(IssueActivity.this, project, REQUEST_ATTACH);
             }
         });
 
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 loadNotes();
@@ -204,22 +201,22 @@ public class IssueActivity extends BaseActivity {
         });
 
         if (getIntent().hasExtra(EXTRA_SELECTED_ISSUE)) {
-            mProject = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_PROJECT));
-            mIssue = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_SELECTED_ISSUE));
-            mIssueDetailsAdapter = new IssueDetailsAdapter(IssueActivity.this, mIssue, mProject);
-            mNotesRecyclerView.setAdapter(mIssueDetailsAdapter);
+            project = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_PROJECT));
+            issue = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_SELECTED_ISSUE));
+            adapterIssueDetails = new IssueDetailsAdapter(IssueActivity.this, issue, project);
+            listNotes.setAdapter(adapterIssueDetails);
             bindIssue();
             bindProject();
             loadNotes();
         } else if (getIntent().hasExtra(EXTRA_ISSUE_IID)) {
-            mIssueIid = getIntent().getStringExtra(EXTRA_ISSUE_IID);
+            issueIid = getIntent().getStringExtra(EXTRA_ISSUE_IID);
             String projectNamespace = getIntent().getStringExtra(EXTRA_PROJECT_NAMESPACE);
             String projectName = getIntent().getStringExtra(EXTRA_PROJECT_NAME);
-            mSwipeRefreshLayout.post(new Runnable() {
+            swipeRefreshLayout.post(new Runnable() {
                 @Override
                 public void run() {
-                    if (mSwipeRefreshLayout != null) {
-                        mSwipeRefreshLayout.setRefreshing(true);
+                    if (swipeRefreshLayout != null) {
+                        swipeRefreshLayout.setRefreshing(true);
                     }
                 }
             });
@@ -227,8 +224,8 @@ public class IssueActivity extends BaseActivity {
                     .flatMap(new Function<Project, SingleSource<List<Issue>>>() {
                         @Override
                         public SingleSource<List<Issue>> apply(Project project) throws Exception {
-                            mProject = project;
-                            return App.get().getGitLab().getIssuesByIid(project.getId(), mIssueIid);
+                            IssueActivity.this.project = project;
+                            return App.get().getGitLab().getIssuesByIid(project.getId(), issueIid);
                         }
                     })
                     .compose(this.<List<Issue>>bindToLifecycle())
@@ -239,21 +236,21 @@ public class IssueActivity extends BaseActivity {
                         @Override
                         public void error(Throwable t) {
                             Timber.e(t);
-                            mSwipeRefreshLayout.setRefreshing(false);
-                            Snackbar.make(mRoot, getString(R.string.failed_to_load), Snackbar.LENGTH_SHORT)
+                            swipeRefreshLayout.setRefreshing(false);
+                            Snackbar.make(root, getString(R.string.failed_to_load), Snackbar.LENGTH_SHORT)
                                     .show();
                         }
 
                         @Override
                         public void success(List<Issue> issues) {
                             if (issues.isEmpty()) {
-                                mSwipeRefreshLayout.setRefreshing(false);
-                                Snackbar.make(mRoot, getString(R.string.failed_to_load), Snackbar.LENGTH_SHORT)
+                                swipeRefreshLayout.setRefreshing(false);
+                                Snackbar.make(root, getString(R.string.failed_to_load), Snackbar.LENGTH_SHORT)
                                         .show();
                             } else {
-                                mIssue = issues.get(0);
-                                mIssueDetailsAdapter = new IssueDetailsAdapter(IssueActivity.this, mIssue, mProject);
-                                mNotesRecyclerView.setAdapter(mIssueDetailsAdapter);
+                                issue = issues.get(0);
+                                adapterIssueDetails = new IssueDetailsAdapter(IssueActivity.this, issue, project);
+                                listNotes.setAdapter(adapterIssueDetails);
                                 bindIssue();
                                 bindProject();
                                 loadNotes();
@@ -270,10 +267,10 @@ public class IssueActivity extends BaseActivity {
             case REQUEST_ATTACH:
                 if (resultCode == RESULT_OK) {
                     FileUploadResponse response = Parcels.unwrap(data.getParcelableExtra(AttachActivity.KEY_FILE_UPLOAD_RESPONSE));
-                    mProgress.setVisibility(View.GONE);
-                    mSendMessageView.appendText(response.getMarkdown());
+                    progress.setVisibility(View.GONE);
+                    sendMessageView.appendText(response.getMarkdown());
                 } else {
-                    Snackbar.make(mRoot, R.string.failed_to_upload_file, Snackbar.LENGTH_LONG)
+                    Snackbar.make(root, R.string.failed_to_upload_file, Snackbar.LENGTH_LONG)
                             .show();
                 }
                 break;
@@ -282,32 +279,32 @@ public class IssueActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
+        App.bus().unregister(this);
         super.onDestroy();
-        App.bus().unregister(mEventReceiver);
     }
 
     private void bindProject() {
-        mToolbar.setSubtitle(mProject.getNameWithNamespace());
+        toolbar.setSubtitle(project.getNameWithNamespace());
     }
 
     private void bindIssue() {
-        mToolbar.setTitle(getString(R.string.issue_number) + mIssue.getIid());
+        toolbar.setTitle(getString(R.string.issue_number) + issue.getIid());
         setOpenCloseMenuStatus();
-        mIssueTitle.setText(mIssue.getTitle());
-        mIssueDetailsAdapter.updateIssue(mIssue);
+        textTitle.setText(issue.getTitle());
+        adapterIssueDetails.updateIssue(issue);
     }
 
     private void loadNotes() {
-        mSwipeRefreshLayout.post(new Runnable() {
+        swipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
-                if (mSwipeRefreshLayout != null) {
-                    mSwipeRefreshLayout.setRefreshing(true);
+                if (swipeRefreshLayout != null) {
+                    swipeRefreshLayout.setRefreshing(true);
                 }
             }
         });
-        mLoading = true;
-        App.get().getGitLab().getIssueNotes(mProject.getId(), mIssue.getId())
+        loading = true;
+        App.get().getGitLab().getIssueNotes(project.getId(), issue.getId())
                 .compose(this.<Response<List<Note>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -315,27 +312,27 @@ public class IssueActivity extends BaseActivity {
 
                     @Override
                     public void error(Throwable t) {
-                        mLoading = false;
+                        loading = false;
                         Timber.e(t);
-                        mSwipeRefreshLayout.setRefreshing(false);
-                        Snackbar.make(mRoot, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
+                        swipeRefreshLayout.setRefreshing(false);
+                        Snackbar.make(root, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
                                 .show();
                     }
 
                     @Override
                     public void responseSuccess(List<Note> notes) {
-                        mLoading = false;
-                        mSwipeRefreshLayout.setRefreshing(false);
-                        mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
-                        mIssueDetailsAdapter.setNotes(notes);
+                        loading = false;
+                        swipeRefreshLayout.setRefreshing(false);
+                        nextPageUrl = LinkHeaderParser.parse(response()).getNext();
+                        adapterIssueDetails.setNotes(notes);
                     }
                 });
     }
 
     private void loadMoreNotes() {
-        mLoading = true;
-        mIssueDetailsAdapter.setLoading(true);
-        App.get().getGitLab().getIssueNotes(mNextPageUrl.toString())
+        loading = true;
+        adapterIssueDetails.setLoading(true);
+        App.get().getGitLab().getIssueNotes(nextPageUrl.toString())
                 .compose(this.<Response<List<Note>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -343,17 +340,17 @@ public class IssueActivity extends BaseActivity {
 
                     @Override
                     public void error(Throwable t) {
-                        mLoading = false;
+                        loading = false;
                         Timber.e(t);
-                        mIssueDetailsAdapter.setLoading(false);
+                        adapterIssueDetails.setLoading(false);
                     }
 
                     @Override
                     public void responseSuccess(List<Note> notes) {
-                        mLoading = false;
-                        mIssueDetailsAdapter.setLoading(false);
-                        mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
-                        mIssueDetailsAdapter.addNotes(notes);
+                        loading = false;
+                        adapterIssueDetails.setLoading(false);
+                        nextPageUrl = LinkHeaderParser.parse(response()).getNext();
+                        adapterIssueDetails.addNotes(notes);
                     }
                 });
     }
@@ -364,14 +361,14 @@ public class IssueActivity extends BaseActivity {
             return;
         }
 
-        mProgress.setVisibility(View.VISIBLE);
-        mProgress.setAlpha(0.0f);
-        mProgress.animate().alpha(1.0f);
+        progress.setVisibility(View.VISIBLE);
+        progress.setAlpha(0.0f);
+        progress.animate().alpha(1.0f);
         // Clear text & collapse keyboard
-        mTeleprinter.hideKeyboard();
-        mSendMessageView.clearText();
+        teleprinter.hideKeyboard();
+        sendMessageView.clearText();
 
-        App.get().getGitLab().addIssueNote(mProject.getId(), mIssue.getId(), message)
+        App.get().getGitLab().addIssueNote(project.getId(), issue.getId(), message)
                 .compose(this.<Note>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -380,26 +377,26 @@ public class IssueActivity extends BaseActivity {
                     @Override
                     public void error(Throwable t) {
                         Timber.e(t);
-                        mProgress.setVisibility(View.GONE);
-                        Snackbar.make(mRoot, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
+                        progress.setVisibility(View.GONE);
+                        Snackbar.make(root, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
                                 .show();
                     }
 
                     @Override
                     public void success(Note note) {
-                        mProgress.setVisibility(View.GONE);
-                        mIssueDetailsAdapter.addNote(note);
-                        mNotesRecyclerView.smoothScrollToPosition(IssueDetailsAdapter.getHeaderCount());
+                        progress.setVisibility(View.GONE);
+                        adapterIssueDetails.addNote(note);
+                        listNotes.smoothScrollToPosition(IssueDetailsAdapter.getHeaderCount());
                     }
                 });
     }
 
     private void closeOrOpenIssue() {
-        mProgress.setVisibility(View.VISIBLE);
-        if (mIssue.getState().equals(Issue.STATE_CLOSED)) {
-            updateIssueStatus(App.get().getGitLab().updateIssueStatus(mProject.getId(), mIssue.getId(), Issue.STATE_REOPEN));
+        progress.setVisibility(View.VISIBLE);
+        if (issue.getState().equals(Issue.STATE_CLOSED)) {
+            updateIssueStatus(App.get().getGitLab().updateIssueStatus(project.getId(), issue.getId(), Issue.STATE_REOPEN));
         } else {
-            updateIssueStatus(App.get().getGitLab().updateIssueStatus(mProject.getId(), mIssue.getId(), Issue.STATE_CLOSE));
+            updateIssueStatus(App.get().getGitLab().updateIssueStatus(project.getId(), issue.getId(), Issue.STATE_CLOSE));
         }
     }
 
@@ -413,16 +410,16 @@ public class IssueActivity extends BaseActivity {
                     @Override
                     public void error(Throwable t) {
                         Timber.e(t);
-                        mProgress.setVisibility(View.GONE);
-                        Snackbar.make(mRoot, getString(R.string.error_changing_issue), Snackbar.LENGTH_SHORT)
+                        progress.setVisibility(View.GONE);
+                        Snackbar.make(root, getString(R.string.error_changing_issue), Snackbar.LENGTH_SHORT)
                                 .show();
                     }
 
                     @Override
                     public void success(Issue issue) {
-                        mProgress.setVisibility(View.GONE);
-                        mIssue = issue;
-                        App.bus().post(new IssueChangedEvent(mIssue));
+                        progress.setVisibility(View.GONE);
+                        IssueActivity.this.issue = issue;
+                        App.bus().post(new IssueChangedEvent(IssueActivity.this.issue));
                         App.bus().post(new IssueReloadEvent());
                         setOpenCloseMenuStatus();
                         loadNotes();
@@ -431,18 +428,15 @@ public class IssueActivity extends BaseActivity {
     }
 
     private void setOpenCloseMenuStatus() {
-        mOpenCloseMenuItem.setTitle(mIssue.getState().equals(Issue.STATE_CLOSED) ? R.string.reopen : R.string.close);
+        menuItemOpenClose.setTitle(issue.getState().equals(Issue.STATE_CLOSED) ? R.string.reopen : R.string.close);
     }
 
-    private class EventReceiver {
-
-        @Subscribe
-        public void onIssueChanged(IssueChangedEvent event) {
-            if (mIssue.getId() == event.mIssue.getId()) {
-                mIssue = event.mIssue;
-                bindIssue();
-                loadNotes();
-            }
+    @Subscribe
+    public void onIssueChanged(IssueChangedEvent event) {
+        if (issue.getId() == event.mIssue.getId()) {
+            issue = event.mIssue;
+            bindIssue();
+            loadNotes();
         }
     }
 }

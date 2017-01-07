@@ -9,17 +9,17 @@ import org.parceler.Parcel;
 @JsonObject
 public class Identity {
     @JsonField(name = "provider")
-    String mProvider;
+    String provider;
     @JsonField(name = "extern_uid")
-    String mExternUid;
+    String externUid;
 
     public Identity() {}
 
     public String getProvider() {
-        return mProvider;
+        return provider;
     }
 
     public String getExternUid() {
-        return mExternUid;
+        return externUid;
     }
 }

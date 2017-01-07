@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
@@ -70,44 +71,42 @@ public class AddIssueActivity extends MorphActivity {
     }
 
     @BindView(R.id.root)
-    FrameLayout mRoot;
+    FrameLayout root;
     @BindView(R.id.toolbar)
-    Toolbar mToolbar;
+    Toolbar toolbar;
     @BindView(R.id.title_text_input_layout)
-    TextInputLayout mTitleInputLayout;
-    @BindView(R.id.title)
-    EditText mTitleInput;
+    TextInputLayout textInputLayoutTitle;
     @BindView(R.id.description)
-    EditText mDescriptionInput;
+    EditText textDescription;
     @BindView(R.id.progress)
-    View mProgress;
+    View progress;
     @BindView(R.id.assignee_progress)
-    View mAssigneeProgress;
+    View progressAssignee;
     @BindView(R.id.assignee_spinner)
-    Spinner mAssigneeSpinner;
+    Spinner spinnerAssignee;
     @BindView(R.id.milestone_progress)
-    View mMilestoneProgress;
+    View progressMilestone;
     @BindView(R.id.milestone_spinner)
-    Spinner mMilestoneSpinner;
+    Spinner spinnerMilestone;
     @BindView(R.id.label_label)
-    TextView mLabelLabel;
+    TextView textLabel;
     @BindView(R.id.labels_progress)
-    View mLabelsProgress;
+    View progressLabels;
     @BindView(R.id.root_add_labels)
-    ViewGroup mRootAddLabels;
+    ViewGroup rootAddLabels;
     @BindView(R.id.list_labels)
-    AdapterFlowLayout mListLabels;
+    AdapterFlowLayout listLabels;
 
-    AddIssueLabelAdapter mLabelsAdapter;
-    Teleprinter mTeleprinter;
+    AddIssueLabelAdapter adapterLabels;
+    Teleprinter teleprinter;
 
-    Project mProject;
-    Issue mIssue;
-    HashSet<Member> mMembers;
+    Project project;
+    Issue issue;
+    HashSet<Member> members;
 
     @OnClick(R.id.text_add_labels)
     void onAddLabelClicked() {
-        Navigator.navigateToAddLabels(this, mProject, REQUEST_LABEL);
+        Navigator.navigateToAddLabels(this, project, REQUEST_LABEL);
     }
 
     @Override
@@ -115,13 +114,13 @@ public class AddIssueActivity extends MorphActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_issue);
         ButterKnife.bind(this);
-        morph(mRoot);
-        mTeleprinter = new Teleprinter(this);
+        morph(root);
+        teleprinter = new Teleprinter(this);
 
-        mProject = Parcels.unwrap(getIntent().getParcelableExtra(KEY_PROJECT));
-        mIssue = Parcels.unwrap(getIntent().getParcelableExtra(KEY_ISSUE));
-        mMembers = new HashSet<>();
-        mLabelsAdapter = new AddIssueLabelAdapter(new AddIssueLabelAdapter.Listener() {
+        project = Parcels.unwrap(getIntent().getParcelableExtra(KEY_PROJECT));
+        issue = Parcels.unwrap(getIntent().getParcelableExtra(KEY_ISSUE));
+        members = new HashSet<>();
+        adapterLabels = new AddIssueLabelAdapter(new AddIssueLabelAdapter.Listener() {
             @Override
             public void onLabelLongClicked(final Label label) {
                 new AlertDialog.Builder(AddIssueActivity.this)
@@ -130,7 +129,7 @@ public class AddIssueActivity extends MorphActivity {
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                mLabelsAdapter.removeLabel(label);
+                                adapterLabels.removeLabel(label);
                             }
                         })
                         .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
@@ -142,16 +141,16 @@ public class AddIssueActivity extends MorphActivity {
                         .show();
             }
         });
-        mListLabels.setAdapter(mLabelsAdapter);
+        listLabels.setAdapter(adapterLabels);
 
-        mToolbar.setNavigationIcon(R.drawable.ic_back_24dp);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        toolbar.setNavigationIcon(R.drawable.ic_back_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
             }
         });
-        mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
@@ -164,17 +163,17 @@ public class AddIssueActivity extends MorphActivity {
             }
         });
 
-        if (mIssue != null) {
+        if (issue != null) {
             bindIssue();
-            mToolbar.inflateMenu(R.menu.menu_edit_milestone);
+            toolbar.inflateMenu(R.menu.menu_edit_milestone);
         } else {
-            mToolbar.inflateMenu(R.menu.menu_add_milestone);
+            toolbar.inflateMenu(R.menu.menu_add_milestone);
         }
         load();
     }
 
     private void load() {
-        App.get().getGitLab().getMilestones(mProject.getId(), getString(R.string.milestone_state_value_default))
+        App.get().getGitLab().getMilestones(project.getId(), getString(R.string.milestone_state_value_default))
                 .compose(this.<Response<List<Milestone>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -183,22 +182,22 @@ public class AddIssueActivity extends MorphActivity {
                     @Override
                     public void error(Throwable t) {
                         Timber.e(t);
-                        mMilestoneProgress.setVisibility(View.GONE);
-                        mMilestoneSpinner.setVisibility(View.GONE);
+                        progressMilestone.setVisibility(View.GONE);
+                        spinnerMilestone.setVisibility(View.GONE);
                     }
 
                     @Override
                     public void responseSuccess(List<Milestone> milestones) {
-                        mMilestoneProgress.setVisibility(View.GONE);
-                        mMilestoneSpinner.setVisibility(View.VISIBLE);
+                        progressMilestone.setVisibility(View.GONE);
+                        spinnerMilestone.setVisibility(View.VISIBLE);
                         MilestoneSpinnerAdapter milestoneSpinnerAdapter = new MilestoneSpinnerAdapter(AddIssueActivity.this, milestones);
-                        mMilestoneSpinner.setAdapter(milestoneSpinnerAdapter);
-                        if (mIssue != null) {
-                            mMilestoneSpinner.setSelection(milestoneSpinnerAdapter.getSelectedItemPosition(mIssue.getMilestone()));
+                        spinnerMilestone.setAdapter(milestoneSpinnerAdapter);
+                        if (issue != null) {
+                            spinnerMilestone.setSelection(milestoneSpinnerAdapter.getSelectedItemPosition(issue.getMilestone()));
                         }
                     }
                 });
-        App.get().getGitLab().getProjectMembers(mProject.getId())
+        App.get().getGitLab().getProjectMembers(project.getId())
                 .compose(this.<Response<List<Member>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -207,16 +206,16 @@ public class AddIssueActivity extends MorphActivity {
                     @Override
                     public void error(Throwable t) {
                         Timber.e(t);
-                        mAssigneeSpinner.setVisibility(View.GONE);
-                        mAssigneeProgress.setVisibility(View.GONE);
+                        spinnerAssignee.setVisibility(View.GONE);
+                        progressAssignee.setVisibility(View.GONE);
                     }
 
                     @Override
                     public void responseSuccess(List<Member> members) {
-                        mMembers.addAll(members);
-                        if (mProject.belongsToGroup()) {
+                        AddIssueActivity.this.members.addAll(members);
+                        if (project.belongsToGroup()) {
                             Timber.d("Project belongs to a group, loading those users too");
-                            App.get().getGitLab().getGroupMembers(mProject.getNamespace().getId())
+                            App.get().getGitLab().getGroupMembers(project.getNamespace().getId())
                                     .subscribeOn(Schedulers.io())
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .subscribe(new CustomResponseSingleObserver<List<Member>>() {
@@ -224,13 +223,13 @@ public class AddIssueActivity extends MorphActivity {
                                         @Override
                                         public void error(Throwable t) {
                                             Timber.e(t);
-                                            mAssigneeSpinner.setVisibility(View.GONE);
-                                            mAssigneeProgress.setVisibility(View.GONE);
+                                            spinnerAssignee.setVisibility(View.GONE);
+                                            progressAssignee.setVisibility(View.GONE);
                                         }
 
                                         @Override
                                         public void responseSuccess(List<Member> members) {
-                                            mMembers.addAll(members);
+                                            AddIssueActivity.this.members.addAll(members);
                                             setAssignees();
                                         }
                                     });
@@ -239,7 +238,7 @@ public class AddIssueActivity extends MorphActivity {
                         }
                     }
                 });
-        App.get().getGitLab().getLabels(mProject.getId())
+        App.get().getGitLab().getLabels(project.getId())
                 .compose(this.<List<Label>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -248,57 +247,57 @@ public class AddIssueActivity extends MorphActivity {
                     @Override
                     public void error(Throwable t) {
                         Timber.e(t);
-                        mListLabels.setVisibility(View.GONE);
-                        mLabelsProgress.setVisibility(View.GONE);
-                        mLabelLabel.setVisibility(View.GONE);
+                        listLabels.setVisibility(View.GONE);
+                        progressLabels.setVisibility(View.GONE);
+                        textLabel.setVisibility(View.GONE);
                     }
 
                     @Override
                     public void success(List<Label> labels) {
-                        mLabelsProgress.setVisibility(View.GONE);
-                        mRootAddLabels.setVisibility(View.VISIBLE);
+                        progressLabels.setVisibility(View.GONE);
+                        rootAddLabels.setVisibility(View.VISIBLE);
                         setLabels(labels);
                     }
                 });
     }
 
     private void showLoading() {
-        mProgress.setVisibility(View.VISIBLE);
-        mProgress.setAlpha(0.0f);
-        mProgress.animate().alpha(1.0f);
+        progress.setVisibility(View.VISIBLE);
+        progress.setAlpha(0.0f);
+        progress.animate().alpha(1.0f);
     }
 
     private void bindIssue() {
-        if (!TextUtils.isEmpty(mIssue.getTitle())) {
-            mTitleInput.setText(mIssue.getTitle());
+        if (!TextUtils.isEmpty(issue.getTitle())) {
+            textInputLayoutTitle.getEditText().setText(issue.getTitle());
         }
-        if (!TextUtils.isEmpty(mIssue.getDescription())) {
-            mDescriptionInput.setText(mIssue.getDescription());
+        if (!TextUtils.isEmpty(issue.getDescription())) {
+            textDescription.setText(issue.getDescription());
         }
     }
 
     private void setAssignees() {
-        mAssigneeProgress.setVisibility(View.GONE);
-        mAssigneeSpinner.setVisibility(View.VISIBLE);
-        AssigneeSpinnerAdapter assigneeSpinnerAdapter = new AssigneeSpinnerAdapter(this, new ArrayList<>(mMembers));
-        mAssigneeSpinner.setAdapter(assigneeSpinnerAdapter);
-        if (mIssue != null) {
-            mAssigneeSpinner.setSelection(assigneeSpinnerAdapter.getSelectedItemPosition(mIssue.getAssignee()));
+        progressAssignee.setVisibility(View.GONE);
+        spinnerAssignee.setVisibility(View.VISIBLE);
+        AssigneeSpinnerAdapter assigneeSpinnerAdapter = new AssigneeSpinnerAdapter(this, new ArrayList<>(members));
+        spinnerAssignee.setAdapter(assigneeSpinnerAdapter);
+        if (issue != null) {
+            spinnerAssignee.setSelection(assigneeSpinnerAdapter.getSelectedItemPosition(issue.getAssignee()));
         }
     }
 
     private void setLabels(List<Label> projectLabels) {
-        if (projectLabels != null && !projectLabels.isEmpty() && mIssue != null && mIssue.getLabels() != null) {
+        if (projectLabels != null && !projectLabels.isEmpty() && issue != null && issue.getLabels() != null) {
             ArrayList<Label> currentLabels = new ArrayList<>();
             for (Label label : projectLabels) {
-                for (String labelName : mIssue.getLabels()) {
+                for (String labelName : issue.getLabels()) {
                     if (labelName.equals(label.getName())) {
                         currentLabels.add(label);
                     }
                 }
             }
             if (!currentLabels.isEmpty()) {
-                mLabelsAdapter.setLabels(currentLabels);
+                adapterLabels.setLabels(currentLabels);
             }
         }
     }
@@ -310,11 +309,11 @@ public class AddIssueActivity extends MorphActivity {
             case REQUEST_LABEL:
                 if (resultCode == RESULT_OK) {
                     Label label = Parcels.unwrap(data.getParcelableExtra(AddLabelActivity.KEY_LABEL));
-                    if (mLabelsAdapter.containsLabel(label)) {
-                        Snackbar.make(mRoot, R.string.label_already_added, Snackbar.LENGTH_SHORT)
+                    if (adapterLabels.containsLabel(label)) {
+                        Snackbar.make(root, R.string.label_already_added, Snackbar.LENGTH_SHORT)
                                 .show();
                     } else {
-                        mLabelsAdapter.addLabel(label);
+                        adapterLabels.addLabel(label);
                     }
                 }
                 break;
@@ -342,14 +341,14 @@ public class AddIssueActivity extends MorphActivity {
     }
 
     private void save() {
-        if (!TextUtils.isEmpty(mTitleInput.getText())) {
-            mTeleprinter.hideKeyboard();
-            mTitleInputLayout.setError(null);
+        if (!TextUtils.isEmpty(textInputLayoutTitle.getEditText().getText())) {
+            teleprinter.hideKeyboard();
+            textInputLayoutTitle.setError(null);
             showLoading();
             Long assigneeId = null;
-            if (mAssigneeSpinner.getAdapter() != null) {
+            if (spinnerAssignee.getAdapter() != null) {
                 //the user did make a selection of some sort. So update it
-                Member member = (Member) mAssigneeSpinner.getSelectedItem();
+                Member member = (Member) spinnerAssignee.getSelectedItem();
                 if (member == null) {
                     //Removes the assignment
                     assigneeId = 0L;
@@ -359,9 +358,9 @@ public class AddIssueActivity extends MorphActivity {
             }
 
             Long milestoneId = null;
-            if (mMilestoneSpinner.getAdapter() != null) {
+            if (spinnerMilestone.getAdapter() != null) {
                 //the user did make a selection of some sort. So update it
-                Milestone milestone = (Milestone) mMilestoneSpinner.getSelectedItem();
+                Milestone milestone = (Milestone) spinnerMilestone.getSelectedItem();
                 if (milestone == null) {
                     //Removes the assignment
                     milestoneId = 0L;
@@ -369,30 +368,30 @@ public class AddIssueActivity extends MorphActivity {
                     milestoneId = milestone.getId();
                 }
             }
-            String labelsCommaSeperated = mLabelsAdapter.getCommaSeperatedStringOfLabels();
-            createOrSaveIssue(mTitleInput.getText().toString(),
-                    mDescriptionInput.getText().toString(),
+            String labelsCommaSeperated = adapterLabels.getCommaSeperatedStringOfLabels();
+            createOrSaveIssue(textInputLayoutTitle.getEditText().getText().toString(),
+                    textDescription.getText().toString(),
                     assigneeId,
                     milestoneId,
                     labelsCommaSeperated);
         } else {
-            mTitleInputLayout.setError(getString(R.string.required_field));
+            textInputLayoutTitle.setError(getString(R.string.required_field));
         }
     }
 
     private void createOrSaveIssue(String title, String description, @Nullable Long assigneeId,
                                    @Nullable Long milestoneId, @Nullable String labels) {
-        if (mIssue == null) {
+        if (issue == null) {
             observeUpdate(App.get().getGitLab().createIssue(
-                    mProject.getId(),
+                    project.getId(),
                     title,
                     description,
                     assigneeId,
                     milestoneId,
                     labels));
         } else {
-            observeUpdate(App.get().getGitLab().updateIssue(mProject.getId(),
-                    mIssue.getId(),
+            observeUpdate(App.get().getGitLab().updateIssue(project.getId(),
+                    issue.getId(),
                     title,
                     description,
                     assigneeId,
@@ -407,15 +406,15 @@ public class AddIssueActivity extends MorphActivity {
                 .subscribe(new CustomSingleObserver<Issue>() {
 
                     @Override
-                    public void error(Throwable t) {
+                    public void error(@NonNull Throwable t) {
                         Timber.e(t);
-                        Snackbar.make(mRoot, getString(R.string.failed_to_create_issue), Snackbar.LENGTH_SHORT)
+                        Snackbar.make(root, getString(R.string.failed_to_create_issue), Snackbar.LENGTH_SHORT)
                                 .show();
                     }
 
                     @Override
-                    public void success(Issue issue) {
-                        if (mIssue == null) {
+                    public void success(@NonNull Issue issue) {
+                        if (AddIssueActivity.this.issue == null) {
                             App.bus().post(new IssueCreatedEvent(issue));
                         } else {
                             App.bus().post(new IssueChangedEvent(issue));

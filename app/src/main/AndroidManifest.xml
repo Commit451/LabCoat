@@ -70,11 +70,13 @@
         <activity android:name=".activity.SettingsActivity" />
         <activity android:name=".activity.AddLabelActivity" />
         <activity android:name=".activity.AddNewLabelActivity" />
-        <activity android:name=".activity.PickBranchOrTagActivity"
-            android:theme="@style/Activity.Translucent"/>
+        <activity
+            android:name=".activity.PickBranchOrTagActivity"
+            android:theme="@style/Activity.Translucent" />
         <activity android:name=".activity.WebviewLoginActivity" />
-        <activity android:name=".activity.AttachActivity"
-            android:theme="@style/Activity.Translucent"/>
+        <activity
+            android:name=".activity.AttachActivity"
+            android:theme="@style/Activity.Translucent" />
         <activity
             android:name=".activity.RoutingActivity"
             android:launchMode="singleTask"
@@ -103,7 +105,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".widget.ProjectFeedWidgetConfigureProjectActivity"/>
+        <activity android:name=".widget.ProjectFeedWidgetConfigureProjectActivity" />
 
         <receiver
             android:name=".widget.UserFeedWidgetProvider"

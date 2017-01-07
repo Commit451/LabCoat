@@ -36,63 +36,63 @@ public class Todo {
     }
 
     @JsonField(name = "id")
-    String mId;
+    String id;
     @JsonField(name = "project")
-    Project mProject;
+    Project project;
     @JsonField(name = "author")
-    UserBasic mAuthor;
+    UserBasic author;
     @JsonField(name = "action_name")
-    String mActionName;
+    String actionName;
     @JsonField(name = "target_type")
     @TargetType
-    String mTargetType;
+    String targetType;
     @JsonField(name = "target_url")
-    String mTargetUrl;
+    String targetUrl;
     @JsonField(name = "body")
-    String mBody;
+    String body;
     @JsonField(name = "state")
     @State
-    String mState;
+    String state;
     @JsonField(name = "created_at")
-    Date mCreatedAt;
+    Date createdAt;
 
     public Todo() {}
 
     public String getId() {
-        return mId;
+        return id;
     }
 
     public Project getProject() {
-        return mProject;
+        return project;
     }
 
     public UserBasic getAuthor() {
-        return mAuthor;
+        return author;
     }
 
     public String getActionName() {
-        return mActionName;
+        return actionName;
     }
 
     @TargetType
     public String getTargetType() {
-        return mTargetType;
+        return targetType;
     }
 
     public String getTargetUrl() {
-        return mTargetUrl;
+        return targetUrl;
     }
 
     public String getBody() {
-        return mBody;
+        return body;
     }
 
     @State
     public String getState() {
-        return mState;
+        return state;
     }
 
     public Date getCreatedAt() {
-        return mCreatedAt;
+        return createdAt;
     }
 }

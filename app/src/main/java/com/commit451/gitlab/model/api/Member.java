@@ -9,12 +9,12 @@ import org.parceler.Parcel;
 @JsonObject
 public class Member extends UserBasic {
     @JsonField(name = "access_level")
-    int mAccessLevel;
+    int accessLevel;
 
     public Member() {}
 
     public int getAccessLevel() {
-        return mAccessLevel;
+        return accessLevel;
     }
 
     public static int getAccessLevel(String accessLevel) {

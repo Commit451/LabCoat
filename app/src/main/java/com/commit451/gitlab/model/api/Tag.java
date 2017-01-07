@@ -10,32 +10,32 @@ import com.bluelinelabs.logansquare.annotation.JsonObject;
 public class Tag {
 
     @JsonField(name = "name")
-    String mName;
+    String name;
     @JsonField(name = "message")
-    String mMessage;
+    String message;
     @JsonField(name = "commit")
-    Commit mCommit;
+    Commit commit;
     @JsonField(name = "release")
-    Release mRelease;
+    Release release;
 
     protected Tag() {
 
     }
 
     public String getName() {
-        return mName;
+        return name;
     }
 
     public String getMessage() {
-        return mMessage;
+        return message;
     }
 
     public Commit getCommit() {
-        return mCommit;
+        return commit;
     }
 
     public Release getRelease() {
-        return mRelease;
+        return release;
     }
 
     @JsonObject

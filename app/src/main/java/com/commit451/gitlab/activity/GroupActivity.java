@@ -55,19 +55,19 @@ public class GroupActivity extends BaseActivity {
     }
 
     @BindView(R.id.root)
-    View mRoot;
+    View root;
     @BindView(R.id.toolbar)
-    Toolbar mToolbar;
+    Toolbar toolbar;
     @BindView(R.id.collapsing_toolbar)
-    CollapsingToolbarLayout mCollapsingToolbarLayout;
+    CollapsingToolbarLayout collapsingToolbarLayout;
     @BindView(R.id.viewpager)
-    ViewPager mViewPager;
+    ViewPager viewPager;
     @BindView(R.id.tabs)
-    TabLayout mTabLayout;
+    TabLayout tabLayout;
     @BindView(R.id.backdrop)
-    ImageView mBackdrop;
+    ImageView backdrop;
     @BindView(R.id.progress)
-    View mProgress;
+    View progress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,8 +77,8 @@ public class GroupActivity extends BaseActivity {
 
         // Default content and scrim colors
 
-        mToolbar.setNavigationIcon(R.drawable.ic_back_24dp);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        toolbar.setNavigationIcon(R.drawable.ic_back_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
@@ -89,7 +89,7 @@ public class GroupActivity extends BaseActivity {
             Group group = Parcels.unwrap(getIntent().getParcelableExtra(KEY_GROUP));
             bind(group);
         } else {
-            mProgress.setVisibility(View.VISIBLE);
+            progress.setVisibility(View.VISIBLE);
             long groupId = getIntent().getLongExtra(KEY_GROUP_ID, -1);
             App.get().getGitLab().getGroup(groupId)
                     .compose(this.<GroupDetail>bindToLifecycle())
@@ -100,13 +100,13 @@ public class GroupActivity extends BaseActivity {
                         @Override
                         public void error(Throwable t) {
                             Timber.e(t);
-                            mProgress.setVisibility(View.GONE);
+                            progress.setVisibility(View.GONE);
                             showError();
                         }
 
                         @Override
                         public void success(GroupDetail groupDetail) {
-                            mProgress.setVisibility(View.GONE);
+                            progress.setVisibility(View.GONE);
                             bind(groupDetail);
                         }
                     });
@@ -122,7 +122,7 @@ public class GroupActivity extends BaseActivity {
         App.get().getPicasso()
                 .load(group.getAvatarUrl())
                 .transform(PaletteTransformation.instance())
-                .into(mBackdrop, new PaletteTransformation.PaletteCallback(mBackdrop) {
+                .into(backdrop, new PaletteTransformation.PaletteCallback(backdrop) {
                     @Override
                     protected void onSuccess(Palette palette) {
                         bindPalette(palette);
@@ -133,8 +133,8 @@ public class GroupActivity extends BaseActivity {
                     }
                 });
 
-        mViewPager.setAdapter(new GroupPagerAdapter(this, getSupportFragmentManager(), group));
-        mTabLayout.setupWithViewPager(mViewPager);
+        viewPager.setAdapter(new GroupPagerAdapter(this, getSupportFragmentManager(), group));
+        tabLayout.setupWithViewPager(viewPager);
     }
 
     private void bindPalette(Palette palette) {
@@ -148,24 +148,24 @@ public class GroupActivity extends BaseActivity {
                     .start();
         }
 
-        ObjectAnimator.ofObject(mCollapsingToolbarLayout, "contentScrimColor", new ArgbEvaluator(),
+        ObjectAnimator.ofObject(collapsingToolbarLayout, "contentScrimColor", new ArgbEvaluator(),
                 Easel.getThemeAttrColor(this, R.attr.colorPrimary), vibrantColor)
                 .setDuration(animationTime)
                 .start();
 
-        ObjectAnimator.ofObject(mCollapsingToolbarLayout, "statusBarScrimColor", new ArgbEvaluator(),
+        ObjectAnimator.ofObject(collapsingToolbarLayout, "statusBarScrimColor", new ArgbEvaluator(),
                 Easel.getThemeAttrColor(this, R.attr.colorPrimaryDark), darkerColor)
                 .setDuration(animationTime)
                 .start();
 
-        ObjectAnimator.ofObject(mToolbar, "titleTextColor", new ArgbEvaluator(),
+        ObjectAnimator.ofObject(toolbar, "titleTextColor", new ArgbEvaluator(),
                 Color.WHITE, palette.getDarkMutedColor(Color.BLACK))
                 .setDuration(animationTime)
                 .start();
     }
 
     private void showError() {
-        Snackbar.make(mRoot, R.string.connection_error, Snackbar.LENGTH_SHORT)
+        Snackbar.make(root, R.string.connection_error, Snackbar.LENGTH_SHORT)
                 .show();
     }
 }

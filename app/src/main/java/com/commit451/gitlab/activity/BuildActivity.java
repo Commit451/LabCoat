@@ -53,28 +53,28 @@ public class BuildActivity extends BaseActivity {
     }
 
     @BindView(R.id.root)
-    ViewGroup mRoot;
+    ViewGroup root;
     @BindView(R.id.toolbar)
-    Toolbar mToolbar;
+    Toolbar toolbar;
     @BindView(R.id.tabs)
-    TabLayout mTabLayout;
+    TabLayout tabLayout;
     @BindView(R.id.pager)
-    ViewPager mViewPager;
+    ViewPager viewPager;
     @BindView(R.id.progress)
-    View mProgress;
+    View progress;
 
-    MenuItem mMenuItemDownload;
+    MenuItem menuItemDownload;
 
-    Project mProject;
-    Build mBuild;
+    Project project;
+    Build build;
 
     private final Toolbar.OnMenuItemClickListener mOnMenuItemClickListener = new Toolbar.OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.action_retry:
-                    mProgress.setVisibility(View.VISIBLE);
-                    App.get().getGitLab().retryBuild(mProject.getId(), mBuild.getId())
+                    progress.setVisibility(View.VISIBLE);
+                    App.get().getGitLab().retryBuild(project.getId(), build.getId())
                             .compose(BuildActivity.this.<Build>bindToLifecycle())
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
@@ -83,23 +83,23 @@ public class BuildActivity extends BaseActivity {
                                 @Override
                                 public void error(Throwable t) {
                                     Timber.e(t);
-                                    mProgress.setVisibility(View.GONE);
-                                    Snackbar.make(mRoot, R.string.unable_to_retry_build, Snackbar.LENGTH_LONG)
+                                    progress.setVisibility(View.GONE);
+                                    Snackbar.make(root, R.string.unable_to_retry_build, Snackbar.LENGTH_LONG)
                                             .show();
                                 }
 
                                 @Override
                                 public void success(Build build) {
-                                    mProgress.setVisibility(View.GONE);
-                                    Snackbar.make(mRoot, R.string.build_started, Snackbar.LENGTH_LONG)
+                                    progress.setVisibility(View.GONE);
+                                    Snackbar.make(root, R.string.build_started, Snackbar.LENGTH_LONG)
                                             .show();
                                     App.bus().post(new BuildChangedEvent(build));
                                 }
                             });
                     return true;
                 case R.id.action_erase:
-                    mProgress.setVisibility(View.VISIBLE);
-                    App.get().getGitLab().eraseBuild(mProject.getId(), mBuild.getId())
+                    progress.setVisibility(View.VISIBLE);
+                    App.get().getGitLab().eraseBuild(project.getId(), build.getId())
                             .compose(BuildActivity.this.<Build>bindToLifecycle())
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
@@ -108,23 +108,23 @@ public class BuildActivity extends BaseActivity {
                                 @Override
                                 public void error(Throwable t) {
                                     Timber.e(t);
-                                    mProgress.setVisibility(View.GONE);
-                                    Snackbar.make(mRoot, R.string.unable_to_erase_build, Snackbar.LENGTH_LONG)
+                                    progress.setVisibility(View.GONE);
+                                    Snackbar.make(root, R.string.unable_to_erase_build, Snackbar.LENGTH_LONG)
                                             .show();
                                 }
 
                                 @Override
                                 public void success(Build build) {
-                                    mProgress.setVisibility(View.GONE);
-                                    Snackbar.make(mRoot, R.string.build_erased, Snackbar.LENGTH_LONG)
+                                    progress.setVisibility(View.GONE);
+                                    Snackbar.make(root, R.string.build_erased, Snackbar.LENGTH_LONG)
                                             .show();
                                     App.bus().post(new BuildChangedEvent(build));
                                 }
                             });
                     return true;
                 case R.id.action_cancel:
-                    mProgress.setVisibility(View.VISIBLE);
-                    App.get().getGitLab().cancelBuild(mProject.getId(), mBuild.getId())
+                    progress.setVisibility(View.VISIBLE);
+                    App.get().getGitLab().cancelBuild(project.getId(), build.getId())
                             .compose(BuildActivity.this.<Build>bindToLifecycle())
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
@@ -133,15 +133,15 @@ public class BuildActivity extends BaseActivity {
                                 @Override
                                 public void error(Throwable t) {
                                     Timber.e(t);
-                                    mProgress.setVisibility(View.GONE);
-                                    Snackbar.make(mRoot, R.string.unable_to_cancel_build, Snackbar.LENGTH_LONG)
+                                    progress.setVisibility(View.GONE);
+                                    Snackbar.make(root, R.string.unable_to_cancel_build, Snackbar.LENGTH_LONG)
                                             .show();
                                 }
 
                                 @Override
                                 public void success(Build build) {
-                                    mProgress.setVisibility(View.GONE);
-                                    Snackbar.make(mRoot, R.string.build_canceled, Snackbar.LENGTH_LONG)
+                                    progress.setVisibility(View.GONE);
+                                    Snackbar.make(root, R.string.build_canceled, Snackbar.LENGTH_LONG)
                                             .show();
                                     App.bus().post(new BuildChangedEvent(build));
                                 }
@@ -161,22 +161,22 @@ public class BuildActivity extends BaseActivity {
         setContentView(R.layout.activity_build);
         ButterKnife.bind(this);
 
-        mProject = Parcels.unwrap(getIntent().getParcelableExtra(KEY_PROJECT));
-        mBuild = Parcels.unwrap(getIntent().getParcelableExtra(KEY_BUILD));
+        project = Parcels.unwrap(getIntent().getParcelableExtra(KEY_PROJECT));
+        build = Parcels.unwrap(getIntent().getParcelableExtra(KEY_BUILD));
 
-        mToolbar.setTitle(getString(R.string.build_number) + mBuild.getId());
-        mToolbar.setNavigationIcon(R.drawable.ic_back_24dp);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        toolbar.setTitle(getString(R.string.build_number) + build.getId());
+        toolbar.setNavigationIcon(R.drawable.ic_back_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
             }
         });
-        mToolbar.setSubtitle(mProject.getNameWithNamespace());
-        mToolbar.inflateMenu(R.menu.menu_build);
-        mToolbar.setOnMenuItemClickListener(mOnMenuItemClickListener);
-        mMenuItemDownload = mToolbar.getMenu().findItem(R.id.action_download);
-        mMenuItemDownload.setVisible(mBuild.getArtifactsFile() != null);
+        toolbar.setSubtitle(project.getNameWithNamespace());
+        toolbar.inflateMenu(R.menu.menu_build);
+        toolbar.setOnMenuItemClickListener(mOnMenuItemClickListener);
+        menuItemDownload = toolbar.getMenu().findItem(R.id.action_download);
+        menuItemDownload.setVisible(build.getArtifactsFile() != null);
         setupTabs();
     }
 
@@ -195,11 +195,11 @@ public class BuildActivity extends BaseActivity {
         BuildSectionsPagerAdapter sectionsPagerAdapter = new BuildSectionsPagerAdapter(
                 this,
                 getSupportFragmentManager(),
-                mProject,
-                mBuild);
+                project,
+                build);
 
-        mViewPager.setAdapter(sectionsPagerAdapter);
-        mTabLayout.setupWithViewPager(mViewPager);
+        viewPager.setAdapter(sectionsPagerAdapter);
+        tabLayout.setupWithViewPager(viewPager);
     }
 
     @TargetApi(23)
@@ -213,8 +213,8 @@ public class BuildActivity extends BaseActivity {
 
     private void downloadBuild() {
         Account account = App.get().getAccount();
-        String downloadUrl = BuildUtil.getDownloadBuildUrl(App.get().getAccount().getServerUrl(), mProject, mBuild);
+        String downloadUrl = BuildUtil.getDownloadBuildUrl(App.get().getAccount().getServerUrl(), project, build);
         Timber.d("Downloading build: " + downloadUrl);
-        DownloadUtil.download(BuildActivity.this, account, downloadUrl, mBuild.getArtifactsFile().getFileName());
+        DownloadUtil.download(BuildActivity.this, account, downloadUrl, build.getArtifactsFile().getFileName());
     }
 }

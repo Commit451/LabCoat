@@ -39,25 +39,25 @@ public class WebviewLoginActivity extends BaseActivity {
         return intent;
     }
 
-    String mUrl;
-
     @BindView(R.id.toolbar)
-    Toolbar mToolbar;
+    Toolbar toolbar;
     @BindView(R.id.progress)
-    MaterialProgressBar mProgressBar;
+    MaterialProgressBar progress;
     @BindView(R.id.webview)
-    WebView mWebView;
+    WebView webView;
 
-    private final WebChromeClient mWebChromeClient = new WebChromeClient(){
+    String url;
+
+    private final WebChromeClient webChromeClient = new WebChromeClient(){
         @Override
         public void onProgressChanged(WebView view, int newProgress) {
             super.onProgressChanged(view, newProgress);
-            if (mProgressBar.getVisibility() != View.VISIBLE) {
-                mProgressBar.setVisibility(View.VISIBLE);
+            if (progress.getVisibility() != View.VISIBLE) {
+                progress.setVisibility(View.VISIBLE);
             }
-            mProgressBar.setProgress(newProgress);
+            progress.setProgress(newProgress);
             if (newProgress == 100) {
-                mProgressBar.setVisibility(View.GONE);
+                progress.setVisibility(View.GONE);
             }
         }
     };
@@ -69,27 +69,27 @@ public class WebviewLoginActivity extends BaseActivity {
         setContentView(R.layout.activity_webview_login);
         ButterKnife.bind(this);
 
-        mUrl = getIntent().getStringExtra(KEY_URL);
-        if (mUrl.endsWith("/")) {
-            mUrl = mUrl.substring(0, mUrl.length() - 1);
+        url = getIntent().getStringExtra(KEY_URL);
+        if (url.endsWith("/")) {
+            url = url.substring(0, url.length() - 1);
         }
 
-        mToolbar.setNavigationIcon(R.drawable.ic_back_24dp);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        toolbar.setNavigationIcon(R.drawable.ic_back_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 onBackPressed();
             }
         });
 
-        WebSettings settings = mWebView.getSettings();
+        WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
-        mWebView.addJavascriptInterface(new HtmlExtractorJavaScriptInterface(), JAVASCRIPT_INTERFACE_EXTRACTOR);
-        mWebView.setWebViewClient(new ExtractionWebClient());
-        mWebView.setWebChromeClient(mWebChromeClient);
-        mWebView.clearCache(true);
-        mWebView.clearFormData();
-        mWebView.clearHistory();
+        webView.addJavascriptInterface(new HtmlExtractorJavaScriptInterface(), JAVASCRIPT_INTERFACE_EXTRACTOR);
+        webView.setWebViewClient(new ExtractionWebClient());
+        webView.setWebChromeClient(webChromeClient);
+        webView.clearCache(true);
+        webView.clearFormData();
+        webView.clearHistory();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
             CookieManager.getInstance().removeAllCookies(null);
@@ -104,7 +104,7 @@ public class WebviewLoginActivity extends BaseActivity {
             cookieSyncMngr.sync();
         }
 
-        mWebView.loadUrl(mUrl + "/users/sign_in");
+        webView.loadUrl(url + "/users/sign_in");
     }
 
     private boolean isExtracting() {
@@ -118,17 +118,17 @@ public class WebviewLoginActivity extends BaseActivity {
                 url = url.substring(0, url.length() - 1);
             }
 
-            if (url.equals(mUrl)) {
+            if (url.equals(WebviewLoginActivity.this.url)) {
                 if (isExtracting()) {
-                    mWebView.loadUrl(mUrl + "/profile/account");
+                    webView.loadUrl(WebviewLoginActivity.this.url + "/profile/account");
                 } else {
-                    mWebView.loadUrl(mUrl + "/profile/personal_access_tokens");
+                    webView.loadUrl(WebviewLoginActivity.this.url + "/profile/personal_access_tokens");
                 }
                 return;
             }
 
-            if (url.equals(mUrl + "/profile/account")) {
-                mWebView.loadUrl("javascript:" + JAVASCRIPT_INTERFACE_EXTRACTOR + ".extract" +
+            if (url.equals(WebviewLoginActivity.this.url + "/profile/account")) {
+                webView.loadUrl("javascript:" + JAVASCRIPT_INTERFACE_EXTRACTOR + ".extract" +
                         "(document.getElementById('token').value);");
                 return;
             }

@@ -24,39 +24,39 @@ public class UserBasic extends UserSafe {
     public @interface State {}
 
     @JsonField(name = "id")
-    long mId;
+    long id;
     @JsonField(name = "state")
     @State
-    String mState;
+    String state;
     @JsonField(name = "avatar_url")
-    Uri mAvatarUrl;
+    Uri avatarUrl;
     @JsonField(name = "web_url")
-    Uri mWebUrl;
+    Uri webUrl;
 
     public UserBasic() {}
 
     public long getId() {
-        return mId;
+        return id;
     }
 
     public @State String getState() {
-        return mState;
+        return state;
     }
 
     public Uri getAvatarUrl() {
-        return mAvatarUrl;
+        return avatarUrl;
     }
 
     public Uri getWebUrl() {
-        return mWebUrl;
+        return webUrl;
     }
 
     @Nullable
     public Uri getFeedUrl() {
-        if (mWebUrl == null) {
+        if (webUrl == null) {
             return null;
         }
-        return Uri.parse(mWebUrl.toString() + ".atom");
+        return Uri.parse(webUrl.toString() + ".atom");
     }
 
     @Override
@@ -66,11 +66,11 @@ public class UserBasic extends UserSafe {
         }
 
         UserBasic user = (UserBasic) o;
-        return mId == user.mId;
+        return id == user.id;
     }
 
     @Override
     public int hashCode() {
-        return (int) (mId ^ (mId >>> 32));
+        return (int) (id ^ (id >>> 32));
     }
 }

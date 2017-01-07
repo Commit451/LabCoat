@@ -45,14 +45,14 @@ public class AccessDialog extends MaterialDialog {
     }
 
     OnAccessChangedListener mAccessChangedListener;
-    OnAccessAppliedListener mAccessAppliedListener;
+    Listener mAccessAppliedListener;
 
     String[] mRoleNames;
     long mProjectId = -1;
     Group mGroup;
     Member mMember;
 
-    public AccessDialog(Context context, OnAccessAppliedListener accessAppliedListener) {
+    public AccessDialog(Context context, Listener accessAppliedListener) {
         this(context, null, null, -1);
         mAccessAppliedListener = accessAppliedListener;
     }
@@ -156,7 +156,7 @@ public class AccessDialog extends MaterialDialog {
         void onAccessChanged(Member member, String accessLevel);
     }
 
-    public interface OnAccessAppliedListener {
+    public interface Listener {
         void onAccessApplied(int accessLevel);
     }
 }

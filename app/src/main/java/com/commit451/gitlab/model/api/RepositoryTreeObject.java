@@ -26,38 +26,38 @@ public class RepositoryTreeObject {
     }
 
     @JsonField(name = "id")
-    String mId;
+    String id;
     @JsonField(name = "name")
-    String mName;
+    String name;
     @JsonField(name = "type")
     @Type
-    String mType;
+    String type;
     @JsonField(name = "mode")
-    String mMode;
+    String mode;
 
     public RepositoryTreeObject() {}
 
     public String getId() {
-        return mId;
+        return id;
     }
 
     public String getName() {
-        return mName;
+        return name;
     }
 
     public @Type String getType() {
-        return mType;
+        return type;
     }
 
     public String getMode() {
-        return mMode;
+        return mode;
     }
 
     public int getDrawableForType() {
-        if (mType == null) {
+        if (type == null) {
             return R.drawable.ic_unknown_24dp;
         }
-        switch (mType) {
+        switch (type) {
             case TYPE_FILE:
                 return R.drawable.ic_file_24dp;
             case TYPE_FOLDER:
@@ -74,7 +74,7 @@ public class RepositoryTreeObject {
                 .appendPath("tree")
                 .appendPath(branchName)
                 .appendEncodedPath(currentPath)
-                .appendPath(mName)
+                .appendPath(name)
                 .build();
     }
 }

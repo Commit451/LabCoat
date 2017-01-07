@@ -18,6 +18,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+
 /**
  * Intermediate activity when deep linking to another activity and things need to load
  */
@@ -36,9 +37,9 @@ public class PickBranchOrTagActivity extends AppCompatActivity {
     }
 
     @BindView(R.id.tabs)
-    TabLayout mTabLayout;
+    TabLayout tabLayout;
     @BindView(R.id.pager)
-    ViewPager mViewPager;
+    ViewPager viewPager;
 
     @OnClick(R.id.root)
     void onRootClicked() {
@@ -52,12 +53,12 @@ public class PickBranchOrTagActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         long projectId = getIntent().getLongExtra(EXTRA_PROJECT_ID, -1);
         Ref currentRef = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_CURRENT_REF));
-        mViewPager.setAdapter(new PickBranchOrTagPagerAdapter(this, getSupportFragmentManager(), projectId, currentRef));
-        mTabLayout.setupWithViewPager(mViewPager);
+        viewPager.setAdapter(new PickBranchOrTagPagerAdapter(this, getSupportFragmentManager(), projectId, currentRef));
+        tabLayout.setupWithViewPager(viewPager);
         if (currentRef != null) {
             int position = currentRef.getType() == Ref.TYPE_BRANCH ? 0 : 1;
-            mTabLayout.getTabAt(position).select();
-            mViewPager.setCurrentItem(position);
+            tabLayout.getTabAt(position).select();
+            viewPager.setCurrentItem(position);
         }
     }
 

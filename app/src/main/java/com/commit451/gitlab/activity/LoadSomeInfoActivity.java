@@ -25,6 +25,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
+
 /**
  * Intermediate activity when deep linking to another activity and things need to load
  */
@@ -80,11 +81,11 @@ public class LoadSomeInfoActivity extends BaseActivity {
     }
 
     @BindView(R.id.progress)
-    View mProgress;
+    View progress;
 
-    private int mLoadType;
+    private int loadType;
 
-    private Project mProject;
+    private Project project;
 
     @OnClick(R.id.root)
     void onRootClicked() {
@@ -96,11 +97,11 @@ public class LoadSomeInfoActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loading);
         ButterKnife.bind(this);
-        mProgress.setVisibility(View.VISIBLE);
-        mLoadType = getIntent().getIntExtra(EXTRA_LOAD_TYPE, -1);
-        Timber.d("Loading some info type: %d", mLoadType);
+        progress.setVisibility(View.VISIBLE);
+        loadType = getIntent().getIntExtra(EXTRA_LOAD_TYPE, -1);
+        Timber.d("Loading some info type: %d", loadType);
 
-        switch (mLoadType) {
+        switch (loadType) {
             case LOAD_TYPE_DIFF:
             case LOAD_TYPE_MERGE_REQUEST:
             case LOAD_TYPE_BUILD:
@@ -128,8 +129,8 @@ public class LoadSomeInfoActivity extends BaseActivity {
     }
 
     private void loadNextPart(Project response) {
-        mProject = response;
-        switch (mLoadType) {
+        project = response;
+        switch (loadType) {
             case LOAD_TYPE_DIFF:
                 String sha = getIntent().getStringExtra(EXTRA_COMMIT_SHA);
                 App.get().getGitLab().getCommit(response.getId(), sha)
@@ -146,7 +147,7 @@ public class LoadSomeInfoActivity extends BaseActivity {
 
                             @Override
                             public void success(RepositoryCommit repositoryCommit) {
-                                Navigator.navigateToDiffActivity(LoadSomeInfoActivity.this, mProject, repositoryCommit);
+                                Navigator.navigateToDiffActivity(LoadSomeInfoActivity.this, project, repositoryCommit);
                                 finish();
                             }
                         });
@@ -168,7 +169,7 @@ public class LoadSomeInfoActivity extends BaseActivity {
                             @Override
                             public void success(List<MergeRequest> mergeRequests) {
                                 if (!mergeRequests.isEmpty()) {
-                                    Navigator.navigateToMergeRequest(LoadSomeInfoActivity.this, mProject, mergeRequests.get(0));
+                                    Navigator.navigateToMergeRequest(LoadSomeInfoActivity.this, project, mergeRequests.get(0));
                                     finish();
                                 } else {
                                     LoadSomeInfoActivity.this.onError();
@@ -192,7 +193,7 @@ public class LoadSomeInfoActivity extends BaseActivity {
 
                             @Override
                             public void success(Build build) {
-                                Navigator.navigateToBuild(LoadSomeInfoActivity.this, mProject, build);
+                                Navigator.navigateToBuild(LoadSomeInfoActivity.this, project, build);
                                 finish();
                             }
                         });
@@ -214,7 +215,7 @@ public class LoadSomeInfoActivity extends BaseActivity {
                             @Override
                             public void success(List<Milestone> milestones) {
                                 if (!milestones.isEmpty()) {
-                                    Navigator.navigateToMilestone(LoadSomeInfoActivity.this, mProject, milestones.get(0));
+                                    Navigator.navigateToMilestone(LoadSomeInfoActivity.this, project, milestones.get(0));
                                     finish();
                                 } else {
                                     LoadSomeInfoActivity.this.onError();

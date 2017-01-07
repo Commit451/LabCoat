@@ -19,23 +19,23 @@ public class Ref {
     public static final int TYPE_BRANCH = 0;
     public static final int TYPE_TAG = 1;
 
-    int mType;
-    String mRef;
+    int type;
+    String ref;
 
     protected Ref() {
 
     }
 
     public Ref(@Type int type, String ref) {
-        mType = type;
-        mRef = ref;
+        this.type = type;
+        this.ref = ref;
     }
 
     public int getType() {
-        return mType;
+        return type;
     }
 
     public String getRef() {
-        return mRef;
+        return ref;
     }
 }

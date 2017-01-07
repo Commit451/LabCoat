@@ -14,34 +14,34 @@ import java.util.Date;
 @JsonObject
 public class Snippet {
     @JsonField(name = "id")
-    long mId;
+    long id;
     @JsonField(name = "title")
-    String mTitle;
+    String title;
     @JsonField(name = "file_name")
-    String mFileName;
+    String fileName;
     @JsonField(name = "author")
-    Author mAuthor;
+    Author author;
     @JsonField(name = "expires_at")
-    Date mExpiresAt;
+    Date expiresAt;
     @JsonField(name = "updated_at")
-    Date mUpdatedAt;
+    Date updatedAt;
     @JsonField(name = "created_at")
-    Date mCreatedAt;
+    Date createdAt;
 
     protected Snippet() {
         //for json
     }
 
     public long getId() {
-        return mId;
+        return id;
     }
 
     public String getTitle() {
-        return mTitle;
+        return title;
     }
 
     public String getFileName() {
-        return mFileName;
+        return fileName;
     }
 
     @Parcel

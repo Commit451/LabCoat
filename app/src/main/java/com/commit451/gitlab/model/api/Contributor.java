@@ -15,36 +15,36 @@ import java.util.Set;
 @JsonObject
 public class Contributor {
     @JsonField(name = "name")
-    String mName;
+    String name;
     @JsonField(name = "email")
-    String mEmail;
+    String email;
     @JsonField(name = "commits")
-    int mCommits;
+    int commits;
     @JsonField(name = "additions")
-    int mAdditions;
+    int additions;
     @JsonField(name = "deletions")
-    int mDeletions;
+    int deletions;
 
     public Contributor() {}
 
     public String getName() {
-        return mName;
+        return name;
     }
 
     public String getEmail() {
-        return mEmail;
+        return email;
     }
 
     public int getCommits() {
-        return mCommits;
+        return commits;
     }
 
     public int getAdditions() {
-        return mAdditions;
+        return additions;
     }
 
     public int getDeletions() {
-        return mDeletions;
+        return deletions;
     }
 
     @Override
@@ -54,12 +54,12 @@ public class Contributor {
         }
 
         Contributor contributor = (Contributor) o;
-        return ObjectUtil.equals(mName, contributor.mName) && ObjectUtil.equals(mEmail, contributor.mEmail);
+        return ObjectUtil.equals(name, contributor.name) && ObjectUtil.equals(email, contributor.email);
     }
 
     @Override
     public int hashCode() {
-        return ObjectUtil.hash(mName, mEmail);
+        return ObjectUtil.hash(name, email);
     }
 
     public static List<Contributor> groupContributors(List<Contributor> contributors) {
@@ -67,8 +67,8 @@ public class Contributor {
         for (Contributor contributor : contributors) {
             ContributorEntry contrib = null;
             for (ContributorEntry entry : contributorEntries) {
-                if ((contributor.mName != null && contributor.mName.equals(entry.mContributor.mName))
-                        || (contributor.mEmail != null && contributor.mEmail.equals(entry.mContributor.mEmail))) {
+                if ((contributor.name != null && contributor.name.equals(entry.mContributor.name))
+                        || (contributor.email != null && contributor.email.equals(entry.mContributor.email))) {
 
                     while (entry.mReplacement != null) {
                         entry = entry.mReplacement;
@@ -81,9 +81,9 @@ public class Contributor {
                     if (contrib == null) {
                         contrib = entry;
                     } else {
-                        contrib.mContributor.mCommits += entry.mContributor.mCommits;
-                        contrib.mContributor.mAdditions += entry.mContributor.mAdditions;
-                        contrib.mContributor.mDeletions += entry.mContributor.mDeletions;
+                        contrib.mContributor.commits += entry.mContributor.commits;
+                        contrib.mContributor.additions += entry.mContributor.additions;
+                        contrib.mContributor.deletions += entry.mContributor.deletions;
 
                         entry.mReplacement = contrib;
                     }
@@ -96,9 +96,9 @@ public class Contributor {
 
                 contributorEntries.add(contrib);
             } else {
-                contrib.mContributor.mCommits += contributor.mCommits;
-                contrib.mContributor.mAdditions += contributor.mAdditions;
-                contrib.mContributor.mDeletions += contributor.mDeletions;
+                contrib.mContributor.commits += contributor.commits;
+                contrib.mContributor.additions += contributor.additions;
+                contrib.mContributor.deletions += contributor.deletions;
             }
         }
 

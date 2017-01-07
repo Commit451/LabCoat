@@ -13,33 +13,33 @@ import org.parceler.Parcel;
 public class Runner {
 
     @JsonField(name = "id")
-    long mId;
+    long id;
     @JsonField(name = "description")
-    String mDescription;
+    String description;
     @JsonField(name = "active")
-    boolean mActive;
+    boolean active;
     @JsonField(name = "is_shared")
-    boolean mIsShared;
+    boolean isShared;
     @JsonField(name = "name")
-    String mName;
+    String name;
 
     public long getId() {
-        return mId;
+        return id;
     }
 
     public String getDescription() {
-        return mDescription;
+        return description;
     }
 
     public boolean isActive() {
-        return mActive;
+        return active;
     }
 
     public boolean isShared() {
-        return mIsShared;
+        return isShared;
     }
 
     public String getName() {
-        return mName;
+        return name;
     }
 }

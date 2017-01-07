@@ -51,13 +51,13 @@ public class AttachActivity extends BaseActivity {
     }
 
     @BindView(R.id.root_buttons)
-    ViewGroup mRootButtons;
+    ViewGroup rootButtons;
     @BindView(R.id.progress)
-    View mProgress;
+    View progress;
     @BindView(R.id.attachCard)
-    View mCard;
+    View card;
 
-    Project mProject;
+    Project project;
 
     @OnClick(R.id.root)
     void onRootClicked() {
@@ -86,22 +86,22 @@ public class AttachActivity extends BaseActivity {
         ButterKnife.bind(this);
 
         //Run the runnable after the view has been measured
-        mCard.post(new Runnable() {
+        card.post(new Runnable() {
             @Override
             public void run() {
                 //we need the radius of the animation circle, which is the diagonal of the view
-                float finalRadius = (float) Math.hypot(mCard.getWidth(), mCard.getHeight());
+                float finalRadius = (float) Math.hypot(card.getWidth(), card.getHeight());
 
                 //it's using a 3rd-party ViewAnimationUtils class for compat reasons (up to API 14)
                 Animator animator = ViewAnimationUtils
-                        .createCircularReveal(mCard, 0, mCard.getHeight(), 0, finalRadius);
+                        .createCircularReveal(card, 0, card.getHeight(), 0, finalRadius);
                 animator.setDuration(500);
                 animator.setInterpolator(new AccelerateDecelerateInterpolator());
                 animator.start();
             }
         });
 
-        mProject = Parcels.unwrap(getIntent().getParcelableExtra(KEY_PROJECT));
+        project = Parcels.unwrap(getIntent().getParcelableExtra(KEY_PROJECT));
     }
 
     @Override
@@ -138,13 +138,13 @@ public class AttachActivity extends BaseActivity {
     }
 
     private void onPhotoReturned(File photo) {
-        mProgress.setVisibility(View.VISIBLE);
-        mRootButtons.setVisibility(View.INVISIBLE);
+        progress.setVisibility(View.VISIBLE);
+        rootButtons.setVisibility(View.INVISIBLE);
         FileObservableFactory.toPart(photo)
                 .flatMap(new Function<MultipartBody.Part, SingleSource<FileUploadResponse>>() {
                     @Override
                     public SingleSource<FileUploadResponse> apply(MultipartBody.Part part) throws Exception {
-                        return App.get().getGitLab().uploadFile(mProject.getId(), part);
+                        return App.get().getGitLab().uploadFile(project.getId(), part);
                     }
                 })
                 .compose(this.<FileUploadResponse>bindToLifecycle())

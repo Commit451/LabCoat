@@ -3,6 +3,7 @@ package com.commit451.gitlab.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -49,18 +50,18 @@ public class AddLabelActivity extends BaseActivity {
     }
 
     @BindView(R.id.root)
-    ViewGroup mRoot;
+    ViewGroup root;
     @BindView(R.id.toolbar)
-    Toolbar mToolbar;
+    Toolbar toolbar;
     @BindView(R.id.swipe_layout)
-    SwipeRefreshLayout mSwipeRefreshLayout;
+    SwipeRefreshLayout swipeRefreshLayout;
     @BindView(R.id.list)
-    RecyclerView mList;
-    LabelAdapter mLabelAdapter;
+    RecyclerView list;
+    LabelAdapter adapterLabel;
     @BindView(R.id.message_text)
-    TextView mTextMessage;
+    TextView textMessage;
 
-    long mProjectId;
+    long projectId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,27 +69,27 @@ public class AddLabelActivity extends BaseActivity {
         setContentView(R.layout.activity_add_label);
         ButterKnife.bind(this);
 
-        mProjectId = getIntent().getLongExtra(KEY_PROJECT_ID, -1);
-        mToolbar.setTitle(labels);
-        mToolbar.inflateMenu(R.menu.menu_add_label);
-        mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+        projectId = getIntent().getLongExtra(KEY_PROJECT_ID, -1);
+        toolbar.setTitle(labels);
+        toolbar.inflateMenu(R.menu.menu_add_label);
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.action_add_label:
-                        Navigator.navigateToAddNewLabel(AddLabelActivity.this, mProjectId, REQUEST_NEW_LABEL);
+                        Navigator.navigateToAddNewLabel(AddLabelActivity.this, projectId, REQUEST_NEW_LABEL);
                         return true;
                 }
                 return false;
             }
         });
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 load();
             }
         });
-        mLabelAdapter = new LabelAdapter(new LabelAdapter.Listener() {
+        adapterLabel = new LabelAdapter(new LabelAdapter.Listener() {
             @Override
             public void onLabelClicked(Label label, LabelViewHolder viewHolder) {
                 Intent data = new Intent();
@@ -97,11 +98,11 @@ public class AddLabelActivity extends BaseActivity {
                 finish();
             }
         });
-        mList.setAdapter(mLabelAdapter);
-        mList.setLayoutManager(new LinearLayoutManager(this));
+        list.setAdapter(adapterLabel);
+        list.setLayoutManager(new LinearLayoutManager(this));
 
-        mToolbar.setNavigationIcon(R.drawable.ic_back_24dp);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        toolbar.setNavigationIcon(R.drawable.ic_back_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
@@ -112,35 +113,35 @@ public class AddLabelActivity extends BaseActivity {
     }
 
     private void load() {
-        mTextMessage.setVisibility(View.GONE);
-        mSwipeRefreshLayout.post(new Runnable() {
+        textMessage.setVisibility(View.GONE);
+        swipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
-                if (mSwipeRefreshLayout != null) {
-                    mSwipeRefreshLayout.setRefreshing(true);
+                if (swipeRefreshLayout != null) {
+                    swipeRefreshLayout.setRefreshing(true);
                 }
             }
         });
-        App.get().getGitLab().getLabels(mProjectId)
+        App.get().getGitLab().getLabels(projectId)
                 .compose(this.<List<Label>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new CustomSingleObserver<List<Label>>() {
 
                     @Override
-                    public void error(Throwable t) {
+                    public void error(@NonNull Throwable t) {
                         Timber.e(t);
-                        mSwipeRefreshLayout.setRefreshing(false);
-                        mTextMessage.setVisibility(View.VISIBLE);
+                        swipeRefreshLayout.setRefreshing(false);
+                        textMessage.setVisibility(View.VISIBLE);
                     }
 
                     @Override
-                    public void success(List<Label> labels) {
-                        mSwipeRefreshLayout.setRefreshing(false);
+                    public void success(@NonNull List<Label> labels) {
+                        swipeRefreshLayout.setRefreshing(false);
                         if (labels.isEmpty()) {
-                            mTextMessage.setVisibility(View.VISIBLE);
+                            textMessage.setVisibility(View.VISIBLE);
                         }
-                        mLabelAdapter.setItems(labels);
+                        adapterLabel.setItems(labels);
                     }
                 });
     }
@@ -152,7 +153,7 @@ public class AddLabelActivity extends BaseActivity {
             case REQUEST_NEW_LABEL:
                 if (resultCode == RESULT_OK) {
                     Label newLabel = Parcels.unwrap(data.getParcelableExtra(AddNewLabelActivity.KEY_NEW_LABEL));
-                    mLabelAdapter.addLabel(newLabel);
+                    adapterLabel.addLabel(newLabel);
                 }
                 break;
         }

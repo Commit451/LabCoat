@@ -45,32 +45,37 @@ public class GroupsActivity extends BaseActivity {
         return intent;
     }
 
-    @BindView(R.id.drawer_layout) DrawerLayout mDrawerLayout;
-    @BindView(R.id.toolbar) Toolbar mToolbar;
-    @BindView(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
-    @BindView(R.id.list) RecyclerView mGroupRecyclerView;
-    @BindView(R.id.message_text) TextView mMessageText;
-    GroupAdapter mGroupAdapter;
-    DynamicGridLayoutManager mGroupLayoutManager;
+    @BindView(R.id.drawer_layout)
+    DrawerLayout drawerLayout;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.swipe_layout)
+    SwipeRefreshLayout swipeRefreshLayout;
+    @BindView(R.id.list)
+    RecyclerView listGroups;
+    @BindView(R.id.message_text)
+    TextView textMessage;
 
-    private Uri mNextPageUrl;
-    private boolean mLoading = false;
-    EventReceiver mEventReceiver;
+    GroupAdapter adapterGroup;
+    DynamicGridLayoutManager layoutManager;
 
-    private final RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
+    private Uri nextPageUrl;
+    private boolean loading = false;
+
+    private final RecyclerView.OnScrollListener onScrollListener = new RecyclerView.OnScrollListener() {
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
             super.onScrolled(recyclerView, dx, dy);
-            int visibleItemCount = mGroupLayoutManager.getChildCount();
-            int totalItemCount = mGroupLayoutManager.getItemCount();
-            int firstVisibleItem = mGroupLayoutManager.findFirstVisibleItemPosition();
-            if (firstVisibleItem + visibleItemCount >= totalItemCount && !mLoading && mNextPageUrl != null) {
+            int visibleItemCount = layoutManager.getChildCount();
+            int totalItemCount = layoutManager.getItemCount();
+            int firstVisibleItem = layoutManager.findFirstVisibleItemPosition();
+            if (firstVisibleItem + visibleItemCount >= totalItemCount && !loading && nextPageUrl != null) {
                 loadMore();
             }
         }
     };
 
-    private final GroupAdapter.Listener mGroupAdapterListener = new GroupAdapter.Listener() {
+    private final GroupAdapter.Listener groupAdapterListener = new GroupAdapter.Listener() {
         @Override
         public void onGroupClicked(Group group, GroupViewHolder groupViewHolder) {
             Navigator.navigateToGroup(GroupsActivity.this, groupViewHolder.mImageView, group);
@@ -82,57 +87,56 @@ public class GroupsActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_groups);
         ButterKnife.bind(this);
-        mEventReceiver = new EventReceiver();
-        App.bus().register(mEventReceiver);
+        App.bus().register(this);
 
-        mToolbar.setTitle(R.string.nav_groups);
-        mToolbar.setNavigationIcon(R.drawable.ic_menu_24dp);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        toolbar.setTitle(R.string.nav_groups);
+        toolbar.setNavigationIcon(R.drawable.ic_menu_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mDrawerLayout.openDrawer(GravityCompat.START);
+                drawerLayout.openDrawer(GravityCompat.START);
             }
         });
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 load();
             }
         });
-        mMessageText.setOnClickListener(new View.OnClickListener() {
+        textMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 load();
             }
         });
-        mGroupLayoutManager = new DynamicGridLayoutManager(this);
-        mGroupLayoutManager.setMinimumWidthDimension(R.dimen.user_list_image_size);
-        mGroupRecyclerView.setLayoutManager(mGroupLayoutManager);
-        mGroupAdapter = new GroupAdapter(mGroupAdapterListener);
-        mGroupRecyclerView.setAdapter(mGroupAdapter);
-        mGroupRecyclerView.addOnScrollListener(mOnScrollListener);
+        layoutManager = new DynamicGridLayoutManager(this);
+        layoutManager.setMinimumWidthDimension(R.dimen.user_list_image_size);
+        listGroups.setLayoutManager(layoutManager);
+        adapterGroup = new GroupAdapter(groupAdapterListener);
+        listGroups.setAdapter(adapterGroup);
+        listGroups.addOnScrollListener(onScrollListener);
         load();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        App.bus().unregister(mEventReceiver);
+        App.bus().unregister(this);
     }
 
     private void load() {
-        mMessageText.setVisibility(View.GONE);
-        mSwipeRefreshLayout.post(new Runnable() {
+        textMessage.setVisibility(View.GONE);
+        swipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
-                if (mSwipeRefreshLayout != null) {
-                    mSwipeRefreshLayout.setRefreshing(true);
+                if (swipeRefreshLayout != null) {
+                    swipeRefreshLayout.setRefreshing(true);
                 }
             }
         });
 
-        mNextPageUrl = null;
-        mLoading = true;
+        nextPageUrl = null;
+        loading = true;
 
         App.get().getGitLab().getGroups()
                 .compose(this.<Response<List<Group>>>bindToLifecycle())
@@ -143,48 +147,48 @@ public class GroupsActivity extends BaseActivity {
                     @Override
                     public void error(Throwable e) {
                         Timber.e(e);
-                        mSwipeRefreshLayout.setRefreshing(false);
-                        mLoading = false;
-                        mMessageText.setVisibility(View.VISIBLE);
-                        mMessageText.setText(R.string.connection_error);
+                        swipeRefreshLayout.setRefreshing(false);
+                        loading = false;
+                        textMessage.setVisibility(View.VISIBLE);
+                        textMessage.setText(R.string.connection_error);
                     }
 
                     @Override
                     public void responseSuccess(List<Group> groups) {
-                        mLoading = false;
-                        mSwipeRefreshLayout.setRefreshing(false);
+                        loading = false;
+                        swipeRefreshLayout.setRefreshing(false);
                         if (groups.isEmpty()) {
-                            mMessageText.setText(R.string.no_groups);
-                            mMessageText.setVisibility(View.VISIBLE);
-                            mGroupRecyclerView.setVisibility(View.GONE);
+                            textMessage.setText(R.string.no_groups);
+                            textMessage.setVisibility(View.VISIBLE);
+                            listGroups.setVisibility(View.GONE);
                         } else {
-                            mGroupAdapter.setGroups(groups);
-                            mMessageText.setVisibility(View.GONE);
-                            mGroupRecyclerView.setVisibility(View.VISIBLE);
-                            mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
+                            adapterGroup.setGroups(groups);
+                            textMessage.setVisibility(View.GONE);
+                            listGroups.setVisibility(View.VISIBLE);
+                            nextPageUrl = LinkHeaderParser.parse(response()).getNext();
                         }
                     }
                 });
     }
 
     private void loadMore() {
-        if (mNextPageUrl == null) {
+        if (nextPageUrl == null) {
             return;
         }
 
-        mSwipeRefreshLayout.post(new Runnable() {
+        swipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
-                if (mSwipeRefreshLayout != null) {
-                    mSwipeRefreshLayout.setRefreshing(true);
+                if (swipeRefreshLayout != null) {
+                    swipeRefreshLayout.setRefreshing(true);
                 }
             }
         });
 
-        mLoading = true;
+        loading = true;
 
-        Timber.d("loadMore called for %s", mNextPageUrl);
-        App.get().getGitLab().getGroups(mNextPageUrl.toString())
+        Timber.d("loadMore called for %s", nextPageUrl);
+        App.get().getGitLab().getGroups(nextPageUrl.toString())
                 .compose(this.<Response<List<Group>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -193,28 +197,26 @@ public class GroupsActivity extends BaseActivity {
                     @Override
                     public void error(Throwable e) {
                         Timber.e(e);
-                        mLoading = false;
+                        loading = false;
                     }
 
                     @Override
                     public void responseSuccess(List<Group> groups) {
-                        mLoading = false;
-                        mGroupAdapter.addGroups(groups);
-                        mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
+                        loading = false;
+                        adapterGroup.addGroups(groups);
+                        nextPageUrl = LinkHeaderParser.parse(response()).getNext();
                     }
                 });
     }
 
-    private class EventReceiver {
-
-        @Subscribe
-        public void onCloseDrawerEvent(CloseDrawerEvent event) {
-            mDrawerLayout.closeDrawers();
-        }
-
-        @Subscribe
-        public void onReloadData(ReloadDataEvent event) {
-            load();
-        }
+    @Subscribe
+    public void onCloseDrawerEvent(CloseDrawerEvent event) {
+        drawerLayout.closeDrawers();
     }
+
+    @Subscribe
+    public void onReloadData(ReloadDataEvent event) {
+        load();
+    }
+
 }

@@ -9,6 +9,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -52,15 +53,19 @@ public class AboutActivity extends BaseActivity {
     }
 
     @BindView(R.id.root)
-    ViewGroup mRoot;
+    ViewGroup root;
     @BindView(R.id.toolbar)
-    Toolbar mToolbar;
+    Toolbar toolbar;
     @BindView(R.id.contributors)
-    TextView mContributors;
+    TextView textContributors;
     @BindView(R.id.physics_layout)
-    PhysicsFlowLayout mPhysicsLayout;
+    PhysicsFlowLayout physicsLayout;
     @BindView(R.id.progress)
-    View mProgress;
+    View progress;
+
+    SensorManager sensorManager;
+    Sensor gravitySensor;
+    Gimbal gimbal;
 
     @OnClick(R.id.sauce)
     void onSauceClick() {
@@ -71,17 +76,13 @@ public class AboutActivity extends BaseActivity {
         }
     }
 
-    SensorManager sensorManager;
-    Sensor gravitySensor;
-    Gimbal mGimbal;
-
     private final SensorEventListener sensorEventListener = new SensorEventListener() {
         @Override
         public void onSensorChanged(SensorEvent event) {
             if (event.sensor.getType() == Sensor.TYPE_GRAVITY) {
-                if (mPhysicsLayout.getPhysics().getWorld() != null) {
-                    mGimbal.normalizeGravityEvent(event);
-                    mPhysicsLayout.getPhysics().getWorld().setGravity(new Vec2(-event.values[0], event.values[1]));
+                if (physicsLayout.getPhysics().getWorld() != null) {
+                    gimbal.normalizeGravityEvent(event);
+                    physicsLayout.getPhysics().getWorld().setGravity(new Vec2(-event.values[0], event.values[1]));
                 }
             }
         }
@@ -94,19 +95,19 @@ public class AboutActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mGimbal = new Gimbal(this);
-        mGimbal.lock();
+        gimbal = new Gimbal(this);
+        gimbal.lock();
         setContentView(R.layout.activity_about);
         ButterKnife.bind(this);
-        mToolbar.setNavigationIcon(R.drawable.ic_back_24dp);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        toolbar.setNavigationIcon(R.drawable.ic_back_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
             }
         });
-        mToolbar.setTitle(R.string.about);
-        mPhysicsLayout.getPhysics().enableFling();
+        toolbar.setTitle(R.string.about);
+        physicsLayout.getPhysics().enableFling();
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         gravitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
         App.get().getGitLab().getContributors(REPO_ID)
@@ -116,20 +117,20 @@ public class AboutActivity extends BaseActivity {
                 .subscribe(new CustomSingleObserver<List<Contributor>>() {
 
                     @Override
-                    public void error(Throwable t) {
+                    public void error(@NonNull Throwable t) {
                         Timber.e(t);
-                        mProgress.setVisibility(View.GONE);
-                        Snackbar.make(mRoot, R.string.failed_to_load_contributors, Snackbar.LENGTH_SHORT)
+                        progress.setVisibility(View.GONE);
+                        Snackbar.make(root, R.string.failed_to_load_contributors, Snackbar.LENGTH_SHORT)
                                 .show();
                     }
 
                     @Override
-                    public void success(List<Contributor> contributors) {
-                        mProgress.setVisibility(View.GONE);
+                    public void success(@NonNull List<Contributor> contributors) {
+                        progress.setVisibility(View.GONE);
                         addContributors(Contributor.groupContributors(contributors));
                     }
                 });
-        mProgress.setVisibility(View.VISIBLE);
+        progress.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -149,7 +150,7 @@ public class AboutActivity extends BaseActivity {
         config.shapeType = PhysicsConfig.SHAPE_TYPE_CIRCLE;
         int borderSize = getResources().getDimensionPixelSize(R.dimen.border_size);
         int imageSize = getResources().getDimensionPixelSize(R.dimen.circle_size);
-        for (int i=0; i<contributors.size(); i++) {
+        for (int i = 0; i < contributors.size(); i++) {
             Contributor contributor = contributors.get(i);
             CircleImageView imageView = new CircleImageView(this);
             FlowLayout.LayoutParams llp = new FlowLayout.LayoutParams(
@@ -159,13 +160,13 @@ public class AboutActivity extends BaseActivity {
             imageView.setBorderWidth(borderSize);
             imageView.setBorderColor(Color.BLACK);
             Physics.setPhysicsConfig(imageView, config);
-            mPhysicsLayout.addView(imageView);
+            physicsLayout.addView(imageView);
 
             Uri url = ImageUtil.getAvatarUrl(contributor.getEmail(), imageSize);
             App.get().getPicasso()
                     .load(url)
                     .into(imageView);
         }
-        mPhysicsLayout.requestLayout();
+        physicsLayout.requestLayout();
     }
 }

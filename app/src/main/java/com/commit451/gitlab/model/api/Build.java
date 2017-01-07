@@ -15,87 +15,87 @@ import java.util.Date;
 public class Build {
 
     @JsonField(name = "commit")
-    RepositoryCommit mCommit;
+    RepositoryCommit commit;
     @JsonField(name = "coverage")
-    String mCoverage;
+    String coverage;
     @JsonField(name = "created_at")
-    Date mCreatedAt;
+    Date createdAt;
     @JsonField(name = "artifacts_file")
-    ArtifactsFile mArtifactsFile;
+    ArtifactsFile artifactsFile;
     @JsonField(name = "finished_at")
-    Date mFinishedAt;
+    Date finishedAt;
     @JsonField(name = "id")
-    long mId;
+    long id;
     @JsonField(name = "name")
-    String mName;
+    String name;
     @JsonField(name = "ref")
-    String mRef;
+    String ref;
     @JsonField(name = "runner")
-    Runner mRunner;
+    Runner runner;
     @JsonField(name = "stage")
-    String mStage;
+    String stage;
     @JsonField(name = "started_at")
-    Date mStartedAt;
+    Date startedAt;
     @JsonField(name = "status")
-    String mStatus;
+    String status;
     @JsonField(name = "tag")
-    boolean mTag;
+    boolean tag;
     @JsonField(name = "user")
-    User mUser;
+    User user;
 
     public RepositoryCommit getCommit() {
-        return mCommit;
+        return commit;
     }
 
     public String getCoverage() {
-        return mCoverage;
+        return coverage;
     }
 
     public Date getCreatedAt() {
-        return mCreatedAt;
+        return createdAt;
     }
 
     public ArtifactsFile getArtifactsFile() {
-        return mArtifactsFile;
+        return artifactsFile;
     }
 
     public Date getFinishedAt() {
-        return mFinishedAt;
+        return finishedAt;
     }
 
     public long getId() {
-        return mId;
+        return id;
     }
 
     public String getName() {
-        return mName;
+        return name;
     }
 
     public String getRef() {
-        return mRef;
+        return ref;
     }
 
     public Runner getRunner() {
-        return mRunner;
+        return runner;
     }
 
     public String getStage() {
-        return mStage;
+        return stage;
     }
 
     public Date getStartedAt() {
-        return mStartedAt;
+        return startedAt;
     }
 
     public String getStatus() {
-        return mStatus;
+        return status;
     }
 
     public boolean isTag() {
-        return mTag;
+        return tag;
     }
 
     public User getUser() {
-        return mUser;
+        return user;
     }
 }

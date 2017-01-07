@@ -23,6 +23,7 @@ import org.greenrobot.eventbus.Subscribe;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+
 /**
  * Shows the projects
  */
@@ -33,15 +34,18 @@ public class ProjectsActivity extends BaseActivity {
         return intent;
     }
 
-    @BindView(R.id.toolbar) Toolbar mToolbar;
-    @BindView(R.id.tabs) TabLayout mTabLayout;
-    @BindView(R.id.pager) ViewPager mViewPager;
-    @BindView(R.id.navigation_view) NavigationView mNavigationView;
-    @BindView(R.id.drawer_layout) DrawerLayout mDrawerLayout;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.tabs)
+    TabLayout tabLayout;
+    @BindView(R.id.pager)
+    ViewPager viewPager;
+    @BindView(R.id.navigation_view)
+    NavigationView navigationView;
+    @BindView(R.id.drawer_layout)
+    DrawerLayout drawerLayout;
 
-    EventReceiver mEventReceiver;
-
-    private final Toolbar.OnMenuItemClickListener mOnMenuItemClickListener = new Toolbar.OnMenuItemClickListener() {
+    private final Toolbar.OnMenuItemClickListener onMenuItemClickListener = new Toolbar.OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
             switch (item.getItemId()) {
@@ -58,34 +62,30 @@ public class ProjectsActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_projects);
         ButterKnife.bind(this);
-        mEventReceiver = new EventReceiver();
-        App.bus().register(mEventReceiver);
+        App.bus().register(this);
 
-        mToolbar.setTitle(R.string.projects);
-        mToolbar.setNavigationIcon(R.drawable.ic_menu_24dp);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        toolbar.setTitle(R.string.projects);
+        toolbar.setNavigationIcon(R.drawable.ic_menu_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mDrawerLayout.openDrawer(GravityCompat.START);
+                drawerLayout.openDrawer(GravityCompat.START);
             }
         });
-        mToolbar.inflateMenu(R.menu.menu_search);
-        mToolbar.setOnMenuItemClickListener(mOnMenuItemClickListener);
-        mViewPager.setAdapter(new ProjectsPagerAdapter(this, getSupportFragmentManager()));
-        mTabLayout.setupWithViewPager(mViewPager);
+        toolbar.inflateMenu(R.menu.menu_search);
+        toolbar.setOnMenuItemClickListener(onMenuItemClickListener);
+        viewPager.setAdapter(new ProjectsPagerAdapter(this, getSupportFragmentManager()));
+        tabLayout.setupWithViewPager(viewPager);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        App.bus().unregister(mEventReceiver);
+        App.bus().unregister(this);
     }
 
-    private class EventReceiver {
-
-        @Subscribe
-        public void onCloseDrawerEvent(CloseDrawerEvent event) {
-            mDrawerLayout.closeDrawers();
-        }
+    @Subscribe
+    public void onCloseDrawerEvent(CloseDrawerEvent event) {
+        drawerLayout.closeDrawers();
     }
 }

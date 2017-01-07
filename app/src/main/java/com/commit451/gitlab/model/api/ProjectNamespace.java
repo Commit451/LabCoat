@@ -13,61 +13,61 @@ import java.util.Date;
 @JsonObject
 public class ProjectNamespace {
     @JsonField(name = "id")
-    long mId;
+    long id;
     @JsonField(name = "name")
-    String mName;
+    String name;
     @JsonField(name = "path")
-    String mPath;
+    String path;
     @JsonField(name = "owner_id")
-    long mOwnerId;
+    long ownerId;
     @JsonField(name = "created_at")
-    Date mCreatedAt;
+    Date createdAt;
     @JsonField(name = "updated_at")
-    Date mUpdatedAt;
+    Date updatedAt;
     @JsonField(name = "description")
-    String mDescription;
+    String description;
     @JsonField(name = "avatar")
-    Avatar mAvatar;
+    Avatar avatar;
     @JsonField(name = "public")
-    boolean mPublic;
+    boolean isPublic;
 
     public ProjectNamespace() {
     }
 
     public long getId() {
-        return mId;
+        return id;
     }
 
     public String getName() {
-        return mName;
+        return name;
     }
 
     public String getPath() {
-        return mPath;
+        return path;
     }
 
     public long getOwnerId() {
-        return mOwnerId;
+        return ownerId;
     }
 
     public Date getCreatedAt() {
-        return mCreatedAt;
+        return createdAt;
     }
 
     public Date getUpdatedAt() {
-        return mUpdatedAt;
+        return updatedAt;
     }
 
     public String getDescription() {
-        return mDescription;
+        return description;
     }
 
     public Avatar getAvatar() {
-        return mAvatar;
+        return avatar;
     }
 
     public boolean isPublic() {
-        return mPublic;
+        return isPublic;
     }
 
     @Override
@@ -77,25 +77,25 @@ public class ProjectNamespace {
         }
 
         ProjectNamespace that = (ProjectNamespace) o;
-        return mId == that.mId;
+        return id == that.id;
     }
 
     @Override
     public int hashCode() {
-        return (int) (mId ^ (mId >>> 32));
+        return (int) (id ^ (id >>> 32));
     }
 
     @Parcel
     @JsonObject
     public static class Avatar {
         @JsonField(name = "url")
-        Uri mUrl;
+        Uri url;
 
         public Avatar() {
         }
 
         public Uri getUrl() {
-            return mUrl;
+            return url;
         }
     }
 }

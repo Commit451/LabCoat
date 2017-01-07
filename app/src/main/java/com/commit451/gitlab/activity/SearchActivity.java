@@ -24,6 +24,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import timber.log.Timber;
 
+
 /**
  * Search for :allthethings:
  */
@@ -34,25 +35,32 @@ public class SearchActivity extends BaseActivity {
         return intent;
     }
 
-    @BindView(R.id.root) View mRoot;
-    @BindView(R.id.tabs) TabLayout mTabLayout;
-    @BindView(R.id.pager) ViewPager mViewPager;
-    SearchPagerAdapter mSearchPagerAdapter;
-    @BindView(R.id.toolbar) Toolbar mToolbar;
-    @BindView(R.id.search) EditText mSearchView;
-    @BindView(R.id.clear) View mClearView;
+    @BindView(R.id.root)
+    View root;
+    @BindView(R.id.tabs)
+    TabLayout tabLayout;
+    @BindView(R.id.pager)
+    ViewPager viewPager;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.search)
+    EditText textSearch;
+    @BindView(R.id.clear)
+    View buttonClear;
+
+    SearchPagerAdapter adapterSearch;
 
     @OnClick(R.id.clear)
     void onClearClick() {
-        mClearView.animate().alpha(0.0f).withEndAction(new Runnable() {
+        buttonClear.animate().alpha(0.0f).withEndAction(new Runnable() {
             @Override
             public void run() {
-                mClearView.setVisibility(View.GONE);
+                buttonClear.setVisibility(View.GONE);
 
             }
         });
-        mSearchView.getText().clear();
-        mTeleprinter.showKeyboard(mSearchView);
+        textSearch.getText().clear();
+        mTeleprinter.showKeyboard(textSearch);
         mSearchDebouncer.cancel();
     }
 
@@ -68,8 +76,8 @@ public class SearchActivity extends BaseActivity {
     private final TextView.OnEditorActionListener mOnSearchEditorActionListener = new TextView.OnEditorActionListener() {
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-            if (TextUtils.isEmpty(mSearchView.getText())) {
-                mSearchView.setText("unicorns");
+            if (TextUtils.isEmpty(textSearch.getText())) {
+                textSearch.setText("unicorns");
             }
             search();
             mTeleprinter.hideKeyboard();
@@ -79,22 +87,23 @@ public class SearchActivity extends BaseActivity {
 
     private final TextWatcher mTextWatcher = new TextWatcher() {
         @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             if (TextUtils.isEmpty(s)) {
-                mClearView.animate().alpha(0.0f).withEndAction(new Runnable() {
+                buttonClear.animate().alpha(0.0f).withEndAction(new Runnable() {
                     @Override
                     public void run() {
-                        mClearView.setVisibility(View.GONE);
+                        buttonClear.setVisibility(View.GONE);
                     }
                 });
             } else if (count == 1) {
-                mClearView.setVisibility(View.VISIBLE);
-                mClearView.animate().alpha(1.0f);
+                buttonClear.setVisibility(View.VISIBLE);
+                buttonClear.animate().alpha(1.0f);
             }
-            if (s != null &&  s.length() > 3) {
+            if (s != null && s.length() > 3) {
                 Timber.d("Posting new future search");
                 mSearchDebouncer.setValue(s);
             }
@@ -106,7 +115,8 @@ public class SearchActivity extends BaseActivity {
         }
 
         @Override
-        public void afterTextChanged(Editable s) {}
+        public void afterTextChanged(Editable s) {
+        }
     };
 
     @Override
@@ -115,22 +125,22 @@ public class SearchActivity extends BaseActivity {
         setContentView(R.layout.activity_search);
         ButterKnife.bind(this);
         mTeleprinter = new Teleprinter(this);
-        mToolbar.setNavigationIcon(R.drawable.ic_back_24dp);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        toolbar.setNavigationIcon(R.drawable.ic_back_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
             }
         });
-        mSearchPagerAdapter = new SearchPagerAdapter(this, getSupportFragmentManager());
-        mViewPager.setAdapter(mSearchPagerAdapter);
-        mTabLayout.setupWithViewPager(mViewPager);
-        mSearchView.setOnEditorActionListener(mOnSearchEditorActionListener);
-        mSearchView.addTextChangedListener(mTextWatcher);
+        adapterSearch = new SearchPagerAdapter(this, getSupportFragmentManager());
+        viewPager.setAdapter(adapterSearch);
+        tabLayout.setupWithViewPager(viewPager);
+        textSearch.setOnEditorActionListener(mOnSearchEditorActionListener);
+        textSearch.addTextChangedListener(mTextWatcher);
     }
 
     private void search() {
         Timber.d("Searching");
-        mSearchPagerAdapter.searchQuery(mSearchView.getText().toString());
+        adapterSearch.searchQuery(textSearch.getText().toString());
     }
 }

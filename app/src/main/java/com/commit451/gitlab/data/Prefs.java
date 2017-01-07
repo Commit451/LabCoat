@@ -35,26 +35,27 @@ public class Prefs {
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({STARTING_VIEW_PROJECTS, STARTING_VIEW_GROUPS, STARTING_VIEW_ACTIVITY, STARTING_VIEW_TODOS})
-    public @interface StartingView {}
+    public @interface StartingView {
+    }
 
-    private SharedPreferences mSharedPreferences;
+    private SharedPreferences prefs;
 
     public Prefs(Context context) {
         if (!(context instanceof Application)) {
             throw new IllegalArgumentException("This should be the application context. Not the activity context");
         }
-        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        prefs = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
     @NonNull
     public List<Account> getAccounts() {
-        String accountsJson = mSharedPreferences.getString(KEY_ACCOUNTS, null);
+        String accountsJson = prefs.getString(KEY_ACCOUNTS, null);
         if (!TextUtils.isEmpty(accountsJson)) {
             try {
                 return LoganSquare.parseList(accountsJson, Account.class);
             } catch (IOException e) {
                 //why would this ever happen?!?!?1
-                mSharedPreferences.edit().remove(KEY_ACCOUNTS).apply();
+                prefs.edit().remove(KEY_ACCOUNTS).apply();
             }
             return new ArrayList<>();
         } else {
@@ -84,8 +85,7 @@ public class Prefs {
     private void setAccounts(List<Account> accounts) {
         try {
             String json = LoganSquare.serialize(accounts);
-            mSharedPreferences
-                    .edit()
+            prefs.edit()
                     .putString(KEY_ACCOUNTS, json)
                     .apply();
         } catch (IOException e) {
@@ -94,34 +94,34 @@ public class Prefs {
     }
 
     public int getSavedVersion() {
-        return mSharedPreferences.getInt(KEY_VERSION, -1);
+        return prefs.getInt(KEY_VERSION, -1);
     }
 
     public void setSavedVersion() {
-        mSharedPreferences
-                .edit()
+        prefs.edit()
                 .putInt(KEY_VERSION, BuildConfig.VERSION_CODE)
                 .apply();
     }
 
+    @StartingView
     public int getStartingView() {
-        return mSharedPreferences.getInt(KEY_STARTING_VIEW, STARTING_VIEW_PROJECTS);
+        @StartingView
+        int start = prefs.getInt(KEY_STARTING_VIEW, STARTING_VIEW_PROJECTS);
+        return start;
     }
 
-    public void setStartingView(int startingView) {
-        mSharedPreferences
-                .edit()
+    public void setStartingView(@StartingView int startingView) {
+        prefs.edit()
                 .putInt(KEY_STARTING_VIEW, startingView)
                 .apply();
     }
 
     public boolean isRequireDeviceAuth() {
-        return mSharedPreferences.getBoolean(KEY_REQUIRE_DEVICE_AUTH, false);
+        return prefs.getBoolean(KEY_REQUIRE_DEVICE_AUTH, false);
     }
 
     public void setRequireDeviceAuth(boolean require) {
-        mSharedPreferences
-                .edit()
+        prefs.edit()
                 .putBoolean(KEY_REQUIRE_DEVICE_AUTH, require)
                 .apply();
     }

@@ -66,23 +66,22 @@ public class FileActivity extends BaseActivity {
     }
 
     @BindView(R.id.root)
-    ViewGroup mRoot;
+    ViewGroup root;
     @BindView(R.id.toolbar)
-    Toolbar mToolbar;
+    Toolbar toolbar;
     @BindView(R.id.file_blob)
-    WebView mFileBlobView;
+    WebView webViewFileBlob;
     @BindView(R.id.progress)
-    View mProgressView;
+    View progress;
 
-    private long mProjectId;
-    private String mPath;
-    private String mRef;
-    private RepositoryFile mRepositoryFile;
-    private String mFileName;
-    private byte[] mBlob;
-    private
+    private long projectId;
+    private String path;
+    private String ref;
+    private RepositoryFile repositoryFile;
+    private String fileName;
+    private byte[] blob;
     @Option
-    int mOption;
+    private int option;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,27 +89,27 @@ public class FileActivity extends BaseActivity {
         setContentView(R.layout.activity_file);
         ButterKnife.bind(this);
 
-        mProjectId = getIntent().getLongExtra(EXTRA_PROJECT_ID, -1);
-        mPath = getIntent().getStringExtra(EXTRA_PATH);
-        mRef = getIntent().getStringExtra(EXTRA_REF);
+        projectId = getIntent().getLongExtra(EXTRA_PROJECT_ID, -1);
+        path = getIntent().getStringExtra(EXTRA_PATH);
+        ref = getIntent().getStringExtra(EXTRA_REF);
 
-        mToolbar.setNavigationIcon(R.drawable.ic_back_24dp);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        toolbar.setNavigationIcon(R.drawable.ic_back_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
             }
         });
-        mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.action_open:
-                        mOption = OPTION_OPEN;
+                        option = OPTION_OPEN;
                         checkAccountPermission();
                         return true;
                     case R.id.action_save:
-                        mOption = OPTION_SAVE;
+                        option = OPTION_SAVE;
                         checkAccountPermission();
                         return true;
                 }
@@ -122,8 +121,8 @@ public class FileActivity extends BaseActivity {
     }
 
     private void loadData() {
-        mProgressView.setVisibility(View.VISIBLE);
-        App.get().getGitLab().getFile(mProjectId, mPath, mRef)
+        progress.setVisibility(View.VISIBLE);
+        App.get().getGitLab().getFile(projectId, path, ref)
                 .compose(this.<RepositoryFile>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -132,25 +131,25 @@ public class FileActivity extends BaseActivity {
                     @Override
                     public void error(Throwable t) {
                         Timber.e(t);
-                        mProgressView.setVisibility(View.GONE);
-                        Snackbar.make(mRoot, R.string.file_load_error, Snackbar.LENGTH_SHORT)
+                        progress.setVisibility(View.GONE);
+                        Snackbar.make(root, R.string.file_load_error, Snackbar.LENGTH_SHORT)
                                 .show();
                     }
 
                     @Override
                     public void success(RepositoryFile repositoryFile) {
-                        mProgressView.setVisibility(View.GONE);
+                        progress.setVisibility(View.GONE);
                         bindFile(repositoryFile);
                     }
                 });
     }
 
     private void bindFile(RepositoryFile repositoryFile) {
-        mRepositoryFile = repositoryFile;
-        mFileName = repositoryFile.getFileName();
-        mToolbar.setTitle(mFileName);
+        this.repositoryFile = repositoryFile;
+        fileName = repositoryFile.getFileName();
+        toolbar.setTitle(fileName);
         if (repositoryFile.getSize() > MAX_FILE_SIZE) {
-            Snackbar.make(mRoot, R.string.file_too_big, Snackbar.LENGTH_SHORT)
+            Snackbar.make(root, R.string.file_too_big, Snackbar.LENGTH_SHORT)
                     .show();
         } else {
             loadBlob(repositoryFile);
@@ -166,7 +165,7 @@ public class FileActivity extends BaseActivity {
 
                     @Override
                     public void error(Throwable t) {
-                        Snackbar.make(mRoot, R.string.failed_to_load, Snackbar.LENGTH_SHORT)
+                        Snackbar.make(root, R.string.failed_to_load, Snackbar.LENGTH_SHORT)
                                 .show();
                     }
 
@@ -178,10 +177,10 @@ public class FileActivity extends BaseActivity {
     }
 
     private void bindBlob(byte[] blob) {
-        mBlob = blob;
+        this.blob = blob;
         String content;
         String mimeType = null;
-        String extension = fileExt(mFileName);
+        String extension = fileExt(fileName);
         if (extension != null) {
             mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
             if (mimeType != null) {
@@ -190,7 +189,7 @@ public class FileActivity extends BaseActivity {
         }
 
         if (mimeType != null && mimeType.startsWith("image/")) {
-            String imageURL = "data:" + mimeType + ";base64," + mRepositoryFile.getContent();
+            String imageURL = "data:" + mimeType + ";base64," + repositoryFile.getContent();
 
             content = "<!DOCTYPE html>" +
                     "<html>" +
@@ -199,7 +198,7 @@ public class FileActivity extends BaseActivity {
                     "</body>" +
                     "</html>";
         } else {
-            String text = new String(mBlob, Charset.forName("UTF-8"));
+            String text = new String(this.blob, Charset.forName("UTF-8"));
 
             content = "<!DOCTYPE html>" +
                     "<html>" +
@@ -216,14 +215,14 @@ public class FileActivity extends BaseActivity {
                     "</html>";
         }
 
-        mFileBlobView.loadDataWithBaseURL("file:///android_asset/", content, "text/html", "utf8", null);
-        mToolbar.inflateMenu(R.menu.menu_file);
+        webViewFileBlob.loadDataWithBaseURL("file:///android_asset/", content, "text/html", "utf8", null);
+        toolbar.inflateMenu(R.menu.menu_file);
     }
 
     @TargetApi(23)
     private void checkAccountPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-            if (mOption == OPTION_SAVE) {
+            if (option == OPTION_SAVE) {
                 saveBlob();
             } else {
                 openFile();
@@ -238,7 +237,7 @@ public class FileActivity extends BaseActivity {
         switch (requestCode) {
             case REQUEST_PERMISSION_WRITE_STORAGE: {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if (mOption == OPTION_SAVE) {
+                    if (option == OPTION_SAVE) {
                         saveBlob();
                     } else {
                         openFile();
@@ -251,21 +250,21 @@ public class FileActivity extends BaseActivity {
     private File saveBlob() {
         String state = Environment.getExternalStorageState();
 
-        if (Environment.MEDIA_MOUNTED.equals(state) && mBlob != null) {
-            File targetFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), mFileName);
+        if (Environment.MEDIA_MOUNTED.equals(state) && blob != null) {
+            File targetFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), fileName);
 
             FileOutputStream outputStream = null;
             try {
                 outputStream = new FileOutputStream(targetFile);
-                outputStream.write(mBlob);
+                outputStream.write(blob);
 
-                Snackbar.make(mRoot, getString(R.string.file_saved), Snackbar.LENGTH_SHORT)
+                Snackbar.make(root, getString(R.string.file_saved), Snackbar.LENGTH_SHORT)
                         .show();
 
                 return targetFile;
             } catch (IOException e) {
                 Timber.e(e);
-                Snackbar.make(mRoot, getString(R.string.save_error), Snackbar.LENGTH_SHORT)
+                Snackbar.make(root, getString(R.string.save_error), Snackbar.LENGTH_SHORT)
                         .show();
             } finally {
                 if (outputStream != null) {
@@ -277,7 +276,7 @@ public class FileActivity extends BaseActivity {
                 }
             }
         } else {
-            Snackbar.make(mRoot, getString(R.string.save_error), Snackbar.LENGTH_SHORT)
+            Snackbar.make(root, getString(R.string.save_error), Snackbar.LENGTH_SHORT)
                     .show();
         }
 
@@ -287,7 +286,7 @@ public class FileActivity extends BaseActivity {
     private void openFile() {
         File file = saveBlob();
         if (file == null) {
-            Snackbar.make(mRoot, getString(R.string.open_error), Snackbar.LENGTH_SHORT)
+            Snackbar.make(root, getString(R.string.open_error), Snackbar.LENGTH_SHORT)
                     .show();
             return;
         }
@@ -305,7 +304,7 @@ public class FileActivity extends BaseActivity {
             startActivity(intent);
         } catch (ActivityNotFoundException | SecurityException e) {
             Timber.e(e);
-            Snackbar.make(mRoot, getString(R.string.open_error), Snackbar.LENGTH_SHORT)
+            Snackbar.make(root, getString(R.string.open_error), Snackbar.LENGTH_SHORT)
                     .show();
         }
     }

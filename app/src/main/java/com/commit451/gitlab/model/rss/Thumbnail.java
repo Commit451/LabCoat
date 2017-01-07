@@ -10,11 +10,11 @@ import org.simpleframework.xml.Root;
 @Root(strict = false)
 public class Thumbnail {
     @Attribute(name = "url", required = true)
-    Uri mUrl;
+    Uri url;
 
     public Thumbnail() {}
 
     public Uri getUrl() {
-        return mUrl;
+        return url;
     }
 }

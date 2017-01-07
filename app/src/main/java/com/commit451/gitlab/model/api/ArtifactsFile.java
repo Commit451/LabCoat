@@ -10,15 +10,15 @@ import org.parceler.Parcel;
 public class ArtifactsFile {
 
     @JsonField(name = "filename")
-    String mFileName;
+    String fileName;
     @JsonField(name = "size")
-    long mSize;
+    long size;
 
     public String getFileName() {
-        return mFileName;
+        return fileName;
     }
 
     public long getSize() {
-        return mSize;
+        return size;
     }
 }

@@ -16,55 +16,55 @@ import org.parceler.Parcel;
 public class Label {
 
     @JsonField(name = "color")
-    String mColor;
+    String color;
     @JsonField(name = "name")
-    String mName;
+    String name;
     @JsonField(name = "description")
-    String mDescription;
+    String description;
     @JsonField(name = "open_issues_count")
-    int mOpenIssuesCount;
+    int openIssuesCount;
     @JsonField(name = "closed_issues_count")
-    int mClosedIssuesCount;
+    int closedIssuesCount;
     @JsonField(name = "open_merge_requests_count")
-    int mOpenMergeRequestsCount;
+    int openMergeRequestsCount;
     @JsonField(name = "subscribed")
-    boolean mSubscribed;
+    boolean subscribed;
 
     protected Label() {
         //for json parsing
     }
 
     public String getName() {
-        return mName;
+        return name;
     }
 
     @ColorInt
     public int getColor() {
         try {
-            return Color.parseColor(mColor);
+            return Color.parseColor(color);
         } catch (Exception e) {
             return Color.TRANSPARENT;
         }
     }
 
     public String getDescription() {
-        return mDescription;
+        return description;
     }
 
     public int getOpenIssuesCount() {
-        return mOpenIssuesCount;
+        return openIssuesCount;
     }
 
     public int getClosedIssuesCount() {
-        return mClosedIssuesCount;
+        return closedIssuesCount;
     }
 
     public int getOpenMergeRequestsCount() {
-        return mOpenMergeRequestsCount;
+        return openMergeRequestsCount;
     }
 
     public boolean isSubscribed() {
-        return mSubscribed;
+        return subscribed;
     }
 
     @Override
@@ -74,17 +74,17 @@ public class Label {
 
         Label label = (Label) o;
 
-        if (mColor != null ? !mColor.equals(label.mColor) : label.mColor != null) return false;
-        if (mName != null ? !mName.equals(label.mName) : label.mName != null) return false;
-        return mDescription != null ? mDescription.equals(label.mDescription) : label.mDescription == null;
+        if (color != null ? !color.equals(label.color) : label.color != null) return false;
+        if (name != null ? !name.equals(label.name) : label.name != null) return false;
+        return description != null ? description.equals(label.description) : label.description == null;
 
     }
 
     @Override
     public int hashCode() {
-        int result = mColor != null ? mColor.hashCode() : 0;
-        result = 31 * result + (mName != null ? mName.hashCode() : 0);
-        result = 31 * result + (mDescription != null ? mDescription.hashCode() : 0);
+        int result = color != null ? color.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (description != null ? description.hashCode() : 0);
         return result;
     }
 }

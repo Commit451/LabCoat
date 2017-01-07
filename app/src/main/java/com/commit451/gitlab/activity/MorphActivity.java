@@ -7,7 +7,7 @@ import android.view.View;
 import com.commit451.morphtransitions.FabTransform;
 
 /**
- * Activity that morphs from a FAB. Make sure the view you want to morph has the view id R.id.mRoot and
+ * Activity that morphs from a FAB. Make sure the view you want to morph has the view id R.id.root and
  * call {@link #morph(View)} when the content view is set
  */
 public class MorphActivity extends BaseActivity {

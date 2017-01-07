@@ -10,18 +10,18 @@ import org.parceler.Parcel;
 @JsonObject
 public class Branch {
     @JsonField(name = "name")
-    String mName;
+    String name;
     @JsonField(name = "protected")
-    boolean mProtected;
+    boolean isProtected;
 
     public Branch() {}
 
     public String getName() {
-        return mName;
+        return name;
     }
 
     public boolean isProtected() {
-        return mProtected;
+        return isProtected;
     }
 
     @Override
@@ -31,16 +31,16 @@ public class Branch {
         }
 
         Branch branch = (Branch) o;
-        return ObjectUtil.equals(mName, branch.mName);
+        return ObjectUtil.equals(name, branch.name);
     }
 
     @Override
     public int hashCode() {
-        return ObjectUtil.hash(mName);
+        return ObjectUtil.hash(name);
     }
 
     @Override
     public String toString() {
-        return mName;
+        return name;
     }
 }

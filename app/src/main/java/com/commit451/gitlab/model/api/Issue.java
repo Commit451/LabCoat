@@ -34,80 +34,80 @@ public class Issue {
     }
 
     @JsonField(name = "id")
-    long mId;
+    long id;
     @JsonField(name = "iid")
-    long mIid;
+    long iId;
     @JsonField(name = "project_id")
-    long mProjectId;
+    long projectId;
     @JsonField(name = "title")
-    String mTitle;
+    String title;
     @JsonField(name = "description")
-    String mDescription;
+    String description;
     @JsonField(name = "state")
     @State
-    String mState;
+    String state;
     @JsonField(name = "created_at")
-    Date mCreatedAt;
+    Date createdAt;
     @JsonField(name = "updated_at")
-    Date mUpdatedAt;
+    Date updatedAt;
     @JsonField(name = "labels")
-    List<String> mLabels;
+    List<String> labels;
     @JsonField(name = "milestone")
-    Milestone mMilestone;
+    Milestone milestone;
     @JsonField(name = "assignee")
-    UserBasic mAssignee;
+    UserBasic assignee;
     @JsonField(name = "author")
-    UserBasic mAuthor;
+    UserBasic author;
 
     public Issue() {
     }
 
     public long getId() {
-        return mId;
+        return id;
     }
 
     public long getIid() {
-        return mIid;
+        return iId;
     }
 
     public long getProjectId() {
-        return mProjectId;
+        return projectId;
     }
 
     public String getTitle() {
-        return mTitle;
+        return title;
     }
 
     public String getDescription() {
-        return mDescription;
+        return description;
     }
 
     public @State String getState() {
-        return mState;
+        return state;
     }
 
     public Date getCreatedAt() {
-        return mCreatedAt;
+        return createdAt;
     }
 
     public Date getUpdatedAt() {
-        return mUpdatedAt;
+        return updatedAt;
     }
 
     public List<String> getLabels() {
-        return mLabels;
+        return labels;
     }
 
     public Milestone getMilestone() {
-        return mMilestone;
+        return milestone;
     }
 
     public UserBasic getAssignee() {
-        return mAssignee;
+        return assignee;
     }
 
     public UserBasic getAuthor() {
-        return mAuthor;
+        return author;
     }
 
     public Uri getUrl(Project project) {
@@ -124,11 +124,11 @@ public class Issue {
         }
 
         Issue issue = (Issue) o;
-        return mId == issue.mId;
+        return id == issue.id;
     }
 
     @Override
     public int hashCode() {
-        return (int) (mId ^ (mId >>> 32));
+        return (int) (id ^ (id >>> 32));
     }
 }

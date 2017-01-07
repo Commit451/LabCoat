@@ -9,11 +9,11 @@ import org.parceler.Parcel;
 @JsonObject
 public class UserLogin extends UserFull {
     @JsonField(name = "private_token")
-    String mPrivateToken;
+    String privateToken;
 
     public UserLogin() {}
 
     public String getPrivateToken() {
-        return mPrivateToken;
+        return privateToken;
     }
 }
