@@ -29,6 +29,12 @@ public class WebLoginActivity extends BaseActivity {
 
     private static final String JAVASCRIPT_INTERFACE_EXTRACTOR = "TokenExtractor";
 
+    /**
+     * This is pretty fragile and has changed in the past, so if this screen ever stops working,
+     * it's probably due to this id changing. Go inspect the source of the page to verify
+     */
+    private static final String PRIVATE_TOKEN_HTML_ID = "private-token";
+
     private static final String KEY_URL = "url";
     private static final String KEY_EXTRACTING_PRIVATE_TOKEN = "extracting_private_token";
 
@@ -129,7 +135,7 @@ public class WebLoginActivity extends BaseActivity {
 
             if (url.equals(WebLoginActivity.this.url + "/profile/account")) {
                 webView.loadUrl("javascript:" + JAVASCRIPT_INTERFACE_EXTRACTOR + ".extract" +
-                        "(document.getElementById('token').value);");
+                        "(document.getElementById('" + PRIVATE_TOKEN_HTML_ID + "').value);");
                 return;
             }
 

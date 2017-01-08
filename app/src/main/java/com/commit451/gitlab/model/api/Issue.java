@@ -39,7 +39,7 @@ public class Issue {
     long iId;
     @JsonField(name = "project_id")
     long projectId;
-    @JsonField(name = "textTitle")
+    @JsonField(name = "title")
     String title;
     @JsonField(name = "description")
     String description;

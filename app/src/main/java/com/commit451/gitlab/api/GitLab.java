@@ -205,7 +205,7 @@ public interface GitLab {
     @FormUrlEncoded
     @POST(API_VERSION + "/projects/{id}/milestones")
     Single<Milestone> createMilestone(@Path("id") long projectId,
-                                      @Field("textTitle") String title,
+                                      @Field("title") String title,
                                       @Field("description") String description,
                                       @Field("due_date") String dueDate);
 
@@ -213,7 +213,7 @@ public interface GitLab {
     @PUT(API_VERSION + "/projects/{id}/milestones/{milestone_id}")
     Single<Milestone> editMilestone(@Path("id") long projectId,
                                     @Path("milestone_id") long milestoneId,
-                                    @Field("textTitle") String title,
+                                    @Field("title") String title,
                                     @Field("description") String description,
                                     @Field("due_date") String dueDate);
 
@@ -285,7 +285,7 @@ public interface GitLab {
     @FormUrlEncoded
     @POST(API_VERSION + "/projects/{id}/issues")
     Single<Issue> createIssue(@Path("id") long projectId,
-                              @Field("textTitle") String title,
+                              @Field("title") String title,
                               @Field("description") String description,
                               @Field("assignee_id") @Nullable Long assigneeId,
                               @Field("milestone_id") @Nullable Long milestoneId,
@@ -294,7 +294,7 @@ public interface GitLab {
     @PUT(API_VERSION + "/projects/{id}/issues/{issue_id}")
     Single<Issue> updateIssue(@Path("id") long projectId,
                               @Path("issue_id") long issueId,
-                              @Query("textTitle") String title,
+                              @Query("title") String title,
                               @Query("description") String description,
                               @Query("assignee_id") @Nullable Long assigneeId,
                               @Query("milestone_id") @Nullable Long milestoneId,
