@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.commit451.gimbal.Gimbal;
 import com.commit451.gitlab.App;
+import com.commit451.gitlab.BuildConfig;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.api.Contributor;
 import com.commit451.gitlab.navigation.Navigator;
@@ -107,6 +108,7 @@ public class AboutActivity extends BaseActivity {
             }
         });
         toolbar.setTitle(R.string.about);
+        toolbar.setSubtitle(BuildConfig.VERSION_NAME);
         physicsLayout.getPhysics().enableFling();
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         gravitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);

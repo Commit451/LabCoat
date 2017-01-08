@@ -30,52 +30,33 @@ public class AccountAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private ArrayList<Account> accounts;
     private int colorControlHighlight;
 
-    private View.OnClickListener mOnItemClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            int position = (int) v.getTag(R.id.list_position);
-            listener.onAccountClicked(getItemAtPosition(position));
-        }
-    };
-
-    private View.OnClickListener mOnFooterClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            listener.onAddAccountClicked();
-        }
-    };
-
     public AccountAdapter(Context context, Listener listener) {
         this.listener = listener;
         accounts = new ArrayList<>();
         colorControlHighlight = Easel.getThemeAttrColor(context, R.attr.colorControlHighlight);
     }
 
-    public void setAccounts(Collection<Account> accounts) {
-        this.accounts.clear();
-        if (accounts != null) {
-            this.accounts.addAll(accounts);
-        }
-        notifyDataSetChanged();
-    }
-
-    public void addAccount(Account account) {
-        if (!accounts.contains(account)) {
-            accounts.add(0, account);
-            notifyItemInserted(0);
-        }
-    }
-
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
             case TYPE_ACCOUNT:
-                AccountViewHolder holder = AccountViewHolder.inflate(parent);
-                holder.itemView.setOnClickListener(mOnItemClickListener);
+                final AccountViewHolder holder = AccountViewHolder.inflate(parent);
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int position = holder.getAdapterPosition();
+                        listener.onAccountClicked(getItemAtPosition(position));
+                    }
+                });
                 return holder;
             case TYPE_FOOTER:
                 AccountFooterViewHolder footerViewHolder = AccountFooterViewHolder.inflate(parent);
-                footerViewHolder.itemView.setOnClickListener(mOnFooterClickListener);
+                footerViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        listener.onAddAccountClicked();
+                    }
+                });
                 return footerViewHolder;
         }
         throw new IllegalStateException("No known view holder for that type " + viewType);
@@ -116,6 +97,21 @@ public class AccountAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @Override
     public int getItemViewType(int position) {
         return position == accounts.size() ? TYPE_FOOTER : TYPE_ACCOUNT;
+    }
+
+    public void setAccounts(Collection<Account> accounts) {
+        this.accounts.clear();
+        if (accounts != null) {
+            this.accounts.addAll(accounts);
+        }
+        notifyDataSetChanged();
+    }
+
+    public void addAccount(Account account) {
+        if (!accounts.contains(account)) {
+            accounts.add(0, account);
+            notifyItemInserted(0);
+        }
     }
 
     private Account getItemAtPosition(int position) {

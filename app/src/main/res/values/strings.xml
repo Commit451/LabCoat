@@ -427,6 +427,7 @@
         <item>@string/setting_starting_view_todos</item>
     </string-array>
     <string name="setting_require_device_auth">Require device authentication</string>
+    <string name="setting_require_device_auth_description">Force device authentication when starting the app for the first time</string>
     <string name="device_auth_title">Authenticate</string>
     <string name="device_auth_message">Please authenticate to access LabCoat</string>
 
@@ -459,4 +460,5 @@
     </string-array>
     <string name="no_branches">No branches</string>
     <string name="no_tags">No tags</string>
+    <string name="fetching_some_details">Fetching some details</string>
 </resources>

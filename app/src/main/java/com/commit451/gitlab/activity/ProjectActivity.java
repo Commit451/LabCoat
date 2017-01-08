@@ -20,6 +20,7 @@ import com.commit451.alakazam.HideRunnable;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.ProjectSectionsPagerAdapter;
+import com.commit451.gitlab.data.Prefs;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.fragment.BaseFragment;
 import com.commit451.gitlab.model.Ref;
@@ -120,6 +121,7 @@ public class ProjectActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        App.get().getPrefs().setStartingView(Prefs.STARTING_VIEW_PROJECTS);
         setContentView(R.layout.activity_project);
         ButterKnife.bind(this);
         Project project = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_PROJECT));

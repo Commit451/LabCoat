@@ -14,6 +14,7 @@ import android.view.View;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.TodoPagerAdapter;
+import com.commit451.gitlab.data.Prefs;
 import com.commit451.gitlab.event.CloseDrawerEvent;
 
 import org.greenrobot.eventbus.Subscribe;
@@ -45,6 +46,7 @@ public class TodosActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        App.get().getPrefs().setStartingView(Prefs.STARTING_VIEW_TODOS);
         setContentView(R.layout.activity_todos);
         ButterKnife.bind(this);
         App.bus().register(this);

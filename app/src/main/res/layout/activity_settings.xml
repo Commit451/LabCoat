@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -12,35 +11,10 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="?attr/actionBarSize">
+            android:layout_marginTop="?attr/actionBarSize"
+            android:orientation="vertical">
 
-            <FrameLayout
-                android:id="@+id/root_launch_activity"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="?attr/selectableItemBackground"
-                android:paddingBottom="@dimen/activity_vertical_margin"
-                android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingRight="@dimen/activity_horizontal_margin"
-                android:paddingTop="@dimen/activity_vertical_margin">
-
-                <TextView
-                    style="?android:attr/textAppearanceMedium"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:text="@string/setting_starting_view" />
-
-                <TextView
-                    android:id="@+id/text_launch_activity"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="right" />
-
-            </FrameLayout>
-
-            <FrameLayout
+            <LinearLayout
                 android:id="@+id/root_require_device_auth"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -48,22 +22,39 @@
                 android:paddingBottom="@dimen/activity_vertical_margin"
                 android:paddingLeft="@dimen/activity_horizontal_margin"
                 android:paddingRight="@dimen/activity_horizontal_margin"
+                android:orientation="horizontal"
                 android:paddingTop="@dimen/activity_vertical_margin">
 
-                <TextView
-                    style="?android:attr/textAppearanceMedium"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:gravity="center_vertical"
-                    android:text="@string/setting_require_device_auth" />
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="?android:attr/textAppearanceMedium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/setting_require_device_auth" />
+
+                    <TextView
+                        style="?android:attr/textAppearance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white_60"
+                        android:text="@string/setting_require_device_auth_description" />
+                </LinearLayout>
+
 
                 <android.support.v7.widget.SwitchCompat
                     android:id="@+id/switch_require_auth"
+                    android:layout_gravity="center_vertical"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="right" />
+                    android:layout_marginLeft="8dp"
+                    android:layout_height="wrap_content" />
 
-            </FrameLayout>
+            </LinearLayout>
 
 
         </LinearLayout>
@@ -74,6 +65,6 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"/>
+        android:background="?attr/colorPrimary" />
 
 </merge>

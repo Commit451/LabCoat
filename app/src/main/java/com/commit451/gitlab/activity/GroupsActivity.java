@@ -17,6 +17,7 @@ import com.alexgwyn.recyclerviewsquire.DynamicGridLayoutManager;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.GroupAdapter;
+import com.commit451.gitlab.data.Prefs;
 import com.commit451.gitlab.event.CloseDrawerEvent;
 import com.commit451.gitlab.event.ReloadDataEvent;
 import com.commit451.gitlab.model.api.Group;
@@ -86,6 +87,7 @@ public class GroupsActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        App.get().getPrefs().setStartingView(Prefs.STARTING_VIEW_GROUPS);
         setContentView(R.layout.activity_groups);
         ButterKnife.bind(this);
         App.bus().register(this);

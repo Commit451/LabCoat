@@ -11,6 +11,7 @@ import android.view.View;
 
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
+import com.commit451.gitlab.data.Prefs;
 import com.commit451.gitlab.event.CloseDrawerEvent;
 import com.commit451.gitlab.fragment.FeedFragment;
 
@@ -40,6 +41,7 @@ public class ActivityActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        App.get().getPrefs().setStartingView(Prefs.STARTING_VIEW_ACTIVITY);
         setContentView(R.layout.activity_activity);
         ButterKnife.bind(this);
 
