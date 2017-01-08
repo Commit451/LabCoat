@@ -14,18 +14,16 @@ import com.commit451.gitlab.fragment.UsersFragment;
  */
 public class SearchPagerAdapter extends FragmentPagerAdapter {
 
-    private static final int SECTION_COUNT = 2;
+    private String[] titles;
 
-    private String[] mTitles;
-    private ProjectsFragment mProjectsFragment;
-
-    private UsersFragment mUsersFragment;
+    private ProjectsFragment projectsFragment;
+    private UsersFragment usersFragment;
 
     public SearchPagerAdapter(Context context, FragmentManager fm) {
         super(fm);
-        mProjectsFragment = ProjectsFragment.newInstance(ProjectsFragment.MODE_SEARCH);
-        mUsersFragment = UsersFragment.newInstance();
-        mTitles = context.getResources().getStringArray(R.array.search_tabs);
+        projectsFragment = ProjectsFragment.newInstance(ProjectsFragment.MODE_SEARCH);
+        usersFragment = UsersFragment.newInstance();
+        titles = context.getResources().getStringArray(R.array.search_tabs);
     }
 
     @Override
@@ -33,9 +31,9 @@ public class SearchPagerAdapter extends FragmentPagerAdapter {
 
         switch(position) {
             case 0:
-                return mProjectsFragment;
+                return projectsFragment;
             case 1:
-                return mUsersFragment;
+                return usersFragment;
         }
 
         throw new IllegalStateException("Position exceeded on view pager");
@@ -43,16 +41,16 @@ public class SearchPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return SECTION_COUNT;
+        return titles.length;
     }
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return mTitles[position];
+        return titles[position];
     }
 
     public void searchQuery(String query) {
-        mProjectsFragment.searchQuery(query);
-        mUsersFragment.searchQuery(query);
+        projectsFragment.searchQuery(query);
+        usersFragment.searchQuery(query);
     }
 }

@@ -24,8 +24,10 @@ public class MilestoneViewHolder extends RecyclerView.ViewHolder {
         return new MilestoneViewHolder(view);
     }
 
-    @BindView(R.id.title) TextView mTitleView;
-    @BindView(R.id.due_date) TextView mDueDateView;
+    @BindView(R.id.title)
+    TextView textTitle;
+    @BindView(R.id.due_date)
+    TextView textDueDate;
 
     public MilestoneViewHolder(View view) {
         super(view);
@@ -33,14 +35,14 @@ public class MilestoneViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(Milestone milestone) {
-        mTitleView.setText(milestone.getTitle());
+        textTitle.setText(milestone.getTitle());
         if (milestone.getDueDate() != null) {
-            mDueDateView.setVisibility(View.VISIBLE);
+            textDueDate.setVisibility(View.VISIBLE);
             CharSequence due = DateUtil.getRelativeTimeSpanString(itemView.getContext(), milestone.getDueDate());
-            mDueDateView.setText(String.format(itemView.getResources().getString(R.string.due_date_formatted), due));
+            textDueDate.setText(String.format(itemView.getResources().getString(R.string.due_date_formatted), due));
         } else {
-            mDueDateView.setVisibility(View.GONE);
-            mDueDateView.setText("");
+            textDueDate.setVisibility(View.GONE);
+            textDueDate.setText("");
         }
     }
 }

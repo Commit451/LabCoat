@@ -16,23 +16,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.commit451.easycallback.EasyCallback;
+import com.commit451.alakazam.HideRunnable;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.ProjectSectionsPagerAdapter;
-import com.commit451.gitlab.animation.HideRunnable;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.fragment.BaseFragment;
 import com.commit451.gitlab.model.Ref;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.navigation.Navigator;
+import com.commit451.gitlab.rx.CustomSingleObserver;
 import com.commit451.gitlab.util.IntentUtil;
 
 import org.parceler.Parcels;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import retrofit2.Callback;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class ProjectActivity extends BaseActivity {
@@ -41,6 +43,9 @@ public class ProjectActivity extends BaseActivity {
     private static final String EXTRA_PROJECT_ID = "extra_project_id";
     private static final String EXTRA_PROJECT_NAMESPACE = "extra_project_namespace";
     private static final String EXTRA_PROJECT_NAME = "extra_project_name";
+
+    private static final String STATE_REF = "ref";
+    private static final String STATE_PROJECT = "project";
 
     private static final int REQUEST_BRANCH_OR_TAG = 1;
 
@@ -64,67 +69,47 @@ public class ProjectActivity extends BaseActivity {
     }
 
     @BindView(R.id.root)
-    ViewGroup mRoot;
+    ViewGroup root;
     @BindView(R.id.toolbar)
-    Toolbar mToolbar;
+    Toolbar toolbar;
     @BindView(R.id.tabs)
-    TabLayout mTabLayout;
+    TabLayout tabLayout;
     @BindView(R.id.progress)
-    View mProgress;
+    View progress;
     @BindView(R.id.pager)
-    ViewPager mViewPager;
+    ViewPager viewPager;
 
-    Project mProject;
-    Ref mRef;
+    Project project;
+    Ref ref;
 
-    private final Callback<Project> mProjectCallback = new EasyCallback<Project>() {
-        @Override
-        public void success(@NonNull Project response) {
-            mProgress.animate()
-                    .alpha(0.0f)
-                    .withEndAction(new HideRunnable(mProgress));
-            bindProject(response);
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t, null);
-            mProgress.animate()
-                    .alpha(0.0f)
-                    .withEndAction(new HideRunnable(mProgress));
-            Snackbar.make(mRoot, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
-                    .show();
-        }
-    };
-
-    private final Toolbar.OnMenuItemClickListener mOnMenuItemClickListener = new Toolbar.OnMenuItemClickListener() {
+    private final Toolbar.OnMenuItemClickListener onMenuItemClickListener = new Toolbar.OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.action_branch:
-                    if (mProject != null) {
-                        Navigator.navigateToPickBranchOrTag(ProjectActivity.this, mProject.getId(), mRef, REQUEST_BRANCH_OR_TAG);
+                    if (project != null) {
+                        Navigator.navigateToPickBranchOrTag(ProjectActivity.this, project.getId(), ref, REQUEST_BRANCH_OR_TAG);
                     }
                     return true;
                 case R.id.action_share:
-                    if (mProject != null) {
-                        IntentUtil.share(mRoot, mProject.getWebUrl());
+                    if (project != null) {
+                        IntentUtil.share(root, project.getWebUrl());
                     }
                     return true;
                 case R.id.action_copy_git_https:
-                    if (mProject == null || mProject.getHttpUrlToRepo() == null) {
+                    if (project == null || project.getHttpUrlToRepo() == null) {
                         Toast.makeText(ProjectActivity.this, R.string.failed_to_copy_to_clipboard, Toast.LENGTH_SHORT)
                                 .show();
                     } else {
-                        copyToClipboard(mProject.getHttpUrlToRepo());
+                        copyToClipboard(project.getHttpUrlToRepo());
                     }
                     return true;
                 case R.id.action_copy_git_ssh:
-                    if (mProject == null || mProject.getHttpUrlToRepo() == null) {
+                    if (project == null || project.getHttpUrlToRepo() == null) {
                         Toast.makeText(ProjectActivity.this, R.string.failed_to_copy_to_clipboard, Toast.LENGTH_SHORT)
                                 .show();
                     } else {
-                        copyToClipboard(mProject.getSshUrlToRepo());
+                        copyToClipboard(project.getSshUrlToRepo());
                     }
                     return true;
             }
@@ -139,15 +124,19 @@ public class ProjectActivity extends BaseActivity {
         ButterKnife.bind(this);
         Project project = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_PROJECT));
 
-        mToolbar.setNavigationIcon(R.drawable.ic_back_24dp);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        if (savedInstanceState != null) {
+            project = Parcels.unwrap(savedInstanceState.getParcelable(STATE_PROJECT));
+            ref = Parcels.unwrap(savedInstanceState.getParcelable(STATE_REF));
+        }
+        toolbar.setNavigationIcon(R.drawable.ic_back_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
-        mToolbar.inflateMenu(R.menu.menu_project);
-        mToolbar.setOnMenuItemClickListener(mOnMenuItemClickListener);
+        toolbar.inflateMenu(R.menu.menu_project);
+        toolbar.setOnMenuItemClickListener(onMenuItemClickListener);
 
         if (project == null) {
             String projectId = getIntent().getStringExtra(EXTRA_PROJECT_ID);
@@ -171,36 +160,69 @@ public class ProjectActivity extends BaseActivity {
         switch (requestCode) {
             case REQUEST_BRANCH_OR_TAG:
                 if (resultCode == RESULT_OK) {
-                    mRef = Parcels.unwrap(data.getParcelableExtra(PickBranchOrTagActivity.EXTRA_REF));
+                    ref = Parcels.unwrap(data.getParcelableExtra(PickBranchOrTagActivity.EXTRA_REF));
                     broadcastLoad();
                 }
                 break;
         }
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(STATE_REF, Parcels.wrap(ref));
+        outState.putParcelable(STATE_PROJECT, Parcels.wrap(project));
+    }
+
     private void loadProject(String projectId) {
         showProgress();
-        App.instance().getGitLab().getProject(projectId).enqueue(mProjectCallback);
+        loadProject(App.get().getGitLab().getProject(projectId));
     }
 
     private void loadProject(String projectNamespace, String projectName) {
         showProgress();
-        App.instance().getGitLab().getProject(projectNamespace, projectName).enqueue(mProjectCallback);
+        loadProject(App.get().getGitLab().getProject(projectNamespace, projectName));
+    }
+
+    private void loadProject(Single<Project> observable) {
+        observable.compose(this.<Project>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new CustomSingleObserver<Project>() {
+
+                    @Override
+                    public void error(@NonNull Throwable t) {
+                        Timber.e(t);
+                        progress.animate()
+                                .alpha(0.0f)
+                                .withEndAction(new HideRunnable(progress));
+                        Snackbar.make(root, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
+                                .show();
+                    }
+
+                    @Override
+                    public void success(@NonNull Project project) {
+                        progress.animate()
+                                .alpha(0.0f)
+                                .withEndAction(new HideRunnable(progress));
+                        bindProject(project);
+                    }
+                });
     }
 
     private void showProgress() {
-        mProgress.setAlpha(0.0f);
-        mProgress.setVisibility(View.VISIBLE);
-        mProgress.animate().alpha(1.0f);
+        progress.setAlpha(0.0f);
+        progress.setVisibility(View.VISIBLE);
+        progress.animate().alpha(1.0f);
     }
 
     private void broadcastLoad() {
-        App.bus().post(new ProjectReloadEvent(mProject, mRef.getRef()));
+        App.bus().post(new ProjectReloadEvent(project, ref.getRef()));
     }
 
     @Override
     public void onBackPressed() {
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.pager + ":" + mViewPager.getCurrentItem());
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.pager + ":" + viewPager.getCurrentItem());
         if (fragment instanceof BaseFragment) {
             if (((BaseFragment) fragment).onBackPressed()) {
                 return;
@@ -211,37 +233,39 @@ public class ProjectActivity extends BaseActivity {
     }
 
     public String getRef() {
-        if (mRef == null) {
+        if (ref == null) {
             return null;
         }
-        return mRef.getRef();
+        return ref.getRef();
     }
 
     public Project getProject() {
-        return mProject;
+        return project;
     }
 
     private void bindProject(Project project) {
-        mProject = project;
-        mRef = new Ref(Ref.TYPE_BRANCH, mProject.getDefaultBranch());
-        mToolbar.setTitle(mProject.getName());
-        mToolbar.setSubtitle(mProject.getNamespace().getName());
+        this.project = project;
+        if (ref == null) {
+            ref = new Ref(Ref.TYPE_BRANCH, this.project.getDefaultBranch());
+        }
+        toolbar.setTitle(this.project.getName());
+        toolbar.setSubtitle(this.project.getNamespace().getName());
         setupTabs();
     }
 
     private void setupTabs() {
         ProjectSectionsPagerAdapter projectSectionsPagerAdapter = new ProjectSectionsPagerAdapter(this, getSupportFragmentManager());
-        mViewPager.setAdapter(projectSectionsPagerAdapter);
-        mTabLayout.setupWithViewPager(mViewPager);
+        viewPager.setAdapter(projectSectionsPagerAdapter);
+        tabLayout.setupWithViewPager(viewPager);
     }
 
     private void copyToClipboard(String url) {
         ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
 
         // Creates a new text clip to put on the clipboard
-        ClipData clip = ClipData.newPlainText(mProject.getName(), url);
+        ClipData clip = ClipData.newPlainText(project.getName(), url);
         clipboard.setPrimaryClip(clip);
-        Snackbar.make(mRoot, R.string.copied_to_clipboard, Snackbar.LENGTH_SHORT)
+        Snackbar.make(root, R.string.copied_to_clipboard, Snackbar.LENGTH_SHORT)
                 .show();
     }
 }

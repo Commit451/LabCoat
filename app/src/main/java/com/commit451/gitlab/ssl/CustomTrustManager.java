@@ -18,39 +18,39 @@ import javax.net.ssl.X509TrustManager;
  */
 public class CustomTrustManager implements X509TrustManager {
 
-    private String mTrustedCertificate;
-    private String mTrustedHostname;
-    private String mPrivateKeyAlias;
-    private SSLSocketFactory mSSLSocketFactory;
-    private HostnameVerifier mHostnameVerifier;
+    private String trustedCertificate;
+    private String trustedHostname;
+    private String privateKeyAlias;
+    private SSLSocketFactory sslSocketFactory;
+    private HostnameVerifier hostnameVerifier;
 
     public CustomTrustManager() {}
 
     public void setTrustedCertificate(String trustedCertificate) {
-        if ((mTrustedCertificate == null && trustedCertificate == null) || (mTrustedCertificate != null && mTrustedCertificate.equals(trustedCertificate))) {
+        if ((this.trustedCertificate == null && trustedCertificate == null) || (this.trustedCertificate != null && this.trustedCertificate.equals(trustedCertificate))) {
             return;
         }
 
-        mTrustedCertificate = trustedCertificate;
-        mSSLSocketFactory = null;
+        this.trustedCertificate = trustedCertificate;
+        sslSocketFactory = null;
     }
 
     public void setTrustedHostname(String trustedHostname) {
-        if ((mTrustedHostname == null && trustedHostname == null) || (mTrustedHostname != null && mTrustedHostname.equals(trustedHostname))) {
+        if ((this.trustedHostname == null && trustedHostname == null) || (this.trustedHostname != null && this.trustedHostname.equals(trustedHostname))) {
             return;
         }
 
-        mTrustedHostname = trustedHostname;
-        mHostnameVerifier = null;
+        this.trustedHostname = trustedHostname;
+        hostnameVerifier = null;
     }
 
     public void setPrivateKeyAlias(String privateKeyAlias) {
-        if ((mPrivateKeyAlias == null && privateKeyAlias == null) || (mPrivateKeyAlias != null && mPrivateKeyAlias.equals(privateKeyAlias))) {
+        if ((this.privateKeyAlias == null && privateKeyAlias == null) || (this.privateKeyAlias != null && this.privateKeyAlias.equals(privateKeyAlias))) {
             return;
         }
 
-        mPrivateKeyAlias = privateKeyAlias;
-        mSSLSocketFactory = null;
+        this.privateKeyAlias = privateKeyAlias;
+        sslSocketFactory = null;
     }
 
     @Override
@@ -76,7 +76,7 @@ public class CustomTrustManager implements X509TrustManager {
             cause = e;
         }
 
-        if (mTrustedCertificate != null && mTrustedCertificate.equals(X509Util.getFingerPrint(chain[0]))) {
+        if (trustedCertificate != null && trustedCertificate.equals(X509Util.getFingerPrint(chain[0]))) {
             return;
         }
 
@@ -93,31 +93,31 @@ public class CustomTrustManager implements X509TrustManager {
     }
 
     public SSLSocketFactory getSSLSocketFactory() {
-        if (mSSLSocketFactory != null) {
-            return mSSLSocketFactory;
+        if (sslSocketFactory != null) {
+            return sslSocketFactory;
         }
 
         KeyManager[] keyManagers = null;
-        if (mPrivateKeyAlias != null) {
-            keyManagers = new KeyManager[] { new CustomKeyManager(mPrivateKeyAlias) };
+        if (privateKeyAlias != null) {
+            keyManagers = new KeyManager[] { new CustomKeyManager(privateKeyAlias) };
         }
 
         try {
             SSLContext sslContext = SSLContext.getInstance("TLS");
             sslContext.init(keyManagers, new TrustManager[]{this}, null);
-            mSSLSocketFactory = new CustomSSLSocketFactory(sslContext.getSocketFactory());
+            sslSocketFactory = new CustomSSLSocketFactory(sslContext.getSocketFactory());
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
 
-        return mSSLSocketFactory;
+        return sslSocketFactory;
     }
 
     public HostnameVerifier getHostnameVerifier() {
-        if (mHostnameVerifier == null) {
-            mHostnameVerifier = new CustomHostnameVerifier(mTrustedHostname);
+        if (hostnameVerifier == null) {
+            hostnameVerifier = new CustomHostnameVerifier(trustedHostname);
         }
 
-        return mHostnameVerifier;
+        return hostnameVerifier;
     }
 }

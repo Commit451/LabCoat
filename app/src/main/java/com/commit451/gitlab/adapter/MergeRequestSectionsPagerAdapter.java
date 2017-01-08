@@ -15,17 +15,16 @@ import com.commit451.gitlab.model.api.Project;
  * Projects Pager Adapter
  */
 public class MergeRequestSectionsPagerAdapter extends FragmentPagerAdapter {
-    private static final int SECTION_COUNT = 2;
 
-    private Project mProject;
-    private MergeRequest mMergeRequest;
-    private String[] mTitles;
+    private Project project;
+    private MergeRequest mergeRequest;
+    private String[] titles;
 
     public MergeRequestSectionsPagerAdapter(Context context, FragmentManager fm, Project project, MergeRequest mergeRequest) {
         super(fm);
-        mProject = project;
-        mMergeRequest = mergeRequest;
-        mTitles = context.getResources().getStringArray(R.array.merge_request_tabs);
+        this.project = project;
+        this.mergeRequest = mergeRequest;
+        titles = context.getResources().getStringArray(R.array.merge_request_tabs);
     }
 
     @Override
@@ -33,9 +32,9 @@ public class MergeRequestSectionsPagerAdapter extends FragmentPagerAdapter {
 
         switch(position) {
             case 0:
-                return MergeRequestDiscussionFragment.newInstance(mProject, mMergeRequest);
+                return MergeRequestDiscussionFragment.newInstance(project, mergeRequest);
             case 1:
-                return MergeRequestCommitsFragment.newInstance(mProject, mMergeRequest);
+                return MergeRequestCommitsFragment.newInstance(project, mergeRequest);
         }
 
         throw new IllegalStateException("Position exceeded on view pager");
@@ -43,11 +42,11 @@ public class MergeRequestSectionsPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return SECTION_COUNT;
+        return titles.length;
     }
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return mTitles[position];
+        return titles[position];
     }
 }

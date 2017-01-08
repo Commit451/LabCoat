@@ -20,54 +20,48 @@ import java.util.Collection;
 /**
  * Adapter to show all the accounts
  */
-public class AccountsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class AccountAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int TYPE_ACCOUNT = 0;
     private static final int TYPE_FOOTER = 1;
 
     private static final int FOOTER_COUNT = 1;
 
-    public interface Listener {
-        void onAccountClicked(Account account);
-        void onAddAccountClicked();
-        void onAccountLogoutClicked(Account account);
-    }
-
-    private Listener mListener;
-    private ArrayList<Account> mAccounts;
-    private int mColorControlHighlight;
+    private Listener listener;
+    private ArrayList<Account> accounts;
+    private int colorControlHighlight;
 
     private View.OnClickListener mOnItemClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             int position = (int) v.getTag(R.id.list_position);
-            mListener.onAccountClicked(getItemAtPosition(position));
+            listener.onAccountClicked(getItemAtPosition(position));
         }
     };
 
     private View.OnClickListener mOnFooterClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            mListener.onAddAccountClicked();
+            listener.onAddAccountClicked();
         }
     };
 
-    public AccountsAdapter(Context context, Listener listener) {
-        mListener = listener;
-        mAccounts = new ArrayList<>();
-        mColorControlHighlight = Easel.getThemeAttrColor(context, R.attr.colorControlHighlight);
+    public AccountAdapter(Context context, Listener listener) {
+        this.listener = listener;
+        accounts = new ArrayList<>();
+        colorControlHighlight = Easel.getThemeAttrColor(context, R.attr.colorControlHighlight);
     }
 
     public void setAccounts(Collection<Account> accounts) {
-        mAccounts.clear();
+        this.accounts.clear();
         if (accounts != null) {
-            mAccounts.addAll(accounts);
+            this.accounts.addAll(accounts);
         }
         notifyDataSetChanged();
     }
 
     public void addAccount(Account account) {
-        if (!mAccounts.contains(account)) {
-            mAccounts.add(0, account);
+        if (!accounts.contains(account)) {
+            accounts.add(0, account);
             notifyItemInserted(0);
         }
     }
@@ -91,17 +85,17 @@ public class AccountsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof AccountViewHolder) {
             final Account account = getItemAtPosition(position);
-            ((AccountViewHolder) holder).bind(account, account.equals(App.instance().getAccount()), mColorControlHighlight);
+            ((AccountViewHolder) holder).bind(account, account.equals(App.get().getAccount()), colorControlHighlight);
             holder.itemView.setTag(R.id.list_position, position);
             ((AccountViewHolder) holder).mPopupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
                     switch (item.getItemId()) {
                         case R.id.action_sign_out:
-                            int itemPosition = mAccounts.indexOf(account);
-                            mAccounts.remove(account);
+                            int itemPosition = accounts.indexOf(account);
+                            accounts.remove(account);
                             notifyItemRemoved(itemPosition);
-                            mListener.onAccountLogoutClicked(account);
+                            listener.onAccountLogoutClicked(account);
                             return true;
                     }
                     return false;
@@ -116,19 +110,21 @@ public class AccountsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public int getItemCount() {
-        return mAccounts.size() + FOOTER_COUNT;
+        return accounts.size() + FOOTER_COUNT;
     }
 
     @Override
     public int getItemViewType(int position) {
-        return position == mAccounts.size() ? TYPE_FOOTER : TYPE_ACCOUNT;
+        return position == accounts.size() ? TYPE_FOOTER : TYPE_ACCOUNT;
     }
 
     private Account getItemAtPosition(int position) {
-        return mAccounts.get(position);
+        return accounts.get(position);
     }
 
-    public int getAccountsCount() {
-        return mAccounts.size();
+    public interface Listener {
+        void onAccountClicked(Account account);
+        void onAddAccountClicked();
+        void onAccountLogoutClicked(Account account);
     }
 }

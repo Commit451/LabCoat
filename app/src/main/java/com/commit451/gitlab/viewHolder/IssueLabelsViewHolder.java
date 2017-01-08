@@ -26,8 +26,9 @@ public class IssueLabelsViewHolder extends RecyclerView.ViewHolder {
     }
 
     @BindView(R.id.adapter_layout)
-    AdapterFlowLayout mFlowLayout;
-    IssueLabelsAdapter mAdapter;
+    AdapterFlowLayout flowLayout;
+
+    IssueLabelsAdapter adapterIssueLabels;
 
     private final IssueLabelsAdapter.Listener mListener = new IssueLabelsAdapter.Listener() {
         @Override
@@ -39,11 +40,11 @@ public class IssueLabelsViewHolder extends RecyclerView.ViewHolder {
     public IssueLabelsViewHolder(View view) {
         super(view);
         ButterKnife.bind(this, view);
-        mAdapter = new IssueLabelsAdapter(mListener);
-        mFlowLayout.setAdapter(mAdapter);
+        adapterIssueLabels = new IssueLabelsAdapter(mListener);
+        flowLayout.setAdapter(adapterIssueLabels);
     }
 
     public void bind(Collection<String> labels) {
-        mAdapter.setLabels(labels);
+        adapterIssueLabels.setLabels(labels);
     }
 }

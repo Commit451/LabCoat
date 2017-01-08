@@ -13,18 +13,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.adapter.UsersAdapter;
+import com.commit451.gitlab.adapter.UserAdapter;
 import com.commit451.gitlab.model.api.UserBasic;
 import com.commit451.gitlab.navigation.Navigator;
-import com.commit451.gitlab.util.PaginationUtil;
+import com.commit451.gitlab.rx.CustomResponseSingleObserver;
+import com.commit451.gitlab.util.LinkHeaderParser;
 import com.commit451.gitlab.viewHolder.UserViewHolder;
 
 import java.util.List;
 
 import butterknife.BindView;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
+import retrofit2.Response;
 import timber.log.Timber;
 
 public class UsersFragment extends ButterKnifeFragment {
@@ -49,97 +52,36 @@ public class UsersFragment extends ButterKnifeFragment {
     }
 
     @BindView(R.id.swipe_layout)
-    SwipeRefreshLayout mSwipeRefreshLayout;
+    SwipeRefreshLayout swipeRefreshLayout;
     @BindView(R.id.list)
-    RecyclerView mUsersListView;
+    RecyclerView listUsers;
     @BindView(R.id.message_text)
-    TextView mMessageView;
-    private GridLayoutManager mUserLinearLayoutManager;
+    TextView textMessage;
 
-    private String mQuery;
-    private UsersAdapter mUsersAdapter;
-    private boolean mLoading;
-    private Uri mNextPageUrl;
+    UserAdapter adapterUser;
+    GridLayoutManager layoutManagerUser;
 
-    private final RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
+    String query;
+    boolean loading;
+    Uri nextPageUrl;
+
+    private final RecyclerView.OnScrollListener onScrollListener = new RecyclerView.OnScrollListener() {
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
             super.onScrolled(recyclerView, dx, dy);
-            int visibleItemCount = mUserLinearLayoutManager.getChildCount();
-            int totalItemCount = mUserLinearLayoutManager.getItemCount();
-            int firstVisibleItem = mUserLinearLayoutManager.findFirstVisibleItemPosition();
-            if (firstVisibleItem + visibleItemCount >= totalItemCount && !mLoading && mNextPageUrl != null) {
+            int visibleItemCount = layoutManagerUser.getChildCount();
+            int totalItemCount = layoutManagerUser.getItemCount();
+            int firstVisibleItem = layoutManagerUser.findFirstVisibleItemPosition();
+            if (firstVisibleItem + visibleItemCount >= totalItemCount && !loading && nextPageUrl != null) {
                 loadMore();
             }
-        }
-    };
-
-    private final UsersAdapter.Listener mUsersAdapterListener = new UsersAdapter.Listener() {
-        @Override
-        public void onUserClicked(UserBasic user, UserViewHolder userViewHolder) {
-            Navigator.navigateToUser(getActivity(), userViewHolder.mImageView, user);
-        }
-    };
-
-    public EasyCallback<List<UserBasic>> mSearchCallback = new EasyCallback<List<UserBasic>>() {
-        @Override
-        public void success(@NonNull List<UserBasic> response) {
-            if (getView() == null) {
-                return;
-            }
-            mSwipeRefreshLayout.setRefreshing(false);
-            mLoading = false;
-            if (response.isEmpty()) {
-                mMessageView.setVisibility(View.VISIBLE);
-                mMessageView.setText(R.string.no_users_found);
-            }
-            mUsersAdapter.setData(response);
-            mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t, null);
-            mLoading = false;
-            if (getView() == null) {
-                return;
-            }
-            mSwipeRefreshLayout.setRefreshing(false);
-            mMessageView.setText(R.string.connection_error_users);
-            mMessageView.setVisibility(View.VISIBLE);
-            mUsersAdapter.setData(null);
-        }
-    };
-
-    public EasyCallback<List<UserBasic>> mMoreUsersCallback = new EasyCallback<List<UserBasic>>() {
-        @Override
-        public void success(@NonNull List<UserBasic> response) {
-            mLoading = false;
-            if (getView() == null) {
-                return;
-            }
-            mSwipeRefreshLayout.setRefreshing(false);
-            mUsersAdapter.addData(response);
-            mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
-            mUsersAdapter.setLoading(false);
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t, null);
-            mLoading = false;
-            if (getView() == null) {
-                return;
-            }
-            mSwipeRefreshLayout.setRefreshing(false);
-            mUsersAdapter.setLoading(false);
         }
     };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mQuery = getArguments().getString(EXTRA_QUERY);
+        query = getArguments().getString(EXTRA_QUERY);
     }
 
     @Nullable
@@ -152,14 +94,19 @@ public class UsersFragment extends ButterKnifeFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mUsersAdapter = new UsersAdapter(mUsersAdapterListener);
-        mUserLinearLayoutManager = new GridLayoutManager(getActivity(), 2);
-        mUserLinearLayoutManager.setSpanSizeLookup(mUsersAdapter.getSpanSizeLookup());
-        mUsersListView.setLayoutManager(mUserLinearLayoutManager);
-        mUsersListView.setAdapter(mUsersAdapter);
-        mUsersListView.addOnScrollListener(mOnScrollListener);
+        adapterUser = new UserAdapter(new UserAdapter.Listener() {
+            @Override
+            public void onUserClicked(UserBasic user, UserViewHolder userViewHolder) {
+                Navigator.navigateToUser(getActivity(), userViewHolder.image, user);
+            }
+        });
+        layoutManagerUser = new GridLayoutManager(getActivity(), 2);
+        layoutManagerUser.setSpanSizeLookup(adapterUser.getSpanSizeLookup());
+        listUsers.setLayoutManager(layoutManagerUser);
+        listUsers.setAdapter(adapterUser);
+        listUsers.addOnScrollListener(onScrollListener);
 
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 loadData();
@@ -171,41 +118,90 @@ public class UsersFragment extends ButterKnifeFragment {
 
     @Override
     protected void loadData() {
-        mLoading = true;
+        loading = true;
         if (getView() == null) {
             return;
         }
 
-        if (TextUtils.isEmpty(mQuery)) {
-            mSwipeRefreshLayout.setRefreshing(false);
+        if (TextUtils.isEmpty(query)) {
+            swipeRefreshLayout.setRefreshing(false);
             return;
         }
 
-        mMessageView.setVisibility(View.GONE);
-        mSwipeRefreshLayout.post(new Runnable() {
+        textMessage.setVisibility(View.GONE);
+        swipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
-                if (mSwipeRefreshLayout != null) {
-                    mSwipeRefreshLayout.setRefreshing(true);
+                if (swipeRefreshLayout != null) {
+                    swipeRefreshLayout.setRefreshing(true);
                 }
             }
         });
 
-        App.instance().getGitLab().searchUsers(mQuery).enqueue(mSearchCallback);
+        App.get().getGitLab().searchUsers(query)
+                .compose(this.<Response<List<UserBasic>>>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new CustomResponseSingleObserver<List<UserBasic>>() {
+
+                    @Override
+                    public void error(@NonNull Throwable e) {
+                        Timber.e(e);
+                        loading = false;
+                        swipeRefreshLayout.setRefreshing(false);
+                        textMessage.setText(R.string.connection_error_users);
+                        textMessage.setVisibility(View.VISIBLE);
+                        adapterUser.setData(null);
+                    }
+
+                    @Override
+                    public void responseSuccess(@NonNull List<UserBasic> users) {
+                        swipeRefreshLayout.setRefreshing(false);
+                        loading = false;
+                        if (users.isEmpty()) {
+                            textMessage.setVisibility(View.VISIBLE);
+                            textMessage.setText(R.string.no_users_found);
+                        }
+                        adapterUser.setData(users);
+                        nextPageUrl = LinkHeaderParser.parse(response()).getNext();
+                    }
+                });
     }
 
     private void loadMore() {
-        mLoading = true;
-        mUsersAdapter.setLoading(true);
-        Timber.d("loadMore called for %s %s", mNextPageUrl.toString(), mQuery);
-        App.instance().getGitLab().searchUsers(mNextPageUrl.toString(), mQuery).enqueue(mMoreUsersCallback);
+        loading = true;
+        adapterUser.setLoading(true);
+        Timber.d("loadMore called for %s %s", nextPageUrl.toString(), query);
+        App.get().getGitLab().searchUsers(nextPageUrl.toString(), query)
+                .compose(this.<Response<List<UserBasic>>>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new CustomResponseSingleObserver<List<UserBasic>>() {
+
+                    @Override
+                    public void error(@NonNull Throwable e) {
+                        Timber.e(e);
+                        loading = false;
+                        swipeRefreshLayout.setRefreshing(false);
+                        adapterUser.setLoading(false);
+                    }
+
+                    @Override
+                    public void responseSuccess(@NonNull List<UserBasic> users) {
+                        loading = false;
+                        swipeRefreshLayout.setRefreshing(false);
+                        adapterUser.addData(users);
+                        nextPageUrl = LinkHeaderParser.parse(response()).getNext();
+                        adapterUser.setLoading(false);
+                    }
+                });
     }
 
     public void searchQuery(String query) {
-        mQuery = query;
+        this.query = query;
 
-        if (mUsersAdapter != null) {
-            mUsersAdapter.clearData();
+        if (adapterUser != null) {
+            adapterUser.clearData();
             loadData();
         }
     }

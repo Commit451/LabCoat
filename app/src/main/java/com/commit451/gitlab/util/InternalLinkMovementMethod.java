@@ -17,10 +17,10 @@ import timber.log.Timber;
  */
 public class InternalLinkMovementMethod extends LinkMovementMethod {
 
-    private Uri mServerUrl;
+    private Uri serverUrl;
 
     public InternalLinkMovementMethod(Uri serverUrl) {
-        mServerUrl = serverUrl;
+        this.serverUrl = serverUrl;
     }
 
     public boolean onTouchEvent(TextView widget, android.text.Spannable buffer, android.view.MotionEvent event) {
@@ -44,7 +44,7 @@ public class InternalLinkMovementMethod extends LinkMovementMethod {
             URLSpan[] link = buffer.getSpans(off, off, URLSpan.class);
             if (link.length != 0) {
                 String url = link[0].getURL();
-                if (url.startsWith(mServerUrl.toString())) {
+                if (url.startsWith(serverUrl.toString())) {
                     Timber.d("Looks like an internal server link: %s", url);
                     Navigator.navigateToUrl(widget.getContext(), Uri.parse(url));
                     return true;

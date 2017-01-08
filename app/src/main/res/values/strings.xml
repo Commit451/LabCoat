@@ -131,9 +131,6 @@
     <string name="user_error">User could not be added</string>
     <string name="user_remove_error">User could not be removed</string>
 
-    <string name="files_not_supported">To browse files GitLab 5.3 or higher is needed</string>
-    <string name="groups_not_supported">To add and remove users from groups GitLab 6.1 or higher is needed</string>
-    <string name="not_in_group">User management is only available for projects that are assigned to groups</string>
     <string name="error_could_not_share">Could not share the link</string>
     <string name="error_no_browser">No browser on device. What are you doing?</string>
     <string name="error_user_conflict">There is a conflict in adding this user.</string>
@@ -161,6 +158,7 @@
     <string name="discard">Discard</string>
     <string name="are_you_sure_you_want_to_discard">Are you sure you want to discard?</string>
     <string name="failed_to_upload_file">Failed to upload file</string>
+    <string name="are_you_sure_you_want_to_remove">Are you sure you want to remove?</string>
 
     <!-- Project -->
     <string name="no_readme_found">No README found for project</string>
@@ -177,9 +175,6 @@
     <string name="project_fork_message">Do you want to fork this project?</string>
     <!-- Commits -->
     <string name="no_commits_found">No commits found.</string>
-
-    <!-- Diffs -->
-    <string name="text_wrap_checkbox">Wrap text</string>
 
     <!-- Files -->
     <string name="file_saved">File saved successfully to Download folder</string>
@@ -291,9 +286,9 @@
     <!-- About -->
     <string name="about">About</string>
     <string name="contributors">Contributors</string>
-    <string name="sauce">See the source</string>
+    <string name="sauce">View project on GitLab</string>
     <string name="source_url">https://gitlab.com/Commit451/LabCoat</string>
-    <string name="failed_to_load_contributors">Failed to load contributors :(</string>
+    <string name="failed_to_load_contributors">Failed to load contributors</string>
 
     <!-- Account -->
     <string name="add_account">Add account</string>
@@ -327,6 +322,7 @@
     </string-array>
     <string name="created_merge_request">created merge request</string>
     <string name="unable_to_merge">Unable to merge</string>
+    <string name="merge_request_already_merged_or_closed">Merge request has already been merged or closed</string>
     <string name="merge_request_accepted">Merge request accepted</string>
 
     <!-- Milestones -->
@@ -373,13 +369,6 @@
 
     <!-- Settings -->
     <string name="settings">Settings</string>
-    <string name="preference_category_theme">Theme</string>
-    <string name="dark_theme">Dark Theme</string>
-    <string name="dark_theme_summary">Apply a dark theme throughout the app</string>
-    <string name="primary_color">Primary Color</string>
-    <string name="primary_color_summary">Change the primary theme color</string>
-    <string name="accent_color">Accent Color</string>
-    <string name="accent_color_summary">Change the accent theme color</string>
 
     <!-- Builds -->
     <string name="no_builds">No builds</string>
@@ -394,7 +383,7 @@
         <item>Canceled</item>
     </string-array>
     <string-array name="build_scope_values">
-        <item></item>
+        <item>@null</item>
         <item>pending</item>
         <item>running</item>
         <item>failed</item>
@@ -413,6 +402,7 @@
         <item>Details</item>
         <item>Log</item>
     </string-array>
+    <string name="build_ref">Ref: %1$s</string>
     <string name="build_status">Status: %1$s</string>
     <string name="build_duration">Duration: %1$s</string>
     <string name="build_created">Created: %1$s</string>
@@ -436,6 +426,9 @@
         <item>@string/setting_starting_view_activity</item>
         <item>@string/setting_starting_view_todos</item>
     </string-array>
+    <string name="setting_require_device_auth">Require device authentication</string>
+    <string name="device_auth_title">Authenticate</string>
+    <string name="device_auth_message">Please authenticate to access LabCoat</string>
 
     <!-- Todos -->
     <string name="no_todos">No todos.</string>

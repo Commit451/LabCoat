@@ -2,8 +2,10 @@ package com.commit451.gitlab.adapter;
 
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.view.ViewGroup;
 
+import com.commit451.adapterlayout.AdapterLayout;
 import com.commit451.gitlab.model.api.Label;
 import com.commit451.gitlab.viewHolder.AddLabelViewHolder;
 
@@ -15,32 +17,49 @@ import java.util.Collection;
  */
 public class AddIssueLabelAdapter extends RecyclerView.Adapter<AddLabelViewHolder> {
 
-    private ArrayList<Label> mValues;
+    private ArrayList<Label> values;
+    private Listener listener;
 
-    public AddIssueLabelAdapter() {
-        mValues = new ArrayList<>();
+    public AddIssueLabelAdapter(Listener listener) {
+        values = new ArrayList<>();
+        this.listener = listener;
     }
 
     public void setLabels(Collection<Label> labels) {
-        mValues.clear();
+        values.clear();
         addLabels(labels);
     }
 
     public void addLabels(Collection<Label> labels) {
         if (labels != null) {
-            mValues.addAll(labels);
+            values.addAll(labels);
         }
         notifyDataSetChanged();
     }
 
     public void addLabel(Label label) {
-        mValues.add(label);
-        notifyItemInserted(mValues.size()-1);
+        values.add(label);
+        notifyItemInserted(values.size()-1);
+    }
+
+    public void removeLabel(Label label) {
+        int indexOf = values.indexOf(label);
+        values.remove(indexOf);
+        notifyItemRemoved(indexOf);
     }
 
     @Override
     public AddLabelViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return AddLabelViewHolder.inflate(parent);
+        final AddLabelViewHolder holder = AddLabelViewHolder.inflate(parent);
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int position = AdapterLayout.getAdapterPosition(holder);
+                Label label = getEntry(position);
+                listener.onLabelClicked(label);
+            }
+        });
+        return holder;
     }
 
     @Override
@@ -50,28 +69,32 @@ public class AddIssueLabelAdapter extends RecyclerView.Adapter<AddLabelViewHolde
 
     @Override
     public int getItemCount() {
-        return mValues.size();
+        return values.size();
     }
 
     private Label getEntry(int position) {
-        return mValues.get(position);
+        return values.get(position);
     }
 
     public boolean containsLabel(Label label) {
-        return mValues.contains(label);
+        return values.contains(label);
     }
 
     @Nullable
     public String getCommaSeperatedStringOfLabels() {
-        if (mValues.isEmpty()) {
+        if (values.isEmpty()) {
             return null;
         }
         String labels = "";
-        for (Label label : mValues) {
+        for (Label label : values) {
             labels = labels + label.getName() + ",";
         }
         //Remove last ","
         labels = labels.substring(0, labels.length()-1);
         return labels;
+    }
+
+    public interface Listener {
+        void onLabelClicked(Label label);
     }
 }

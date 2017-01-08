@@ -11,9 +11,9 @@ import com.bluelinelabs.logansquare.annotation.JsonObject;
 public class Message {
 
     @JsonField(name = "message")
-    String mMessage;
+    String message;
 
     public String getMessage() {
-        return mMessage;
+        return message;
     }
 }

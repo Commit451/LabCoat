@@ -24,7 +24,7 @@ public class AccessViewHolder extends RecyclerView.ViewHolder {
         return new AccessViewHolder(view);
     }
 
-    @BindView(R.id.access) TextView mTitleView;
+    @BindView(R.id.access) TextView textTitle;
 
     public AccessViewHolder(View view) {
         super(view);
@@ -32,7 +32,7 @@ public class AccessViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(String access, int colorSelected, boolean isSelected) {
-        mTitleView.setText(access);
+        textTitle.setText(access);
         ((FrameLayout) itemView).setForeground(isSelected ? new ColorDrawable(colorSelected) : null);
     }
 }

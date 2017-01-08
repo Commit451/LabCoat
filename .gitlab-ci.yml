@@ -1,15 +1,24 @@
-image: commit451/android-config:latest
+#Derived from https://about.gitlab.com/2016/11/30/setting-up-gitlab-ci-for-android-projects/
+image: openjdk:8-jdk
+
+variables:
+  ANDROID_COMPILE_SDK: "25"
+  ANDROID_BUILD_TOOLS: "25.0.2"
+  ANDROID_SDK_TOOLS: "25.2.3"
 
 before_script:
-  # Make sure that there won't be any interactive prompts that await user interaction
-  - unset DISPLAY
-  - export TERM=dumb
-  - export _JAVA_OPTIONS="-Djava.awt.headless=true"
-  # Increase the heap size to 3 GB for faster builds
-  - export JAVA_OPTS="-Xmx3G"
-  # Make the gradle wrapper executable
-  - chmod +x gradlew
+  - wget --quiet --output-document=android-sdk.zip https://dl.google.com/android/repository/tools_r${ANDROID_SDK_TOOLS}-linux.zip
+  - unzip -q android-sdk.zip -d android-sdk
+  - export ANDROID_HOME=$PWD/android-sdk
+  - echo y | $ANDROID_HOME/tools/bin/sdkmanager "platforms;android-$ANDROID_COMPILE_SDK"
+  - echo y | $ANDROID_HOME/tools/bin/sdkmanager "build-tools;$ANDROID_BUILD_TOOLS"
+  - echo y | $ANDROID_HOME/tools/bin/sdkmanager "extras;android;m2repository"
+  - chmod +x ./gradlew
+
+stages:
+  - build
 
 build:
+  stage: build
   script:
-    - ./gradlew testFdroidDebug --stacktrace
+    - ./gradlew testFdroidDebug

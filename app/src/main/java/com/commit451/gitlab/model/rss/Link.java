@@ -10,11 +10,11 @@ import org.simpleframework.xml.Root;
 @Root(strict = false)
 public class Link {
     @Attribute(name = "href", required = true)
-    Uri mHref;
+    Uri href;
 
     public Link() {}
 
     public Uri getHref() {
-        return mHref;
+        return href;
     }
 }

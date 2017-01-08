@@ -23,8 +23,10 @@ public class SnippetViewHolder extends RecyclerView.ViewHolder {
         return new SnippetViewHolder(view);
     }
 
-    @BindView(R.id.title) public TextView title;
-    @BindView(R.id.file_name) public TextView fileName;
+    @BindView(R.id.title)
+    public TextView textTitle;
+    @BindView(R.id.file_name)
+    public TextView textFileName;
 
     public SnippetViewHolder(View view) {
         super(view);
@@ -32,12 +34,12 @@ public class SnippetViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(Snippet snippet) {
-        title.setText(snippet.getTitle());
+        textTitle.setText(snippet.getTitle());
         if (snippet.getFileName() != null) {
-            fileName.setVisibility(View.VISIBLE);
-            fileName.setText(snippet.getFileName());
+            textFileName.setVisibility(View.VISIBLE);
+            textFileName.setText(snippet.getFileName());
         } else {
-            fileName.setVisibility(View.GONE);
+            textFileName.setVisibility(View.GONE);
         }
     }
 }

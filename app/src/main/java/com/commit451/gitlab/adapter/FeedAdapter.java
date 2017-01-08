@@ -16,38 +16,32 @@ import java.util.Collection;
  */
 public class FeedAdapter extends RecyclerView.Adapter<FeedEntryViewHolder> {
 
-    public interface Listener {
-        void onFeedEntryClicked(Entry entry);
-    }
-    private Listener mListener;
-
-    private ArrayList<Entry> mValues;
+    Listener listener;
+    ArrayList<Entry> values;
 
     public FeedAdapter(Listener listener) {
-        mListener = listener;
-        mValues = new ArrayList<>();
+        this.listener = listener;
+        values = new ArrayList<>();
     }
 
-    private final View.OnClickListener mOnItemClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            int position = (int) v.getTag(R.id.list_position);
-            mListener.onFeedEntryClicked(getEntry(position));
-        }
-    };
-
     public void setEntries(Collection<Entry> entries) {
-        mValues.clear();
+        values.clear();
         if (entries != null) {
-            mValues.addAll(entries);
+            values.addAll(entries);
         }
         notifyDataSetChanged();
     }
 
     @Override
     public FeedEntryViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        FeedEntryViewHolder holder = FeedEntryViewHolder.inflate(parent);
-        holder.itemView.setOnClickListener(mOnItemClickListener);
+        final FeedEntryViewHolder holder = FeedEntryViewHolder.inflate(parent);
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int position = holder.getAdapterPosition();
+                listener.onFeedEntryClicked(getEntry(position));
+            }
+        });
         return holder;
     }
 
@@ -59,10 +53,14 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedEntryViewHolder> {
 
     @Override
     public int getItemCount() {
-        return mValues.size();
+        return values.size();
     }
 
     private Entry getEntry(int position) {
-        return mValues.get(position);
+        return values.get(position);
+    }
+
+    public interface Listener {
+        void onFeedEntryClicked(Entry entry);
     }
 }

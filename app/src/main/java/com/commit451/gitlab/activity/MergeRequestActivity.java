@@ -15,16 +15,19 @@ import android.view.ViewGroup;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.MergeRequestSectionsPagerAdapter;
-import com.commit451.easycallback.EasyCallback;
-import com.commit451.gitlab.api.GitLabFactory;
 import com.commit451.gitlab.event.MergeRequestChangedEvent;
 import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.model.api.Project;
+import com.commit451.gitlab.rx.CustomResponseSingleObserver;
+import com.jakewharton.retrofit2.adapter.rxjava2.HttpException;
 
 import org.parceler.Parcels;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
+import retrofit2.Response;
 import timber.log.Timber;
 
 /**
@@ -43,44 +46,54 @@ public class MergeRequestActivity extends BaseActivity {
     }
 
     @BindView(R.id.root)
-    ViewGroup mRoot;
+    ViewGroup root;
     @BindView(R.id.toolbar)
-    Toolbar mToolbar;
+    Toolbar toolbar;
     @BindView(R.id.tabs)
-    TabLayout mTabLayout;
+    TabLayout tabLayout;
     @BindView(R.id.pager)
-    ViewPager mViewPager;
+    ViewPager viewPager;
     @BindView(R.id.progress)
-    View mProgress;
+    View progress;
 
-    Project mProject;
-    MergeRequest mMergeRequest;
+    Project project;
+    MergeRequest mergeRequest;
 
-    private final EasyCallback<MergeRequest> mMergeRequestCallback = new EasyCallback<MergeRequest>() {
-        @Override
-        public void success(@NonNull MergeRequest response) {
-            mProgress.setVisibility(View.GONE);
-            Snackbar.make(mRoot, R.string.merge_request_accepted, Snackbar.LENGTH_LONG)
-                    .show();
-            App.bus().post(new MergeRequestChangedEvent(response));
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t, null);
-            mProgress.setVisibility(View.GONE);
-            Snackbar.make(mRoot, R.string.unable_to_merge, Snackbar.LENGTH_LONG)
-                    .show();
-        }
-    };
-
-    private final Toolbar.OnMenuItemClickListener mOnMenuItemClickListener = new Toolbar.OnMenuItemClickListener() {
+    private final Toolbar.OnMenuItemClickListener onMenuItemClickListener = new Toolbar.OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.action_merge:
-                    mProgress.setVisibility(View.VISIBLE);
-                    App.instance().getGitLab().acceptMergeRequest(mProject.getId(), mMergeRequest.getId()).enqueue(mMergeRequestCallback);
+                    progress.setVisibility(View.VISIBLE);
+                    App.get().getGitLab().acceptMergeRequest(project.getId(), mergeRequest.getId())
+                            .compose(MergeRequestActivity.this.<Response<MergeRequest>>bindToLifecycle())
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new CustomResponseSingleObserver<MergeRequest>() {
+
+                                @Override
+                                public void error(@NonNull Throwable e) {
+                                    Timber.e(e);
+                                    progress.setVisibility(View.GONE);
+                                    String message = getString(R.string.unable_to_merge);
+                                    if (e instanceof HttpException) {
+                                        int code = ((HttpException) e).response().code();
+                                        if (code == 406) {
+                                            message = getString(R.string.merge_request_already_merged_or_closed);
+                                        }
+                                    }
+                                    Snackbar.make(root, message, Snackbar.LENGTH_LONG)
+                                            .show();
+                                }
+
+                                @Override
+                                public void responseSuccess(@NonNull MergeRequest mergeRequest) {
+                                    progress.setVisibility(View.GONE);
+                                    Snackbar.make(root, R.string.merge_request_accepted, Snackbar.LENGTH_LONG)
+                                            .show();
+                                    App.bus().post(new MergeRequestChangedEvent(mergeRequest));
+                                }
+                            });
                     return true;
             }
             return false;
@@ -93,20 +106,20 @@ public class MergeRequestActivity extends BaseActivity {
         setContentView(R.layout.activity_merge_request);
         ButterKnife.bind(this);
 
-        mProject = Parcels.unwrap(getIntent().getParcelableExtra(KEY_PROJECT));
-        mMergeRequest = Parcels.unwrap(getIntent().getParcelableExtra(KEY_MERGE_REQUEST));
+        project = Parcels.unwrap(getIntent().getParcelableExtra(KEY_PROJECT));
+        mergeRequest = Parcels.unwrap(getIntent().getParcelableExtra(KEY_MERGE_REQUEST));
 
-        mToolbar.setTitle(getString(R.string.merge_request_number) + mMergeRequest.getIid());
-        mToolbar.setNavigationIcon(R.drawable.ic_back_24dp);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        toolbar.setTitle(getString(R.string.merge_request_number) + mergeRequest.getIid());
+        toolbar.setNavigationIcon(R.drawable.ic_back_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
             }
         });
-        mToolbar.setSubtitle(mProject.getNameWithNamespace());
-        mToolbar.inflateMenu(R.menu.menu_merge_request);
-        mToolbar.setOnMenuItemClickListener(mOnMenuItemClickListener);
+        toolbar.setSubtitle(project.getNameWithNamespace());
+        toolbar.inflateMenu(R.menu.menu_merge_request);
+        toolbar.setOnMenuItemClickListener(onMenuItemClickListener);
         setupTabs();
     }
 
@@ -114,10 +127,10 @@ public class MergeRequestActivity extends BaseActivity {
         MergeRequestSectionsPagerAdapter sectionsPagerAdapter = new MergeRequestSectionsPagerAdapter(
                 this,
                 getSupportFragmentManager(),
-                mProject,
-                mMergeRequest);
+                project,
+                mergeRequest);
 
-        mViewPager.setAdapter(sectionsPagerAdapter);
-        mTabLayout.setupWithViewPager(mViewPager);
+        viewPager.setAdapter(sectionsPagerAdapter);
+        tabLayout.setupWithViewPager(viewPager);
     }
 }

@@ -15,45 +15,45 @@ import java.util.Date;
 public class AwardEmoji {
 
     @JsonField(name = "id")
-    String mId;
+    String id;
     @JsonField(name = "name")
-    String mName;
+    String name;
     @JsonField(name = "user")
-    UserBasic mUser;
+    UserBasic user;
     @JsonField(name = "created_at")
-    Date mCreatedAt;
+    Date createdAt;
     @JsonField(name = "updated_at")
-    Date mUpdatedAt;
+    Date updatedAt;
     @JsonField(name = "awardable_id")
-    int mAwardableId;
+    int awardableId;
     @JsonField(name = "awardable_type")
-    String mAwardableType;
+    String awardableType;
 
     public String getId() {
-        return mId;
+        return id;
     }
 
     public String getName() {
-        return mName;
+        return name;
     }
 
     public UserBasic getUser() {
-        return mUser;
+        return user;
     }
 
     public Date getCreatedAt() {
-        return mCreatedAt;
+        return createdAt;
     }
 
     public Date getUpdatedAt() {
-        return mUpdatedAt;
+        return updatedAt;
     }
 
     public int getAwardableId() {
-        return mAwardableId;
+        return awardableId;
     }
 
     public String getAwardableType() {
-        return mAwardableType;
+        return awardableType;
     }
 }

@@ -35,40 +35,45 @@ public class IssueHeaderViewHolder extends RecyclerView.ViewHolder {
         return new IssueHeaderViewHolder(view);
     }
 
-    @BindView(R.id.description) TextView mDescriptionView;
-    @BindView(R.id.author_image) ImageView mAuthorImageView;
-    @BindView(R.id.author) TextView mAuthorView;
-    @BindView(R.id.milestone_root) ViewGroup mMilestoneRoot;
-    @BindView(R.id.milestone_text) TextView mMilestoneText;
+    @BindView(R.id.description)
+    TextView textDescription;
+    @BindView(R.id.author_image)
+    ImageView imageAuthor;
+    @BindView(R.id.author)
+    TextView textAuthor;
+    @BindView(R.id.milestone_root)
+    ViewGroup rootMilestone;
+    @BindView(R.id.milestone_text)
+    TextView textMilestone;
 
-    private final Bypass mBypass;
+    private final Bypass bypass;
 
     public IssueHeaderViewHolder(View view) {
         super(view);
         ButterKnife.bind(this, view);
-        mBypass = new Bypass(view.getContext());
+        bypass = new Bypass(view.getContext());
     }
 
     public void bind(Issue issue, Project project) {
 
         if (TextUtils.isEmpty(issue.getDescription())) {
-            mDescriptionView.setVisibility(View.GONE);
+            textDescription.setVisibility(View.GONE);
         } else {
-            mDescriptionView.setVisibility(View.VISIBLE);
-            BypassPicassoImageGetter getter = BypassImageGetterFactory.create(mDescriptionView,
-                    App.instance().getPicasso(),
-                    App.instance().getAccount().getServerUrl().toString(),
+            textDescription.setVisibility(View.VISIBLE);
+            BypassPicassoImageGetter getter = BypassImageGetterFactory.create(textDescription,
+                    App.get().getPicasso(),
+                    App.get().getAccount().getServerUrl().toString(),
                     project);
             String description = issue.getDescription();
             description = EmojiParser.parseToUnicode(description);
-            mDescriptionView.setText(mBypass.markdownToSpannable(description, getter));
-            mDescriptionView.setMovementMethod(new InternalLinkMovementMethod(App.instance().getAccount().getServerUrl()));
+            textDescription.setText(bypass.markdownToSpannable(description, getter));
+            textDescription.setMovementMethod(new InternalLinkMovementMethod(App.get().getAccount().getServerUrl()));
         }
 
-        App.instance().getPicasso()
+        App.get().getPicasso()
                 .load(ImageUtil.getAvatarUrl(issue.getAuthor(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size)))
                 .transform(new CircleTransformation())
-                .into(mAuthorImageView);
+                .into(imageAuthor);
 
         String author = "";
         if (issue.getAuthor() != null) {
@@ -78,12 +83,12 @@ public class IssueHeaderViewHolder extends RecyclerView.ViewHolder {
         if (issue.getCreatedAt() != null) {
             author = author + " " + DateUtil.getRelativeTimeSpanString(itemView.getContext(), issue.getCreatedAt());
         }
-        mAuthorView.setText(author);
+        textAuthor.setText(author);
         if (issue.getMilestone() != null) {
-            mMilestoneRoot.setVisibility(View.VISIBLE);
-            mMilestoneText.setText(issue.getMilestone().getTitle());
+            rootMilestone.setVisibility(View.VISIBLE);
+            textMilestone.setText(issue.getMilestone().getTitle());
         } else {
-            mMilestoneRoot.setVisibility(View.GONE);
+            rootMilestone.setVisibility(View.GONE);
         }
     }
 }

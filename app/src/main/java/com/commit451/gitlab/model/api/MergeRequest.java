@@ -26,136 +26,136 @@ public class MergeRequest {
     public @interface State {}
 
     @JsonField(name = "id")
-    long mId;
+    long id;
     @JsonField(name = "iid")
-    long mIid;
+    long iId;
     @JsonField(name = "project_id")
-    long mProjectId;
+    long projectId;
     @JsonField(name = "title")
-    String mTitle;
+    String title;
     @JsonField(name = "description")
-    String mDescription;
+    String description;
     @JsonField(name = "state")
     @State
-    String mState;
+    String state;
     @JsonField(name = "updated_at")
-    Date mUpdatedAt;
+    Date updatedAt;
     @JsonField(name = "created_at")
-    Date mCreatedAt;
+    Date createdAt;
     @JsonField(name = "target_branch")
-    String mTargetBranch;
+    String targetBranch;
     @JsonField(name = "source_branch")
-    String mSourceBranch;
+    String sourceBranch;
     @JsonField(name = "upvotes")
-    long mUpvotes;
+    long upvotes;
     @JsonField(name = "downvotes")
-    long mDownvotes;
+    long downvotes;
     @JsonField(name = "author")
-    UserBasic mAuthor;
+    UserBasic author;
     @JsonField(name = "assignee")
-    UserBasic mAssignee;
+    UserBasic assignee;
     @JsonField(name = "source_project_id")
-    long mSourceProjectId;
+    long sourceProjectId;
     @JsonField(name = "target_project_id")
-    long mTargetProjectId;
+    long targetProjectId;
     @JsonField(name = "labels")
-    List<String> mLabels;
+    List<String> labels;
     @JsonField(name = "work_in_progress")
-    boolean mWorkInProgress;
+    boolean workInProgress;
     @JsonField(name = "milestone")
-    Milestone mMilestone;
+    Milestone milestone;
     @JsonField(name = "merge_when_build_succeeds")
-    boolean mMergeWhenBuildSucceeds;
+    boolean mergeWhenBuildSucceeds;
     @JsonField(name = "merge_status")
-    String mMergeStatus;
+    String mergeStatus;
     @JsonField(name = "changes")
     @Nullable
-    List<Diff> mChanges;
+    List<Diff> changes;
 
     public MergeRequest() {}
 
     public long getId() {
-        return mId;
+        return id;
     }
 
     public long getIid() {
-        return mIid;
+        return iId;
     }
 
     public long getProjectId() {
-        return mProjectId;
+        return projectId;
     }
 
     public String getTitle() {
-        return mTitle;
+        return title;
     }
 
     public String getDescription() {
-        return mDescription;
+        return description;
     }
 
     public @State String getState() {
-        return mState;
+        return state;
     }
 
     public Date getUpdatedAt() {
-        return mUpdatedAt;
+        return updatedAt;
     }
 
     public Date getCreatedAt() {
-        return mCreatedAt;
+        return createdAt;
     }
 
     public String getTargetBranch() {
-        return mTargetBranch;
+        return targetBranch;
     }
 
     public String getSourceBranch() {
-        return mSourceBranch;
+        return sourceBranch;
     }
 
     public long getUpvotes() {
-        return mUpvotes;
+        return upvotes;
     }
 
     public long getDownvotes() {
-        return mDownvotes;
+        return downvotes;
     }
 
     public UserBasic getAuthor() {
-        return mAuthor;
+        return author;
     }
 
     public UserBasic getAssignee() {
-        return mAssignee;
+        return assignee;
     }
 
     public long getSourceProjectId() {
-        return mSourceProjectId;
+        return sourceProjectId;
     }
 
     public long getTargetProjectId() {
-        return mTargetProjectId;
+        return targetProjectId;
     }
 
     public List<String> getLabels() {
-        return mLabels;
+        return labels;
     }
 
     public boolean isWorkInProgress() {
-        return mWorkInProgress;
+        return workInProgress;
     }
 
     public Milestone getMilestone() {
-        return mMilestone;
+        return milestone;
     }
 
     public boolean isMergeWhenBuildSucceedsEnabled() {
-        return mMergeWhenBuildSucceeds;
+        return mergeWhenBuildSucceeds;
     }
 
     public String getMergeStatus() {
-        return mMergeStatus;
+        return mergeStatus;
     }
 
     /**
@@ -164,7 +164,7 @@ public class MergeRequest {
      */
     @Nullable
     public List<Diff> getChanges() {
-        return mChanges;
+        return changes;
     }
 
     @Override
@@ -174,11 +174,11 @@ public class MergeRequest {
         }
 
         MergeRequest mergeRequest = (MergeRequest) o;
-        return mId == mergeRequest.mId;
+        return id == mergeRequest.id;
     }
 
     @Override
     public int hashCode() {
-        return (int) (mId ^ (mId >>> 32));
+        return (int) (id ^ (id >>> 32));
     }
 }

@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
@@ -19,9 +18,12 @@ import com.commit451.gitlab.adapter.FeedAdapter;
 import com.commit451.gitlab.model.rss.Entry;
 import com.commit451.gitlab.model.rss.Feed;
 import com.commit451.gitlab.navigation.Navigator;
+import com.commit451.gitlab.rx.CustomSingleObserver;
 import com.novoda.simplechromecustomtabs.SimpleChromeCustomTabs;
 
 import butterknife.BindView;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -41,56 +43,19 @@ public class FeedFragment extends ButterKnifeFragment {
     }
 
     @BindView(R.id.swipe_layout)
-    SwipeRefreshLayout mSwipeRefreshLayout;
+    SwipeRefreshLayout swipeRefreshLayout;
     @BindView(R.id.list)
-    RecyclerView mEntryListView;
+    RecyclerView listEntries;
     @BindView(R.id.message_text)
-    TextView mMessageView;
+    TextView textMessage;
 
-    private Uri mFeedUrl;
-    private FeedAdapter mFeedAdapter;
-
-    private final EasyCallback<Feed> mUserFeedCallback = new EasyCallback<Feed>() {
-        @Override
-        public void success(@NonNull Feed response) {
-            if (getView() == null) {
-                return;
-            }
-            mSwipeRefreshLayout.setRefreshing(false);
-            if (response.getEntries() != null && !response.getEntries().isEmpty()) {
-                mMessageView.setVisibility(View.GONE);
-            } else {
-                Timber.d("No activity in the feed");
-                mMessageView.setVisibility(View.VISIBLE);
-                mMessageView.setText(R.string.no_activity);
-            }
-            mFeedAdapter.setEntries(response.getEntries());
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t, null);
-            if (getView() == null) {
-                return;
-            }
-            mSwipeRefreshLayout.setRefreshing(false);
-            mMessageView.setVisibility(View.VISIBLE);
-            mMessageView.setText(R.string.connection_error_feed);
-            mFeedAdapter.setEntries(null);
-        }
-    };
-
-    private final FeedAdapter.Listener mFeedAdapterListener = new FeedAdapter.Listener() {
-        @Override
-        public void onFeedEntryClicked(Entry entry) {
-            Navigator.navigateToUrl(getActivity(), entry.getLink().getHref(), App.instance().getAccount());
-        }
-    };
+    private Uri feedUrl;
+    private FeedAdapter adapterFeed;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mFeedUrl = getArguments().getParcelable(EXTRA_FEED_URL);
+        feedUrl = getArguments().getParcelable(EXTRA_FEED_URL);
     }
 
     @Override
@@ -102,12 +67,17 @@ public class FeedFragment extends ButterKnifeFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mFeedAdapter = new FeedAdapter(mFeedAdapterListener);
-        mEntryListView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mEntryListView.addItemDecoration(new DividerItemDecoration(getActivity()));
-        mEntryListView.setAdapter(mFeedAdapter);
+        adapterFeed = new FeedAdapter(new FeedAdapter.Listener() {
+            @Override
+            public void onFeedEntryClicked(Entry entry) {
+                Navigator.navigateToUrl(getActivity(), entry.getLink().getHref(), App.get().getAccount());
+            }
+        });
+        listEntries.setLayoutManager(new LinearLayoutManager(getActivity()));
+        listEntries.addItemDecoration(new DividerItemDecoration(getActivity()));
+        listEntries.setAdapter(adapterFeed);
 
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 loadData();
@@ -136,20 +106,46 @@ public class FeedFragment extends ButterKnifeFragment {
         if (getView() == null) {
             return;
         }
-        if (mFeedUrl == null) {
-            mSwipeRefreshLayout.setRefreshing(false);
-            mMessageView.setVisibility(View.VISIBLE);
+        if (feedUrl == null) {
+            swipeRefreshLayout.setRefreshing(false);
+            textMessage.setVisibility(View.VISIBLE);
             return;
         }
-        mMessageView.setVisibility(View.GONE);
-        mSwipeRefreshLayout.post(new Runnable() {
+        textMessage.setVisibility(View.GONE);
+        swipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
-                if (mSwipeRefreshLayout != null) {
-                    mSwipeRefreshLayout.setRefreshing(true);
+                if (swipeRefreshLayout != null) {
+                    swipeRefreshLayout.setRefreshing(true);
                 }
             }
         });
-        App.instance().getGitLabRss().getFeed(mFeedUrl.toString()).enqueue(mUserFeedCallback);
+        App.get().getGitLabRss().getFeed(feedUrl.toString())
+                .compose(this.<Feed>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new CustomSingleObserver<Feed>() {
+                    @Override
+                    public void success(@NonNull Feed feed) {
+                        swipeRefreshLayout.setRefreshing(false);
+                        if (feed.getEntries() != null && !feed.getEntries().isEmpty()) {
+                            textMessage.setVisibility(View.GONE);
+                        } else {
+                            Timber.d("No activity in the feed");
+                            textMessage.setVisibility(View.VISIBLE);
+                            textMessage.setText(R.string.no_activity);
+                        }
+                        adapterFeed.setEntries(feed.getEntries());
+                    }
+
+                    @Override
+                    public void error(@NonNull Throwable e) {
+                        Timber.e(e);
+                        swipeRefreshLayout.setRefreshing(false);
+                        textMessage.setVisibility(View.VISIBLE);
+                        textMessage.setText(R.string.connection_error_feed);
+                        adapterFeed.setEntries(null);
+                    }
+                });
     }
 }

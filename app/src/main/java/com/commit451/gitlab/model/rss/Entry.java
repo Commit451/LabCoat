@@ -10,35 +10,35 @@ import java.util.Date;
 @Root(strict = false)
 public class Entry {
     @Element(name = "link", required = true)
-    Link mLink;
+    Link link;
     @Element(name = "title", required = true)
-    String mTitle;
+    String title;
     @Element(name = "updated", required = true)
-    Date mUpdated;
+    Date updated;
     @Element(name = "thumbnail", required = true)
-    Thumbnail mThumbnail;
+    Thumbnail thumbnail;
     @Element(name = "summary", required = true)
-    String mSummary;
+    String summary;
 
     public Entry() {}
 
     public Link getLink() {
-        return mLink;
+        return link;
     }
 
     public String getTitle() {
-        return mTitle;
+        return title;
     }
 
     public Date getUpdated() {
-        return mUpdated;
+        return updated;
     }
 
     public Thumbnail getThumbnail() {
-        return mThumbnail;
+        return thumbnail;
     }
 
     public String getSummary() {
-        return mSummary;
+        return summary;
     }
 }

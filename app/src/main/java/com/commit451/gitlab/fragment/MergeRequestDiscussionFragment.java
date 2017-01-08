@@ -14,7 +14,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.AttachActivity;
@@ -25,7 +24,9 @@ import com.commit451.gitlab.model.api.MergeRequest;
 import com.commit451.gitlab.model.api.Note;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.navigation.TransitionFactory;
-import com.commit451.gitlab.util.PaginationUtil;
+import com.commit451.gitlab.rx.CustomResponseSingleObserver;
+import com.commit451.gitlab.rx.CustomSingleObserver;
+import com.commit451.gitlab.util.LinkHeaderParser;
 import com.commit451.gitlab.view.SendMessageView;
 import com.commit451.teleprinter.Teleprinter;
 
@@ -35,6 +36,9 @@ import org.parceler.Parcels;
 import java.util.List;
 
 import butterknife.BindView;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
+import retrofit2.Response;
 import timber.log.Timber;
 
 import static android.app.Activity.RESULT_OK;
@@ -59,121 +63,43 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
     }
 
     @BindView(R.id.root)
-    ViewGroup mRoot;
+    ViewGroup root;
     @BindView(R.id.swipe_layout)
-    SwipeRefreshLayout mSwipeRefreshLayout;
+    SwipeRefreshLayout swipeRefreshLayout;
     @BindView(R.id.list)
-    RecyclerView mNotesRecyclerView;
+    RecyclerView listNotes;
     @BindView(R.id.send_message_view)
-    SendMessageView mSendMessageView;
+    SendMessageView sendMessageView;
     @BindView(R.id.progress)
-    View mProgress;
+    View progress;
 
-    MergeRequestDetailAdapter mMergeRequestDetailAdapter;
-    LinearLayoutManager mNotesLinearLayoutManager;
+    MergeRequestDetailAdapter adapterMergeRequestDetail;
+    LinearLayoutManager layoutManagerNotes;
 
-    Project mProject;
-    MergeRequest mMergeRequest;
-    Uri mNextPageUrl;
-    boolean mLoading;
-    Teleprinter mTeleprinter;
+    Project project;
+    MergeRequest mergeRequest;
+    Uri nextPageUrl;
+    boolean loading;
+    Teleprinter teleprinter;
 
-    EventReceiver mEventReceiver;
-
-    private final RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
+    private final RecyclerView.OnScrollListener onScrollListener = new RecyclerView.OnScrollListener() {
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
             super.onScrolled(recyclerView, dx, dy);
-            int visibleItemCount = mNotesLinearLayoutManager.getChildCount();
-            int totalItemCount = mNotesLinearLayoutManager.getItemCount();
-            int firstVisibleItem = mNotesLinearLayoutManager.findFirstVisibleItemPosition();
-            if (firstVisibleItem + visibleItemCount >= totalItemCount && !mLoading && mNextPageUrl != null) {
+            int visibleItemCount = layoutManagerNotes.getChildCount();
+            int totalItemCount = layoutManagerNotes.getItemCount();
+            int firstVisibleItem = layoutManagerNotes.findFirstVisibleItemPosition();
+            if (firstVisibleItem + visibleItemCount >= totalItemCount && !loading && nextPageUrl != null) {
                 loadMoreNotes();
             }
-        }
-    };
-
-    private EasyCallback<List<Note>> mNotesCallback = new EasyCallback<List<Note>>() {
-
-        @Override
-        public void success(@NonNull List<Note> response) {
-            if (getView() == null) {
-                return;
-            }
-            mSwipeRefreshLayout.setRefreshing(false);
-            mLoading = false;
-            mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
-            mMergeRequestDetailAdapter.setNotes(response);
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            mLoading = false;
-            Timber.e(t, null);
-            if (getView() == null) {
-                return;
-            }
-            mSwipeRefreshLayout.setRefreshing(false);
-            Snackbar.make(mRoot, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
-                    .show();
-        }
-    };
-
-    private EasyCallback<List<Note>> mMoreNotesCallback = new EasyCallback<List<Note>>() {
-
-        @Override
-        public void success(@NonNull List<Note> response) {
-            if (getView() == null) {
-                return;
-            }
-            mMergeRequestDetailAdapter.setLoading(false);
-            mLoading = false;
-            mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
-            mMergeRequestDetailAdapter.addNotes(response);
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            if (getView() == null) {
-                return;
-            }
-            mLoading = false;
-            Timber.e(t, null);
-            mMergeRequestDetailAdapter.setLoading(false);
-            Snackbar.make(mRoot, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
-                    .show();
-        }
-    };
-
-    private EasyCallback<Note> mPostNoteCallback = new EasyCallback<Note>() {
-
-        @Override
-        public void success(@NonNull Note response) {
-            if (getView() == null) {
-                return;
-            }
-            mProgress.setVisibility(View.GONE);
-            mMergeRequestDetailAdapter.addNote(response);
-            mNotesRecyclerView.smoothScrollToPosition(MergeRequestDetailAdapter.getHeaderCount());
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            if (getView() == null) {
-                return;
-            }
-            Timber.e(t, null);
-            mProgress.setVisibility(View.GONE);
-            Snackbar.make(mRoot, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
-                    .show();
         }
     };
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mProject = Parcels.unwrap(getArguments().getParcelable(KEY_PROJECT));
-        mMergeRequest = Parcels.unwrap(getArguments().getParcelable(KEY_MERGE_REQUEST));
+        project = Parcels.unwrap(getArguments().getParcelable(KEY_PROJECT));
+        mergeRequest = Parcels.unwrap(getArguments().getParcelable(KEY_MERGE_REQUEST));
     }
 
     @Override
@@ -184,15 +110,15 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mTeleprinter = new Teleprinter(getActivity());
+        teleprinter = new Teleprinter(getActivity());
 
-        mMergeRequestDetailAdapter = new MergeRequestDetailAdapter(getActivity(), mMergeRequest, mProject);
-        mNotesLinearLayoutManager = new LinearLayoutManager(getActivity());
-        mNotesRecyclerView.setLayoutManager(mNotesLinearLayoutManager);
-        mNotesRecyclerView.setAdapter(mMergeRequestDetailAdapter);
-        mNotesRecyclerView.addOnScrollListener(mOnScrollListener);
+        adapterMergeRequestDetail = new MergeRequestDetailAdapter(getActivity(), mergeRequest, project);
+        layoutManagerNotes = new LinearLayoutManager(getActivity());
+        listNotes.setLayoutManager(layoutManagerNotes);
+        listNotes.setAdapter(adapterMergeRequestDetail);
+        listNotes.addOnScrollListener(onScrollListener);
 
-        mSendMessageView.setCallbacks(new SendMessageView.Callbacks() {
+        sendMessageView.setCallbacks(new SendMessageView.Callbacks() {
             @Override
             public void onSendClicked(String message) {
                 postNote(message);
@@ -200,13 +126,13 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
 
             @Override
             public void onAttachmentClicked() {
-                Intent intent = AttachActivity.newIntent(getActivity(), mProject);
+                Intent intent = AttachActivity.newIntent(getActivity(), project);
                 ActivityOptions activityOptions = TransitionFactory.createFadeInOptions(getActivity());
                 startActivityForResult(intent, REQUEST_ATTACH, activityOptions.toBundle());
             }
         });
 
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 loadNotes();
@@ -214,8 +140,7 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
         });
         loadNotes();
 
-        mEventReceiver = new EventReceiver();
-        App.bus().register(mEventReceiver);
+        App.bus().register(this);
     }
 
     @Override
@@ -225,10 +150,10 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
             case REQUEST_ATTACH:
                 if (resultCode == RESULT_OK) {
                     FileUploadResponse response = Parcels.unwrap(data.getParcelableExtra(AttachActivity.KEY_FILE_UPLOAD_RESPONSE));
-                    mProgress.setVisibility(View.GONE);
-                    mSendMessageView.appendText(response.getMarkdown());
+                    progress.setVisibility(View.GONE);
+                    sendMessageView.appendText(response.getMarkdown());
                 } else {
-                    Snackbar.make(mRoot, R.string.failed_to_upload_file, Snackbar.LENGTH_LONG)
+                    Snackbar.make(root, R.string.failed_to_upload_file, Snackbar.LENGTH_LONG)
                             .show();
                 }
                 break;
@@ -237,25 +162,69 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
 
     @Override
     public void onDestroyView() {
+        App.bus().unregister(this);
         super.onDestroyView();
-        App.bus().unregister(mEventReceiver);
     }
 
     private void loadNotes() {
-        mSwipeRefreshLayout.post(new Runnable() {
+        swipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
-                if (mSwipeRefreshLayout != null) {
-                    mSwipeRefreshLayout.setRefreshing(true);
+                if (swipeRefreshLayout != null) {
+                    swipeRefreshLayout.setRefreshing(true);
                 }
             }
         });
-        App.instance().getGitLab().getMergeRequestNotes(mProject.getId(), mMergeRequest.getId()).enqueue(mNotesCallback);
+        App.get().getGitLab().getMergeRequestNotes(project.getId(), mergeRequest.getId())
+                .compose(this.<Response<List<Note>>>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new CustomResponseSingleObserver<List<Note>>() {
+
+                    @Override
+                    public void error(@NonNull Throwable e) {
+                        loading = false;
+                        Timber.e(e);
+                        swipeRefreshLayout.setRefreshing(false);
+                        Snackbar.make(root, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
+                                .show();
+                    }
+
+                    @Override
+                    public void responseSuccess(@NonNull List<Note> notes) {
+                        swipeRefreshLayout.setRefreshing(false);
+                        loading = false;
+                        nextPageUrl = LinkHeaderParser.parse(response()).getNext();
+                        adapterMergeRequestDetail.setNotes(notes);
+                    }
+                });
     }
 
     private void loadMoreNotes() {
-        mMergeRequestDetailAdapter.setLoading(true);
-        App.instance().getGitLab().getMergeRequestNotes(mNextPageUrl.toString()).enqueue(mMoreNotesCallback);
+        adapterMergeRequestDetail.setLoading(true);
+        App.get().getGitLab().getMergeRequestNotes(nextPageUrl.toString())
+                .compose(this.<Response<List<Note>>>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new CustomResponseSingleObserver<List<Note>>() {
+
+                    @Override
+                    public void error(@NonNull Throwable e) {
+                        loading = false;
+                        Timber.e(e);
+                        adapterMergeRequestDetail.setLoading(false);
+                        Snackbar.make(root, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
+                                .show();
+                    }
+
+                    @Override
+                    public void responseSuccess(@NonNull List<Note> notes) {
+                        adapterMergeRequestDetail.setLoading(false);
+                        loading = false;
+                        nextPageUrl = LinkHeaderParser.parse(response()).getNext();
+                        adapterMergeRequestDetail.addNotes(notes);
+                    }
+                });
     }
 
     private void postNote(String message) {
@@ -264,24 +233,41 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
             return;
         }
 
-        mProgress.setVisibility(View.VISIBLE);
-        mProgress.setAlpha(0.0f);
-        mProgress.animate().alpha(1.0f);
+        progress.setVisibility(View.VISIBLE);
+        progress.setAlpha(0.0f);
+        progress.animate().alpha(1.0f);
         // Clear text & collapse keyboard
-        mTeleprinter.hideKeyboard();
-        mSendMessageView.clearText();
+        teleprinter.hideKeyboard();
+        sendMessageView.clearText();
 
-        App.instance().getGitLab().addMergeRequestNote(mProject.getId(), mMergeRequest.getId(), message).enqueue(mPostNoteCallback);
+        App.get().getGitLab().addMergeRequestNote(project.getId(), mergeRequest.getId(), message)
+                .compose(this.<Note>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new CustomSingleObserver<Note>() {
+
+                    @Override
+                    public void error(@NonNull Throwable e) {
+                        Timber.e(e);
+                        progress.setVisibility(View.GONE);
+                        Snackbar.make(root, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
+                                .show();
+                    }
+
+                    @Override
+                    public void success(@NonNull Note note) {
+                        progress.setVisibility(View.GONE);
+                        adapterMergeRequestDetail.addNote(note);
+                        listNotes.smoothScrollToPosition(MergeRequestDetailAdapter.getHeaderCount());
+                    }
+                });
     }
 
-    private class EventReceiver {
-
-        @Subscribe
-        public void onMergeRequestChangedEvent(MergeRequestChangedEvent event) {
-            if (mMergeRequest.getId() == event.mergeRequest.getId()) {
-                mMergeRequest = event.mergeRequest;
-                loadNotes();
-            }
+    @Subscribe
+    public void onMergeRequestChangedEvent(MergeRequestChangedEvent event) {
+        if (mergeRequest.getId() == event.mergeRequest.getId()) {
+            mergeRequest = event.mergeRequest;
+            loadNotes();
         }
     }
 

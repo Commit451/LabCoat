@@ -11,15 +11,15 @@ import org.simpleframework.xml.transform.Transform;
  * Uri Transformer
  */
 public class UriTransform implements Transform<Uri> {
-    private final Account mAccount;
+    private final Account account;
 
     public UriTransform(Account account) {
-        mAccount = account;
+        this.account = account;
     }
 
     @Override
     public Uri read(String value) throws Exception {
-        return ConversionUtil.toUri(mAccount, value);
+        return ConversionUtil.toUri(account, value);
     }
 
     @Override

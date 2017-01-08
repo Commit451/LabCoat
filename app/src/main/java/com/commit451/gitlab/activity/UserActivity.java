@@ -15,6 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.commit451.alakazam.Alakazam;
 import com.commit451.easel.Easel;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
@@ -41,49 +42,53 @@ public class UserActivity extends BaseActivity {
         return intent;
     }
 
-    @BindView(R.id.toolbar) Toolbar mToolbar;
-    @BindView(R.id.collapsing_toolbar) CollapsingToolbarLayout mCollapsingToolbarLayout;
-    @BindView(R.id.backdrop) ImageView mBackdrop;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.collapsing_toolbar)
+    CollapsingToolbarLayout collapsingToolbarLayout;
+    @BindView(R.id.backdrop)
+    ImageView backdrop;
 
-    UserBasic mUser;
+    UserBasic user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
         ButterKnife.bind(this);
-        mUser = Parcels.unwrap(getIntent().getParcelableExtra(KEY_USER));
+        user = Parcels.unwrap(getIntent().getParcelableExtra(KEY_USER));
 
         // Default content and scrim colors
-        mCollapsingToolbarLayout.setCollapsedTitleTextColor(Color.WHITE);
-        mCollapsingToolbarLayout.setExpandedTitleColor(Color.WHITE);
+        collapsingToolbarLayout.setCollapsedTitleTextColor(Color.WHITE);
+        collapsingToolbarLayout.setExpandedTitleColor(Color.WHITE);
 
-        mToolbar.setNavigationIcon(R.drawable.ic_back_24dp);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        toolbar.setNavigationIcon(R.drawable.ic_back_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
             }
         });
-        mToolbar.setTitle(mUser.getUsername());
-        Uri url = ImageUtil.getAvatarUrl(mUser, getResources().getDimensionPixelSize(R.dimen.user_header_image_size));
+        toolbar.setTitle(user.getUsername());
+        Uri url = ImageUtil.getAvatarUrl(user, getResources().getDimensionPixelSize(R.dimen.user_header_image_size));
 
-        App.instance().getPicasso()
+        App.get().getPicasso()
                 .load(url)
                 .transform(PaletteTransformation.instance())
-                .into(mBackdrop, new PaletteTransformation.PaletteCallback(mBackdrop) {
+                .into(backdrop, new PaletteTransformation.PaletteCallback(backdrop) {
                     @Override
                     protected void onSuccess(Palette palette) {
                         bindPalette(palette);
                     }
 
                     @Override
-                    public void onError() {}
+                    public void onError() {
+                    }
                 });
 
         if (savedInstanceState == null) {
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.add(R.id.user_feed, FeedFragment.newInstance(mUser.getFeedUrl())).commit();
+            fragmentTransaction.add(R.id.user_feed, FeedFragment.newInstance(user.getFeedUrl())).commit();
         }
     }
 
@@ -98,23 +103,23 @@ public class UserActivity extends BaseActivity {
         int darkerColor = Easel.getDarkerColor(vibrantColor);
 
         if (Build.VERSION.SDK_INT >= 21) {
-            Easel.getNavigationBarColorAnimator(getWindow(), darkerColor)
+            Alakazam.navigationBarColorAnimator(getWindow(), darkerColor)
                     .setDuration(animationTime)
                     .start();
             getWindow().setStatusBarColor(darkerColor);
         }
 
-        ObjectAnimator.ofObject(mCollapsingToolbarLayout, "contentScrimColor", new ArgbEvaluator(),
+        ObjectAnimator.ofObject(collapsingToolbarLayout, "contentScrimColor", new ArgbEvaluator(),
                 Easel.getThemeAttrColor(this, R.attr.colorPrimary), vibrantColor)
                 .setDuration(animationTime)
                 .start();
 
-        ObjectAnimator.ofObject(mCollapsingToolbarLayout, "statusBarScrimColor", new ArgbEvaluator(),
+        ObjectAnimator.ofObject(collapsingToolbarLayout, "statusBarScrimColor", new ArgbEvaluator(),
                 Easel.getThemeAttrColor(this, R.attr.colorPrimaryDark), darkerColor)
                 .setDuration(animationTime)
                 .start();
 
-        ObjectAnimator.ofObject(mToolbar, "titleTextColor", new ArgbEvaluator(),
+        ObjectAnimator.ofObject(toolbar, "titleTextColor", new ArgbEvaluator(),
                 Color.WHITE, palette.getDarkMutedColor(Color.BLACK))
                 .setDuration(animationTime)
                 .start();

@@ -14,26 +14,31 @@ import butterknife.ButterKnife;
 
 public class HttpLoginDialog extends AppCompatDialog {
 
-    @BindView(R.id.message_text) TextView mMessageTextView;
-    @BindView(R.id.login_username) EditText mUsernameView;
-    @BindView(R.id.login_password) EditText mPasswordView;
-    @BindView(R.id.ok_button) Button mOkButton;
-    @BindView(R.id.cancel_button) Button mCancelButton;
+    @BindView(R.id.message_text)
+    TextView textMessage;
+    @BindView(R.id.login_username)
+    EditText textUsername;
+    @BindView(R.id.login_password)
+    EditText textPassword;
+    @BindView(R.id.ok_button)
+    Button buttonOk;
+    @BindView(R.id.cancel_button)
+    Button buttonCancel;
 
     public HttpLoginDialog(Context context, String realm, final LoginListener loginListener) {
         super(context);
         setContentView(R.layout.dialog_http_login);
         ButterKnife.bind(this);
 
-        mMessageTextView.setText(String.format(context.getResources().getString(R.string.realm_message), realm));
-        mOkButton.setOnClickListener(new View.OnClickListener() {
+        textMessage.setText(String.format(context.getResources().getString(R.string.realm_message), realm));
+        buttonOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loginListener.onLogin(mUsernameView.getText().toString(), mPasswordView.getText().toString());
+                loginListener.onLogin(textUsername.getText().toString(), textPassword.getText().toString());
                 HttpLoginDialog.this.dismiss();
             }
         });
-        mCancelButton.setOnClickListener(new View.OnClickListener() {
+        buttonCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 loginListener.onCancel();
@@ -45,6 +50,7 @@ public class HttpLoginDialog extends AppCompatDialog {
 
     public interface LoginListener {
         void onLogin(String username, String password);
+
         void onCancel();
     }
 }

@@ -37,10 +37,10 @@
 
     </LinearLayout>
 
-    <FrameLayout
+    <LinearLayout
         android:orientation="vertical"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="16dp"
@@ -51,8 +51,7 @@
             android:layout_width="@dimen/image_size"
             android:layout_height="@dimen/image_size"
             android:contentDescription="@null"
-            tools:src="@drawable/ic_assign_24dp"
-            android:layout_gravity="top|right" />
+            tools:src="@drawable/ic_assign_24dp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -61,8 +60,8 @@
             android:text="@string/issue_open"
             android:textAllCaps="true"
             android:id="@+id/issue_state"
-            android:layout_gravity="bottom|right" />
+            android:layout_gravity="right"/>
 
-    </FrameLayout>
+    </LinearLayout>
 
 </LinearLayout>

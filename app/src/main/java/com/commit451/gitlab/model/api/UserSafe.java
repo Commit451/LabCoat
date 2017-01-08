@@ -9,18 +9,18 @@ import org.parceler.Parcel;
 @JsonObject
 public class UserSafe {
     @JsonField(name = "name")
-    String mName;
+    String name;
     @JsonField(name = "username")
-    String mUsername;
+    String username;
 
     public UserSafe() {}
 
     public String getName() {
-        return mName;
+        return name;
     }
 
     public String getUsername() {
-        return mUsername;
+        return username;
     }
 
     @Override
@@ -30,12 +30,12 @@ public class UserSafe {
         }
 
         UserSafe user = (UserSafe) o;
-        return mUsername != null ? mUsername.equals(user.mUsername) : user.mUsername == null;
+        return username != null ? username.equals(user.username) : user.username == null;
 
     }
 
     @Override
     public int hashCode() {
-        return mUsername != null ? mUsername.hashCode() : 0;
+        return username != null ? username.hashCode() : 0;
     }
 }

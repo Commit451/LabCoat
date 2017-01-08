@@ -16,7 +16,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.IssueDetailsAdapter;
@@ -27,8 +26,10 @@ import com.commit451.gitlab.model.api.Issue;
 import com.commit451.gitlab.model.api.Note;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.navigation.Navigator;
+import com.commit451.gitlab.rx.CustomResponseSingleObserver;
+import com.commit451.gitlab.rx.CustomSingleObserver;
 import com.commit451.gitlab.util.IntentUtil;
-import com.commit451.gitlab.util.PaginationUtil;
+import com.commit451.gitlab.util.LinkHeaderParser;
 import com.commit451.gitlab.view.SendMessageView;
 import com.commit451.teleprinter.Teleprinter;
 
@@ -40,8 +41,11 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import retrofit2.Call;
-import retrofit2.Callback;
+import io.reactivex.Single;
+import io.reactivex.SingleSource;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Response;
 import timber.log.Timber;
 
@@ -74,218 +78,85 @@ public class IssueActivity extends BaseActivity {
     }
 
     @BindView(R.id.root)
-    ViewGroup mRoot;
+    ViewGroup root;
     @BindView(R.id.toolbar)
-    Toolbar mToolbar;
+    Toolbar toolbar;
     @BindView(R.id.issue_title)
-    TextView mIssueTitle;
+    TextView textTitle;
     @BindView(R.id.swipe_layout)
-    SwipeRefreshLayout mSwipeRefreshLayout;
+    SwipeRefreshLayout swipeRefreshLayout;
     @BindView(R.id.list)
-    RecyclerView mNotesRecyclerView;
+    RecyclerView listNotes;
     @BindView(R.id.send_message_view)
-    SendMessageView mSendMessageView;
+    SendMessageView sendMessageView;
     @BindView(R.id.progress)
-    View mProgress;
+    View progress;
 
-    MenuItem mOpenCloseMenuItem;
-    IssueDetailsAdapter mIssueDetailsAdapter;
-    LinearLayoutManager mNotesLayoutManager;
+    MenuItem menuItemOpenClose;
+    IssueDetailsAdapter adapterIssueDetails;
+    LinearLayoutManager layoutManagerNotes;
 
-    Project mProject;
-    Issue mIssue;
-    String mIssueIid;
-    boolean mLoading;
-    Uri mNextPageUrl;
-    Teleprinter mTeleprinter;
+    Project project;
+    Issue issue;
+    String issueIid;
+    boolean loading;
+    Uri nextPageUrl;
+    Teleprinter teleprinter;
 
-    EventReceiver mEventReceiver;
-
-    private final RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
+    private final RecyclerView.OnScrollListener onScrollListener = new RecyclerView.OnScrollListener() {
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
             super.onScrolled(recyclerView, dx, dy);
-            int visibleItemCount = mNotesLayoutManager.getChildCount();
-            int totalItemCount = mNotesLayoutManager.getItemCount();
-            int firstVisibleItem = mNotesLayoutManager.findFirstVisibleItemPosition();
-            if (firstVisibleItem + visibleItemCount >= totalItemCount && !mLoading && mNextPageUrl != null) {
+            int visibleItemCount = layoutManagerNotes.getChildCount();
+            int totalItemCount = layoutManagerNotes.getItemCount();
+            int firstVisibleItem = layoutManagerNotes.findFirstVisibleItemPosition();
+            if (firstVisibleItem + visibleItemCount >= totalItemCount && !loading && nextPageUrl != null) {
                 loadMoreNotes();
             }
         }
     };
 
-    private final Toolbar.OnMenuItemClickListener mOnMenuItemClickListener = new Toolbar.OnMenuItemClickListener() {
+    private final Toolbar.OnMenuItemClickListener onMenuItemClickListener = new Toolbar.OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.action_share:
-                    IntentUtil.share(mRoot, mIssue.getUrl(mProject));
+                    IntentUtil.share(root, issue.getUrl(project));
                     return true;
                 case R.id.action_close:
                     closeOrOpenIssue();
                     return true;
                 case R.id.action_delete:
-                    App.instance().getGitLab().deleteIssue(mProject.getId(), mIssue.getId()).enqueue(mDeleteIssueCallback);
+                    App.get().getGitLab().deleteIssue(project.getId(), issue.getId())
+                            .compose(IssueActivity.this.<String>bindToLifecycle())
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new CustomSingleObserver<String>() {
+
+                                @Override
+                                public void error(@NonNull Throwable t) {
+                                    Timber.e(t);
+                                    Snackbar.make(root, getString(R.string.failed_to_delete_issue), Snackbar.LENGTH_SHORT)
+                                            .show();
+                                }
+
+                                @Override
+                                public void success(@NonNull String s) {
+                                    App.bus().post(new IssueReloadEvent());
+                                    Toast.makeText(IssueActivity.this, R.string.issue_deleted, Toast.LENGTH_SHORT)
+                                            .show();
+                                    finish();
+                                }
+                            });
                     return true;
             }
             return false;
         }
     };
 
-    private Callback<Project> mProjectCallback = new EasyCallback<Project>() {
-        @Override
-        public void success(@NonNull Project response) {
-            mProject = response;
-            App.instance().getGitLab().getIssuesByIid(mProject.getId(), mIssueIid).enqueue(mIssueCallback);
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t, null);
-            mSwipeRefreshLayout.setRefreshing(false);
-            Snackbar.make(mRoot, getString(R.string.failed_to_load), Snackbar.LENGTH_SHORT)
-                    .show();
-        }
-    };
-
-    private Callback<List<Issue>> mIssueCallback = new EasyCallback<List<Issue>>() {
-
-        @Override
-        public void success(@NonNull List<Issue> response) {
-            if (response.isEmpty()) {
-                mSwipeRefreshLayout.setRefreshing(false);
-                Snackbar.make(mRoot, getString(R.string.failed_to_load), Snackbar.LENGTH_SHORT)
-                        .show();
-            } else {
-                mIssue = response.get(0);
-                mIssueDetailsAdapter = new IssueDetailsAdapter(IssueActivity.this, mIssue, mProject);
-                mNotesRecyclerView.setAdapter(mIssueDetailsAdapter);
-                bindIssue();
-                bindProject();
-                loadNotes();
-            }
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t, null);
-            mSwipeRefreshLayout.setRefreshing(false);
-            Snackbar.make(mRoot, getString(R.string.failed_to_load), Snackbar.LENGTH_SHORT)
-                    .show();
-        }
-    };
-
-    private Callback<List<Note>> mNotesCallback = new EasyCallback<List<Note>>() {
-
-        @Override
-        public void success(@NonNull List<Note> response) {
-            mLoading = false;
-            mSwipeRefreshLayout.setRefreshing(false);
-            mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
-            mIssueDetailsAdapter.setNotes(response);
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            mLoading = false;
-            Timber.e(t, null);
-            mSwipeRefreshLayout.setRefreshing(false);
-            Snackbar.make(mRoot, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
-                    .show();
-        }
-    };
-
-    private Callback<List<Note>> mMoreNotesCallback = new EasyCallback<List<Note>>() {
-
-        @Override
-        public void success(@NonNull List<Note> response) {
-            mLoading = false;
-            mIssueDetailsAdapter.setLoading(false);
-            mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
-            mIssueDetailsAdapter.addNotes(response);
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            mLoading = false;
-            Timber.e(t, null);
-            mIssueDetailsAdapter.setLoading(false);
-        }
-    };
-
-    private final Callback<Issue> mOpenCloseCallback = new EasyCallback<Issue>() {
-        @Override
-        public void success(@NonNull Issue response) {
-            mProgress.setVisibility(View.GONE);
-            mIssue = response;
-            App.bus().post(new IssueChangedEvent(mIssue));
-            App.bus().post(new IssueReloadEvent());
-            setOpenCloseMenuStatus();
-            loadNotes();
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t, null);
-            mProgress.setVisibility(View.GONE);
-            Snackbar.make(mRoot, getString(R.string.error_changing_issue), Snackbar.LENGTH_SHORT)
-                    .show();
-        }
-    };
-
-    private Callback<Note> mPostNoteCallback = new EasyCallback<Note>() {
-
-        @Override
-        public void success(@NonNull Note response) {
-            mProgress.setVisibility(View.GONE);
-            mIssueDetailsAdapter.addNote(response);
-            mNotesRecyclerView.smoothScrollToPosition(IssueDetailsAdapter.getHeaderCount());
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t, null);
-            mProgress.setVisibility(View.GONE);
-            Snackbar.make(mRoot, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
-                    .show();
-        }
-    };
-
-    private Callback<FileUploadResponse> mUploadImageCallback = new EasyCallback<FileUploadResponse>() {
-        @Override
-        public void success(@NonNull FileUploadResponse response) {
-
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t, null);
-            mProgress.setVisibility(View.GONE);
-            Snackbar.make(mRoot, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
-                    .show();
-        }
-    };
-
-    private final Callback<Void> mDeleteIssueCallback = new Callback<Void>() {
-        @Override
-        public void onResponse(Call<Void> call, Response<Void> response) {
-            App.bus().post(new IssueReloadEvent());
-            Toast.makeText(IssueActivity.this, R.string.issue_deleted, Toast.LENGTH_SHORT)
-                    .show();
-            finish();
-        }
-
-        @Override
-        public void onFailure(Call<Void> call, Throwable t) {
-            Timber.e(t, null);
-            Snackbar.make(mRoot, getString(R.string.failed_to_delete_issue), Snackbar.LENGTH_SHORT)
-                    .show();
-        }
-    };
-
     @OnClick(R.id.fab_edit_issue)
     public void onEditIssueClick(View fab) {
-        Navigator.navigateToEditIssue(IssueActivity.this, fab, mProject, mIssue);
+        Navigator.navigateToEditIssue(IssueActivity.this, fab, project, issue);
     }
 
     @Override
@@ -293,26 +164,25 @@ public class IssueActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_issue);
         ButterKnife.bind(this);
-        mTeleprinter = new Teleprinter(this);
-        mEventReceiver = new EventReceiver();
-        App.bus().register(mEventReceiver);
+        teleprinter = new Teleprinter(this);
+        App.bus().register(this);
 
-        mToolbar.setNavigationIcon(R.drawable.ic_back_24dp);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        toolbar.setNavigationIcon(R.drawable.ic_back_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
             }
         });
-        mToolbar.inflateMenu(R.menu.menu_issue);
-        mOpenCloseMenuItem = mToolbar.getMenu().findItem(R.id.action_close);
-        mToolbar.setOnMenuItemClickListener(mOnMenuItemClickListener);
+        toolbar.inflateMenu(R.menu.menu_issue);
+        menuItemOpenClose = toolbar.getMenu().findItem(R.id.action_close);
+        toolbar.setOnMenuItemClickListener(onMenuItemClickListener);
 
-        mNotesLayoutManager = new LinearLayoutManager(this);
-        mNotesRecyclerView.setLayoutManager(mNotesLayoutManager);
-        mNotesRecyclerView.addOnScrollListener(mOnScrollListener);
+        layoutManagerNotes = new LinearLayoutManager(this);
+        listNotes.setLayoutManager(layoutManagerNotes);
+        listNotes.addOnScrollListener(onScrollListener);
 
-        mSendMessageView.setCallbacks(new SendMessageView.Callbacks() {
+        sendMessageView.setCallbacks(new SendMessageView.Callbacks() {
             @Override
             public void onSendClicked(String message) {
                 postNote(message);
@@ -320,11 +190,11 @@ public class IssueActivity extends BaseActivity {
 
             @Override
             public void onAttachmentClicked() {
-                Navigator.navigateToAttach(IssueActivity.this, mProject, REQUEST_ATTACH);
+                Navigator.navigateToAttach(IssueActivity.this, project, REQUEST_ATTACH);
             }
         });
 
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 loadNotes();
@@ -332,26 +202,62 @@ public class IssueActivity extends BaseActivity {
         });
 
         if (getIntent().hasExtra(EXTRA_SELECTED_ISSUE)) {
-            mProject = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_PROJECT));
-            mIssue = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_SELECTED_ISSUE));
-            mIssueDetailsAdapter = new IssueDetailsAdapter(IssueActivity.this, mIssue, mProject);
-            mNotesRecyclerView.setAdapter(mIssueDetailsAdapter);
+            project = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_PROJECT));
+            issue = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_SELECTED_ISSUE));
+            adapterIssueDetails = new IssueDetailsAdapter(IssueActivity.this, issue, project);
+            listNotes.setAdapter(adapterIssueDetails);
             bindIssue();
             bindProject();
             loadNotes();
         } else if (getIntent().hasExtra(EXTRA_ISSUE_IID)) {
-            mIssueIid = getIntent().getStringExtra(EXTRA_ISSUE_IID);
+            issueIid = getIntent().getStringExtra(EXTRA_ISSUE_IID);
             String projectNamespace = getIntent().getStringExtra(EXTRA_PROJECT_NAMESPACE);
             String projectName = getIntent().getStringExtra(EXTRA_PROJECT_NAME);
-            mSwipeRefreshLayout.post(new Runnable() {
+            swipeRefreshLayout.post(new Runnable() {
                 @Override
                 public void run() {
-                    if (mSwipeRefreshLayout != null) {
-                        mSwipeRefreshLayout.setRefreshing(true);
+                    if (swipeRefreshLayout != null) {
+                        swipeRefreshLayout.setRefreshing(true);
                     }
                 }
             });
-            App.instance().getGitLab().getProject(projectNamespace, projectName).enqueue(mProjectCallback);
+            App.get().getGitLab().getProject(projectNamespace, projectName)
+                    .flatMap(new Function<Project, SingleSource<List<Issue>>>() {
+                        @Override
+                        public SingleSource<List<Issue>> apply(Project project) throws Exception {
+                            IssueActivity.this.project = project;
+                            return App.get().getGitLab().getIssuesByIid(project.getId(), issueIid);
+                        }
+                    })
+                    .compose(this.<List<Issue>>bindToLifecycle())
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new CustomSingleObserver<List<Issue>>() {
+
+                        @Override
+                        public void error(@NonNull Throwable t) {
+                            Timber.e(t);
+                            swipeRefreshLayout.setRefreshing(false);
+                            Snackbar.make(root, getString(R.string.failed_to_load), Snackbar.LENGTH_SHORT)
+                                    .show();
+                        }
+
+                        @Override
+                        public void success(@NonNull List<Issue> issues) {
+                            if (issues.isEmpty()) {
+                                swipeRefreshLayout.setRefreshing(false);
+                                Snackbar.make(root, getString(R.string.failed_to_load), Snackbar.LENGTH_SHORT)
+                                        .show();
+                            } else {
+                                issue = issues.get(0);
+                                adapterIssueDetails = new IssueDetailsAdapter(IssueActivity.this, issue, project);
+                                listNotes.setAdapter(adapterIssueDetails);
+                                bindIssue();
+                                bindProject();
+                                loadNotes();
+                            }
+                        }
+                    });
         }
     }
 
@@ -362,11 +268,11 @@ public class IssueActivity extends BaseActivity {
             case REQUEST_ATTACH:
                 if (resultCode == RESULT_OK) {
                     FileUploadResponse response = Parcels.unwrap(data.getParcelableExtra(AttachActivity.KEY_FILE_UPLOAD_RESPONSE));
-                    mProgress.setVisibility(View.GONE);
-                    mSendMessageView.appendText(response.getMarkdown());
+                    progress.setVisibility(View.GONE);
+                    sendMessageView.appendText(response.getMarkdown());
                 } else {
-                  Snackbar.make(mRoot, R.string.failed_to_upload_file, Snackbar.LENGTH_LONG)
-                          .show();
+                    Snackbar.make(root, R.string.failed_to_upload_file, Snackbar.LENGTH_LONG)
+                            .show();
                 }
                 break;
         }
@@ -374,38 +280,80 @@ public class IssueActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
+        App.bus().unregister(this);
         super.onDestroy();
-        App.bus().unregister(mEventReceiver);
     }
 
     private void bindProject() {
-        mToolbar.setSubtitle(mProject.getNameWithNamespace());
+        toolbar.setSubtitle(project.getNameWithNamespace());
     }
 
     private void bindIssue() {
-        mToolbar.setTitle(getString(R.string.issue_number) + mIssue.getIid());
+        toolbar.setTitle(getString(R.string.issue_number) + issue.getIid());
         setOpenCloseMenuStatus();
-        mIssueTitle.setText(mIssue.getTitle());
-        mIssueDetailsAdapter.updateIssue(mIssue);
+        textTitle.setText(issue.getTitle());
+        adapterIssueDetails.updateIssue(issue);
     }
 
     private void loadNotes() {
-        mSwipeRefreshLayout.post(new Runnable() {
+        swipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
-                if (mSwipeRefreshLayout != null) {
-                    mSwipeRefreshLayout.setRefreshing(true);
+                if (swipeRefreshLayout != null) {
+                    swipeRefreshLayout.setRefreshing(true);
                 }
             }
         });
-        mLoading = true;
-        App.instance().getGitLab().getIssueNotes(mProject.getId(), mIssue.getId()).enqueue(mNotesCallback);
+        loading = true;
+        App.get().getGitLab().getIssueNotes(project.getId(), issue.getId())
+                .compose(this.<Response<List<Note>>>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new CustomResponseSingleObserver<List<Note>>() {
+
+                    @Override
+                    public void error(@NonNull Throwable t) {
+                        loading = false;
+                        Timber.e(t);
+                        swipeRefreshLayout.setRefreshing(false);
+                        Snackbar.make(root, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
+                                .show();
+                    }
+
+                    @Override
+                    public void responseSuccess(@NonNull List<Note> notes) {
+                        loading = false;
+                        swipeRefreshLayout.setRefreshing(false);
+                        nextPageUrl = LinkHeaderParser.parse(response()).getNext();
+                        adapterIssueDetails.setNotes(notes);
+                    }
+                });
     }
 
     private void loadMoreNotes() {
-        mLoading = true;
-        mIssueDetailsAdapter.setLoading(true);
-        App.instance().getGitLab().getIssueNotes(mNextPageUrl.toString()).enqueue(mMoreNotesCallback);
+        loading = true;
+        adapterIssueDetails.setLoading(true);
+        App.get().getGitLab().getIssueNotes(nextPageUrl.toString())
+                .compose(this.<Response<List<Note>>>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new CustomResponseSingleObserver<List<Note>>() {
+
+                    @Override
+                    public void error(@NonNull Throwable t) {
+                        loading = false;
+                        Timber.e(t);
+                        adapterIssueDetails.setLoading(false);
+                    }
+
+                    @Override
+                    public void responseSuccess(@NonNull List<Note> notes) {
+                        loading = false;
+                        adapterIssueDetails.setLoading(false);
+                        nextPageUrl = LinkHeaderParser.parse(response()).getNext();
+                        adapterIssueDetails.addNotes(notes);
+                    }
+                });
     }
 
     private void postNote(String message) {
@@ -414,39 +362,82 @@ public class IssueActivity extends BaseActivity {
             return;
         }
 
-        mProgress.setVisibility(View.VISIBLE);
-        mProgress.setAlpha(0.0f);
-        mProgress.animate().alpha(1.0f);
+        progress.setVisibility(View.VISIBLE);
+        progress.setAlpha(0.0f);
+        progress.animate().alpha(1.0f);
         // Clear text & collapse keyboard
-        mTeleprinter.hideKeyboard();
-        mSendMessageView.clearText();
+        teleprinter.hideKeyboard();
+        sendMessageView.clearText();
 
-        App.instance().getGitLab().addIssueNote(mProject.getId(), mIssue.getId(), message).enqueue(mPostNoteCallback);
+        App.get().getGitLab().addIssueNote(project.getId(), issue.getId(), message)
+                .compose(this.<Note>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new CustomSingleObserver<Note>() {
+
+                    @Override
+                    public void error(@NonNull Throwable t) {
+                        Timber.e(t);
+                        progress.setVisibility(View.GONE);
+                        Snackbar.make(root, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
+                                .show();
+                    }
+
+                    @Override
+                    public void success(@NonNull Note note) {
+                        progress.setVisibility(View.GONE);
+                        adapterIssueDetails.addNote(note);
+                        listNotes.smoothScrollToPosition(IssueDetailsAdapter.getHeaderCount());
+                    }
+                });
     }
 
     private void closeOrOpenIssue() {
-        mProgress.setVisibility(View.VISIBLE);
-        if (mIssue.getState().equals(Issue.STATE_CLOSED)) {
-            App.instance().getGitLab().updateIssueStatus(mProject.getId(), mIssue.getId(), Issue.STATE_REOPEN)
-                    .enqueue(mOpenCloseCallback);
+        progress.setVisibility(View.VISIBLE);
+        if (issue.getState().equals(Issue.STATE_CLOSED)) {
+            updateIssueStatus(App.get().getGitLab().updateIssueStatus(project.getId(), issue.getId(), Issue.STATE_REOPEN));
         } else {
-            App.instance().getGitLab().updateIssueStatus(mProject.getId(), mIssue.getId(), Issue.STATE_CLOSE)
-                    .enqueue(mOpenCloseCallback);
+            updateIssueStatus(App.get().getGitLab().updateIssueStatus(project.getId(), issue.getId(), Issue.STATE_CLOSE));
         }
     }
 
-    private void setOpenCloseMenuStatus() {
-        mOpenCloseMenuItem.setTitle(mIssue.getState().equals(Issue.STATE_CLOSED) ? R.string.reopen : R.string.close);
+    private void updateIssueStatus(Single<Issue> observable) {
+        observable
+                .compose(this.<Issue>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new CustomSingleObserver<Issue>() {
+
+                    @Override
+                    public void error(@NonNull Throwable t) {
+                        Timber.e(t);
+                        progress.setVisibility(View.GONE);
+                        Snackbar.make(root, getString(R.string.error_changing_issue), Snackbar.LENGTH_SHORT)
+                                .show();
+                    }
+
+                    @Override
+                    public void success(@NonNull Issue issue) {
+                        progress.setVisibility(View.GONE);
+                        IssueActivity.this.issue = issue;
+                        App.bus().post(new IssueChangedEvent(IssueActivity.this.issue));
+                        App.bus().post(new IssueReloadEvent());
+                        setOpenCloseMenuStatus();
+                        loadNotes();
+                    }
+                });
     }
 
-    private class EventReceiver {
+    private void setOpenCloseMenuStatus() {
+        menuItemOpenClose.setTitle(issue.getState().equals(Issue.STATE_CLOSED) ? R.string.reopen : R.string.close);
+    }
 
-        @Subscribe
-        public void onIssueChanged(IssueChangedEvent event) {
-            if (mIssue.getId() == event.mIssue.getId()) {
-                mIssue = event.mIssue;
-                bindIssue();
-            }
+    @Subscribe
+    public void onIssueChanged(IssueChangedEvent event) {
+        if (issue.getId() == event.issue.getId()) {
+            issue = event.issue;
+            bindIssue();
+            loadNotes();
         }
     }
 }

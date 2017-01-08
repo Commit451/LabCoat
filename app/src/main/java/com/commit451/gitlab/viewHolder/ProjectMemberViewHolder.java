@@ -19,7 +19,7 @@ import butterknife.ButterKnife;
 /**
  * Shows a project member
  */
-public class ProjectMemberViewHolder extends RecyclerView.ViewHolder{
+public class ProjectMemberViewHolder extends RecyclerView.ViewHolder {
 
     public static ProjectMemberViewHolder inflate(ViewGroup parent) {
         View view = LayoutInflater.from(parent.getContext())
@@ -27,34 +27,38 @@ public class ProjectMemberViewHolder extends RecyclerView.ViewHolder{
         return new ProjectMemberViewHolder(view);
     }
 
-    @BindView(R.id.overflow) View mOverflowView;
-    @BindView(R.id.name) TextView mUsernameView;
-    @BindView(R.id.access) TextView mAccessView;
-    @BindView(R.id.image) public ImageView mImageView;
+    @BindView(R.id.overflow)
+    View buttonOverflow;
+    @BindView(R.id.name)
+    TextView textUsername;
+    @BindView(R.id.access)
+    TextView textAccess;
+    @BindView(R.id.image)
+    public ImageView image;
 
-    public final PopupMenu mPopupMenu;
+    public final PopupMenu popupMenu;
 
     public ProjectMemberViewHolder(View view) {
         super(view);
         ButterKnife.bind(this, view);
 
-        mPopupMenu = new PopupMenu(itemView.getContext(), mOverflowView);
-        mPopupMenu.getMenuInflater().inflate(R.menu.item_menu_project_member, mPopupMenu.getMenu());
+        popupMenu = new PopupMenu(itemView.getContext(), buttonOverflow);
+        popupMenu.getMenuInflater().inflate(R.menu.item_menu_project_member, popupMenu.getMenu());
 
-        mOverflowView.setOnClickListener(new View.OnClickListener() {
+        buttonOverflow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPopupMenu.show();
+                popupMenu.show();
             }
         });
     }
 
     public void bind(Member member) {
-        mUsernameView.setText(member.getUsername());
-        mAccessView.setText(Member.getAccessLevel(member.getAccessLevel()));
+        textUsername.setText(member.getUsername());
+        textAccess.setText(Member.getAccessLevel(member.getAccessLevel()));
 
-        App.instance().getPicasso()
+        App.get().getPicasso()
                 .load(ImageUtil.getAvatarUrl(member, itemView.getResources().getDimensionPixelSize(R.dimen.user_header_image_size)))
-                .into(mImageView);
+                .into(image);
     }
 }

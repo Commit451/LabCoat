@@ -34,10 +34,14 @@ public class NoteViewHolder extends RecyclerView.ViewHolder {
         return new NoteViewHolder(view);
     }
 
-    @BindView(R.id.title) TextView mTitleView;
-    @BindView(R.id.summary) TextView mSummaryView;
-    @BindView(R.id.creation_date) TextView mCreationDateView;
-    @BindView(R.id.icon) ImageView mIconView;
+    @BindView(R.id.title)
+    TextView textTitle;
+    @BindView(R.id.summary)
+    TextView textSummary;
+    @BindView(R.id.creation_date)
+    TextView textCreationDate;
+    @BindView(R.id.icon)
+    ImageView imageAvatar;
 
     public NoteViewHolder(View view) {
         super(view);
@@ -46,11 +50,11 @@ public class NoteViewHolder extends RecyclerView.ViewHolder {
 
     public void bind(Note note, Bypass bypass, Project project) {
         if (note.getCreatedAt() != null) {
-            mCreationDateView.setText(DateUtil.getRelativeTimeSpanString(itemView.getContext(), note.getCreatedAt()));
+            textCreationDate.setText(DateUtil.getRelativeTimeSpanString(itemView.getContext(), note.getCreatedAt()));
         }
 
         if (note.getAuthor() != null) {
-            mTitleView.setText(note.getAuthor().getUsername());
+            textTitle.setText(note.getAuthor().getUsername());
         }
 
         String summary = "";
@@ -59,16 +63,16 @@ public class NoteViewHolder extends RecyclerView.ViewHolder {
             summary = EmojiParser.parseToUnicode(summary);
         }
 
-        BypassPicassoImageGetter getter = BypassImageGetterFactory.create(mSummaryView,
-                App.instance().getPicasso(),
-                App.instance().getAccount().getServerUrl().toString(),
+        BypassPicassoImageGetter getter = BypassImageGetterFactory.create(textSummary,
+                App.get().getPicasso(),
+                App.get().getAccount().getServerUrl().toString(),
                 project);
-        mSummaryView.setText(bypass.markdownToSpannable(summary, getter));
-        mSummaryView.setMovementMethod(new InternalLinkMovementMethod(App.instance().getAccount().getServerUrl()));
+        textSummary.setText(bypass.markdownToSpannable(summary, getter));
+        textSummary.setMovementMethod(new InternalLinkMovementMethod(App.get().getAccount().getServerUrl()));
 
-        App.instance().getPicasso()
+        App.get().getPicasso()
                 .load(ImageUtil.getAvatarUrl(note.getAuthor(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size)))
                 .transform(new CircleTransformation())
-                .into(mIconView);
+                .into(imageAvatar);
     }
 }

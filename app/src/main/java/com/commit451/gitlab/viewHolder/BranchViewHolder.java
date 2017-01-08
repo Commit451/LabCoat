@@ -25,7 +25,7 @@ public class BranchViewHolder extends RecyclerView.ViewHolder {
     }
 
     @BindView(R.id.title)
-    public TextView title;
+    public TextView textTitle;
 
     int colorHighlighted;
 
@@ -36,7 +36,7 @@ public class BranchViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(Branch branch, boolean selected) {
-        title.setText(branch.getName());
+        textTitle.setText(branch.getName());
         if (selected) {
             itemView.setBackgroundColor(colorHighlighted);
         } else {

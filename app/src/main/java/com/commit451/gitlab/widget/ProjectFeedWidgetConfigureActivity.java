@@ -10,9 +10,9 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.alexgwyn.recyclerviewsquire.ClickableArrayAdapter;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.BaseActivity;
-import com.commit451.gitlab.data.Prefs;
 import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.model.api.Project;
 
@@ -35,12 +35,13 @@ public class ProjectFeedWidgetConfigureActivity extends BaseActivity {
     int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
 
     @BindView(R.id.toolbar)
-    Toolbar mToolbar;
+    Toolbar toolbar;
     @BindView(R.id.message_text)
-    TextView mTextMessage;
+    TextView textMessage;
     @BindView(R.id.list)
-    RecyclerView mList;
-    AccountsAdapter mAccountAdapter;
+    RecyclerView list;
+
+    AccountsAdapter adapterAccounts;
 
     Account mAccount;
 
@@ -60,21 +61,22 @@ public class ProjectFeedWidgetConfigureActivity extends BaseActivity {
         }
         // If they gave us an intent without the widget id, just bail.
         if (mAppWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
+            Timber.e("We did not get a widget id. Bail out");
             finish();
         }
 
-        mToolbar.setTitle(R.string.widget_choose_account);
+        toolbar.setTitle(R.string.widget_choose_account);
 
-        mAccountAdapter = new AccountsAdapter();
-        mAccountAdapter.setOnItemClickListener(new ClickableArrayAdapter.OnItemClickListener<Account>() {
+        adapterAccounts = new AccountsAdapter();
+        adapterAccounts.setOnItemClickListener(new ClickableArrayAdapter.OnItemClickListener<Account>() {
             @Override
             public void onItemClicked(ClickableArrayAdapter<Account, ?> adapter, View view, int position) {
                 mAccount = adapter.get(position);
                 moveAlongToChooseProject(mAccount);
             }
         });
-        mList.setLayoutManager(new LinearLayoutManager(this));
-        mList.setAdapter(mAccountAdapter);
+        list.setLayoutManager(new LinearLayoutManager(this));
+        list.setAdapter(adapterAccounts);
 
         loadAccounts();
     }
@@ -93,15 +95,15 @@ public class ProjectFeedWidgetConfigureActivity extends BaseActivity {
     }
 
     private void loadAccounts() {
-        List<Account> accounts = Prefs.getAccounts(this);
+        List<Account> accounts = App.get().getPrefs().getAccounts();
         Timber.d("Got %s accounts", accounts.size());
         Collections.sort(accounts);
         Collections.reverse(accounts);
         if (accounts.isEmpty()) {
-            mTextMessage.setVisibility(View.VISIBLE);
+            textMessage.setVisibility(View.VISIBLE);
         } else {
-            mTextMessage.setVisibility(View.GONE);
-            mAccountAdapter.clearAndFill(accounts);
+            textMessage.setVisibility(View.GONE);
+            adapterAccounts.clearAndFill(accounts);
         }
     }
 
@@ -111,8 +113,8 @@ public class ProjectFeedWidgetConfigureActivity extends BaseActivity {
     }
 
     private void saveWidgetConfig(Account account, Project project) {
-        ProjectFeedWidgetPrefs.setAccount(ProjectFeedWidgetConfigureActivity.this, mAppWidgetId, account);
-        ProjectFeedWidgetPrefs.setFeedUrl(ProjectFeedWidgetConfigureActivity.this, mAppWidgetId, project.getFeedUrl().toString());
+        ProjectFeedWidgetPrefs.setAccount(this, mAppWidgetId, account);
+        ProjectFeedWidgetPrefs.setFeedUrl(this, mAppWidgetId, project.getFeedUrl().toString());
 
         Intent resultValue = new Intent();
         resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);

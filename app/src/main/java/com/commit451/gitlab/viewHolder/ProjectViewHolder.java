@@ -30,11 +30,16 @@ public class ProjectViewHolder extends RecyclerView.ViewHolder {
         return new ProjectViewHolder(view);
     }
 
-    @BindView(R.id.project_image) ImageView mImageView;
-    @BindView(R.id.project_letter) MaterialLetterIcon mLetterView;
-    @BindView(R.id.project_title) TextView mTitleView;
-    @BindView(R.id.project_description) TextView mDescriptionView;
-    @BindView(R.id.project_visibility) ImageView mVisibilityView;
+    @BindView(R.id.project_image)
+    ImageView image;
+    @BindView(R.id.project_letter)
+    MaterialLetterIcon iconLetter;
+    @BindView(R.id.project_title)
+    TextView textTitle;
+    @BindView(R.id.project_description)
+    TextView textDescription;
+    @BindView(R.id.project_visibility)
+    ImageView iconVisibility;
 
     public ProjectViewHolder(View view) {
         super(view);
@@ -43,35 +48,35 @@ public class ProjectViewHolder extends RecyclerView.ViewHolder {
 
     public void bind(Project project, int color) {
         if (project.getAvatarUrl() != null && !project.getAvatarUrl().equals(Uri.EMPTY)) {
-            mLetterView.setVisibility(View.GONE);
+            iconLetter.setVisibility(View.GONE);
 
-            mImageView.setVisibility(View.VISIBLE);
-            App.instance().getPicasso()
+            image.setVisibility(View.VISIBLE);
+            App.get().getPicasso()
                     .load(project.getAvatarUrl())
                     .transform(new CircleTransformation())
-                    .into(mImageView);
+                    .into(image);
         } else {
-            mImageView.setVisibility(View.GONE);
+            image.setVisibility(View.GONE);
 
-            mLetterView.setVisibility(View.VISIBLE);
-            mLetterView.setLetter(project.getName().substring(0, 1));
-            mLetterView.setLetterColor(Color.WHITE);
-            mLetterView.setShapeColor(color);
+            iconLetter.setVisibility(View.VISIBLE);
+            iconLetter.setLetter(project.getName().substring(0, 1));
+            iconLetter.setLetterColor(Color.WHITE);
+            iconLetter.setShapeColor(color);
         }
 
-        mTitleView.setText(project.getNameWithNamespace());
+        textTitle.setText(project.getNameWithNamespace());
         if (!TextUtils.isEmpty(project.getDescription())) {
-            mDescriptionView.setVisibility(View.VISIBLE);
-            mDescriptionView.setText(project.getDescription());
+            textDescription.setVisibility(View.VISIBLE);
+            textDescription.setText(project.getDescription());
         } else {
-            mDescriptionView.setVisibility(View.GONE);
-            mDescriptionView.setText("");
+            textDescription.setVisibility(View.GONE);
+            textDescription.setText("");
         }
 
         if (project.isPublic()) {
-            mVisibilityView.setImageResource(R.drawable.ic_public_24dp);
+            iconVisibility.setImageResource(R.drawable.ic_public_24dp);
         } else {
-            mVisibilityView.setImageResource(R.drawable.ic_private_24dp);
+            iconVisibility.setImageResource(R.drawable.ic_private_24dp);
         }
     }
 }

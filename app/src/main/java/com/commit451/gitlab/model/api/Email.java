@@ -9,18 +9,18 @@ import org.parceler.Parcel;
 @JsonObject
 public class Email {
     @JsonField(name = "id")
-    long mId;
+    long id;
     @JsonField(name = "email")
-    String mEmail;
+    String email;
 
     public Email() {}
 
     public long getId() {
-        return mId;
+        return id;
     }
 
     public String getEmail() {
-        return mEmail;
+        return email;
     }
 
     @Override
@@ -30,11 +30,11 @@ public class Email {
         }
 
         Email email = (Email) o;
-        return mId == email.mId;
+        return id == email.id;
     }
 
     @Override
     public int hashCode() {
-        return (int) (mId ^ (mId >>> 32));
+        return (int) (id ^ (id >>> 32));
     }
 }

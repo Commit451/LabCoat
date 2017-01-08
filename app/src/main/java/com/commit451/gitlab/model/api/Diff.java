@@ -9,62 +9,62 @@ import org.parceler.Parcel;
 @JsonObject
 public class Diff {
     @JsonField(name = "old_path")
-    String mOldPath;
+    String oldPath;
     @JsonField(name = "new_path")
-    String mNewPath;
+    String newPath;
     @JsonField(name = "a_mode")
-    int mAMode;
+    int aMode;
     @JsonField(name = "b_mode")
-    int mBMode;
+    int bMode;
     @JsonField(name = "diff")
-    String mDiff;
+    String diff;
     @JsonField(name = "new_file")
-    boolean mNewFile;
+    boolean newFile;
     @JsonField(name = "renamed_file")
-    boolean mRenamedFile;
+    boolean renamedFile;
     @JsonField(name = "deleted_file")
-    boolean mDeletedFile;
+    boolean deletedFile;
 
     public Diff() {}
 
     public String getOldPath() {
-        return mOldPath;
+        return oldPath;
     }
 
     public String getNewPath() {
-        return mNewPath;
+        return newPath;
     }
 
     public int getAMode() {
-        return mAMode;
+        return aMode;
     }
 
     public int getBMode() {
-        return mBMode;
+        return bMode;
     }
 
     public String getDiff() {
-        return mDiff;
+        return diff;
     }
 
     public boolean isNewFile() {
-        return mNewFile;
+        return newFile;
     }
 
     public boolean isRenamedFile() {
-        return mRenamedFile;
+        return renamedFile;
     }
 
     public boolean isDeletedFile() {
-        return mDeletedFile;
+        return deletedFile;
     }
 
     public String getFileName() {
-        if (mNewPath.contains("/")) {
-            String[] paths = mNewPath.split("/");
+        if (newPath.contains("/")) {
+            String[] paths = newPath.split("/");
             return paths[paths.length-1];
         } else {
-            return mNewPath;
+            return newPath;
         }
     }
 }

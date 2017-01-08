@@ -14,14 +14,15 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.net.ssl.X509ExtendedKeyManager;
 
 public class CustomKeyManager extends X509ExtendedKeyManager {
-    private static final Map<String, KeyEntry> sKeyCache = new ConcurrentHashMap<>();
+
+    private static final Map<String, KeyEntry> keyCache = new ConcurrentHashMap<>();
 
     public static boolean isCached(String alias) {
-        return sKeyCache.containsKey(alias);
+        return keyCache.containsKey(alias);
     }
 
     public static KeyEntry getCachedKey(String alias) {
-        return sKeyCache.get(alias);
+        return keyCache.get(alias);
     }
 
     public static void cache(final Context context, final String alias, final KeyCallback callback) {
@@ -33,7 +34,7 @@ public class CustomKeyManager extends X509ExtendedKeyManager {
                     PrivateKey privateKey = KeyChain.getPrivateKey(context, alias);
 
                     KeyEntry entry = new KeyEntry(alias, chain, privateKey);
-                    sKeyCache.put(alias, entry);
+                    keyCache.put(alias, entry);
                     callback.onSuccess(entry);
                 } catch (Exception e) {
                     callback.onError(e);
@@ -44,19 +45,19 @@ public class CustomKeyManager extends X509ExtendedKeyManager {
         }.execute();
     }
 
-    private final KeyEntry mEntry;
+    private final KeyEntry entry;
 
     public CustomKeyManager(String alias) {
-        mEntry = getCachedKey(alias);
+        entry = getCachedKey(alias);
 
-        if (mEntry == null) {
+        if (entry == null) {
             throw new IllegalStateException("No cached key available");
         }
     }
 
     @Override
     public String chooseClientAlias(String[] keyType, Principal[] issuers, Socket socket) {
-        return mEntry.alias;
+        return entry.alias;
     }
 
     @Override
@@ -66,16 +67,16 @@ public class CustomKeyManager extends X509ExtendedKeyManager {
 
     @Override
     public X509Certificate[] getCertificateChain(String alias) {
-        if (!mEntry.alias.equals(alias)) {
+        if (!entry.alias.equals(alias)) {
             return null;
         }
 
-        return mEntry.chain;
+        return entry.chain;
     }
 
     @Override
     public String[] getClientAliases(String keyType, Principal[] issuers) {
-        return new String[] { mEntry.alias };
+        return new String[] { entry.alias };
     }
 
     @Override
@@ -85,11 +86,11 @@ public class CustomKeyManager extends X509ExtendedKeyManager {
 
     @Override
     public PrivateKey getPrivateKey(String alias) {
-        if (!mEntry.alias.equals(alias)) {
+        if (!entry.alias.equals(alias)) {
             return null;
         }
 
-        return mEntry.privateKey;
+        return entry.privateKey;
     }
 
     public static class KeyEntry {

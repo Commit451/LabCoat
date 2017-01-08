@@ -23,8 +23,10 @@ public class LabelViewHolder extends RecyclerView.ViewHolder {
         return new LabelViewHolder(view);
     }
 
-    @BindView(R.id.title) public TextView title;
-    @BindView(R.id.color) public View colorView;
+    @BindView(R.id.title)
+    public TextView textTitle;
+    @BindView(R.id.color)
+    public View viewColor;
 
     public LabelViewHolder(View view) {
         super(view);
@@ -32,7 +34,7 @@ public class LabelViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(Label label) {
-        title.setText(label.getName());
-        colorView.setBackgroundColor(label.getColor());
+        textTitle.setText(label.getName());
+        viewColor.setBackgroundColor(label.getColor());
     }
 }

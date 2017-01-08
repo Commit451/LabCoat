@@ -8,15 +8,17 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
-import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.model.api.Member;
+import com.commit451.gitlab.rx.CustomSingleObserver;
 
 import java.util.Arrays;
 
-import retrofit2.Callback;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -24,52 +26,17 @@ import timber.log.Timber;
  */
 public class AccessDialog extends MaterialDialog {
 
-    void onApply() {
-        if (getSelectedIndex() == -1) {
-            Toast.makeText(getContext(), R.string.please_select_access_level, Toast.LENGTH_LONG)
-                    .show();
-            return;
-        }
-        String accessLevel = mRoleNames[getSelectedIndex()];
-        if (accessLevel == null) {
-            Toast.makeText(getContext(), R.string.please_select_access_level, Toast.LENGTH_LONG)
-                    .show();
-        } else {
-            changeAccess(Member.getAccessLevel(accessLevel));
-        }
-    }
+    OnAccessChangedListener onAccessChangedListener;
+    Listener listener;
 
-    void onCancel() {
-        dismiss();
-    }
+    String[] roleNames;
+    long projectId = -1;
+    Group group;
+    Member member;
 
-    OnAccessChangedListener mAccessChangedListener;
-    OnAccessAppliedListener mAccessAppliedListener;
-
-    String[] mRoleNames;
-    long mProjectId = -1;
-    Group mGroup;
-    Member mMember;
-
-    private final Callback<Member> mEditUserCallback = new EasyCallback<Member>() {
-        @Override
-        public void success(@NonNull Member response) {
-            if (mAccessChangedListener != null) {
-                mAccessChangedListener.onAccessChanged(mMember, mRoleNames[getSelectedIndex()]);
-            }
-            dismiss();
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t, null);
-            onError();
-        }
-    };
-
-    public AccessDialog(Context context, OnAccessAppliedListener accessAppliedListener) {
+    public AccessDialog(Context context, Listener accessAppliedListener) {
         this(context, null, null, -1);
-        mAccessAppliedListener = accessAppliedListener;
+        listener = accessAppliedListener;
     }
 
     public AccessDialog(Context context, Member member, Group group) {
@@ -93,7 +60,7 @@ public class AccessDialog extends MaterialDialog {
                 .progress(true, 0) // So we can later show loading progress
                 .positiveText(R.string.action_apply)
                 .negativeText(R.string.md_cancel_label));
-        mRoleNames = getContext().getResources().getStringArray((group == null)
+        roleNames = getContext().getResources().getStringArray((group == null)
                 ? R.array.project_role_names
                 : R.array.group_role_names);
         getActionButton(DialogAction.POSITIVE).setOnClickListener(new View.OnClickListener() {
@@ -108,28 +75,50 @@ public class AccessDialog extends MaterialDialog {
                 onCancel();
             }
         });
-        mMember = member;
-        mGroup = group;
-        mProjectId = projectId;
-        if (mMember != null) {
-            setSelectedIndex(Arrays.asList(mRoleNames).indexOf(
-                    Member.getAccessLevel(mMember.getAccessLevel())));
+        this.member = member;
+        this.group = group;
+        this.projectId = projectId;
+        if (this.member != null) {
+            setSelectedIndex(Arrays.asList(roleNames).indexOf(
+                    Member.getAccessLevel(this.member.getAccessLevel())));
         }
     }
 
     private void changeAccess(int accessLevel) {
 
-        if (mGroup != null) {
+        if (group != null) {
             showLoading();
-            App.instance().getGitLab().editGroupMember(mGroup.getId(), mMember.getId(), accessLevel).enqueue(mEditUserCallback);
-        } else if (mProjectId != -1) {
+            editGroupOrProjectMember(App.get().getGitLab().editGroupMember(group.getId(), member.getId(), accessLevel));
+        } else if (projectId != -1) {
             showLoading();
-            App.instance().getGitLab().editProjectMember(mProjectId, mMember.getId(), accessLevel).enqueue(mEditUserCallback);
-        } else if (mAccessAppliedListener != null) {
-            mAccessAppliedListener.onAccessApplied(accessLevel);
+            editGroupOrProjectMember(App.get().getGitLab().editProjectMember(projectId, member.getId(), accessLevel));
+        } else if (listener != null) {
+            listener.onAccessApplied(accessLevel);
         } else {
             throw new IllegalStateException("Not sure what to apply this access change to. Check the constructors plz");
         }
+    }
+
+    private void editGroupOrProjectMember(Single<Member> observable) {
+        observable
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new CustomSingleObserver<Member>() {
+
+                    @Override
+                    public void error(@NonNull Throwable t) {
+                        Timber.e(t);
+                        AccessDialog.this.onError();
+                    }
+
+                    @Override
+                    public void success(@NonNull Member member) {
+                        if (onAccessChangedListener != null) {
+                            onAccessChangedListener.onAccessChanged(AccessDialog.this.member, roleNames[getSelectedIndex()]);
+                        }
+                        dismiss();
+                    }
+                });
     }
 
     public void showLoading() {
@@ -142,14 +131,33 @@ public class AccessDialog extends MaterialDialog {
     }
 
     public void setOnAccessChangedListener(OnAccessChangedListener listener) {
-        mAccessChangedListener = listener;
+        onAccessChangedListener = listener;
+    }
+
+    private void onApply() {
+        if (getSelectedIndex() == -1) {
+            Toast.makeText(getContext(), R.string.please_select_access_level, Toast.LENGTH_LONG)
+                    .show();
+            return;
+        }
+        String accessLevel = roleNames[getSelectedIndex()];
+        if (accessLevel == null) {
+            Toast.makeText(getContext(), R.string.please_select_access_level, Toast.LENGTH_LONG)
+                    .show();
+        } else {
+            changeAccess(Member.getAccessLevel(accessLevel));
+        }
+    }
+
+    private void onCancel() {
+        dismiss();
     }
 
     public interface OnAccessChangedListener {
         void onAccessChanged(Member member, String accessLevel);
     }
 
-    public interface OnAccessAppliedListener {
+    public interface Listener {
         void onAccessApplied(int accessLevel);
     }
 }

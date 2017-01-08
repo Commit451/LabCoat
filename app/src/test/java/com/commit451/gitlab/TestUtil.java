@@ -31,10 +31,10 @@ public class TestUtil {
         if (BuildConfig.DEBUG) {
             gitlabClientBuilder.addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
         }
-        GitLab gitLab = GitLabFactory.create(account, gitlabClientBuilder.build());
+        GitLab gitLab = GitLabFactory.create(account, gitlabClientBuilder.build(), true);
         Response<UserLogin> loginResponse = gitLab
                 .loginWithUsername("TestAllTheThings", "testing123")
-                .execute();
+                .blockingGet();
         assertTrue(loginResponse.isSuccessful());
         assertNotNull(loginResponse.body().getPrivateToken());
         //attach the newly retrieved private token

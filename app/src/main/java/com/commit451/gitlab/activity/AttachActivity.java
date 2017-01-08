@@ -1,6 +1,7 @@
 package com.commit451.gitlab.activity;
 
 
+import android.animation.Animator;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,27 +9,31 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 
-import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.api.FileUploadResponse;
 import com.commit451.gitlab.model.api.Project;
-import com.commit451.gitlab.observable.FileObservableFactory;
+import com.commit451.gitlab.rx.CustomSingleObserver;
+import com.commit451.gitlab.rx.FileObservableFactory;
 
 import org.parceler.Parcels;
 
 import java.io.File;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.codetail.animation.ViewAnimationUtils;
+import io.reactivex.SingleSource;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 import okhttp3.MultipartBody;
 import pl.aprilapps.easyphotopicker.DefaultCallback;
 import pl.aprilapps.easyphotopicker.EasyImage;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -47,27 +52,13 @@ public class AttachActivity extends BaseActivity {
     }
 
     @BindView(R.id.root_buttons)
-    ViewGroup mRootButtons;
+    ViewGroup rootButtons;
     @BindView(R.id.progress)
-    View mProgress;
+    View progress;
+    @BindView(R.id.attachCard)
+    View card;
 
-    Project mProject;
-
-    private final EasyCallback<FileUploadResponse> mUploadCallback = new EasyCallback<FileUploadResponse>() {
-        @Override
-        public void success(@NonNull FileUploadResponse response) {
-            Intent data = new Intent();
-            data.putExtra(KEY_FILE_UPLOAD_RESPONSE, Parcels.wrap(response));
-            setResult(RESULT_OK, data);
-            finish();
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t);
-            finish();
-        }
-    };
+    Project project;
 
     @OnClick(R.id.root)
     void onRootClicked() {
@@ -76,7 +67,7 @@ public class AttachActivity extends BaseActivity {
 
     @OnClick(R.id.button_choose_photo)
     void onChoosePhotoClicked() {
-        EasyImage.openGallery(this, 0);
+        EasyImage.openGallery(this, 0, false);
     }
 
     @OnClick(R.id.button_take_photo)
@@ -94,7 +85,24 @@ public class AttachActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_attach);
         ButterKnife.bind(this);
-        mProject = Parcels.unwrap(getIntent().getParcelableExtra(KEY_PROJECT));
+
+        //Run the runnable after the view has been measured
+        card.post(new Runnable() {
+            @Override
+            public void run() {
+                //we need the radius of the animation circle, which is the diagonal of the view
+                float finalRadius = (float) Math.hypot(card.getWidth(), card.getHeight());
+
+                //it's using a 3rd-party ViewAnimationUtils class for compat reasons (up to API 14)
+                Animator animator = ViewAnimationUtils
+                        .createCircularReveal(card, 0, card.getHeight(), 0, finalRadius);
+                animator.setDuration(500);
+                animator.setInterpolator(new AccelerateDecelerateInterpolator());
+                animator.start();
+            }
+        });
+
+        project = Parcels.unwrap(getIntent().getParcelableExtra(KEY_PROJECT));
     }
 
     @Override
@@ -107,9 +115,8 @@ public class AttachActivity extends BaseActivity {
             }
 
             @Override
-            public void onImagePicked(File imageFile, EasyImage.ImageSource source, int type) {
-                //Handle the image
-                onPhotoReturned(imageFile);
+            public void onImagesPicked(List<File> imageFiles, EasyImage.ImageSource source, int type) {
+                onPhotoReturned(imageFiles.get(0));
             }
 
             @Override
@@ -125,16 +132,39 @@ public class AttachActivity extends BaseActivity {
         });
     }
 
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.do_nothing, R.anim.fade_out);
+    }
+
     private void onPhotoReturned(File photo) {
-        mProgress.setVisibility(View.VISIBLE);
-        mRootButtons.setVisibility(View.INVISIBLE);
+        progress.setVisibility(View.VISIBLE);
+        rootButtons.setVisibility(View.INVISIBLE);
         FileObservableFactory.toPart(photo)
+                .flatMap(new Function<MultipartBody.Part, SingleSource<FileUploadResponse>>() {
+                    @Override
+                    public SingleSource<FileUploadResponse> apply(MultipartBody.Part part) throws Exception {
+                        return App.get().getGitLab().uploadFile(project.getId(), part);
+                    }
+                })
+                .compose(this.<FileUploadResponse>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<MultipartBody.Part>() {
+                .subscribe(new CustomSingleObserver<FileUploadResponse>() {
+
                     @Override
-                    public void call(MultipartBody.Part part) {
-                        App.instance().getGitLab().uploadFile(mProject.getId(), part).enqueue(mUploadCallback);
+                    public void success(@NonNull FileUploadResponse fileUploadResponse) {
+                        Intent data = new Intent();
+                        data.putExtra(KEY_FILE_UPLOAD_RESPONSE, Parcels.wrap(fileUploadResponse));
+                        setResult(RESULT_OK, data);
+                        finish();
+                    }
+
+                    @Override
+                    public void error(@NonNull Throwable t) {
+                        Timber.e(t);
+                        finish();
                     }
                 });
     }

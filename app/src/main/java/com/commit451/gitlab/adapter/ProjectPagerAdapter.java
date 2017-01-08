@@ -11,14 +11,13 @@ import com.commit451.gitlab.fragment.ProjectsFragment;
 /**
  * Projects Pager Adapter
  */
-public class ProjectsPagerAdapter extends FragmentPagerAdapter {
-    private static final int SECTION_COUNT = 3;
+public class ProjectPagerAdapter extends FragmentPagerAdapter {
 
-    private String[] mTitles;
+    private String[] titles;
 
-    public ProjectsPagerAdapter(Context context, FragmentManager fm) {
+    public ProjectPagerAdapter(Context context, FragmentManager fm) {
         super(fm);
-        mTitles = context.getResources().getStringArray(R.array.projects_tabs);
+        titles = context.getResources().getStringArray(R.array.projects_tabs);
     }
 
     @Override
@@ -38,11 +37,11 @@ public class ProjectsPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return SECTION_COUNT;
+        return titles.length;
     }
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return mTitles[position];
+        return titles[position];
     }
 }

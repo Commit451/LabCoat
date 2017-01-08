@@ -26,9 +26,12 @@ public class BuildViewHolder extends RecyclerView.ViewHolder {
         return new BuildViewHolder(view);
     }
 
-    @BindView(R.id.number) TextView buildNumber;
-    @BindView(R.id.status) TextView status;
-    @BindView(R.id.duration) TextView duration;
+    @BindView(R.id.number)
+    TextView textBuildNumber;
+    @BindView(R.id.status)
+    TextView textStatus;
+    @BindView(R.id.duration)
+    TextView textDuration;
 
     public BuildViewHolder(View view) {
         super(view);
@@ -36,9 +39,9 @@ public class BuildViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(Build build) {
-        buildNumber.setText(itemView.getResources().getString(R.string.build_number) + build.getId());
+        textBuildNumber.setText(itemView.getResources().getString(R.string.build_number) + build.getId());
         String statusText = String.format(itemView.getResources().getString(R.string.build_status), build.getStatus());
-        status.setText(statusText);
+        textStatus.setText(statusText);
         Date finishedTime = build.getFinishedAt();
         if (finishedTime == null) {
             finishedTime = new Date();
@@ -49,6 +52,6 @@ public class BuildViewHolder extends RecyclerView.ViewHolder {
         }
         String timeTaken = DateUtil.getTimeTaken(startedAt, finishedTime);
         String durationStr = String.format(itemView.getResources().getString(R.string.build_duration), timeTaken);
-        duration.setText(durationStr);
+        textDuration.setText(durationStr);
     }
 }

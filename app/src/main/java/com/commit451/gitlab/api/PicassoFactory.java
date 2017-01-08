@@ -12,7 +12,7 @@ import okhttp3.OkHttpClient;
 public class PicassoFactory {
 
     public static Picasso createPicasso(OkHttpClient client) {
-        return new Picasso.Builder(App.instance())
+        return new Picasso.Builder(App.get())
                 .downloader(new OkHttp3Downloader(client))
                 .build();
     }

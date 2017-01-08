@@ -13,47 +13,47 @@ import java.util.Date;
 @JsonObject
 public class User extends UserBasic {
     @JsonField(name = "created_at")
-    Date mCreatedAt;
+    Date createdAt;
     @JsonField(name = "is_admin")
-    boolean mIsAdmin;
+    boolean isAdmin;
     @JsonField(name = "bio")
-    String mBio;
+    String bio;
     @JsonField(name = "skype")
-    String mSkype;
+    String skype;
     @JsonField(name = "linkedin")
-    String mLinkedin;
+    String linkedin;
     @JsonField(name = "twitter")
-    String mTwitter;
+    String twitter;
     @JsonField(name = "website_url")
-    Uri mWebsiteUrl;
+    Uri websiteUrl;
 
     public User() {}
 
     public Date getCreatedAt() {
-        return mCreatedAt;
+        return createdAt;
     }
 
     public boolean isAdmin() {
-        return mIsAdmin;
+        return isAdmin;
     }
 
     public String getBio() {
-        return mBio;
+        return bio;
     }
 
     public String getSkype() {
-        return mSkype;
+        return skype;
     }
 
     public String getLinkedin() {
-        return mLinkedin;
+        return linkedin;
     }
 
     public String getTwitter() {
-        return mTwitter;
+        return twitter;
     }
 
     public Uri getWebsiteUrl() {
-        return mWebsiteUrl;
+        return websiteUrl;
     }
 }

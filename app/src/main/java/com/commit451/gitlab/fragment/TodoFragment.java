@@ -11,17 +11,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.TodoAdapter;
 import com.commit451.gitlab.model.api.Todo;
 import com.commit451.gitlab.navigation.Navigator;
-import com.commit451.gitlab.util.PaginationUtil;
+import com.commit451.gitlab.rx.CustomResponseSingleObserver;
+import com.commit451.gitlab.util.LinkHeaderParser;
 
 import java.util.List;
 
 import butterknife.BindView;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
+import retrofit2.Response;
 import timber.log.Timber;
 
 public class TodoFragment extends ButterKnifeFragment {
@@ -41,101 +45,36 @@ public class TodoFragment extends ButterKnifeFragment {
     }
 
     @BindView(R.id.swipe_layout)
-    SwipeRefreshLayout mSwipeRefreshLayout;
+    SwipeRefreshLayout swipeRefreshLayout;
     @BindView(R.id.list)
-    RecyclerView mProjectsListView;
+    RecyclerView listTodos;
     @BindView(R.id.message_text)
-    TextView mMessageView;
+    TextView textMessage;
 
-    LinearLayoutManager mLayoutManager;
-    TodoAdapter mTodoAdapter;
+    LinearLayoutManager layoutManagerTodos;
+    TodoAdapter adapterTodos;
 
-    int mMode;
-    Uri mNextPageUrl;
-    boolean mLoading = false;
+    int mode;
+    Uri nextPageUrl;
+    boolean loading = false;
 
-    private final RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
+    private final RecyclerView.OnScrollListener onScrollListener = new RecyclerView.OnScrollListener() {
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
             super.onScrolled(recyclerView, dx, dy);
-            int visibleItemCount = mLayoutManager.getChildCount();
-            int totalItemCount = mLayoutManager.getItemCount();
-            int firstVisibleItem = mLayoutManager.findFirstVisibleItemPosition();
-            if (firstVisibleItem + visibleItemCount >= totalItemCount && !mLoading && mNextPageUrl != null) {
+            int visibleItemCount = layoutManagerTodos.getChildCount();
+            int totalItemCount = layoutManagerTodos.getItemCount();
+            int firstVisibleItem = layoutManagerTodos.findFirstVisibleItemPosition();
+            if (firstVisibleItem + visibleItemCount >= totalItemCount && !loading && nextPageUrl != null) {
                 loadMore();
             }
-        }
-    };
-
-    private final EasyCallback<List<Todo>> mProjectsCallback = new EasyCallback<List<Todo>>() {
-        @Override
-        public void success(@NonNull List<Todo> response) {
-            mLoading = false;
-            if (getView() == null) {
-                return;
-            }
-            mSwipeRefreshLayout.setRefreshing(false);
-            if (response.isEmpty()) {
-                mMessageView.setVisibility(View.VISIBLE);
-                mMessageView.setText(R.string.no_todos);
-            }
-            mTodoAdapter.setData(response);
-            mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
-            Timber.d("Next page url " + mNextPageUrl);
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            mLoading = false;
-            Timber.e(t, null);
-            if (getView() == null) {
-                return;
-            }
-            mSwipeRefreshLayout.setRefreshing(false);
-            mMessageView.setVisibility(View.VISIBLE);
-            mMessageView.setText(R.string.connection_error);
-            mTodoAdapter.setData(null);
-            mNextPageUrl = null;
-        }
-    };
-
-    private final EasyCallback<List<Todo>> mMoreProjectsCallback = new EasyCallback<List<Todo>>() {
-        @Override
-        public void success(@NonNull List<Todo> response) {
-            mLoading = false;
-            if (getView() == null) {
-                return;
-            }
-            mTodoAdapter.setLoading(false);
-            mTodoAdapter.addData(response);
-            mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
-            Timber.d("Next page url " + mNextPageUrl);
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            mLoading = false;
-            Timber.e(t, null);
-
-            if (getView() == null) {
-                return;
-            }
-            mTodoAdapter.setLoading(false);
-        }
-    };
-
-    private final TodoAdapter.Listener mProjectsListener = new TodoAdapter.Listener() {
-
-        @Override
-        public void onTodoClicked(Todo todo) {
-            Navigator.navigateToUrl(getActivity(), Uri.parse(todo.getTargetUrl()), App.instance().getAccount());
         }
     };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mMode = getArguments().getInt(EXTRA_MODE);
+        mode = getArguments().getInt(EXTRA_MODE);
     }
 
     @Override
@@ -147,13 +86,18 @@ public class TodoFragment extends ButterKnifeFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mTodoAdapter = new TodoAdapter(mProjectsListener);
-        mLayoutManager = new LinearLayoutManager(getActivity());
-        mProjectsListView.setLayoutManager(mLayoutManager);
-        mProjectsListView.setAdapter(mTodoAdapter);
-        mProjectsListView.addOnScrollListener(mOnScrollListener);
+        adapterTodos = new TodoAdapter(new TodoAdapter.Listener() {
+            @Override
+            public void onTodoClicked(Todo todo) {
+                Navigator.navigateToUrl(getActivity(), Uri.parse(todo.getTargetUrl()), App.get().getAccount());
+            }
+        });
+        layoutManagerTodos = new LinearLayoutManager(getActivity());
+        listTodos.setLayoutManager(layoutManagerTodos);
+        listTodos.setAdapter(adapterTodos);
+        listTodos.addOnScrollListener(onScrollListener);
 
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 loadData();
@@ -168,22 +112,56 @@ public class TodoFragment extends ButterKnifeFragment {
         if (getView() == null) {
             return;
         }
-        mMessageView.setVisibility(View.GONE);
+        textMessage.setVisibility(View.GONE);
 
-        mNextPageUrl = null;
+        nextPageUrl = null;
 
-        switch (mMode) {
+        switch (mode) {
             case MODE_TODO:
                 showLoading();
-                App.instance().getGitLab().getTodos(Todo.STATE_PENDING).enqueue(mProjectsCallback);
+                getTodos(App.get().getGitLab().getTodos(Todo.STATE_PENDING));
                 break;
             case MODE_DONE:
                 showLoading();
-                App.instance().getGitLab().getTodos(Todo.STATE_DONE).enqueue(mProjectsCallback);
+                getTodos(App.get().getGitLab().getTodos(Todo.STATE_DONE));
                 break;
             default:
-                throw new IllegalStateException(mMode + " is not defined");
+                throw new IllegalStateException(mode + " is not defined");
         }
+    }
+
+    private void getTodos(Single<Response<List<Todo>>> observable) {
+        observable
+                .compose(this.<Response<List<Todo>>>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new CustomResponseSingleObserver<List<Todo>>() {
+
+                    @Override
+                    public void error(@NonNull Throwable e) {
+                        loading = false;
+                        Timber.e(e);
+                        swipeRefreshLayout.setRefreshing(false);
+                        textMessage.setVisibility(View.VISIBLE);
+                        textMessage.setText(R.string.connection_error);
+                        adapterTodos.setData(null);
+                        nextPageUrl = null;
+                    }
+
+                    @Override
+                    public void responseSuccess(@NonNull List<Todo> todos) {
+                        loading = false;
+
+                        swipeRefreshLayout.setRefreshing(false);
+                        if (todos.isEmpty()) {
+                            textMessage.setVisibility(View.VISIBLE);
+                            textMessage.setText(R.string.no_todos);
+                        }
+                        adapterTodos.setData(todos);
+                        nextPageUrl = LinkHeaderParser.parse(response()).getNext();
+                        Timber.d("Next page url " + nextPageUrl);
+                    }
+                });
     }
 
     private void loadMore() {
@@ -191,22 +169,43 @@ public class TodoFragment extends ButterKnifeFragment {
             return;
         }
 
-        if (mNextPageUrl == null) {
+        if (nextPageUrl == null) {
             return;
         }
-        mLoading = true;
-        mTodoAdapter.setLoading(true);
-        Timber.d("loadMore called for " + mNextPageUrl);
-        App.instance().getGitLab().getTodosByUrl(mNextPageUrl.toString()).enqueue(mMoreProjectsCallback);
+        loading = true;
+        adapterTodos.setLoading(true);
+        Timber.d("loadMore called for " + nextPageUrl);
+        App.get().getGitLab().getTodosByUrl(nextPageUrl.toString())
+                .compose(this.<Response<List<Todo>>>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new CustomResponseSingleObserver<List<Todo>>() {
+
+                    @Override
+                    public void error(@NonNull Throwable e) {
+                        loading = false;
+                        Timber.e(e);
+                        adapterTodos.setLoading(false);
+                    }
+
+                    @Override
+                    public void responseSuccess(@NonNull List<Todo> todos) {
+                        loading = false;
+                        adapterTodos.setLoading(false);
+                        adapterTodos.addData(todos);
+                        nextPageUrl = LinkHeaderParser.parse(response()).getNext();
+                        Timber.d("Next page url " + nextPageUrl);
+                    }
+                });
     }
 
     private void showLoading() {
-        mLoading = true;
-        mSwipeRefreshLayout.post(new Runnable() {
+        loading = true;
+        swipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
-                if (mSwipeRefreshLayout != null) {
-                    mSwipeRefreshLayout.setRefreshing(true);
+                if (swipeRefreshLayout != null) {
+                    swipeRefreshLayout.setRefreshing(true);
                 }
             }
         });

@@ -23,8 +23,10 @@ public class BreadcrumbViewHolder extends RecyclerView.ViewHolder {
         return new BreadcrumbViewHolder(view);
     }
 
-    @BindView(R.id.breadcrumb_text) TextView mTextView;
-    @BindView(R.id.breadcrumb_arrow) ImageView mArrowView;
+    @BindView(R.id.breadcrumb_text)
+    TextView textBreadcrumb;
+    @BindView(R.id.breadcrumb_arrow)
+    ImageView buttonArrow;
 
     public BreadcrumbViewHolder(View view) {
         super(view);
@@ -32,11 +34,11 @@ public class BreadcrumbViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(String breadcrumb, boolean showArrow) {
-        mTextView.setText(breadcrumb);
+        textBreadcrumb.setText(breadcrumb);
         if (showArrow) {
-            mArrowView.setVisibility(View.VISIBLE);
+            buttonArrow.setVisibility(View.VISIBLE);
         } else {
-            mArrowView.setVisibility(View.GONE);
+            buttonArrow.setVisibility(View.GONE);
         }
     }
 }

@@ -17,8 +17,8 @@ import javax.net.ssl.SSLSocketFactory;
 public class CustomSSLSocketFactory extends SSLSocketFactory {
 
     /**
-     * You may be wondering why this is named "delegate" which seems to break the convention
-     * of the rest of the project. See here for deets:
+     * You may be wondering why this is named "delegate"
+     * See here for deets:
      * https://github.com/square/okhttp/issues/2323
      */
     private final SSLSocketFactory delegate;

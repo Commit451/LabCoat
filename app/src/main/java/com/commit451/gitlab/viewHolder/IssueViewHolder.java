@@ -28,10 +28,14 @@ public class IssueViewHolder extends RecyclerView.ViewHolder {
         return new IssueViewHolder(view);
     }
 
-    @BindView(R.id.issue_state) TextView mStateView;
-    @BindView(R.id.issue_image) ImageView mImageView;
-    @BindView(R.id.issue_message) TextView mMessageView;
-    @BindView(R.id.issue_creator) TextView mCreatorView;
+    @BindView(R.id.issue_state)
+    TextView textState;
+    @BindView(R.id.issue_image)
+    ImageView image;
+    @BindView(R.id.issue_message)
+    TextView textMessage;
+    @BindView(R.id.issue_creator)
+    TextView textCreator;
 
     public IssueViewHolder(View view) {
         super(view);
@@ -40,28 +44,28 @@ public class IssueViewHolder extends RecyclerView.ViewHolder {
 
     public void bind(Issue issue) {
 
-        switch (issue.getState()){
+        switch (issue.getState()) {
             case Issue.STATE_OPENED:
-                mStateView.setText(itemView.getResources().getString(R.string.issue_open));
+                textState.setText(itemView.getResources().getString(R.string.issue_open));
                 break;
             case Issue.STATE_CLOSED:
-                mStateView.setText(itemView.getResources().getString(R.string.issue_closed));
+                textState.setText(itemView.getResources().getString(R.string.issue_closed));
                 break;
             default:
-                mStateView.setVisibility(View.GONE);
+                textState.setVisibility(View.GONE);
                 break;
         }
 
         if (issue.getAssignee() != null) {
-            App.instance().getPicasso()
+            App.get().getPicasso()
                     .load(ImageUtil.getAvatarUrl(issue.getAssignee(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size)))
                     .transform(new CircleTransformation())
-                    .into(mImageView);
+                    .into(image);
         } else {
-            mImageView.setImageBitmap(null);
+            image.setImageBitmap(null);
         }
 
-        mMessageView.setText(issue.getTitle());
+        textMessage.setText(issue.getTitle());
 
         String time = "";
         if (issue.getCreatedAt() != null) {
@@ -78,6 +82,6 @@ public class IssueViewHolder extends RecyclerView.ViewHolder {
         }
         id = "#" + issueId;
 
-        mCreatorView.setText(String.format(itemView.getContext().getString(R.string.opened_time), id, time, author));
+        textCreator.setText(String.format(itemView.getContext().getString(R.string.opened_time), id, time, author));
     }
 }

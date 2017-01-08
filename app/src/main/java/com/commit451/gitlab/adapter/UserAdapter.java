@@ -16,30 +16,18 @@ import java.util.Collection;
 /**
  * Adapter for a list of users
  */
-public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
+public class UserAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
 
     private static final int FOOTER_COUNT = 1;
 
     private static final int TYPE_ITEM = 0;
     private static final int TYPE_FOOTER = 1;
 
-    public interface Listener {
-        void onUserClicked(UserBasic user, UserViewHolder userViewHolder);
-    }
-    private Listener mListener;
-    private ArrayList<UserBasic> mData;
-    private boolean mLoading = false;
+    private Listener listener;
+    private ArrayList<UserBasic> values;
+    private boolean loading;
 
-    private final View.OnClickListener mItemClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            int position = (int) v.getTag(R.id.list_position);
-            UserViewHolder holder = (UserViewHolder) v.getTag(R.id.list_view_holder);
-            mListener.onUserClicked(getUser(position), holder);
-        }
-    };
-
-    private final GridLayoutManager.SpanSizeLookup mSpanSizeLookup = new GridLayoutManager.SpanSizeLookup() {
+    private final GridLayoutManager.SpanSizeLookup spanSizeLookup = new GridLayoutManager.SpanSizeLookup() {
         @Override
         public int getSpanSize(int position) {
             int viewType = getItemViewType(position);
@@ -51,9 +39,9 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     };
 
-    public UsersAdapter(Listener listener) {
-        mListener = listener;
-        mData = new ArrayList<>();
+    public UserAdapter(Listener listener) {
+        this.listener = listener;
+        values = new ArrayList<>();
     }
 
     @Override
@@ -61,7 +49,14 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         switch (viewType) {
             case TYPE_ITEM:
                 UserViewHolder holder = UserViewHolder.inflate(parent);
-                holder.itemView.setOnClickListener(mItemClickListener);
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int position = (int) v.getTag(R.id.list_position);
+                        UserViewHolder holder = (UserViewHolder) v.getTag(R.id.list_view_holder);
+                        listener.onUserClicked(getUser(position), holder);
+                    }
+                });
                 return holder;
             case TYPE_FOOTER:
                 return LoadingFooterViewHolder.inflate(parent);
@@ -72,17 +67,17 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof UserViewHolder) {
-            ((UserViewHolder) holder).bind(mData.get(position));
+            ((UserViewHolder) holder).bind(values.get(position));
             holder.itemView.setTag(R.id.list_position, position);
             holder.itemView.setTag(R.id.list_view_holder, holder);
         } else if (holder instanceof LoadingFooterViewHolder) {
-            ((LoadingFooterViewHolder) holder).bind(mLoading);
+            ((LoadingFooterViewHolder) holder).bind(loading);
         }
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (position == mData.size()) {
+        if (position == values.size()) {
             return TYPE_FOOTER;
         } else {
             return TYPE_ITEM;
@@ -91,36 +86,40 @@ public class UsersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public int getItemCount() {
-        return mData.size() + FOOTER_COUNT;
+        return values.size() + FOOTER_COUNT;
     }
 
     private UserBasic getUser(int position) {
-        return mData.get(position);
+        return values.get(position);
     }
 
     public void setData(Collection<UserBasic> users) {
-        mData.clear();
+        values.clear();
         addData(users);
     }
 
     public void addData(Collection<UserBasic> users) {
         if (users != null) {
-            mData.addAll(users);
+            values.addAll(users);
         }
         notifyDataSetChanged();
     }
 
     public void clearData() {
-        mData.clear();
+        values.clear();
         notifyDataSetChanged();
     }
 
     public void setLoading(boolean loading) {
-        mLoading = loading;
-        notifyItemChanged(mData.size());
+        this.loading = loading;
+        notifyItemChanged(values.size());
     }
 
     public GridLayoutManager.SpanSizeLookup getSpanSizeLookup() {
-        return mSpanSizeLookup;
+        return spanSizeLookup;
+    }
+
+    public interface Listener {
+        void onUserClicked(UserBasic user, UserViewHolder userViewHolder);
     }
 }

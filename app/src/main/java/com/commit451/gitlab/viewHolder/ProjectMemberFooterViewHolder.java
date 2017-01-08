@@ -15,7 +15,7 @@ import butterknife.ButterKnife;
 /**
  * Shows a button to take you to a group
  */
-public class ProjectMemberFooterViewHolder extends RecyclerView.ViewHolder{
+public class ProjectMemberFooterViewHolder extends RecyclerView.ViewHolder {
 
     public static ProjectMemberFooterViewHolder inflate(ViewGroup parent) {
         View view = LayoutInflater.from(parent.getContext())
@@ -23,7 +23,8 @@ public class ProjectMemberFooterViewHolder extends RecyclerView.ViewHolder{
         return new ProjectMemberFooterViewHolder(view);
     }
 
-    @BindView(R.id.button) Button mButton;
+    @BindView(R.id.button)
+    Button button;
 
     public ProjectMemberFooterViewHolder(View view) {
         super(view);
@@ -31,6 +32,6 @@ public class ProjectMemberFooterViewHolder extends RecyclerView.ViewHolder{
     }
 
     public void bind(ProjectNamespace namespace) {
-        mButton.setText(String.format(itemView.getResources().getString(R.string.group_members), namespace.getName()));
+        button.setText(String.format(itemView.getResources().getString(R.string.group_members), namespace.getName()));
     }
 }

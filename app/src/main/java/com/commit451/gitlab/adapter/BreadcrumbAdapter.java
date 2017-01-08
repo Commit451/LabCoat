@@ -15,10 +15,10 @@ import java.util.List;
  * Shows the current file path
  */
 public class BreadcrumbAdapter extends RecyclerView.Adapter<BreadcrumbViewHolder> {
-    private List<Breadcrumb> mValues;
+    private List<Breadcrumb> values;
 
     public BreadcrumbAdapter() {
-        mValues = new ArrayList<>();
+        values = new ArrayList<>();
         notifyDataSetChanged();
     }
 
@@ -43,7 +43,7 @@ public class BreadcrumbAdapter extends RecyclerView.Adapter<BreadcrumbViewHolder
     @Override
     public void onBindViewHolder(final BreadcrumbViewHolder holder, int position) {
         String title = "";
-        boolean showArrow = position != mValues.size() - 1;
+        boolean showArrow = position != values.size() - 1;
 
         Breadcrumb breadcrumb = getValueAt(position);
         if (breadcrumb != null) {
@@ -56,24 +56,24 @@ public class BreadcrumbAdapter extends RecyclerView.Adapter<BreadcrumbViewHolder
 
     @Override
     public int getItemCount() {
-        return mValues.size();
+        return values.size();
     }
 
     public void setData(Collection<Breadcrumb> breadcrumbs) {
-        mValues.clear();
+        values.clear();
         if (breadcrumbs != null) {
-            mValues.addAll(breadcrumbs);
+            values.addAll(breadcrumbs);
             notifyItemRangeInserted(0, breadcrumbs.size());
         }
         notifyDataSetChanged();
     }
 
     public Breadcrumb getValueAt(int position) {
-        if (position < 0 || position >= mValues.size()) {
+        if (position < 0 || position >= values.size()) {
             return null;
         }
 
-        return mValues.get(position);
+        return values.get(position);
     }
 
     public static class Breadcrumb {

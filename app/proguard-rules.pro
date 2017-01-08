@@ -27,21 +27,6 @@
 # Picasso rules
 -dontwarn com.squareup.okhttp.**
 
-# Retrofit rules
-# Platform calls Class.forName on types which do not exist on Android to determine platform.
--dontnote retrofit2.Platform
-# Platform used when running on RoboVM on iOS. Will not be used at runtime.
--dontnote retrofit2.Platform$IOS$MainThreadExecutor
-# Platform used when running on Java 8 VMs. Will not be used at runtime.
--dontwarn retrofit2.Platform$Java8
-# Retain generic type information for use by reflection by converters and adapters.
--keepattributes Signature
-# Retain declared checked exceptions for use by a Proxy instance.
--keepattributes Exceptions
-
-# Okio
--dontwarn okio.**
-
 # Simple-Xml Proguard Config
 # Keep public classes and methods.
 -dontwarn com.bea.xml.stream.**
@@ -52,18 +37,6 @@
 }
 -dontwarn javax.xml.stream.events.**
 -dontwarn javax.xml.**
-
-# EventBus
--keepattributes *Annotation*
--keepclassmembers class ** {
-    @org.greenrobot.eventbus.Subscribe <methods>;
-}
--keep enum org.greenrobot.eventbus.ThreadMode { *; }
-
-# Only required if you use AsyncExecutor
--keepclassmembers class * extends org.greenrobot.eventbus.util.ThrowableFailureEvent {
-    <init>(java.lang.Throwable);
-}
 
 ## joda-time-android 2.8.0
 # This is only necessary if you are not including the optional joda-convert dependency
@@ -77,14 +50,6 @@
 }
 
 -keep class org.parceler.Parceler$$Parcels
-
-# Unicoding Bypass library
--keep class in.uncod.android.** { *; }
-
-# LoganSquare
--keep class com.bluelinelabs.logansquare.** { *; }
--keep @com.bluelinelabs.logansquare.annotation.JsonObject class *
--keep class **$$JsonObjectMapper { *; }
 
 # Custom rules
 -keep class com.commit451.gitlab.ssl.CustomSSLSocketFactory

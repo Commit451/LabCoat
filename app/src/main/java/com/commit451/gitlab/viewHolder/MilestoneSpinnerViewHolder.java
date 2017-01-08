@@ -25,7 +25,7 @@ public class MilestoneSpinnerViewHolder extends RecyclerView.ViewHolder {
     }
 
     @BindView(R.id.title)
-    TextView mTitle;
+    TextView textTitle;
 
     public MilestoneSpinnerViewHolder(View view) {
         super(view);
@@ -34,9 +34,9 @@ public class MilestoneSpinnerViewHolder extends RecyclerView.ViewHolder {
 
     public void bind(@Nullable Milestone milestone) {
         if (milestone == null) {
-            mTitle.setText(R.string.no_milestone);
+            textTitle.setText(R.string.no_milestone);
         } else {
-            mTitle.setText(milestone.getTitle());
+            textTitle.setText(milestone.getTitle());
         }
     }
 }

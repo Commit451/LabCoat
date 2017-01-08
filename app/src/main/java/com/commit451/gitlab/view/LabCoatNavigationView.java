@@ -15,23 +15,23 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.commit451.easel.Easel;
-import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ActivityActivity;
 import com.commit451.gitlab.activity.GroupsActivity;
 import com.commit451.gitlab.activity.ProjectsActivity;
 import com.commit451.gitlab.activity.TodosActivity;
-import com.commit451.gitlab.adapter.AccountsAdapter;
-import com.commit451.gitlab.data.Prefs;
+import com.commit451.gitlab.adapter.AccountAdapter;
 import com.commit451.gitlab.event.CloseDrawerEvent;
 import com.commit451.gitlab.event.LoginEvent;
 import com.commit451.gitlab.event.ReloadDataEvent;
 import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.model.api.UserFull;
 import com.commit451.gitlab.navigation.Navigator;
+import com.commit451.gitlab.rx.CustomResponseSingleObserver;
 import com.commit451.gitlab.transformation.CircleTransformation;
 import com.commit451.gitlab.util.ImageUtil;
+
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.Collections;
@@ -41,6 +41,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -48,56 +50,51 @@ import timber.log.Timber;
  */
 public class LabCoatNavigationView extends NavigationView {
 
-    @BindView(R.id.profile_image) ImageView mProfileImage;
-    @BindView(R.id.profile_user) TextView mUserName;
-    @BindView(R.id.profile_email) TextView mUserEmail;
-    @BindView(R.id.arrow) View mArrow;
+    @BindView(R.id.profile_image)
+    ImageView imageProfile;
+    @BindView(R.id.profile_user)
+    TextView textUserName;
+    @BindView(R.id.profile_email)
+    TextView textEmail;
+    @BindView(R.id.arrow)
+    View iconArrow;
 
-    RecyclerView mAccountList;
-    AccountsAdapter mAccountAdapter;
-    EventReceiver mEventReceiver;
+    RecyclerView listAccounts;
+    AccountAdapter adapterAccounts;
 
     private final OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new OnNavigationItemSelectedListener() {
         @Override
         public boolean onNavigationItemSelected(MenuItem menuItem) {
             switch (menuItem.getItemId()) {
                 case R.id.nav_projects:
-                    if (getContext() instanceof ProjectsActivity) {
-
-                    } else {
+                    if (!(getContext() instanceof ProjectsActivity)) {
                         Navigator.navigateToProjects((Activity) getContext());
                         ((Activity) getContext()).finish();
-                        ((Activity)getContext()).overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
+                        ((Activity) getContext()).overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
                     }
                     App.bus().post(new CloseDrawerEvent());
                     return true;
                 case R.id.nav_groups:
-                    if (getContext() instanceof GroupsActivity) {
-
-                    } else {
+                    if (!(getContext() instanceof GroupsActivity)) {
                         Navigator.navigateToGroups((Activity) getContext());
                         ((Activity) getContext()).finish();
-                        ((Activity)getContext()).overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
+                        ((Activity) getContext()).overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
                     }
                     App.bus().post(new CloseDrawerEvent());
                     return true;
                 case R.id.nav_activity:
-                    if (getContext() instanceof ActivityActivity) {
-
-                    } else {
+                    if (!(getContext() instanceof ActivityActivity)) {
                         Navigator.navigateToActivity((Activity) getContext());
                         ((Activity) getContext()).finish();
-                        ((Activity)getContext()).overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
+                        ((Activity) getContext()).overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
                     }
                     App.bus().post(new CloseDrawerEvent());
                     return true;
                 case R.id.nav_todos:
-                    if (getContext() instanceof TodosActivity) {
-
-                    } else {
+                    if (!(getContext() instanceof TodosActivity)) {
                         Navigator.navigateToTodos((Activity) getContext());
                         ((Activity) getContext()).finish();
-                        ((Activity)getContext()).overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
+                        ((Activity) getContext()).overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
                     }
                     App.bus().post(new CloseDrawerEvent());
                     return true;
@@ -114,7 +111,7 @@ public class LabCoatNavigationView extends NavigationView {
         }
     };
 
-    private final AccountsAdapter.Listener mAccountsAdapterListener = new AccountsAdapter.Listener() {
+    private final AccountAdapter.Listener mAccountsAdapterListener = new AccountAdapter.Listener() {
         @Override
         public void onAccountClicked(Account account) {
             switchToAccount(account);
@@ -129,41 +126,23 @@ public class LabCoatNavigationView extends NavigationView {
 
         @Override
         public void onAccountLogoutClicked(Account account) {
-            Prefs.removeAccount(getContext(), account);
-            List<Account> accounts = Account.getAccounts(getContext());
+            App.get().getPrefs().removeAccount(account);
+            List<Account> accounts = Account.getAccounts();
 
             if (accounts.isEmpty()) {
                 Navigator.navigateToLogin((Activity) getContext());
                 ((Activity) getContext()).finish();
             } else {
-                if (account.equals(App.instance().getAccount())) {
+                if (account.equals(App.get().getAccount())) {
                     switchToAccount(accounts.get(0));
                 }
             }
         }
     };
 
-    private final EasyCallback<UserFull> mUserCallback = new EasyCallback<UserFull>() {
-
-        @Override
-        public void success(@NonNull UserFull response) {
-            //Store the newly retrieved user to the account so that it stays up to date
-            // in local storage
-            Account account = App.instance().getAccount();
-            account.setUser(response);
-            Prefs.updateAccount(getContext(), account);
-            bindUser(response);
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t, null);
-        }
-    };
-
     @OnClick(R.id.profile_image)
     public void onUserImageClick(ImageView imageView) {
-        Navigator.navigateToUser((Activity) getContext(), imageView, App.instance().getAccount().getUser());
+        Navigator.navigateToUser((Activity) getContext(), imageView, App.get().getAccount().getUser());
     }
 
     @OnClick(R.id.drawer_header)
@@ -187,8 +166,7 @@ public class LabCoatNavigationView extends NavigationView {
     }
 
     private void init() {
-        mEventReceiver = new EventReceiver();
-        App.bus().register(mEventReceiver);
+        App.bus().register(this);
         int colorPrimary = Easel.getThemeAttrColor(getContext(), R.attr.colorPrimary);
 
         setNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -197,15 +175,15 @@ public class LabCoatNavigationView extends NavigationView {
         View header = inflateHeaderView(R.layout.header_nav_drawer);
         ButterKnife.bind(this, header);
 
-        mAccountList = new RecyclerView(getContext());
-        mAccountList.setLayoutManager(new LinearLayoutManager(getContext()));
-        addView(mAccountList);
-        LayoutParams params = (FrameLayout.LayoutParams) mAccountList.getLayoutParams();
+        listAccounts = new RecyclerView(getContext());
+        listAccounts.setLayoutManager(new LinearLayoutManager(getContext()));
+        addView(listAccounts);
+        LayoutParams params = (FrameLayout.LayoutParams) listAccounts.getLayoutParams();
         params.setMargins(0, getResources().getDimensionPixelSize(R.dimen.account_header_height), 0, 0);
-        mAccountList.setBackgroundColor(colorPrimary);
-        mAccountList.setVisibility(View.GONE);
-        mAccountAdapter = new AccountsAdapter(getContext(), mAccountsAdapterListener);
-        mAccountList.setAdapter(mAccountAdapter);
+        listAccounts.setBackgroundColor(colorPrimary);
+        listAccounts.setVisibility(View.GONE);
+        adapterAccounts = new AccountAdapter(getContext(), mAccountsAdapterListener);
+        listAccounts.setAdapter(adapterAccounts);
         setSelectedNavigationItem();
         setAccounts();
         loadCurrentUser();
@@ -213,12 +191,12 @@ public class LabCoatNavigationView extends NavigationView {
 
     @Override
     protected void onDetachedFromWindow() {
-        App.bus().unregister(mEventReceiver);
+        App.bus().unregister(this);
         super.onDetachedFromWindow();
     }
 
     private void setSelectedNavigationItem() {
-        for (int i=0; i<getMenu().size(); i++) {
+        for (int i = 0; i < getMenu().size(); i++) {
             MenuItem menuItem = getMenu().getItem(i);
             if (getContext() instanceof ProjectsActivity && menuItem.getItemId() == R.id.nav_projects) {
                 menuItem.setChecked(true);
@@ -241,15 +219,34 @@ public class LabCoatNavigationView extends NavigationView {
     }
 
     private void setAccounts() {
-        List<Account> accounts = Prefs.getAccounts(getContext());
+        List<Account> accounts = App.get().getPrefs().getAccounts();
         Timber.d("Got %s accounts", accounts.size());
         Collections.sort(accounts);
         Collections.reverse(accounts);
-        mAccountAdapter.setAccounts(accounts);
+        adapterAccounts.setAccounts(accounts);
     }
 
     private void loadCurrentUser() {
-        App.instance().getGitLab().getThisUser().enqueue(mUserCallback);
+        App.get().getGitLab().getThisUser()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new CustomResponseSingleObserver<UserFull>() {
+
+                    @Override
+                    public void error(@NonNull Throwable e) {
+                        Timber.e(e);
+                    }
+
+                    @Override
+                    public void responseSuccess(@NonNull UserFull userFull) {
+                        //Store the newly retrieved user to the account so that it stays up to date
+                        // in local storage
+                        Account account = App.get().getAccount();
+                        account.setUser(userFull);
+                        App.get().getPrefs().updateAccount(account);
+                        bindUser(userFull);
+                    }
+                });
     }
 
     private void bindUser(UserFull user) {
@@ -257,64 +254,61 @@ public class LabCoatNavigationView extends NavigationView {
             return;
         }
         if (user.getUsername() != null) {
-            mUserName.setText(user.getUsername());
+            textUserName.setText(user.getUsername());
         }
         if (user.getEmail() != null) {
-            mUserEmail.setText(user.getEmail());
+            textEmail.setText(user.getEmail());
         }
         Uri url = ImageUtil.getAvatarUrl(user, getResources().getDimensionPixelSize(R.dimen.larger_image_size));
-        App.instance().getPicasso()
+        App.get().getPicasso()
                 .load(url)
                 .transform(new CircleTransformation())
-                .into(mProfileImage);
+                .into(imageProfile);
     }
 
     /**
      * Toggle the visibility of accounts. Meaning hide it if it is showing, show it if it is hidden
      */
     private void toggleAccounts() {
-        if (mAccountList.getVisibility() == View.GONE) {
-            mAccountList.setVisibility(View.VISIBLE);
-            mAccountList.setAlpha(0.0f);
-            mAccountList.animate().alpha(1.0f);
-            mArrow.animate().rotation(180.0f);
+        if (listAccounts.getVisibility() == View.GONE) {
+            listAccounts.setVisibility(View.VISIBLE);
+            listAccounts.setAlpha(0.0f);
+            listAccounts.animate().alpha(1.0f);
+            iconArrow.animate().rotation(180.0f);
         } else {
-            mAccountList.animate().alpha(0.0f).withEndAction(new Runnable() {
+            listAccounts.animate().alpha(0.0f).withEndAction(new Runnable() {
                 @Override
                 public void run() {
-                    if (mAccountList != null) {
-                        mAccountList.setVisibility(View.GONE);
+                    if (listAccounts != null) {
+                        listAccounts.setVisibility(View.GONE);
                     }
                 }
             });
-            mArrow.animate().rotation(0.0f);
+            iconArrow.animate().rotation(0.0f);
         }
     }
 
     private void switchToAccount(Account account) {
         Timber.d("Switching to account: %s", account);
         account.setLastUsed(new Date());
-        App.instance().setAccount(account);
-        Prefs.updateAccount(getContext(), account);
+        App.get().setAccount(account);
+        App.get().getPrefs().updateAccount(account);
         bindUser(account.getUser());
         toggleAccounts();
         App.bus().post(new ReloadDataEvent());
         App.bus().post(new CloseDrawerEvent());
         // Trigger a reload in the adapter so that we will place the accounts
         // in the correct order from most recently used
-        mAccountAdapter.notifyDataSetChanged();
+        adapterAccounts.notifyDataSetChanged();
         loadCurrentUser();
     }
 
-    private class EventReceiver {
-
         @Subscribe
         public void onUserLoggedIn(LoginEvent event) {
-            if (mAccountAdapter != null) {
-                mAccountAdapter.addAccount(event.account);
-                mAccountAdapter.notifyDataSetChanged();
+            if (adapterAccounts != null) {
+                adapterAccounts.addAccount(event.account);
+                adapterAccounts.notifyDataSetChanged();
                 loadCurrentUser();
             }
         }
-    }
 }

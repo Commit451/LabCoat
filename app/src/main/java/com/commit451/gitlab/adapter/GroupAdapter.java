@@ -16,16 +16,13 @@ import java.util.Collection;
  */
 public class GroupAdapter extends RecyclerView.Adapter<GroupViewHolder> {
 
-    public interface Listener {
-        void onGroupClicked(Group group, GroupViewHolder groupViewHolder);
-    }
-    private Listener mListener;
+    private Listener listener;
 
-    private ArrayList<Group> mValues;
+    private ArrayList<Group> values;
 
     public GroupAdapter(Listener listener) {
-        mListener = listener;
-        mValues = new ArrayList<>();
+        this.listener = listener;
+        values = new ArrayList<>();
     }
 
     private final View.OnClickListener mOnItemClickListener = new View.OnClickListener() {
@@ -33,18 +30,18 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupViewHolder> {
         public void onClick(View v) {
             int position = (int) v.getTag(R.id.list_position);
             GroupViewHolder holder = (GroupViewHolder) v.getTag(R.id.list_view_holder);
-            mListener.onGroupClicked(getEntry(position), holder);
+            listener.onGroupClicked(getEntry(position), holder);
         }
     };
 
     public void setGroups(Collection<Group> groups) {
-        mValues.clear();
+        values.clear();
         addGroups(groups);
     }
 
     public void addGroups(Collection<Group> groups) {
         if (groups != null) {
-            mValues.addAll(groups);
+            values.addAll(groups);
         }
         notifyDataSetChanged();
     }
@@ -65,10 +62,14 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupViewHolder> {
 
     @Override
     public int getItemCount() {
-        return mValues.size();
+        return values.size();
     }
 
     private Group getEntry(int position) {
-        return mValues.get(position);
+        return values.get(position);
+    }
+
+    public interface Listener {
+        void onGroupClicked(Group group, GroupViewHolder groupViewHolder);
     }
 }

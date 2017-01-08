@@ -8,8 +8,7 @@ import android.support.v4.view.ViewPager;
 
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.BaseActivity;
-import com.commit451.gitlab.activity.ProjectsActivity;
-import com.commit451.gitlab.adapter.ProjectsPagerAdapter;
+import com.commit451.gitlab.adapter.ProjectPagerAdapter;
 import com.commit451.gitlab.api.GitLab;
 import com.commit451.gitlab.api.GitLabFactory;
 import com.commit451.gitlab.api.OkHttpClientFactory;
@@ -31,17 +30,17 @@ public class ProjectFeedWidgetConfigureProjectActivity extends BaseActivity impl
     private static final String EXTRA_ACCOUNT = "account";
 
     public static Intent newIntent(Context context, Account account) {
-        Intent intent = new Intent(context, ProjectsActivity.class);
+        Intent intent = new Intent(context, ProjectFeedWidgetConfigureProjectActivity.class);
         intent.putExtra(EXTRA_ACCOUNT, Parcels.wrap(account));
         return intent;
     }
 
     @BindView(R.id.tabs)
-    TabLayout mTabLayout;
+    TabLayout tabLayout;
     @BindView(R.id.pager)
-    ViewPager mViewPager;
+    ViewPager viewPager;
 
-    GitLab mGitLab;
+    GitLab gitLab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,15 +49,15 @@ public class ProjectFeedWidgetConfigureProjectActivity extends BaseActivity impl
         ButterKnife.bind(this);
 
         Account account = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_ACCOUNT));
-        mGitLab = GitLabFactory.create(account, OkHttpClientFactory.create(account, false).build());
+        gitLab = GitLabFactory.create(account, OkHttpClientFactory.create(account, false).build());
 
-        mViewPager.setAdapter(new ProjectsPagerAdapter(this, getSupportFragmentManager()));
-        mTabLayout.setupWithViewPager(mViewPager);
+        viewPager.setAdapter(new ProjectPagerAdapter(this, getSupportFragmentManager()));
+        tabLayout.setupWithViewPager(viewPager);
     }
 
     @Override
     public GitLab getGitLab() {
-        return mGitLab;
+        return gitLab;
     }
 
     @Override

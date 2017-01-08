@@ -35,11 +35,11 @@ public class MergeRequestHeaderViewHolder extends RecyclerView.ViewHolder {
     }
 
     @BindView(R.id.description)
-    TextView mDescriptionView;
+    TextView textDescription;
     @BindView(R.id.author_image)
-    ImageView mAuthorImageView;
+    ImageView imageAuthor;
     @BindView(R.id.author)
-    TextView mAuthorView;
+    TextView textAuthor;
 
     public MergeRequestHeaderViewHolder(View view) {
         super(view);
@@ -48,23 +48,23 @@ public class MergeRequestHeaderViewHolder extends RecyclerView.ViewHolder {
 
     public void bind(MergeRequest mergeRequest, Bypass bypass, Project project) {
         if (TextUtils.isEmpty(mergeRequest.getDescription())) {
-            mDescriptionView.setVisibility(View.GONE);
+            textDescription.setVisibility(View.GONE);
         } else {
-            mDescriptionView.setVisibility(View.VISIBLE);
+            textDescription.setVisibility(View.VISIBLE);
             String description = mergeRequest.getDescription();
             description = EmojiParser.parseToUnicode(description);
-            mDescriptionView.setText(bypass.markdownToSpannable(description,
-                    BypassImageGetterFactory.create(mDescriptionView,
-                            App.instance().getPicasso(),
-                            App.instance().getAccount().getServerUrl().toString(),
+            textDescription.setText(bypass.markdownToSpannable(description,
+                    BypassImageGetterFactory.create(textDescription,
+                            App.get().getPicasso(),
+                            App.get().getAccount().getServerUrl().toString(),
                             project)));
-            mDescriptionView.setMovementMethod(new InternalLinkMovementMethod(App.instance().getAccount().getServerUrl()));
+            textDescription.setMovementMethod(new InternalLinkMovementMethod(App.get().getAccount().getServerUrl()));
         }
 
-        App.instance().getPicasso()
+        App.get().getPicasso()
                 .load(ImageUtil.getAvatarUrl(mergeRequest.getAuthor(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size)))
                 .transform(new CircleTransformation())
-                .into(mAuthorImageView);
+                .into(imageAuthor);
 
         String author = "";
         if (mergeRequest.getAuthor() != null) {
@@ -74,6 +74,6 @@ public class MergeRequestHeaderViewHolder extends RecyclerView.ViewHolder {
         if (mergeRequest.getCreatedAt() != null) {
             author += " " + DateUtil.getRelativeTimeSpanString(itemView.getContext(), mergeRequest.getCreatedAt());
         }
-        mAuthorView.setText(author);
+        textAuthor.setText(author);
     }
 }

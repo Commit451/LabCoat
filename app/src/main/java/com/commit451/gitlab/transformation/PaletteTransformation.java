@@ -50,10 +50,10 @@ public final class PaletteTransformation implements Transformation {
      * @see Callback
      */
     public static abstract class PaletteCallback implements Callback {
-        private WeakReference<ImageView> mImageView;
+        private WeakReference<ImageView> imageView;
 
         public PaletteCallback(@NonNull ImageView imageView) {
-            mImageView = new WeakReference<>(imageView);
+            this.imageView = new WeakReference<>(imageView);
         }
 
         protected abstract void onSuccess(Palette palette);
@@ -68,7 +68,7 @@ public final class PaletteTransformation implements Transformation {
         }
 
         private ImageView getImageView() {
-            return mImageView.get();
+            return imageView.get();
         }
     }
 

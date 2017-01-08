@@ -17,21 +17,27 @@ import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.adapter.ProjectMembersAdapter;
-import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.dialog.AccessDialog;
 import com.commit451.gitlab.event.MemberAddedEvent;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Member;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.navigation.Navigator;
-import com.commit451.gitlab.util.PaginationUtil;
+import com.commit451.gitlab.rx.CustomResponseSingleObserver;
+import com.commit451.gitlab.rx.CustomSingleObserver;
+import com.commit451.gitlab.util.LinkHeaderParser;
 import com.commit451.gitlab.viewHolder.ProjectMemberViewHolder;
+
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
+import retrofit2.Response;
 import timber.log.Timber;
 
 public class ProjectMembersFragment extends ButterKnifeFragment {
@@ -40,126 +46,35 @@ public class ProjectMembersFragment extends ButterKnifeFragment {
         return new ProjectMembersFragment();
     }
 
-    @BindView(R.id.root) View mRoot;
-    @BindView(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
-    @BindView(R.id.list) RecyclerView mMembersListView;
-    @BindView(R.id.message_text) TextView mMessageView;
-    @BindView(R.id.add_user_button) FloatingActionButton mAddUserButton;
+    @BindView(R.id.root)
+    View root;
+    @BindView(R.id.swipe_layout)
+    SwipeRefreshLayout swipeRefreshLayout;
+    @BindView(R.id.list)
+    RecyclerView listMembers;
+    @BindView(R.id.message_text)
+    TextView textMessage;
+    @BindView(R.id.add_user_button)
+    FloatingActionButton buttonAddUser;
 
-    private Project mProject;
-    private EventReceiver mEventReceiver;
-    private ProjectMembersAdapter mAdapter;
-    private GridLayoutManager mProjectLayoutManager;
-    private Member mMember;
-    private Uri mNextPageUrl;
-    private boolean mLoading = false;
+    ProjectMembersAdapter adapterProjectMembers;
+    GridLayoutManager layoutManagerMembers;
 
-    private final RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
+    Project project;
+    Member member;
+    Uri nextPageUrl;
+    boolean loading = false;
+
+    private final RecyclerView.OnScrollListener onScrollListener = new RecyclerView.OnScrollListener() {
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
             super.onScrolled(recyclerView, dx, dy);
-            int visibleItemCount = mProjectLayoutManager.getChildCount();
-            int totalItemCount = mProjectLayoutManager.getItemCount();
-            int firstVisibleItem = mProjectLayoutManager.findFirstVisibleItemPosition();
-            if (firstVisibleItem + visibleItemCount >= totalItemCount && !mLoading && mNextPageUrl != null) {
+            int visibleItemCount = layoutManagerMembers.getChildCount();
+            int totalItemCount = layoutManagerMembers.getItemCount();
+            int firstVisibleItem = layoutManagerMembers.findFirstVisibleItemPosition();
+            if (firstVisibleItem + visibleItemCount >= totalItemCount && !loading && nextPageUrl != null) {
                 loadMore();
             }
-        }
-    };
-
-    private final AccessDialog.OnAccessChangedListener mOnAccessChangedListener = new AccessDialog.OnAccessChangedListener() {
-        @Override
-        public void onAccessChanged(Member member, String accessLevel) {
-            loadData();
-        }
-    };
-
-    private final ProjectMembersAdapter.Listener mMemberAdapterListener = new ProjectMembersAdapter.Listener() {
-        @Override
-        public void onProjectMemberClicked(Member member, ProjectMemberViewHolder memberGroupViewHolder) {
-            Navigator.navigateToUser(getActivity(), memberGroupViewHolder.mImageView, member);
-        }
-
-        @Override
-        public void onRemoveMember(Member member) {
-            mMember = member;
-            App.instance().getGitLab().removeProjectMember(mProject.getId(), member.getId()).enqueue(mRemoveMemberCallback);
-        }
-
-        @Override
-        public void onChangeAccess(Member member) {
-            AccessDialog accessDialog = new AccessDialog(getActivity(), member, mProject.getId());
-            accessDialog.setOnAccessChangedListener(mOnAccessChangedListener);
-            accessDialog.show();
-        }
-
-        @Override
-        public void onSeeGroupClicked() {
-            Navigator.navigateToGroup(getActivity(), mProject.getNamespace().getId());
-        }
-    };
-
-    private final EasyCallback<List<Member>> mProjectMembersCallback = new EasyCallback<List<Member>>() {
-        @Override
-        public void success(@NonNull List<Member> response) {
-            mLoading = false;
-            if (getView() == null) {
-                return;
-            }
-            mSwipeRefreshLayout.setRefreshing(false);
-            if (!response.isEmpty()) {
-                mMessageView.setVisibility(View.GONE);
-            } else if (mNextPageUrl == null) {
-                Timber.d("No project members found");
-                mMessageView.setText(R.string.no_project_members);
-                mMessageView.setVisibility(View.VISIBLE);
-            }
-
-            mAddUserButton.setVisibility(View.VISIBLE);
-
-            if (mNextPageUrl == null) {
-                mAdapter.setProjectMembers(response);
-            } else {
-                mAdapter.addProjectMembers(response);
-            }
-
-            mNextPageUrl = PaginationUtil.parse(getResponse()).getNext();
-            Timber.d("Next page url " + mNextPageUrl);
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            mLoading = false;
-            Timber.e(t, null);
-            if (getView() == null) {
-                return;
-            }
-            mSwipeRefreshLayout.setRefreshing(false);
-            mMessageView.setVisibility(View.VISIBLE);
-            mMessageView.setText(R.string.connection_error_users);
-            mAddUserButton.setVisibility(View.GONE);
-            mAdapter.setProjectMembers(null);
-            mNextPageUrl = null;
-        }
-    };
-
-    private final EasyCallback<Void> mRemoveMemberCallback = new EasyCallback<Void>() {
-        @Override
-        public void success(@NonNull Void response) {
-            if (getView() == null) {
-                return;
-            }
-            mAdapter.removeMember(mMember);
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t, null);
-            if (getView() == null) {
-                return;
-            }
-            Snackbar.make(mRoot, R.string.failed_to_remove_member, Snackbar.LENGTH_SHORT)
-                    .show();
         }
     };
 
@@ -172,17 +87,61 @@ public class ProjectMembersFragment extends ButterKnifeFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mEventReceiver = new EventReceiver();
-        App.bus().register(mEventReceiver);
+        App.bus().register(this);
 
-        mAdapter = new ProjectMembersAdapter(mMemberAdapterListener);
-        mProjectLayoutManager = new GridLayoutManager(getActivity(), 2);
-        mProjectLayoutManager.setSpanSizeLookup(mAdapter.getSpanSizeLookup());
-        mMembersListView.setLayoutManager(mProjectLayoutManager);
-        mMembersListView.setAdapter(mAdapter);
-        mMembersListView.addOnScrollListener(mOnScrollListener);
+        adapterProjectMembers = new ProjectMembersAdapter(new ProjectMembersAdapter.Listener() {
+            @Override
+            public void onProjectMemberClicked(Member member, ProjectMemberViewHolder memberGroupViewHolder) {
+                Navigator.navigateToUser(getActivity(), memberGroupViewHolder.image, member);
+            }
 
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRemoveMember(Member member) {
+                ProjectMembersFragment.this.member = member;
+                App.get().getGitLab().removeProjectMember(project.getId(), member.getId())
+                        .compose(ProjectMembersFragment.this.<String>bindToLifecycle())
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new CustomSingleObserver<String>() {
+
+                            @Override
+                            public void error(@NonNull Throwable t) {
+                                Timber.e(t);
+                                Snackbar.make(root, R.string.failed_to_remove_member, Snackbar.LENGTH_SHORT)
+                                        .show();
+                            }
+
+                            @Override
+                            public void success(@NonNull String s) {
+                                adapterProjectMembers.removeMember(ProjectMembersFragment.this.member);
+                            }
+                        });
+            }
+
+            @Override
+            public void onChangeAccess(Member member) {
+                AccessDialog accessDialog = new AccessDialog(getActivity(), member, project.getId());
+                accessDialog.setOnAccessChangedListener(new AccessDialog.OnAccessChangedListener() {
+                    @Override
+                    public void onAccessChanged(Member member, String accessLevel) {
+                        loadData();
+                    }
+                });
+                accessDialog.show();
+            }
+
+            @Override
+            public void onSeeGroupClicked() {
+                Navigator.navigateToGroup(getActivity(), project.getNamespace().getId());
+            }
+        });
+        layoutManagerMembers = new GridLayoutManager(getActivity(), 2);
+        layoutManagerMembers.setSpanSizeLookup(adapterProjectMembers.getSpanSizeLookup());
+        listMembers.setLayoutManager(layoutManagerMembers);
+        listMembers.setAdapter(adapterProjectMembers);
+        listMembers.addOnScrollListener(onScrollListener);
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 loadData();
@@ -190,7 +149,7 @@ public class ProjectMembersFragment extends ButterKnifeFragment {
         });
 
         if (getActivity() instanceof ProjectActivity) {
-            mProject = ((ProjectActivity) getActivity()).getProject();
+            project = ((ProjectActivity) getActivity()).getProject();
             setNamespace();
             loadData();
         } else {
@@ -200,13 +159,13 @@ public class ProjectMembersFragment extends ButterKnifeFragment {
 
     @Override
     public void onDestroyView() {
+        App.bus().unregister(this);
         super.onDestroyView();
-        App.bus().unregister(mEventReceiver);
     }
 
     @OnClick(R.id.add_user_button)
     public void onAddUserClick(View fab) {
-        Navigator.navigateToAddProjectMember(getActivity(), fab, mProject.getId());
+        Navigator.navigateToAddProjectMember(getActivity(), fab, project.getId());
     }
 
     @Override
@@ -215,24 +174,24 @@ public class ProjectMembersFragment extends ButterKnifeFragment {
             return;
         }
 
-        if (mProject == null) {
-            mSwipeRefreshLayout.setRefreshing(false);
+        if (project == null) {
+            swipeRefreshLayout.setRefreshing(false);
             return;
         }
 
-        mSwipeRefreshLayout.post(new Runnable() {
+        swipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
-                if (mSwipeRefreshLayout != null) {
-                    mSwipeRefreshLayout.setRefreshing(true);
+                if (swipeRefreshLayout != null) {
+                    swipeRefreshLayout.setRefreshing(true);
                 }
             }
         });
 
-        mNextPageUrl = null;
-        mLoading = true;
+        nextPageUrl = null;
+        loading = true;
 
-        App.instance().getGitLab().getProjectMembers(mProject.getId()).enqueue(mProjectMembersCallback);
+        load(App.get().getGitLab().getProjectMembers(project.getId()));
     }
 
     private void loadMore() {
@@ -240,54 +199,97 @@ public class ProjectMembersFragment extends ButterKnifeFragment {
             return;
         }
 
-        if (mNextPageUrl == null) {
+        if (nextPageUrl == null) {
             return;
         }
 
-        mSwipeRefreshLayout.post(new Runnable() {
+        swipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
-                if (mSwipeRefreshLayout != null) {
-                    mSwipeRefreshLayout.setRefreshing(true);
+                if (swipeRefreshLayout != null) {
+                    swipeRefreshLayout.setRefreshing(true);
                 }
             }
         });
 
-        mLoading = true;
+        loading = true;
 
-        Timber.d("loadMore called for " + mNextPageUrl);
-        App.instance().getGitLab().getProjectMembers(mNextPageUrl.toString()).enqueue(mProjectMembersCallback);
+        Timber.d("loadMore called for " + nextPageUrl);
+        load(App.get().getGitLab().getProjectMembers(nextPageUrl.toString()));
+    }
+
+    private void load(Single<Response<List<Member>>> observable) {
+        observable
+                .compose(this.<Response<List<Member>>>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new CustomResponseSingleObserver<List<Member>>() {
+
+                    @Override
+                    public void error(@NonNull Throwable t) {
+                        loading = false;
+                        Timber.e(t);
+                        swipeRefreshLayout.setRefreshing(false);
+                        textMessage.setVisibility(View.VISIBLE);
+                        textMessage.setText(R.string.connection_error_users);
+                        buttonAddUser.setVisibility(View.GONE);
+                        adapterProjectMembers.setProjectMembers(null);
+                        nextPageUrl = null;
+                    }
+
+                    @Override
+                    public void responseSuccess(@NonNull List<Member> members) {
+                        loading = false;
+                        swipeRefreshLayout.setRefreshing(false);
+                        if (!members.isEmpty()) {
+                            textMessage.setVisibility(View.GONE);
+                        } else if (nextPageUrl == null) {
+                            Timber.d("No project members found");
+                            textMessage.setText(R.string.no_project_members);
+                            textMessage.setVisibility(View.VISIBLE);
+                        }
+
+                        buttonAddUser.setVisibility(View.VISIBLE);
+
+                        if (nextPageUrl == null) {
+                            adapterProjectMembers.setProjectMembers(members);
+                        } else {
+                            adapterProjectMembers.addProjectMembers(members);
+                        }
+
+                        nextPageUrl = LinkHeaderParser.parse(response()).getNext();
+                        Timber.d("Next page url " + nextPageUrl);
+                    }
+                });
     }
 
     private void setNamespace() {
-        if (mProject == null) {
+        if (project == null) {
             return;
         }
 
         //If there is an owner, then there is no group
-        if (mProject.belongsToGroup()) {
-            mAdapter.setNamespace(mProject.getNamespace());
+        if (project.belongsToGroup()) {
+            adapterProjectMembers.setNamespace(project.getNamespace());
         } else {
-            mAdapter.setNamespace(null);
+            adapterProjectMembers.setNamespace(null);
         }
     }
 
-    private class EventReceiver {
-        @Subscribe
-        public void onProjectReload(ProjectReloadEvent event) {
-            mProject = event.mProject;
-            setNamespace();
-            loadData();
-        }
+    @Subscribe
+    public void onProjectReload(ProjectReloadEvent event) {
+        project = event.project;
+        setNamespace();
+        loadData();
+    }
 
-        @Subscribe
-        public void onMemberAdded(MemberAddedEvent event) {
-            if (mAdapter != null) {
-                mAdapter.addMember(event.mMember);
+    @Subscribe
+    public void onMemberAdded(MemberAddedEvent event) {
+        if (adapterProjectMembers != null) {
+            adapterProjectMembers.addMember(event.member);
 
-                if (getView() != null) {
-                    mMessageView.setVisibility(View.GONE);
-                }
+            if (getView() != null) {
+                textMessage.setVisibility(View.GONE);
             }
         }
     }

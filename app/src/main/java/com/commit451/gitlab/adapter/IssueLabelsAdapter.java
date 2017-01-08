@@ -15,16 +15,13 @@ import java.util.Collection;
  */
 public class IssueLabelsAdapter extends RecyclerView.Adapter<IssueLabelViewHolder> {
 
-    public interface Listener {
-        void onLabelClicked(String label, IssueLabelViewHolder viewHolder);
-    }
-    private Listener mListener;
+    private Listener listener;
 
-    private ArrayList<String> mValues;
+    private ArrayList<String> values;
 
     public IssueLabelsAdapter(Listener listener) {
-        mListener = listener;
-        mValues = new ArrayList<>();
+        this.listener = listener;
+        values = new ArrayList<>();
     }
 
     private final View.OnClickListener mOnItemClickListener = new View.OnClickListener() {
@@ -32,18 +29,18 @@ public class IssueLabelsAdapter extends RecyclerView.Adapter<IssueLabelViewHolde
         public void onClick(View v) {
             int position = (int) v.getTag(R.id.list_position);
             IssueLabelViewHolder holder = (IssueLabelViewHolder) v.getTag(R.id.list_view_holder);
-            mListener.onLabelClicked(getEntry(position), holder);
+            listener.onLabelClicked(getEntry(position), holder);
         }
     };
 
     public void setLabels(Collection<String> labels) {
-        mValues.clear();
+        values.clear();
         addLabels(labels);
     }
 
     public void addLabels(Collection<String> labels) {
         if (labels != null) {
-            mValues.addAll(labels);
+            values.addAll(labels);
         }
         notifyDataSetChanged();
     }
@@ -64,10 +61,14 @@ public class IssueLabelsAdapter extends RecyclerView.Adapter<IssueLabelViewHolde
 
     @Override
     public int getItemCount() {
-        return mValues.size();
+        return values.size();
     }
 
     private String getEntry(int position) {
-        return mValues.get(position);
+        return values.get(position);
+    }
+
+    public interface Listener {
+        void onLabelClicked(String label, IssueLabelViewHolder viewHolder);
     }
 }

@@ -9,36 +9,36 @@ import org.parceler.Parcel;
 @JsonObject
 public class ForkedFromProject {
     @JsonField(name = "id")
-    long mId;
+    long id;
     @JsonField(name = "name")
-    String mName;
+    String name;
     @JsonField(name = "name_with_namespace")
-    String mNameWithNamespace;
+    String nameWithNamespace;
     @JsonField(name = "path")
-    String mPath;
+    String path;
     @JsonField(name = "path_with_namespace")
-    String mPathWithNamespace;
+    String pathWithNamespace;
 
     public ForkedFromProject() {}
 
     public long getId() {
-        return mId;
+        return id;
     }
 
     public String getName() {
-        return mName;
+        return name;
     }
 
     public String getNameWithNamespace() {
-        return mNameWithNamespace;
+        return nameWithNamespace;
     }
 
     public String getPath() {
-        return mPath;
+        return path;
     }
 
     public String getPathWithNamespace() {
-        return mPathWithNamespace;
+        return pathWithNamespace;
     }
 
     @Override
@@ -48,11 +48,11 @@ public class ForkedFromProject {
         }
 
         ForkedFromProject that = (ForkedFromProject) o;
-        return mId == that.mId;
+        return id == that.id;
     }
 
     @Override
     public int hashCode() {
-        return (int) (mId ^ (mId >>> 32));
+        return (int) (id ^ (id >>> 32));
     }
 }

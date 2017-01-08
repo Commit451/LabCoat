@@ -12,19 +12,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.PickBranchOrTagActivity;
-import com.commit451.gitlab.adapter.TagsAdapter;
+import com.commit451.gitlab.adapter.TagAdapter;
 import com.commit451.gitlab.model.Ref;
 import com.commit451.gitlab.model.api.Tag;
+import com.commit451.gitlab.rx.CustomSingleObserver;
 
 import org.parceler.Parcels;
 
 import java.util.List;
 
 import butterknife.BindView;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -45,20 +47,20 @@ public class PickTagFragment extends ButterKnifeFragment {
     }
 
     @BindView(R.id.list)
-    RecyclerView mProjectsListView;
+    RecyclerView listProjects;
     @BindView(R.id.message_text)
-    TextView mMessageView;
+    TextView textMessage;
     @BindView(R.id.progress)
-    View mProgress;
+    View progress;
 
-    TagsAdapter mTagsAdapter;
+    TagAdapter adapterTags;
 
-    long mProjectId;
+    long projectId;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mProjectId = getArguments().getLong(EXTRA_PROJECT_ID);
+        projectId = getArguments().getLong(EXTRA_PROJECT_ID);
     }
 
     @Override
@@ -71,7 +73,7 @@ public class PickTagFragment extends ButterKnifeFragment {
         super.onViewCreated(view, savedInstanceState);
 
         Ref ref = Parcels.unwrap(getArguments().getParcelable(EXTRA_CURRENT_REF));
-        mTagsAdapter = new TagsAdapter(ref, new TagsAdapter.Listener() {
+        adapterTags = new TagAdapter(ref, new TagAdapter.Listener() {
 
             @Override
             public void onTagClicked(Tag entry) {
@@ -82,8 +84,8 @@ public class PickTagFragment extends ButterKnifeFragment {
                 getActivity().finish();
             }
         });
-        mProjectsListView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mProjectsListView.setAdapter(mTagsAdapter);
+        listProjects.setLayoutManager(new LinearLayoutManager(getActivity()));
+        listProjects.setAdapter(adapterTags);
 
         loadData();
     }
@@ -93,29 +95,28 @@ public class PickTagFragment extends ButterKnifeFragment {
         if (getView() == null) {
             return;
         }
-        mProgress.setVisibility(View.VISIBLE);
-        mMessageView.setVisibility(View.GONE);
+        progress.setVisibility(View.VISIBLE);
+        textMessage.setVisibility(View.GONE);
 
-        App.instance().getGitLab().getTags(mProjectId).enqueue(new EasyCallback<List<Tag>>() {
-            @Override
-            public void success(@NonNull List<Tag> response) {
-                if (getView() == null) {
-                    return;
-                }
-                mProgress.setVisibility(View.GONE);
-                mTagsAdapter.setEntries(response);
-            }
+        App.get().getGitLab().getTags(projectId)
+                .compose(this.<List<Tag>>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new CustomSingleObserver<List<Tag>>() {
 
-            @Override
-            public void failure(Throwable t) {
-                Timber.e(t, null);
-                if (getView() == null) {
-                    return;
-                }
-                mProgress.setVisibility(View.GONE);
-                mMessageView.setVisibility(View.VISIBLE);
-            }
-        });
+                    @Override
+                    public void error(@NonNull Throwable e) {
+                        Timber.e(e);
+                        progress.setVisibility(View.GONE);
+                        textMessage.setVisibility(View.VISIBLE);
+                    }
+
+                    @Override
+                    public void success(@NonNull List<Tag> tags) {
+                        progress.setVisibility(View.GONE);
+                        adapterTags.setEntries(tags);
+                    }
+                });
     }
 
 }

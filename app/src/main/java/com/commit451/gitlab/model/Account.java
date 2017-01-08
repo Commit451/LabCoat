@@ -1,12 +1,11 @@
 package com.commit451.gitlab.model;
 
-import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
 import com.bluelinelabs.logansquare.annotation.JsonField;
 import com.bluelinelabs.logansquare.annotation.JsonObject;
-import com.commit451.gitlab.data.Prefs;
+import com.commit451.gitlab.App;
 import com.commit451.gitlab.model.api.UserFull;
 import com.commit451.gitlab.util.ObjectUtil;
 
@@ -25,99 +24,99 @@ import java.util.List;
 public class Account implements Comparable<Account>{
 
     @NonNull
-    public static List<Account> getAccounts(Context context) {
-        List<Account> accounts = new ArrayList<>(Prefs.getAccounts(context));
+    public static List<Account> getAccounts() {
+        List<Account> accounts = new ArrayList<>(App.get().getPrefs().getAccounts());
         Collections.sort(accounts);
         Collections.reverse(accounts);
         return accounts;
     }
 
     @JsonField(name = "server_url")
-    Uri mServerUrl;
+    Uri serverUrl;
     @JsonField(name = "authorization_header")
-    String mAuthorizationHeader;
+    String authorizationHeader;
     @JsonField(name = "private_token")
-    String mPrivateToken;
+    String privateToken;
     @JsonField(name = "trusted_certificate")
-    String mTrustedCertificate;
+    String trustedCertificate;
     @JsonField(name = "trusted_hostname")
-    String mTrustedHostname;
+    String trustedHostname;
     @JsonField(name = "private_key_alias")
-    String mPrivateKeyAlias;
+    String privateKeyAlias;
     @JsonField(name = "user")
-    UserFull mUser;
+    UserFull user;
     @JsonField(name = "last_used")
-    Date mLastUsed;
+    Date lastUsed;
 
     public Account() {}
 
     public Uri getServerUrl() {
-        return mServerUrl;
+        return serverUrl;
     }
 
     public void setServerUrl(Uri url) {
-        mServerUrl = url;
+        serverUrl = url;
     }
 
     public String getAuthorizationHeader() {
-        return mAuthorizationHeader;
+        return authorizationHeader;
     }
 
     public void setAuthorizationHeader(String authorizationHeader) {
-        mAuthorizationHeader = authorizationHeader;
+        this.authorizationHeader = authorizationHeader;
     }
 
     public String getPrivateToken() {
-        return mPrivateToken;
+        return privateToken;
     }
 
     public void setPrivateToken(String privateToken) {
-        mPrivateToken = privateToken;
+        this.privateToken = privateToken;
     }
 
     public String getTrustedCertificate() {
-        return mTrustedCertificate;
+        return trustedCertificate;
     }
 
     public void setTrustedCertificate(String trustedCertificate) {
-        mTrustedCertificate = trustedCertificate;
+        this.trustedCertificate = trustedCertificate;
     }
 
     public String getTrustedHostname() {
-        return mTrustedHostname;
+        return trustedHostname;
     }
 
     public void setTrustedHostname(String trustedHostname) {
-        mTrustedHostname = trustedHostname;
+        this.trustedHostname = trustedHostname;
     }
 
     public String getPrivateKeyAlias() {
-        return mPrivateKeyAlias;
+        return privateKeyAlias;
     }
 
     public void setPrivateKeyAlias(String privateKeyAlias) {
-        mPrivateKeyAlias = privateKeyAlias;
+        this.privateKeyAlias = privateKeyAlias;
     }
 
     public UserFull getUser() {
-        return mUser;
+        return user;
     }
 
     public void setUser(UserFull user) {
-        mUser = user;
+        this.user = user;
     }
 
     public Date getLastUsed() {
-        return mLastUsed;
+        return lastUsed;
     }
 
     public void setLastUsed(Date lastUsed) {
-        mLastUsed = lastUsed;
+        this.lastUsed = lastUsed;
     }
 
     @Override
     public int compareTo(@NonNull Account another) {
-        return mLastUsed.compareTo(another.getLastUsed());
+        return lastUsed.compareTo(another.getLastUsed());
     }
 
     @Override
@@ -127,12 +126,12 @@ public class Account implements Comparable<Account>{
         }
 
         Account account = (Account) o;
-        return ObjectUtil.equals(mServerUrl, account.mServerUrl)
-                && ObjectUtil.equals(mUser, account.mUser);
+        return ObjectUtil.equals(serverUrl, account.serverUrl)
+                && ObjectUtil.equals(user, account.user);
     }
 
     @Override
     public int hashCode() {
-        return ObjectUtil.hash(mServerUrl, mUser);
+        return ObjectUtil.hash(serverUrl, user);
     }
 }

@@ -28,11 +28,11 @@ public class AccountViewHolder extends TypedViewHolder<Account> {
     }
 
     @BindView(R.id.account_image)
-    ImageView mImageView;
+    ImageView image;
     @BindView(R.id.account_username)
-    TextView mUsernameView;
+    TextView textUsername;
     @BindView(R.id.account_server)
-    TextView mServerView;
+    TextView textServer;
 
     public AccountViewHolder(View view) {
         super(view);
@@ -41,12 +41,12 @@ public class AccountViewHolder extends TypedViewHolder<Account> {
 
     @Override
     public void bind(int position, Account item) {
-        mServerView.setText(item.getServerUrl().toString());
-        mUsernameView.setText(item.getUser().getUsername());
+        textServer.setText(item.getServerUrl().toString());
+        textUsername.setText(item.getUser().getUsername());
 
         Picasso.with(getContext())
                 .load(ImageUtil.getAvatarUrl(item.getUser(), itemView.getResources().getDimensionPixelSize(R.dimen.user_list_image_size)))
                 .transform(new CircleTransformation())
-                .into(mImageView);
+                .into(image);
     }
 }

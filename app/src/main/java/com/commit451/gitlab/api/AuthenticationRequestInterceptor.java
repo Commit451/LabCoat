@@ -19,10 +19,10 @@ public class AuthenticationRequestInterceptor implements Interceptor {
     public static final String PRIVATE_TOKEN_HEADER_FIELD = "PRIVATE-TOKEN";
     private static final String PRIVATE_TOKEN_GET_PARAMETER = "private_token";
 
-    private Account mAccount;
+    private Account account;
 
     public AuthenticationRequestInterceptor(Account account) {
-        mAccount = account;
+        this.account = account;
     }
 
     @Override
@@ -34,18 +34,18 @@ public class AuthenticationRequestInterceptor implements Interceptor {
         String cleanUrl = url.toString();
         cleanUrl = cleanUrl.substring(cleanUrl.indexOf(':'));
 
-        String cleanServerUrl = mAccount.getServerUrl().toString();
+        String cleanServerUrl = account.getServerUrl().toString();
         cleanServerUrl = cleanServerUrl.substring(cleanServerUrl.indexOf(':'));
 
         if (cleanUrl.startsWith(cleanServerUrl)) {
-            String authorizationHeader = mAccount.getAuthorizationHeader();
+            String authorizationHeader = account.getAuthorizationHeader();
             if (authorizationHeader != null) {
                 request = request.newBuilder()
                         .header(AUTHORIZATION_HEADER_FIELD, authorizationHeader)
                         .build();
             }
 
-            String privateToken = mAccount.getPrivateToken();
+            String privateToken = account.getPrivateToken();
             if (privateToken == null) {
                 Timber.e("The private token was null");
             } else {

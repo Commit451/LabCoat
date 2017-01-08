@@ -11,17 +11,17 @@ import java.util.List;
 @Root(strict = false)
 public class Feed {
     @Element(name = "title", required = false)
-    String mTitle;
+    String title;
     @ElementList(name = "entry", required = false, inline = true)
-    List<Entry> mEntryList;
+    List<Entry> entryList;
 
     public Feed() {}
 
     public String getTitle() {
-        return mTitle;
+        return title;
     }
 
     public List<Entry> getEntries() {
-        return mEntryList;
+        return entryList;
     }
 }

@@ -16,41 +16,32 @@ import java.util.Collection;
 /**
  * Shows the files
  */
-public class FilesAdapter extends RecyclerView.Adapter<FileViewHolder> {
+public class FileAdapter extends RecyclerView.Adapter<FileViewHolder> {
 
-    public interface Listener {
-        void onFolderClicked(RepositoryTreeObject treeItem);
-        void onFileClicked(RepositoryTreeObject treeItem);
-        void onCopyClicked(RepositoryTreeObject treeItem);
-        void onShareClicked(RepositoryTreeObject treeItem);
-        void onOpenInBrowserClicked(RepositoryTreeObject treeItem);
-    }
-    private Listener mListener;
-    private ArrayList<RepositoryTreeObject> mValues;
+    private Listener listener;
+    private ArrayList<RepositoryTreeObject> values;
 
-    private final View.OnClickListener onProjectClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            int position = (int) v.getTag(R.id.list_position);
-            RepositoryTreeObject treeItem = getValueAt(position);
-
-            if (treeItem.getType().equals(RepositoryTreeObject.TYPE_FOLDER)) {
-                mListener.onFolderClicked(treeItem);
-            } else if (treeItem.getType().equals(RepositoryTreeObject.TYPE_FILE)) {
-                mListener.onFileClicked(treeItem);
-            }
-        }
-    };
-
-    public FilesAdapter(Listener listener) {
-        mListener = listener;
-        mValues = new ArrayList<>();
+    public FileAdapter(Listener listener) {
+        this.listener = listener;
+        values = new ArrayList<>();
     }
 
     @Override
     public FileViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         FileViewHolder holder = FileViewHolder.inflate(parent);
-        holder.itemView.setOnClickListener(onProjectClickListener);
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int position = (int) v.getTag(R.id.list_position);
+                RepositoryTreeObject treeItem = getValueAt(position);
+
+                if (treeItem.getType().equals(RepositoryTreeObject.TYPE_FOLDER)) {
+                    listener.onFolderClicked(treeItem);
+                } else if (treeItem.getType().equals(RepositoryTreeObject.TYPE_FILE)) {
+                    listener.onFileClicked(treeItem);
+                }
+            }
+        });
         return holder;
     }
 
@@ -64,13 +55,13 @@ public class FilesAdapter extends RecyclerView.Adapter<FileViewHolder> {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.action_copy:
-                        mListener.onCopyClicked(treeItem);
+                        listener.onCopyClicked(treeItem);
                         return true;
                     case R.id.action_share:
-                        mListener.onShareClicked(treeItem);
+                        listener.onShareClicked(treeItem);
                         return true;
                     case R.id.action_open:
-                        mListener.onOpenInBrowserClicked(treeItem);
+                        listener.onOpenInBrowserClicked(treeItem);
                         return true;
                 }
                 return false;
@@ -80,23 +71,31 @@ public class FilesAdapter extends RecyclerView.Adapter<FileViewHolder> {
 
     @Override
     public int getItemCount() {
-        return mValues.size();
+        return values.size();
     }
 
     public void setData(Collection<RepositoryTreeObject> values) {
-        mValues.clear();
+        this.values.clear();
         if (values != null) {
-            mValues.addAll(values);
+            this.values.addAll(values);
         }
         notifyDataSetChanged();
     }
 
     public void clear() {
-        mValues.clear();
+        values.clear();
         notifyDataSetChanged();
     }
 
     public RepositoryTreeObject getValueAt(int position) {
-        return mValues.get(position);
+        return values.get(position);
+    }
+
+    public interface Listener {
+        void onFolderClicked(RepositoryTreeObject treeItem);
+        void onFileClicked(RepositoryTreeObject treeItem);
+        void onCopyClicked(RepositoryTreeObject treeItem);
+        void onShareClicked(RepositoryTreeObject treeItem);
+        void onOpenInBrowserClicked(RepositoryTreeObject treeItem);
     }
 }

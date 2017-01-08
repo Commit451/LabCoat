@@ -4,7 +4,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.api.Build;
 import com.commit451.gitlab.viewHolder.BuildViewHolder;
 import com.commit451.gitlab.viewHolder.LoadingFooterViewHolder;
@@ -15,39 +14,34 @@ import java.util.Collection;
 /**
  * Builds adapter
  */
-public class BuildsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class BuildAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final int FOOTER_COUNT = 1;
 
     private static final int TYPE_ITEM = 0;
     private static final int TYPE_FOOTER = 1;
 
-    public interface Listener {
-        void onBuildClicked(Build issue);
-    }
-    private Listener mListener;
-    private ArrayList<Build> mValues;
-    private boolean mLoading = false;
+    private Listener listener;
+    private ArrayList<Build> values;
+    private boolean loading = false;
 
-    public BuildsAdapter(Listener listener) {
-        mListener = listener;
-        mValues = new ArrayList<>();
+    public BuildAdapter(Listener listener) {
+        this.listener = listener;
+        values = new ArrayList<>();
     }
-
-    private final View.OnClickListener onProjectClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            int position = (int) v.getTag(R.id.list_position);
-            mListener.onBuildClicked(getValueAt(position));
-        }
-    };
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
             case TYPE_ITEM:
-                BuildViewHolder holder = BuildViewHolder.inflate(parent);
-                holder.itemView.setOnClickListener(onProjectClickListener);
+                final BuildViewHolder holder = BuildViewHolder.inflate(parent);
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int position = holder.getAdapterPosition();
+                        listener.onBuildClicked(getValueAt(position));
+                    }
+                });
                 return holder;
             case TYPE_FOOTER:
                 return LoadingFooterViewHolder.inflate(parent);
@@ -60,9 +54,8 @@ public class BuildsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         if (holder instanceof BuildViewHolder) {
             Build build = getValueAt(position);
             ((BuildViewHolder) holder).bind(build);
-            holder.itemView.setTag(R.id.list_position, position);
         } else if (holder instanceof LoadingFooterViewHolder) {
-            ((LoadingFooterViewHolder) holder).bind(mLoading);
+            ((LoadingFooterViewHolder) holder).bind(loading);
         } else {
             throw new IllegalStateException("What is this holder?");
         }
@@ -70,12 +63,12 @@ public class BuildsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     @Override
     public int getItemCount() {
-        return mValues.size() + FOOTER_COUNT;
+        return values.size() + FOOTER_COUNT;
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (position == mValues.size()) {
+        if (position == values.size()) {
             return TYPE_FOOTER;
         } else {
             return TYPE_ITEM;
@@ -83,38 +76,42 @@ public class BuildsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
     public void setValues(Collection<Build> values) {
-        mValues.clear();
+        this.values.clear();
         addValues(values);
     }
 
     public void addValues(Collection<Build> values) {
         if (values != null) {
-            mValues.addAll(values);
+            this.values.addAll(values);
         }
         notifyDataSetChanged();
     }
 
     public void updateBuild(Build build) {
         int indexToDelete = -1;
-        for (int i=0; i<mValues.size(); i++) {
-            if (mValues.get(i).getId() == build.getId()) {
+        for (int i = 0; i< values.size(); i++) {
+            if (values.get(i).getId() == build.getId()) {
                 indexToDelete = i;
                 break;
             }
         }
         if (indexToDelete != -1) {
-            mValues.remove(indexToDelete);
-            mValues.add(indexToDelete, build);
+            values.remove(indexToDelete);
+            values.add(indexToDelete, build);
         }
         notifyItemChanged(indexToDelete);
     }
 
     public Build getValueAt(int position) {
-        return mValues.get(position);
+        return values.get(position);
     }
 
     public void setLoading(boolean loading) {
-        mLoading = loading;
-        notifyItemChanged(mValues.size());
+        this.loading = loading;
+        notifyItemChanged(values.size());
+    }
+
+    public interface Listener {
+        void onBuildClicked(Build build);
     }
 }

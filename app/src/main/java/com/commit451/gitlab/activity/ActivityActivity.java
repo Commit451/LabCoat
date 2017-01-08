@@ -32,10 +32,10 @@ public class ActivityActivity extends BaseActivity {
         return intent;
     }
 
-    @BindView(R.id.drawer_layout) DrawerLayout mDrawerLayout;
-    @BindView(R.id.toolbar) Toolbar mToolbar;
-
-    EventReceiver mEventReceiver;
+    @BindView(R.id.drawer_layout)
+    DrawerLayout drawerLayout;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,21 +43,20 @@ public class ActivityActivity extends BaseActivity {
         setContentView(R.layout.activity_activity);
         ButterKnife.bind(this);
 
-        mEventReceiver = new EventReceiver();
-        App.bus().register(mEventReceiver);
+        App.bus().register(this);
 
-        mToolbar.setTitle(R.string.nav_activity);
-        mToolbar.setNavigationIcon(R.drawable.ic_menu_24dp);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        toolbar.setTitle(R.string.nav_activity);
+        toolbar.setNavigationIcon(R.drawable.ic_menu_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mDrawerLayout.openDrawer(GravityCompat.START);
+                drawerLayout.openDrawer(GravityCompat.START);
             }
         });
 
         FeedFragment feedFragment = (FeedFragment) getSupportFragmentManager().findFragmentByTag(TAG_FEED_FRAGMENT);
         if (feedFragment == null) {
-            Uri feedUri = App.instance().getAccount().getServerUrl();
+            Uri feedUri = App.get().getAccount().getServerUrl();
 
             feedUri = feedUri.buildUpon()
                     .appendPath("dashboard")
@@ -75,14 +74,11 @@ public class ActivityActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        App.bus().unregister(mEventReceiver);
+        App.bus().unregister(this);
     }
 
-    private class EventReceiver {
-
-        @Subscribe
-        public void onCloseDrawerEvent(CloseDrawerEvent event) {
-            mDrawerLayout.closeDrawers();
-        }
+    @Subscribe
+    public void onCloseDrawerEvent(CloseDrawerEvent event) {
+        drawerLayout.closeDrawers();
     }
 }

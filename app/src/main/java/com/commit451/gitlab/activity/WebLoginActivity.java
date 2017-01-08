@@ -24,40 +24,46 @@ import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 /**
  * Shows user a WebView for login and intercepts the headers to get the private token. Hmmmm
  */
-public class WebviewLoginActivity extends BaseActivity {
+public class WebLoginActivity extends BaseActivity {
     public static final String EXTRA_TOKEN = "token";
 
     private static final String JAVASCRIPT_INTERFACE_EXTRACTOR = "TokenExtractor";
+
+    /**
+     * This is pretty fragile and has changed in the past, so if this screen ever stops working,
+     * it's probably due to this id changing. Go inspect the source of the page to verify
+     */
+    private static final String PRIVATE_TOKEN_HTML_ID = "private-token";
 
     private static final String KEY_URL = "url";
     private static final String KEY_EXTRACTING_PRIVATE_TOKEN = "extracting_private_token";
 
     public static Intent newIntent(Context context, String url, boolean extractingPrivateToken) {
-        Intent intent = new Intent(context, WebviewLoginActivity.class);
+        Intent intent = new Intent(context, WebLoginActivity.class);
         intent.putExtra(KEY_URL, url);
         intent.putExtra(KEY_EXTRACTING_PRIVATE_TOKEN, extractingPrivateToken);
         return intent;
     }
 
-    String mUrl;
-
     @BindView(R.id.toolbar)
-    Toolbar mToolbar;
+    Toolbar toolbar;
     @BindView(R.id.progress)
-    MaterialProgressBar mProgressBar;
+    MaterialProgressBar progress;
     @BindView(R.id.webview)
-    WebView mWebView;
+    WebView webView;
 
-    private final WebChromeClient mWebChromeClient = new WebChromeClient(){
+    String url;
+
+    private final WebChromeClient webChromeClient = new WebChromeClient(){
         @Override
         public void onProgressChanged(WebView view, int newProgress) {
             super.onProgressChanged(view, newProgress);
-            if (mProgressBar.getVisibility() != View.VISIBLE) {
-                mProgressBar.setVisibility(View.VISIBLE);
+            if (progress.getVisibility() != View.VISIBLE) {
+                progress.setVisibility(View.VISIBLE);
             }
-            mProgressBar.setProgress(newProgress);
+            progress.setProgress(newProgress);
             if (newProgress == 100) {
-                mProgressBar.setVisibility(View.GONE);
+                progress.setVisibility(View.GONE);
             }
         }
     };
@@ -69,27 +75,27 @@ public class WebviewLoginActivity extends BaseActivity {
         setContentView(R.layout.activity_webview_login);
         ButterKnife.bind(this);
 
-        mUrl = getIntent().getStringExtra(KEY_URL);
-        if (mUrl.endsWith("/")) {
-            mUrl = mUrl.substring(0, mUrl.length() - 1);
+        url = getIntent().getStringExtra(KEY_URL);
+        if (url.endsWith("/")) {
+            url = url.substring(0, url.length() - 1);
         }
 
-        mToolbar.setNavigationIcon(R.drawable.ic_back_24dp);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        toolbar.setNavigationIcon(R.drawable.ic_back_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 onBackPressed();
             }
         });
 
-        WebSettings settings = mWebView.getSettings();
+        WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
-        mWebView.addJavascriptInterface(new HtmlExtractorJavaScriptInterface(), JAVASCRIPT_INTERFACE_EXTRACTOR);
-        mWebView.setWebViewClient(new ExtractionWebClient());
-        mWebView.setWebChromeClient(mWebChromeClient);
-        mWebView.clearCache(true);
-        mWebView.clearFormData();
-        mWebView.clearHistory();
+        webView.addJavascriptInterface(new HtmlExtractorJavaScriptInterface(), JAVASCRIPT_INTERFACE_EXTRACTOR);
+        webView.setWebViewClient(new ExtractionWebClient());
+        webView.setWebChromeClient(webChromeClient);
+        webView.clearCache(true);
+        webView.clearFormData();
+        webView.clearHistory();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
             CookieManager.getInstance().removeAllCookies(null);
@@ -104,7 +110,7 @@ public class WebviewLoginActivity extends BaseActivity {
             cookieSyncMngr.sync();
         }
 
-        mWebView.loadUrl(mUrl + "/users/sign_in");
+        webView.loadUrl(url + "/users/sign_in");
     }
 
     private boolean isExtracting() {
@@ -118,18 +124,18 @@ public class WebviewLoginActivity extends BaseActivity {
                 url = url.substring(0, url.length() - 1);
             }
 
-            if (url.equals(mUrl)) {
+            if (url.equals(WebLoginActivity.this.url)) {
                 if (isExtracting()) {
-                    mWebView.loadUrl(mUrl + "/profile/account");
+                    webView.loadUrl(WebLoginActivity.this.url + "/profile/account");
                 } else {
-                    mWebView.loadUrl(mUrl + "/profile/personal_access_tokens");
+                    webView.loadUrl(WebLoginActivity.this.url + "/profile/personal_access_tokens");
                 }
                 return;
             }
 
-            if (url.equals(mUrl + "/profile/account")) {
-                mWebView.loadUrl("javascript:" + JAVASCRIPT_INTERFACE_EXTRACTOR + ".extract" +
-                        "(document.getElementById('token').value);");
+            if (url.equals(WebLoginActivity.this.url + "/profile/account")) {
+                webView.loadUrl("javascript:" + JAVASCRIPT_INTERFACE_EXTRACTOR + ".extract" +
+                        "(document.getElementById('" + PRIVATE_TOKEN_HTML_ID + "').value);");
                 return;
             }
 

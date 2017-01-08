@@ -32,49 +32,44 @@ public class TodosActivity extends BaseActivity {
     }
 
     @BindView(R.id.toolbar)
-    Toolbar mToolbar;
+    Toolbar toolbar;
     @BindView(R.id.tabs)
-    TabLayout mTabLayout;
+    TabLayout tabLayout;
     @BindView(R.id.pager)
-    ViewPager mViewPager;
+    ViewPager viewPager;
     @BindView(R.id.navigation_view)
-    NavigationView mNavigationView;
+    NavigationView navigationView;
     @BindView(R.id.drawer_layout)
-    DrawerLayout mDrawerLayout;
-
-    EventReceiver mEventReceiver;
+    DrawerLayout drawerLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_todos);
         ButterKnife.bind(this);
-        mEventReceiver = new EventReceiver();
-        App.bus().register(mEventReceiver);
+        App.bus().register(this);
 
-        mToolbar.setTitle(R.string.nav_todos);
-        mToolbar.setNavigationIcon(R.drawable.ic_menu_24dp);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        toolbar.setTitle(R.string.nav_todos);
+        toolbar.setNavigationIcon(R.drawable.ic_menu_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mDrawerLayout.openDrawer(GravityCompat.START);
+                drawerLayout.openDrawer(GravityCompat.START);
             }
         });
-        mViewPager.setAdapter(new TodoPagerAdapter(this, getSupportFragmentManager()));
-        mTabLayout.setupWithViewPager(mViewPager);
+        viewPager.setAdapter(new TodoPagerAdapter(this, getSupportFragmentManager()));
+        tabLayout.setupWithViewPager(viewPager);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        App.bus().unregister(mEventReceiver);
+        App.bus().unregister(this);
     }
 
-    private class EventReceiver {
-
-        @Subscribe
-        public void onCloseDrawerEvent(CloseDrawerEvent event) {
-            mDrawerLayout.closeDrawers();
-        }
+    @Subscribe
+    public void onCloseDrawerEvent(CloseDrawerEvent event) {
+        drawerLayout.closeDrawers();
     }
+
 }

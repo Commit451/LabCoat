@@ -29,9 +29,9 @@ public class AssigneeSpinnerViewHolder extends RecyclerView.ViewHolder {
     }
 
     @BindView(R.id.user_image)
-    ImageView mImageView;
+    ImageView image;
     @BindView(R.id.user_username)
-    TextView mUsernameView;
+    TextView textUsername;
 
     public AssigneeSpinnerViewHolder(View view) {
         super(view);
@@ -40,14 +40,14 @@ public class AssigneeSpinnerViewHolder extends RecyclerView.ViewHolder {
 
     public void bind(@Nullable Member user) {
         if (user == null) {
-            mUsernameView.setText(R.string.no_assignee);
-            mImageView.setImageResource(R.drawable.ic_assign_24dp);
+            textUsername.setText(R.string.no_assignee);
+            image.setImageResource(R.drawable.ic_assign_24dp);
         } else {
-            mUsernameView.setText(user.getUsername());
-            App.instance().getPicasso()
+            textUsername.setText(user.getUsername());
+            App.get().getPicasso()
                     .load(ImageUtil.getAvatarUrl(user, itemView.getResources().getDimensionPixelSize(R.dimen.user_list_image_size)))
                     .transform(new CircleTransformation())
-                    .into(mImageView);
+                    .into(image);
         }
     }
 }

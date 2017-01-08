@@ -22,33 +22,27 @@ public class TodoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int TYPE_ITEM = 0;
     private static final int TYPE_FOOTER = 1;
 
-    public interface Listener {
-        void onTodoClicked(Todo todo);
-    }
-
-    private Listener mListener;
-    private ArrayList<Todo> mValues;
-    private boolean mLoading = false;
+    private Listener listener;
+    private ArrayList<Todo> values;
+    private boolean loading = false;
 
     public TodoAdapter(Listener listener) {
-        mListener = listener;
-        mValues = new ArrayList<>();
+        this.listener = listener;
+        values = new ArrayList<>();
     }
-
-    private final View.OnClickListener onProjectClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            int position = (int) v.getTag(R.id.list_position);
-            mListener.onTodoClicked(getValueAt(position));
-        }
-    };
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
             case TYPE_ITEM:
                 TodoViewHolder holder = TodoViewHolder.inflate(parent);
-                holder.itemView.setOnClickListener(onProjectClickListener);
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int position = (int) v.getTag(R.id.list_position);
+                        listener.onTodoClicked(getValueAt(position));
+                    }
+                });
                 return holder;
             case TYPE_FOOTER:
                 return LoadingFooterViewHolder.inflate(parent);
@@ -63,7 +57,7 @@ public class TodoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             ((TodoViewHolder) holder).bind(todo);
             holder.itemView.setTag(R.id.list_position, position);
         } else if (holder instanceof LoadingFooterViewHolder) {
-            ((LoadingFooterViewHolder) holder).bind(mLoading);
+            ((LoadingFooterViewHolder) holder).bind(loading);
         } else {
             throw new IllegalStateException("What is this holder?");
         }
@@ -71,12 +65,12 @@ public class TodoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        return mValues.size() + FOOTER_COUNT;
+        return values.size() + FOOTER_COUNT;
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (position == mValues.size()) {
+        if (position == values.size()) {
             return TYPE_FOOTER;
         } else {
             return TYPE_ITEM;
@@ -84,23 +78,27 @@ public class TodoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     public void setData(Collection<Todo> todos) {
-        mValues.clear();
+        values.clear();
         addData(todos);
     }
 
     public void addData(Collection<Todo> todos) {
         if (todos != null) {
-            mValues.addAll(todos);
+            values.addAll(todos);
         }
         notifyDataSetChanged();
     }
 
     public Todo getValueAt(int position) {
-        return mValues.get(position);
+        return values.get(position);
     }
 
     public void setLoading(boolean loading) {
-        mLoading = loading;
-        notifyItemChanged(mValues.size());
+        this.loading = loading;
+        notifyItemChanged(values.size());
+    }
+
+    public interface Listener {
+        void onTodoClicked(Todo todo);
     }
 }

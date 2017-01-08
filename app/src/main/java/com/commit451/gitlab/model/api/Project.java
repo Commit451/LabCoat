@@ -15,188 +15,188 @@ import java.util.List;
 @JsonObject
 public class Project {
     @JsonField(name = "id")
-    long mId;
+    long id;
     @JsonField(name = "description")
-    String mDescription;
+    String description;
     @JsonField(name = "default_branch")
-    String mDefaultBranch;
+    String defaultBranch;
     @JsonField(name = "tag_list")
-    List<String> mTagList;
+    List<String> tagList;
     @JsonField(name = "public")
-    boolean mPublic;
+    boolean isPublic;
     @JsonField(name = "archived")
-    boolean mArchived;
+    boolean archived;
     @JsonField(name = "visibility_level")
-    int mVisibilityLevel;
+    int visibilityLevel;
     @JsonField(name = "ssh_url_to_repo")
-    String mSshUrlToRepo;
+    String sshUrlToRepo;
     @JsonField(name = "http_url_to_repo")
-    String mHttpUrlToRepo;
+    String httpUrlToRepo;
     @JsonField(name = "web_url")
-    Uri mWebUrl;
+    Uri webUrl;
     @JsonField(name = "owner")
-    UserBasic mOwner;
+    UserBasic owner;
     @JsonField(name = "name")
-    String mName;
+    String name;
     @JsonField(name = "name_with_namespace")
-    String mNameWithNamespace;
+    String nameWithNamespace;
     @JsonField(name = "path")
-    String mPath;
+    String path;
     @JsonField(name = "path_with_namespace")
-    String mPathWithNamespace;
+    String pathWithNamespace;
     @JsonField(name = "issues_enabled")
-    boolean mIssuesEnabled;
+    boolean issuesEnabled;
     @JsonField(name = "merge_requests_enabled")
-    boolean mMergeRequestsEnabled;
+    boolean mergeRequestsEnabled;
     @JsonField(name = "wiki_enabled")
-    boolean mWikiEnabled;
+    boolean wikiEnabled;
     @JsonField(name = "builds_enabled")
-    boolean mBuildEnabled;
+    boolean buildEnabled;
     @JsonField(name = "snippets_enabled")
-    boolean mSnippetsEnabled;
+    boolean snippetsEnabled;
     @JsonField(name = "created_at")
-    Date mCreatedAt;
+    Date createdAt;
     @JsonField(name = "last_activity_at")
-    Date mLastActivityAt;
+    Date lastActivityAt;
     @JsonField(name = "creator_id")
-    long mCreatorId;
+    long creatorId;
     @JsonField(name = "namespace")
-    ProjectNamespace mNamespace;
+    ProjectNamespace namespace;
     @JsonField(name = "forked_from_project")
-    ForkedFromProject mForkedFromProject;
+    ForkedFromProject forkedFromProject;
     @JsonField(name = "avatar_url")
-    Uri mAvatarUrl;
+    Uri avatarUrl;
     @JsonField(name = "star_count")
-    int mStarCount;
+    int starCount;
     @JsonField(name = "forks_count")
-    int mForksCount;
+    int forksCount;
     @JsonField(name = "open_issues_count")
-    int mOpenIssuesCount;
+    int openIssuesCount;
 
     public Project() {}
 
     public long getId() {
-        return mId;
+        return id;
     }
 
     public String getDescription() {
-        return mDescription;
+        return description;
     }
 
     public String getDefaultBranch() {
-        return mDefaultBranch;
+        return defaultBranch;
     }
 
     public List<String> getTagList() {
-        return mTagList;
+        return tagList;
     }
 
     public boolean isPublic() {
-        return mPublic;
+        return isPublic;
     }
 
     public boolean isArchived() {
-        return mArchived;
+        return archived;
     }
 
     public int getVisibilityLevel() {
-        return mVisibilityLevel;
+        return visibilityLevel;
     }
 
     public String getSshUrlToRepo() {
-        return mSshUrlToRepo;
+        return sshUrlToRepo;
     }
 
     public String getHttpUrlToRepo() {
-        return mHttpUrlToRepo;
+        return httpUrlToRepo;
     }
 
     public Uri getWebUrl() {
-        return mWebUrl;
+        return webUrl;
     }
 
     public UserBasic getOwner() {
-        return mOwner;
+        return owner;
     }
 
     public String getName() {
-        return mName;
+        return name;
     }
 
     public String getNameWithNamespace() {
-        return mNameWithNamespace;
+        return nameWithNamespace;
     }
 
     public String getPath() {
-        return mPath;
+        return path;
     }
 
     public String getPathWithNamespace() {
-        return mPathWithNamespace;
+        return pathWithNamespace;
     }
 
     public boolean isIssuesEnabled() {
-        return mIssuesEnabled;
+        return issuesEnabled;
     }
 
     public boolean isMergeRequestsEnabled() {
-        return mMergeRequestsEnabled;
+        return mergeRequestsEnabled;
     }
 
     public boolean isWikiEnabled() {
-        return mWikiEnabled;
+        return wikiEnabled;
     }
 
     public boolean isBuildEnabled() {
-        return mBuildEnabled;
+        return buildEnabled;
     }
 
     public boolean isSnippetsEnabled() {
-        return mSnippetsEnabled;
+        return snippetsEnabled;
     }
 
     public Date getCreatedAt() {
-        return mCreatedAt;
+        return createdAt;
     }
 
     public Date getLastActivityAt() {
-        return mLastActivityAt;
+        return lastActivityAt;
     }
 
     public long getCreatorId() {
-        return mCreatorId;
+        return creatorId;
     }
 
     public ProjectNamespace getNamespace() {
-        return mNamespace;
+        return namespace;
     }
 
     public ForkedFromProject getForkedFromProject() {
-        return mForkedFromProject;
+        return forkedFromProject;
     }
 
     public Uri getAvatarUrl() {
-        return mAvatarUrl;
+        return avatarUrl;
     }
 
     public int getStarCount() {
-        return mStarCount;
+        return starCount;
     }
 
     public int getForksCount() {
-        return mForksCount;
+        return forksCount;
     }
 
     public int getOpenIssuesCount() {
-        return mOpenIssuesCount;
+        return openIssuesCount;
     }
 
     @Nullable
     public Uri getFeedUrl() {
-        if (mWebUrl == null) {
+        if (webUrl == null) {
             return null;
         }
-        return Uri.parse(mWebUrl + ".atom");
+        return Uri.parse(webUrl + ".atom");
     }
 
     public boolean belongsToGroup() {
@@ -211,12 +211,12 @@ public class Project {
         }
 
         Project project = (Project) o;
-        return mId == project.mId;
+        return id == project.id;
 
     }
 
     @Override
     public int hashCode() {
-        return (int) (mId ^ (mId >>> 32));
+        return (int) (id ^ (id >>> 32));
     }
 }

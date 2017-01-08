@@ -12,13 +12,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.DiffAdapter;
 import com.commit451.gitlab.model.api.Diff;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryCommit;
+import com.commit451.gitlab.rx.CustomSingleObserver;
 
 import org.parceler.Parcels;
 
@@ -26,7 +26,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import retrofit2.Callback;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -44,31 +45,21 @@ public class DiffActivity extends BaseActivity {
         return intent;
     }
 
-    @BindView(R.id.root) ViewGroup mRoot;
-    @BindView(R.id.toolbar) Toolbar mToolbar;
-    @BindView(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
-    @BindView(R.id.list) RecyclerView mDiffRecyclerView;
-    DiffAdapter mDiffAdapter;
-    @BindView(R.id.message_text) TextView mMessageText;
+    @BindView(R.id.root)
+    ViewGroup root;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.swipe_layout)
+    SwipeRefreshLayout swipeRefreshLayout;
+    @BindView(R.id.list)
+    RecyclerView listDiff;
+    @BindView(R.id.message_text)
+    TextView textMessage;
 
-    private Project mProject;
-    private RepositoryCommit mCommit;
+    DiffAdapter adapterDiff;
 
-    private Callback<List<Diff>> mDiffCallback = new EasyCallback<List<Diff>>() {
-        @Override
-        public void success(@NonNull List<Diff> response) {
-            mSwipeRefreshLayout.setRefreshing(false);
-            mDiffAdapter.setData(response);
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            mSwipeRefreshLayout.setRefreshing(false);
-            Timber.e(t, null);
-            mMessageText.setText(R.string.connection_error);
-            mMessageText.setVisibility(View.VISIBLE);
-        }
-    };
+    private Project project;
+    private RepositoryCommit commit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,27 +67,27 @@ public class DiffActivity extends BaseActivity {
         setContentView(R.layout.activity_diff);
         ButterKnife.bind(this);
 
-        mProject = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_PROJECT));
-        mCommit = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_COMMIT));
+        project = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_PROJECT));
+        commit = Parcels.unwrap(getIntent().getParcelableExtra(EXTRA_COMMIT));
 
-        mToolbar.setNavigationIcon(R.drawable.ic_back_24dp);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        toolbar.setNavigationIcon(R.drawable.ic_back_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
             }
         });
-        mToolbar.setTitle(mCommit.getShortId());
+        toolbar.setTitle(commit.getShortId());
 
-        mDiffAdapter = new DiffAdapter(mCommit, new DiffAdapter.Listener() {
+        adapterDiff = new DiffAdapter(commit, new DiffAdapter.Listener() {
             @Override
             public void onDiffClicked(Diff diff) {
 
             }
         });
-        mDiffRecyclerView.setAdapter(mDiffAdapter);
-        mDiffRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        listDiff.setAdapter(adapterDiff);
+        listDiff.setLayoutManager(new LinearLayoutManager(this));
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 loadData();
@@ -107,15 +98,34 @@ public class DiffActivity extends BaseActivity {
     }
 
     private void loadData() {
-        mMessageText.setVisibility(View.GONE);
-        mSwipeRefreshLayout.post(new Runnable() {
+        textMessage.setVisibility(View.GONE);
+        swipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
-            if (mSwipeRefreshLayout != null) {
-                mSwipeRefreshLayout.setRefreshing(true);
-            }
+                if (swipeRefreshLayout != null) {
+                    swipeRefreshLayout.setRefreshing(true);
+                }
             }
         });
-        App.instance().getGitLab().getCommitDiff(mProject.getId(), mCommit.getId()).enqueue(mDiffCallback);
+        App.get().getGitLab().getCommitDiff(project.getId(), commit.getId())
+                .compose(this.<List<Diff>>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new CustomSingleObserver<List<Diff>>() {
+
+                    @Override
+                    public void error(@NonNull Throwable t) {
+                        swipeRefreshLayout.setRefreshing(false);
+                        Timber.e(t);
+                        textMessage.setText(R.string.connection_error);
+                        textMessage.setVisibility(View.VISIBLE);
+                    }
+
+                    @Override
+                    public void success(@NonNull List<Diff> diffs) {
+                        swipeRefreshLayout.setRefreshing(false);
+                        adapterDiff.setData(diffs);
+                    }
+                });
     }
 }

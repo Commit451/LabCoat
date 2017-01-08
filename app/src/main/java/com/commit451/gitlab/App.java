@@ -14,8 +14,10 @@ import com.commit451.gitlab.api.GitLabRssFactory;
 import com.commit451.gitlab.api.OkHttpClientFactory;
 import com.commit451.gitlab.api.PicassoFactory;
 import com.commit451.gitlab.api.converter.UriTypeConverter;
+import com.commit451.gitlab.data.Prefs;
 import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.util.FabricUtil;
+import com.commit451.lift.Lift;
 import com.novoda.simplechromecustomtabs.SimpleChromeCustomTabs;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.picasso.Picasso;
@@ -37,40 +39,48 @@ import timber.log.Timber;
 public class App extends Application {
 
     /**
-     * Register our type converters on our singleton LoganSquare instance. Needs to be set here
+     * Register our type converters on our singleton LoganSquare get. Needs to be set here
      * since we are fetching accounts immediately with LoganSquare
      */
     static {
         LoganSquare.registerTypeConverter(Uri.class, new UriTypeConverter());
     }
 
-    private static EventBus sBus;
-    private static App sInstance;
+    private static EventBus bus;
+    private static App instance;
 
     public static EventBus bus() {
-        if (sBus == null) {
-            sBus = EventBus.getDefault();
+        if (bus == null) {
+            bus = EventBus.getDefault();
         }
-        return sBus;
+        return bus;
     }
 
-    public static App instance() {
-        return sInstance;
+    public static App get() {
+        return instance;
     }
 
-    private Account mAccount;
-    private GitLab mGitLab;
-    private GitLabRss mGitLabRss;
-    private Picasso mPicasso;
+    private Account account;
+    private GitLab gitLab;
+    private GitLabRss gitLabRss;
+    private Picasso picasso;
+    private Prefs prefs;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        sInstance = this;
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            // This process is dedicated to LeakCanary for heap analysis.
+            // You should not init your app in this process.
+            return;
+        }
+        setupLeakCanary();
+        instance = this;
 
+        prefs = new Prefs(this);
+        //So that we don't get weird half translations
         forceLocale(Locale.ENGLISH);
         setupCrashReporting();
-        setupLeakCanary();
 
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
@@ -79,10 +89,17 @@ public class App extends Application {
         JodaTimeAndroid.init(this);
         SimpleChromeCustomTabs.initialize(this);
 
-        List<Account> accounts = Account.getAccounts(this);
+        List<Account> accounts = Account.getAccounts();
         if(!accounts.isEmpty()) {
             setAccount(accounts.get(0));
         }
+
+        Lift.check(this, new Lift.Callback() {
+            @Override
+            public void onUpgrade(int oldVersion, int newVersion) {
+
+            }
+        });
     }
 
     @VisibleForTesting
@@ -109,28 +126,28 @@ public class App extends Application {
                 res.updateConfiguration(configuration, res.getDisplayMetrics());
             }
         } catch (Exception e) {
-            Timber.e(e, null);
+            Timber.e(e);
         }
     }
 
     public GitLab getGitLab() {
-        return mGitLab;
+        return gitLab;
     }
 
     public GitLabRss getGitLabRss() {
-        return mGitLabRss;
+        return gitLabRss;
     }
 
     public Picasso getPicasso() {
-        return mPicasso;
+        return picasso;
     }
 
     public Account getAccount() {
-        return mAccount;
+        return account;
     }
 
     public void setAccount(Account account) {
-        mAccount = account;
+        this.account = account;
         OkHttpClient.Builder clientBuilder = OkHttpClientFactory.create(account);
         if (BuildConfig.DEBUG) {
             clientBuilder.addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
@@ -148,15 +165,19 @@ public class App extends Application {
         }
     }
 
+    public Prefs getPrefs() {
+        return prefs;
+    }
+
     private void initGitLab(Account account, OkHttpClient client) {
-        mGitLab = GitLabFactory.create(account, client);
+        gitLab = GitLabFactory.create(account, client);
     }
 
     private void initGitLabRss(Account account, OkHttpClient client) {
-        mGitLabRss = GitLabRssFactory.create(account, client);
+        gitLabRss = GitLabRssFactory.create(account, client);
     }
 
     private void initPicasso(OkHttpClient client) {
-        mPicasso = PicassoFactory.createPicasso(client);
+        picasso = PicassoFactory.createPicasso(client);
     }
 }

@@ -12,51 +12,51 @@ import org.parceler.Parcel;
 @JsonObject
 public class Group {
     @JsonField(name = "id")
-    long mId;
+    long id;
     @JsonField(name = "name")
-    String mName;
+    String name;
     @JsonField(name = "path")
-    String mPath;
+    String path;
     @JsonField(name = "description")
-    String mDescription;
+    String description;
     @JsonField(name = "avatar_url")
-    Uri mAvatarUrl;
+    Uri avatarUrl;
     @JsonField(name = "web_url")
-    Uri mWebUrl;
+    Uri webUrl;
 
     public Group() {}
 
     public long getId() {
-        return mId;
+        return id;
     }
 
     public String getName() {
-        return mName;
+        return name;
     }
 
     public String getPath() {
-        return mPath;
+        return path;
     }
 
     public String getDescription() {
-        return mDescription;
+        return description;
     }
 
     public Uri getAvatarUrl() {
-        return mAvatarUrl;
+        return avatarUrl;
     }
 
     public Uri getWebUrl() {
-        return mWebUrl;
+        return webUrl;
     }
 
     @Nullable
     public Uri getFeedUrl() {
-        if (mWebUrl == null) {
+        if (webUrl == null) {
             return null;
         }
 
-        return Uri.parse(mWebUrl.toString() + ".atom");
+        return Uri.parse(webUrl.toString() + ".atom");
     }
 
     @Override
@@ -66,11 +66,11 @@ public class Group {
         }
 
         Group group = (Group) o;
-        return mId == group.mId;
+        return id == group.id;
     }
 
     @Override
     public int hashCode() {
-        return (int) (mId ^ (mId >>> 32));
+        return (int) (id ^ (id >>> 32));
     }
 }

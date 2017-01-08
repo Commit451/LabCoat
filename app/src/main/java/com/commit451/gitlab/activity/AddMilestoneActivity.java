@@ -18,11 +18,10 @@ import android.widget.FrameLayout;
 import com.commit451.easel.Easel;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
-import com.commit451.easycallback.EasyCallback;
-import com.commit451.gitlab.api.GitLabFactory;
 import com.commit451.gitlab.event.MilestoneChangedEvent;
 import com.commit451.gitlab.event.MilestoneCreatedEvent;
 import com.commit451.gitlab.model.api.Milestone;
+import com.commit451.gitlab.rx.CustomSingleObserver;
 import com.commit451.teleprinter.Teleprinter;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
@@ -34,7 +33,9 @@ import java.util.Date;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import retrofit2.Callback;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class AddMilestoneActivity extends MorphActivity {
@@ -56,28 +57,46 @@ public class AddMilestoneActivity extends MorphActivity {
     }
 
     @BindView(R.id.root)
-    FrameLayout mRoot;
+    FrameLayout root;
     @BindView(R.id.toolbar)
-    Toolbar mToolbar;
+    Toolbar toolbar;
     @BindView(R.id.title_text_input_layout)
-    TextInputLayout mTitleTextInputLayout;
+    TextInputLayout textInputLayoutTitle;
     @BindView(R.id.title)
-    EditText mTitle;
+    EditText textTitle;
     @BindView(R.id.description)
-    EditText mDescription;
+    EditText textDescription;
     @BindView(R.id.due_date)
-    Button mDueDate;
+    Button buttonDueDate;
     @BindView(R.id.progress)
-    View mProgress;
+    View progress;
+
+    Teleprinter teleprinter;
+
+    long projectId;
+    Milestone milestone;
+    Date currentDate;
+
+    private final DatePickerDialog.OnDateSetListener onDateSetListener = new DatePickerDialog.OnDateSetListener() {
+        @Override
+        public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.YEAR, year);
+            calendar.set(Calendar.MONTH, monthOfYear);
+            calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+            currentDate = calendar.getTime();
+            bind(currentDate);
+        }
+    };
 
     @OnClick(R.id.due_date)
     void onDueDateClicked() {
         Calendar now = Calendar.getInstance();
-        if (mCurrentDate != null) {
-            now.setTime(mCurrentDate);
+        if (currentDate != null) {
+            now.setTime(currentDate);
         }
         DatePickerDialog dpd = DatePickerDialog.newInstance(
-                mOnDateSetListener,
+                onDateSetListener,
                 now.get(Calendar.YEAR),
                 now.get(Calendar.MONTH),
                 now.get(Calendar.DAY_OF_MONTH)
@@ -86,69 +105,29 @@ public class AddMilestoneActivity extends MorphActivity {
         dpd.show(getFragmentManager(), "date_picker");
     }
 
-    long mProjectId;
-    Milestone mMilestone;
-    Date mCurrentDate;
-    Teleprinter mTeleprinter;
-
-    private final DatePickerDialog.OnDateSetListener mOnDateSetListener = new DatePickerDialog.OnDateSetListener() {
-        @Override
-        public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
-            Calendar calendar = Calendar.getInstance();
-            calendar.set(Calendar.YEAR, year);
-            calendar.set(Calendar.MONTH, monthOfYear);
-            calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-            mCurrentDate = calendar.getTime();
-            bind(mCurrentDate);
-        }
-    };
-
-    private final View.OnClickListener mOnBackPressed = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            onBackPressed();
-        }
-    };
-
-    private Callback<Milestone> mMilestoneCallback = new EasyCallback<Milestone>() {
-
-        @Override
-        public void success(@NonNull Milestone response) {
-            mProgress.setVisibility(View.GONE);
-            if (mMilestone == null) {
-                App.bus().post(new MilestoneCreatedEvent(response));
-            } else {
-                App.bus().post(new MilestoneChangedEvent(response));
-            }
-            finish();
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t, null);
-            mProgress.setVisibility(View.GONE);
-            showError();
-        }
-    };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_milestone);
         ButterKnife.bind(this);
-        morph(mRoot);
-        mTeleprinter = new Teleprinter(this);
-        mProjectId = getIntent().getLongExtra(KEY_PROJECT_ID, -1);
-        mMilestone = Parcels.unwrap(getIntent().getParcelableExtra(KEY_MILESTONE));
-        if (mMilestone != null) {
-            bind(mMilestone);
-            mToolbar.inflateMenu(R.menu.menu_edit_milestone);
+        morph(root);
+        teleprinter = new Teleprinter(this);
+        projectId = getIntent().getLongExtra(KEY_PROJECT_ID, -1);
+        milestone = Parcels.unwrap(getIntent().getParcelableExtra(KEY_MILESTONE));
+        if (milestone != null) {
+            bind(milestone);
+            toolbar.inflateMenu(R.menu.menu_edit_milestone);
         } else {
-            mToolbar.inflateMenu(R.menu.menu_add_milestone);
+            toolbar.inflateMenu(R.menu.menu_add_milestone);
         }
-        mToolbar.setNavigationIcon(R.drawable.ic_back_24dp);
-        mToolbar.setNavigationOnClickListener(mOnBackPressed);
-        mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+        toolbar.setNavigationIcon(R.drawable.ic_back_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
@@ -163,50 +142,76 @@ public class AddMilestoneActivity extends MorphActivity {
     }
 
     private void createMilestone() {
-        mTeleprinter.hideKeyboard();
-        if (TextUtils.isEmpty(mTitle.getText())) {
-            mTitleTextInputLayout.setError(getString(R.string.required_field));
+        teleprinter.hideKeyboard();
+        if (TextUtils.isEmpty(textTitle.getText())) {
+            textInputLayoutTitle.setError(getString(R.string.required_field));
             return;
         }
 
-        mProgress.setVisibility(View.VISIBLE);
+        progress.setVisibility(View.VISIBLE);
         String dueDate = null;
-        if (mCurrentDate != null) {
-            dueDate = Milestone.DUE_DATE_FORMAT.format(mCurrentDate);
+        if (currentDate != null) {
+            dueDate = Milestone.DUE_DATE_FORMAT.format(currentDate);
         }
 
-        if (mMilestone == null) {
-            App.instance().getGitLab().createMilestone(mProjectId,
-                    mTitle.getText().toString(),
-                    mDescription.getText().toString(),
-                    dueDate).enqueue(mMilestoneCallback);
+        if (milestone == null) {
+            createOrEditMilestone(App.get().getGitLab().createMilestone(projectId,
+                    textTitle.getText().toString(),
+                    textDescription.getText().toString(),
+                    dueDate));
         } else {
-            App.instance().getGitLab().editMilestone(mProjectId,
-                    mMilestone.getId(),
-                    mTitle.getText().toString(),
-                    mDescription.getText().toString(),
-                    dueDate).enqueue(mMilestoneCallback);
+            createOrEditMilestone(App.get().getGitLab().editMilestone(projectId,
+                    milestone.getId(),
+                    textTitle.getText().toString(),
+                    textDescription.getText().toString(),
+                    dueDate));
         }
 
     }
 
+    private void createOrEditMilestone(Single<Milestone> observable) {
+        observable.subscribeOn(Schedulers.io())
+                .compose(this.<Milestone>bindToLifecycle())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new CustomSingleObserver<Milestone>() {
+
+                    @Override
+                    public void error(@NonNull Throwable t) {
+                        Timber.e(t);
+                        progress.setVisibility(View.GONE);
+                        showError();
+                    }
+
+                    @Override
+                    public void success(@NonNull Milestone milestone) {
+                        progress.setVisibility(View.GONE);
+                        if (AddMilestoneActivity.this.milestone == null) {
+                            App.bus().post(new MilestoneCreatedEvent(milestone));
+                        } else {
+                            App.bus().post(new MilestoneChangedEvent(milestone));
+                        }
+                        finish();
+                    }
+                });
+    }
+
     private void showError() {
-        Snackbar.make(mRoot, getString(R.string.failed_to_create_milestone), Snackbar.LENGTH_SHORT)
+        Snackbar.make(root, getString(R.string.failed_to_create_milestone), Snackbar.LENGTH_SHORT)
                 .show();
     }
 
     private void bind(Date date) {
-        mDueDate.setText(Milestone.DUE_DATE_FORMAT.format(date));
+        buttonDueDate.setText(Milestone.DUE_DATE_FORMAT.format(date));
     }
 
     private void bind(Milestone milestone) {
-        mTitle.setText(milestone.getTitle());
+        textTitle.setText(milestone.getTitle());
         if (milestone.getDescription() != null) {
-            mDescription.setText(milestone.getDescription());
+            textDescription.setText(milestone.getDescription());
         }
         if (milestone.getDueDate() != null) {
-            mCurrentDate = milestone.getDueDate();
-            bind(mCurrentDate);
+            currentDate = milestone.getDueDate();
+            bind(currentDate);
         }
     }
 }

@@ -12,48 +12,48 @@ import java.util.Date;
 @JsonObject
 public class RepositoryCommit {
     @JsonField(name = "id")
-    String mId;
+    String id;
     @JsonField(name = "short_id")
-    String mShortId;
+    String shortId;
     @JsonField(name = "title")
-    String mTitle;
+    String title;
     @JsonField(name = "author_name")
-    String mAuthorName;
+    String authorName;
     @JsonField(name = "author_email")
-    String mAuthorEmail;
+    String authorEmail;
     @JsonField(name = "created_at")
-    Date mCreatedAt;
+    Date createdAt;
     @JsonField(name = "message")
-    String mMessage;
+    String message;
 
     public RepositoryCommit() {}
 
     public String getId() {
-        return mId;
+        return id;
     }
 
     public String getShortId() {
-        return mShortId;
+        return shortId;
     }
 
     public String getTitle() {
-        return mTitle;
+        return title;
     }
 
     public String getAuthorName() {
-        return mAuthorName;
+        return authorName;
     }
 
     public String getAuthorEmail() {
-        return mAuthorEmail;
+        return authorEmail;
     }
 
     public Date getCreatedAt() {
-        return mCreatedAt;
+        return createdAt;
     }
 
     public String getMessage() {
-        return mMessage;
+        return message;
     }
 
     @Override
@@ -63,11 +63,11 @@ public class RepositoryCommit {
         }
 
         RepositoryCommit commit = (RepositoryCommit) o;
-        return ObjectUtil.equals(mId, commit.mId);
+        return ObjectUtil.equals(id, commit.id);
     }
 
     @Override
     public int hashCode() {
-        return ObjectUtil.hash(mId);
+        return ObjectUtil.hash(id);
     }
 }

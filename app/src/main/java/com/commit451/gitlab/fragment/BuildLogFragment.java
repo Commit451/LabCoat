@@ -9,18 +9,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.event.BuildChangedEvent;
 import com.commit451.gitlab.model.api.Build;
 import com.commit451.gitlab.model.api.Project;
+import com.commit451.gitlab.rx.CustomSingleObserver;
 import com.commit451.gitlab.util.BuildUtil;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.parceler.Parcels;
 
 import butterknife.BindView;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -40,20 +42,21 @@ public class BuildLogFragment extends ButterKnifeFragment {
         return fragment;
     }
 
-    @BindView(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
-    @BindView(R.id.log) TextView mTextLog;
-    @BindView(R.id.message_text) TextView mMessageView;
+    @BindView(R.id.swipe_layout)
+    SwipeRefreshLayout swipeRefreshLayout;
+    @BindView(R.id.log)
+    TextView textLog;
+    @BindView(R.id.message_text)
+    TextView textMessage;
 
-    Project mProject;
-    Build mBuild;
-
-    EventReceiver mEventReceiver;
+    Project project;
+    Build build;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mProject = Parcels.unwrap(getArguments().getParcelable(KEY_PROJECT));
-        mBuild = Parcels.unwrap(getArguments().getParcelable(KEY_BUILD));
+        project = Parcels.unwrap(getArguments().getParcelable(KEY_PROJECT));
+        build = Parcels.unwrap(getArguments().getParcelable(KEY_BUILD));
     }
 
     @Override
@@ -65,21 +68,20 @@ public class BuildLogFragment extends ButterKnifeFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 loadData();
             }
         });
         loadData();
-        mEventReceiver = new EventReceiver();
-        App.bus().register(mEventReceiver);
+        App.bus().register(this);
     }
 
     @Override
     public void onDestroyView() {
+        App.bus().unregister(this);
         super.onDestroyView();
-        App.bus().unregister(mEventReceiver);
     }
 
     @Override
@@ -88,47 +90,43 @@ public class BuildLogFragment extends ButterKnifeFragment {
             return;
         }
 
-        mSwipeRefreshLayout.post(new Runnable() {
+        swipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
-                if (mSwipeRefreshLayout != null) {
-                    mSwipeRefreshLayout.setRefreshing(true);
+                if (swipeRefreshLayout != null) {
+                    swipeRefreshLayout.setRefreshing(true);
                 }
             }
         });
 
-        String url = BuildUtil.getRawBuildUrl(App.instance().getAccount().getServerUrl(), mProject, mBuild);
+        String url = BuildUtil.getRawBuildUrl(App.get().getAccount().getServerUrl(), project, build);
 
-        App.instance().getGitLab().getRaw(url).enqueue(new EasyCallback<String>() {
-            @Override
-            public void success(@NonNull String response) {
-                if (getView() == null) {
-                    return;
-                }
-                mSwipeRefreshLayout.setRefreshing(false);
-                mTextLog.setText(response);
-            }
+        App.get().getGitLab().getRaw(url)
+                .compose(this.<String>bindToLifecycle())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new CustomSingleObserver<String>() {
 
-            @Override
-            public void failure(Throwable t) {
-                Timber.e(t);
-                if (getView() == null) {
-                    return;
-                }
-                mSwipeRefreshLayout.setRefreshing(false);
-                mMessageView.setVisibility(View.VISIBLE);
-            }
-        });
+                    @Override
+                    public void error(@NonNull Throwable t) {
+                        Timber.e(t);
+                        swipeRefreshLayout.setRefreshing(false);
+                        textMessage.setVisibility(View.VISIBLE);
+                    }
+
+                    @Override
+                    public void success(@NonNull String s) {
+                        swipeRefreshLayout.setRefreshing(false);
+                        textLog.setText(s);
+                    }
+                });
     }
 
-    private class EventReceiver {
-
-        @Subscribe
-        public void onBuildChanged(BuildChangedEvent event) {
-            if (mBuild.getId() == event.build.getId()) {
-                mBuild = event.build;
-                loadData();
-            }
+    @Subscribe
+    public void onBuildChanged(BuildChangedEvent event) {
+        if (build.getId() == event.build.getId()) {
+            build = event.build;
+            loadData();
         }
     }
 }

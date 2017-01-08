@@ -23,24 +23,13 @@ public class MergeRequestAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private static final int TYPE_ITEM = 0;
     private static final int TYPE_FOOTER = 1;
 
-    public interface Listener {
-        void onMergeRequestClicked(MergeRequest mergeRequest);
-    }
-    private Listener mListener;
-    private List<MergeRequest> mValues;
-    private boolean mLoading;
-
-    private final View.OnClickListener mOnItemClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            int position = (int) v.getTag(R.id.list_position);
-            mListener.onMergeRequestClicked(getValueAt(position));
-        }
-    };
+    private Listener listener;
+    private List<MergeRequest> values;
+    private boolean loading;
 
     public MergeRequestAdapter(Listener listener) {
-        mListener = listener;
-        mValues = new ArrayList<>();
+        this.listener = listener;
+        values = new ArrayList<>();
     }
 
     @Override
@@ -48,7 +37,13 @@ public class MergeRequestAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         switch (viewType) {
             case TYPE_ITEM:
                 MergeRequestViewHolder holder = MergeRequestViewHolder.inflate(parent);
-                holder.itemView.setOnClickListener(mOnItemClickListener);
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int position = (int) v.getTag(R.id.list_position);
+                        listener.onMergeRequestClicked(getValueAt(position));
+                    }
+                });
                 return holder;
             case TYPE_FOOTER:
                 return LoadingFooterViewHolder.inflate(parent);
@@ -63,18 +58,18 @@ public class MergeRequestAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             ((MergeRequestViewHolder) holder).bind(mergeRequest);
             holder.itemView.setTag(R.id.list_position, position);
         } else if (holder instanceof LoadingFooterViewHolder) {
-            ((LoadingFooterViewHolder) holder).bind(mLoading);
+            ((LoadingFooterViewHolder) holder).bind(loading);
         }
     }
 
     @Override
     public int getItemCount() {
-        return mValues.size() + FOOTER_COUNT;
+        return values.size() + FOOTER_COUNT;
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (position == mValues.size()) {
+        if (position == values.size()) {
             return TYPE_FOOTER;
         } else {
             return TYPE_ITEM;
@@ -82,23 +77,27 @@ public class MergeRequestAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     public MergeRequest getValueAt(int position) {
-        return mValues.get(position);
+        return values.get(position);
     }
 
     public void setData(Collection<MergeRequest> mergeRequests) {
-        mValues.clear();
+        values.clear();
         addData(mergeRequests);
     }
 
     public void addData(Collection<MergeRequest> mergeRequests) {
         if (mergeRequests != null) {
-            mValues.addAll(mergeRequests);
+            values.addAll(mergeRequests);
         }
         notifyDataSetChanged();
     }
 
     public void setLoading(boolean loading) {
-        mLoading = loading;
-        notifyItemChanged(mValues.size());
+        this.loading = loading;
+        notifyItemChanged(values.size());
+    }
+
+    public interface Listener {
+        void onMergeRequestClicked(MergeRequest mergeRequest);
     }
 }

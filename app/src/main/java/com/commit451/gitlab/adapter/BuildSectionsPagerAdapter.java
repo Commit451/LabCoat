@@ -16,15 +16,15 @@ import com.commit451.gitlab.model.api.Project;
  */
 public class BuildSectionsPagerAdapter extends FragmentPagerAdapter {
 
-    private Project mProject;
-    private Build mBuild;
-    private String[] mTitles;
+    private Project project;
+    private Build build;
+    private String[] titles;
 
     public BuildSectionsPagerAdapter(Context context, FragmentManager fm, Project project, Build build) {
         super(fm);
-        mProject = project;
-        mBuild = build;
-        mTitles = context.getResources().getStringArray(R.array.build_tabs);
+        this.project = project;
+        this.build = build;
+        titles = context.getResources().getStringArray(R.array.build_tabs);
     }
 
     @Override
@@ -32,9 +32,9 @@ public class BuildSectionsPagerAdapter extends FragmentPagerAdapter {
 
         switch(position) {
             case 0:
-                return BuildDescriptionFragment.newInstance(mProject, mBuild);
+                return BuildDescriptionFragment.newInstance(project, build);
             case 1:
-                return BuildLogFragment.newInstance(mProject, mBuild);
+                return BuildLogFragment.newInstance(project, build);
         }
 
         throw new IllegalStateException("Position exceeded on view pager");
@@ -42,11 +42,11 @@ public class BuildSectionsPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return mTitles.length;
+        return titles.length;
     }
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return mTitles[position];
+        return titles[position];
     }
 }

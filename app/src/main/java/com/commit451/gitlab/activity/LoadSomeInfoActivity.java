@@ -4,11 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
 
-import com.commit451.easycallback.EasyCallback;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.api.Build;
@@ -17,18 +15,22 @@ import com.commit451.gitlab.model.api.Milestone;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryCommit;
 import com.commit451.gitlab.navigation.Navigator;
+import com.commit451.gitlab.rx.CustomSingleObserver;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
+
 
 /**
  * Intermediate activity when deep linking to another activity and things need to load
  */
-public class LoadSomeInfoActivity extends AppCompatActivity {
+public class LoadSomeInfoActivity extends BaseActivity {
 
     private static final String EXTRA_LOAD_TYPE = "load_type";
     private static final String EXTRA_PROJECT_NAMESPACE = "project_namespace";
@@ -80,132 +82,150 @@ public class LoadSomeInfoActivity extends AppCompatActivity {
     }
 
     @BindView(R.id.progress)
-    View mProgress;
+    View progress;
 
-    private int mLoadType;
+    private int loadType;
 
-    private Project mProject;
+    private Project project;
 
     @OnClick(R.id.root)
     void onRootClicked() {
         finish();
     }
 
-    private final EasyCallback<Project> mProjectCallback = new EasyCallback<Project>() {
-        @Override
-        public void success(@NonNull Project response) {
-            mProject = response;
-            switch (mLoadType) {
-                case LOAD_TYPE_DIFF:
-                    String sha = getIntent().getStringExtra(EXTRA_COMMIT_SHA);
-                    App.instance().getGitLab().getCommit(response.getId(), sha).enqueue(mCommitCallback);
-                    return;
-                case LOAD_TYPE_MERGE_REQUEST:
-                    String mergeRequestId = getIntent().getStringExtra(EXTRA_MERGE_REQUEST);
-                    App.instance().getGitLab().getMergeRequestsByIid(response.getId(), mergeRequestId).enqueue(mMergeRequestCallback);
-                    return;
-                case LOAD_TYPE_BUILD:
-                    long buildId = getIntent().getLongExtra(EXTRA_BUILD_ID, -1);
-                    App.instance().getGitLab().getBuild(response.getId(), buildId).enqueue(mBuildCallback);
-                    return;
-                case LOAD_TYPE_MILESTONE:
-                    String milestoneId = getIntent().getStringExtra(EXTRA_MILESTONE_ID);
-                    App.instance().getGitLab().getMilestonesByIid(response.getId(), milestoneId).enqueue(mMilestoneCallback);
-                    return;
-            }
-
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t, null);
-            onError();
-        }
-    };
-
-    private final EasyCallback<RepositoryCommit> mCommitCallback = new EasyCallback<RepositoryCommit>() {
-        @Override
-        public void success(@NonNull RepositoryCommit response) {
-            Navigator.navigateToDiffActivity(LoadSomeInfoActivity.this, mProject, response);
-            finish();
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t, null);
-            onError();
-        }
-    };
-
-    private final EasyCallback<List<MergeRequest>> mMergeRequestCallback = new EasyCallback<List<MergeRequest>>() {
-        @Override
-        public void success(@NonNull List<MergeRequest> response) {
-            if (!response.isEmpty()) {
-                Navigator.navigateToMergeRequest(LoadSomeInfoActivity.this, mProject, response.get(0));
-                finish();
-            } else {
-                onError();
-            }
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t, null);
-            onError();
-        }
-    };
-
-    private final EasyCallback<Build> mBuildCallback = new EasyCallback<Build>() {
-        @Override
-        public void success(@NonNull Build response) {
-            Navigator.navigateToBuild(LoadSomeInfoActivity.this, mProject, response);
-            finish();
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t, null);
-            onError();
-        }
-    };
-
-    private final EasyCallback<List<Milestone>> mMilestoneCallback = new EasyCallback<List<Milestone>>() {
-        @Override
-        public void success(@NonNull List<Milestone> response) {
-            if (!response.isEmpty()) {
-                Navigator.navigateToMilestone(LoadSomeInfoActivity.this, mProject, response.get(0));
-                finish();
-            } else {
-                onError();
-            }
-        }
-
-        @Override
-        public void failure(Throwable t) {
-            Timber.e(t, null);
-            onError();
-        }
-    };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loading);
         ButterKnife.bind(this);
-        mProgress.setVisibility(View.VISIBLE);
-        mLoadType = getIntent().getIntExtra(EXTRA_LOAD_TYPE, -1);
-        Timber.d("Loading some info type: %d", mLoadType);
+        progress.setVisibility(View.VISIBLE);
+        loadType = getIntent().getIntExtra(EXTRA_LOAD_TYPE, -1);
+        Timber.d("Loading some info type: %d", loadType);
 
-        switch (mLoadType) {
+        switch (loadType) {
             case LOAD_TYPE_DIFF:
             case LOAD_TYPE_MERGE_REQUEST:
             case LOAD_TYPE_BUILD:
             case LOAD_TYPE_MILESTONE:
                 String namespace = getIntent().getStringExtra(EXTRA_PROJECT_NAMESPACE);
                 String project = getIntent().getStringExtra(EXTRA_PROJECT_NAME);
-                App.instance().getGitLab().getProject(namespace, project).enqueue(mProjectCallback);
+                App.get().getGitLab().getProject(namespace, project)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new CustomSingleObserver<Project>() {
+
+                            @Override
+                            public void error(@NonNull Throwable t) {
+                                Timber.e(t);
+                                LoadSomeInfoActivity.this.onError();
+                            }
+
+                            @Override
+                            public void success(@NonNull Project project) {
+                                loadNextPart(project);
+                            }
+                        });
                 break;
         }
+    }
+
+    private void loadNextPart(Project response) {
+        project = response;
+        switch (loadType) {
+            case LOAD_TYPE_DIFF:
+                String sha = getIntent().getStringExtra(EXTRA_COMMIT_SHA);
+                App.get().getGitLab().getCommit(response.getId(), sha)
+                        .compose(LoadSomeInfoActivity.this.<RepositoryCommit>bindToLifecycle())
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new CustomSingleObserver<RepositoryCommit>() {
+
+                            @Override
+                            public void error(@NonNull Throwable t) {
+                                Timber.e(t);
+                                LoadSomeInfoActivity.this.onError();
+                            }
+
+                            @Override
+                            public void success(@NonNull RepositoryCommit repositoryCommit) {
+                                Navigator.navigateToDiffActivity(LoadSomeInfoActivity.this, project, repositoryCommit);
+                                finish();
+                            }
+                        });
+                return;
+            case LOAD_TYPE_MERGE_REQUEST:
+                String mergeRequestId = getIntent().getStringExtra(EXTRA_MERGE_REQUEST);
+                App.get().getGitLab().getMergeRequestsByIid(response.getId(), mergeRequestId)
+                        .compose(LoadSomeInfoActivity.this.<List<MergeRequest>>bindToLifecycle())
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new CustomSingleObserver<List<MergeRequest>>() {
+
+                            @Override
+                            public void error(@NonNull Throwable t) {
+                                Timber.e(t);
+                                LoadSomeInfoActivity.this.onError();
+                            }
+
+                            @Override
+                            public void success(@NonNull List<MergeRequest> mergeRequests) {
+                                if (!mergeRequests.isEmpty()) {
+                                    Navigator.navigateToMergeRequest(LoadSomeInfoActivity.this, project, mergeRequests.get(0));
+                                    finish();
+                                } else {
+                                    LoadSomeInfoActivity.this.onError();
+                                }
+                            }
+                        });
+                return;
+            case LOAD_TYPE_BUILD:
+                long buildId = getIntent().getLongExtra(EXTRA_BUILD_ID, -1);
+                App.get().getGitLab().getBuild(response.getId(), buildId)
+                        .compose(LoadSomeInfoActivity.this.<Build>bindToLifecycle())
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new CustomSingleObserver<Build>() {
+
+                            @Override
+                            public void error(@NonNull Throwable t) {
+                                Timber.e(t);
+                                LoadSomeInfoActivity.this.onError();
+                            }
+
+                            @Override
+                            public void success(@NonNull Build build) {
+                                Navigator.navigateToBuild(LoadSomeInfoActivity.this, project, build);
+                                finish();
+                            }
+                        });
+                return;
+            case LOAD_TYPE_MILESTONE:
+                String milestoneId = getIntent().getStringExtra(EXTRA_MILESTONE_ID);
+                App.get().getGitLab().getMilestonesByIid(response.getId(), milestoneId)
+                        .compose(LoadSomeInfoActivity.this.<List<Milestone>>bindToLifecycle())
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new CustomSingleObserver<List<Milestone>>() {
+
+                            @Override
+                            public void error(@NonNull Throwable t) {
+                                Timber.e(t);
+                                LoadSomeInfoActivity.this.onError();
+                            }
+
+                            @Override
+                            public void success(@NonNull List<Milestone> milestones) {
+                                if (!milestones.isEmpty()) {
+                                    Navigator.navigateToMilestone(LoadSomeInfoActivity.this, project, milestones.get(0));
+                                    finish();
+                                } else {
+                                    LoadSomeInfoActivity.this.onError();
+                                }
+                            }
+                        });
+                return;
+        }
+
     }
 
     private void onError() {

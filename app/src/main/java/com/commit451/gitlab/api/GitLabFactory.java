@@ -1,7 +1,13 @@
 package com.commit451.gitlab.api;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.VisibleForTesting;
+
 import com.commit451.gitlab.model.Account;
 import com.github.aurae.retrofit2.LoganSquareConverterFactory;
+import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
+
+import java.util.concurrent.Executor;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
@@ -13,17 +19,30 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 public final class GitLabFactory {
 
     /**
-     * Create a GitLab instance with the current account passed.
+     * Create a GitLab get with the current account passed.
      * @param account the account to try and log in with
-     * @return the GitLab instance
+     * @return the GitLab get
      */
     public static GitLab create(Account account, OkHttpClient client) {
-        Retrofit restAdapter = new Retrofit.Builder()
+        return create(account, client, false);
+    }
+
+    @VisibleForTesting
+    public static GitLab create(Account account, OkHttpClient client, boolean dummyExecutor) {
+        Retrofit.Builder retrofitBuilder = new Retrofit.Builder()
                 .baseUrl(account.getServerUrl().toString())
                 .client(client)
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(ScalarsConverterFactory.create())
-                .addConverterFactory(LoganSquareConverterFactory.create())
-                .build();
-        return restAdapter.create(GitLab.class);
+                .addConverterFactory(LoganSquareConverterFactory.create());
+        if (dummyExecutor) {
+            retrofitBuilder.callbackExecutor(new Executor() {
+                @Override
+                public void execute(@NonNull Runnable command) {
+                    //dumb, to prevent tests from failing
+                }
+            });
+        }
+        return retrofitBuilder.build().create(GitLab.class);
     }
 }

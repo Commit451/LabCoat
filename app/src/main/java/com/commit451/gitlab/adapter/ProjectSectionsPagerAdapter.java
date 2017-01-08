@@ -39,50 +39,50 @@ public class ProjectSectionsPagerAdapter extends FragmentPagerAdapter {
     private static final int PROJECT_MEMBERS_POS = 8;
     private static final int SNIPPETS_POS = 9;
 
-    private final Project mProject;
-    private final String[] mTitles;
-    private final Set<Integer> mDisabledSections = new HashSet<>();
+    private final Project project;
+    private final String[] titles;
+    private final Set<Integer> disabledSections = new HashSet<>();
 
     public ProjectSectionsPagerAdapter(ProjectActivity context, FragmentManager fm) {
         super(fm);
 
-        mProject = context.getProject();
-        mTitles = context.getResources().getStringArray(R.array.main_tabs);
+        project = context.getProject();
+        titles = context.getResources().getStringArray(R.array.main_tabs);
 
         Project project = context.getProject();
         if (!project.isBuildEnabled()) {
             Timber.d("Builds are disabled");
-            mDisabledSections.add(BUILDS_POS);
+            disabledSections.add(BUILDS_POS);
         }
         if (!project.isIssuesEnabled()) {
             Timber.d("Issues are disabled");
-            mDisabledSections.add(ISSUES_POS);
+            disabledSections.add(ISSUES_POS);
         }
         if (!project.isMergeRequestsEnabled()) {
             Timber.d("Merge requests are disabled");
-            mDisabledSections.add(MERGE_REQUESTS_POS);
+            disabledSections.add(MERGE_REQUESTS_POS);
         }
         if (!project.isIssuesEnabled() && !project.isMergeRequestsEnabled()) {
             Timber.d("Milestones are disabled");
-            mDisabledSections.add(MILESTONES_POS);
+            disabledSections.add(MILESTONES_POS);
         }
         //TODO enable snippets when they are done
         if (true){//!project.isSnippetsEnabled()) {
             Timber.d("Snippets are disabled");
-            mDisabledSections.add(SNIPPETS_POS);
+            disabledSections.add(SNIPPETS_POS);
         }
     }
 
     @Override
     public int getCount() {
-        return mTitles.length - mDisabledSections.size();
+        return titles.length - disabledSections.size();
     }
 
     @Override
     public CharSequence getPageTitle(int position) {
         position = getCorrectPosition(position);
 
-        return mTitles[position];
+        return titles[position];
     }
 
     @Override
@@ -93,7 +93,7 @@ public class ProjectSectionsPagerAdapter extends FragmentPagerAdapter {
             case PROJECT_POS:
                 return ProjectFragment.newInstance();
             case ACTIVITY_POS:
-                return FeedFragment.newInstance(mProject.getFeedUrl());
+                return FeedFragment.newInstance(project.getFeedUrl());
             case FILES_POS:
                 return FilesFragment.newInstance();
             case COMMITS_POS:
@@ -117,7 +117,7 @@ public class ProjectSectionsPagerAdapter extends FragmentPagerAdapter {
 
     private int getCorrectPosition(int position) {
         for (int i = 0; i <= position; i++) {
-            if (mDisabledSections.contains(i)) {
+            if (disabledSections.contains(i)) {
                 position++;
             }
         }

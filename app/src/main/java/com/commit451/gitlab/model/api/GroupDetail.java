@@ -11,11 +11,11 @@ import java.util.List;
 @JsonObject
 public class GroupDetail extends Group {
     @JsonField(name = "projects")
-    List<Project> mProjects;
+    List<Project> projects;
 
     public GroupDetail() {}
 
     public List<Project> getProjects() {
-        return mProjects;
+        return projects;
     }
 }

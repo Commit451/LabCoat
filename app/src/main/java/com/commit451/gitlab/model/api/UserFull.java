@@ -12,59 +12,59 @@ import java.util.List;
 @JsonObject
 public class UserFull extends User {
     @JsonField(name = "email")
-    String mEmail;
+    String email;
     @JsonField(name = "theme_id")
-    int mThemeId;
+    int themeId;
     @JsonField(name = "color_scheme_id")
-    int mColorSchemeId;
+    int colorSchemeId;
     @JsonField(name = "projects_limit")
-    int mProjectsLimit;
+    int projectsLimit;
     @JsonField(name = "current_sign_in_at")
-    Date mCurrentSignInAt;
+    Date currentSignInAt;
     @JsonField(name = "identities")
-    List<Identity> mIdentities;
+    List<Identity> identities;
     @JsonField(name = "can_create_group")
-    boolean mCanCreateGroup;
+    boolean canCreateGroup;
     @JsonField(name = "can_create_project")
-    boolean mCanCreateProject;
+    boolean canCreateProject;
     @JsonField(name = "two_factor_enabled")
-    boolean mTwoFactorEnabled;
+    boolean twoFactorEnabled;
 
     public UserFull() {}
 
     public String getEmail() {
-        return mEmail;
+        return email;
     }
 
     public int getThemeId() {
-        return mThemeId;
+        return themeId;
     }
 
     public int getColorSchemeId() {
-        return mColorSchemeId;
+        return colorSchemeId;
     }
 
     public int getProjectsLimit() {
-        return mProjectsLimit;
+        return projectsLimit;
     }
 
     public Date getCurrentSignInAt() {
-        return mCurrentSignInAt;
+        return currentSignInAt;
     }
 
     public List<Identity> getIdentities() {
-        return mIdentities;
+        return identities;
     }
 
     public boolean canCreateGroup() {
-        return mCanCreateGroup;
+        return canCreateGroup;
     }
 
     public boolean canCreateProject() {
-        return mCanCreateProject;
+        return canCreateProject;
     }
 
     public boolean isTwoFactorEnabled() {
-        return mTwoFactorEnabled;
+        return twoFactorEnabled;
     }
 }
