@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.commit451.adapterlayout.AdapterLayout;
 import com.commit451.gitlab.model.api.Label;
 import com.commit451.gitlab.viewHolder.AddLabelViewHolder;
 
@@ -50,12 +51,12 @@ public class AddIssueLabelAdapter extends RecyclerView.Adapter<AddLabelViewHolde
     @Override
     public AddLabelViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         final AddLabelViewHolder holder = AddLabelViewHolder.inflate(parent);
-        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onLongClick(View v) {
-                Label label = getEntry(holder.getAdapterPosition());
-                listener.onLabelLongClicked(label);
-                return true;
+            public void onClick(View v) {
+                int position = AdapterLayout.getAdapterPosition(holder);
+                Label label = getEntry(position);
+                listener.onLabelClicked(label);
             }
         });
         return holder;
@@ -94,6 +95,6 @@ public class AddIssueLabelAdapter extends RecyclerView.Adapter<AddLabelViewHolde
     }
 
     public interface Listener {
-        void onLabelLongClicked(Label label);
+        void onLabelClicked(Label label);
     }
 }

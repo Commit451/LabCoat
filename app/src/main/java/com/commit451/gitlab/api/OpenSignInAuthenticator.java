@@ -15,6 +15,7 @@ import okhttp3.Authenticator;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.Route;
+import timber.log.Timber;
 
 /**
  * If it detects a 401, redirect the user to the login screen, clearing activity the stack.
@@ -33,6 +34,7 @@ public class OpenSignInAuthenticator implements Authenticator {
         //Special case for if someone just put in their username or password wrong
         if (!"session".equals(response.request().url().pathSegments().get(response.request().url().pathSegments().size()-1))) {
             //Off the background thread
+            Timber.wtf(new RuntimeException("Got a 401 and showing sign in for url: " + response.request().url()));
             ThreadUtil.postOnMainThread(new Runnable() {
                 @Override
                 public void run() {

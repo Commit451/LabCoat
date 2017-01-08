@@ -52,7 +52,12 @@ public class DiffHeaderViewHolder extends RecyclerView.ViewHolder {
                 .into(image);
 
         textAuthor.setText(commit.getAuthorName());
-        textTime.setText(DateUtil.getRelativeTimeSpanString(itemView.getContext(), commit.getCreatedAt()));
+        if (commit.getCreatedAt() == null) {
+            textTime.setText(null);
+        } else {
+            textTime.setText(DateUtil.getRelativeTimeSpanString(itemView.getContext(), commit.getCreatedAt()));
+        }
+
         textTitle.setText(commit.getTitle());
         String message = extractMessage(commit.getTitle(), commit.getMessage());
         textMessage.setText(message);

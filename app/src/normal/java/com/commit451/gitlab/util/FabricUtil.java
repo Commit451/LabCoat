@@ -7,6 +7,7 @@ import com.commit451.gitlab.BuildConfig;
 import com.crashlytics.android.Crashlytics;
 
 import io.fabric.sdk.android.Fabric;
+import timber.log.Timber;
 
 /**
  * Enables Fabric
@@ -17,6 +18,7 @@ public class FabricUtil {
         // Start crashlytics if enabled
         if (!BuildConfig.DEBUG) {
             Fabric.with(context, new Crashlytics());
+            Timber.plant(new CrashlyticsWtfTree());
         }
     }
 }

@@ -13,7 +13,7 @@
         <item name="alertDialogTheme">@style/AppDialogTheme</item>
     </style>
 
-    <style name="Activity" parent="AppTheme"/>
+    <style name="Activity" parent="AppTheme" />
 
     <style name="Activity.Login">
         <item name="android:windowBackground">?attr/colorPrimary</item>
@@ -51,7 +51,7 @@
         <item name="android:windowIsFloating">false</item>
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowNoTitle">true</item>
-        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:windowDrawsSystemBarBackgrounds" tools:targetApi="lollipop">true</item>
     </style>
 
     <!-- Widget styles -->

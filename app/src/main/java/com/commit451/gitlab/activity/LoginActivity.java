@@ -1,14 +1,10 @@
 package com.commit451.gitlab.activity;
 
-import android.Manifest;
-import android.accounts.AccountManager;
-import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.security.KeyChain;
@@ -16,15 +12,11 @@ import android.security.KeyChainAliasCallback;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.AppCompatAutoCompleteTextView;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
-import android.util.Patterns;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.bluelinelabs.logansquare.LoganSquare;
@@ -53,12 +45,8 @@ import com.jakewharton.retrofit2.adapter.rxjava2.HttpException;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.security.cert.CertificateEncodingException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 import javax.net.ssl.SSLHandshakeException;
@@ -83,7 +71,6 @@ public class LoginActivity extends BaseActivity {
 
     private static final String EXTRA_SHOW_CLOSE = "show_close";
 
-    private static final int REQUEST_PERMISSION_GET_ACCOUNTS = 1337;
     private static final int REQUEST_PRIVATE_TOKEN = 123;
     private static Pattern sTokenPattern = Pattern.compile("^[A-Za-z0-9-_]*$");
 
@@ -108,7 +95,7 @@ public class LoginActivity extends BaseActivity {
     @BindView(R.id.user_input_hint)
     TextInputLayout textInputLayoutUser;
     @BindView(R.id.user_input)
-    AppCompatAutoCompleteTextView textUser;
+    EditText textUser;
     @BindView(R.id.password_hint)
     TextInputLayout textInputLayoutPassword;
     @BindView(R.id.password_input)
@@ -234,35 +221,7 @@ public class LoginActivity extends BaseActivity {
             });
         }
 
-        textUser.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                    checkAccountPermission();
-                }
-            }
-        });
         textUrl.setText(R.string.url_gitlab);
-    }
-
-    @TargetApi(23)
-    private void checkAccountPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.GET_ACCOUNTS) == PackageManager.PERMISSION_GRANTED) {
-            retrieveAccounts();
-        } else {
-            requestPermissions(new String[]{Manifest.permission.GET_ACCOUNTS}, REQUEST_PERMISSION_GET_ACCOUNTS);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case REQUEST_PERMISSION_GET_ACCOUNTS: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    retrieveAccounts();
-                }
-            }
-        }
     }
 
     @Override
@@ -598,37 +557,5 @@ public class LoginActivity extends BaseActivity {
             }
         }
         return false;
-    }
-
-    /**
-     * Manually retrieve the accounts, typically used for API 23+ after getting the permission. Called automatically
-     * on creation, but needs to be recalled if the permission is granted later
-     */
-    private void retrieveAccounts() {
-        Collection<String> accounts = getEmailAccounts();
-        if (accounts != null && !accounts.isEmpty()) {
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                    R.layout.support_simple_spinner_dropdown_item,
-                    new ArrayList<>(accounts));
-            textUser.setAdapter(adapter);
-        }
-    }
-
-    /**
-     * Get all the accounts that appear to be email accounts. HashSet so that we do not get duplicates
-     *
-     * @return list of email accounts
-     */
-    private Set<String> getEmailAccounts() {
-        HashSet<String> emailAccounts = new HashSet<>();
-        AccountManager manager = (AccountManager) getSystemService(Context.ACCOUNT_SERVICE);
-        @SuppressWarnings("MissingPermission")
-        final android.accounts.Account[] accounts = manager.getAccounts();
-        for (android.accounts.Account account : accounts) {
-            if (!TextUtils.isEmpty(account.name) && Patterns.EMAIL_ADDRESS.matcher(account.name).matches()) {
-                emailAccounts.add(account.name);
-            }
-        }
-        return emailAccounts;
     }
 }

@@ -122,7 +122,7 @@ public class AddIssueActivity extends MorphActivity {
         members = new HashSet<>();
         adapterLabels = new AddIssueLabelAdapter(new AddIssueLabelAdapter.Listener() {
             @Override
-            public void onLabelLongClicked(final Label label) {
+            public void onLabelClicked(final Label label) {
                 new AlertDialog.Builder(AddIssueActivity.this)
                         .setTitle(R.string.remove)
                         .setMessage(R.string.are_you_sure_you_want_to_remove)
