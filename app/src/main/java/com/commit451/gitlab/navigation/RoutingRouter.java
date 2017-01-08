@@ -8,19 +8,19 @@ import android.support.annotation.Nullable;
  */
 public class RoutingRouter {
 
-    private RoutingNavigator mNavigator;
+    private RoutingNavigator navigator;
 
     public RoutingRouter(RoutingNavigator routingNavigator) {
-        mNavigator = routingNavigator;
+        navigator = routingNavigator;
     }
 
     public void route(@Nullable Uri link) {
         if (link == null) {
-            mNavigator.onRouteUnknown(null);
+            navigator.onRouteUnknown(null);
             return;
         }
         if (link.getPath() == null) {
-            mNavigator.onRouteUnknown(link);
+            navigator.onRouteUnknown(link);
             return;
         }
         if (link.getPath().contains("issues")) {
@@ -32,7 +32,7 @@ public class RoutingRouter {
                     String namespace = link.getPathSegments().get(index - 2);
                     String name = link.getPathSegments().get(index - 1);
                     //TODO make this tell what tab to open up when we get to projects
-                    mNavigator.onRouteToProject(namespace, name);
+                    navigator.onRouteToProject(namespace, name);
                     return;
                 }
             } else {
@@ -46,7 +46,7 @@ public class RoutingRouter {
                     //https://gitlab.com/Commit451/LabCoat/issues/158#note_4560580
                     String[] stuff = lastSegment.split("#");
                     String issueIid = stuff[0];
-                    mNavigator.onRouteToIssue(projectNamespace, projectName, issueIid);
+                    navigator.onRouteToIssue(projectNamespace, projectName, issueIid);
                     return;
                 }
             }
@@ -56,7 +56,7 @@ public class RoutingRouter {
             if (index > 1) {
                 String projectNamespace = link.getPathSegments().get(index - 2);
                 String projectName = link.getPathSegments().get(index - 1);
-                mNavigator.onRouteToProject(projectNamespace, projectName);
+                navigator.onRouteToProject(projectNamespace, projectName);
                 return;
             }
         } else if (link.getPath().contains("commit")) {
@@ -65,7 +65,7 @@ public class RoutingRouter {
                 String projectNamespace = link.getPathSegments().get(index - 2);
                 String projectName = link.getPathSegments().get(index - 1);
                 String commitSha = link.getPathSegments().get(index + 1);
-                mNavigator.onRouteToCommit(projectNamespace, projectName, commitSha);
+                navigator.onRouteToCommit(projectNamespace, projectName, commitSha);
                 return;
             }
         } else if (link.getPath().contains("compare")) {
@@ -77,7 +77,7 @@ public class RoutingRouter {
                 String[] shas = link.getLastPathSegment().split("...");
                 if (shas.length == 2) {
                     //I believe we want to route to the second one. Should verify this
-                    mNavigator.onRouteToCommit(projectNamespace, projectName, shas[1]);
+                    navigator.onRouteToCommit(projectNamespace, projectName, shas[1]);
                     return;
                 }
             }
@@ -87,7 +87,7 @@ public class RoutingRouter {
                 String projectNamespace = link.getPathSegments().get(index - 2);
                 String projectName = link.getPathSegments().get(index - 1);
                 String mergeRequestId = link.getPathSegments().get(index + 1);
-                mNavigator.onRouteToMergeRequest(projectNamespace, projectName, mergeRequestId);
+                navigator.onRouteToMergeRequest(projectNamespace, projectName, mergeRequestId);
                 return;
             }
         } else if (link.getPath().contains("builds")) {
@@ -96,7 +96,7 @@ public class RoutingRouter {
                 String projectNamespace = link.getPathSegments().get(index - 2);
                 String projectName = link.getPathSegments().get(index - 1);
                 String buildId = link.getPathSegments().get(index + 1);
-                mNavigator.onRouteToBuild(projectNamespace, projectName, buildId);
+                navigator.onRouteToBuild(projectNamespace, projectName, buildId);
                 return;
             }
         } else if (link.getPath().contains("milestones")) {
@@ -105,10 +105,10 @@ public class RoutingRouter {
                 String projectNamespace = link.getPathSegments().get(index - 2);
                 String projectName = link.getPathSegments().get(index - 1);
                 String milestoneId = link.getPathSegments().get(index + 1);
-                mNavigator.onRouteToMilestone(projectNamespace, projectName, milestoneId);
+                navigator.onRouteToMilestone(projectNamespace, projectName, milestoneId);
                 return;
             }
         }
-        mNavigator.onRouteUnknown(link);
+        navigator.onRouteUnknown(link);
     }
 }

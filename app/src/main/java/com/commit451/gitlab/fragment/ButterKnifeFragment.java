@@ -11,17 +11,17 @@ import butterknife.Unbinder;
  */
 public class ButterKnifeFragment extends BaseFragment {
 
-    private Unbinder mUnbinder;
+    private Unbinder unbinder;
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mUnbinder = ButterKnife.bind(this, view);
+        unbinder = ButterKnife.bind(this, view);
     }
 
     @Override
     public void onDestroyView() {
-        mUnbinder.unbind();
+        unbinder.unbind();
         super.onDestroyView();
     }
 }

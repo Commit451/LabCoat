@@ -19,38 +19,38 @@ public class LabelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private static final int TYPE_ITEM = 0;
 
-    private Listener mListener;
+    private Listener listener;
 
-    private ArrayList<Label> mItems;
+    private ArrayList<Label> items;
 
     private final View.OnClickListener mProjectMemberClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             int position = (int) v.getTag(R.id.list_position);
             LabelViewHolder viewHolder = (LabelViewHolder) v.getTag(R.id.list_view_holder);
-            mListener.onLabelClicked(getItem(position), viewHolder);
+            listener.onLabelClicked(getItem(position), viewHolder);
         }
     };
 
     public LabelAdapter(Listener listener) {
-        mListener = listener;
-        mItems = new ArrayList<>();
+        this.listener = listener;
+        items = new ArrayList<>();
     }
 
     public Label getItem(int position) {
-        return mItems.get(position);
+        return items.get(position);
     }
 
     public void setItems(Collection<Label> data) {
-        mItems.clear();
+        items.clear();
         if (data != null) {
-            mItems.addAll(data);
+            items.addAll(data);
         }
         notifyDataSetChanged();
     }
 
     public void addLabel(Label label) {
-        mItems.add(0, label);
+        items.add(0, label);
         notifyItemInserted(0);
     }
 
@@ -79,7 +79,7 @@ public class LabelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public int getItemCount() {
-        return mItems.size();
+        return items.size();
     }
 
     @Override

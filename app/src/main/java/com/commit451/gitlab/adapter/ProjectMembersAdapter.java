@@ -26,28 +26,12 @@ public class ProjectMembersAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     private static final int FOOTER_COUNT = 1;
 
-    private Listener mListener;
+    private Listener listener;
 
-    private ArrayList<Member> mProjectMembers;
-    private ProjectNamespace mNamespace;
+    private ArrayList<Member> members;
+    private ProjectNamespace namespace;
 
-    private final View.OnClickListener mProjectMemberClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            int position = (int) v.getTag(R.id.list_position);
-            ProjectMemberViewHolder memberGroupViewHolder = (ProjectMemberViewHolder) v.getTag(R.id.list_view_holder);
-            mListener.onProjectMemberClicked(getProjectMember(position), memberGroupViewHolder);
-        }
-    };
-
-    private final View.OnClickListener mFooterClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            mListener.onSeeGroupClicked();
-        }
-    };
-
-    private final GridLayoutManager.SpanSizeLookup mSpanSizeLookup = new GridLayoutManager.SpanSizeLookup() {
+    private final GridLayoutManager.SpanSizeLookup spanSizeLookup = new GridLayoutManager.SpanSizeLookup() {
         @Override
         public int getSpanSize(int position) {
             int viewType = getItemViewType(position);
@@ -60,29 +44,29 @@ public class ProjectMembersAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     };
 
     public ProjectMembersAdapter(Listener listener) {
-        mListener = listener;
-        mProjectMembers = new ArrayList<>();
+        this.listener = listener;
+        members = new ArrayList<>();
     }
 
     public void setProjectMembers(Collection<Member> data) {
-        mProjectMembers.clear();
+        members.clear();
         addProjectMembers(data);
     }
 
     public void addProjectMembers(Collection<Member> data) {
         if (data != null) {
-            mProjectMembers.addAll(data);
+            members.addAll(data);
         }
         notifyDataSetChanged();
     }
 
     public void setNamespace(ProjectNamespace namespace) {
-        mNamespace = namespace;
+        this.namespace = namespace;
         notifyDataSetChanged();
     }
 
     public Member getProjectMember(int position) {
-        return mProjectMembers.get(position);
+        return members.get(position);
     }
 
     @Override
@@ -90,11 +74,23 @@ public class ProjectMembersAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         switch (viewType) {
             case TYPE_MEMBER:
                 ProjectMemberViewHolder projectViewHolder = ProjectMemberViewHolder.inflate(parent);
-                projectViewHolder.itemView.setOnClickListener(mProjectMemberClickListener);
+                projectViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int position = (int) v.getTag(R.id.list_position);
+                        ProjectMemberViewHolder memberGroupViewHolder = (ProjectMemberViewHolder) v.getTag(R.id.list_view_holder);
+                        listener.onProjectMemberClicked(getProjectMember(position), memberGroupViewHolder);
+                    }
+                });
                 return projectViewHolder;
             case TYPE_FOOTER:
                 ProjectMemberFooterViewHolder footerHolder = ProjectMemberFooterViewHolder.inflate(parent);
-                footerHolder.itemView.setOnClickListener(mFooterClickListener);
+                footerHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        listener.onSeeGroupClicked();
+                    }
+                });
                 return footerHolder;
         }
         throw new IllegalStateException("No idea what to inflate with view type of " + viewType);
@@ -103,26 +99,26 @@ public class ProjectMembersAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof ProjectMemberFooterViewHolder) {
-            if (mNamespace == null) {
+            if (namespace == null) {
                 holder.itemView.setVisibility(View.GONE);
             } else {
                 holder.itemView.setVisibility(View.VISIBLE);
-                ((ProjectMemberFooterViewHolder) holder).bind(mNamespace);
+                ((ProjectMemberFooterViewHolder) holder).bind(namespace);
             }
         } else if (holder instanceof ProjectMemberViewHolder) {
             final Member member = getProjectMember(position);
             ((ProjectMemberViewHolder) holder).bind(member);
             holder.itemView.setTag(R.id.list_position, position);
             holder.itemView.setTag(R.id.list_view_holder, holder);
-            ((ProjectMemberViewHolder) holder).mPopupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            ((ProjectMemberViewHolder) holder).popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
                     switch (item.getItemId()) {
                         case R.id.action_change_access:
-                            mListener.onChangeAccess(member);
+                            listener.onChangeAccess(member);
                             return true;
                         case R.id.action_remove:
-                            mListener.onRemoveMember(member);
+                            listener.onRemoveMember(member);
                             return true;
                     }
                     return false;
@@ -133,12 +129,12 @@ public class ProjectMembersAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     @Override
     public int getItemCount() {
-        return mProjectMembers.size() + FOOTER_COUNT;
+        return members.size() + FOOTER_COUNT;
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (position == mProjectMembers.size()) {
+        if (position == members.size()) {
             return TYPE_FOOTER;
         } else {
             return TYPE_MEMBER;
@@ -146,17 +142,17 @@ public class ProjectMembersAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     }
 
     public GridLayoutManager.SpanSizeLookup getSpanSizeLookup() {
-        return mSpanSizeLookup;
+        return spanSizeLookup;
     }
 
     public void addMember(Member member) {
-        mProjectMembers.add(0, member);
+        members.add(0, member);
         notifyItemInserted(0);
     }
 
     public void removeMember(Member member) {
-        int position = mProjectMembers.indexOf(member);
-        mProjectMembers.remove(member);
+        int position = members.indexOf(member);
+        members.remove(member);
         notifyItemRemoved(position);
     }
 

@@ -25,9 +25,9 @@ public class MilestoneHeaderViewHolder extends RecyclerView.ViewHolder {
     }
 
     @BindView(R.id.description)
-    TextView mDescriptionView;
+    TextView textDescription;
     @BindView(R.id.due_date)
-    TextView mDueDateView;
+    TextView textDueDate;
 
     public MilestoneHeaderViewHolder(View view) {
         super(view);
@@ -36,11 +36,11 @@ public class MilestoneHeaderViewHolder extends RecyclerView.ViewHolder {
 
     public void bind(Milestone milestone) {
         if (milestone.getDescription() != null) {
-            mDescriptionView.setText(milestone.getDescription());
+            textDescription.setText(milestone.getDescription());
         }
         if (milestone.getDueDate() != null) {
             CharSequence due = DateUtil.getRelativeTimeSpanString(itemView.getContext(), milestone.getDueDate());
-            mDueDateView.setText(String.format(itemView.getResources().getString(R.string.due_date_formatted), due));
+            textDueDate.setText(String.format(itemView.getResources().getString(R.string.due_date_formatted), due));
         }
     }
 }

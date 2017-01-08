@@ -21,7 +21,7 @@ import com.commit451.gitlab.activity.ActivityActivity;
 import com.commit451.gitlab.activity.GroupsActivity;
 import com.commit451.gitlab.activity.ProjectsActivity;
 import com.commit451.gitlab.activity.TodosActivity;
-import com.commit451.gitlab.adapter.AccountsAdapter;
+import com.commit451.gitlab.adapter.AccountAdapter;
 import com.commit451.gitlab.event.CloseDrawerEvent;
 import com.commit451.gitlab.event.LoginEvent;
 import com.commit451.gitlab.event.ReloadDataEvent;
@@ -51,17 +51,16 @@ import timber.log.Timber;
 public class LabCoatNavigationView extends NavigationView {
 
     @BindView(R.id.profile_image)
-    ImageView mProfileImage;
+    ImageView imageProfile;
     @BindView(R.id.profile_user)
-    TextView mUserName;
+    TextView textUserName;
     @BindView(R.id.profile_email)
-    TextView mUserEmail;
+    TextView textEmail;
     @BindView(R.id.arrow)
-    View mArrow;
+    View iconArrow;
 
-    RecyclerView mAccountList;
-    AccountsAdapter mAccountAdapter;
-    EventReceiver mEventReceiver;
+    RecyclerView listAccounts;
+    AccountAdapter adapterAccounts;
 
     private final OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new OnNavigationItemSelectedListener() {
         @Override
@@ -112,7 +111,7 @@ public class LabCoatNavigationView extends NavigationView {
         }
     };
 
-    private final AccountsAdapter.Listener mAccountsAdapterListener = new AccountsAdapter.Listener() {
+    private final AccountAdapter.Listener mAccountsAdapterListener = new AccountAdapter.Listener() {
         @Override
         public void onAccountClicked(Account account) {
             switchToAccount(account);
@@ -167,8 +166,7 @@ public class LabCoatNavigationView extends NavigationView {
     }
 
     private void init() {
-        mEventReceiver = new EventReceiver();
-        App.bus().register(mEventReceiver);
+        App.bus().register(this);
         int colorPrimary = Easel.getThemeAttrColor(getContext(), R.attr.colorPrimary);
 
         setNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -177,15 +175,15 @@ public class LabCoatNavigationView extends NavigationView {
         View header = inflateHeaderView(R.layout.header_nav_drawer);
         ButterKnife.bind(this, header);
 
-        mAccountList = new RecyclerView(getContext());
-        mAccountList.setLayoutManager(new LinearLayoutManager(getContext()));
-        addView(mAccountList);
-        LayoutParams params = (FrameLayout.LayoutParams) mAccountList.getLayoutParams();
+        listAccounts = new RecyclerView(getContext());
+        listAccounts.setLayoutManager(new LinearLayoutManager(getContext()));
+        addView(listAccounts);
+        LayoutParams params = (FrameLayout.LayoutParams) listAccounts.getLayoutParams();
         params.setMargins(0, getResources().getDimensionPixelSize(R.dimen.account_header_height), 0, 0);
-        mAccountList.setBackgroundColor(colorPrimary);
-        mAccountList.setVisibility(View.GONE);
-        mAccountAdapter = new AccountsAdapter(getContext(), mAccountsAdapterListener);
-        mAccountList.setAdapter(mAccountAdapter);
+        listAccounts.setBackgroundColor(colorPrimary);
+        listAccounts.setVisibility(View.GONE);
+        adapterAccounts = new AccountAdapter(getContext(), mAccountsAdapterListener);
+        listAccounts.setAdapter(adapterAccounts);
         setSelectedNavigationItem();
         setAccounts();
         loadCurrentUser();
@@ -193,7 +191,7 @@ public class LabCoatNavigationView extends NavigationView {
 
     @Override
     protected void onDetachedFromWindow() {
-        App.bus().unregister(mEventReceiver);
+        App.bus().unregister(this);
         super.onDetachedFromWindow();
     }
 
@@ -225,7 +223,7 @@ public class LabCoatNavigationView extends NavigationView {
         Timber.d("Got %s accounts", accounts.size());
         Collections.sort(accounts);
         Collections.reverse(accounts);
-        mAccountAdapter.setAccounts(accounts);
+        adapterAccounts.setAccounts(accounts);
     }
 
     private void loadCurrentUser() {
@@ -256,37 +254,37 @@ public class LabCoatNavigationView extends NavigationView {
             return;
         }
         if (user.getUsername() != null) {
-            mUserName.setText(user.getUsername());
+            textUserName.setText(user.getUsername());
         }
         if (user.getEmail() != null) {
-            mUserEmail.setText(user.getEmail());
+            textEmail.setText(user.getEmail());
         }
         Uri url = ImageUtil.getAvatarUrl(user, getResources().getDimensionPixelSize(R.dimen.larger_image_size));
         App.get().getPicasso()
                 .load(url)
                 .transform(new CircleTransformation())
-                .into(mProfileImage);
+                .into(imageProfile);
     }
 
     /**
      * Toggle the visibility of accounts. Meaning hide it if it is showing, show it if it is hidden
      */
     private void toggleAccounts() {
-        if (mAccountList.getVisibility() == View.GONE) {
-            mAccountList.setVisibility(View.VISIBLE);
-            mAccountList.setAlpha(0.0f);
-            mAccountList.animate().alpha(1.0f);
-            mArrow.animate().rotation(180.0f);
+        if (listAccounts.getVisibility() == View.GONE) {
+            listAccounts.setVisibility(View.VISIBLE);
+            listAccounts.setAlpha(0.0f);
+            listAccounts.animate().alpha(1.0f);
+            iconArrow.animate().rotation(180.0f);
         } else {
-            mAccountList.animate().alpha(0.0f).withEndAction(new Runnable() {
+            listAccounts.animate().alpha(0.0f).withEndAction(new Runnable() {
                 @Override
                 public void run() {
-                    if (mAccountList != null) {
-                        mAccountList.setVisibility(View.GONE);
+                    if (listAccounts != null) {
+                        listAccounts.setVisibility(View.GONE);
                     }
                 }
             });
-            mArrow.animate().rotation(0.0f);
+            iconArrow.animate().rotation(0.0f);
         }
     }
 
@@ -301,19 +299,16 @@ public class LabCoatNavigationView extends NavigationView {
         App.bus().post(new CloseDrawerEvent());
         // Trigger a reload in the adapter so that we will place the accounts
         // in the correct order from most recently used
-        mAccountAdapter.notifyDataSetChanged();
+        adapterAccounts.notifyDataSetChanged();
         loadCurrentUser();
     }
 
-    private class EventReceiver {
-
         @Subscribe
         public void onUserLoggedIn(LoginEvent event) {
-            if (mAccountAdapter != null) {
-                mAccountAdapter.addAccount(event.account);
-                mAccountAdapter.notifyDataSetChanged();
+            if (adapterAccounts != null) {
+                adapterAccounts.addAccount(event.account);
+                adapterAccounts.notifyDataSetChanged();
                 loadCurrentUser();
             }
         }
-    }
 }

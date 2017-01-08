@@ -18,7 +18,7 @@ import android.widget.EditText;
 import com.commit451.alakazam.HideRunnable;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.adapter.UsersAdapter;
+import com.commit451.gitlab.adapter.UserAdapter;
 import com.commit451.gitlab.dialog.AccessDialog;
 import com.commit451.gitlab.event.MemberAddedEvent;
 import com.commit451.gitlab.model.api.Group;
@@ -79,7 +79,7 @@ public class AddUserActivity extends MorphActivity {
     View buttonClear;
 
     GridLayoutManager layoutManager;
-    UsersAdapter adapter;
+    UserAdapter adapter;
     AccessDialog dialogAccess;
     UserBasic selectedUser;
     Teleprinter teleprinter;
@@ -150,7 +150,7 @@ public class AddUserActivity extends MorphActivity {
             }
         });
 
-        adapter = new UsersAdapter(new UsersAdapter.Listener() {
+        adapter = new UserAdapter(new UserAdapter.Listener() {
             @Override
             public void onUserClicked(UserBasic user, UserViewHolder userViewHolder) {
                 selectedUser = user;

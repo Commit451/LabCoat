@@ -24,27 +24,27 @@ public class GroupPagerAdapter extends FragmentPagerAdapter {
     private static final int PROJECTS_POS = 1;
     private static final int MEMBERS_POS = 2;
 
-    private final Group mGroup;
-    private final String[] mTitles;
-    private final Set<Integer> mDisabledSections = new HashSet<>();
+    private final Group group;
+    private final String[] titles;
+    private final Set<Integer> disabledSections = new HashSet<>();
 
     public GroupPagerAdapter(Context context, FragmentManager fm, Group group) {
         super(fm);
 
-        mGroup = group;
-        mTitles = context.getResources().getStringArray(R.array.group_tabs);
+        this.group = group;
+        titles = context.getResources().getStringArray(R.array.group_tabs);
     }
 
     @Override
     public int getCount() {
-        return SECTION_COUNT - mDisabledSections.size();
+        return SECTION_COUNT - disabledSections.size();
     }
 
     @Override
     public CharSequence getPageTitle(int position) {
         position = getCorrectPosition(position);
 
-        return mTitles[position];
+        return titles[position];
     }
 
     @Override
@@ -53,11 +53,11 @@ public class GroupPagerAdapter extends FragmentPagerAdapter {
 
         switch (position) {
             case ACTIVITY_POS:
-                return FeedFragment.newInstance(mGroup.getFeedUrl());
+                return FeedFragment.newInstance(group.getFeedUrl());
             case PROJECTS_POS:
-                return ProjectsFragment.newInstance(mGroup);
+                return ProjectsFragment.newInstance(group);
             case MEMBERS_POS:
-                return GroupMembersFragment.newInstance(mGroup);
+                return GroupMembersFragment.newInstance(group);
         }
 
         throw new IllegalStateException("Position exceeded on view pager");
@@ -65,7 +65,7 @@ public class GroupPagerAdapter extends FragmentPagerAdapter {
 
     private int getCorrectPosition(int position) {
         for (int i = 0; i <= position; i++) {
-            if (mDisabledSections.contains(i)) {
+            if (disabledSections.contains(i)) {
                 position++;
             }
         }

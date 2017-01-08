@@ -17,34 +17,30 @@ import java.util.List;
 /**
  * Shows a list of projects
  */
-public class ProjectsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class ProjectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final int FOOTER_COUNT = 1;
 
     private static final int TYPE_ITEM = 0;
     private static final int TYPE_FOOTER = 1;
 
-    public interface Listener {
-        void onProjectClicked(Project project);
-    }
-
-    private Listener mListener;
-    private List<Project> mValues;
-    private int[] mColors;
-    private boolean mLoading;
+    private Listener listener;
+    private List<Project> values;
+    private int[] colors;
+    private boolean loading;
 
     private final View.OnClickListener onProjectClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             int position = (int) v.getTag(R.id.list_position);
-            mListener.onProjectClicked(getValueAt(position));
+            listener.onProjectClicked(getValueAt(position));
         }
     };
 
-    public ProjectsAdapter(Context context, Listener listener) {
-        mListener = listener;
-        mValues = new ArrayList<>();
-        mColors = context.getResources().getIntArray(R.array.cool_colors);
+    public ProjectAdapter(Context context, Listener listener) {
+        this.listener = listener;
+        values = new ArrayList<>();
+        colors = context.getResources().getIntArray(R.array.cool_colors);
     }
 
     @Override
@@ -64,21 +60,21 @@ public class ProjectsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof ProjectViewHolder) {
             Project project = getValueAt(position);
-            ((ProjectViewHolder) holder).bind(project, mColors[position % mColors.length]);
+            ((ProjectViewHolder) holder).bind(project, colors[position % colors.length]);
             holder.itemView.setTag(R.id.list_position, position);
         } else if (holder instanceof LoadingFooterViewHolder) {
-            ((LoadingFooterViewHolder) holder).bind(mLoading);
+            ((LoadingFooterViewHolder) holder).bind(loading);
         }
     }
 
     @Override
     public int getItemCount() {
-        return mValues.size() + FOOTER_COUNT;
+        return values.size() + FOOTER_COUNT;
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (position == mValues.size()) {
+        if (position == values.size()) {
             return TYPE_FOOTER;
         } else {
             return TYPE_ITEM;
@@ -86,29 +82,33 @@ public class ProjectsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     public Project getValueAt(int position) {
-        return mValues.get(position);
+        return values.get(position);
     }
 
     public void clearData() {
-        mValues.clear();
+        values.clear();
         notifyDataSetChanged();
     }
 
     public void setData(Collection<Project> projects) {
-        mValues.clear();
+        values.clear();
         if (projects != null) {
-            mValues.addAll(projects);
+            values.addAll(projects);
         }
         notifyDataSetChanged();
     }
 
     public void addData(Collection<Project> projects) {
-        mValues.addAll(projects);
+        values.addAll(projects);
         notifyDataSetChanged();
     }
 
     public void setLoading(boolean loading) {
-        mLoading = loading;
-        notifyItemChanged(mValues.size());
+        this.loading = loading;
+        notifyItemChanged(values.size());
+    }
+
+    public interface Listener {
+        void onProjectClicked(Project project);
     }
 }

@@ -14,7 +14,7 @@ import android.view.View;
 
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
-import com.commit451.gitlab.adapter.ProjectsPagerAdapter;
+import com.commit451.gitlab.adapter.ProjectPagerAdapter;
 import com.commit451.gitlab.event.CloseDrawerEvent;
 import com.commit451.gitlab.navigation.Navigator;
 
@@ -74,7 +74,7 @@ public class ProjectsActivity extends BaseActivity {
         });
         toolbar.inflateMenu(R.menu.menu_search);
         toolbar.setOnMenuItemClickListener(onMenuItemClickListener);
-        viewPager.setAdapter(new ProjectsPagerAdapter(this, getSupportFragmentManager()));
+        viewPager.setAdapter(new ProjectPagerAdapter(this, getSupportFragmentManager()));
         tabLayout.setupWithViewPager(viewPager);
     }
 

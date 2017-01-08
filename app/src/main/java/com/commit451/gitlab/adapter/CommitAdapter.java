@@ -15,31 +15,20 @@ import java.util.Collection;
 /**
  * Shows a list of commits to a project, seen in a project overview
  */
-public class CommitsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class CommitAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final int FOOTER_COUNT = 1;
 
     private static final int TYPE_ITEM = 0;
     private static final int TYPE_FOOTER = 1;
 
-    public interface Listener {
-        void onCommitClicked(RepositoryCommit commit);
-    }
-    private Listener mListener;
-    private ArrayList<RepositoryCommit> mValues;
-    private boolean mLoading = false;
+    private Listener listener;
+    private ArrayList<RepositoryCommit> values;
+    private boolean loading = false;
 
-    private final View.OnClickListener onProjectClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            int position = (int) v.getTag(R.id.list_position);
-            mListener.onCommitClicked(getValueAt(position));
-        }
-    };
-
-    public CommitsAdapter(Listener listener) {
-        mListener = listener;
-        mValues = new ArrayList<>();
+    public CommitAdapter(Listener listener) {
+        this.listener = listener;
+        values = new ArrayList<>();
     }
 
     @Override
@@ -47,7 +36,13 @@ public class CommitsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         switch (viewType) {
             case TYPE_ITEM:
                 CommitViewHolder holder = CommitViewHolder.inflate(parent);
-                holder.itemView.setOnClickListener(onProjectClickListener);
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int position = (int) v.getTag(R.id.list_position);
+                        listener.onCommitClicked(getValueAt(position));
+                    }
+                });
                 return holder;
             case TYPE_FOOTER:
                 return LoadingFooterViewHolder.inflate(parent);
@@ -62,18 +57,18 @@ public class CommitsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             ((CommitViewHolder) holder).bind(commit);
             holder.itemView.setTag(R.id.list_position, position);
         } else if (holder instanceof LoadingFooterViewHolder) {
-            ((LoadingFooterViewHolder) holder).bind(mLoading);
+            ((LoadingFooterViewHolder) holder).bind(loading);
         }
     }
 
     @Override
     public int getItemCount() {
-        return mValues.size() + FOOTER_COUNT;
+        return values.size() + FOOTER_COUNT;
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (position == mValues.size()) {
+        if (position == values.size()) {
             return TYPE_FOOTER;
         } else {
             return TYPE_ITEM;
@@ -81,25 +76,29 @@ public class CommitsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     public RepositoryCommit getValueAt(int position) {
-        return mValues.get(position);
+        return values.get(position);
     }
 
     public void addData(Collection<RepositoryCommit> commits) {
         if (commits != null) {
-            mValues.addAll(commits);
+            values.addAll(commits);
             notifyItemRangeInserted(0, commits.size());
         }
         notifyDataSetChanged();
     }
 
     public void setData(Collection<RepositoryCommit> commits) {
-        mValues.clear();
+        values.clear();
         addData(commits);
     }
 
     public void setLoading(boolean loading) {
-        mLoading = loading;
-        notifyItemChanged(mValues.size());
+        this.loading = loading;
+        notifyItemChanged(values.size());
+    }
+
+    public interface Listener {
+        void onCommitClicked(RepositoryCommit commit);
     }
 }
 

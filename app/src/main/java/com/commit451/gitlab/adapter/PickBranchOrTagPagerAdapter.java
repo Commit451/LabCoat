@@ -16,15 +16,15 @@ import com.commit451.gitlab.model.Ref;
  */
 public class PickBranchOrTagPagerAdapter extends FragmentPagerAdapter {
 
-    private String[] mTitles;
-    private long mProjectId;
-    private Ref mCurrentRef;
+    private String[] titles;
+    private long projectId;
+    private Ref ref;
 
     public PickBranchOrTagPagerAdapter(Context context, FragmentManager fm, long projectId, @Nullable Ref currentRef) {
         super(fm);
-        mTitles = context.getResources().getStringArray(R.array.tabs_branch_tag);
-        mProjectId = projectId;
-        mCurrentRef = currentRef;
+        titles = context.getResources().getStringArray(R.array.tabs_branch_tag);
+        this.projectId = projectId;
+        ref = currentRef;
     }
 
     @Override
@@ -32,9 +32,9 @@ public class PickBranchOrTagPagerAdapter extends FragmentPagerAdapter {
 
         switch(position) {
             case 0:
-                return PickBranchFragment.newInstance(mProjectId, mCurrentRef);
+                return PickBranchFragment.newInstance(projectId, ref);
             case 1:
-                return PickTagFragment.newInstance(mProjectId, mCurrentRef);
+                return PickTagFragment.newInstance(projectId, ref);
         }
 
         throw new IllegalStateException("Position exceeded on view pager");
@@ -42,11 +42,11 @@ public class PickBranchOrTagPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return mTitles.length;
+        return titles.length;
     }
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return mTitles[position];
+        return titles[position];
     }
 }

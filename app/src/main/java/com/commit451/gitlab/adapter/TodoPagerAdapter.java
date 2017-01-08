@@ -12,13 +12,12 @@ import com.commit451.gitlab.fragment.TodoFragment;
  * Projects Pager Adapter
  */
 public class TodoPagerAdapter extends FragmentPagerAdapter {
-    private static final int SECTION_COUNT = 2;
 
-    private String[] mTitles;
+    private String[] titles;
 
     public TodoPagerAdapter(Context context, FragmentManager fm) {
         super(fm);
-        mTitles = context.getResources().getStringArray(R.array.tabs_todo);
+        titles = context.getResources().getStringArray(R.array.tabs_todo);
     }
 
     @Override
@@ -36,11 +35,11 @@ public class TodoPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return SECTION_COUNT;
+        return titles.length;
     }
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return mTitles[position];
+        return titles[position];
     }
 }

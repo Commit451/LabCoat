@@ -21,24 +21,13 @@ public class SnippetAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private static final int TYPE_ITEM = 0;
     private static final int TYPE_FOOTER = 1;
 
-    public interface Listener {
-        void onSnippetClicked(Snippet snippet);
-    }
-    private Listener mListener;
-    private List<Snippet> mValues;
-    private boolean mLoading;
-
-    private final View.OnClickListener mOnItemClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            int position = (int) v.getTag(R.id.list_position);
-            mListener.onSnippetClicked(getValueAt(position));
-        }
-    };
+    private Listener listener;
+    private List<Snippet> values;
+    private boolean loading;
 
     public SnippetAdapter(Listener listener) {
-        mListener = listener;
-        mValues = new ArrayList<>();
+        this.listener = listener;
+        values = new ArrayList<>();
     }
 
     @Override
@@ -46,7 +35,13 @@ public class SnippetAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         switch (viewType) {
             case TYPE_ITEM:
                 SnippetViewHolder holder = SnippetViewHolder.inflate(parent);
-                holder.itemView.setOnClickListener(mOnItemClickListener);
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int position = (int) v.getTag(R.id.list_position);
+                        listener.onSnippetClicked(getValueAt(position));
+                    }
+                });
                 return holder;
             case TYPE_FOOTER:
                 return LoadingFooterViewHolder.inflate(parent);
@@ -61,18 +56,18 @@ public class SnippetAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             ((SnippetViewHolder) holder).bind(snippet);
             holder.itemView.setTag(R.id.list_position, position);
         } else if (holder instanceof LoadingFooterViewHolder) {
-            ((LoadingFooterViewHolder) holder).bind(mLoading);
+            ((LoadingFooterViewHolder) holder).bind(loading);
         }
     }
 
     @Override
     public int getItemCount() {
-        return mValues.size() + FOOTER_COUNT;
+        return values.size() + FOOTER_COUNT;
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (position == mValues.size()) {
+        if (position == values.size()) {
             return TYPE_FOOTER;
         } else {
             return TYPE_ITEM;
@@ -80,43 +75,47 @@ public class SnippetAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     public Snippet getValueAt(int position) {
-        return mValues.get(position);
+        return values.get(position);
     }
 
     public void setData(Collection<Snippet> milestones) {
-        mValues.clear();
+        values.clear();
         addData(milestones);
     }
 
     public void addData(Collection<Snippet> milestones) {
         if (milestones != null) {
-            mValues.addAll(milestones);
+            values.addAll(milestones);
         }
         notifyDataSetChanged();
     }
 
     public void addSnippet(Snippet milestone) {
-        mValues.add(0, milestone);
+        values.add(0, milestone);
         notifyItemInserted(0);
     }
 
     public void updateIssue(Snippet snippet) {
         int indexToDelete = -1;
-        for (int i=0; i<mValues.size(); i++) {
-            if (mValues.get(i).getId() == snippet.getId()) {
+        for (int i = 0; i< values.size(); i++) {
+            if (values.get(i).getId() == snippet.getId()) {
                 indexToDelete = i;
                 break;
             }
         }
         if (indexToDelete != -1) {
-            mValues.remove(indexToDelete);
-            mValues.add(indexToDelete, snippet);
+            values.remove(indexToDelete);
+            values.add(indexToDelete, snippet);
         }
         notifyItemChanged(indexToDelete);
     }
 
     public void setLoading(boolean loading) {
-        mLoading = loading;
-        notifyItemChanged(mValues.size());
+        this.loading = loading;
+        notifyItemChanged(values.size());
+    }
+
+    public interface Listener {
+        void onSnippetClicked(Snippet snippet);
     }
 }

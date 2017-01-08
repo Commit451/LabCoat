@@ -20,7 +20,7 @@ import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.adapter.BreadcrumbAdapter;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
-import com.commit451.gitlab.adapter.FilesAdapter;
+import com.commit451.gitlab.adapter.FileAdapter;
 import com.commit451.gitlab.event.ProjectReloadEvent;
 import com.commit451.gitlab.model.api.Project;
 import com.commit451.gitlab.model.api.RepositoryTreeObject;
@@ -45,32 +45,32 @@ public class FilesFragment extends ButterKnifeFragment {
     }
 
     @BindView(R.id.root)
-    View mRoot;
+    View root;
     @BindView(R.id.swipe_layout)
-    SwipeRefreshLayout mSwipeRefreshLayout;
+    SwipeRefreshLayout swipeRefreshLayout;
     @BindView(R.id.list)
-    RecyclerView mFilesListView;
+    RecyclerView list;
     @BindView(R.id.breadcrumb)
-    RecyclerView mBreadcrumbListView;
+    RecyclerView listBreadcrumbs;
     @BindView(R.id.message_text)
-    TextView mMessageView;
+    TextView textMessage;
 
-    private Project mProject;
-    private String mBranchName;
-    private FilesAdapter mFilesAdapter;
-    private BreadcrumbAdapter mBreadcrumbAdapter;
-    private String mCurrentPath = "";
+    private Project project;
+    private String branchName;
+    private FileAdapter adapterFiles;
+    private BreadcrumbAdapter adapterBreadcrumb;
+    private String currentPath = "";
 
-    private final FilesAdapter.Listener mFilesAdapterListener = new FilesAdapter.Listener() {
+    private final FileAdapter.Listener mFilesAdapterListener = new FileAdapter.Listener() {
         @Override
         public void onFolderClicked(RepositoryTreeObject treeItem) {
-            loadData(mCurrentPath + treeItem.getName() + "/");
+            loadData(currentPath + treeItem.getName() + "/");
         }
 
         @Override
         public void onFileClicked(RepositoryTreeObject treeItem) {
-            String path = mCurrentPath + treeItem.getName();
-            Navigator.navigateToFile(getActivity(), mProject.getId(), path, mBranchName);
+            String path = currentPath + treeItem.getName();
+            Navigator.navigateToFile(getActivity(), project.getId(), path, branchName);
         }
 
         @Override
@@ -78,20 +78,20 @@ public class FilesFragment extends ButterKnifeFragment {
             ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
 
             // Creates a new text clip to put on the clipboard
-            ClipData clip = ClipData.newPlainText(treeItem.getName(), treeItem.getUrl(mProject, mBranchName, mCurrentPath).toString());
+            ClipData clip = ClipData.newPlainText(treeItem.getName(), treeItem.getUrl(project, branchName, currentPath).toString());
             clipboard.setPrimaryClip(clip);
-            Snackbar.make(mRoot, R.string.copied_to_clipboard, Snackbar.LENGTH_SHORT)
+            Snackbar.make(root, R.string.copied_to_clipboard, Snackbar.LENGTH_SHORT)
                     .show();
         }
 
         @Override
         public void onShareClicked(RepositoryTreeObject treeItem) {
-            IntentUtil.share(getView(), treeItem.getUrl(mProject, mBranchName, mCurrentPath));
+            IntentUtil.share(getView(), treeItem.getUrl(project, branchName, currentPath));
         }
 
         @Override
         public void onOpenInBrowserClicked(RepositoryTreeObject treeItem) {
-            IntentUtil.openPage(getActivity(), treeItem.getUrl(mProject, mBranchName, mCurrentPath).toString());
+            IntentUtil.openPage(getActivity(), treeItem.getUrl(project, branchName, currentPath).toString());
         }
     };
 
@@ -106,16 +106,16 @@ public class FilesFragment extends ButterKnifeFragment {
 
         App.bus().register(this);
 
-        mFilesAdapter = new FilesAdapter(mFilesAdapterListener);
-        mFilesListView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mFilesListView.addItemDecoration(new DividerItemDecoration(getActivity()));
-        mFilesListView.setAdapter(mFilesAdapter);
+        adapterFiles = new FileAdapter(mFilesAdapterListener);
+        list.setLayoutManager(new LinearLayoutManager(getActivity()));
+        list.addItemDecoration(new DividerItemDecoration(getActivity()));
+        list.setAdapter(adapterFiles);
 
-        mBreadcrumbAdapter = new BreadcrumbAdapter();
-        mBreadcrumbListView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
-        mBreadcrumbListView.setAdapter(mBreadcrumbAdapter);
+        adapterBreadcrumb = new BreadcrumbAdapter();
+        listBreadcrumbs.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        listBreadcrumbs.setAdapter(adapterBreadcrumb);
 
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 loadData();
@@ -123,8 +123,8 @@ public class FilesFragment extends ButterKnifeFragment {
         });
 
         if (getActivity() instanceof ProjectActivity) {
-            mProject = ((ProjectActivity) getActivity()).getProject();
-            mBranchName = ((ProjectActivity) getActivity()).getRef();
+            project = ((ProjectActivity) getActivity()).getProject();
+            branchName = ((ProjectActivity) getActivity()).getRef();
             loadData("");
         } else {
             throw new IllegalStateException("Incorrect parent activity");
@@ -139,7 +139,7 @@ public class FilesFragment extends ButterKnifeFragment {
 
     @Override
     protected void loadData() {
-        loadData(mCurrentPath);
+        loadData(currentPath);
     }
 
     public void loadData(final String newPath) {
@@ -147,21 +147,21 @@ public class FilesFragment extends ButterKnifeFragment {
             return;
         }
 
-        if (mProject == null || TextUtils.isEmpty(mBranchName)) {
-            mSwipeRefreshLayout.setRefreshing(false);
+        if (project == null || TextUtils.isEmpty(branchName)) {
+            swipeRefreshLayout.setRefreshing(false);
             return;
         }
 
-        mSwipeRefreshLayout.post(new Runnable() {
+        swipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
-                if (mSwipeRefreshLayout != null) {
-                    mSwipeRefreshLayout.setRefreshing(true);
+                if (swipeRefreshLayout != null) {
+                    swipeRefreshLayout.setRefreshing(true);
                 }
             }
         });
 
-        App.get().getGitLab().getTree(mProject.getId(), mBranchName, newPath)
+        App.get().getGitLab().getTree(project.getId(), branchName, newPath)
                 .compose(this.<List<RepositoryTreeObject>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -170,28 +170,28 @@ public class FilesFragment extends ButterKnifeFragment {
                     @Override
                     public void error(@NonNull Throwable e) {
                         Timber.e(e);
-                        mSwipeRefreshLayout.setRefreshing(false);
-                        mMessageView.setVisibility(View.VISIBLE);
-                        mMessageView.setText(R.string.connection_error_files);
-                        mFilesAdapter.setData(null);
-                        mCurrentPath = newPath;
+                        swipeRefreshLayout.setRefreshing(false);
+                        textMessage.setVisibility(View.VISIBLE);
+                        textMessage.setText(R.string.connection_error_files);
+                        adapterFiles.setData(null);
+                        currentPath = newPath;
                         updateBreadcrumbs();
                     }
 
                     @Override
                     public void success(@NonNull List<RepositoryTreeObject> repositoryTreeObjects) {
-                        mSwipeRefreshLayout.setRefreshing(false);
+                        swipeRefreshLayout.setRefreshing(false);
                         if (!repositoryTreeObjects.isEmpty()) {
-                            mMessageView.setVisibility(View.GONE);
+                            textMessage.setVisibility(View.GONE);
                         } else {
                             Timber.d("No files found");
-                            mMessageView.setVisibility(View.VISIBLE);
-                            mMessageView.setText(R.string.no_files_found);
+                            textMessage.setVisibility(View.VISIBLE);
+                            textMessage.setText(R.string.no_files_found);
                         }
 
-                        mFilesAdapter.setData(repositoryTreeObjects);
-                        mFilesListView.scrollToPosition(0);
-                        mCurrentPath = newPath;
+                        adapterFiles.setData(repositoryTreeObjects);
+                        list.scrollToPosition(0);
+                        currentPath = newPath;
                         updateBreadcrumbs();
                     }
                 });
@@ -199,8 +199,8 @@ public class FilesFragment extends ButterKnifeFragment {
 
     @Override
     public boolean onBackPressed() {
-        if (mBreadcrumbAdapter.getItemCount() > 1) {
-            BreadcrumbAdapter.Breadcrumb breadcrumb = mBreadcrumbAdapter.getValueAt(mBreadcrumbAdapter.getItemCount() - 2);
+        if (adapterBreadcrumb.getItemCount() > 1) {
+            BreadcrumbAdapter.Breadcrumb breadcrumb = adapterBreadcrumb.getValueAt(adapterBreadcrumb.getItemCount() - 2);
             if (breadcrumb != null && breadcrumb.getListener() != null) {
                 breadcrumb.getListener().onClick();
                 return true;
@@ -221,7 +221,7 @@ public class FilesFragment extends ButterKnifeFragment {
 
         String newPath = "";
 
-        String[] segments = mCurrentPath.split("/");
+        String[] segments = currentPath.split("/");
         for (String segment : segments) {
             if (segment.isEmpty()) {
                 continue;
@@ -238,15 +238,15 @@ public class FilesFragment extends ButterKnifeFragment {
             }));
         }
 
-        mBreadcrumbAdapter.setData(breadcrumbs);
-        mBreadcrumbListView.scrollToPosition(mBreadcrumbAdapter.getItemCount() - 1);
+        adapterBreadcrumb.setData(breadcrumbs);
+        listBreadcrumbs.scrollToPosition(adapterBreadcrumb.getItemCount() - 1);
     }
 
 
     @Subscribe
     public void onProjectReload(ProjectReloadEvent event) {
-        mProject = event.mProject;
-        mBranchName = event.mBranchName;
+        project = event.project;
+        branchName = event.branchName;
 
         loadData("");
     }

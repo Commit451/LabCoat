@@ -18,7 +18,7 @@ import android.widget.TextView;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ProjectActivity;
-import com.commit451.gitlab.adapter.BuildsAdapter;
+import com.commit451.gitlab.adapter.BuildAdapter;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
 import com.commit451.gitlab.event.BuildChangedEvent;
 import com.commit451.gitlab.event.ProjectReloadEvent;
@@ -48,68 +48,43 @@ public class BuildsFragment extends ButterKnifeFragment {
     }
 
     @BindView(R.id.root)
-    ViewGroup mRoot;
+    ViewGroup root;
     @BindView(R.id.swipe_layout)
-    SwipeRefreshLayout mSwipeRefreshLayout;
+    SwipeRefreshLayout swipeRefreshLayout;
     @BindView(R.id.list)
-    RecyclerView mListBuilds;
+    RecyclerView listBuilds;
     @BindView(R.id.message_text)
-    TextView mMessageView;
+    TextView textMessage;
     @BindView(R.id.issue_spinner)
-    Spinner mSpinner;
+    Spinner spinnerIssue;
 
-    private Project mProject;
-    private BuildsAdapter mBuildsAdapter;
-    private LinearLayoutManager mLayoutManagerBuilds;
-    private EventReceiver mEventReceiver;
+    BuildAdapter adapterBuilds;
+    LinearLayoutManager layoutManagerBuilds;
 
-    String mScope;
-    private String[] mScopes;
-    private Uri mNextPageUrl;
-    private boolean mLoading = false;
+    Project project;
+    String scope;
+    String[] scopes;
+    Uri nextPageUrl;
+    boolean loading;
 
-    private final RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
+    private final RecyclerView.OnScrollListener onScrollListener = new RecyclerView.OnScrollListener() {
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
             super.onScrolled(recyclerView, dx, dy);
-            int visibleItemCount = mLayoutManagerBuilds.getChildCount();
-            int totalItemCount = mLayoutManagerBuilds.getItemCount();
-            int firstVisibleItem = mLayoutManagerBuilds.findFirstVisibleItemPosition();
-            if (firstVisibleItem + visibleItemCount >= totalItemCount && !mLoading && mNextPageUrl != null) {
+            int visibleItemCount = layoutManagerBuilds.getChildCount();
+            int totalItemCount = layoutManagerBuilds.getItemCount();
+            int firstVisibleItem = layoutManagerBuilds.findFirstVisibleItemPosition();
+            if (firstVisibleItem + visibleItemCount >= totalItemCount && !loading && nextPageUrl != null) {
                 loadMore();
             }
-        }
-    };
-
-    private final BuildsAdapter.Listener mAdapterListener = new BuildsAdapter.Listener() {
-        @Override
-        public void onBuildClicked(Build build) {
-            if (mProject != null) {
-                Navigator.navigateToBuild(getActivity(), mProject, build);
-            } else {
-                Snackbar.make(mRoot, getString(R.string.wait_for_project_to_load), Snackbar.LENGTH_SHORT)
-                        .show();
-            }
-        }
-    };
-
-    private final AdapterView.OnItemSelectedListener mSpinnerItemSelectedListener = new AdapterView.OnItemSelectedListener() {
-        @Override
-        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            mScope = mScopes[position];
-            loadData();
-        }
-
-        @Override
-        public void onNothingSelected(AdapterView<?> parent) {
         }
     };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mScopes = getResources().getStringArray(R.array.build_scope_values);
-        mScope = mScopes[0];
+        scopes = getResources().getStringArray(R.array.build_scope_values);
+        scope = scopes[0];
     }
 
     @Override
@@ -121,21 +96,41 @@ public class BuildsFragment extends ButterKnifeFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mEventReceiver = new EventReceiver();
-        App.bus().register(mEventReceiver);
+        App.bus().register(this);
 
-        mBuildsAdapter = new BuildsAdapter(mAdapterListener);
-        mLayoutManagerBuilds = new LinearLayoutManager(getActivity());
-        mListBuilds.setLayoutManager(mLayoutManagerBuilds);
-        mListBuilds.addItemDecoration(new DividerItemDecoration(getActivity()));
-        mListBuilds.setAdapter(mBuildsAdapter);
-        mListBuilds.addOnScrollListener(mOnScrollListener);
+        adapterBuilds = new BuildAdapter(new BuildAdapter.Listener() {
+            @Override
+            public void onBuildClicked(Build build) {
+                if (project != null) {
+                    Navigator.navigateToBuild(getActivity(), project, build);
+                } else {
+                    Snackbar.make(root, getString(R.string.wait_for_project_to_load), Snackbar.LENGTH_SHORT)
+                            .show();
+                }
+            }
+        });
+        layoutManagerBuilds = new LinearLayoutManager(getActivity());
+        listBuilds.setLayoutManager(layoutManagerBuilds);
+        listBuilds.addItemDecoration(new DividerItemDecoration(getActivity()));
+        listBuilds.setAdapter(adapterBuilds);
+        listBuilds.addOnScrollListener(onScrollListener);
 
-        mSpinner.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1,
+        spinnerIssue.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1,
                 android.R.id.text1, getResources().getStringArray(R.array.build_scope_names)));
-        mSpinner.setOnItemSelectedListener(mSpinnerItemSelectedListener);
+        spinnerIssue.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                scope = scopes[position];
+                loadData();
+            }
 
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 loadData();
@@ -143,7 +138,7 @@ public class BuildsFragment extends ButterKnifeFragment {
         });
 
         if (getActivity() instanceof ProjectActivity) {
-            mProject = ((ProjectActivity) getActivity()).getProject();
+            project = ((ProjectActivity) getActivity()).getProject();
             loadData();
         } else {
             throw new IllegalStateException("Incorrect parent activity");
@@ -152,8 +147,8 @@ public class BuildsFragment extends ButterKnifeFragment {
 
     @Override
     public void onDestroyView() {
+        App.bus().unregister(this);
         super.onDestroyView();
-        App.bus().unregister(mEventReceiver);
     }
 
     @Override
@@ -161,22 +156,22 @@ public class BuildsFragment extends ButterKnifeFragment {
         if (getView() == null) {
             return;
         }
-        if (mProject == null) {
-            mSwipeRefreshLayout.setRefreshing(false);
+        if (project == null) {
+            swipeRefreshLayout.setRefreshing(false);
             return;
         }
-        mMessageView.setVisibility(View.GONE);
-        mSwipeRefreshLayout.post(new Runnable() {
+        textMessage.setVisibility(View.GONE);
+        swipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
-                if (mSwipeRefreshLayout != null) {
-                    mSwipeRefreshLayout.setRefreshing(true);
+                if (swipeRefreshLayout != null) {
+                    swipeRefreshLayout.setRefreshing(true);
                 }
             }
         });
-        mNextPageUrl = null;
-        mLoading = true;
-        App.get().getGitLab().getBuilds(mProject.getId(), mScope)
+        nextPageUrl = null;
+        loading = true;
+        App.get().getGitLab().getBuilds(project.getId(), scope)
                 .compose(this.<Response<List<Build>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -184,27 +179,27 @@ public class BuildsFragment extends ButterKnifeFragment {
 
                     @Override
                     public void error(@NonNull Throwable e) {
-                        mLoading = false;
+                        loading = false;
                         Timber.e(e);
-                        mSwipeRefreshLayout.setRefreshing(false);
-                        mMessageView.setVisibility(View.VISIBLE);
-                        mMessageView.setText(R.string.failed_to_load_builds);
-                        mBuildsAdapter.setValues(null);
-                        mNextPageUrl = null;
+                        swipeRefreshLayout.setRefreshing(false);
+                        textMessage.setVisibility(View.VISIBLE);
+                        textMessage.setText(R.string.failed_to_load_builds);
+                        adapterBuilds.setValues(null);
+                        nextPageUrl = null;
                     }
 
                     @Override
                     public void responseSuccess(@NonNull List<Build> builds) {
-                        mLoading = false;
+                        loading = false;
 
-                        mSwipeRefreshLayout.setRefreshing(false);
+                        swipeRefreshLayout.setRefreshing(false);
                         if (builds.isEmpty()) {
-                            mMessageView.setVisibility(View.VISIBLE);
-                            mMessageView.setText(R.string.no_builds);
+                            textMessage.setVisibility(View.VISIBLE);
+                            textMessage.setText(R.string.no_builds);
                         }
-                        mBuildsAdapter.setValues(builds);
-                        mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
-                        Timber.d("Next page url %s", mNextPageUrl);
+                        adapterBuilds.setValues(builds);
+                        nextPageUrl = LinkHeaderParser.parse(response()).getNext();
+                        Timber.d("Next page url %s", nextPageUrl);
                     }
                 });
     }
@@ -214,15 +209,15 @@ public class BuildsFragment extends ButterKnifeFragment {
             return;
         }
 
-        if (mNextPageUrl == null) {
+        if (nextPageUrl == null) {
             return;
         }
 
-        mBuildsAdapter.setLoading(true);
-        mLoading = true;
+        adapterBuilds.setLoading(true);
+        loading = true;
 
-        Timber.d("loadMore called for %s", mNextPageUrl);
-        App.get().getGitLab().getBuilds(mNextPageUrl.toString(), mScope)
+        Timber.d("loadMore called for %s", nextPageUrl);
+        App.get().getGitLab().getBuilds(nextPageUrl.toString(), scope)
                 .compose(this.<Response<List<Build>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -231,30 +226,28 @@ public class BuildsFragment extends ButterKnifeFragment {
                     @Override
                     public void error(@NonNull Throwable e) {
                         Timber.e(e);
-                        mLoading = false;
-                        mBuildsAdapter.setLoading(false);
+                        loading = false;
+                        adapterBuilds.setLoading(false);
                     }
 
                     @Override
                     public void responseSuccess(@NonNull List<Build> builds) {
-                        mLoading = false;
-                        mBuildsAdapter.setLoading(false);
-                        mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
-                        mBuildsAdapter.addValues(builds);
+                        loading = false;
+                        adapterBuilds.setLoading(false);
+                        nextPageUrl = LinkHeaderParser.parse(response()).getNext();
+                        adapterBuilds.addValues(builds);
                     }
                 });
     }
 
-    private class EventReceiver {
-        @Subscribe
-        public void onProjectReload(ProjectReloadEvent event) {
-            mProject = event.mProject;
-            loadData();
-        }
+    @Subscribe
+    public void onProjectReload(ProjectReloadEvent event) {
+        project = event.project;
+        loadData();
+    }
 
-        @Subscribe
-        public void onBuildChangedEvent(BuildChangedEvent event) {
-            mBuildsAdapter.updateBuild(event.build);
-        }
+    @Subscribe
+    public void onBuildChangedEvent(BuildChangedEvent event) {
+        adapterBuilds.updateBuild(event.build);
     }
 }

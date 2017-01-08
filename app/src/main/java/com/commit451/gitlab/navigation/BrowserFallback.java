@@ -15,17 +15,17 @@ import java.lang.ref.WeakReference;
  */
 public class BrowserFallback implements NavigationFallback {
 
-    private WeakReference<Context> mContext;
+    private WeakReference<Context> context;
 
     public BrowserFallback(Context context) {
-        mContext = new WeakReference<>(context);
+        this.context = new WeakReference<>(context);
     }
 
     @Override
     public void onFallbackNavigateTo(Uri url) {
         Intent i = new Intent(Intent.ACTION_VIEW);
         i.setData(url);
-        Context context = mContext.get();
+        Context context = this.context.get();
         if (context == null) {
             return;
         }

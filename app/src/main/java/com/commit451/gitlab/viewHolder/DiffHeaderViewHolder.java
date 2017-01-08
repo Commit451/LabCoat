@@ -29,11 +29,16 @@ public class DiffHeaderViewHolder extends RecyclerView.ViewHolder {
         return new DiffHeaderViewHolder(view);
     }
 
-    @BindView(R.id.commit_author_image) ImageView mImageView;
-    @BindView(R.id.commit_author) TextView mAuthorView;
-    @BindView(R.id.commit_time) TextView mTimeView;
-    @BindView(R.id.commit_title) TextView mTitleView;
-    @BindView(R.id.commit_message) TextView mMessageView;
+    @BindView(R.id.commit_author_image)
+    ImageView image;
+    @BindView(R.id.commit_author)
+    TextView textAuthor;
+    @BindView(R.id.commit_time)
+    TextView textTime;
+    @BindView(R.id.commit_title)
+    TextView textTitle;
+    @BindView(R.id.commit_message)
+    TextView textMessage;
 
     public DiffHeaderViewHolder(View view) {
         super(view);
@@ -44,14 +49,14 @@ public class DiffHeaderViewHolder extends RecyclerView.ViewHolder {
         App.get().getPicasso()
                 .load(ImageUtil.getAvatarUrl(commit.getAuthorEmail(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size)))
                 .transform(new CircleTransformation())
-                .into(mImageView);
+                .into(image);
 
-        mAuthorView.setText(commit.getAuthorName());
-        mTimeView.setText(DateUtil.getRelativeTimeSpanString(itemView.getContext(), commit.getCreatedAt()));
-        mTitleView.setText(commit.getTitle());
+        textAuthor.setText(commit.getAuthorName());
+        textTime.setText(DateUtil.getRelativeTimeSpanString(itemView.getContext(), commit.getCreatedAt()));
+        textTitle.setText(commit.getTitle());
         String message = extractMessage(commit.getTitle(), commit.getMessage());
-        mMessageView.setText(message);
-        mMessageView.setVisibility(message.isEmpty() ? View.GONE : View.VISIBLE);
+        textMessage.setText(message);
+        textMessage.setVisibility(message.isEmpty() ? View.GONE : View.VISIBLE);
     }
 
     /**

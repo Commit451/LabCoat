@@ -434,8 +434,8 @@ public class IssueActivity extends BaseActivity {
 
     @Subscribe
     public void onIssueChanged(IssueChangedEvent event) {
-        if (issue.getId() == event.mIssue.getId()) {
-            issue = event.mIssue;
+        if (issue.getId() == event.issue.getId()) {
+            issue = event.issue;
             bindIssue();
             loadNotes();
         }

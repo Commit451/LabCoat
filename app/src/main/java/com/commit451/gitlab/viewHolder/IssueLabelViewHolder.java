@@ -23,7 +23,7 @@ public class IssueLabelViewHolder extends RecyclerView.ViewHolder {
     }
 
     @BindView(R.id.title)
-    TextView mTitleView;
+    TextView textTitle;
 
     public IssueLabelViewHolder(View view) {
         super(view);
@@ -31,6 +31,6 @@ public class IssueLabelViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(String label) {
-        mTitleView.setText(label);
+        textTitle.setText(label);
     }
 }

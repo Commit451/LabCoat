@@ -19,7 +19,7 @@ import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.ProjectActivity;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
-import com.commit451.gitlab.adapter.IssuesAdapter;
+import com.commit451.gitlab.adapter.IssueAdapter;
 import com.commit451.gitlab.event.IssueChangedEvent;
 import com.commit451.gitlab.event.IssueCreatedEvent;
 import com.commit451.gitlab.event.IssueReloadEvent;
@@ -49,67 +49,43 @@ public class IssuesFragment extends ButterKnifeFragment {
     }
 
     @BindView(R.id.root)
-    ViewGroup mRoot;
+    ViewGroup root;
     @BindView(R.id.swipe_layout)
-    SwipeRefreshLayout mSwipeRefreshLayout;
+    SwipeRefreshLayout swipeRefreshLayout;
     @BindView(R.id.list)
-    RecyclerView mIssueListView;
+    RecyclerView listIssues;
     @BindView(R.id.message_text)
-    TextView mMessageView;
+    TextView textMessage;
     @BindView(R.id.issue_spinner)
-    Spinner mSpinner;
+    Spinner spinnerIssue;
 
-    private Project mProject;
-    private IssuesAdapter mIssuesAdapter;
-    private LinearLayoutManager mIssuesLayoutManager;
+    IssueAdapter adapterIssue;
+    LinearLayoutManager mIssuesLayoutManager;
 
-    String mState;
-    private String[] mStates;
-    private Uri mNextPageUrl;
-    private boolean mLoading = false;
+    Project project;
+    String state;
+    String[] states;
+    Uri nextPageUrl;
+    boolean loading = false;
 
-    private final RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
+    private final RecyclerView.OnScrollListener onScrollListener = new RecyclerView.OnScrollListener() {
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
             super.onScrolled(recyclerView, dx, dy);
             int visibleItemCount = mIssuesLayoutManager.getChildCount();
             int totalItemCount = mIssuesLayoutManager.getItemCount();
             int firstVisibleItem = mIssuesLayoutManager.findFirstVisibleItemPosition();
-            if (firstVisibleItem + visibleItemCount >= totalItemCount && !mLoading && mNextPageUrl != null) {
+            if (firstVisibleItem + visibleItemCount >= totalItemCount && !loading && nextPageUrl != null) {
                 loadMore();
             }
-        }
-    };
-
-    private final IssuesAdapter.Listener mIssuesAdapterListener = new IssuesAdapter.Listener() {
-        @Override
-        public void onIssueClicked(Issue issue) {
-            if (mProject != null) {
-                Navigator.navigateToIssue(getActivity(), mProject, issue);
-            } else {
-                Snackbar.make(mRoot, getString(R.string.wait_for_project_to_load), Snackbar.LENGTH_SHORT)
-                        .show();
-            }
-        }
-    };
-
-    private final AdapterView.OnItemSelectedListener mSpinnerItemSelectedListener = new AdapterView.OnItemSelectedListener() {
-        @Override
-        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            mState = mStates[position];
-            loadData();
-        }
-
-        @Override
-        public void onNothingSelected(AdapterView<?> parent) {
         }
     };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mState = getResources().getString(R.string.issue_state_value_default);
-        mStates = getResources().getStringArray(R.array.issue_state_values);
+        state = getResources().getString(R.string.issue_state_value_default);
+        states = getResources().getStringArray(R.array.issue_state_values);
     }
 
     @Override
@@ -123,17 +99,38 @@ public class IssuesFragment extends ButterKnifeFragment {
 
         App.bus().register(this);
 
-        mIssuesAdapter = new IssuesAdapter(mIssuesAdapterListener);
+        adapterIssue = new IssueAdapter(new IssueAdapter.Listener() {
+            @Override
+            public void onIssueClicked(Issue issue) {
+                if (project != null) {
+                    Navigator.navigateToIssue(getActivity(), project, issue);
+                } else {
+                    Snackbar.make(root, getString(R.string.wait_for_project_to_load), Snackbar.LENGTH_SHORT)
+                            .show();
+                }
+            }
+        });
         mIssuesLayoutManager = new LinearLayoutManager(getActivity());
-        mIssueListView.setLayoutManager(mIssuesLayoutManager);
-        mIssueListView.addItemDecoration(new DividerItemDecoration(getActivity()));
-        mIssueListView.setAdapter(mIssuesAdapter);
-        mIssueListView.addOnScrollListener(mOnScrollListener);
+        listIssues.setLayoutManager(mIssuesLayoutManager);
+        listIssues.addItemDecoration(new DividerItemDecoration(getActivity()));
+        listIssues.setAdapter(adapterIssue);
+        listIssues.addOnScrollListener(onScrollListener);
 
-        mSpinner.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, getResources().getStringArray(R.array.issue_state_names)));
-        mSpinner.setOnItemSelectedListener(mSpinnerItemSelectedListener);
+        spinnerIssue.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, getResources().getStringArray(R.array.issue_state_names)));
+        spinnerIssue.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                state = states[position];
+                loadData();
+            }
 
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 loadData();
@@ -141,7 +138,7 @@ public class IssuesFragment extends ButterKnifeFragment {
         });
 
         if (getActivity() instanceof ProjectActivity) {
-            mProject = ((ProjectActivity) getActivity()).getProject();
+            project = ((ProjectActivity) getActivity()).getProject();
             loadData();
         } else {
             throw new IllegalStateException("Incorrect parent activity");
@@ -156,10 +153,10 @@ public class IssuesFragment extends ButterKnifeFragment {
 
     @OnClick(R.id.add_issue_button)
     public void onAddIssueClick(View fab) {
-        if (mProject != null) {
-            Navigator.navigateToAddIssue(getActivity(), fab, mProject);
+        if (project != null) {
+            Navigator.navigateToAddIssue(getActivity(), fab, project);
         } else {
-            Snackbar.make(mRoot, getString(R.string.wait_for_project_to_load), Snackbar.LENGTH_SHORT)
+            Snackbar.make(root, getString(R.string.wait_for_project_to_load), Snackbar.LENGTH_SHORT)
                     .show();
         }
     }
@@ -169,22 +166,22 @@ public class IssuesFragment extends ButterKnifeFragment {
         if (getView() == null) {
             return;
         }
-        if (mProject == null) {
-            mSwipeRefreshLayout.setRefreshing(false);
+        if (project == null) {
+            swipeRefreshLayout.setRefreshing(false);
             return;
         }
-        mMessageView.setVisibility(View.GONE);
-        mSwipeRefreshLayout.post(new Runnable() {
+        textMessage.setVisibility(View.GONE);
+        swipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
-                if (mSwipeRefreshLayout != null) {
-                    mSwipeRefreshLayout.setRefreshing(true);
+                if (swipeRefreshLayout != null) {
+                    swipeRefreshLayout.setRefreshing(true);
                 }
             }
         });
-        mNextPageUrl = null;
-        mLoading = true;
-        App.get().getGitLab().getIssues(mProject.getId(), mState)
+        nextPageUrl = null;
+        loading = true;
+        App.get().getGitLab().getIssues(project.getId(), state)
                 .compose(this.<Response<List<Issue>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -192,26 +189,26 @@ public class IssuesFragment extends ButterKnifeFragment {
 
                     @Override
                     public void error(@NonNull Throwable e) {
-                        mLoading = false;
+                        loading = false;
                         Timber.e(e);
-                        mSwipeRefreshLayout.setRefreshing(false);
-                        mMessageView.setVisibility(View.VISIBLE);
-                        mMessageView.setText(R.string.connection_error_issues);
-                        mIssuesAdapter.setIssues(null);
-                        mNextPageUrl = null;
+                        swipeRefreshLayout.setRefreshing(false);
+                        textMessage.setVisibility(View.VISIBLE);
+                        textMessage.setText(R.string.connection_error_issues);
+                        adapterIssue.setIssues(null);
+                        nextPageUrl = null;
                     }
 
                     @Override
                     public void responseSuccess(@NonNull List<Issue> issues) {
-                        mLoading = false;
-                        mSwipeRefreshLayout.setRefreshing(false);
+                        loading = false;
+                        swipeRefreshLayout.setRefreshing(false);
                         if (issues.isEmpty()) {
-                            mMessageView.setVisibility(View.VISIBLE);
-                            mMessageView.setText(R.string.no_issues);
+                            textMessage.setVisibility(View.VISIBLE);
+                            textMessage.setText(R.string.no_issues);
                         }
-                        mIssuesAdapter.setIssues(issues);
-                        mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
-                        Timber.d("Next page url " + mNextPageUrl);
+                        adapterIssue.setIssues(issues);
+                        nextPageUrl = LinkHeaderParser.parse(response()).getNext();
+                        Timber.d("Next page url " + nextPageUrl);
                     }
                 });
     }
@@ -221,15 +218,15 @@ public class IssuesFragment extends ButterKnifeFragment {
             return;
         }
 
-        if (mNextPageUrl == null) {
+        if (nextPageUrl == null) {
             return;
         }
 
-        mIssuesAdapter.setLoading(true);
-        mLoading = true;
+        adapterIssue.setLoading(true);
+        loading = true;
 
-        Timber.d("loadMore called for " + mNextPageUrl);
-        App.get().getGitLab().getIssues(mNextPageUrl.toString())
+        Timber.d("loadMore called for " + nextPageUrl);
+        App.get().getGitLab().getIssues(nextPageUrl.toString())
                 .compose(this.<Response<List<Issue>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -238,38 +235,38 @@ public class IssuesFragment extends ButterKnifeFragment {
                     @Override
                     public void error(@NonNull Throwable e) {
                         Timber.e(e);
-                        mLoading = false;
-                        mIssuesAdapter.setLoading(false);
+                        loading = false;
+                        adapterIssue.setLoading(false);
                     }
 
                     @Override
                     public void success(@NonNull Response<List<Issue>> listResponse) {
-                        mLoading = false;
-                        mIssuesAdapter.setLoading(false);
-                        mNextPageUrl = LinkHeaderParser.parse(listResponse).getNext();
-                        mIssuesAdapter.addIssues(listResponse.body());
+                        loading = false;
+                        adapterIssue.setLoading(false);
+                        nextPageUrl = LinkHeaderParser.parse(listResponse).getNext();
+                        adapterIssue.addIssues(listResponse.body());
                     }
                 });
     }
 
     @Subscribe
     public void onProjectReload(ProjectReloadEvent event) {
-        mProject = event.mProject;
+        project = event.project;
         loadData();
     }
 
     @Subscribe
     public void onIssueCreated(IssueCreatedEvent event) {
-        mIssuesAdapter.addIssue(event.mIssue);
+        adapterIssue.addIssue(event.issue);
         if (getView() != null) {
-            mMessageView.setVisibility(View.GONE);
-            mIssueListView.smoothScrollToPosition(0);
+            textMessage.setVisibility(View.GONE);
+            listIssues.smoothScrollToPosition(0);
         }
     }
 
     @Subscribe
     public void onIssueChanged(IssueChangedEvent event) {
-        mIssuesAdapter.updateIssue(event.mIssue);
+        adapterIssue.updateIssue(event.issue);
     }
 
     @Subscribe

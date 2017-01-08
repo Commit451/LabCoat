@@ -15,7 +15,7 @@ import android.widget.TextView;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.PickBranchOrTagActivity;
-import com.commit451.gitlab.adapter.TagsAdapter;
+import com.commit451.gitlab.adapter.TagAdapter;
 import com.commit451.gitlab.model.Ref;
 import com.commit451.gitlab.model.api.Tag;
 import com.commit451.gitlab.rx.CustomSingleObserver;
@@ -47,20 +47,20 @@ public class PickTagFragment extends ButterKnifeFragment {
     }
 
     @BindView(R.id.list)
-    RecyclerView mProjectsListView;
+    RecyclerView listProjects;
     @BindView(R.id.message_text)
-    TextView mMessageView;
+    TextView textMessage;
     @BindView(R.id.progress)
-    View mProgress;
+    View progress;
 
-    TagsAdapter mTagsAdapter;
+    TagAdapter adapterTags;
 
-    long mProjectId;
+    long projectId;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mProjectId = getArguments().getLong(EXTRA_PROJECT_ID);
+        projectId = getArguments().getLong(EXTRA_PROJECT_ID);
     }
 
     @Override
@@ -73,7 +73,7 @@ public class PickTagFragment extends ButterKnifeFragment {
         super.onViewCreated(view, savedInstanceState);
 
         Ref ref = Parcels.unwrap(getArguments().getParcelable(EXTRA_CURRENT_REF));
-        mTagsAdapter = new TagsAdapter(ref, new TagsAdapter.Listener() {
+        adapterTags = new TagAdapter(ref, new TagAdapter.Listener() {
 
             @Override
             public void onTagClicked(Tag entry) {
@@ -84,8 +84,8 @@ public class PickTagFragment extends ButterKnifeFragment {
                 getActivity().finish();
             }
         });
-        mProjectsListView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mProjectsListView.setAdapter(mTagsAdapter);
+        listProjects.setLayoutManager(new LinearLayoutManager(getActivity()));
+        listProjects.setAdapter(adapterTags);
 
         loadData();
     }
@@ -95,10 +95,10 @@ public class PickTagFragment extends ButterKnifeFragment {
         if (getView() == null) {
             return;
         }
-        mProgress.setVisibility(View.VISIBLE);
-        mMessageView.setVisibility(View.GONE);
+        progress.setVisibility(View.VISIBLE);
+        textMessage.setVisibility(View.GONE);
 
-        App.get().getGitLab().getTags(mProjectId)
+        App.get().getGitLab().getTags(projectId)
                 .compose(this.<List<Tag>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -107,14 +107,14 @@ public class PickTagFragment extends ButterKnifeFragment {
                     @Override
                     public void error(@NonNull Throwable e) {
                         Timber.e(e);
-                        mProgress.setVisibility(View.GONE);
-                        mMessageView.setVisibility(View.VISIBLE);
+                        progress.setVisibility(View.GONE);
+                        textMessage.setVisibility(View.VISIBLE);
                     }
 
                     @Override
                     public void success(@NonNull List<Tag> tags) {
-                        mProgress.setVisibility(View.GONE);
-                        mTagsAdapter.setEntries(tags);
+                        progress.setVisibility(View.GONE);
+                        adapterTags.setEntries(tags);
                     }
                 });
     }

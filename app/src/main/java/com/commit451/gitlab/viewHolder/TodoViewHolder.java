@@ -29,13 +29,13 @@ public class TodoViewHolder extends RecyclerView.ViewHolder {
     }
 
     @BindView(R.id.text_project)
-    TextView mTextProject;
+    TextView textProject;
     @BindView(R.id.issue_image)
-    ImageView mImageView;
+    ImageView image;
     @BindView(R.id.issue_message)
-    TextView mMessageView;
+    TextView textMessage;
     @BindView(R.id.issue_creator)
-    TextView mCreatorView;
+    TextView textCreator;
 
     public TodoViewHolder(View view) {
         super(view);
@@ -43,24 +43,23 @@ public class TodoViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(Todo todo) {
-
-        mTextProject.setText(todo.getProject().getNameWithNamespace());
+        textProject.setText(todo.getProject().getNameWithNamespace());
         if (todo.getAuthor() != null) {
             App.get().getPicasso()
                     .load(ImageUtil.getAvatarUrl(todo.getAuthor(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size)))
                     .transform(new CircleTransformation())
-                    .into(mImageView);
+                    .into(image);
         } else {
-            mImageView.setImageBitmap(null);
+            image.setImageBitmap(null);
         }
 
-        mMessageView.setText(todo.getBody());
+        textMessage.setText(todo.getBody());
 
         String time = "";
         if (todo.getCreatedAt() != null) {
             time += DateUtil.getRelativeTimeSpanString(itemView.getContext(), todo.getCreatedAt());
         }
 
-        mCreatorView.setText(time);
+        textCreator.setText(time);
     }
 }

@@ -48,34 +48,34 @@ public class BuildDescriptionFragment extends ButterKnifeFragment {
     }
 
     @BindView(R.id.root)
-    ViewGroup mRoot;
+    ViewGroup root;
     @BindView(R.id.swipe_layout)
-    SwipeRefreshLayout mSwipeRefreshLayout;
+    SwipeRefreshLayout swipeRefreshLayout;
     @BindView(R.id.text_status)
-    TextView mTextStatus;
+    TextView textStatus;
     @BindView(R.id.text_duration)
-    TextView mTextDuration;
+    TextView textDuration;
     @BindView(R.id.text_created)
-    TextView mTextCreated;
+    TextView textCreated;
     @BindView(R.id.text_finished)
-    TextView mTextFinished;
+    TextView textFinished;
     @BindView(R.id.text_runner)
-    TextView mTextRunner;
+    TextView textRunner;
     @BindView(R.id.text_ref)
-    TextView mTextRef;
+    TextView textRef;
     @BindView(R.id.text_author)
-    TextView mTextAuthor;
+    TextView textAuthor;
     @BindView(R.id.text_message)
-    TextView mTextMessage;
+    TextView textMessage;
 
-    Project mProject;
-    Build mBuild;
+    Project project;
+    Build build;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mProject = Parcels.unwrap(getArguments().getParcelable(KEY_PROJECT));
-        mBuild = Parcels.unwrap(getArguments().getParcelable(KEY_BUILD));
+        project = Parcels.unwrap(getArguments().getParcelable(KEY_PROJECT));
+        build = Parcels.unwrap(getArguments().getParcelable(KEY_BUILD));
     }
 
     @Override
@@ -87,18 +87,18 @@ public class BuildDescriptionFragment extends ButterKnifeFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 load();
             }
         });
-        bindBuild(mBuild);
+        bindBuild(build);
         App.bus().register(this);
     }
 
     private void load() {
-        App.get().getGitLab().getBuild(mProject.getId(), mBuild.getId())
+        App.get().getGitLab().getBuild(project.getId(), build.getId())
                 .compose(this.<Build>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -107,14 +107,14 @@ public class BuildDescriptionFragment extends ButterKnifeFragment {
                     @Override
                     public void error(@NonNull Throwable t) {
                         Timber.e(t);
-                        Snackbar.make(mRoot, R.string.unable_to_load_build, Snackbar.LENGTH_LONG)
+                        Snackbar.make(root, R.string.unable_to_load_build, Snackbar.LENGTH_LONG)
                                 .show();
                     }
 
                     @Override
                     public void success(@NonNull Build build) {
-                        mSwipeRefreshLayout.setRefreshing(false);
-                        mBuild = build;
+                        swipeRefreshLayout.setRefreshing(false);
+                        BuildDescriptionFragment.this.build = build;
                         bindBuild(build);
                         App.bus().post(new BuildChangedEvent(build));
                     }
@@ -131,20 +131,20 @@ public class BuildDescriptionFragment extends ButterKnifeFragment {
             startedTime = new Date();
         }
         String status = String.format(getString(R.string.build_status), build.getStatus());
-        mTextStatus.setText(status);
+        textStatus.setText(status);
         String timeTaken = DateUtil.getTimeTaken(startedTime, finishedTime);
         String duration = String.format(getString(R.string.build_duration), timeTaken);
-        mTextDuration.setText(duration);
+        textDuration.setText(duration);
         String created = String.format(getString(R.string.build_created), DateUtil.getRelativeTimeSpanString(getActivity(), build.getCreatedAt()));
-        mTextCreated.setText(created);
+        textCreated.setText(created);
         String ref = String.format(getString(R.string.build_ref), build.getRef());
-        mTextRef.setText(ref);
+        textRef.setText(ref);
         if (build.getFinishedAt() != null) {
             String finished = String.format(getString(R.string.build_finished), DateUtil.getRelativeTimeSpanString(getActivity(), build.getFinishedAt()));
-            mTextFinished.setText(finished);
-            mTextFinished.setVisibility(View.VISIBLE);
+            textFinished.setText(finished);
+            textFinished.setVisibility(View.VISIBLE);
         } else {
-            mTextFinished.setVisibility(View.GONE);
+            textFinished.setVisibility(View.GONE);
         }
         if (build.getRunner() != null) {
             bindRunner(build.getRunner());
@@ -156,14 +156,14 @@ public class BuildDescriptionFragment extends ButterKnifeFragment {
 
     private void bindRunner(Runner runner) {
         String runnerNum = String.format(getString(R.string.runner_number), String.valueOf(runner.getId()));
-        mTextRunner.setText(runnerNum);
+        textRunner.setText(runnerNum);
     }
 
     private void bindCommit(RepositoryCommit commit) {
         String authorText = String.format(getString(R.string.build_commit_author), commit.getAuthorName());
-        mTextAuthor.setText(authorText);
+        textAuthor.setText(authorText);
         String messageText = String.format(getString(R.string.build_commit_message), commit.getMessage());
-        mTextMessage.setText(messageText);
+        textMessage.setText(messageText);
     }
 
     @Override
@@ -175,9 +175,9 @@ public class BuildDescriptionFragment extends ButterKnifeFragment {
 
     @Subscribe
     public void onBuildChangedEvent(BuildChangedEvent event) {
-        if (mBuild.getId() == event.build.getId()) {
-            mBuild = event.build;
-            bindBuild(mBuild);
+        if (build.getId() == event.build.getId()) {
+            build = event.build;
+            bindBuild(build);
         }
     }
 

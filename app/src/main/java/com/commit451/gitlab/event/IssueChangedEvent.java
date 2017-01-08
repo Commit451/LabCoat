@@ -6,9 +6,9 @@ import com.commit451.gitlab.model.api.Issue;
  * Event indicating that an issue has changed
  */
 public class IssueChangedEvent {
-    public final Issue mIssue;
+    public final Issue issue;
 
     public IssueChangedEvent(Issue issue) {
-        this.mIssue = issue;
+        this.issue = issue;
     }
 }

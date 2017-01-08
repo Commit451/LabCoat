@@ -18,7 +18,7 @@ import android.widget.TextView;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
-import com.commit451.gitlab.adapter.MilestoneIssuesAdapter;
+import com.commit451.gitlab.adapter.MilestoneIssueAdapter;
 import com.commit451.gitlab.event.MilestoneChangedEvent;
 import com.commit451.gitlab.model.api.Issue;
 import com.commit451.gitlab.model.api.Milestone;
@@ -67,7 +67,7 @@ public class MilestoneActivity extends BaseActivity {
     @BindView(R.id.progress)
     View progress;
 
-    MilestoneIssuesAdapter adapterMilestoneIssues;
+    MilestoneIssueAdapter adapterMilestoneIssues;
     LinearLayoutManager layoutManagerIssues;
     MenuItem menuItemOpenClose;
 
@@ -130,7 +130,7 @@ public class MilestoneActivity extends BaseActivity {
             }
         });
 
-        adapterMilestoneIssues = new MilestoneIssuesAdapter(new MilestoneIssuesAdapter.Listener() {
+        adapterMilestoneIssues = new MilestoneIssueAdapter(new MilestoneIssueAdapter.Listener() {
             @Override
             public void onIssueClicked(Issue issue) {
                 Navigator.navigateToIssue(MilestoneActivity.this, project, issue);
@@ -279,8 +279,8 @@ public class MilestoneActivity extends BaseActivity {
 
     @Subscribe
     public void onMilestoneChanged(MilestoneChangedEvent event) {
-        if (milestone.getId() == event.mMilestone.getId()) {
-            milestone = event.mMilestone;
+        if (milestone.getId() == event.milestone.getId()) {
+            milestone = event.milestone;
             bind(milestone);
         }
     }

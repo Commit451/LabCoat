@@ -24,22 +24,13 @@ public class GroupMembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private static final int FOOTER_COUNT = 1;
 
-    private Listener mListener;
-    private ArrayList<Member> mData;
-    private boolean mLoading = false;
-
-    private final View.OnClickListener mItemClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            int position = (int) v.getTag(R.id.list_position);
-            ProjectMemberViewHolder holder = (ProjectMemberViewHolder) v.getTag(R.id.list_view_holder);
-            mListener.onUserClicked(getMember(position), holder);
-        }
-    };
+    private Listener listener;
+    private ArrayList<Member> values;
+    private boolean loading = false;
 
     public GroupMembersAdapter(Listener listener) {
-        mListener = listener;
-        mData = new ArrayList<>();
+        this.listener = listener;
+        values = new ArrayList<>();
     }
 
     @Override
@@ -47,7 +38,14 @@ public class GroupMembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         switch (viewType) {
             case TYPE_MEMBER:
                 ProjectMemberViewHolder holder = ProjectMemberViewHolder.inflate(parent);
-                holder.itemView.setOnClickListener(mItemClickListener);
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int position = (int) v.getTag(R.id.list_position);
+                        ProjectMemberViewHolder holder = (ProjectMemberViewHolder) v.getTag(R.id.list_view_holder);
+                        listener.onUserClicked(getMember(position), holder);
+                    }
+                });
                 return holder;
             case TYPE_FOOTER:
                 return LoadingFooterViewHolder.inflate(parent);
@@ -59,17 +57,17 @@ public class GroupMembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof ProjectMemberViewHolder) {
-            final Member member = mData.get(position);
+            final Member member = values.get(position);
             ((ProjectMemberViewHolder) holder).bind(member);
-            ((ProjectMemberViewHolder) holder).mPopupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            ((ProjectMemberViewHolder) holder).popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
                     switch (item.getItemId()) {
                         case R.id.action_change_access:
-                            mListener.onUserChangeAccessClicked(member);
+                            listener.onUserChangeAccessClicked(member);
                             return true;
                         case R.id.action_remove:
-                            mListener.onUserRemoveClicked(member);
+                            listener.onUserRemoveClicked(member);
                             return true;
                     }
                     return false;
@@ -78,13 +76,13 @@ public class GroupMembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             holder.itemView.setTag(R.id.list_position, position);
             holder.itemView.setTag(R.id.list_view_holder, holder);
         } else if(holder instanceof LoadingFooterViewHolder) {
-            ((LoadingFooterViewHolder) holder).bind(mLoading);
+            ((LoadingFooterViewHolder) holder).bind(loading);
         }
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (position == mData.size()) {
+        if (position == values.size()) {
             return TYPE_FOOTER;
         } else {
             return TYPE_MEMBER;
@@ -93,43 +91,43 @@ public class GroupMembersAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public int getItemCount() {
-        return mData.size() + FOOTER_COUNT;
+        return values.size() + FOOTER_COUNT;
     }
 
     private Member getMember(int position) {
-        return mData.get(position);
+        return values.get(position);
     }
 
     public void setData(Collection<Member> members) {
-        mData.clear();
+        values.clear();
         addData(members);
     }
 
     public void addData(Collection<Member> members) {
         if (members != null) {
-            mData.addAll(members);
+            values.addAll(members);
         }
         notifyDataSetChanged();
     }
 
     public void addMember(Member member) {
-        mData.add(0, member);
+        values.add(0, member);
         notifyItemInserted(0);
     }
 
     public void removeMember(Member member) {
-        int index = mData.indexOf(member);
-        mData.remove(index);
+        int index = values.indexOf(member);
+        values.remove(index);
         notifyItemRemoved(index);
     }
 
     public void setLoading(boolean loading) {
-        mLoading = loading;
-        notifyItemChanged(mData.size());
+        this.loading = loading;
+        notifyItemChanged(values.size());
     }
 
     public boolean isLoading() {
-        return mLoading;
+        return loading;
     }
 
     public boolean isFooter(int position) {

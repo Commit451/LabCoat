@@ -13,22 +13,25 @@ import org.greenrobot.eventbus.Subscribe;
 
 public class BaseFragment extends RxFragment {
 
-    private EventReceiver mBaseEventReceiever;
+    private EventReceiver baseEventReceiver;
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mBaseEventReceiever = new EventReceiver();
-        App.bus().register(mBaseEventReceiever);
+        baseEventReceiver = new EventReceiver();
+        App.bus().register(baseEventReceiver);
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        App.bus().unregister(mBaseEventReceiever);
+        App.bus().unregister(baseEventReceiver);
     }
 
+    /**
+     * Load the data based on a {@link ReloadDataEvent}
+     */
     protected void loadData() {
     }
 

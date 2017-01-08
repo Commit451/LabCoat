@@ -13,23 +13,23 @@ import java.lang.ref.WeakReference;
  */
 public class LabCoatIntentCustomizer implements IntentCustomizer {
 
-    private WeakReference<Activity> mActivity;
-    private int mToolbarColor;
+    private WeakReference<Activity> activity;
+    private int colorToolbar;
 
     public LabCoatIntentCustomizer(Activity activity, int toolbarColor) {
-        mActivity = new WeakReference<>(activity);
-        mToolbarColor = toolbarColor;
+        this.activity = new WeakReference<>(activity);
+        colorToolbar = toolbarColor;
     }
 
     @Override
     public SimpleChromeCustomTabsIntentBuilder onCustomiseIntent(SimpleChromeCustomTabsIntentBuilder simpleChromeCustomTabsIntentBuilder) {
-        Activity activity = mActivity.get();
+        Activity activity = this.activity.get();
         if (activity == null) {
             return simpleChromeCustomTabsIntentBuilder;
         }
         return simpleChromeCustomTabsIntentBuilder
                 .withStartAnimations(activity, R.anim.fade_in, R.anim.do_nothing)
                 .withExitAnimations(activity, R.anim.do_nothing, R.anim.fade_out)
-                .withToolbarColor(mToolbarColor);
+                .withToolbarColor(colorToolbar);
     }
 }

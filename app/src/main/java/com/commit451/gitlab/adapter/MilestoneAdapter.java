@@ -21,24 +21,13 @@ public class MilestoneAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private static final int TYPE_ITEM = 0;
     private static final int TYPE_FOOTER = 1;
 
-    public interface Listener {
-        void onMilestoneClicked(Milestone milestone);
-    }
-    private Listener mListener;
-    private List<Milestone> mValues;
-    private boolean mLoading;
-
-    private final View.OnClickListener mOnItemClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            int position = (int) v.getTag(R.id.list_position);
-            mListener.onMilestoneClicked(getValueAt(position));
-        }
-    };
+    private Listener listener;
+    private List<Milestone> values;
+    private boolean loading;
 
     public MilestoneAdapter(Listener listener) {
-        mListener = listener;
-        mValues = new ArrayList<>();
+        this.listener = listener;
+        values = new ArrayList<>();
     }
 
     @Override
@@ -46,7 +35,13 @@ public class MilestoneAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         switch (viewType) {
             case TYPE_ITEM:
                 MilestoneViewHolder holder = MilestoneViewHolder.inflate(parent);
-                holder.itemView.setOnClickListener(mOnItemClickListener);
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int position = (int) v.getTag(R.id.list_position);
+                        listener.onMilestoneClicked(getValueAt(position));
+                    }
+                });
                 return holder;
             case TYPE_FOOTER:
                 return LoadingFooterViewHolder.inflate(parent);
@@ -61,18 +56,18 @@ public class MilestoneAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             ((MilestoneViewHolder) holder).bind(milestone);
             holder.itemView.setTag(R.id.list_position, position);
         } else if (holder instanceof LoadingFooterViewHolder) {
-            ((LoadingFooterViewHolder) holder).bind(mLoading);
+            ((LoadingFooterViewHolder) holder).bind(loading);
         }
     }
 
     @Override
     public int getItemCount() {
-        return mValues.size() + FOOTER_COUNT;
+        return values.size() + FOOTER_COUNT;
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (position == mValues.size()) {
+        if (position == values.size()) {
             return TYPE_FOOTER;
         } else {
             return TYPE_ITEM;
@@ -80,43 +75,47 @@ public class MilestoneAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     public Milestone getValueAt(int position) {
-        return mValues.get(position);
+        return values.get(position);
     }
 
     public void setData(Collection<Milestone> milestones) {
-        mValues.clear();
+        values.clear();
         addData(milestones);
     }
 
     public void addData(Collection<Milestone> milestones) {
         if (milestones != null) {
-            mValues.addAll(milestones);
+            values.addAll(milestones);
         }
         notifyDataSetChanged();
     }
 
     public void addMilestone(Milestone milestone) {
-        mValues.add(0, milestone);
+        values.add(0, milestone);
         notifyItemInserted(0);
     }
 
     public void updateIssue(Milestone milestone) {
         int indexToDelete = -1;
-        for (int i=0; i<mValues.size(); i++) {
-            if (mValues.get(i).getId() == milestone.getId()) {
+        for (int i = 0; i< values.size(); i++) {
+            if (values.get(i).getId() == milestone.getId()) {
                 indexToDelete = i;
                 break;
             }
         }
         if (indexToDelete != -1) {
-            mValues.remove(indexToDelete);
-            mValues.add(indexToDelete, milestone);
+            values.remove(indexToDelete);
+            values.add(indexToDelete, milestone);
         }
         notifyItemChanged(indexToDelete);
     }
 
     public void setLoading(boolean loading) {
-        mLoading = loading;
-        notifyItemChanged(mValues.size());
+        this.loading = loading;
+        notifyItemChanged(values.size());
+    }
+
+    public interface Listener {
+        void onMilestoneClicked(Milestone milestone);
     }
 }

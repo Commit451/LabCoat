@@ -43,46 +43,44 @@ public class MergeRequestsFragment extends ButterKnifeFragment {
         return new MergeRequestsFragment();
     }
 
-    @BindView(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
-    @BindView(R.id.list) RecyclerView mRecyclerView;
-    @BindView(R.id.message_text) TextView mMessageView;
-    @BindView(R.id.state_spinner) Spinner mSpinner;
+    @BindView(R.id.swipe_layout)
+    SwipeRefreshLayout swipeRefreshLayout;
+    @BindView(R.id.list)
+    RecyclerView listMergeRequests;
+    @BindView(R.id.message_text)
+    TextView textMessage;
+    @BindView(R.id.state_spinner)
+    Spinner spinnerState;
 
-    private Project mProject;
-    private MergeRequestAdapter mMergeRequestAdapter;
-    private LinearLayoutManager mMergeLayoutManager;
+    MergeRequestAdapter adapterMergeRequests;
+    LinearLayoutManager layoutManagerMergeRequests;
 
-    private String mState;
-    private String[] mStates;
-    private Uri mNextPageUrl;
-    private boolean mLoading = false;
+    Project project;
+    String state;
+    String[] states;
+    Uri nextPageUrl;
+    boolean loading = false;
 
-    private final AdapterView.OnItemSelectedListener mSpinnerItemSelectedListener = new AdapterView.OnItemSelectedListener() {
+    private final AdapterView.OnItemSelectedListener onItemSelectedListener = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            mState = mStates[position];
+            state = states[position];
             loadData();
         }
 
         @Override
-        public void onNothingSelected(AdapterView<?> parent) {}
-    };
-
-    private final MergeRequestAdapter.Listener mMergeRequestAdapterListener = new MergeRequestAdapter.Listener() {
-        @Override
-        public void onMergeRequestClicked(MergeRequest mergeRequest) {
-            Navigator.navigateToMergeRequest(getActivity(), mProject, mergeRequest);
+        public void onNothingSelected(AdapterView<?> parent) {
         }
     };
 
-    private final RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
+    private final RecyclerView.OnScrollListener onScrollListener = new RecyclerView.OnScrollListener() {
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
             super.onScrolled(recyclerView, dx, dy);
-            int visibleItemCount = mMergeLayoutManager.getChildCount();
-            int totalItemCount = mMergeLayoutManager.getItemCount();
-            int firstVisibleItem = mMergeLayoutManager.findFirstVisibleItemPosition();
-            if (firstVisibleItem + visibleItemCount >= totalItemCount && !mLoading && mNextPageUrl != null) {
+            int visibleItemCount = layoutManagerMergeRequests.getChildCount();
+            int totalItemCount = layoutManagerMergeRequests.getItemCount();
+            int firstVisibleItem = layoutManagerMergeRequests.findFirstVisibleItemPosition();
+            if (firstVisibleItem + visibleItemCount >= totalItemCount && !loading && nextPageUrl != null) {
                 loadMore();
             }
         }
@@ -91,8 +89,8 @@ public class MergeRequestsFragment extends ButterKnifeFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mState = getContext().getResources().getString(R.string.merge_request_state_value_default);
-        mStates = getContext().getResources().getStringArray(R.array.merge_request_state_values);
+        state = getContext().getResources().getString(R.string.merge_request_state_value_default);
+        states = getContext().getResources().getStringArray(R.array.merge_request_state_values);
     }
 
     @Override
@@ -106,17 +104,22 @@ public class MergeRequestsFragment extends ButterKnifeFragment {
 
         App.bus().register(this);
 
-        mMergeRequestAdapter = new MergeRequestAdapter(mMergeRequestAdapterListener);
-        mMergeLayoutManager = new LinearLayoutManager(getActivity());
-        mRecyclerView.setLayoutManager(mMergeLayoutManager);
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity()));
-        mRecyclerView.setAdapter(mMergeRequestAdapter);
-        mRecyclerView.addOnScrollListener(mOnScrollListener);
+        adapterMergeRequests = new MergeRequestAdapter(new MergeRequestAdapter.Listener() {
+            @Override
+            public void onMergeRequestClicked(MergeRequest mergeRequest) {
+                Navigator.navigateToMergeRequest(getActivity(), project, mergeRequest);
+            }
+        });
+        layoutManagerMergeRequests = new LinearLayoutManager(getActivity());
+        listMergeRequests.setLayoutManager(layoutManagerMergeRequests);
+        listMergeRequests.addItemDecoration(new DividerItemDecoration(getActivity()));
+        listMergeRequests.setAdapter(adapterMergeRequests);
+        listMergeRequests.addOnScrollListener(onScrollListener);
 
-        mSpinner.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, getResources().getStringArray(R.array.merge_request_state_names)));
-        mSpinner.setOnItemSelectedListener(mSpinnerItemSelectedListener);
+        spinnerState.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, getResources().getStringArray(R.array.merge_request_state_names)));
+        spinnerState.setOnItemSelectedListener(onItemSelectedListener);
 
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 loadData();
@@ -124,7 +127,7 @@ public class MergeRequestsFragment extends ButterKnifeFragment {
         });
 
         if (getActivity() instanceof ProjectActivity) {
-            mProject = ((ProjectActivity) getActivity()).getProject();
+            project = ((ProjectActivity) getActivity()).getProject();
             loadData();
         } else {
             throw new IllegalStateException("Incorrect parent activity");
@@ -142,22 +145,22 @@ public class MergeRequestsFragment extends ButterKnifeFragment {
         if (getView() == null) {
             return;
         }
-        if (mProject == null) {
-            mSwipeRefreshLayout.setRefreshing(false);
+        if (project == null) {
+            swipeRefreshLayout.setRefreshing(false);
             return;
         }
-        mMessageView.setVisibility(View.GONE);
-        mSwipeRefreshLayout.post(new Runnable() {
+        textMessage.setVisibility(View.GONE);
+        swipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
-                if (mSwipeRefreshLayout != null) {
-                    mSwipeRefreshLayout.setRefreshing(true);
+                if (swipeRefreshLayout != null) {
+                    swipeRefreshLayout.setRefreshing(true);
                 }
             }
         });
-        mNextPageUrl = null;
-        mLoading = true;
-        App.get().getGitLab().getMergeRequests(mProject.getId(), mState)
+        nextPageUrl = null;
+        loading = true;
+        App.get().getGitLab().getMergeRequests(project.getId(), state)
                 .compose(this.<Response<List<MergeRequest>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -165,26 +168,26 @@ public class MergeRequestsFragment extends ButterKnifeFragment {
 
                     @Override
                     public void error(@NonNull Throwable e) {
-                        mLoading = false;
+                        loading = false;
                         Timber.e(e);
-                        mSwipeRefreshLayout.setRefreshing(false);
-                        mMessageView.setVisibility(View.VISIBLE);
-                        mMessageView.setText(R.string.connection_error_merge_requests);
-                        mMergeRequestAdapter.setData(null);
-                        mNextPageUrl = null;
+                        swipeRefreshLayout.setRefreshing(false);
+                        textMessage.setVisibility(View.VISIBLE);
+                        textMessage.setText(R.string.connection_error_merge_requests);
+                        adapterMergeRequests.setData(null);
+                        nextPageUrl = null;
                     }
 
                     @Override
                     public void responseSuccess(@NonNull List<MergeRequest> mergeRequests) {
-                        mLoading = false;
-                        mSwipeRefreshLayout.setRefreshing(false);
+                        loading = false;
+                        swipeRefreshLayout.setRefreshing(false);
                         if (mergeRequests.isEmpty()) {
-                            mMessageView.setVisibility(View.VISIBLE);
-                            mMessageView.setText(R.string.no_merge_requests);
+                            textMessage.setVisibility(View.VISIBLE);
+                            textMessage.setText(R.string.no_merge_requests);
                         }
-                        mMergeRequestAdapter.setData(mergeRequests);
-                        mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
-                        Timber.d("Next page url " + mNextPageUrl);
+                        adapterMergeRequests.setData(mergeRequests);
+                        nextPageUrl = LinkHeaderParser.parse(response()).getNext();
+                        Timber.d("Next page url " + nextPageUrl);
                     }
                 });
     }
@@ -193,13 +196,13 @@ public class MergeRequestsFragment extends ButterKnifeFragment {
         if (getView() == null) {
             return;
         }
-        if (mNextPageUrl == null) {
+        if (nextPageUrl == null) {
             return;
         }
-        mMergeRequestAdapter.setLoading(true);
-        mLoading = true;
-        Timber.d("loadMore called for " + mNextPageUrl);
-        App.get().getGitLab().getMergeRequests(mNextPageUrl.toString(), mState)
+        adapterMergeRequests.setLoading(true);
+        loading = true;
+        Timber.d("loadMore called for " + nextPageUrl);
+        App.get().getGitLab().getMergeRequests(nextPageUrl.toString(), state)
                 .compose(this.<Response<List<MergeRequest>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -208,28 +211,28 @@ public class MergeRequestsFragment extends ButterKnifeFragment {
                     @Override
                     public void error(@NonNull Throwable e) {
                         Timber.e(e);
-                        mMergeRequestAdapter.setLoading(false);
-                        mLoading = false;
+                        adapterMergeRequests.setLoading(false);
+                        loading = false;
                     }
 
                     @Override
                     public void responseSuccess(@NonNull List<MergeRequest> mergeRequests) {
-                        mLoading = false;
-                        mMergeRequestAdapter.setLoading(false);
-                        mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
-                        mMergeRequestAdapter.addData(mergeRequests);
+                        loading = false;
+                        adapterMergeRequests.setLoading(false);
+                        nextPageUrl = LinkHeaderParser.parse(response()).getNext();
+                        adapterMergeRequests.addData(mergeRequests);
                     }
                 });
     }
 
-        @Subscribe
-        public void onProjectReload(ProjectReloadEvent event) {
-            mProject = event.mProject;
-            loadData();
-        }
+    @Subscribe
+    public void onProjectReload(ProjectReloadEvent event) {
+        project = event.project;
+        loadData();
+    }
 
-        @Subscribe
-        public void onMergeRequestChanged(MergeRequestChangedEvent event) {
-            loadData();
-        }
+    @Subscribe
+    public void onMergeRequestChanged(MergeRequestChangedEvent event) {
+        loadData();
+    }
 }

@@ -6,9 +6,9 @@ import com.commit451.gitlab.model.api.Milestone;
  * Shows that a milestone has changed (been edited)
  */
 public class MilestoneChangedEvent {
-    public final Milestone mMilestone;
+    public final Milestone milestone;
 
     public MilestoneChangedEvent(Milestone milestone) {
-        this.mMilestone = milestone;
+        this.milestone = milestone;
     }
 }

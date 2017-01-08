@@ -15,7 +15,7 @@ import android.widget.TextView;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.activity.PickBranchOrTagActivity;
-import com.commit451.gitlab.adapter.BranchesAdapter;
+import com.commit451.gitlab.adapter.BranchAdapter;
 import com.commit451.gitlab.model.Ref;
 import com.commit451.gitlab.model.api.Branch;
 import com.commit451.gitlab.rx.CustomSingleObserver;
@@ -47,20 +47,20 @@ public class PickBranchFragment extends ButterKnifeFragment {
     }
 
     @BindView(R.id.list)
-    RecyclerView mProjectsListView;
+    RecyclerView listProjects;
     @BindView(R.id.message_text)
-    TextView mMessageView;
+    TextView textMessage;
     @BindView(R.id.progress)
-    View mProgress;
+    View progress;
 
-    BranchesAdapter mBranchesAdapter;
+    BranchAdapter adapterBranches;
 
-    long mProjectId;
+    long projectId;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mProjectId = getArguments().getLong(EXTRA_PROJECT_ID);
+        projectId = getArguments().getLong(EXTRA_PROJECT_ID);
     }
 
     @Override
@@ -73,7 +73,7 @@ public class PickBranchFragment extends ButterKnifeFragment {
         super.onViewCreated(view, savedInstanceState);
 
         Ref existingRef = Parcels.unwrap(getArguments().getParcelable(EXTRA_REF));
-        mBranchesAdapter = new BranchesAdapter(existingRef, new BranchesAdapter.Listener() {
+        adapterBranches = new BranchAdapter(existingRef, new BranchAdapter.Listener() {
             @Override
             public void onBranchClicked(Branch entry) {
                 Intent data = new Intent();
@@ -83,8 +83,8 @@ public class PickBranchFragment extends ButterKnifeFragment {
                 getActivity().finish();
             }
         });
-        mProjectsListView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mProjectsListView.setAdapter(mBranchesAdapter);
+        listProjects.setLayoutManager(new LinearLayoutManager(getActivity()));
+        listProjects.setAdapter(adapterBranches);
 
         loadData();
     }
@@ -94,10 +94,10 @@ public class PickBranchFragment extends ButterKnifeFragment {
         if (getView() == null) {
             return;
         }
-        mProgress.setVisibility(View.VISIBLE);
-        mMessageView.setVisibility(View.GONE);
+        progress.setVisibility(View.VISIBLE);
+        textMessage.setVisibility(View.GONE);
 
-        App.get().getGitLab().getBranches(mProjectId)
+        App.get().getGitLab().getBranches(projectId)
                 .compose(this.<List<Branch>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -106,14 +106,14 @@ public class PickBranchFragment extends ButterKnifeFragment {
                     @Override
                     public void error(@NonNull Throwable e) {
                         Timber.e(e);
-                        mProgress.setVisibility(View.GONE);
-                        mMessageView.setVisibility(View.VISIBLE);
+                        progress.setVisibility(View.GONE);
+                        textMessage.setVisibility(View.VISIBLE);
                     }
 
                     @Override
                     public void success(@NonNull List<Branch> branches) {
-                        mProgress.setVisibility(View.GONE);
-                        mBranchesAdapter.setEntries(branches);
+                        progress.setVisibility(View.GONE);
+                        adapterBranches.setEntries(branches);
                     }
                 });
     }

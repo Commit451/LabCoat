@@ -29,22 +29,23 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
     private static final int[] ATTRS = new int[]{
             android.R.attr.listDivider
     };
-    private Drawable mDivider;
-    private int mDividerHeight;
 
-    private boolean mShowFirstDivider = true;
-    private boolean mShowLastDivider = false;
+    private Drawable divider;
+    private int dividerHeight;
+
+    private boolean showFirstDivider = true;
+    private boolean showLastDivider = false;
 
     public DividerItemDecoration(Context context) {
         final TypedArray a = context.obtainStyledAttributes(ATTRS);
-        mDivider = a.getDrawable(0);
+        divider = a.getDrawable(0);
         a.recycle();
-        mDividerHeight = context.getResources().getDimensionPixelSize(R.dimen.divider_height);
+        dividerHeight = context.getResources().getDimensionPixelSize(R.dimen.divider_height);
     }
 
     public DividerItemDecoration(Context context, boolean first) {
         this(context);
-        mShowFirstDivider = first;
+        showFirstDivider = first;
     }
 
     @Override
@@ -62,9 +63,9 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
             final RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) child
                     .getLayoutParams();
             final int top = child.getBottom() + params.bottomMargin;
-            final int bottom = top + mDividerHeight;
-            mDivider.setBounds(left, top, right, bottom);
-            mDivider.draw(c);
+            final int bottom = top + dividerHeight;
+            divider.setBounds(left, top, right, bottom);
+            divider.draw(c);
         }
     }
 
@@ -72,15 +73,15 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
     public void getItemOffsets(Rect outRect, View view, RecyclerView parent,
                                RecyclerView.State state) {
         if (isSkipped(view, parent)) return;
-        outRect.set(0, 0, 0, mDividerHeight);
+        outRect.set(0, 0, 0, dividerHeight);
     }
 
     private boolean isSkipped(View child, RecyclerView parent) {
         int position = parent.getChildAdapterPosition(child);
         // Skip the first divider if needed
-        if (!mShowFirstDivider && position == 0) return true;
+        if (!showFirstDivider && position == 0) return true;
         // Skip the last divider if needed
-        if (!mShowLastDivider && position == parent.getAdapter().getItemCount() - 1) return true;
+        if (!showLastDivider && position == parent.getAdapter().getItemCount() - 1) return true;
         // Otherwise don't skip
         return false;
     }

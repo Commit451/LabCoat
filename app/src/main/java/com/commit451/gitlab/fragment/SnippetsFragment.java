@@ -45,73 +45,53 @@ public class SnippetsFragment extends ButterKnifeFragment {
     }
 
     @BindView(R.id.root)
-    ViewGroup mRoot;
+    ViewGroup root;
     @BindView(R.id.swipe_layout)
-    SwipeRefreshLayout mSwipeRefreshLayout;
+    SwipeRefreshLayout swipeRefreshLayout;
     @BindView(R.id.list)
-    RecyclerView mRecyclerView;
+    RecyclerView listSnippets;
     @BindView(R.id.message_text)
-    TextView mMessageView;
+    TextView textMessage;
     @BindView(R.id.state_spinner)
-    Spinner mSpinner;
+    Spinner spinnerState;
 
-    private Project mProject;
-    private SnippetAdapter mSnippetAdapter;
-    private LinearLayoutManager mMilestoneLayoutManager;
+    SnippetAdapter adapterSnippets;
+    LinearLayoutManager layoutManagerSnippets;
 
-    private String mState;
-    private String[] mStates;
-    private boolean mLoading = false;
-    private Uri mNextPageUrl;
+    Project project;
+    String state;
+    String[] states;
+    boolean loading = false;
+    Uri nextPageUrl;
 
-    @OnClick(R.id.add)
-    public void onAddClicked(View fab) {
-        if (mProject != null) {
-            Navigator.navigateToAddMilestone(getActivity(), fab, mProject);
-        } else {
-            Snackbar.make(mRoot, getString(R.string.wait_for_project_to_load), Snackbar.LENGTH_SHORT)
-                    .show();
-        }
-    }
-
-    private final AdapterView.OnItemSelectedListener mSpinnerItemSelectedListener = new AdapterView.OnItemSelectedListener() {
-        @Override
-        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            mState = mStates[position];
-            loadData();
-        }
-
-        @Override
-        public void onNothingSelected(AdapterView<?> parent) {
-        }
-    };
-
-    private final SnippetAdapter.Listener mMilestoneListener = new SnippetAdapter.Listener() {
-
-        @Override
-        public void onSnippetClicked(Snippet snippet) {
-
-        }
-    };
-
-    private final RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
+    private final RecyclerView.OnScrollListener onScrollListener = new RecyclerView.OnScrollListener() {
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
             super.onScrolled(recyclerView, dx, dy);
-            int visibleItemCount = mMilestoneLayoutManager.getChildCount();
-            int totalItemCount = mMilestoneLayoutManager.getItemCount();
-            int firstVisibleItem = mMilestoneLayoutManager.findFirstVisibleItemPosition();
-            if (firstVisibleItem + visibleItemCount >= totalItemCount && !mLoading && mNextPageUrl != null) {
+            int visibleItemCount = layoutManagerSnippets.getChildCount();
+            int totalItemCount = layoutManagerSnippets.getItemCount();
+            int firstVisibleItem = layoutManagerSnippets.findFirstVisibleItemPosition();
+            if (firstVisibleItem + visibleItemCount >= totalItemCount && !loading && nextPageUrl != null) {
                 loadMore();
             }
         }
     };
 
+    @OnClick(R.id.add)
+    public void onAddClicked(View fab) {
+        if (project != null) {
+            Navigator.navigateToAddMilestone(getActivity(), fab, project);
+        } else {
+            Snackbar.make(root, getString(R.string.wait_for_project_to_load), Snackbar.LENGTH_SHORT)
+                    .show();
+        }
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mState = getResources().getString(R.string.milestone_state_value_default);
-        mStates = getResources().getStringArray(R.array.milestone_state_values);
+        state = getResources().getString(R.string.milestone_state_value_default);
+        states = getResources().getStringArray(R.array.milestone_state_values);
     }
 
     @Override
@@ -125,17 +105,33 @@ public class SnippetsFragment extends ButterKnifeFragment {
 
         App.bus().register(this);
 
-        mSnippetAdapter = new SnippetAdapter(mMilestoneListener);
-        mMilestoneLayoutManager = new LinearLayoutManager(getActivity());
-        mRecyclerView.setLayoutManager(mMilestoneLayoutManager);
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity()));
-        mRecyclerView.setAdapter(mSnippetAdapter);
-        mRecyclerView.addOnScrollListener(mOnScrollListener);
+        adapterSnippets = new SnippetAdapter(new SnippetAdapter.Listener() {
+            @Override
+            public void onSnippetClicked(Snippet snippet) {
 
-        mSpinner.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, getResources().getStringArray(R.array.milestone_state_names)));
-        mSpinner.setOnItemSelectedListener(mSpinnerItemSelectedListener);
+            }
+        });
+        layoutManagerSnippets = new LinearLayoutManager(getActivity());
+        listSnippets.setLayoutManager(layoutManagerSnippets);
+        listSnippets.addItemDecoration(new DividerItemDecoration(getActivity()));
+        listSnippets.setAdapter(adapterSnippets);
+        listSnippets.addOnScrollListener(onScrollListener);
 
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        spinnerState.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, getResources().getStringArray(R.array.milestone_state_names)));
+        spinnerState.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                state = states[position];
+                loadData();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 loadData();
@@ -143,7 +139,7 @@ public class SnippetsFragment extends ButterKnifeFragment {
         });
 
         if (getActivity() instanceof ProjectActivity) {
-            mProject = ((ProjectActivity) getActivity()).getProject();
+            project = ((ProjectActivity) getActivity()).getProject();
             loadData();
         } else {
             throw new IllegalStateException("Incorrect parent activity");
@@ -161,22 +157,22 @@ public class SnippetsFragment extends ButterKnifeFragment {
         if (getView() == null) {
             return;
         }
-        if (mProject == null) {
-            mSwipeRefreshLayout.setRefreshing(false);
+        if (project == null) {
+            swipeRefreshLayout.setRefreshing(false);
             return;
         }
-        mMessageView.setVisibility(View.GONE);
-        mSwipeRefreshLayout.post(new Runnable() {
+        textMessage.setVisibility(View.GONE);
+        swipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
-                if (mSwipeRefreshLayout != null) {
-                    mSwipeRefreshLayout.setRefreshing(true);
+                if (swipeRefreshLayout != null) {
+                    swipeRefreshLayout.setRefreshing(true);
                 }
             }
         });
-        mNextPageUrl = null;
-        mLoading = true;
-        App.get().getGitLab().getSnippets(mProject.getId())
+        nextPageUrl = null;
+        loading = true;
+        App.get().getGitLab().getSnippets(project.getId())
                 .compose(this.<Response<List<Snippet>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -184,26 +180,26 @@ public class SnippetsFragment extends ButterKnifeFragment {
 
                     @Override
                     public void error(@NonNull Throwable e) {
-                        mLoading = false;
+                        loading = false;
                         Timber.e(e);
-                        mSwipeRefreshLayout.setRefreshing(false);
-                        mMessageView.setVisibility(View.VISIBLE);
-                        mMessageView.setText(R.string.connection_error_milestones);
-                        mSnippetAdapter.setData(null);
-                        mNextPageUrl = null;
+                        swipeRefreshLayout.setRefreshing(false);
+                        textMessage.setVisibility(View.VISIBLE);
+                        textMessage.setText(R.string.connection_error_milestones);
+                        adapterSnippets.setData(null);
+                        nextPageUrl = null;
                     }
 
                     @Override
                     public void responseSuccess(@NonNull List<Snippet> snippets) {
-                        mLoading = false;
-                        mSwipeRefreshLayout.setRefreshing(false);
+                        loading = false;
+                        swipeRefreshLayout.setRefreshing(false);
                         if (snippets.isEmpty()) {
-                            mMessageView.setVisibility(View.VISIBLE);
-                            mMessageView.setText(R.string.no_milestones);
+                            textMessage.setVisibility(View.VISIBLE);
+                            textMessage.setText(R.string.no_milestones);
                         }
-                        mSnippetAdapter.setData(snippets);
-                        mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
-                        Timber.d("Next page url %s", mNextPageUrl);
+                        adapterSnippets.setData(snippets);
+                        nextPageUrl = LinkHeaderParser.parse(response()).getNext();
+                        Timber.d("Next page url %s", nextPageUrl);
                     }
                 });
     }
@@ -213,15 +209,15 @@ public class SnippetsFragment extends ButterKnifeFragment {
             return;
         }
 
-        if (mNextPageUrl == null) {
+        if (nextPageUrl == null) {
             return;
         }
 
-        mLoading = true;
-        mSnippetAdapter.setLoading(true);
+        loading = true;
+        adapterSnippets.setLoading(true);
 
-        Timber.d("loadMore called for %s", mNextPageUrl);
-        App.get().getGitLab().getSnippets(mNextPageUrl.toString())
+        Timber.d("loadMore called for %s", nextPageUrl);
+        App.get().getGitLab().getSnippets(nextPageUrl.toString())
                 .compose(this.<Response<List<Snippet>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -230,23 +226,23 @@ public class SnippetsFragment extends ButterKnifeFragment {
                     @Override
                     public void error(@NonNull Throwable e) {
                         Timber.e(e);
-                        mSnippetAdapter.setLoading(false);
-                        mLoading = false;
+                        adapterSnippets.setLoading(false);
+                        loading = false;
                     }
 
                     @Override
                     public void responseSuccess(@NonNull List<Snippet> snippets) {
-                        mLoading = false;
-                        mSnippetAdapter.setLoading(false);
-                        mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
-                        mSnippetAdapter.addData(snippets);
+                        loading = false;
+                        adapterSnippets.setLoading(false);
+                        nextPageUrl = LinkHeaderParser.parse(response()).getNext();
+                        adapterSnippets.addData(snippets);
                     }
                 });
     }
 
         @Subscribe
         public void onProjectReload(ProjectReloadEvent event) {
-            mProject = event.mProject;
+            project = event.project;
             loadData();
         }
 }

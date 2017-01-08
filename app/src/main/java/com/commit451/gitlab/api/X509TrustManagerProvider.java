@@ -15,7 +15,7 @@ import javax.net.ssl.X509TrustManager;
  */
 public class X509TrustManagerProvider {
 
-    private static X509TrustManager sX509TrustManager;
+    private static X509TrustManager x509TrustManager;
 
     /**
      * Get the static {@link X509TrustManager} for the system
@@ -23,7 +23,7 @@ public class X509TrustManagerProvider {
      * @return the static get
      */
     public static X509TrustManager get() {
-        if (sX509TrustManager == null) {
+        if (x509TrustManager == null) {
             try {
                 init();
             } catch (Exception any) {
@@ -31,7 +31,7 @@ public class X509TrustManagerProvider {
                 throw new RuntimeException(any);
             }
         }
-        return sX509TrustManager;
+        return x509TrustManager;
     }
 
     /**
@@ -47,6 +47,6 @@ public class X509TrustManagerProvider {
             throw new IllegalStateException("Unexpected default trust managers:"
                     + Arrays.toString(trustManagers));
         }
-        sX509TrustManager = (X509TrustManager) trustManagers[0];
+        x509TrustManager = (X509TrustManager) trustManagers[0];
     }
 }

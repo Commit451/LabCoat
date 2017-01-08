@@ -16,36 +16,21 @@ import java.util.Collection;
 /**
  * Shows the issues associated with a {@link com.commit451.gitlab.model.api.Milestone}
  */
-public class MilestoneIssuesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class MilestoneIssueAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_MILESTONE = 1;
 
     private static final int HEADER_COUNT = 1;
 
-    public interface Listener {
-        void onIssueClicked(Issue issue);
-    }
-    private Listener mListener;
-    private ArrayList<Issue> mValues;
-    private Milestone mMilestone;
+    private Listener listener;
+    private ArrayList<Issue> values;
+    private Milestone milestone;
 
-    public Issue getValueAt(int position) {
-        return mValues.get(position - HEADER_COUNT);
+    public MilestoneIssueAdapter(Listener listener) {
+        this.listener = listener;
+        values = new ArrayList<>();
     }
-
-    public MilestoneIssuesAdapter(Listener listener) {
-        mListener = listener;
-        mValues = new ArrayList<>();
-    }
-
-    private final View.OnClickListener mOnProjectClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            int position = (int) v.getTag(R.id.list_position);
-            mListener.onIssueClicked(getValueAt(position));
-        }
-    };
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -54,7 +39,13 @@ public class MilestoneIssuesAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 return MilestoneHeaderViewHolder.inflate(parent);
             case TYPE_MILESTONE:
                 IssueViewHolder issueViewHolder = IssueViewHolder.inflate(parent);
-                issueViewHolder.itemView.setOnClickListener(mOnProjectClickListener);
+                issueViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int position = (int) v.getTag(R.id.list_position);
+                        listener.onIssueClicked(getValueAt(position));
+                    }
+                });
                 return issueViewHolder;
         }
         throw new IllegalStateException("No holder for viewType " + viewType);
@@ -63,7 +54,7 @@ public class MilestoneIssuesAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof MilestoneHeaderViewHolder) {
-            ((MilestoneHeaderViewHolder) holder).bind(mMilestone);
+            ((MilestoneHeaderViewHolder) holder).bind(milestone);
         }
         if (holder instanceof IssueViewHolder) {
             Issue issue = getValueAt(position);
@@ -74,7 +65,7 @@ public class MilestoneIssuesAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     @Override
     public int getItemCount() {
-        return mValues.size() + HEADER_COUNT;
+        return values.size() + HEADER_COUNT;
     }
 
     @Override
@@ -86,40 +77,48 @@ public class MilestoneIssuesAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         }
     }
 
+    public Issue getValueAt(int position) {
+        return values.get(position - HEADER_COUNT);
+    }
+
     public void setIssues(Collection<Issue> issues) {
-        mValues.clear();
+        values.clear();
         addIssues(issues);
     }
 
     public void addIssues(Collection<Issue> issues) {
         if (issues != null) {
-            mValues.addAll(issues);
+            values.addAll(issues);
         }
         notifyDataSetChanged();
     }
 
     public void setMilestone(Milestone milestone) {
-        mMilestone = milestone;
+        this.milestone = milestone;
         notifyItemChanged(0);
     }
 
     public void addIssue(Issue issue) {
-        mValues.add(0, issue);
+        values.add(0, issue);
         notifyItemInserted(0);
     }
 
     public void updateIssue(Issue issue) {
         int indexToDelete = -1;
-        for (int i=0; i<mValues.size(); i++) {
-            if (mValues.get(i).getId() == issue.getId()) {
+        for (int i = 0; i< values.size(); i++) {
+            if (values.get(i).getId() == issue.getId()) {
                 indexToDelete = i;
                 break;
             }
         }
         if (indexToDelete != -1) {
-            mValues.remove(indexToDelete);
-            mValues.add(indexToDelete, issue);
+            values.remove(indexToDelete);
+            values.add(indexToDelete, issue);
         }
         notifyItemChanged(indexToDelete);
+    }
+
+    public interface Listener {
+        void onIssueClicked(Issue issue);
     }
 }

@@ -24,62 +24,64 @@ import java.util.ArrayList;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
+import timber.log.Timber;
 
 /**
  * Remote all the views
  */
 public class FeedRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
-    private static final int mCount = 10;
-    private Context mContext;
-    private int mAppWidgetId;
-    private String mFeedUrl;
-    private ArrayList<Entry> mEntries;
-    private Picasso mPicasso;
-    private GitLabRss mRssClient;
+    private static final int COUNT = 10;
+
+    private Context context;
+    private int appWidgetId;
+    private String feedUrl;
+    private ArrayList<Entry> entries;
+    private Picasso picasso;
+    private GitLabRss rssClient;
 
     public FeedRemoteViewsFactory(Context context, Intent intent, Account account, String url) {
-        mContext = context;
-        mAppWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
+        this.context = context;
+        appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
                 AppWidgetManager.INVALID_APPWIDGET_ID);
-        mFeedUrl = url;
+        feedUrl = url;
 
         OkHttpClient.Builder gitlabRssClientBuilder = OkHttpClientFactory.create(account);
         if (BuildConfig.DEBUG) {
             gitlabRssClientBuilder.addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
         }
-        mRssClient = GitLabRssFactory.create(account, gitlabRssClientBuilder.build());
+        rssClient = GitLabRssFactory.create(account, gitlabRssClientBuilder.build());
         OkHttpClient.Builder picassoClientBuilder = OkHttpClientFactory.create(account);
-        mPicasso = PicassoFactory.createPicasso(picassoClientBuilder.build());
+        picasso = PicassoFactory.createPicasso(picassoClientBuilder.build());
     }
 
     @Override
     public void onCreate() {
-        mEntries = new ArrayList<>();
+        entries = new ArrayList<>();
     }
 
     @Override
     public void onDestroy() {
         // In onDestroy() you should tear down anything that was setup for your data source,
         // eg. cursors, connections, etc.
-        mEntries.clear();
+        entries.clear();
     }
 
     @Override
     public int getCount() {
-        return mCount;
+        return COUNT;
     }
 
     @Override
     public RemoteViews getViewAt(int position) {
         // position will always range from 0 to getCount() - 1.
 
-        if (position >= mEntries.size()) {
+        if (position >= entries.size()) {
             return null;
         }
-        Entry entry = mEntries.get(position);
+        Entry entry = entries.get(position);
 
-        RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.widget_item_entry);
+        RemoteViews rv = new RemoteViews(context.getPackageName(), R.layout.widget_item_entry);
         rv.setTextViewText(R.id.title, entry.getTitle());
         rv.setTextViewText(R.id.summary, entry.getSummary());
 
@@ -90,7 +92,7 @@ public class FeedRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
         rv.setOnClickFillInIntent(R.id.root, fillInIntent);
 
         try {
-            Bitmap image = mPicasso
+            Bitmap image = picasso
                     .load(entry.getThumbnail().getUrl())
                     .transform(new CircleTransformation())
                     .get();
@@ -134,14 +136,15 @@ public class FeedRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
         // locking up the widget.
 
         try {
-            Feed feed = mRssClient.getFeed(mFeedUrl)
+            Feed feed = rssClient.getFeed(feedUrl)
                     .blockingGet();
             if (feed.getEntries() != null) {
-                mEntries.addAll(feed.getEntries());
+                entries.addAll(feed.getEntries());
             }
 
         } catch (Exception e) {
             //maybe let the user know somehow?
+            Timber.e(e);
         }
     }
 }

@@ -28,17 +28,17 @@ public class MergeRequestDetailAdapter extends RecyclerView.Adapter<RecyclerView
     private static final int HEADER_COUNT = 1;
     private static final int FOOTER_COUNT = 1;
 
-    private LinkedList<Note> mNotes;
-    private MergeRequest mMergeRequest;
-    private boolean mLoading = false;
-    private Bypass mBypass;
-    private Project mProject;
+    private LinkedList<Note> notes;
+    private MergeRequest mergeRequest;
+    private boolean loading = false;
+    private Bypass bypass;
+    private Project project;
 
     public MergeRequestDetailAdapter(Context context, MergeRequest mergeRequest, Project project) {
-        mMergeRequest = mergeRequest;
-        mNotes = new LinkedList<>();
-        mBypass = new Bypass(context);
-        mProject = project;
+        this.mergeRequest = mergeRequest;
+        notes = new LinkedList<>();
+        bypass = new Bypass(context);
+        this.project = project;
     }
 
     @Override
@@ -56,25 +56,25 @@ public class MergeRequestDetailAdapter extends RecyclerView.Adapter<RecyclerView
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof MergeRequestHeaderViewHolder) {
-            ((MergeRequestHeaderViewHolder) holder).bind(mMergeRequest, mBypass, mProject);
+            ((MergeRequestHeaderViewHolder) holder).bind(mergeRequest, bypass, project);
         } else if (holder instanceof NoteViewHolder) {
             Note note = getNoteAt(position);
-            ((NoteViewHolder) holder).bind(note, mBypass, mProject);
+            ((NoteViewHolder) holder).bind(note, bypass, project);
         } else if (holder instanceof LoadingFooterViewHolder) {
-            ((LoadingFooterViewHolder) holder).bind(mLoading);
+            ((LoadingFooterViewHolder) holder).bind(loading);
         }
     }
 
     @Override
     public int getItemCount() {
-        return mNotes.size() + HEADER_COUNT + FOOTER_COUNT;
+        return notes.size() + HEADER_COUNT + FOOTER_COUNT;
     }
 
     @Override
     public int getItemViewType(int position) {
         if (isPositionHeader(position)) {
             return TYPE_HEADER;
-        } else if (position == HEADER_COUNT + mNotes.size()) {
+        } else if (position == HEADER_COUNT + notes.size()) {
             return TYPE_FOOTER;
         } else {
             return TYPE_COMMENT;
@@ -86,29 +86,29 @@ public class MergeRequestDetailAdapter extends RecyclerView.Adapter<RecyclerView
     }
 
     public Note getNoteAt(int position) {
-        return mNotes.get(position - HEADER_COUNT);
+        return notes.get(position - HEADER_COUNT);
     }
 
     public void addNote(Note note) {
-        mNotes.addFirst(note);
+        notes.addFirst(note);
         notifyItemInserted(HEADER_COUNT);
     }
 
     public void setNotes(List<Note> notes) {
-        mNotes.clear();
+        this.notes.clear();
         addNotes(notes);
     }
 
     public void addNotes(List<Note> notes) {
         if (!notes.isEmpty()) {
-            mNotes.addAll(notes);
+            this.notes.addAll(notes);
         }
         notifyDataSetChanged();
     }
 
     public void setLoading(boolean loading) {
-        mLoading = loading;
-        notifyItemChanged(mNotes.size() + HEADER_COUNT);
+        this.loading = loading;
+        notifyItemChanged(notes.size() + HEADER_COUNT);
     }
 
     public static int getHeaderCount() {

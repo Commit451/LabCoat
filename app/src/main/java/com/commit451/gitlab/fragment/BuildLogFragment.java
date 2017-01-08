@@ -43,20 +43,20 @@ public class BuildLogFragment extends ButterKnifeFragment {
     }
 
     @BindView(R.id.swipe_layout)
-    SwipeRefreshLayout mSwipeRefreshLayout;
+    SwipeRefreshLayout swipeRefreshLayout;
     @BindView(R.id.log)
-    TextView mTextLog;
+    TextView textLog;
     @BindView(R.id.message_text)
-    TextView mMessageView;
+    TextView textMessage;
 
-    Project mProject;
-    Build mBuild;
+    Project project;
+    Build build;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mProject = Parcels.unwrap(getArguments().getParcelable(KEY_PROJECT));
-        mBuild = Parcels.unwrap(getArguments().getParcelable(KEY_BUILD));
+        project = Parcels.unwrap(getArguments().getParcelable(KEY_PROJECT));
+        build = Parcels.unwrap(getArguments().getParcelable(KEY_BUILD));
     }
 
     @Override
@@ -68,7 +68,7 @@ public class BuildLogFragment extends ButterKnifeFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 loadData();
@@ -90,16 +90,16 @@ public class BuildLogFragment extends ButterKnifeFragment {
             return;
         }
 
-        mSwipeRefreshLayout.post(new Runnable() {
+        swipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
-                if (mSwipeRefreshLayout != null) {
-                    mSwipeRefreshLayout.setRefreshing(true);
+                if (swipeRefreshLayout != null) {
+                    swipeRefreshLayout.setRefreshing(true);
                 }
             }
         });
 
-        String url = BuildUtil.getRawBuildUrl(App.get().getAccount().getServerUrl(), mProject, mBuild);
+        String url = BuildUtil.getRawBuildUrl(App.get().getAccount().getServerUrl(), project, build);
 
         App.get().getGitLab().getRaw(url)
                 .compose(this.<String>bindToLifecycle())
@@ -110,22 +110,22 @@ public class BuildLogFragment extends ButterKnifeFragment {
                     @Override
                     public void error(@NonNull Throwable t) {
                         Timber.e(t);
-                        mSwipeRefreshLayout.setRefreshing(false);
-                        mMessageView.setVisibility(View.VISIBLE);
+                        swipeRefreshLayout.setRefreshing(false);
+                        textMessage.setVisibility(View.VISIBLE);
                     }
 
                     @Override
                     public void success(@NonNull String s) {
-                        mSwipeRefreshLayout.setRefreshing(false);
-                        mTextLog.setText(s);
+                        swipeRefreshLayout.setRefreshing(false);
+                        textLog.setText(s);
                     }
                 });
     }
 
     @Subscribe
     public void onBuildChanged(BuildChangedEvent event) {
-        if (mBuild.getId() == event.build.getId()) {
-            mBuild = event.build;
+        if (build.getId() == event.build.getId()) {
+            build = event.build;
             loadData();
         }
     }

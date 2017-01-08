@@ -26,8 +26,10 @@ public class UserViewHolder extends RecyclerView.ViewHolder {
         return new UserViewHolder(view);
     }
 
-    @BindView(R.id.name) public TextView mUsernameView;
-    @BindView(R.id.image) public ImageView mImageView;
+    @BindView(R.id.name)
+    public TextView textUsername;
+    @BindView(R.id.image)
+    public ImageView image;
 
     public UserViewHolder(View view) {
         super(view);
@@ -35,9 +37,9 @@ public class UserViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(UserBasic user) {
-        mUsernameView.setText(user.getUsername());
+        textUsername.setText(user.getUsername());
         App.get().getPicasso()
                 .load(ImageUtil.getAvatarUrl(user, itemView.getResources().getDimensionPixelSize(R.dimen.user_list_image_size)))
-                .into(mImageView);
+                .into(image);
     }
 }

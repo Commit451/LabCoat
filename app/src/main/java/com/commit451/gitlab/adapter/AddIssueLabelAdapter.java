@@ -16,34 +16,34 @@ import java.util.Collection;
  */
 public class AddIssueLabelAdapter extends RecyclerView.Adapter<AddLabelViewHolder> {
 
-    private ArrayList<Label> mValues;
-    private Listener mListener;
+    private ArrayList<Label> values;
+    private Listener listener;
 
     public AddIssueLabelAdapter(Listener listener) {
-        mValues = new ArrayList<>();
-        mListener = listener;
+        values = new ArrayList<>();
+        this.listener = listener;
     }
 
     public void setLabels(Collection<Label> labels) {
-        mValues.clear();
+        values.clear();
         addLabels(labels);
     }
 
     public void addLabels(Collection<Label> labels) {
         if (labels != null) {
-            mValues.addAll(labels);
+            values.addAll(labels);
         }
         notifyDataSetChanged();
     }
 
     public void addLabel(Label label) {
-        mValues.add(label);
-        notifyItemInserted(mValues.size()-1);
+        values.add(label);
+        notifyItemInserted(values.size()-1);
     }
 
     public void removeLabel(Label label) {
-        int indexOf = mValues.indexOf(label);
-        mValues.remove(indexOf);
+        int indexOf = values.indexOf(label);
+        values.remove(indexOf);
         notifyItemRemoved(indexOf);
     }
 
@@ -54,7 +54,7 @@ public class AddIssueLabelAdapter extends RecyclerView.Adapter<AddLabelViewHolde
             @Override
             public boolean onLongClick(View v) {
                 Label label = getEntry(holder.getAdapterPosition());
-                mListener.onLabelLongClicked(label);
+                listener.onLabelLongClicked(label);
                 return true;
             }
         });
@@ -68,24 +68,24 @@ public class AddIssueLabelAdapter extends RecyclerView.Adapter<AddLabelViewHolde
 
     @Override
     public int getItemCount() {
-        return mValues.size();
+        return values.size();
     }
 
     private Label getEntry(int position) {
-        return mValues.get(position);
+        return values.get(position);
     }
 
     public boolean containsLabel(Label label) {
-        return mValues.contains(label);
+        return values.contains(label);
     }
 
     @Nullable
     public String getCommaSeperatedStringOfLabels() {
-        if (mValues.isEmpty()) {
+        if (values.isEmpty()) {
             return null;
         }
         String labels = "";
-        for (Label label : mValues) {
+        for (Label label : values) {
             labels = labels + label.getName() + ",";
         }
         //Remove last ","

@@ -15,7 +15,7 @@ import android.widget.TextView;
 import com.commit451.gitlab.App;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.adapter.DividerItemDecoration;
-import com.commit451.gitlab.adapter.ProjectsAdapter;
+import com.commit451.gitlab.adapter.ProjectAdapter;
 import com.commit451.gitlab.api.GitLab;
 import com.commit451.gitlab.model.api.Group;
 import com.commit451.gitlab.model.api.Project;
@@ -73,39 +73,42 @@ public class ProjectsFragment extends ButterKnifeFragment {
         return fragment;
     }
 
-    @BindView(R.id.swipe_layout) SwipeRefreshLayout mSwipeRefreshLayout;
-    @BindView(R.id.list) RecyclerView mProjectsListView;
-    @BindView(R.id.message_text) TextView mMessageView;
+    @BindView(R.id.swipe_layout)
+    SwipeRefreshLayout swipeRefreshLayout;
+    @BindView(R.id.list)
+    RecyclerView listProjects;
+    @BindView(R.id.message_text)
+    TextView textMessage;
 
-    LinearLayoutManager mLayoutManager;
-    ProjectsAdapter mProjectsAdapter;
+    LinearLayoutManager layoutManagerProjects;
+    ProjectAdapter adapterProjects;
 
-    int mMode;
-    String mQuery;
-    Uri mNextPageUrl;
-    boolean mLoading = false;
-    Listener mListener;
+    int mode;
+    String query;
+    Uri nextPageUrl;
+    boolean loading = false;
+    Listener listener;
 
     private final RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
             super.onScrolled(recyclerView, dx, dy);
-            int visibleItemCount = mLayoutManager.getChildCount();
-            int totalItemCount = mLayoutManager.getItemCount();
-            int firstVisibleItem = mLayoutManager.findFirstVisibleItemPosition();
-            if (firstVisibleItem + visibleItemCount >= totalItemCount && !mLoading && mNextPageUrl != null) {
+            int visibleItemCount = layoutManagerProjects.getChildCount();
+            int totalItemCount = layoutManagerProjects.getItemCount();
+            int firstVisibleItem = layoutManagerProjects.findFirstVisibleItemPosition();
+            if (firstVisibleItem + visibleItemCount >= totalItemCount && !loading && nextPageUrl != null) {
                 loadMore();
             }
         }
     };
 
-    private final ProjectsAdapter.Listener mProjectsListener = new ProjectsAdapter.Listener() {
+    private final ProjectAdapter.Listener mProjectsListener = new ProjectAdapter.Listener() {
         @Override
         public void onProjectClicked(Project project) {
-            if (mListener == null) {
+            if (listener == null) {
                 Navigator.navigateToProject(getActivity(), project);
             } else {
-                mListener.onProjectClicked(project);
+                listener.onProjectClicked(project);
             }
         }
     };
@@ -114,15 +117,15 @@ public class ProjectsFragment extends ButterKnifeFragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof Listener) {
-            mListener = (Listener) context;
+            listener = (Listener) context;
         }
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mMode = getArguments().getInt(EXTRA_MODE);
-        mQuery = getArguments().getString(EXTRA_QUERY);
+        mode = getArguments().getInt(EXTRA_MODE);
+        query = getArguments().getString(EXTRA_QUERY);
     }
 
     @Override
@@ -134,14 +137,14 @@ public class ProjectsFragment extends ButterKnifeFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mProjectsAdapter = new ProjectsAdapter(getActivity(), mProjectsListener);
-        mLayoutManager = new LinearLayoutManager(getActivity());
-        mProjectsListView.setLayoutManager(mLayoutManager);
-        mProjectsListView.addItemDecoration(new DividerItemDecoration(getActivity()));
-        mProjectsListView.setAdapter(mProjectsAdapter);
-        mProjectsListView.addOnScrollListener(mOnScrollListener);
+        adapterProjects = new ProjectAdapter(getActivity(), mProjectsListener);
+        layoutManagerProjects = new LinearLayoutManager(getActivity());
+        listProjects.setLayoutManager(layoutManagerProjects);
+        listProjects.addItemDecoration(new DividerItemDecoration(getActivity()));
+        listProjects.setAdapter(adapterProjects);
+        listProjects.addOnScrollListener(mOnScrollListener);
 
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 loadData();
@@ -156,11 +159,11 @@ public class ProjectsFragment extends ButterKnifeFragment {
         if (getView() == null) {
             return;
         }
-        mMessageView.setVisibility(View.GONE);
+        textMessage.setVisibility(View.GONE);
 
-        mNextPageUrl = null;
+        nextPageUrl = null;
 
-        switch (mMode) {
+        switch (mode) {
             case MODE_ALL:
                 showLoading();
                 actuallyLoadIt(getGitLab().getAllProjects());
@@ -174,9 +177,9 @@ public class ProjectsFragment extends ButterKnifeFragment {
                 actuallyLoadIt(getGitLab().getStarredProjects());
                 break;
             case MODE_SEARCH:
-                if (mQuery != null) {
+                if (query != null) {
                     showLoading();
-                    actuallyLoadIt(getGitLab().searchAllProjects(mQuery));
+                    actuallyLoadIt(getGitLab().searchAllProjects(query));
                 }
                 break;
             case MODE_GROUP:
@@ -188,7 +191,7 @@ public class ProjectsFragment extends ButterKnifeFragment {
                 actuallyLoadIt(getGitLab().getGroupProjects(group.getId()));
                 break;
             default:
-                throw new IllegalStateException(mMode + " is not defined");
+                throw new IllegalStateException(mode + " is not defined");
         }
     }
 
@@ -200,26 +203,26 @@ public class ProjectsFragment extends ButterKnifeFragment {
 
                     @Override
                     public void error(@NonNull Throwable e) {
-                        mLoading = false;
+                        loading = false;
                         Timber.e(e);
-                        mSwipeRefreshLayout.setRefreshing(false);
-                        mMessageView.setVisibility(View.VISIBLE);
-                        mMessageView.setText(R.string.connection_error);
-                        mProjectsAdapter.setData(null);
-                        mNextPageUrl = null;
+                        swipeRefreshLayout.setRefreshing(false);
+                        textMessage.setVisibility(View.VISIBLE);
+                        textMessage.setText(R.string.connection_error);
+                        adapterProjects.setData(null);
+                        nextPageUrl = null;
                     }
 
                     @Override
                     public void responseSuccess(@NonNull List<Project> projects) {
-                        mLoading = false;
-                        mSwipeRefreshLayout.setRefreshing(false);
+                        loading = false;
+                        swipeRefreshLayout.setRefreshing(false);
                         if (projects.isEmpty()) {
-                            mMessageView.setVisibility(View.VISIBLE);
-                            mMessageView.setText(R.string.no_projects);
+                            textMessage.setVisibility(View.VISIBLE);
+                            textMessage.setText(R.string.no_projects);
                         }
-                        mProjectsAdapter.setData(projects);
-                        mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
-                        Timber.d("Next page url " + mNextPageUrl);
+                        adapterProjects.setData(projects);
+                        nextPageUrl = LinkHeaderParser.parse(response()).getNext();
+                        Timber.d("Next page url " + nextPageUrl);
                     }
                 });
     }
@@ -229,13 +232,13 @@ public class ProjectsFragment extends ButterKnifeFragment {
             return;
         }
 
-        if (mNextPageUrl == null) {
+        if (nextPageUrl == null) {
             return;
         }
-        mLoading = true;
-        mProjectsAdapter.setLoading(true);
-        Timber.d("loadMore called for %s", mNextPageUrl);
-        getGitLab().getProjects(mNextPageUrl.toString())
+        loading = true;
+        adapterProjects.setLoading(true);
+        Timber.d("loadMore called for %s", nextPageUrl);
+        getGitLab().getProjects(nextPageUrl.toString())
                 .compose(this.<Response<List<Project>>>bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -243,46 +246,46 @@ public class ProjectsFragment extends ButterKnifeFragment {
 
                     @Override
                     public void error(@NonNull Throwable e) {
-                        mLoading = false;
+                        loading = false;
                         Timber.e(e);
-                        mProjectsAdapter.setLoading(false);
+                        adapterProjects.setLoading(false);
                     }
 
                     @Override
                     public void responseSuccess(@NonNull List<Project> projects) {
-                        mLoading = false;
-                        mProjectsAdapter.setLoading(false);
-                        mProjectsAdapter.addData(projects);
-                        mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
-                        Timber.d("Next page url " + mNextPageUrl);
+                        loading = false;
+                        adapterProjects.setLoading(false);
+                        adapterProjects.addData(projects);
+                        nextPageUrl = LinkHeaderParser.parse(response()).getNext();
+                        Timber.d("Next page url " + nextPageUrl);
                     }
                 });
     }
 
     private void showLoading() {
-        mLoading = true;
-        mSwipeRefreshLayout.post(new Runnable() {
+        loading = true;
+        swipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
-                if (mSwipeRefreshLayout != null) {
-                    mSwipeRefreshLayout.setRefreshing(true);
+                if (swipeRefreshLayout != null) {
+                    swipeRefreshLayout.setRefreshing(true);
                 }
             }
         });
     }
 
     public void searchQuery(String query) {
-        mQuery = query;
+        this.query = query;
 
-        if (mProjectsAdapter != null) {
-            mProjectsAdapter.clearData();
+        if (adapterProjects != null) {
+            adapterProjects.clearData();
             loadData();
         }
     }
 
     private GitLab getGitLab() {
-        if (mListener != null) {
-            return mListener.getGitLab();
+        if (listener != null) {
+            return listener.getGitLab();
         } else {
             return App.get().getGitLab();
         }
@@ -290,6 +293,7 @@ public class ProjectsFragment extends ButterKnifeFragment {
 
     public interface Listener {
         void onProjectClicked(Project project);
+
         GitLab getGitLab();
     }
 }

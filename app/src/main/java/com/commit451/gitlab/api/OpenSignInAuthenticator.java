@@ -22,10 +22,10 @@ import okhttp3.Route;
  */
 public class OpenSignInAuthenticator implements Authenticator {
 
-    private Account mAccount;
+    private Account account;
 
     public OpenSignInAuthenticator(Account account) {
-        mAccount = account;
+        this.account = account;
     }
 
     @Override
@@ -37,7 +37,7 @@ public class OpenSignInAuthenticator implements Authenticator {
                 @Override
                 public void run() {
                     //Remove the account, so that the user can sign in again
-                    App.get().getPrefs().removeAccount(mAccount);
+                    App.get().getPrefs().removeAccount(account);
                     Toast.makeText(App.get(), R.string.error_401, Toast.LENGTH_LONG)
                             .show();
                     Intent intent = LoginActivity.newIntent(App.get());

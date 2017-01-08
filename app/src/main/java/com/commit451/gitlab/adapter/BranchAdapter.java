@@ -16,35 +16,33 @@ import java.util.Collection;
 /**
  * Adapts the feeds
  */
-public class BranchesAdapter extends RecyclerView.Adapter<BranchViewHolder> {
+public class BranchAdapter extends RecyclerView.Adapter<BranchViewHolder> {
 
-    public interface Listener {
-        void onBranchClicked(Branch entry);
-    }
-    private Listener mListener;
 
-    private ArrayList<Branch> mValues;
+    private Listener listener;
+
+    private ArrayList<Branch> values;
     @Nullable
-    private Ref mRef;
+    private Ref ref;
 
-    public BranchesAdapter(@Nullable Ref currentRef, Listener listener) {
-        mListener = listener;
-        mValues = new ArrayList<>();
-        mRef = currentRef;
+    public BranchAdapter(@Nullable Ref currentRef, Listener listener) {
+        this.listener = listener;
+        values = new ArrayList<>();
+        ref = currentRef;
     }
 
     private final View.OnClickListener mOnItemClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             int position = (int) v.getTag(R.id.list_position);
-            mListener.onBranchClicked(getEntry(position));
+            listener.onBranchClicked(getEntry(position));
         }
     };
 
     public void setEntries(Collection<Branch> entries) {
-        mValues.clear();
+        values.clear();
         if (entries != null) {
-            mValues.addAll(entries);
+            values.addAll(entries);
         }
         notifyDataSetChanged();
     }
@@ -61,9 +59,9 @@ public class BranchesAdapter extends RecyclerView.Adapter<BranchViewHolder> {
         holder.itemView.setTag(R.id.list_position, position);
         Branch branch = getEntry(position);
         boolean selected = false;
-        if (mRef != null) {
-            if (mRef.getType() == Ref.TYPE_BRANCH
-                    && mRef.getRef().equals(branch.getName())) {
+        if (ref != null) {
+            if (ref.getType() == Ref.TYPE_BRANCH
+                    && ref.getRef().equals(branch.getName())) {
                 selected = true;
             }
         }
@@ -72,10 +70,14 @@ public class BranchesAdapter extends RecyclerView.Adapter<BranchViewHolder> {
 
     @Override
     public int getItemCount() {
-        return mValues.size();
+        return values.size();
     }
 
     private Branch getEntry(int position) {
-        return mValues.get(position);
+        return values.get(position);
+    }
+
+    public interface Listener {
+        void onBranchClicked(Branch entry);
     }
 }

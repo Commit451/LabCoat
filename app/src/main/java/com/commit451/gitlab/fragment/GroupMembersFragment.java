@@ -53,53 +53,46 @@ public class GroupMembersFragment extends ButterKnifeFragment {
     }
 
     @BindView(R.id.root)
-    View mRoot;
+    View root;
     @BindView(R.id.swipe_layout)
-    SwipeRefreshLayout mSwipeRefreshLayout;
+    SwipeRefreshLayout swipeRefreshLayout;
     @BindView(R.id.list)
-    RecyclerView mRecyclerView;
+    RecyclerView list;
     @BindView(R.id.message_text)
-    TextView mMessageView;
+    TextView textMessage;
     @BindView(R.id.add_user_button)
-    View mAddUserButton;
+    View buttonAddUser;
 
-    GroupMembersAdapter mGroupMembersAdapter;
-    DynamicGridLayoutManager mLayoutManager;
+    GroupMembersAdapter adapterGroupMembers;
+    DynamicGridLayoutManager layoutManagerGroupMembers;
 
-    Member mMember;
-    Group mGroup;
-    Uri mNextPageUrl;
-
-    private final AccessDialog.OnAccessChangedListener mOnAccessChangedListener = new AccessDialog.OnAccessChangedListener() {
-        @Override
-        public void onAccessChanged(Member member, String accessLevel) {
-            loadData();
-        }
-    };
+    Member member;
+    Group group;
+    Uri nextPageUrl;
 
     private final RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
             super.onScrolled(recyclerView, dx, dy);
-            int visibleItemCount = mLayoutManager.getChildCount();
-            int totalItemCount = mLayoutManager.getItemCount();
-            int firstVisibleItem = mLayoutManager.findFirstVisibleItemPosition();
-            if (firstVisibleItem + visibleItemCount >= totalItemCount && !mGroupMembersAdapter.isLoading() && mNextPageUrl != null) {
+            int visibleItemCount = layoutManagerGroupMembers.getChildCount();
+            int totalItemCount = layoutManagerGroupMembers.getItemCount();
+            int firstVisibleItem = layoutManagerGroupMembers.findFirstVisibleItemPosition();
+            if (firstVisibleItem + visibleItemCount >= totalItemCount && !adapterGroupMembers.isLoading() && nextPageUrl != null) {
                 loadMore();
             }
         }
     };
 
-    private final GroupMembersAdapter.Listener mListener = new GroupMembersAdapter.Listener() {
+    private final GroupMembersAdapter.Listener listener = new GroupMembersAdapter.Listener() {
         @Override
         public void onUserClicked(Member member, ProjectMemberViewHolder holder) {
-            Navigator.navigateToUser(getActivity(), holder.mImageView, member);
+            Navigator.navigateToUser(getActivity(), holder.image, member);
         }
 
         @Override
         public void onUserRemoveClicked(Member member) {
-            mMember = member;
-            App.get().getGitLab().removeGroupMember(mGroup.getId(), member.getId())
+            GroupMembersFragment.this.member = member;
+            App.get().getGitLab().removeGroupMember(group.getId(), member.getId())
                     .compose(GroupMembersFragment.this.<String>bindToLifecycle())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -108,21 +101,26 @@ public class GroupMembersFragment extends ButterKnifeFragment {
                         @Override
                         public void error(@NonNull Throwable e) {
                             Timber.e(e);
-                            Snackbar.make(mRoot, R.string.failed_to_remove_member, Snackbar.LENGTH_SHORT)
+                            Snackbar.make(root, R.string.failed_to_remove_member, Snackbar.LENGTH_SHORT)
                                     .show();
                         }
 
                         @Override
                         public void success(@NonNull String value) {
-                            mGroupMembersAdapter.removeMember(mMember);
+                            adapterGroupMembers.removeMember(GroupMembersFragment.this.member);
                         }
                     });
         }
 
         @Override
         public void onUserChangeAccessClicked(Member member) {
-            AccessDialog accessDialog = new AccessDialog(getActivity(), member, mGroup);
-            accessDialog.setOnAccessChangedListener(mOnAccessChangedListener);
+            AccessDialog accessDialog = new AccessDialog(getActivity(), member, group);
+            accessDialog.setOnAccessChangedListener(new AccessDialog.OnAccessChangedListener() {
+                @Override
+                public void onAccessChanged(Member member, String accessLevel) {
+                    loadData();
+                }
+            });
             accessDialog.show();
         }
     };
@@ -130,7 +128,7 @@ public class GroupMembersFragment extends ButterKnifeFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mGroup = Parcels.unwrap(getArguments().getParcelable(KEY_GROUP));
+        group = Parcels.unwrap(getArguments().getParcelable(KEY_GROUP));
     }
 
     @Override
@@ -144,23 +142,23 @@ public class GroupMembersFragment extends ButterKnifeFragment {
 
         App.bus().register(this);
 
-        mGroupMembersAdapter = new GroupMembersAdapter(mListener);
-        mLayoutManager = new DynamicGridLayoutManager(getActivity());
-        mLayoutManager.setMinimumWidthDimension(R.dimen.user_list_image_size);
-        mLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+        adapterGroupMembers = new GroupMembersAdapter(listener);
+        layoutManagerGroupMembers = new DynamicGridLayoutManager(getActivity());
+        layoutManagerGroupMembers.setMinimumWidthDimension(R.dimen.user_list_image_size);
+        layoutManagerGroupMembers.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
-                if (mGroupMembersAdapter.isFooter(position)) {
-                    return mLayoutManager.getNumColumns();
+                if (adapterGroupMembers.isFooter(position)) {
+                    return layoutManagerGroupMembers.getNumColumns();
                 }
                 return 1;
             }
         });
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.setAdapter(mGroupMembersAdapter);
-        mRecyclerView.addOnScrollListener(mOnScrollListener);
+        list.setLayoutManager(layoutManagerGroupMembers);
+        list.setAdapter(adapterGroupMembers);
+        list.addOnScrollListener(mOnScrollListener);
 
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 loadData();
@@ -178,27 +176,27 @@ public class GroupMembersFragment extends ButterKnifeFragment {
 
     @OnClick(R.id.add_user_button)
     public void onAddUserClick(View fab) {
-        Navigator.navigateToAddGroupMember(getActivity(), fab, mGroup);
+        Navigator.navigateToAddGroupMember(getActivity(), fab, group);
     }
 
     public void loadData() {
         if (getView() == null) {
             return;
         }
-        if (mGroup == null) {
-            mSwipeRefreshLayout.setRefreshing(false);
+        if (group == null) {
+            swipeRefreshLayout.setRefreshing(false);
             return;
         }
-        mMessageView.setVisibility(View.GONE);
-        mSwipeRefreshLayout.post(new Runnable() {
+        textMessage.setVisibility(View.GONE);
+        swipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
-                if (mSwipeRefreshLayout != null) {
-                    mSwipeRefreshLayout.setRefreshing(true);
+                if (swipeRefreshLayout != null) {
+                    swipeRefreshLayout.setRefreshing(true);
                 }
             }
         });
-        loadGroupMembers(App.get().getGitLab().getGroupMembers(mGroup.getId()));
+        loadGroupMembers(App.get().getGitLab().getGroupMembers(group.getId()));
     }
 
     private void loadMore() {
@@ -206,23 +204,23 @@ public class GroupMembersFragment extends ButterKnifeFragment {
             return;
         }
 
-        if (mNextPageUrl == null) {
+        if (nextPageUrl == null) {
             return;
         }
 
-        mSwipeRefreshLayout.post(new Runnable() {
+        swipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
-                if (mSwipeRefreshLayout != null) {
-                    mSwipeRefreshLayout.setRefreshing(true);
+                if (swipeRefreshLayout != null) {
+                    swipeRefreshLayout.setRefreshing(true);
                 }
             }
         });
 
-        mGroupMembersAdapter.setLoading(true);
+        adapterGroupMembers.setLoading(true);
 
-        Timber.d("loadMore called for %s", mNextPageUrl);
-        loadGroupMembers(App.get().getGitLab().getProjectMembers(mNextPageUrl.toString()));
+        Timber.d("loadMore called for %s", nextPageUrl);
+        loadGroupMembers(App.get().getGitLab().getProjectMembers(nextPageUrl.toString()));
     }
 
     private void loadGroupMembers(Single<Response<List<Member>>> observable) {
@@ -235,39 +233,39 @@ public class GroupMembersFragment extends ButterKnifeFragment {
                     @Override
                     public void error(@NonNull Throwable e) {
                         Timber.e(e);
-                        mSwipeRefreshLayout.setRefreshing(false);
-                        mMessageView.setVisibility(View.VISIBLE);
-                        mMessageView.setText(R.string.connection_error_users);
-                        mAddUserButton.setVisibility(View.GONE);
-                        mGroupMembersAdapter.setData(null);
+                        swipeRefreshLayout.setRefreshing(false);
+                        textMessage.setVisibility(View.VISIBLE);
+                        textMessage.setText(R.string.connection_error_users);
+                        buttonAddUser.setVisibility(View.GONE);
+                        adapterGroupMembers.setData(null);
                     }
 
                     @Override
                     public void responseSuccess(@NonNull List<Member> members) {
-                        mSwipeRefreshLayout.setRefreshing(false);
+                        swipeRefreshLayout.setRefreshing(false);
                         if (members.isEmpty()) {
-                            mMessageView.setVisibility(View.VISIBLE);
-                            mMessageView.setText(R.string.no_project_members);
+                            textMessage.setVisibility(View.VISIBLE);
+                            textMessage.setText(R.string.no_project_members);
                         }
-                        mAddUserButton.setVisibility(View.VISIBLE);
-                        if (mNextPageUrl == null) {
-                            mGroupMembersAdapter.setData(members);
+                        buttonAddUser.setVisibility(View.VISIBLE);
+                        if (nextPageUrl == null) {
+                            adapterGroupMembers.setData(members);
                         } else {
-                            mGroupMembersAdapter.addData(members);
+                            adapterGroupMembers.addData(members);
                         }
-                        mGroupMembersAdapter.setLoading(false);
+                        adapterGroupMembers.setLoading(false);
 
-                        mNextPageUrl = LinkHeaderParser.parse(response()).getNext();
-                        Timber.d("Next page url %s", mNextPageUrl);
+                        nextPageUrl = LinkHeaderParser.parse(response()).getNext();
+                        Timber.d("Next page url %s", nextPageUrl);
                     }
                 });
     }
 
     @Subscribe
     public void onMemberAdded(MemberAddedEvent event) {
-        if (mGroupMembersAdapter != null) {
-            mGroupMembersAdapter.addMember(event.mMember);
-            mMessageView.setVisibility(View.GONE);
+        if (adapterGroupMembers != null) {
+            adapterGroupMembers.addMember(event.member);
+            textMessage.setVisibility(View.GONE);
         }
     }
 }

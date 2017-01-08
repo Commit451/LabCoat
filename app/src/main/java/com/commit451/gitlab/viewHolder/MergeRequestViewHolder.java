@@ -27,9 +27,12 @@ public class MergeRequestViewHolder extends RecyclerView.ViewHolder {
         return new MergeRequestViewHolder(view);
     }
 
-    @BindView(R.id.request_image) ImageView mImageView;
-    @BindView(R.id.request_title) TextView mTitleView;
-    @BindView(R.id.request_author) TextView mAuthorView;
+    @BindView(R.id.request_image)
+    ImageView image;
+    @BindView(R.id.request_title)
+    TextView textTitle;
+    @BindView(R.id.request_author)
+    TextView textAuthor;
 
     public MergeRequestViewHolder(View view) {
         super(view);
@@ -40,18 +43,18 @@ public class MergeRequestViewHolder extends RecyclerView.ViewHolder {
         App.get().getPicasso()
                 .load(ImageUtil.getAvatarUrl(item.getAuthor(), itemView.getResources().getDimensionPixelSize(R.dimen.image_size)))
                 .transform(new CircleTransformation())
-                .into(mImageView);
+                .into(image);
 
         if (item.getAuthor() != null) {
-            mAuthorView.setText(item.getAuthor().getUsername());
+            textAuthor.setText(item.getAuthor().getUsername());
         } else {
-            mAuthorView.setText("");
+            textAuthor.setText("");
         }
 
         if (item.getTitle() != null) {
-            mTitleView.setText(item.getTitle());
+            textTitle.setText(item.getTitle());
         } else {
-            mTitleView.setText("");
+            textTitle.setText("");
         }
     }
 }

@@ -30,17 +30,17 @@ public class IssueDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private static final int HEADER_COUNT = 2;
     private static final int FOOTER_COUNT = 1;
 
-    private Project mProject;
-    private LinkedList<Note> mNotes;
-    private Issue mIssue;
-    private boolean mLoading = false;
-    private Bypass mBypass;
+    private Project project;
+    private LinkedList<Note> notes;
+    private Issue issue;
+    private boolean loading = false;
+    private Bypass bypass;
 
     public IssueDetailsAdapter(Context context, Issue issue, Project project) {
-        mIssue = issue;
-        mNotes = new LinkedList<>();
-        mBypass = new Bypass(context);
-        mProject = project;
+        this.issue = issue;
+        notes = new LinkedList<>();
+        bypass = new Bypass(context);
+        this.project = project;
     }
 
     @Override
@@ -60,20 +60,20 @@ public class IssueDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof IssueHeaderViewHolder) {
-            ((IssueHeaderViewHolder) holder).bind(mIssue, mProject);
+            ((IssueHeaderViewHolder) holder).bind(issue, project);
         } else if (holder instanceof IssueLabelsViewHolder) {
-            ((IssueLabelsViewHolder) holder).bind(mIssue.getLabels());
+            ((IssueLabelsViewHolder) holder).bind(issue.getLabels());
         } else if (holder instanceof NoteViewHolder) {
             Note note = getNoteAt(position);
-            ((NoteViewHolder) holder).bind(note, mBypass, mProject);
+            ((NoteViewHolder) holder).bind(note, bypass, project);
         } else if (holder instanceof LoadingFooterViewHolder) {
-            ((LoadingFooterViewHolder) holder).bind(mLoading);
+            ((LoadingFooterViewHolder) holder).bind(loading);
         }
     }
 
     @Override
     public int getItemCount() {
-        return mNotes.size() + HEADER_COUNT + FOOTER_COUNT;
+        return notes.size() + HEADER_COUNT + FOOTER_COUNT;
     }
 
     @Override
@@ -82,7 +82,7 @@ public class IssueDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             return TYPE_HEADER;
         } else if (position == 1) {
             return TYPE_HEADER_LABEL;
-        } else if (position == HEADER_COUNT + mNotes.size()) {
+        } else if (position == HEADER_COUNT + notes.size()) {
             return TYPE_FOOTER;
         } else {
             return TYPE_COMMENT;
@@ -90,38 +90,38 @@ public class IssueDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     public Note getNoteAt(int position) {
-        return mNotes.get(position - HEADER_COUNT);
+        return notes.get(position - HEADER_COUNT);
     }
 
     public void setNotes(List<Note> notes) {
-        mNotes.clear();
+        this.notes.clear();
         addNotes(notes);
     }
 
     public void addNotes(List<Note> notes) {
         if (!notes.isEmpty()) {
-            mNotes.addAll(notes);
-            notifyItemRangeChanged(HEADER_COUNT, HEADER_COUNT + mNotes.size());
+            this.notes.addAll(notes);
+            notifyItemRangeChanged(HEADER_COUNT, HEADER_COUNT + this.notes.size());
         }
     }
 
     public void addNote(Note note) {
-        mNotes.addFirst(note);
+        notes.addFirst(note);
         notifyItemInserted(HEADER_COUNT);
     }
 
     public void updateIssue(Issue issue) {
-        List<String> oldLabels = mIssue.getLabels();
-        mIssue = issue;
+        List<String> oldLabels = this.issue.getLabels();
+        this.issue = issue;
         notifyItemChanged(0);
-        if (oldLabels.size() != mIssue.getLabels().size()) {
+        if (oldLabels.size() != this.issue.getLabels().size()) {
             notifyItemChanged(1);
         }
     }
 
     public void setLoading(boolean loading) {
-        mLoading = loading;
-        notifyItemChanged(mNotes.size() + HEADER_COUNT);
+        this.loading = loading;
+        notifyItemChanged(notes.size() + HEADER_COUNT);
     }
 
     public static int getHeaderCount() {

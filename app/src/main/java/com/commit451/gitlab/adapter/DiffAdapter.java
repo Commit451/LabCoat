@@ -18,32 +18,29 @@ import java.util.Collection;
  */
 public class DiffAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    public static final int TYPE_HEADER = 0;
+    private static final int TYPE_HEADER = 0;
     public static final int TYPE_ITEM = 1;
 
-    public static final int HEADER_COUNT = 1;
+    private static final int HEADER_COUNT = 1;
 
-    public interface Listener {
-        void onDiffClicked(Diff diff);
-    }
-    private Listener mListener;
-    private RepositoryCommit mRepositoryCommit;
-    private ArrayList<Diff> mValues;
+    private Listener listener;
+    private RepositoryCommit repositoryCommit;
+    private ArrayList<Diff> values;
 
     public Diff getValueAt(int position) {
-        return mValues.get(position - HEADER_COUNT);
+        return values.get(position - HEADER_COUNT);
     }
 
     public DiffAdapter(RepositoryCommit repositoryCommit, Listener listener) {
-        mRepositoryCommit = repositoryCommit;
-        mListener = listener;
-        mValues = new ArrayList<>();
+        this.repositoryCommit = repositoryCommit;
+        this.listener = listener;
+        values = new ArrayList<>();
     }
 
     public void setData(Collection<Diff> diffs) {
-        mValues.clear();
+        values.clear();
         if (diffs != null) {
-            mValues.addAll(diffs);
+            values.addAll(diffs);
         }
         notifyDataSetChanged();
     }
@@ -52,7 +49,7 @@ public class DiffAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         @Override
         public void onClick(View v) {
             int position = (int) v.getTag(R.id.list_position);
-            mListener.onDiffClicked(getValueAt(position));
+            listener.onDiffClicked(getValueAt(position));
         }
     };
 
@@ -72,7 +69,7 @@ public class DiffAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof DiffHeaderViewHolder) {
-            ((DiffHeaderViewHolder) holder).bind(mRepositoryCommit);
+            ((DiffHeaderViewHolder) holder).bind(repositoryCommit);
         } else if (holder instanceof DiffViewHolder) {
             Diff diff = getValueAt(position);
             ((DiffViewHolder) holder).bind(diff);
@@ -82,7 +79,7 @@ public class DiffAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        return mValues.size() + HEADER_COUNT;
+        return values.size() + HEADER_COUNT;
     }
 
     @Override
@@ -92,5 +89,9 @@ public class DiffAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         } else {
             return TYPE_ITEM;
         }
+    }
+
+    public interface Listener {
+        void onDiffClicked(Diff diff);
     }
 }

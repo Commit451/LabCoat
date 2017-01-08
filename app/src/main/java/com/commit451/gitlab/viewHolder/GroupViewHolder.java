@@ -18,7 +18,7 @@ import butterknife.ButterKnife;
 /**
  * View associated with a group
  */
-public class GroupViewHolder extends RecyclerView.ViewHolder{
+public class GroupViewHolder extends RecyclerView.ViewHolder {
 
     public static GroupViewHolder inflate(ViewGroup parent) {
         View view = LayoutInflater.from(parent.getContext())
@@ -26,8 +26,10 @@ public class GroupViewHolder extends RecyclerView.ViewHolder{
         return new GroupViewHolder(view);
     }
 
-    @BindView(R.id.image) public ImageView mImageView;
-    @BindView(R.id.name) public TextView mNameView;
+    @BindView(R.id.image)
+    public ImageView image;
+    @BindView(R.id.name)
+    public TextView textName;
 
     public GroupViewHolder(View view) {
         super(view);
@@ -35,12 +37,12 @@ public class GroupViewHolder extends RecyclerView.ViewHolder{
     }
 
     public void bind(Group group) {
-        mNameView.setText(group.getName());
+        textName.setText(group.getName());
 
         if (group.getAvatarUrl() != null && !group.getAvatarUrl().equals(Uri.EMPTY)) {
             App.get().getPicasso()
                     .load(group.getAvatarUrl())
-                    .into(mImageView);
+                    .into(image);
         }
     }
 }
