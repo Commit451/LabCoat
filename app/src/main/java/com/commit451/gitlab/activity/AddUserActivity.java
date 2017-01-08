@@ -111,7 +111,7 @@ public class AddUserActivity extends MorphActivity {
         return true;
     }
 
-    @OnTextChanged
+    @OnTextChanged(R.id.search)
     void onTextChanged(CharSequence s, int start, int before, int count) {
         if (TextUtils.isEmpty(s)) {
             buttonClear.animate()

@@ -234,7 +234,7 @@ public class Navigator {
 
     public static void navigateToEditMilestone(Activity activity, View fab, Project project, Milestone milestone) {
         Intent intent = AddMilestoneActivity.newIntent(activity, project.getId(), milestone);
-        startMorphActivity(activity, fab, R.drawable.ic_edit_24dp, intent);
+        activity.startActivity(intent);
     }
 
     public static void navigateToBuild(Activity activity, Project project, com.commit451.gitlab.model.api.Build build) {

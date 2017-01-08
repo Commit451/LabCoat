@@ -21,6 +21,10 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize" />
 
+        <!--Hack for the fact that if there is not a view here, then the fab will disappear-->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"/>
     </android.support.design.widget.AppBarLayout>
 
     <com.commit451.gitlab.view.LabCoatSwipeRefreshLayout

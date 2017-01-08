@@ -68,7 +68,7 @@ public class BuildActivity extends BaseActivity {
     Project project;
     Build build;
 
-    private final Toolbar.OnMenuItemClickListener mOnMenuItemClickListener = new Toolbar.OnMenuItemClickListener() {
+    private final Toolbar.OnMenuItemClickListener onMenuItemClickListener = new Toolbar.OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
             switch (item.getItemId()) {
@@ -174,7 +174,7 @@ public class BuildActivity extends BaseActivity {
         });
         toolbar.setSubtitle(project.getNameWithNamespace());
         toolbar.inflateMenu(R.menu.menu_build);
-        toolbar.setOnMenuItemClickListener(mOnMenuItemClickListener);
+        toolbar.setOnMenuItemClickListener(onMenuItemClickListener);
         menuItemDownload = toolbar.getMenu().findItem(R.id.action_download);
         menuItemDownload.setVisible(build.getArtifactsFile() != null);
         setupTabs();

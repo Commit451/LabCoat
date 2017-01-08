@@ -141,7 +141,6 @@ public class FeedRemoteViewsFactory implements RemoteViewsService.RemoteViewsFac
             if (feed.getEntries() != null) {
                 entries.addAll(feed.getEntries());
             }
-
         } catch (Exception e) {
             //maybe let the user know somehow?
             Timber.e(e);
