@@ -9,7 +9,6 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.bluelinelabs.logansquare.LoganSquare;
-import com.commit451.gitlab.BuildConfig;
 import com.commit451.gitlab.model.Account;
 
 import java.io.IOException;
@@ -24,7 +23,6 @@ import java.util.List;
 public class Prefs {
 
     private static final String KEY_ACCOUNTS = "accounts";
-    private static final String KEY_VERSION = "current_version";
     private static final String KEY_STARTING_VIEW = "starting_view";
     private static final String KEY_REQUIRE_DEVICE_AUTH = "require_device_auth";
 
@@ -91,16 +89,6 @@ public class Prefs {
         } catch (IOException e) {
             //this wont happen! Right?!?!?!
         }
-    }
-
-    public int getSavedVersion() {
-        return prefs.getInt(KEY_VERSION, -1);
-    }
-
-    public void setSavedVersion() {
-        prefs.edit()
-                .putInt(KEY_VERSION, BuildConfig.VERSION_CODE)
-                .apply();
     }
 
     @StartingView

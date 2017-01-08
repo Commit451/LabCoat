@@ -22,7 +22,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.Patterns;
-import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -48,7 +47,6 @@ import com.commit451.gitlab.ssl.CustomHostnameVerifier;
 import com.commit451.gitlab.ssl.CustomKeyManager;
 import com.commit451.gitlab.ssl.X509CertificateException;
 import com.commit451.gitlab.ssl.X509Util;
-import com.commit451.reptar.retrofit.ResponseSingleObserver;
 import com.commit451.teleprinter.Teleprinter;
 import com.jakewharton.retrofit2.adapter.rxjava2.HttpException;
 
@@ -69,6 +67,7 @@ import javax.net.ssl.SSLPeerUnverifiedException;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnEditorAction;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -125,17 +124,16 @@ public class LoginActivity extends BaseActivity {
     @BindView(R.id.progress)
     View progress;
 
-    private boolean isNormalLogin = true;
-    private Account account;
-    private Teleprinter teleprinter;
+    Teleprinter teleprinter;
 
-    private final TextView.OnEditorActionListener onEditorActionListener = new TextView.OnEditorActionListener() {
-        @Override
-        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-            onLoginClick();
-            return true;
-        }
-    };
+    boolean isNormalLogin = true;
+    Account account;
+
+    @OnEditorAction({R.id.password_input, R.id.token_input})
+    boolean onPasswordEditorAction() {
+        onLoginClick();
+        return true;
+    }
 
     @OnClick(R.id.login_button)
     public void onLoginClick() {
@@ -235,8 +233,7 @@ public class LoginActivity extends BaseActivity {
                 }
             });
         }
-        textPassword.setOnEditorActionListener(onEditorActionListener);
-        textToken.setOnEditorActionListener(onEditorActionListener);
+
         textUser.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -245,6 +242,7 @@ public class LoginActivity extends BaseActivity {
                 }
             }
         });
+        textUrl.setText(R.string.url_gitlab);
     }
 
     @TargetApi(23)
@@ -273,7 +271,7 @@ public class LoginActivity extends BaseActivity {
         switch (requestCode) {
             case REQUEST_PRIVATE_TOKEN:
                 if (resultCode == RESULT_OK) {
-                    String token = data.getStringExtra(WebviewLoginActivity.EXTRA_TOKEN);
+                    String token = data.getStringExtra(WebLoginActivity.EXTRA_TOKEN);
                     textInputLayoutToken.getEditText().setText(token);
                 }
                 break;
@@ -624,6 +622,7 @@ public class LoginActivity extends BaseActivity {
     private Set<String> getEmailAccounts() {
         HashSet<String> emailAccounts = new HashSet<>();
         AccountManager manager = (AccountManager) getSystemService(Context.ACCOUNT_SERVICE);
+        @SuppressWarnings("MissingPermission")
         final android.accounts.Account[] accounts = manager.getAccounts();
         for (android.accounts.Account account : accounts) {
             if (!TextUtils.isEmpty(account.name) && Patterns.EMAIL_ADDRESS.matcher(account.name).matches()) {

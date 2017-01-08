@@ -39,7 +39,7 @@ import com.commit451.gitlab.activity.SearchActivity;
 import com.commit451.gitlab.activity.SettingsActivity;
 import com.commit451.gitlab.activity.TodosActivity;
 import com.commit451.gitlab.activity.UserActivity;
-import com.commit451.gitlab.activity.WebviewLoginActivity;
+import com.commit451.gitlab.activity.WebLoginActivity;
 import com.commit451.gitlab.data.Prefs;
 import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.model.Ref;
@@ -130,7 +130,7 @@ public class Navigator {
     }
 
     public static void navigateToWebSignin(Activity activity, String url, boolean extractingPrivateToken, int requestCode) {
-        Intent intent = WebviewLoginActivity.newIntent(activity, url, extractingPrivateToken);
+        Intent intent = WebLoginActivity.newIntent(activity, url, extractingPrivateToken);
         activity.startActivityForResult(intent, requestCode);
     }
 

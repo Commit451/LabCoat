@@ -33,9 +33,9 @@ public class ActivityActivity extends BaseActivity {
     }
 
     @BindView(R.id.drawer_layout)
-    DrawerLayout mDrawerLayout;
+    DrawerLayout drawerLayout;
     @BindView(R.id.toolbar)
-    Toolbar mToolbar;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,12 +45,12 @@ public class ActivityActivity extends BaseActivity {
 
         App.bus().register(this);
 
-        mToolbar.setTitle(R.string.nav_activity);
-        mToolbar.setNavigationIcon(R.drawable.ic_menu_24dp);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        toolbar.setTitle(R.string.nav_activity);
+        toolbar.setNavigationIcon(R.drawable.ic_menu_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mDrawerLayout.openDrawer(GravityCompat.START);
+                drawerLayout.openDrawer(GravityCompat.START);
             }
         });
 
@@ -79,6 +79,6 @@ public class ActivityActivity extends BaseActivity {
 
     @Subscribe
     public void onCloseDrawerEvent(CloseDrawerEvent event) {
-        mDrawerLayout.closeDrawers();
+        drawerLayout.closeDrawers();
     }
 }

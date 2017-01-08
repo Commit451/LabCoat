@@ -24,7 +24,7 @@ import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 /**
  * Shows user a WebView for login and intercepts the headers to get the private token. Hmmmm
  */
-public class WebviewLoginActivity extends BaseActivity {
+public class WebLoginActivity extends BaseActivity {
     public static final String EXTRA_TOKEN = "token";
 
     private static final String JAVASCRIPT_INTERFACE_EXTRACTOR = "TokenExtractor";
@@ -33,7 +33,7 @@ public class WebviewLoginActivity extends BaseActivity {
     private static final String KEY_EXTRACTING_PRIVATE_TOKEN = "extracting_private_token";
 
     public static Intent newIntent(Context context, String url, boolean extractingPrivateToken) {
-        Intent intent = new Intent(context, WebviewLoginActivity.class);
+        Intent intent = new Intent(context, WebLoginActivity.class);
         intent.putExtra(KEY_URL, url);
         intent.putExtra(KEY_EXTRACTING_PRIVATE_TOKEN, extractingPrivateToken);
         return intent;
@@ -118,16 +118,16 @@ public class WebviewLoginActivity extends BaseActivity {
                 url = url.substring(0, url.length() - 1);
             }
 
-            if (url.equals(WebviewLoginActivity.this.url)) {
+            if (url.equals(WebLoginActivity.this.url)) {
                 if (isExtracting()) {
-                    webView.loadUrl(WebviewLoginActivity.this.url + "/profile/account");
+                    webView.loadUrl(WebLoginActivity.this.url + "/profile/account");
                 } else {
-                    webView.loadUrl(WebviewLoginActivity.this.url + "/profile/personal_access_tokens");
+                    webView.loadUrl(WebLoginActivity.this.url + "/profile/personal_access_tokens");
                 }
                 return;
             }
 
-            if (url.equals(WebviewLoginActivity.this.url + "/profile/account")) {
+            if (url.equals(WebLoginActivity.this.url + "/profile/account")) {
                 webView.loadUrl("javascript:" + JAVASCRIPT_INTERFACE_EXTRACTOR + ".extract" +
                         "(document.getElementById('token').value);");
                 return;

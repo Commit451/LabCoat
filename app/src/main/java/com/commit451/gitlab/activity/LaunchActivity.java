@@ -8,15 +8,12 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.commit451.gitlab.App;
-import com.commit451.gitlab.BuildConfig;
 import com.commit451.gitlab.R;
 import com.commit451.gitlab.model.Account;
 import com.commit451.gitlab.navigation.Navigator;
 import com.commit451.gitlab.ssl.CustomKeyManager;
 
 import java.util.List;
-
-import timber.log.Timber;
 
 /**
  * This activity acts as switching platform for the application directing the user to the appropriate
@@ -33,12 +30,6 @@ public class LaunchActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        int savedVersion = App.get().getPrefs().getSavedVersion();
-        if (savedVersion != -1 && savedVersion < BuildConfig.VERSION_CODE) {
-            Timber.d("Performing upgrade");
-            performUpgrade(savedVersion, BuildConfig.VERSION_CODE);
-            App.get().getPrefs().setSavedVersion();
-        }
         List<Account> accounts = Account.getAccounts();
         if(accounts.isEmpty()) {
             Navigator.navigateToLogin(this);
@@ -112,12 +103,5 @@ public class LaunchActivity extends Activity {
         } else {
             loadPrivateKey(accounts, i + 1);
         }
-    }
-
-    /**
-     * Perform an upgrade from one version to another. This should only be one time upgrade things
-     */
-    private void performUpgrade(int previousVersion, int currentVersion) {
-
     }
 }

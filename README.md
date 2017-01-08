@@ -1,15 +1,15 @@
 # LabCoat for GitLab
-[![Google Play](https://gitlab.com/Commit451/LabCoat/raw/master/art/google-play-badge.png)](https://play.google.com/store/apps/details?id=com.commit451.gitlab)
 
 [![build status](https://gitlab.com/ci/projects/7701/status.png?ref=master)](https://gitlab.com/ci/projects/7701?ref=master)
 
 ![Image](https://gitlab.com/Commit451/LabCoat/raw/master/art/screenshot-1.png)
+[![Google Play](https://gitlab.com/Commit451/LabCoat/raw/master/art/google-play-badge.png)](https://play.google.com/store/apps/details?id=com.commit451.gitlab)
 
 ## Issues
 Please see the [issues](https://gitlab.com/Commit451/LabCoat/issues) section to report any bugs or feature requests and to see the list of known issues.
 
 ## Building
-You should be able to build the project from Android Studio without any further setup. The app uses Fabric for Crashlytics, so if you wanted to do a release build, you would need to generate your own Crashlytics/Fabric key. All in all, your gradle.properties will look something like this:
+You should be able to build the project from Android Studio without any further setup. The app uses Fabric for crash reporting, so if you wanted to do a release build, you would need to generate your own Crashlytics/Fabric key. All in all, your `gradle.properties` will look something like this:
 ```Gradle
 LABCOAT_FABRIC_KEY = FABRIC_KEY_GOES_HERE_BUT_ONLY_REALLY_NEEDED_FOR_RELEASE_BUILDS
 ```
@@ -61,6 +61,8 @@ The following 3rd party libraries and resources are the reason this app works. R
 
 ## Contributing
 Please fork this repository and contribute back! All Merge Requests should be made against the `develop` branch, as it is the active branch for development. Please make your best effort to break up commits as much as possible to improve the reviewing process.
+
+If you are making substantial changes, please refer to Commit 451's style [guidelines](https://github.com/Commit451/guidelines) for Android
 
 License
 --------

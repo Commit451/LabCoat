@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:app="http://schemas.android.com/apk/res-auto"
-             android:id="@+id/root"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:elevation="0dp"/>
+        android:elevation="0dp" />
 
     <ImageView
         android:layout_width="wrap_content"
@@ -17,7 +17,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="32dp"
         android:contentDescription="@string/app_name"
-        app:srcCompat="@drawable/ic_logo"/>
+        app:srcCompat="@drawable/ic_logo" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -39,8 +39,7 @@
                 android:layout_below="@+id/title"
                 android:layout_centerHorizontal="true"
                 android:hint="@string/url_hint"
-                android:inputType="textUri"
-                android:text="@string/url_gitlab"/>
+                android:inputType="textUri" />
 
         </android.support.design.widget.TextInputLayout>
 
@@ -63,7 +62,7 @@
                     android:ems="10"
                     android:hint="@string/user_hint"
                     android:imeOptions="actionNext"
-                    android:inputType="textEmailAddress"/>
+                    android:inputType="textEmailAddress" />
 
             </android.support.design.widget.TextInputLayout>
 
@@ -79,7 +78,7 @@
                     android:layout_below="@+id/user_input"
                     android:layout_centerHorizontal="true"
                     android:hint="@string/password_hint"
-                    android:inputType="textPassword"/>
+                    android:inputType="textPassword" />
 
             </android.support.design.widget.TextInputLayout>
         </LinearLayout>
@@ -103,34 +102,34 @@
                     android:layout_alignParentTop="true"
                     android:layout_centerHorizontal="true"
                     android:hint="@string/token_hint"
-                    android:inputType="textVisiblePassword"/>
+                    android:inputType="textVisiblePassword" />
             </android.support.design.widget.TextInputLayout>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="@string/or"/>
+                android:text="@string/or" />
 
             <Button
                 android:id="@+id/button_open_login_page"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="@string/open_login_page"/>
+                android:text="@string/open_login_page" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="@string/or"/>
+                android:text="@string/or" />
 
             <Button
                 android:id="@+id/button_open_login_page_for_personal_access"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="@string/open_login_page_for_personal_access_token"/>
+                android:text="@string/open_login_page_for_personal_access_token" />
         </LinearLayout>
 
     </LinearLayout>
@@ -141,8 +140,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:layout_margin="16dp"
-        android:text="@string/login_button"/>
+        android:text="@string/login_button" />
 
-    <include layout="@layout/progress_fullscreen"/>
+    <include layout="@layout/progress_fullscreen" />
 
 </FrameLayout>
