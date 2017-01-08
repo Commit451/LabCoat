@@ -61,7 +61,7 @@ import timber.log.Timber;
 public class Navigator {
 
     public static void navigateToAbout(Activity activity) {
-        activity.startActivity(AboutActivity.newIntent(activity));
+        activity.startActivity(AboutActivity.Companion.newIntent(activity));
     }
 
     public static void navigateToSettings(Activity activity) {
@@ -114,7 +114,7 @@ public class Navigator {
     }
 
     public static void navigateToActivity(Activity activity) {
-        activity.startActivity(ActivityActivity.newIntent(activity));
+        activity.startActivity(ActivityActivity.Companion.newIntent(activity));
     }
 
     public static void navigateToTodos(Activity activity) {
@@ -204,7 +204,7 @@ public class Navigator {
     }
 
     public static void navigateToEditIssue(Activity activity, View fab, Project project, Issue issue) {
-        Intent intent = AddIssueActivity.newIntent(activity, project, issue);
+        Intent intent = AddIssueActivity.Companion.newIntent(activity, project, issue);
         activity.startActivity(intent);
     }
 
@@ -213,7 +213,7 @@ public class Navigator {
     }
 
     private static void navigateToAddIssue(Activity activity, View fab, @DrawableRes int drawable, Project project, Issue issue) {
-        Intent intent = AddIssueActivity.newIntent(activity, project, issue);
+        Intent intent = AddIssueActivity.Companion.newIntent(activity, project, issue);
         startMorphActivity(activity, fab, drawable, intent);
     }
 
