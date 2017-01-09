@@ -109,7 +109,7 @@ class MergeRequestDiscussionFragment : ButterKnifeFragment() {
         listNotes.adapter = adapterMergeRequestDetail
         listNotes.addOnScrollListener(onScrollListener)
 
-        sendMessageView.setCallback(object : SendMessageView.Callback {
+        sendMessageView.callback = object : SendMessageView.Callback {
             override fun onSendClicked(message: String) {
                 postNote(message)
             }
@@ -119,7 +119,7 @@ class MergeRequestDiscussionFragment : ButterKnifeFragment() {
                 val activityOptions = TransitionFactory.createFadeInOptions(activity)
                 startActivityForResult(intent, REQUEST_ATTACH, activityOptions.toBundle())
             }
-        })
+        }
 
         swipeRefreshLayout.setOnRefreshListener { loadNotes() }
         loadNotes()
@@ -227,7 +227,7 @@ class MergeRequestDiscussionFragment : ButterKnifeFragment() {
                     override fun success(note: Note) {
                         progress.visibility = View.GONE
                         adapterMergeRequestDetail.addNote(note)
-                        listNotes.smoothScrollToPosition(MergeRequestDetailAdapter.getHeaderCount())
+                        listNotes.smoothScrollToPosition(MergeRequestDetailAdapter.headerCount)
                     }
                 })
     }

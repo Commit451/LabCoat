@@ -100,7 +100,11 @@ class MilestonesFragment : ButterKnifeFragment() {
 
         App.bus().register(this)
 
-        adapterMilestones = MilestoneAdapter(MilestoneAdapter.Listener { milestone -> Navigator.navigateToMilestone(activity, project, milestone) })
+        adapterMilestones = MilestoneAdapter(object : MilestoneAdapter.Listener {
+            override fun onMilestoneClicked(milestone: Milestone) {
+                Navigator.navigateToMilestone(activity, project, milestone)
+            }
+        })
         layoutManagerMilestones = LinearLayoutManager(activity)
         listMilestones.layoutManager = layoutManagerMilestones
         listMilestones.addItemDecoration(DividerItemDecoration(activity))

@@ -21,6 +21,7 @@ import com.commit451.gitlab.adapter.LabelAdapter
 import com.commit451.gitlab.model.api.Label
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomSingleObserver
+import com.commit451.gitlab.viewHolder.LabelViewHolder
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import org.parceler.Parcels
@@ -78,11 +79,13 @@ class AddLabelActivity : BaseActivity() {
             false
         })
         swipeRefreshLayout.setOnRefreshListener { load() }
-        adapterLabel = LabelAdapter(LabelAdapter.Listener { label, viewHolder ->
-            val data = Intent()
-            data.putExtra(KEY_LABEL, Parcels.wrap(label))
-            setResult(Activity.RESULT_OK, data)
-            finish()
+        adapterLabel = LabelAdapter(object : LabelAdapter.Listener {
+            override fun onLabelClicked(label: Label, viewHolder: LabelViewHolder) {
+                val data = Intent()
+                data.putExtra(KEY_LABEL, Parcels.wrap(label))
+                setResult(Activity.RESULT_OK, data)
+                finish()
+            }
         })
         list.adapter = adapterLabel
         list.layoutManager = LinearLayoutManager(this)

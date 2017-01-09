@@ -170,7 +170,7 @@ class IssueActivity : BaseActivity() {
         listNotes.layoutManager = layoutManagerNotes
         listNotes.addOnScrollListener(onScrollListener)
 
-        sendMessageView.setCallback(object : SendMessageView.Callback {
+        sendMessageView.callback = object : SendMessageView.Callback {
             override fun onSendClicked(message: String) {
                 postNote(message)
             }
@@ -178,14 +178,14 @@ class IssueActivity : BaseActivity() {
             override fun onAttachmentClicked() {
                 Navigator.navigateToAttach(this@IssueActivity, project, REQUEST_ATTACH)
             }
-        })
+        }
 
         swipeRefreshLayout.setOnRefreshListener { loadNotes() }
 
         if (intent.hasExtra(EXTRA_SELECTED_ISSUE)) {
             project = Parcels.unwrap<Project>(intent.getParcelableExtra<Parcelable>(EXTRA_PROJECT))
             issue = Parcels.unwrap<Issue>(intent.getParcelableExtra<Parcelable>(EXTRA_SELECTED_ISSUE))
-            adapterIssueDetails = IssueDetailsAdapter(this@IssueActivity, issue, project)
+            adapterIssueDetails = IssueDetailsAdapter(this@IssueActivity, issue, project!!)
             listNotes.adapter = adapterIssueDetails
             bindIssue()
             bindProject()
@@ -219,7 +219,7 @@ class IssueActivity : BaseActivity() {
                                         .show()
                             } else {
                                 issue = issues[0]
-                                adapterIssueDetails = IssueDetailsAdapter(this@IssueActivity, issue, project)
+                                adapterIssueDetails = IssueDetailsAdapter(this@IssueActivity, issue, project!!)
                                 listNotes.adapter = adapterIssueDetails
                                 bindIssue()
                                 bindProject()
@@ -257,7 +257,7 @@ class IssueActivity : BaseActivity() {
         toolbar.title = getString(R.string.issue_number) + issue?.iid
         setOpenCloseMenuStatus()
         textTitle.text = issue?.title
-        adapterIssueDetails.updateIssue(issue)
+        adapterIssueDetails.updateIssue(issue!!)
     }
 
     fun loadNotes() {
@@ -339,7 +339,7 @@ class IssueActivity : BaseActivity() {
                     override fun success(note: Note) {
                         progress.visibility = View.GONE
                         adapterIssueDetails.addNote(note)
-                        listNotes.smoothScrollToPosition(IssueDetailsAdapter.getHeaderCount())
+                        listNotes.smoothScrollToPosition(IssueDetailsAdapter.headerCount)
                     }
                 })
     }

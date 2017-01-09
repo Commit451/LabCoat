@@ -91,12 +91,14 @@ class BuildsFragment : ButterKnifeFragment() {
 
         App.bus().register(this)
 
-        adapterBuilds = BuildAdapter(BuildAdapter.Listener { build ->
-            if (project != null) {
-                Navigator.navigateToBuild(activity, project, build)
-            } else {
-                Snackbar.make(root, getString(R.string.wait_for_project_to_load), Snackbar.LENGTH_SHORT)
-                        .show()
+        adapterBuilds = BuildAdapter(object : BuildAdapter.Listener {
+            override fun onBuildClicked(build: Build) {
+                if (project != null) {
+                    Navigator.navigateToBuild(activity, project, build)
+                } else {
+                    Snackbar.make(root, getString(R.string.wait_for_project_to_load), Snackbar.LENGTH_SHORT)
+                            .show()
+                }
             }
         })
         layoutManagerBuilds = LinearLayoutManager(activity)

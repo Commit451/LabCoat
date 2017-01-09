@@ -186,7 +186,11 @@ class FilesFragment : ButterKnifeFragment() {
 
     fun updateBreadcrumbs() {
         val breadcrumbs = ArrayList<BreadcrumbAdapter.Breadcrumb>()
-        breadcrumbs.add(BreadcrumbAdapter.Breadcrumb(getString(R.string.root), BreadcrumbAdapter.Listener { loadData("") }))
+        breadcrumbs.add(BreadcrumbAdapter.Breadcrumb(getString(R.string.root), object : BreadcrumbAdapter.Listener {
+            override fun onClick() {
+                loadData("")
+            }
+        }))
 
         var newPath = ""
 
@@ -199,7 +203,11 @@ class FilesFragment : ButterKnifeFragment() {
             newPath += segment + "/"
 
             val finalPath = newPath
-            breadcrumbs.add(BreadcrumbAdapter.Breadcrumb(segment, BreadcrumbAdapter.Listener { loadData(finalPath) }))
+            breadcrumbs.add(BreadcrumbAdapter.Breadcrumb(segment, object : BreadcrumbAdapter.Listener {
+                override fun onClick() {
+                    loadData(finalPath)
+                }
+            }))
         }
 
         adapterBreadcrumb.setData(breadcrumbs)

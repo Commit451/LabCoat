@@ -119,11 +119,13 @@ class ProjectsFragment : ButterKnifeFragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapterProjects = ProjectAdapter(activity, ProjectAdapter.Listener { project ->
-            if (listener == null) {
-                Navigator.navigateToProject(activity, project)
-            } else {
-                listener!!.onProjectClicked(project)
+        adapterProjects = ProjectAdapter(activity, object : ProjectAdapter.Listener {
+            override fun onProjectClicked(project: Project) {
+                if (listener == null) {
+                    Navigator.navigateToProject(activity, project)
+                } else {
+                    listener!!.onProjectClicked(project)
+                }
             }
         })
         layoutManagerProjects = LinearLayoutManager(activity)

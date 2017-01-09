@@ -67,12 +67,14 @@ class PickTagFragment : ButterKnifeFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val ref = Parcels.unwrap<Ref>(arguments.getParcelable<Parcelable>(EXTRA_CURRENT_REF))
-        adapterTags = TagAdapter(ref, TagAdapter.Listener { entry ->
-            val data = Intent()
-            val newRef = Ref(Ref.TYPE_TAG, entry.name)
-            data.putExtra(PickBranchOrTagActivity.EXTRA_REF, Parcels.wrap(newRef))
-            activity.setResult(Activity.RESULT_OK, data)
-            activity.finish()
+        adapterTags = TagAdapter(ref, object : TagAdapter.Listener {
+            override fun onTagClicked(entry: Tag) {
+                val data = Intent()
+                val newRef = Ref(Ref.TYPE_TAG, entry.name)
+                data.putExtra(PickBranchOrTagActivity.EXTRA_REF, Parcels.wrap(newRef))
+                activity.setResult(Activity.RESULT_OK, data)
+                activity.finish()
+            }
         })
         listProjects.layoutManager = LinearLayoutManager(activity)
         listProjects.adapter = adapterTags

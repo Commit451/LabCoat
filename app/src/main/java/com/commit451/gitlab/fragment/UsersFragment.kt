@@ -18,6 +18,7 @@ import com.commit451.gitlab.model.api.UserBasic
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
+import com.commit451.gitlab.viewHolder.UserViewHolder
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import retrofit2.Response
@@ -81,7 +82,11 @@ class UsersFragment : ButterKnifeFragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapterUser = UserAdapter(UserAdapter.Listener { user, userViewHolder -> Navigator.navigateToUser(activity, userViewHolder.image, user) })
+        adapterUser = UserAdapter(object : UserAdapter.Listener {
+            override fun onUserClicked(user: UserBasic, userViewHolder: UserViewHolder) {
+                Navigator.navigateToUser(activity, userViewHolder.image, user)
+            }
+        })
         layoutManagerUser = GridLayoutManager(activity, 2)
         layoutManagerUser.spanSizeLookup = adapterUser.spanSizeLookup
         listUsers.layoutManager = layoutManagerUser

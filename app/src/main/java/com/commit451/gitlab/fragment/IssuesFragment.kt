@@ -102,12 +102,14 @@ class IssuesFragment : ButterKnifeFragment() {
 
         App.bus().register(this)
 
-        adapterIssue = IssueAdapter(IssueAdapter.Listener { issue ->
-            if (project != null) {
-                Navigator.navigateToIssue(activity, project, issue)
-            } else {
-                Snackbar.make(root!!, getString(R.string.wait_for_project_to_load), Snackbar.LENGTH_SHORT)
-                        .show()
+        adapterIssue = IssueAdapter(object : IssueAdapter.Listener {
+            override fun onIssueClicked(issue: Issue) {
+                if (project != null) {
+                    Navigator.navigateToIssue(activity, project, issue)
+                } else {
+                    Snackbar.make(root, getString(R.string.wait_for_project_to_load), Snackbar.LENGTH_SHORT)
+                            .show()
+                }
             }
         })
         layoutManagerIssues = LinearLayoutManager(activity)

@@ -24,6 +24,7 @@ import com.commit451.gitlab.model.api.Group
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
+import com.commit451.gitlab.viewHolder.GroupViewHolder
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import org.greenrobot.eventbus.Subscribe
@@ -72,8 +73,6 @@ class GroupsActivity : BaseActivity() {
         }
     }
 
-    val groupAdapterListener = GroupAdapter.Listener { group, groupViewHolder -> Navigator.navigateToGroup(this@GroupsActivity, groupViewHolder.image, group) }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         App.get().prefs.startingView = Prefs.STARTING_VIEW_GROUPS
@@ -89,7 +88,11 @@ class GroupsActivity : BaseActivity() {
         layoutManager = DynamicGridLayoutManager(this)
         layoutManager.setMinimumWidthDimension(R.dimen.user_list_image_size)
         listGroups.layoutManager = layoutManager
-        adapterGroup = GroupAdapter(groupAdapterListener)
+        adapterGroup = GroupAdapter(object : GroupAdapter.Listener {
+            override fun onGroupClicked(group: Group, groupViewHolder: GroupViewHolder) {
+                Navigator.navigateToGroup(this@GroupsActivity, groupViewHolder.image, group)
+            }
+        })
         listGroups.adapter = adapterGroup
         listGroups.addOnScrollListener(onScrollListener)
         load()

@@ -119,7 +119,11 @@ class MilestoneActivity : BaseActivity() {
             false
         })
 
-        adapterMilestoneIssues = MilestoneIssueAdapter(MilestoneIssueAdapter.Listener { issue -> Navigator.navigateToIssue(this@MilestoneActivity, project, issue) })
+        adapterMilestoneIssues = MilestoneIssueAdapter(object : MilestoneIssueAdapter.Listener {
+            override fun onIssueClicked(issue: Issue) {
+                Navigator.navigateToIssue(this@MilestoneActivity, project, issue)
+            }
+        })
         bind(milestone)
         listIssues.adapter = adapterMilestoneIssues
         layoutManagerIssues = LinearLayoutManager(this)

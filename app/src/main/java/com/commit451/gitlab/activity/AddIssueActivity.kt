@@ -110,13 +110,15 @@ class AddIssueActivity : MorphActivity() {
         project = Parcels.unwrap<Project>(intent.getParcelableExtra<Parcelable>(KEY_PROJECT))
         issue = Parcels.unwrap<Issue>(intent.getParcelableExtra<Parcelable>(KEY_ISSUE))
         members = HashSet<Member>()
-        adapterLabels = AddIssueLabelAdapter(AddIssueLabelAdapter.Listener { label ->
-            AlertDialog.Builder(this@AddIssueActivity)
-                    .setTitle(R.string.remove)
-                    .setMessage(R.string.are_you_sure_you_want_to_remove)
-                    .setPositiveButton(android.R.string.yes) { dialog, which -> adapterLabels.removeLabel(label) }
-                    .setNegativeButton(android.R.string.no) { dialog, which -> dialog.dismiss() }
-                    .show()
+        adapterLabels = AddIssueLabelAdapter(object : AddIssueLabelAdapter.Listener {
+            override fun onLabelClicked(label: Label) {
+                AlertDialog.Builder(this@AddIssueActivity)
+                        .setTitle(R.string.remove)
+                        .setMessage(R.string.are_you_sure_you_want_to_remove)
+                        .setPositiveButton(android.R.string.yes) { dialog, which -> adapterLabels.removeLabel(label) }
+                        .setNegativeButton(android.R.string.no) { dialog, which -> dialog.dismiss() }
+                        .show()
+            }
         })
         listLabels.adapter = adapterLabels
 
@@ -157,7 +159,9 @@ class AddIssueActivity : MorphActivity() {
                     override fun responseSuccess(milestones: List<Milestone>) {
                         progressMilestone.visibility = View.GONE
                         spinnerMilestone.visibility = View.VISIBLE
-                        val milestoneSpinnerAdapter = MilestoneSpinnerAdapter(this@AddIssueActivity, milestones)
+                        val maybeNullMilestones = mutableListOf<Milestone?>()
+                        maybeNullMilestones.addAll(milestones)
+                        val milestoneSpinnerAdapter = MilestoneSpinnerAdapter(this@AddIssueActivity, maybeNullMilestones)
                         spinnerMilestone.adapter = milestoneSpinnerAdapter
                         if (issue != null) {
                             spinnerMilestone.setSelection(milestoneSpinnerAdapter.getSelectedItemPosition(issue!!.milestone))
@@ -315,7 +319,7 @@ class AddIssueActivity : MorphActivity() {
                     milestoneId = milestone.id
                 }
             }
-            val labelsCommaSeperated = adapterLabels.commaSeperatedStringOfLabels
+            val labelsCommaSeperated = adapterLabels.getCommaSeperatedStringOfLabels()
             createOrSaveIssue(textInputLayoutTitle.editText!!.text.toString(),
                     textDescription.text.toString(),
                     assigneeId,

@@ -94,7 +94,11 @@ class MergeRequestsFragment : ButterKnifeFragment() {
 
         App.bus().register(this)
 
-        adapterMergeRequests = MergeRequestAdapter(MergeRequestAdapter.Listener { mergeRequest -> Navigator.navigateToMergeRequest(activity, project, mergeRequest) })
+        adapterMergeRequests = MergeRequestAdapter(object : MergeRequestAdapter.Listener {
+            override fun onMergeRequestClicked(mergeRequest: MergeRequest) {
+                Navigator.navigateToMergeRequest(activity, project, mergeRequest)
+            }
+        })
         layoutManagerMergeRequests = LinearLayoutManager(activity)
         listMergeRequests.layoutManager = layoutManagerMergeRequests
         listMergeRequests.addItemDecoration(DividerItemDecoration(activity))

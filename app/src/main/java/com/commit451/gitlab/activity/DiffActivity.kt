@@ -71,7 +71,11 @@ class DiffActivity : BaseActivity() {
         toolbar.setNavigationOnClickListener { onBackPressed() }
         toolbar.title = commit.shortId
 
-        adapterDiff = DiffAdapter(commit, DiffAdapter.Listener { })
+        adapterDiff = DiffAdapter(commit, object : DiffAdapter.Listener {
+            override fun onDiffClicked(diff: Diff) {
+
+            }
+        })
         listDiff.adapter = adapterDiff
         listDiff.layoutManager = LinearLayoutManager(this)
         swipeRefreshLayout.setOnRefreshListener { loadData() }

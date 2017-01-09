@@ -108,7 +108,7 @@ class ProjectMembersFragment : ButterKnifeFragment() {
                             }
 
                             override fun success(s: String) {
-                                adapterProjectMembers.removeMember(this@ProjectMembersFragment.member)
+                                adapterProjectMembers.removeMember(this@ProjectMembersFragment.member!!)
                             }
                         })
             }

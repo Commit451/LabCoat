@@ -74,7 +74,7 @@ class GroupMembersFragment : ButterKnifeFragment() {
             val visibleItemCount = layoutManagerGroupMembers.childCount
             val totalItemCount = layoutManagerGroupMembers.itemCount
             val firstVisibleItem = layoutManagerGroupMembers.findFirstVisibleItemPosition()
-            if (firstVisibleItem + visibleItemCount >= totalItemCount && !adapterGroupMembers!!.isLoading && nextPageUrl != null) {
+            if (firstVisibleItem + visibleItemCount >= totalItemCount && !adapterGroupMembers.isLoading && nextPageUrl != null) {
                 loadMore()
             }
         }
@@ -100,7 +100,7 @@ class GroupMembersFragment : ButterKnifeFragment() {
                         }
 
                         override fun success(value: String) {
-                            adapterGroupMembers.removeMember(this@GroupMembersFragment.member)
+                            adapterGroupMembers.removeMember(this@GroupMembersFragment.member!!)
                         }
                     })
         }
@@ -156,7 +156,7 @@ class GroupMembersFragment : ButterKnifeFragment() {
         Navigator.navigateToAddGroupMember(activity, fab, group)
     }
 
-    public override fun loadData() {
+    override fun loadData() {
         if (view == null) {
             return
         }

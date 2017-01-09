@@ -14,6 +14,7 @@ import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.DividerItemDecoration
 import com.commit451.gitlab.adapter.FeedAdapter
+import com.commit451.gitlab.model.rss.Entry
 import com.commit451.gitlab.model.rss.Feed
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomSingleObserver
@@ -64,7 +65,11 @@ class FeedFragment : ButterKnifeFragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapterFeed = FeedAdapter(FeedAdapter.Listener { entry -> Navigator.navigateToUrl(activity, entry.link.href, App.get().account) })
+        adapterFeed = FeedAdapter(object : FeedAdapter.Listener {
+            override fun onFeedEntryClicked(entry: Entry) {
+                Navigator.navigateToUrl(activity, entry.link.href, App.get().account)
+            }
+        })
         listEntries.layoutManager = LinearLayoutManager(activity)
         listEntries.addItemDecoration(DividerItemDecoration(activity))
         listEntries.adapter = adapterFeed

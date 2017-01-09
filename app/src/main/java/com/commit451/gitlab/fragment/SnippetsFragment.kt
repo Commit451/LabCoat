@@ -98,7 +98,11 @@ class SnippetsFragment : ButterKnifeFragment() {
 
         App.bus().register(this)
 
-        adapterSnippets = SnippetAdapter(SnippetAdapter.Listener { })
+        adapterSnippets = SnippetAdapter(object : SnippetAdapter.Listener {
+            override fun onSnippetClicked(snippet: Snippet) {
+
+            }
+        })
         layoutManagerSnippets = LinearLayoutManager(activity)
         listSnippets.layoutManager = layoutManagerSnippets
         listSnippets.addItemDecoration(DividerItemDecoration(activity))

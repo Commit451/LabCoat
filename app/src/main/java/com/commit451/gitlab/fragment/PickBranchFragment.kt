@@ -67,12 +67,14 @@ class PickBranchFragment : ButterKnifeFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val existingRef = Parcels.unwrap<Ref>(arguments.getParcelable<Parcelable>(EXTRA_REF))
-        adapterBranches = BranchAdapter(existingRef, BranchAdapter.Listener { entry ->
-            val data = Intent()
-            val ref = Ref(Ref.TYPE_BRANCH, entry.name)
-            data.putExtra(PickBranchOrTagActivity.EXTRA_REF, Parcels.wrap(ref))
-            activity.setResult(Activity.RESULT_OK, data)
-            activity.finish()
+        adapterBranches = BranchAdapter(existingRef, object : BranchAdapter.Listener {
+            override fun onBranchClicked(entry: Branch) {
+                val data = Intent()
+                val ref = Ref(Ref.TYPE_BRANCH, entry.name)
+                data.putExtra(PickBranchOrTagActivity.EXTRA_REF, Parcels.wrap(ref))
+                activity.setResult(Activity.RESULT_OK, data)
+                activity.finish()
+            }
         })
         listProjects.layoutManager = LinearLayoutManager(activity)
         listProjects.adapter = adapterBranches

@@ -80,7 +80,11 @@ class TodoFragment : ButterKnifeFragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapterTodos = TodoAdapter(TodoAdapter.Listener { todo -> Navigator.navigateToUrl(activity, Uri.parse(todo.targetUrl), App.get().account) })
+        adapterTodos = TodoAdapter(object : TodoAdapter.Listener {
+            override fun onTodoClicked(todo: Todo) {
+                Navigator.navigateToUrl(activity, Uri.parse(todo.targetUrl), App.get().account)
+            }
+        })
         layoutManagerTodos = LinearLayoutManager(activity)
         listTodos.layoutManager = layoutManagerTodos
         listTodos.adapter = adapterTodos

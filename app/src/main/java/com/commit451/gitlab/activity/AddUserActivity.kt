@@ -26,6 +26,7 @@ import com.commit451.gitlab.model.api.Member
 import com.commit451.gitlab.model.api.UserBasic
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
+import com.commit451.gitlab.viewHolder.UserViewHolder
 import com.commit451.teleprinter.Teleprinter
 import com.jakewharton.retrofit2.adapter.rxjava2.HttpException
 import io.reactivex.Single
@@ -131,9 +132,11 @@ class AddUserActivity : MorphActivity() {
         toolbar.setNavigationIcon(R.drawable.ic_back_24dp)
         toolbar.setNavigationOnClickListener { onBackPressed() }
 
-        adapter = UserAdapter(UserAdapter.Listener { user, userViewHolder ->
-            selectedUser = user
-            dialogAccess.show()
+        adapter = UserAdapter(object : UserAdapter.Listener {
+            override fun onUserClicked(user: UserBasic, userViewHolder: UserViewHolder) {
+                selectedUser = user
+                dialogAccess.show()
+            }
         })
         swipeRefreshLayout.setOnRefreshListener { loadData() }
         list.adapter = adapter

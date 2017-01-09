@@ -70,7 +70,11 @@ class CommitsFragment : ButterKnifeFragment() {
 
         App.bus().register(this)
 
-        adapterCommits = CommitAdapter(CommitAdapter.Listener { commit -> Navigator.navigateToDiffActivity(activity, project, commit) })
+        adapterCommits = CommitAdapter(object : CommitAdapter.Listener {
+            override fun onCommitClicked(commit: RepositoryCommit) {
+                Navigator.navigateToDiffActivity(activity, project, commit)
+            }
+        })
         layoutManagerCommits = LinearLayoutManager(activity)
         listCommits.layoutManager = layoutManagerCommits
         listCommits.addItemDecoration(DividerItemDecoration(activity))
