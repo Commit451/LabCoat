@@ -31,10 +31,10 @@ public class AuthenticationRequestInterceptor implements Interceptor {
 
         HttpUrl url = request.url();
 
-        String cleanUrl = url.toString();
+        String cleanUrl = url.toString().toLowerCase();
         cleanUrl = cleanUrl.substring(cleanUrl.indexOf(':'));
 
-        String cleanServerUrl = account.getServerUrl().toString();
+        String cleanServerUrl = account.getServerUrl().toString().toLowerCase();
         cleanServerUrl = cleanServerUrl.substring(cleanServerUrl.indexOf(':'));
 
         if (cleanUrl.startsWith(cleanServerUrl)) {
