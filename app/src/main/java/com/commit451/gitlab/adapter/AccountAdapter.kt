@@ -51,7 +51,7 @@ class AccountAdapter(context: Context, private val listener: AccountAdapter.List
             val account = getItemAtPosition(position)
             holder.bind(account, account == App.get().account, colorControlHighlight)
             holder.itemView.setTag(R.id.list_position, position)
-            holder.mPopupMenu.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { item ->
+            holder.popupMenu.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { item ->
                 when (item.itemId) {
                     R.id.action_sign_out -> {
                         val itemPosition = accounts.indexOf(account)

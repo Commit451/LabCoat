@@ -42,7 +42,7 @@ class MilestoneIssueAdapter(private val listener: MilestoneIssueAdapter.Listener
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is MilestoneHeaderViewHolder) {
-            holder.bind(milestone)
+            holder.bind(milestone!!)
         }
         if (holder is IssueViewHolder) {
             val issue = getValueAt(position)

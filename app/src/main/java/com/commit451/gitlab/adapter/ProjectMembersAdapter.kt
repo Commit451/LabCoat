@@ -65,7 +65,7 @@ class ProjectMembersAdapter(private val listener: ProjectMembersAdapter.Listener
                 holder.itemView.visibility = View.GONE
             } else {
                 holder.itemView.visibility = View.VISIBLE
-                holder.bind(namespace)
+                holder.bind(namespace!!)
             }
         } else if (holder is ProjectMemberViewHolder) {
             val member = getProjectMember(position)

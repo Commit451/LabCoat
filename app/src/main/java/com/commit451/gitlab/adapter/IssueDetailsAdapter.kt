@@ -48,7 +48,7 @@ class IssueDetailsAdapter(context: Context, private var issue: Issue?, private v
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is IssueHeaderViewHolder) {
-            holder.bind(issue, project)
+            holder.bind(issue!!, project)
         } else if (holder is IssueLabelsViewHolder) {
             holder.bind(issue!!.labels)
         } else if (holder is NoteViewHolder) {
