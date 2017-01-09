@@ -21,8 +21,8 @@ public class SearchPagerAdapter extends FragmentPagerAdapter {
 
     public SearchPagerAdapter(Context context, FragmentManager fm) {
         super(fm);
-        projectsFragment = ProjectsFragment.newInstance(ProjectsFragment.MODE_SEARCH);
-        usersFragment = UsersFragment.newInstance();
+        projectsFragment = ProjectsFragment.Companion.newInstance(ProjectsFragment.Companion.getMODE_SEARCH());
+        usersFragment = UsersFragment.Companion.newInstance();
         titles = context.getResources().getStringArray(R.array.search_tabs);
     }
 

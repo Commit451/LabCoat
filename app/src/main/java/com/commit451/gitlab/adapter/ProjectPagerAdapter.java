@@ -25,11 +25,11 @@ public class ProjectPagerAdapter extends FragmentPagerAdapter {
 
         switch(position) {
             case 0:
-                return ProjectsFragment.newInstance(ProjectsFragment.MODE_ALL);
+                return ProjectsFragment.Companion.newInstance(ProjectsFragment.Companion.getMODE_ALL());
             case 1:
-                return ProjectsFragment.newInstance(ProjectsFragment.MODE_MINE);
+                return ProjectsFragment.Companion.newInstance(ProjectsFragment.Companion.getMODE_MINE());
             case 2:
-                return ProjectsFragment.newInstance(ProjectsFragment.MODE_STARRED);
+                return ProjectsFragment.Companion.newInstance(ProjectsFragment.Companion.getMODE_STARRED());
         }
 
         throw new IllegalStateException("Position exceeded on view pager");

@@ -32,9 +32,9 @@ public class MergeRequestSectionsPagerAdapter extends FragmentPagerAdapter {
 
         switch(position) {
             case 0:
-                return MergeRequestDiscussionFragment.newInstance(project, mergeRequest);
+                return MergeRequestDiscussionFragment.Companion.newInstance(project, mergeRequest);
             case 1:
-                return MergeRequestCommitsFragment.newInstance(project, mergeRequest);
+                return MergeRequestCommitsFragment.Companion.newInstance(project, mergeRequest);
         }
 
         throw new IllegalStateException("Position exceeded on view pager");

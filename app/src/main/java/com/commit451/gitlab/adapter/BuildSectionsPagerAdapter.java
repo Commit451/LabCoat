@@ -32,9 +32,9 @@ public class BuildSectionsPagerAdapter extends FragmentPagerAdapter {
 
         switch(position) {
             case 0:
-                return BuildDescriptionFragment.newInstance(project, build);
+                return BuildDescriptionFragment.Companion.newInstance(project, build);
             case 1:
-                return BuildLogFragment.newInstance(project, build);
+                return BuildLogFragment.Companion.newInstance(project, build);
         }
 
         throw new IllegalStateException("Position exceeded on view pager");

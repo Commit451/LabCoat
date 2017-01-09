@@ -77,7 +77,9 @@ class UserActivity : BaseActivity() {
 
         if (savedInstanceState == null) {
             val fragmentTransaction = supportFragmentManager.beginTransaction()
-            fragmentTransaction.add(R.id.user_feed, FeedFragment.newInstance(user.feedUrl)).commit()
+            fragmentTransaction
+                    .add(R.id.user_feed, FeedFragment.newInstance(user.feedUrl))
+                    .commit()
         }
     }
 

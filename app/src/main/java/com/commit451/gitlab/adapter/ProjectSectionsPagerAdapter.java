@@ -91,25 +91,25 @@ public class ProjectSectionsPagerAdapter extends FragmentPagerAdapter {
 
         switch (position) {
             case PROJECT_POS:
-                return ProjectFragment.newInstance();
+                return ProjectFragment.Companion.newInstance();
             case ACTIVITY_POS:
-                return FeedFragment.newInstance(project.getFeedUrl());
+                return FeedFragment.Companion.newInstance(project.getFeedUrl());
             case FILES_POS:
-                return FilesFragment.newInstance();
+                return FilesFragment.Companion.newInstance();
             case COMMITS_POS:
-                return CommitsFragment.newInstance();
+                return CommitsFragment.Companion.newInstance();
             case BUILDS_POS:
-                return BuildsFragment.newInstance();
+                return BuildsFragment.Companion.newInstance();
             case MILESTONES_POS:
-                return MilestonesFragment.newInstance();
+                return MilestonesFragment.Companion.newInstance();
             case ISSUES_POS:
-                return IssuesFragment.newInstance();
+                return IssuesFragment.Companion.newInstance();
             case MERGE_REQUESTS_POS:
-                return MergeRequestsFragment.newInstance();
+                return MergeRequestsFragment.Companion.newInstance();
             case PROJECT_MEMBERS_POS:
-                return ProjectMembersFragment.newInstance();
+                return ProjectMembersFragment.Companion.newInstance();
             case SNIPPETS_POS:
-                return SnippetsFragment.newInstance();
+                return SnippetsFragment.Companion.newInstance();
         }
 
         throw new IllegalStateException("Position exceeded on view pager");

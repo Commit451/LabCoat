@@ -25,9 +25,9 @@ public class TodoPagerAdapter extends FragmentPagerAdapter {
 
         switch(position) {
             case 0:
-                return TodoFragment.newInstance(TodoFragment.MODE_TODO);
+                return TodoFragment.Companion.newInstance(TodoFragment.Companion.getMODE_TODO());
             case 1:
-                return TodoFragment.newInstance(TodoFragment.MODE_DONE);
+                return TodoFragment.Companion.newInstance(TodoFragment.Companion.getMODE_DONE());
         }
 
         throw new IllegalStateException("Position exceeded on view pager");

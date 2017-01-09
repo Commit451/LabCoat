@@ -53,11 +53,11 @@ public class GroupPagerAdapter extends FragmentPagerAdapter {
 
         switch (position) {
             case ACTIVITY_POS:
-                return FeedFragment.newInstance(group.getFeedUrl());
+                return FeedFragment.Companion.newInstance(group.getFeedUrl());
             case PROJECTS_POS:
-                return ProjectsFragment.newInstance(group);
+                return ProjectsFragment.Companion.newInstance(group);
             case MEMBERS_POS:
-                return GroupMembersFragment.newInstance(group);
+                return GroupMembersFragment.Companion.newInstance(group);
         }
 
         throw new IllegalStateException("Position exceeded on view pager");

@@ -32,9 +32,9 @@ public class PickBranchOrTagPagerAdapter extends FragmentPagerAdapter {
 
         switch(position) {
             case 0:
-                return PickBranchFragment.newInstance(projectId, ref);
+                return PickBranchFragment.Companion.newInstance(projectId, ref);
             case 1:
-                return PickTagFragment.newInstance(projectId, ref);
+                return PickTagFragment.Companion.newInstance(projectId, ref);
         }
 
         throw new IllegalStateException("Position exceeded on view pager");
