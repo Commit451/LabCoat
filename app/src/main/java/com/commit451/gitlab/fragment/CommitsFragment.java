@@ -97,7 +97,7 @@ public class CommitsFragment extends ButterKnifeFragment {
 
         if (getActivity() instanceof ProjectActivity) {
             project = ((ProjectActivity) getActivity()).getProject();
-            branchName = ((ProjectActivity) getActivity()).getRef();
+            branchName = ((ProjectActivity) getActivity()).getRefRef();
             loadData();
         } else {
             throw new IllegalStateException("Incorrect parent activity");

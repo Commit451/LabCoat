@@ -118,7 +118,7 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
         listNotes.setAdapter(adapterMergeRequestDetail);
         listNotes.addOnScrollListener(onScrollListener);
 
-        sendMessageView.setCallbacks(new SendMessageView.Callbacks() {
+        sendMessageView.setCallback(new SendMessageView.Callback() {
             @Override
             public void onSendClicked(String message) {
                 postNote(message);
@@ -126,7 +126,7 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
 
             @Override
             public void onAttachmentClicked() {
-                Intent intent = AttachActivity.newIntent(getActivity(), project);
+                Intent intent = AttachActivity.Companion.newIntent(getActivity(), project);
                 ActivityOptions activityOptions = TransitionFactory.createFadeInOptions(getActivity());
                 startActivityForResult(intent, REQUEST_ATTACH, activityOptions.toBundle());
             }
@@ -149,7 +149,7 @@ public class MergeRequestDiscussionFragment extends ButterKnifeFragment {
         switch (requestCode) {
             case REQUEST_ATTACH:
                 if (resultCode == RESULT_OK) {
-                    FileUploadResponse response = Parcels.unwrap(data.getParcelableExtra(AttachActivity.KEY_FILE_UPLOAD_RESPONSE));
+                    FileUploadResponse response = Parcels.unwrap(data.getParcelableExtra(AttachActivity.Companion.getKEY_FILE_UPLOAD_RESPONSE()));
                     progress.setVisibility(View.GONE);
                     sendMessageView.appendText(response.getMarkdown());
                 } else {

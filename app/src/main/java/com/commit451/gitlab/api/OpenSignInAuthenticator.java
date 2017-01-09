@@ -42,7 +42,7 @@ public class OpenSignInAuthenticator implements Authenticator {
                     App.get().getPrefs().removeAccount(account);
                     Toast.makeText(App.get(), R.string.error_401, Toast.LENGTH_LONG)
                             .show();
-                    Intent intent = LoginActivity.newIntent(App.get());
+                    Intent intent = LoginActivity.Companion.newIntent(App.get());
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     App.get().startActivity(intent);
                 }

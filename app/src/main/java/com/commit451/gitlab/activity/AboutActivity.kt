@@ -130,7 +130,7 @@ class AboutActivity : BaseActivity() {
         sensorManager.unregisterListener(sensorEventListener)
     }
 
-    private fun addContributors(contributors: List<Contributor>) {
+    fun addContributors(contributors: List<Contributor>) {
         val config = PhysicsConfig.create()
         config.shapeType = PhysicsConfig.SHAPE_TYPE_CIRCLE
         val borderSize = resources.getDimensionPixelSize(R.dimen.border_size)

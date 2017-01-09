@@ -65,23 +65,23 @@ public class Navigator {
     }
 
     public static void navigateToSettings(Activity activity) {
-        activity.startActivity(SettingsActivity.newIntent(activity));
+        activity.startActivity(SettingsActivity.Companion.newIntent(activity));
     }
 
     public static void navigateToProject(Activity activity, Project project) {
-        activity.startActivity(ProjectActivity.newIntent(activity, project));
+        activity.startActivity(ProjectActivity.Companion.newIntent(activity, project));
     }
 
     public static void navigateToProject(Activity activity, String projectId) {
-        activity.startActivity(ProjectActivity.newIntent(activity, projectId));
+        activity.startActivity(ProjectActivity.Companion.newIntent(activity, projectId));
     }
 
     public static void navigateToProject(Activity activity, String projectNamespace, String projectName) {
-        activity.startActivity(ProjectActivity.newIntent(activity, projectNamespace, projectName));
+        activity.startActivity(ProjectActivity.Companion.newIntent(activity, projectNamespace, projectName));
     }
 
     public static void navigateToPickBranchOrTag(Activity activity, long projectId, @Nullable Ref currentRef, int requestCode) {
-        activity.startActivityForResult(PickBranchOrTagActivity.newIntent(activity, projectId, currentRef), requestCode);
+        activity.startActivityForResult(PickBranchOrTagActivity.Companion.newIntent(activity, projectId, currentRef), requestCode);
         activity.overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
     }
 
@@ -106,11 +106,11 @@ public class Navigator {
     }
 
     public static void navigateToProjects(Activity activity) {
-        activity.startActivity(ProjectsActivity.newIntent(activity));
+        activity.startActivity(ProjectsActivity.Companion.newIntent(activity));
     }
 
     public static void navigateToGroups(Activity activity) {
-        activity.startActivity(GroupsActivity.newIntent(activity));
+        activity.startActivity(GroupsActivity.Companion.newIntent(activity));
     }
 
     public static void navigateToActivity(Activity activity) {
@@ -118,24 +118,24 @@ public class Navigator {
     }
 
     public static void navigateToTodos(Activity activity) {
-        activity.startActivity(TodosActivity.newIntent(activity));
+        activity.startActivity(TodosActivity.Companion.newIntent(activity));
     }
 
     public static void navigateToLogin(Activity activity) {
-        activity.startActivity(LoginActivity.newIntent(activity));
+        activity.startActivity(LoginActivity.Companion.newIntent(activity));
     }
 
     public static void navigateToLogin(Activity activity, boolean showClose) {
-        activity.startActivity(LoginActivity.newIntent(activity, showClose));
+        activity.startActivity(LoginActivity.Companion.newIntent(activity, showClose));
     }
 
     public static void navigateToWebSignin(Activity activity, String url, boolean extractingPrivateToken, int requestCode) {
-        Intent intent = WebLoginActivity.newIntent(activity, url, extractingPrivateToken);
+        Intent intent = WebLoginActivity.Companion.newIntent(activity, url, extractingPrivateToken);
         activity.startActivityForResult(intent, requestCode);
     }
 
     public static void navigateToSearch(Activity activity) {
-        activity.startActivity(SearchActivity.newIntent(activity));
+        activity.startActivity(SearchActivity.Companion.newIntent(activity));
     }
 
     public static void navigateToUser(Activity activity, UserBasic user) {
@@ -143,7 +143,7 @@ public class Navigator {
     }
 
     public static void navigateToUser(Activity activity, ImageView profileImage, UserBasic user) {
-        Intent intent = UserActivity.newIntent(activity, user);
+        Intent intent = UserActivity.Companion.newIntent(activity, user);
         if (Build.VERSION.SDK_INT >= 21 && profileImage != null) {
             ActivityOptionsCompat options = ActivityOptionsCompat.
                     makeSceneTransitionAnimation(activity, profileImage, activity.getString(R.string.transition_user));
@@ -154,7 +154,7 @@ public class Navigator {
     }
 
     public static void navigateToGroup(Activity activity, ImageView profileImage, Group group) {
-        Intent intent = GroupActivity.newIntent(activity, group);
+        Intent intent = GroupActivity.Companion.newIntent(activity, group);
         if (Build.VERSION.SDK_INT >= 21) {
             ActivityOptionsCompat options = ActivityOptionsCompat.
                     makeSceneTransitionAnimation(activity, profileImage, activity.getString(R.string.transition_user));
@@ -165,41 +165,41 @@ public class Navigator {
     }
 
     public static void navigateToGroup(Activity activity, long groupId) {
-        activity.startActivity(GroupActivity.newIntent(activity, groupId));
+        activity.startActivity(GroupActivity.Companion.newIntent(activity, groupId));
     }
 
     public static void navigateToMilestone(Activity activity, Project project, Milestone milestone) {
-        activity.startActivity(MilestoneActivity.newIntent(activity, project, milestone));
+        activity.startActivity(MilestoneActivity.Companion.newIntent(activity, project, milestone));
     }
 
     public static void navigateToIssue(Activity activity, Project project, Issue issue) {
-        activity.startActivity(IssueActivity.newIntent(activity, project, issue));
+        activity.startActivity(IssueActivity.Companion.newIntent(activity, project, issue));
     }
 
     public static void navigateToIssue(Activity activity, String namespace, String projectName, String issueIid) {
-        activity.startActivity(IssueActivity.newIntent(activity, namespace, projectName, issueIid));
+        activity.startActivity(IssueActivity.Companion.newIntent(activity, namespace, projectName, issueIid));
     }
 
     public static void navigateToMergeRequest(Activity activity, Project project, MergeRequest mergeRequest) {
-        Intent intent = MergeRequestActivity.newIntent(activity, project, mergeRequest);
+        Intent intent = MergeRequestActivity.Companion.newIntent(activity, project, mergeRequest);
         activity.startActivity(intent);
     }
 
     public static void navigateToFile(Activity activity, long projectId, String path, String branchName) {
-        activity.startActivity(FileActivity.newIntent(activity, projectId, path, branchName));
+        activity.startActivity(FileActivity.Companion.newIntent(activity, projectId, path, branchName));
     }
 
     public static void navigateToDiffActivity(Activity activity, Project project, RepositoryCommit commit) {
-        activity.startActivity(DiffActivity.newIntent(activity, project, commit));
+        activity.startActivity(DiffActivity.Companion.newIntent(activity, project, commit));
     }
 
     public static void navigateToAddProjectMember(Activity activity, View fab, long projectId) {
-        Intent intent = AddUserActivity.newIntent(activity, projectId);
+        Intent intent = AddUserActivity.Companion.newIntent(activity, projectId);
         startMorphActivity(activity, fab, R.drawable.ic_add_24dp, intent);
     }
 
     public static void navigateToAddGroupMember(Activity activity, View fab, Group group) {
-        Intent intent = AddUserActivity.newIntent(activity, group);
+        Intent intent = AddUserActivity.Companion.newIntent(activity, group);
         startMorphActivity(activity, fab, R.drawable.ic_add_24dp, intent);
     }
 
@@ -218,32 +218,32 @@ public class Navigator {
     }
 
     public static void navigateToAddLabels(Activity activity, Project project, int requestCode) {
-        Intent intent = AddLabelActivity.newIntent(activity, project.getId());
+        Intent intent = AddLabelActivity.Companion.newIntent(activity, project.getId());
         activity.startActivityForResult(intent, requestCode);
     }
 
     public static void navigateToAddNewLabel(Activity activity, long projectId, int requestCode) {
-        Intent intent = AddNewLabelActivity.newIntent(activity, projectId);
+        Intent intent = AddNewLabelActivity.Companion.newIntent(activity, projectId);
         activity.startActivityForResult(intent, requestCode);
     }
 
     public static void navigateToAddMilestone(Activity activity, View fab, Project project) {
-        Intent intent = AddMilestoneActivity.newIntent(activity, project.getId());
+        Intent intent = AddMilestoneActivity.Companion.newIntent(activity, project.getId());
         startMorphActivity(activity, fab, R.drawable.ic_add_24dp, intent);
     }
 
     public static void navigateToEditMilestone(Activity activity, View fab, Project project, Milestone milestone) {
-        Intent intent = AddMilestoneActivity.newIntent(activity, project.getId(), milestone);
+        Intent intent = AddMilestoneActivity.Companion.newIntent(activity, project.getId(), milestone);
         activity.startActivity(intent);
     }
 
     public static void navigateToBuild(Activity activity, Project project, com.commit451.gitlab.model.api.Build build) {
-        Intent intent = BuildActivity.newIntent(activity, project, build);
+        Intent intent = BuildActivity.Companion.newIntent(activity, project, build);
         activity.startActivity(intent);
     }
 
     public static void navigateToAttach(Activity activity, Project project, int requestCode) {
-        Intent intent = AttachActivity.newIntent(activity, project);
+        Intent intent = AttachActivity.Companion.newIntent(activity, project);
         activity.startActivityForResult(intent, requestCode);
         activity.overridePendingTransition(R.anim.fade_in, R.anim.do_nothing);
     }

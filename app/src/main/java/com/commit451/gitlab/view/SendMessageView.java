@@ -26,19 +26,19 @@ public class SendMessageView extends LinearLayout {
 
     @OnClick(R.id.button_send)
     void onSend() {
-        if (callbacks != null) {
-            callbacks.onSendClicked(textNote.getText().toString());
+        if (callback != null) {
+            callback.onSendClicked(textNote.getText().toString());
         }
     }
 
     @OnClick(R.id.button_attach)
     void onAttachClicked() {
-        if (callbacks != null) {
-            callbacks.onAttachmentClicked();
+        if (callback != null) {
+            callback.onAttachmentClicked();
         }
     }
 
-    private Callbacks callbacks;
+    private Callback callback;
 
     public SendMessageView(Context context) {
         super(context);
@@ -79,8 +79,8 @@ public class SendMessageView extends LinearLayout {
         });
     }
 
-    public void setCallbacks(Callbacks callbacks) {
-        this.callbacks = callbacks;
+    public void setCallback(Callback callback) {
+        this.callback = callback;
     }
 
     public void clearText() {
@@ -91,7 +91,7 @@ public class SendMessageView extends LinearLayout {
         textNote.append(text);
     }
 
-    public interface Callbacks {
+    public interface Callback {
         void onSendClicked(String message);
         void onAttachmentClicked();
     }

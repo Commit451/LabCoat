@@ -78,7 +78,7 @@ public class PickBranchFragment extends ButterKnifeFragment {
             public void onBranchClicked(Branch entry) {
                 Intent data = new Intent();
                 Ref ref = new Ref(Ref.TYPE_BRANCH, entry.getName());
-                data.putExtra(PickBranchOrTagActivity.EXTRA_REF, Parcels.wrap(ref));
+                data.putExtra(PickBranchOrTagActivity.Companion.getEXTRA_REF(), Parcels.wrap(ref));
                 getActivity().setResult(Activity.RESULT_OK, data);
                 getActivity().finish();
             }

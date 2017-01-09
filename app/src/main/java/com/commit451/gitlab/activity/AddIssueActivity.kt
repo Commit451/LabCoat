@@ -45,6 +45,22 @@ import java.util.*
  */
 class AddIssueActivity : MorphActivity() {
 
+    companion object {
+
+        private val REQUEST_LABEL = 1
+        private val KEY_PROJECT = "project"
+        private val KEY_ISSUE = "issue"
+
+        fun newIntent(context: Context, project: Project, issue: Issue?): Intent {
+            val intent = Intent(context, AddIssueActivity::class.java)
+            intent.putExtra(KEY_PROJECT, Parcels.wrap(project))
+            if (issue != null) {
+                intent.putExtra(KEY_ISSUE, Parcels.wrap(issue))
+            }
+            return intent
+        }
+    }
+
     @BindView(R.id.root)
     lateinit var root: FrameLayout
     @BindView(R.id.toolbar)
@@ -80,7 +96,7 @@ class AddIssueActivity : MorphActivity() {
     lateinit var members: HashSet<Member>
 
     @OnClick(R.id.text_add_labels)
-    internal fun onAddLabelClicked() {
+    fun onAddLabelClicked() {
         Navigator.navigateToAddLabels(this, project, REQUEST_LABEL)
     }
 
@@ -338,7 +354,7 @@ class AddIssueActivity : MorphActivity() {
 
                     override fun error(t: Throwable) {
                         Timber.e(t)
-                        Snackbar.make(root!!, getString(R.string.failed_to_create_issue), Snackbar.LENGTH_SHORT)
+                        Snackbar.make(root, getString(R.string.failed_to_create_issue), Snackbar.LENGTH_SHORT)
                                 .show()
                     }
 
@@ -352,21 +368,4 @@ class AddIssueActivity : MorphActivity() {
                     }
                 })
     }
-
-    companion object {
-
-        private val REQUEST_LABEL = 1
-        private val KEY_PROJECT = "project"
-        private val KEY_ISSUE = "issue"
-
-        fun newIntent(context: Context, project: Project, issue: Issue?): Intent {
-            val intent = Intent(context, AddIssueActivity::class.java)
-            intent.putExtra(KEY_PROJECT, Parcels.wrap(project))
-            if (issue != null) {
-                intent.putExtra(KEY_ISSUE, Parcels.wrap(issue))
-            }
-            return intent
-        }
-    }
-
 }

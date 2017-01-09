@@ -186,7 +186,7 @@ public class ProjectFragment extends ButterKnifeFragment {
 
         if (getActivity() instanceof ProjectActivity) {
             project = ((ProjectActivity) getActivity()).getProject();
-            branchName = ((ProjectActivity) getActivity()).getRef();
+            branchName = ((ProjectActivity) getActivity()).getRefRef();
             bindProject(project);
             loadData();
         } else {
