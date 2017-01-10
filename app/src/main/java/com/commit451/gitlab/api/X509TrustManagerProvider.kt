@@ -3,10 +3,7 @@ package com.commit451.gitlab.api
 import java.security.KeyStore
 import java.security.KeyStoreException
 import java.security.NoSuchAlgorithmException
-import java.util.Arrays
-
-import javax.net.ssl.SSLSocketFactory
-import javax.net.ssl.TrustManager
+import java.util.*
 import javax.net.ssl.TrustManagerFactory
 import javax.net.ssl.X509TrustManager
 
@@ -32,7 +29,7 @@ object X509TrustManagerProvider {
             }
 
         }
-        return x509TrustManager
+        return x509TrustManager!!
     }
 
     /**
@@ -44,7 +41,8 @@ object X509TrustManagerProvider {
     @Throws(NoSuchAlgorithmException::class, KeyStoreException::class)
     private fun init() {
         val trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm())
-        trustManagerFactory.init(null as KeyStore)
+        val nullKeystore : KeyStore? = null
+        trustManagerFactory.init(nullKeystore)
         val trustManagers = trustManagerFactory.trustManagers
         if (trustManagers.size != 1 || trustManagers[0] !is X509TrustManager) {
             throw IllegalStateException("Unexpected default trust managers:" + Arrays.toString(trustManagers))
