@@ -25,7 +25,7 @@ public class Account implements Comparable<Account>{
 
     @NonNull
     public static List<Account> getAccounts() {
-        List<Account> accounts = new ArrayList<>(App.get().getPrefs().getAccounts());
+        List<Account> accounts = new ArrayList<>(App.Companion.get().getPrefs().getAccounts());
         Collections.sort(accounts);
         Collections.reverse(accounts);
         return accounts;

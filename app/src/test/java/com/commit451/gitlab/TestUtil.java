@@ -27,11 +27,11 @@ public class TestUtil {
         Account account = new Account();
         account.setServerUrl(Uri.parse("https://gitlab.com/"));
 
-        OkHttpClient.Builder gitlabClientBuilder = OkHttpClientFactory.create(account);
+        OkHttpClient.Builder gitlabClientBuilder = OkHttpClientFactory.INSTANCE.create(account);
         if (BuildConfig.DEBUG) {
             gitlabClientBuilder.addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
         }
-        GitLab gitLab = GitLabFactory.create(account, gitlabClientBuilder.build(), true);
+        GitLab gitLab = GitLabFactory.INSTANCE.create(account, gitlabClientBuilder.build(), true);
         Response<UserLogin> loginResponse = gitLab
                 .loginWithUsername("TestAllTheThings", "testing123")
                 .blockingGet();
