@@ -164,7 +164,7 @@ class AddUserActivity : MorphActivity() {
         teleprinter.hideKeyboard()
         swipeRefreshLayout.isRefreshing = true
         loading = true
-        App.get().gitLab.searchUsers(query)
+        App.get().gitLab.searchUsers(query!!)
                 .compose(this.bindToLifecycle<Response<List<UserBasic>>>())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -192,7 +192,7 @@ class AddUserActivity : MorphActivity() {
         loading = true
         adapter.setLoading(true)
         Timber.d("loadMore " + nextPageUrl!!.toString() + " " + query)
-        App.get().gitLab.searchUsers(nextPageUrl!!.toString(), query)
+        App.get().gitLab.searchUsers(nextPageUrl!!.toString(), query!!)
                 .compose(this.bindToLifecycle<Response<List<UserBasic>>>())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

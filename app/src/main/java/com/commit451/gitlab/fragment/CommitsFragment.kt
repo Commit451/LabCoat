@@ -112,7 +112,7 @@ class CommitsFragment : ButterKnifeFragment() {
         page = 0
         loading = true
 
-        App.get().gitLab.getCommits(project!!.id, branchName, page)
+        App.get().gitLab.getCommits(project!!.id, branchName!!, page)
                 .compose(this.bindToLifecycle<List<RepositoryCommit>>())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -159,7 +159,7 @@ class CommitsFragment : ButterKnifeFragment() {
         adapterCommits.setLoading(true)
 
         Timber.d("loadMore called for %s", page)
-        App.get().gitLab.getCommits(project!!.id, branchName, page)
+        App.get().gitLab.getCommits(project!!.id, branchName!!, page)
                 .compose(this.bindToLifecycle<List<RepositoryCommit>>())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

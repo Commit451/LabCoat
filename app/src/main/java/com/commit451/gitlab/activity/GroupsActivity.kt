@@ -110,7 +110,7 @@ class GroupsActivity : BaseActivity() {
         nextPageUrl = null
         loading = true
 
-        App.get().gitLab.groups
+        App.get().gitLab.getGroups()
                 .compose(this.bindToLifecycle<Response<List<Group>>>())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

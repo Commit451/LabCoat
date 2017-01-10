@@ -78,7 +78,7 @@ open class App : Application() {
 
         val accounts = Account.getAccounts()
         if (!accounts.isEmpty()) {
-            currentAccount = accounts[0]
+            setAccount(accounts[0])
         }
 
         Lift.track(this)

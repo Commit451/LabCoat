@@ -112,7 +112,7 @@ class UsersFragment : ButterKnifeFragment() {
         textMessage.visibility = View.GONE
         swipeRefreshLayout.isRefreshing = true
 
-        App.get().gitLab.searchUsers(query)
+        App.get().gitLab.searchUsers(query!!)
                 .compose(this.bindToLifecycle<Response<List<UserBasic>>>())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -144,7 +144,7 @@ class UsersFragment : ButterKnifeFragment() {
         loading = true
         adapterUser.setLoading(true)
         Timber.d("loadMore called for %s %s", nextPageUrl!!.toString(), query)
-        App.get().gitLab.searchUsers(nextPageUrl!!.toString(), query)
+        App.get().gitLab.searchUsers(nextPageUrl!!.toString(), query!!)
                 .compose(this.bindToLifecycle<Response<List<UserBasic>>>())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

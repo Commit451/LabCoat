@@ -122,7 +122,7 @@ class FileActivity : BaseActivity() {
 
     private fun loadData() {
         progress.visibility = View.VISIBLE
-        App.get().gitLab.getFile(projectId, path, ref)
+        App.get().gitLab.getFile(projectId, path!!, ref!!)
                 .compose(this.bindToLifecycle<RepositoryFile>())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

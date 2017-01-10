@@ -1,0 +1,57 @@
+package com.commit451.gitlab.api
+
+import com.commit451.gitlab.model.Account
+import okhttp3.Interceptor
+import okhttp3.Response
+import timber.log.Timber
+import java.io.IOException
+
+/**
+ * Adds the private token to all requests
+ */
+class AuthenticationRequestInterceptor(private val account: Account) : Interceptor {
+
+    companion object {
+        val AUTHORIZATION_HEADER_FIELD = "Authorization"
+        val PRIVATE_TOKEN_HEADER_FIELD = "PRIVATE-TOKEN"
+        val PRIVATE_TOKEN_GET_PARAMETER = "private_token"
+    }
+
+    @Throws(IOException::class)
+    override fun intercept(chain: Interceptor.Chain): Response {
+        var request = chain.request()
+
+        var url = request.url()
+
+        var cleanUrl = url.toString()
+        cleanUrl = cleanUrl.substring(cleanUrl.indexOf(':'))
+
+        var cleanServerUrl = account.serverUrl.toString()
+        cleanServerUrl = cleanServerUrl.substring(cleanServerUrl.indexOf(':'))
+
+        if (cleanUrl.startsWith(cleanServerUrl)) {
+            val authorizationHeader = account.authorizationHeader
+            if (authorizationHeader != null) {
+                request = request.newBuilder()
+                        .header(AUTHORIZATION_HEADER_FIELD, authorizationHeader)
+                        .build()
+            }
+
+            val privateToken = account.privateToken
+            if (privateToken == null) {
+                Timber.e("The private token was null")
+            } else {
+                url = url.newBuilder()
+                        .addQueryParameter(PRIVATE_TOKEN_GET_PARAMETER, privateToken)
+                        .build()
+
+                request = request.newBuilder()
+                        .header(PRIVATE_TOKEN_HEADER_FIELD, privateToken)
+                        .url(url)
+                        .build()
+            }
+        }
+
+        return chain.proceed(request)
+    }
+}

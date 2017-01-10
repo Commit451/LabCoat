@@ -187,7 +187,7 @@ class ProjectFragment : ButterKnifeFragment() {
         swipeRefreshLayout.isRefreshing = true
 
         val result = ReadmeResult()
-        App.get().gitLab.getTree(project!!.id, branchName, null)
+        App.get().gitLab.getTree(project!!.id, branchName!!, null)
                 .flatMap(Function<List<RepositoryTreeObject>, SingleSource<Result<RepositoryTreeObject>>> { repositoryTreeObjects ->
                     for (treeItem in repositoryTreeObjects) {
                         if (getReadmeType(treeItem.name) != README_TYPE_UNKNOWN) {
@@ -198,7 +198,7 @@ class ProjectFragment : ButterKnifeFragment() {
                 })
                 .flatMap(Function<Result<RepositoryTreeObject>, SingleSource<Result<RepositoryFile>>> { repositoryTreeObjectResult ->
                     if (repositoryTreeObjectResult.isPresent) {
-                        val repositoryFile = App.get().gitLab.getFile(project!!.id, repositoryTreeObjectResult.get().name, branchName)
+                        val repositoryFile = App.get().gitLab.getFile(project!!.id, repositoryTreeObjectResult.get().name, branchName!!)
                                 .blockingGet()
                         result.repositoryFile = repositoryFile
                         return@Function Single.just(Result(repositoryFile))

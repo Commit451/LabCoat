@@ -150,7 +150,7 @@ class FilesFragment : ButterKnifeFragment() {
 
         swipeRefreshLayout.isRefreshing = true
 
-        App.get().gitLab.getTree(project!!.id, branchName, newPath)
+        App.get().gitLab.getTree(project!!.id, branchName!!, newPath)
                 .compose(this.bindToLifecycle<List<RepositoryTreeObject>>())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

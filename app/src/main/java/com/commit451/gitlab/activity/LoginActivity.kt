@@ -341,7 +341,7 @@ class LoginActivity : BaseActivity() {
             gitlabClientBuilder.addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
         }
         val gitLab = GitLabFactory.create(account, gitlabClientBuilder.build())
-        gitLab.thisUser
+        gitLab.getThisUser()
                 .compose(this.bindToLifecycle<Response<UserFull>>())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -402,7 +402,7 @@ class LoginActivity : BaseActivity() {
             (d.findViewById(android.R.id.message) as TextView).movementMethod = LinkMovementMethod.getInstance()
         } else if (t is SSLPeerUnverifiedException && t.message?.toLowerCase()!!.contains("hostname")) {
             account.trustedHostname = null
-            val finalHostname = CustomHostnameVerifier.getLastFailedHostname()
+            val finalHostname = CustomHostnameVerifier.lastFailedHostname
             val d = AlertDialog.Builder(this)
                     .setTitle(R.string.hostname_title)
                     .setMessage(R.string.hostname_message)

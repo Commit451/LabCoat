@@ -206,7 +206,7 @@ class LabCoatNavigationView : NavigationView {
     }
 
     fun loadCurrentUser() {
-        App.get().gitLab.thisUser
+        App.get().gitLab.getThisUser()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : CustomResponseSingleObserver<UserFull>() {

@@ -198,7 +198,7 @@ class IssueActivity : BaseActivity() {
             App.get().gitLab.getProject(projectNamespace, projectName)
                     .flatMap { project ->
                         this@IssueActivity.project = project
-                        App.get().gitLab.getIssuesByIid(project.id, issueIid)
+                        App.get().gitLab.getIssuesByIid(project.id, issueIid!!)
                     }
                     .compose(this.bindToLifecycle<List<Issue>>())
                     .subscribeOn(Schedulers.io())

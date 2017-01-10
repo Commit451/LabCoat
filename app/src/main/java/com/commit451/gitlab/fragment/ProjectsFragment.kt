@@ -150,19 +150,19 @@ class ProjectsFragment : ButterKnifeFragment() {
         when (mode) {
             MODE_ALL -> {
                 showLoading()
-                actuallyLoadIt(getGitLab().allProjects)
+                actuallyLoadIt(getGitLab().getAllProjects())
             }
             MODE_MINE -> {
                 showLoading()
-                actuallyLoadIt(getGitLab().myProjects)
+                actuallyLoadIt(getGitLab().getMyProjects())
             }
             MODE_STARRED -> {
                 showLoading()
-                actuallyLoadIt(getGitLab().starredProjects)
+                actuallyLoadIt(getGitLab().getStarredProjects())
             }
             MODE_SEARCH -> if (query != null) {
                 showLoading()
-                actuallyLoadIt(getGitLab().searchAllProjects(query))
+                actuallyLoadIt(getGitLab().searchAllProjects(query!!))
             }
             MODE_GROUP -> {
                 showLoading()

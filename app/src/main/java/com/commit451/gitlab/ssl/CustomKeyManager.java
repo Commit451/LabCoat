@@ -26,6 +26,7 @@ public class CustomKeyManager extends X509ExtendedKeyManager {
     }
 
     public static void cache(final Context context, final String alias, final KeyCallback callback) {
+        //TODO remove this async task in favor of Rx
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
