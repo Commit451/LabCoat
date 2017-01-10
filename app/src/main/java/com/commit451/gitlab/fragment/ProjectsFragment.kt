@@ -150,24 +150,24 @@ class ProjectsFragment : ButterKnifeFragment() {
         when (mode) {
             MODE_ALL -> {
                 showLoading()
-                actuallyLoadIt(gitLab.allProjects)
+                actuallyLoadIt(getGitLab().allProjects)
             }
             MODE_MINE -> {
                 showLoading()
-                actuallyLoadIt(gitLab.myProjects)
+                actuallyLoadIt(getGitLab().myProjects)
             }
             MODE_STARRED -> {
                 showLoading()
-                actuallyLoadIt(gitLab.starredProjects)
+                actuallyLoadIt(getGitLab().starredProjects)
             }
             MODE_SEARCH -> if (query != null) {
                 showLoading()
-                actuallyLoadIt(gitLab.searchAllProjects(query))
+                actuallyLoadIt(getGitLab().searchAllProjects(query))
             }
             MODE_GROUP -> {
                 showLoading()
                 val group = Parcels.unwrap<Group>(arguments.getParcelable<Parcelable>(EXTRA_GROUP)) ?: throw IllegalStateException("You must also pass a group if you want to show a groups projects")
-                actuallyLoadIt(gitLab.getGroupProjects(group.id))
+                actuallyLoadIt(getGitLab().getGroupProjects(group.id))
             }
             else -> throw IllegalStateException(mode.toString() + " is not defined")
         }
@@ -214,7 +214,7 @@ class ProjectsFragment : ButterKnifeFragment() {
         loading = true
         adapterProjects.setLoading(true)
         Timber.d("loadMore called for %s", nextPageUrl)
-        gitLab.getProjects(nextPageUrl!!.toString())
+        getGitLab().getProjects(nextPageUrl!!.toString())
                 .compose(this.bindToLifecycle<Response<List<Project>>>())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -247,18 +247,17 @@ class ProjectsFragment : ButterKnifeFragment() {
         loadData()
     }
 
-    private val gitLab: GitLab
-        get() {
-            if (listener != null) {
-                return listener!!.gitLab
-            } else {
-                return App.get().gitLab
-            }
+    fun getGitLab(): GitLab {
+        if (listener != null) {
+            return listener!!.getGitLab()
+        } else {
+            return App.get().gitLab
         }
+    }
 
     interface Listener {
         fun onProjectClicked(project: Project)
 
-        val gitLab: GitLab
+        fun getGitLab(): GitLab
     }
 }

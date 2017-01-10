@@ -55,7 +55,7 @@ class LaunchActivity : BaseActivity() {
         if (accounts.isEmpty()) {
             Navigator.navigateToLogin(this)
             finish()
-        } else if (App.get().prefs.isRequireDeviceAuth) {
+        } else if (App.get().prefs.isRequiredDeviceAuth()) {
             showKeyguard()
         } else {
             if (PRIVATE_KEY_ENABLED) {

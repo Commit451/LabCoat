@@ -75,7 +75,7 @@ class GroupsActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        App.get().prefs.startingView = Prefs.STARTING_VIEW_GROUPS
+        App.get().prefs.setStartingView(Prefs.STARTING_VIEW_GROUPS)
         setContentView(R.layout.activity_groups)
         ButterKnife.bind(this)
         App.bus().register(this)

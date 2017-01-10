@@ -121,12 +121,14 @@ class AddUserActivity : MorphActivity() {
         teleprinter = Teleprinter(this)
         projectId = intent.getLongExtra(KEY_PROJECT_ID, -1)
         group = Parcels.unwrap<Group>(intent.getParcelableExtra<Parcelable>(KEY_GROUP))
-        dialogAccess = AccessDialog(this, AccessDialog.Listener { accessLevel ->
-            dialogAccess.showLoading()
-            if (group == null) {
-                add(App.get().gitLab.addProjectMember(projectId, selectedUser!!.id, accessLevel))
-            } else {
-                add(App.get().gitLab.addGroupMember(projectId, selectedUser!!.id, accessLevel))
+        dialogAccess = AccessDialog(this, object : AccessDialog.Listener {
+            override fun onAccessApplied(accessLevel: Int) {
+                dialogAccess.showLoading()
+                if (group == null) {
+                    add(App.get().gitLab.addProjectMember(projectId, selectedUser!!.id, accessLevel))
+                } else {
+                    add(App.get().gitLab.addGroupMember(projectId, selectedUser!!.id, accessLevel))
+                }
             }
         })
         toolbar.setNavigationIcon(R.drawable.ic_back_24dp)

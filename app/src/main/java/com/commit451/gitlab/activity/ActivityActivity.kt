@@ -38,7 +38,7 @@ class ActivityActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        App.get().prefs.startingView = Prefs.STARTING_VIEW_ACTIVITY
+        App.get().prefs.setStartingView(Prefs.STARTING_VIEW_ACTIVITY)
         setContentView(R.layout.activity_activity)
         ButterKnife.bind(this)
 

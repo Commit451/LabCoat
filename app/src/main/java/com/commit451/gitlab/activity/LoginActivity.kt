@@ -489,7 +489,7 @@ class LoginActivity : BaseActivity() {
     }
 
     fun isAlreadySignedIn(url: String, usernameOrEmailOrPrivateToken: String): Boolean {
-        val accounts = App.get().prefs.accounts
+        val accounts = App.get().prefs.getAccounts()
         for (account in accounts) {
             if (account.serverUrl == Uri.parse(url)) {
                 if (usernameOrEmailOrPrivateToken == account.user.username

@@ -198,7 +198,7 @@ class LabCoatNavigationView : NavigationView {
     }
 
     fun setAccounts() {
-        val accounts = App.get().prefs.accounts
+        val accounts = App.get().prefs.getAccounts()
         Timber.d("Got %s accounts", accounts.size)
         Collections.sort(accounts)
         Collections.reverse(accounts)

@@ -107,7 +107,11 @@ class GroupMembersFragment : ButterKnifeFragment() {
 
         override fun onUserChangeAccessClicked(member: Member) {
             val accessDialog = AccessDialog(activity, member, group)
-            accessDialog.setOnAccessChangedListener { member, accessLevel -> loadData() }
+            accessDialog.setOnAccessChangedListener(object : AccessDialog.OnAccessChangedListener {
+                override fun onAccessChanged(member: Member, accessLevel: String) {
+                    loadData()
+                }
+            })
             accessDialog.show()
         }
     }
