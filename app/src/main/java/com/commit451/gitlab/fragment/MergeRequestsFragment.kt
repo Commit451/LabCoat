@@ -96,7 +96,7 @@ class MergeRequestsFragment : ButterKnifeFragment() {
 
         adapterMergeRequests = MergeRequestAdapter(object : MergeRequestAdapter.Listener {
             override fun onMergeRequestClicked(mergeRequest: MergeRequest) {
-                Navigator.navigateToMergeRequest(activity, project, mergeRequest)
+                Navigator.navigateToMergeRequest(activity, project!!, mergeRequest)
             }
         })
         layoutManagerMergeRequests = LinearLayoutManager(activity)

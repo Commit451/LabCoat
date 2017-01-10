@@ -94,7 +94,7 @@ class BuildsFragment : ButterKnifeFragment() {
         adapterBuilds = BuildAdapter(object : BuildAdapter.Listener {
             override fun onBuildClicked(build: Build) {
                 if (project != null) {
-                    Navigator.navigateToBuild(activity, project, build)
+                    Navigator.navigateToBuild(activity, project!!, build)
                 } else {
                     Snackbar.make(root, getString(R.string.wait_for_project_to_load), Snackbar.LENGTH_SHORT)
                             .show()

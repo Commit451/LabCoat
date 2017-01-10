@@ -78,7 +78,7 @@ class MilestonesFragment : ButterKnifeFragment() {
     @OnClick(R.id.add)
     fun onAddClicked(fab: View) {
         if (project != null) {
-            Navigator.navigateToAddMilestone(activity, fab, project)
+            Navigator.navigateToAddMilestone(activity, fab, project!!)
         } else {
             Snackbar.make(root, getString(R.string.wait_for_project_to_load), Snackbar.LENGTH_SHORT)
                     .show()
@@ -102,7 +102,7 @@ class MilestonesFragment : ButterKnifeFragment() {
 
         adapterMilestones = MilestoneAdapter(object : MilestoneAdapter.Listener {
             override fun onMilestoneClicked(milestone: Milestone) {
-                Navigator.navigateToMilestone(activity, project, milestone)
+                Navigator.navigateToMilestone(activity, project!!, milestone)
             }
         })
         layoutManagerMilestones = LinearLayoutManager(activity)

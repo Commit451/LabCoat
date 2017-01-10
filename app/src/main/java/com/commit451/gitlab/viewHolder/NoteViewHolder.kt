@@ -60,10 +60,10 @@ class NoteViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
         val getter = BypassImageGetterFactory.create(textSummary,
                 App.get().picasso,
-                App.get().account.serverUrl.toString(),
+                App.get().getAccount().serverUrl.toString(),
                 project)
         textSummary.text = bypass.markdownToSpannable(summary, getter)
-        textSummary.movementMethod = InternalLinkMovementMethod(App.get().account.serverUrl)
+        textSummary.movementMethod = InternalLinkMovementMethod(App.get().getAccount().serverUrl)
 
         App.get().picasso
                 .load(ImageUtil.getAvatarUrl(note.author, itemView.resources.getDimensionPixelSize(R.dimen.image_size)))

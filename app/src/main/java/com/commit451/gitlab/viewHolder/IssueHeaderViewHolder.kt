@@ -55,12 +55,12 @@ class IssueHeaderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             textDescription.visibility = View.VISIBLE
             val getter = BypassImageGetterFactory.create(textDescription,
                     App.get().picasso,
-                    App.get().account.serverUrl.toString(),
+                    App.get().getAccount().serverUrl.toString(),
                     project)
             var description = issue.description
             description = EmojiParser.parseToUnicode(description)
             textDescription.text = bypass.markdownToSpannable(description, getter)
-            textDescription.movementMethod = InternalLinkMovementMethod(App.get().account.serverUrl)
+            textDescription.movementMethod = InternalLinkMovementMethod(App.get().getAccount().serverUrl)
         }
 
         App.get().picasso

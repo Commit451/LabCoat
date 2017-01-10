@@ -125,7 +125,7 @@ class LabCoatNavigationView : NavigationView {
                 Navigator.navigateToLogin(context as Activity)
                 (context as Activity).finish()
             } else {
-                if (account == App.get().account) {
+                if (account == App.get().getAccount()) {
                     switchToAccount(accounts[0])
                 }
             }
@@ -134,7 +134,7 @@ class LabCoatNavigationView : NavigationView {
 
     @OnClick(R.id.profile_image)
     fun onUserImageClick(imageView: ImageView) {
-        Navigator.navigateToUser(context as Activity, imageView, App.get().account.user)
+        Navigator.navigateToUser(context as Activity, imageView, App.get().getAccount().user)
     }
 
     @OnClick(R.id.drawer_header)
@@ -218,7 +218,7 @@ class LabCoatNavigationView : NavigationView {
                     override fun responseSuccess(userFull: UserFull) {
                         //Store the newly retrieved user to the account so that it stays up to date
                         // in local storage
-                        val account = App.get().account
+                        val account = App.get().getAccount()
                         account.user = userFull
                         App.get().prefs.updateAccount(account)
                         bindUser(userFull)
@@ -261,7 +261,7 @@ class LabCoatNavigationView : NavigationView {
     fun switchToAccount(account: Account) {
         Timber.d("Switching to account: %s", account)
         account.lastUsed = Date()
-        App.get().account = account
+        App.get().setAccount(account)
         App.get().prefs.updateAccount(account)
         bindUser(account.user)
         toggleAccounts()

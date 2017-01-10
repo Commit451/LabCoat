@@ -55,22 +55,22 @@ public class CustomTrustManager implements X509TrustManager {
 
     @Override
     public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-        if (X509TrustManagerProvider.get() == null) {
+        if (X509TrustManagerProvider.INSTANCE.get() == null) {
             throw new IllegalStateException("No default TrustManager available");
         }
 
-        X509TrustManagerProvider.get().checkClientTrusted(chain, authType);
+        X509TrustManagerProvider.INSTANCE.get().checkClientTrusted(chain, authType);
     }
 
     @Override
     public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-        if (X509TrustManagerProvider.get() == null) {
+        if (X509TrustManagerProvider.INSTANCE.get() == null) {
             throw new IllegalStateException("No default TrustManager available");
         }
 
         CertificateException cause;
         try {
-            X509TrustManagerProvider.get().checkServerTrusted(chain, authType);
+            X509TrustManagerProvider.INSTANCE.get().checkServerTrusted(chain, authType);
             return;
         } catch (CertificateException e) {
             cause = e;
@@ -85,11 +85,11 @@ public class CustomTrustManager implements X509TrustManager {
 
     @Override
     public X509Certificate[] getAcceptedIssuers() {
-        if (X509TrustManagerProvider.get() == null) {
+        if (X509TrustManagerProvider.INSTANCE.get() == null) {
             throw new IllegalStateException("No default TrustManager available");
         }
 
-        return X509TrustManagerProvider.get().getAcceptedIssuers();
+        return X509TrustManagerProvider.INSTANCE.get().getAcceptedIssuers();
     }
 
     public SSLSocketFactory getSSLSocketFactory() {

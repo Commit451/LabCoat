@@ -66,7 +66,7 @@ class FilesFragment : ButterKnifeFragment() {
 
         override fun onFileClicked(treeItem: RepositoryTreeObject) {
             val path = currentPath + treeItem.name
-            Navigator.navigateToFile(activity, project!!.id, path, branchName)
+            Navigator.navigateToFile(activity, project!!.id, path, branchName!!)
         }
 
         override fun onCopyClicked(treeItem: RepositoryTreeObject) {

@@ -220,7 +220,7 @@ class ProjectActivity : BaseActivity() {
     }
 
     fun broadcastLoad() {
-        App.bus().post(ProjectReloadEvent(project, ref!!.ref))
+        App.bus().post(ProjectReloadEvent(project!!, ref!!.ref))
     }
 
     fun getRefRef(): String? {

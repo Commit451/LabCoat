@@ -361,7 +361,7 @@ class LoginActivity : BaseActivity() {
                         account.user = userFull
                         account.lastUsed = Date()
                         App.get().prefs.addAccount(account)
-                        App.get().account = account
+                        App.get().setAccount(account)
                         App.bus().post(LoginEvent(account))
                         //This is mostly for if projects already exists, then we will reload the data
                         App.bus().post(ReloadDataEvent())

@@ -88,7 +88,7 @@ class MergeRequestCommitsFragment : ButterKnifeFragment() {
 
         adapterCommits = CommitAdapter(object : CommitAdapter.Listener {
             override fun onCommitClicked(commit: RepositoryCommit) {
-                Navigator.navigateToDiffActivity(activity, project, commit)
+                Navigator.navigateToDiffActivity(activity, project!!, commit)
             }
         })
         layoutManagerCommits = LinearLayoutManager(activity)

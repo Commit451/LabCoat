@@ -53,9 +53,9 @@ class MergeRequestHeaderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             textDescription.text = bypass.markdownToSpannable(description,
                     BypassImageGetterFactory.create(textDescription,
                             App.get().picasso,
-                            App.get().account.serverUrl.toString(),
+                            App.get().getAccount().serverUrl.toString(),
                             project))
-            textDescription.movementMethod = InternalLinkMovementMethod(App.get().account.serverUrl)
+            textDescription.movementMethod = InternalLinkMovementMethod(App.get().getAccount().serverUrl)
         }
 
         App.get().picasso

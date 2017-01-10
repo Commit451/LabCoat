@@ -155,7 +155,7 @@ class ProjectFragment : ButterKnifeFragment() {
 
         App.bus().register(this)
 
-        textOverview.movementMethod = InternalLinkMovementMethod(App.get().account.serverUrl)
+        textOverview.movementMethod = InternalLinkMovementMethod(App.get().getAccount().serverUrl)
 
         swipeRefreshLayout.setOnRefreshListener { loadData() }
 
@@ -234,7 +234,7 @@ class ProjectFragment : ButterKnifeFragment() {
                                     textOverview.text = bypass.markdownToSpannable(text,
                                             BypassImageGetterFactory.create(textOverview,
                                                     App.get().picasso,
-                                                    App.get().account.serverUrl.toString(),
+                                                    App.get().getAccount().serverUrl.toString(),
                                                     project))
                                 }
                                 README_TYPE_HTML -> textOverview.text = Html.fromHtml(text)

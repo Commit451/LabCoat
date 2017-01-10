@@ -80,7 +80,7 @@ class IssuesFragment : ButterKnifeFragment() {
     @OnClick(R.id.add_issue_button)
     fun onAddIssueClick(fab: View) {
         if (project != null) {
-            Navigator.navigateToAddIssue(activity, fab, project)
+            Navigator.navigateToAddIssue(activity, fab, project!!)
         } else {
             Snackbar.make(root, getString(R.string.wait_for_project_to_load), Snackbar.LENGTH_SHORT)
                     .show()
@@ -105,7 +105,7 @@ class IssuesFragment : ButterKnifeFragment() {
         adapterIssue = IssueAdapter(object : IssueAdapter.Listener {
             override fun onIssueClicked(issue: Issue) {
                 if (project != null) {
-                    Navigator.navigateToIssue(activity, project, issue)
+                    Navigator.navigateToIssue(activity, project!!, issue)
                 } else {
                     Snackbar.make(root, getString(R.string.wait_for_project_to_load), Snackbar.LENGTH_SHORT)
                             .show()

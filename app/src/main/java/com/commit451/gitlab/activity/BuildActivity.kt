@@ -203,8 +203,8 @@ class BuildActivity : BaseActivity() {
     }
 
     private fun downloadBuild() {
-        val account = App.get().account
-        val downloadUrl = BuildUtil.getDownloadBuildUrl(App.get().account.serverUrl, project, build)
+        val account = App.get().getAccount()
+        val downloadUrl = BuildUtil.getDownloadBuildUrl(App.get().getAccount().serverUrl, project, build)
         Timber.d("Downloading build: " + downloadUrl)
         DownloadUtil.download(this@BuildActivity, account, downloadUrl, build.artifactsFile.fileName)
     }

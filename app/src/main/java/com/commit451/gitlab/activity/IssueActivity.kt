@@ -150,7 +150,7 @@ class IssueActivity : BaseActivity() {
 
     @OnClick(R.id.fab_edit_issue)
     fun onEditIssueClick(fab: View) {
-        Navigator.navigateToEditIssue(this@IssueActivity, fab, project, issue)
+        Navigator.navigateToEditIssue(this@IssueActivity, fab, project!!, issue!!)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -176,7 +176,7 @@ class IssueActivity : BaseActivity() {
             }
 
             override fun onAttachmentClicked() {
-                Navigator.navigateToAttach(this@IssueActivity, project, REQUEST_ATTACH)
+                Navigator.navigateToAttach(this@IssueActivity, project!!, REQUEST_ATTACH)
             }
         }
 
@@ -370,7 +370,7 @@ class IssueActivity : BaseActivity() {
                     override fun success(issue: Issue) {
                         progress.visibility = View.GONE
                         this@IssueActivity.issue = issue
-                        App.bus().post(IssueChangedEvent(this@IssueActivity.issue))
+                        App.bus().post(IssueChangedEvent(this@IssueActivity.issue!!))
                         App.bus().post(IssueReloadEvent())
                         setOpenCloseMenuStatus()
                         loadNotes()

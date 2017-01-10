@@ -66,7 +66,7 @@ class AboutActivity : BaseActivity() {
 
     @OnClick(R.id.sauce)
     fun onSauceClick() {
-        if (getString(R.string.url_gitlab) == App.get().account.serverUrl.toString()) {
+        if (getString(R.string.url_gitlab) == App.get().getAccount().serverUrl.toString()) {
             Navigator.navigateToProject(this@AboutActivity, REPO_ID)
         } else {
             IntentUtil.openPage(this@AboutActivity, getString(R.string.source_url))

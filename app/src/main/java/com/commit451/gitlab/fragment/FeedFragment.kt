@@ -67,7 +67,7 @@ class FeedFragment : ButterKnifeFragment() {
 
         adapterFeed = FeedAdapter(object : FeedAdapter.Listener {
             override fun onFeedEntryClicked(entry: Entry) {
-                Navigator.navigateToUrl(activity, entry.link.href, App.get().account)
+                Navigator.navigateToUrl(activity, entry.link.href, App.get().getAccount())
             }
         })
         listEntries.layoutManager = LinearLayoutManager(activity)

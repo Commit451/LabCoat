@@ -139,7 +139,7 @@ class LoadSomeInfoActivity : BaseActivity() {
                             }
 
                             override fun success(repositoryCommit: RepositoryCommit) {
-                                Navigator.navigateToDiffActivity(this@LoadSomeInfoActivity, project, repositoryCommit)
+                                Navigator.navigateToDiffActivity(this@LoadSomeInfoActivity, project!!, repositoryCommit)
                                 finish()
                             }
                         })
@@ -160,7 +160,7 @@ class LoadSomeInfoActivity : BaseActivity() {
 
                             override fun success(mergeRequests: List<MergeRequest>) {
                                 if (!mergeRequests.isEmpty()) {
-                                    Navigator.navigateToMergeRequest(this@LoadSomeInfoActivity, project, mergeRequests[0])
+                                    Navigator.navigateToMergeRequest(this@LoadSomeInfoActivity, project!!, mergeRequests[0])
                                     finish()
                                 } else {
                                     this@LoadSomeInfoActivity.onError()
@@ -183,7 +183,7 @@ class LoadSomeInfoActivity : BaseActivity() {
                             }
 
                             override fun success(build: Build) {
-                                Navigator.navigateToBuild(this@LoadSomeInfoActivity, project, build)
+                                Navigator.navigateToBuild(this@LoadSomeInfoActivity, project!!, build)
                                 finish()
                             }
                         })
@@ -204,7 +204,7 @@ class LoadSomeInfoActivity : BaseActivity() {
 
                             override fun success(milestones: List<Milestone>) {
                                 if (!milestones.isEmpty()) {
-                                    Navigator.navigateToMilestone(this@LoadSomeInfoActivity, project, milestones[0])
+                                    Navigator.navigateToMilestone(this@LoadSomeInfoActivity, project!!, milestones[0])
                                     finish()
                                 } else {
                                     this@LoadSomeInfoActivity.onError()

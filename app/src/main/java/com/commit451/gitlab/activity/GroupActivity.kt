@@ -115,8 +115,8 @@ class GroupActivity : BaseActivity() {
                 .load(group.avatarUrl)
                 .transform(PaletteTransformation.instance())
                 .into(backdrop, object : PaletteTransformation.PaletteCallback(backdrop) {
-                    override fun onSuccess(palette: Palette) {
-                        bindPalette(palette)
+                    override fun onSuccess(palette: Palette?) {
+                        bindPalette(palette!!)
                     }
 
                     override fun onError() {}

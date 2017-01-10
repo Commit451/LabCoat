@@ -76,7 +76,7 @@ class SnippetsFragment : ButterKnifeFragment() {
     @OnClick(R.id.add)
     fun onAddClicked(fab: View) {
         if (project != null) {
-            Navigator.navigateToAddMilestone(activity, fab, project)
+            Navigator.navigateToAddMilestone(activity, fab, project!!)
         } else {
             Snackbar.make(root, getString(R.string.wait_for_project_to_load), Snackbar.LENGTH_SHORT)
                     .show()

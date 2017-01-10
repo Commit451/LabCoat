@@ -34,7 +34,7 @@ public final class OkHttpClientFactory {
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .addInterceptor(new AuthenticationRequestInterceptor(account))
-                .sslSocketFactory(customTrustManager.getSSLSocketFactory(), X509TrustManagerProvider.get())
+                .sslSocketFactory(customTrustManager.getSSLSocketFactory(), X509TrustManagerProvider.INSTANCE.get())
                 .hostnameVerifier(customTrustManager.getHostnameVerifier());
 
         if (includeSignInAuthenticator) {

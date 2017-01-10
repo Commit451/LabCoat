@@ -46,7 +46,7 @@ public class InternalLinkMovementMethod extends LinkMovementMethod {
                 String url = link[0].getURL();
                 if (url.startsWith(serverUrl.toString())) {
                     Timber.d("Looks like an internal server link: %s", url);
-                    Navigator.navigateToUrl(widget.getContext(), Uri.parse(url));
+                    Navigator.INSTANCE.navigateToUrl(widget.getContext(), Uri.parse(url));
                     return true;
                 }
                 return super.onTouchEvent(widget, buffer, event);

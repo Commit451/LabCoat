@@ -50,7 +50,7 @@ class ActivityActivity : BaseActivity() {
 
         var feedFragment: FeedFragment? = supportFragmentManager.findFragmentByTag(TAG_FEED_FRAGMENT) as? FeedFragment
         if (feedFragment == null) {
-            var feedUri = App.get().account.serverUrl
+            var feedUri = App.get().getAccount().serverUrl
 
             feedUri = feedUri.buildUpon()
                     .appendPath("dashboard")

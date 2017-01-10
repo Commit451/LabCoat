@@ -49,7 +49,7 @@ class AccountAdapter(context: Context, private val listener: AccountAdapter.List
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is AccountViewHolder) {
             val account = getItemAtPosition(position)
-            holder.bind(account, account == App.get().account, colorControlHighlight)
+            holder.bind(account, account == App.get().getAccount(), colorControlHighlight)
             holder.itemView.setTag(R.id.list_position, position)
             holder.popupMenu.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { item ->
                 when (item.itemId) {
