@@ -36,7 +36,7 @@ class MilestoneViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         textTitle.text = milestone.title
         if (milestone.dueDate != null) {
             textDueDate.visibility = View.VISIBLE
-            val due = DateUtil.getRelativeTimeSpanString(itemView.context, milestone.dueDate)
+            val due = DateUtil.getRelativeTimeSpanString(itemView.context, milestone.dueDate!!)
             textDueDate.text = String.format(itemView.resources.getString(R.string.due_date_formatted), due)
         } else {
             textDueDate.visibility = View.GONE

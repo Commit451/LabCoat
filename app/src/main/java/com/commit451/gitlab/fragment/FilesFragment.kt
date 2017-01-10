@@ -80,7 +80,7 @@ class FilesFragment : ButterKnifeFragment() {
         }
 
         override fun onShareClicked(treeItem: RepositoryTreeObject) {
-            IntentUtil.share(view, treeItem.getUrl(project, branchName, currentPath))
+            IntentUtil.share(view!!, treeItem.getUrl(project, branchName, currentPath))
         }
 
         override fun onOpenInBrowserClicked(treeItem: RepositoryTreeObject) {

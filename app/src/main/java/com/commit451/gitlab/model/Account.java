@@ -126,12 +126,12 @@ public class Account implements Comparable<Account>{
         }
 
         Account account = (Account) o;
-        return ObjectUtil.equals(serverUrl, account.serverUrl)
-                && ObjectUtil.equals(user, account.user);
+        return ObjectUtil.INSTANCE.equals(serverUrl, account.serverUrl)
+                && ObjectUtil.INSTANCE.equals(user, account.user);
     }
 
     @Override
     public int hashCode() {
-        return ObjectUtil.hash(serverUrl, user);
+        return ObjectUtil.INSTANCE.hash(serverUrl, user);
     }
 }

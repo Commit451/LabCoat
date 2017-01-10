@@ -235,7 +235,7 @@ class ProjectFragment : ButterKnifeFragment() {
                                             BypassImageGetterFactory.create(textOverview,
                                                     App.get().picasso,
                                                     App.get().getAccount().serverUrl.toString(),
-                                                    project))
+                                                    project!!))
                                 }
                                 README_TYPE_HTML -> textOverview.text = Html.fromHtml(text)
                                 README_TYPE_TEXT -> textOverview.text = text

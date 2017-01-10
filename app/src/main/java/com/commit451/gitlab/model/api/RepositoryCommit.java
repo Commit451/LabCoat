@@ -63,11 +63,11 @@ public class RepositoryCommit {
         }
 
         RepositoryCommit commit = (RepositoryCommit) o;
-        return ObjectUtil.equals(id, commit.id);
+        return ObjectUtil.INSTANCE.equals(id, commit.id);
     }
 
     @Override
     public int hashCode() {
-        return ObjectUtil.hash(id);
+        return ObjectUtil.INSTANCE.hash(id);
     }
 }

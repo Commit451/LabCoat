@@ -26,7 +26,7 @@ class OpenSignInAuthenticator(private val account: Account) : Authenticator {
         if ("session" != response.request().url().pathSegments()[response.request().url().pathSegments().size - 1]) {
             //Off the background thread
             Timber.wtf(RuntimeException("Got a 401 and showing sign in for url: " + response.request().url()))
-            ThreadUtil.postOnMainThread {
+            ThreadUtil.postOnMainThread(Runnable {
                 //Remove the account, so that the user can sign in again
                 App.get().prefs.removeAccount(account)
                 Toast.makeText(App.get(), R.string.error_401, Toast.LENGTH_LONG)
@@ -34,7 +34,7 @@ class OpenSignInAuthenticator(private val account: Account) : Authenticator {
                 val intent = LoginActivity.newIntent(App.get())
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 App.get().startActivity(intent)
-            }
+            })
         }
         return null
     }

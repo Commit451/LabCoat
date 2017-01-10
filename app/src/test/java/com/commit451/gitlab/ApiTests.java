@@ -141,7 +141,7 @@ public class ApiTests {
     //    @Test
     public void uploadFile() throws Exception {
         Bitmap bitmap = BitmapFactory.decodeResource(RuntimeEnvironment.application.getResources(), R.drawable.ic_fork);
-        MultipartBody.Part part = FileUtil.toPart(bitmap, "fork.png");
+        MultipartBody.Part part = FileUtil.INSTANCE.toPart(bitmap, "fork.png");
 
         FileUploadResponse uploadResponseResponse =
                 gitLab.uploadFile(sFakeProject.getId(), part)

@@ -10,7 +10,7 @@ import java.util.*
 class DateTransform : Transform<Date> {
 
     @Throws(Exception::class)
-    override fun read(value: String): Date {
+    override fun read(value: String): Date? {
         return ConversionUtil.toDate(value)
     }
 
