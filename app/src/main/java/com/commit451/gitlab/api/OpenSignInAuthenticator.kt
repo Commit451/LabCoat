@@ -22,19 +22,30 @@ class OpenSignInAuthenticator(private val account: Account) : Authenticator {
 
     @Throws(IOException::class)
     override fun authenticate(route: Route, response: Response): Request? {
-        //Special case for if someone just put in their username or password wrong
-        if ("session" != response.request().url().pathSegments()[response.request().url().pathSegments().size - 1]) {
-            //Off the background thread
-            Timber.wtf(RuntimeException("Got a 401 and showing sign in for url: " + response.request().url()))
-            ThreadUtil.postOnMainThread(Runnable {
-                //Remove the account, so that the user can sign in again
-                App.get().prefs.removeAccount(account)
-                Toast.makeText(App.get(), R.string.error_401, Toast.LENGTH_LONG)
-                        .show()
-                val intent = LoginActivity.newIntent(App.get())
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                App.get().startActivity(intent)
-            })
+        val url = response.request().url()
+
+        var cleanUrl = url.toString().toLowerCase()
+        cleanUrl = cleanUrl.substring(cleanUrl.indexOf(':'))
+
+        var cleanServerUrl = account.serverUrl.toString().toLowerCase()
+        cleanServerUrl = cleanServerUrl.substring(cleanServerUrl.indexOf(':'))
+
+        //Ensure that we only check urls of the gitlab instance
+        if (cleanUrl.startsWith(cleanServerUrl)) {
+            //Special case for if someone just put in their username or password wrong
+            if ("session" != url.pathSegments()[url.pathSegments().size - 1]) {
+                //Off the background thread
+                Timber.wtf(RuntimeException("Got a 401 and showing sign in for url: " + response.request().url()))
+                ThreadUtil.postOnMainThread(Runnable {
+                    //Remove the account, so that the user can sign in again
+                    App.get().prefs.removeAccount(account)
+                    Toast.makeText(App.get(), R.string.error_401, Toast.LENGTH_LONG)
+                            .show()
+                    val intent = LoginActivity.newIntent(App.get())
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    App.get().startActivity(intent)
+                })
+            }
         }
         return null
     }
