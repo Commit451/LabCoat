@@ -22,6 +22,7 @@ import com.commit451.gitlab.activity.GroupsActivity
 import com.commit451.gitlab.activity.ProjectsActivity
 import com.commit451.gitlab.activity.TodosActivity
 import com.commit451.gitlab.adapter.AccountAdapter
+import com.commit451.gitlab.data.Prefs
 import com.commit451.gitlab.event.CloseDrawerEvent
 import com.commit451.gitlab.event.LoginEvent
 import com.commit451.gitlab.event.ReloadDataEvent
@@ -118,7 +119,7 @@ class LabCoatNavigationView : NavigationView {
         }
 
         override fun onAccountLogoutClicked(account: Account) {
-            App.get().prefs.removeAccount(account)
+            Prefs.removeAccount(account)
             val accounts = Account.getAccounts()
 
             if (accounts.isEmpty()) {
@@ -198,7 +199,7 @@ class LabCoatNavigationView : NavigationView {
     }
 
     fun setAccounts() {
-        val accounts = App.get().prefs.getAccounts()
+        val accounts = Prefs.getAccounts()
         Timber.d("Got %s accounts", accounts.size)
         Collections.sort(accounts)
         Collections.reverse(accounts)
@@ -220,7 +221,7 @@ class LabCoatNavigationView : NavigationView {
                         // in local storage
                         val account = App.get().getAccount()
                         account.user = userFull
-                        App.get().prefs.updateAccount(account)
+                        Prefs.updateAccount(account)
                         bindUser(userFull)
                     }
                 })
@@ -262,7 +263,7 @@ class LabCoatNavigationView : NavigationView {
         Timber.d("Switching to account: %s", account)
         account.lastUsed = Date()
         App.get().setAccount(account)
-        App.get().prefs.updateAccount(account)
+        Prefs.updateAccount(account)
         bindUser(account.user)
         toggleAccounts()
         App.bus().post(ReloadDataEvent())

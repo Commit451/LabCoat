@@ -71,7 +71,7 @@ class AddLabelActivity : BaseActivity() {
         toolbar.inflateMenu(R.menu.create)
         toolbar.setOnMenuItemClickListener(Toolbar.OnMenuItemClickListener { item ->
             when (item.itemId) {
-                R.id.action_add_label -> {
+                R.id.action_create -> {
                     Navigator.navigateToAddNewLabel(this@AddLabelActivity, projectId, REQUEST_NEW_LABEL)
                     return@OnMenuItemClickListener true
                 }

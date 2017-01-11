@@ -11,8 +11,8 @@ import android.view.ViewGroup
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
-import com.commit451.gitlab.App
 import com.commit451.gitlab.R
+import com.commit451.gitlab.data.Prefs
 
 /**
  * Settings
@@ -52,10 +52,10 @@ class SettingsActivity : BaseActivity() {
         }
 
         bindPrefs()
-        switchRequireAuth.setOnCheckedChangeListener { compoundButton, b -> App.get().prefs.setRequiredDeviceAuth(b) }
+        switchRequireAuth.setOnCheckedChangeListener { compoundButton, b -> Prefs.setRequiredDeviceAuth(b) }
     }
 
     fun bindPrefs() {
-        switchRequireAuth.isChecked = App.get().prefs.isRequiredDeviceAuth()
+        switchRequireAuth.isChecked = Prefs.isRequiredDeviceAuth()
     }
 }

@@ -12,9 +12,9 @@ import android.view.View
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
-import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.BaseActivity
+import com.commit451.gitlab.data.Prefs
 import com.commit451.gitlab.model.Account
 import com.commit451.gitlab.model.api.Project
 import org.parceler.Parcels
@@ -85,7 +85,7 @@ class ProjectFeedWidgetConfigureActivity : BaseActivity() {
     }
 
     fun loadAccounts() {
-        val accounts = App.get().prefs.getAccounts()
+        val accounts = Prefs.getAccounts()
         Timber.d("Got %s accounts", accounts.size)
         Collections.sort(accounts)
         Collections.reverse(accounts)

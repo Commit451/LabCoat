@@ -5,6 +5,7 @@ import android.widget.Toast
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.LoginActivity
+import com.commit451.gitlab.data.Prefs
 import com.commit451.gitlab.model.Account
 import com.commit451.gitlab.util.ThreadUtil
 import okhttp3.Authenticator
@@ -38,7 +39,7 @@ class OpenSignInAuthenticator(private val account: Account) : Authenticator {
                 Timber.wtf(RuntimeException("Got a 401 and showing sign in for url: " + response.request().url()))
                 ThreadUtil.postOnMainThread(Runnable {
                     //Remove the account, so that the user can sign in again
-                    App.get().prefs.removeAccount(account)
+                    Prefs.removeAccount(account)
                     Toast.makeText(App.get(), R.string.error_401, Toast.LENGTH_LONG)
                             .show()
                     val intent = LoginActivity.newIntent(App.get())

@@ -44,7 +44,7 @@ class TodosActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        App.get().prefs.setStartingView(Prefs.STARTING_VIEW_TODOS)
+        Prefs.setStartingView(Prefs.STARTING_VIEW_TODOS)
         setContentView(R.layout.activity_todos)
         ButterKnife.bind(this)
         App.bus().register(this)

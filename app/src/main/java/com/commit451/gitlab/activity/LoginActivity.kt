@@ -24,6 +24,7 @@ import com.commit451.gitlab.BuildConfig
 import com.commit451.gitlab.R
 import com.commit451.gitlab.api.GitLabFactory
 import com.commit451.gitlab.api.OkHttpClientFactory
+import com.commit451.gitlab.data.Prefs
 import com.commit451.gitlab.dialog.HttpLoginDialog
 import com.commit451.gitlab.event.LoginEvent
 import com.commit451.gitlab.event.ReloadDataEvent
@@ -360,7 +361,7 @@ class LoginActivity : BaseActivity() {
                         progress.visibility = View.GONE
                         account.user = userFull
                         account.lastUsed = Date()
-                        App.get().prefs.addAccount(account)
+                        Prefs.addAccount(account)
                         App.get().setAccount(account)
                         App.bus().post(LoginEvent(account))
                         //This is mostly for if projects already exists, then we will reload the data
@@ -489,7 +490,7 @@ class LoginActivity : BaseActivity() {
     }
 
     fun isAlreadySignedIn(url: String, usernameOrEmailOrPrivateToken: String): Boolean {
-        val accounts = App.get().prefs.getAccounts()
+        val accounts = Prefs.getAccounts()
         for (account in accounts) {
             if (account.serverUrl == Uri.parse(url)) {
                 if (usernameOrEmailOrPrivateToken == account.user.username

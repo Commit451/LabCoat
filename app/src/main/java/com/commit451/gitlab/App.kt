@@ -52,7 +52,6 @@ open class App : Application() {
     lateinit var gitLab: GitLab
     lateinit var gitLabRss: GitLabRss
     lateinit var picasso: Picasso
-    lateinit var prefs: Prefs
 
     override fun onCreate() {
         super.onCreate()
@@ -64,7 +63,7 @@ open class App : Application() {
         setupLeakCanary()
         instance = this
 
-        prefs = Prefs(this)
+        Prefs.init(this)
         //So that we don't get weird half translations
         forceLocale(Locale.ENGLISH)
         setupCrashReporting()

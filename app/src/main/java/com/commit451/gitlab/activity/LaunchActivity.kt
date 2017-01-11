@@ -11,6 +11,7 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
+import com.commit451.gitlab.data.Prefs
 import com.commit451.gitlab.model.Account
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.ssl.CustomKeyManager
@@ -55,7 +56,7 @@ class LaunchActivity : BaseActivity() {
         if (accounts.isEmpty()) {
             Navigator.navigateToLogin(this)
             finish()
-        } else if (App.get().prefs.isRequiredDeviceAuth()) {
+        } else if (Prefs.isRequiredDeviceAuth()) {
             showKeyguard()
         } else {
             if (PRIVATE_KEY_ENABLED) {
