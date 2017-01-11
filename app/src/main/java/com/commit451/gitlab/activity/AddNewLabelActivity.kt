@@ -80,7 +80,7 @@ class AddNewLabelActivity : BaseActivity(), ColorChooserDialog.ColorCallback {
         toolbar.setNavigationIcon(R.drawable.ic_back_24dp)
         toolbar.setNavigationOnClickListener { onBackPressed() }
 
-        toolbar.inflateMenu(R.menu.menu_add_new_label)
+        toolbar.inflateMenu(R.menu.create)
         toolbar.setOnMenuItemClickListener(Toolbar.OnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.action_create -> {

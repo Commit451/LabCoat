@@ -162,7 +162,9 @@ class IssueActivity : BaseActivity() {
 
         toolbar.setNavigationIcon(R.drawable.ic_back_24dp)
         toolbar.setNavigationOnClickListener { onBackPressed() }
-        toolbar.inflateMenu(R.menu.menu_issue)
+        toolbar.inflateMenu(R.menu.share)
+        toolbar.inflateMenu(R.menu.close)
+        toolbar.inflateMenu(R.menu.delete)
         menuItemOpenClose = toolbar.menu.findItem(R.id.action_close)
         toolbar.setOnMenuItemClickListener(onMenuItemClickListener)
 

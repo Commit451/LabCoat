@@ -7,5 +7,4 @@
         app:showAsAction="never"
         android:title="@string/action_merge"/>
 
-
 </menu>

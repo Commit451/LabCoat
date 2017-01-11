@@ -40,7 +40,7 @@ class AccountViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         ButterKnife.bind(this, view)
 
         popupMenu = PopupMenu(itemView.context, buttonMore)
-        popupMenu.menuInflater.inflate(R.menu.item_menu_account, popupMenu.menu)
+        popupMenu.menuInflater.inflate(R.menu.logout, popupMenu.menu)
 
         buttonMore.setOnClickListener { popupMenu.show() }
     }

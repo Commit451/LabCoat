@@ -62,7 +62,7 @@ class ProjectsActivity : BaseActivity() {
         toolbar.setTitle(R.string.projects)
         toolbar.setNavigationIcon(R.drawable.ic_menu_24dp)
         toolbar.setNavigationOnClickListener { drawerLayout.openDrawer(GravityCompat.START) }
-        toolbar.inflateMenu(R.menu.menu_search)
+        toolbar.inflateMenu(R.menu.search)
         toolbar.setOnMenuItemClickListener(onMenuItemClickListener)
         viewPager.adapter = ProjectPagerAdapter(this, supportFragmentManager)
         tabLayout.setupWithViewPager(viewPager)

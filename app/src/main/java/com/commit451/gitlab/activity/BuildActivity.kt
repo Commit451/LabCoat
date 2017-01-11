@@ -165,7 +165,10 @@ class BuildActivity : BaseActivity() {
         toolbar.setNavigationIcon(R.drawable.ic_back_24dp)
         toolbar.setNavigationOnClickListener { onBackPressed() }
         toolbar.subtitle = project.nameWithNamespace
-        toolbar.inflateMenu(R.menu.menu_build)
+        toolbar.inflateMenu(R.menu.retry)
+        toolbar.inflateMenu(R.menu.erase)
+        toolbar.inflateMenu(R.menu.cancel)
+        toolbar.inflateMenu(R.menu.download)
         toolbar.setOnMenuItemClickListener(onMenuItemClickListener)
         menuItemDownload = toolbar.menu.findItem(R.id.action_download)
         menuItemDownload.isVisible = build.artifactsFile != null

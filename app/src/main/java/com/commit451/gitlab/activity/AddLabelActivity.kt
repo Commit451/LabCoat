@@ -68,7 +68,7 @@ class AddLabelActivity : BaseActivity() {
 
         projectId = intent.getLongExtra(KEY_PROJECT_ID, -1)
         toolbar.setTitle(labels)
-        toolbar.inflateMenu(R.menu.menu_add_label)
+        toolbar.inflateMenu(R.menu.create)
         toolbar.setOnMenuItemClickListener(Toolbar.OnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.action_add_label -> {

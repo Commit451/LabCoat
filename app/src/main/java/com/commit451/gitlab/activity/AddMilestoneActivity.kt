@@ -104,9 +104,9 @@ class AddMilestoneActivity : MorphActivity() {
         milestone = Parcels.unwrap<Milestone>(intent.getParcelableExtra<Parcelable>(KEY_MILESTONE))
         if (milestone != null) {
             bind(milestone!!)
-            toolbar.inflateMenu(R.menu.menu_edit_milestone)
+            toolbar.inflateMenu(R.menu.edit)
         } else {
-            toolbar.inflateMenu(R.menu.menu_add_milestone)
+            toolbar.inflateMenu(R.menu.create)
         }
         toolbar.setNavigationIcon(R.drawable.ic_back_24dp)
         toolbar.setNavigationOnClickListener { onBackPressed() }

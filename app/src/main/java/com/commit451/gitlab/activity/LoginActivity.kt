@@ -175,7 +175,7 @@ class LoginActivity : BaseActivity() {
         teleprinter = Teleprinter(this)
         val showClose = intent.getBooleanExtra(EXTRA_SHOW_CLOSE, false)
 
-        toolbar.inflateMenu(R.menu.menu_login)
+        toolbar.inflateMenu(R.menu.advanced_login)
         toolbar.setOnMenuItemClickListener(Toolbar.OnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.action_advanced_login -> {

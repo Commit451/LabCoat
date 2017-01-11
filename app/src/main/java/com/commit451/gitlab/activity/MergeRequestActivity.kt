@@ -58,43 +58,6 @@ class MergeRequestActivity : BaseActivity() {
     lateinit var project: Project
     lateinit var mergeRequest: MergeRequest
 
-    val onMenuItemClickListener = Toolbar.OnMenuItemClickListener { item ->
-        when (item.itemId) {
-            R.id.action_merge -> {
-                progress.visibility = View.VISIBLE
-                App.get().gitLab.acceptMergeRequest(project.id, mergeRequest.id)
-                        .compose(this@MergeRequestActivity.bindToLifecycle<Response<MergeRequest>>())
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(object : CustomResponseSingleObserver<MergeRequest>() {
-
-                            override fun error(e: Throwable) {
-                                Timber.e(e)
-                                progress.visibility = View.GONE
-                                var message = getString(R.string.unable_to_merge)
-                                if (e is HttpException) {
-                                    val code = e.response().code()
-                                    if (code == 406) {
-                                        message = getString(R.string.merge_request_already_merged_or_closed)
-                                    }
-                                }
-                                Snackbar.make(root, message, Snackbar.LENGTH_LONG)
-                                        .show()
-                            }
-
-                            override fun responseSuccess(mergeRequest: MergeRequest) {
-                                progress.visibility = View.GONE
-                                Snackbar.make(root, R.string.merge_request_accepted, Snackbar.LENGTH_LONG)
-                                        .show()
-                                App.bus().post(MergeRequestChangedEvent(mergeRequest))
-                            }
-                        })
-                return@OnMenuItemClickListener true
-            }
-        }
-        false
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_merge_request)
@@ -107,8 +70,18 @@ class MergeRequestActivity : BaseActivity() {
         toolbar.setNavigationIcon(R.drawable.ic_back_24dp)
         toolbar.setNavigationOnClickListener { onBackPressed() }
         toolbar.subtitle = project.nameWithNamespace
-        toolbar.inflateMenu(R.menu.menu_merge_request)
-        toolbar.setOnMenuItemClickListener(onMenuItemClickListener)
+        if (mergeRequest.state == MergeRequest.STATE_OPENED) {
+            toolbar.inflateMenu(R.menu.merge)
+        }
+        toolbar.setOnMenuItemClickListener(Toolbar.OnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.action_merge -> {
+                    merge()
+                    return@OnMenuItemClickListener true
+                }
+            }
+            false
+        })
         val sectionsPagerAdapter = MergeRequestSectionsPagerAdapter(
                 this,
                 supportFragmentManager,
@@ -117,5 +90,36 @@ class MergeRequestActivity : BaseActivity() {
 
         viewPager.adapter = sectionsPagerAdapter
         tabLayout.setupWithViewPager(viewPager)
+    }
+
+    fun merge() {
+        progress.visibility = View.VISIBLE
+        App.get().gitLab.acceptMergeRequest(project.id, mergeRequest.id)
+                .compose(this@MergeRequestActivity.bindToLifecycle<Response<MergeRequest>>())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(object : CustomResponseSingleObserver<MergeRequest>() {
+
+                    override fun error(e: Throwable) {
+                        Timber.e(e)
+                        progress.visibility = View.GONE
+                        var message = getString(R.string.unable_to_merge)
+                        if (e is HttpException) {
+                            val code = e.response().code()
+                            if (code == 406) {
+                                message = getString(R.string.merge_request_already_merged_or_closed)
+                            }
+                        }
+                        Snackbar.make(root, message, Snackbar.LENGTH_LONG)
+                                .show()
+                    }
+
+                    override fun responseSuccess(mergeRequest: MergeRequest) {
+                        progress.visibility = View.GONE
+                        Snackbar.make(root, R.string.merge_request_accepted, Snackbar.LENGTH_LONG)
+                                .show()
+                        App.bus().post(MergeRequestChangedEvent(mergeRequest))
+                    }
+                })
     }
 }

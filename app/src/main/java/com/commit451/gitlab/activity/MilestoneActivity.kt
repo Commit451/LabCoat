@@ -107,7 +107,7 @@ class MilestoneActivity : BaseActivity() {
 
         toolbar.setNavigationIcon(R.drawable.ic_back_24dp)
         toolbar.setNavigationOnClickListener { onBackPressed() }
-        toolbar.inflateMenu(R.menu.menu_milestone)
+        toolbar.inflateMenu(R.menu.close)
         menuItemOpenClose = toolbar.menu.findItem(R.id.action_close)
         toolbar.setOnMenuItemClickListener(Toolbar.OnMenuItemClickListener { item ->
             when (item.itemId) {

@@ -136,9 +136,9 @@ class AddIssueActivity : MorphActivity() {
 
         if (issue != null) {
             bindIssue()
-            toolbar.inflateMenu(R.menu.menu_edit_milestone)
+            toolbar.inflateMenu(R.menu.edit)
         } else {
-            toolbar.inflateMenu(R.menu.menu_add_milestone)
+            toolbar.inflateMenu(R.menu.create)
         }
         load()
     }
