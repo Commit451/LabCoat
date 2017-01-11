@@ -59,12 +59,12 @@ class MergeRequestsFragment : ButterKnifeFragment() {
     var loading = false
 
     val onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-        override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
             state = states[position]
             loadData()
         }
 
-        override fun onNothingSelected(parent: AdapterView<*>) {}
+        override fun onNothingSelected(parent: AdapterView<*>?) {}
     }
 
     val onScrollListener = object : RecyclerView.OnScrollListener() {

@@ -358,11 +358,11 @@ interface GitLab {
     /* --- BUILDS --- */
     @GET(API_VERSION + "/projects/{id}/builds")
     fun getBuilds(@Path("id") projectId: Long,
-                  @Query("scope") scope: String): Single<Response<List<Build>>>
+                  @Query("scope") scope: String?): Single<Response<List<Build>>>
 
     @GET
     fun getBuilds(@Url url: String,
-                  @Query("scope") state: String): Single<Response<List<Build>>>
+                  @Query("scope") state: String?): Single<Response<List<Build>>>
 
     @GET(API_VERSION + "/projects/{id}/builds/{build_id}")
     fun getBuild(@Path("id") projectId: Long,

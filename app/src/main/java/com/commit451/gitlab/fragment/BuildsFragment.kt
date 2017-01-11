@@ -58,9 +58,9 @@ class BuildsFragment : ButterKnifeFragment() {
     lateinit var adapterBuilds: BuildAdapter
     lateinit var layoutManagerBuilds: LinearLayoutManager
 
-    var project: Project? = null
-    lateinit var scope: String
     lateinit var scopes: Array<String>
+    var scope: String? = null
+    var project: Project? = null
     var nextPageUrl: Uri? = null
     var loading: Boolean = false
 
@@ -110,13 +110,12 @@ class BuildsFragment : ButterKnifeFragment() {
         spinnerIssue.adapter = ArrayAdapter(activity, android.R.layout.simple_list_item_1,
                 android.R.id.text1, resources.getStringArray(R.array.build_scope_names))
         spinnerIssue.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 scope = scopes[position]
                 loadData()
             }
 
-            override fun onNothingSelected(parent: AdapterView<*>) {
-
+            override fun onNothingSelected(parent: AdapterView<*>?) {
             }
         }
 

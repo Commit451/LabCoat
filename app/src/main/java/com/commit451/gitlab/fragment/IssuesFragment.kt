@@ -120,12 +120,12 @@ class IssuesFragment : ButterKnifeFragment() {
 
         spinnerIssue.adapter = ArrayAdapter(activity, android.R.layout.simple_list_item_1, android.R.id.text1, resources.getStringArray(R.array.issue_state_names))
         spinnerIssue.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 state = states[position]
                 loadData()
             }
 
-            override fun onNothingSelected(parent: AdapterView<*>) {
+            override fun onNothingSelected(parent: AdapterView<*>?) {
 
             }
         }

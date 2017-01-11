@@ -111,14 +111,12 @@ class SnippetsFragment : ButterKnifeFragment() {
 
         spinnerState.adapter = ArrayAdapter(activity, android.R.layout.simple_list_item_1, android.R.id.text1, resources.getStringArray(R.array.milestone_state_names))
         spinnerState.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 state = states[position]
                 loadData()
             }
 
-            override fun onNothingSelected(parent: AdapterView<*>) {
-
-            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
 
         swipeRefreshLayout.setOnRefreshListener { loadData() }
