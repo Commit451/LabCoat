@@ -152,11 +152,11 @@ class ProjectActivity : BaseActivity() {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             REQUEST_BRANCH_OR_TAG -> if (resultCode == Activity.RESULT_OK) {
-                ref = Parcels.unwrap<Ref>(data.getParcelableExtra<Parcelable>(PickBranchOrTagActivity.EXTRA_REF))
+                ref = Parcels.unwrap<Ref>(data?.getParcelableExtra<Parcelable>(PickBranchOrTagActivity.EXTRA_REF))
                 broadcastLoad()
             }
         }

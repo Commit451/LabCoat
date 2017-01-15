@@ -267,11 +267,11 @@ class AddIssueActivity : MorphActivity() {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             REQUEST_LABEL -> if (resultCode == Activity.RESULT_OK) {
-                val label = Parcels.unwrap<Label>(data.getParcelableExtra<Parcelable>(AddLabelActivity.KEY_LABEL))
+                val label = Parcels.unwrap<Label>(data?.getParcelableExtra<Parcelable>(AddLabelActivity.KEY_LABEL))
                 if (adapterLabels.containsLabel(label)) {
                     Snackbar.make(root, R.string.label_already_added, Snackbar.LENGTH_SHORT)
                             .show()

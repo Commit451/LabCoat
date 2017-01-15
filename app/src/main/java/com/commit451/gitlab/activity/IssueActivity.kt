@@ -232,11 +232,11 @@ class IssueActivity : BaseActivity() {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             REQUEST_ATTACH -> if (resultCode == Activity.RESULT_OK) {
-                val response = Parcels.unwrap<FileUploadResponse>(data.getParcelableExtra<Parcelable>(AttachActivity.KEY_FILE_UPLOAD_RESPONSE))
+                val response = Parcels.unwrap<FileUploadResponse>(data?.getParcelableExtra<Parcelable>(AttachActivity.KEY_FILE_UPLOAD_RESPONSE))
                 progress.visibility = View.GONE
                 sendMessageView.appendText(response.markdown)
             } else {

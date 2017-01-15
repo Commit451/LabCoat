@@ -74,11 +74,11 @@ class ProjectFeedWidgetConfigureActivity : BaseActivity() {
         loadAccounts()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             REQUEST_PROJECT -> if (resultCode == Activity.RESULT_OK) {
-                val project = Parcels.unwrap<Project>(data.getParcelableExtra<Parcelable>(ProjectFeedWidgetConfigureProjectActivity.EXTRA_PROJECT))
+                val project = Parcels.unwrap<Project>(data?.getParcelableExtra<Parcelable>(ProjectFeedWidgetConfigureProjectActivity.EXTRA_PROJECT))
                 saveWidgetConfig(account!!, project)
             }
         }

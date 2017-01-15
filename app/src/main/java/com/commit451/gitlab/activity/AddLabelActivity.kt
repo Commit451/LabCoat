@@ -96,11 +96,11 @@ class AddLabelActivity : BaseActivity() {
         load()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             REQUEST_NEW_LABEL -> if (resultCode == Activity.RESULT_OK) {
-                val newLabel = Parcels.unwrap<Label>(data.getParcelableExtra<Parcelable>(AddNewLabelActivity.KEY_NEW_LABEL))
+                val newLabel = Parcels.unwrap<Label>(data?.getParcelableExtra<Parcelable>(AddNewLabelActivity.KEY_NEW_LABEL))
                 adapterLabel.addLabel(newLabel)
             }
         }

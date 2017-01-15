@@ -205,11 +205,11 @@ class LoginActivity : BaseActivity() {
         textUrl.setText(R.string.url_gitlab)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             REQUEST_PRIVATE_TOKEN -> if (resultCode == Activity.RESULT_OK) {
-                val token = data.getStringExtra(WebLoginActivity.EXTRA_TOKEN)
+                val token = data?.getStringExtra(WebLoginActivity.EXTRA_TOKEN)
                 textInputLayoutToken.editText!!.setText(token)
             }
         }
