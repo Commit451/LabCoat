@@ -87,6 +87,10 @@ class UserActivity : BaseActivity() {
         supportFinishAfterTransition()
     }
 
+    override fun hasBrowsableLinks(): Boolean {
+        return true
+    }
+
     fun bindPalette(palette: Palette) {
         val animationTime = 1000
         val vibrantColor = palette.getVibrantColor(Easel.getThemeAttrColor(this, R.attr.colorPrimary))

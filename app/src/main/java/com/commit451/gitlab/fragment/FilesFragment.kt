@@ -16,6 +16,7 @@ import android.widget.TextView
 import butterknife.BindView
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
+import com.commit451.gitlab.activity.BaseActivity
 import com.commit451.gitlab.activity.ProjectActivity
 import com.commit451.gitlab.adapter.BreadcrumbAdapter
 import com.commit451.gitlab.adapter.DividerItemDecoration
@@ -84,7 +85,7 @@ class FilesFragment : ButterKnifeFragment() {
         }
 
         override fun onOpenInBrowserClicked(treeItem: RepositoryTreeObject) {
-            IntentUtil.openPage(activity, treeItem.getUrl(project, branchName, currentPath).toString())
+            IntentUtil.openPage(activity as BaseActivity, treeItem.getUrl(project, branchName, currentPath).toString())
         }
     }
 

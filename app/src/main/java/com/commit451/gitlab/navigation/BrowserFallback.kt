@@ -22,11 +22,11 @@ class BrowserFallback(context: Context) : NavigationFallback {
     }
 
     override fun onFallbackNavigateTo(url: Uri) {
-        val i = Intent(Intent.ACTION_VIEW)
-        i.data = url
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.data = url
         val context = this.context.get() ?: return
         try {
-            context.startActivity(i)
+            context.startActivity(intent)
         } catch (e: Exception) {
             Toast.makeText(context, R.string.error_no_browser, Toast.LENGTH_SHORT)
                     .show()

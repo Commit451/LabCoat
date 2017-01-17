@@ -1,11 +1,9 @@
 package com.commit451.gitlab.activity
 
-import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
-
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.Account
@@ -14,20 +12,18 @@ import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.navigation.RoutingNavigator
 import com.commit451.gitlab.navigation.RoutingRouter
 import com.commit451.gitlab.util.IntentUtil
-import com.novoda.simplechromecustomtabs.SimpleChromeCustomTabs
-
 import timber.log.Timber
 
 
 /**
  * The easy way to do deep links. Just route everything here, and it does all the work.
  */
-class RoutingActivity : Activity() {
+class RoutingActivity : BaseActivity() {
 
     lateinit var router: RoutingRouter
     var originalUri: Uri? = null
 
-    val mNavigator = object : RoutingNavigator {
+    val navigator = object : RoutingNavigator {
         override fun onRouteToIssue(projectNamespace: String, projectName: String, issueIid: String) {
             Timber.d("Routing to issue")
             Navigator.navigateToIssue(this@RoutingActivity, projectNamespace, projectName, issueIid)
@@ -83,16 +79,8 @@ class RoutingActivity : Activity() {
         handleIntent(intent)
     }
 
-    override fun onResume() {
-        super.onResume()
-        SimpleChromeCustomTabs.getInstance().connectTo(this)
-    }
-
-    override fun onPause() {
-        if (SimpleChromeCustomTabs.getInstance().isConnected) {
-            SimpleChromeCustomTabs.getInstance().disconnectFrom(this)
-        }
-        super.onPause()
+    override fun hasBrowsableLinks(): Boolean {
+        return true
     }
 
     fun handleIntent(intent: Intent?) {
@@ -115,7 +103,7 @@ class RoutingActivity : Activity() {
             finish()
             return
         }
-        router = RoutingRouter(mNavigator)
+        router = RoutingRouter(navigator)
         router.route(link)
         finish()
     }

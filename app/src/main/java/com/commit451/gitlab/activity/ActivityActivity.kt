@@ -65,6 +65,10 @@ class ActivityActivity : BaseActivity() {
         }
     }
 
+    override fun hasBrowsableLinks(): Boolean {
+        return true
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         App.bus().unregister(this)

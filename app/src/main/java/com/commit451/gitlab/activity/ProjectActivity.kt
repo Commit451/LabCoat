@@ -179,6 +179,10 @@ class ProjectActivity : BaseActivity() {
         super.onBackPressed()
     }
 
+    override fun hasBrowsableLinks(): Boolean {
+        return true
+    }
+
     fun loadProject(projectId: String) {
         showProgress()
         loadProject(App.get().gitLab.getProject(projectId))

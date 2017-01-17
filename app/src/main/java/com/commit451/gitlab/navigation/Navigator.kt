@@ -11,7 +11,6 @@ import android.support.v4.app.ActivityOptionsCompat
 import android.view.View
 import android.widget.ImageView
 import com.commit451.easel.Easel
-import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.*
 import com.commit451.gitlab.data.Prefs
@@ -221,7 +220,7 @@ object Navigator {
         if (account.serverUrl.host == uri.host) {
             activity.startActivity(DeepLinker.generateDeeplinkIntentFromUri(activity, uri))
         } else {
-            IntentUtil.openPage(activity, uri.toString())
+            IntentUtil.openPage(activity as BaseActivity, uri.toString())
         }
     }
 

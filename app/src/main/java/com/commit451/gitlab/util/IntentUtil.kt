@@ -1,14 +1,13 @@
 package com.commit451.gitlab.util
 
-import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.support.design.widget.Snackbar
 import android.text.TextUtils
 import android.view.View
-
 import com.commit451.easel.Easel
 import com.commit451.gitlab.R
+import com.commit451.gitlab.activity.BaseActivity
 import com.commit451.gitlab.navigation.BrowserFallback
 import com.commit451.gitlab.navigation.LabCoatIntentCustomizer
 import com.novoda.simplechromecustomtabs.SimpleChromeCustomTabs
@@ -18,7 +17,10 @@ import com.novoda.simplechromecustomtabs.SimpleChromeCustomTabs
  */
 object IntentUtil {
 
-    fun openPage(activity: Activity, url: String) {
+    fun openPage(activity: BaseActivity, url: String) {
+        if (!activity.hasBrowsableLinks()) {
+            throw IllegalStateException("You need to override hasBrowsableLinks and return true!")
+        }
         if (TextUtils.isEmpty(url)) {
             return
         }

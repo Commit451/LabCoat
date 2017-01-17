@@ -130,6 +130,10 @@ class AboutActivity : BaseActivity() {
         sensorManager.unregisterListener(sensorEventListener)
     }
 
+    override fun hasBrowsableLinks(): Boolean {
+        return true
+    }
+
     fun addContributors(contributors: List<Contributor>) {
         val config = PhysicsConfig.create()
         config.shapeType = PhysicsConfig.SHAPE_TYPE_CIRCLE

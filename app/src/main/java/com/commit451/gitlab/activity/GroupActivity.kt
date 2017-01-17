@@ -110,6 +110,10 @@ class GroupActivity : BaseActivity() {
         supportFinishAfterTransition()
     }
 
+    override fun hasBrowsableLinks(): Boolean {
+        return true
+    }
+
     fun bind(group: Group) {
         App.get().picasso
                 .load(group.avatarUrl)
