@@ -1,9 +1,11 @@
 package com.commit451.gitlab
 
 import android.app.Application
+import android.content.Context
 import android.content.res.Resources
 import android.net.Uri
 import android.support.annotation.VisibleForTesting
+import android.support.multidex.MultiDex
 import com.bluelinelabs.logansquare.LoganSquare
 import com.commit451.gitlab.api.*
 import com.commit451.gitlab.api.converter.UriTypeConverter
@@ -83,6 +85,11 @@ open class App : Application() {
         Lift.track(this)
     }
 
+    override fun attachBaseContext(base: Context) {
+        super.attachBaseContext(base)
+        setupMultidex()
+    }
+
     fun setAccount(account: Account) {
         currentAccount = account
         //This is kinda weird, but basically, I don't want to see all the annoying logs from bitmap
@@ -104,6 +111,11 @@ open class App : Application() {
 
     fun getAccount(): Account {
         return currentAccount
+    }
+
+    @VisibleForTesting
+    protected open fun setupMultidex() {
+        MultiDex.install(this)
     }
 
     @VisibleForTesting

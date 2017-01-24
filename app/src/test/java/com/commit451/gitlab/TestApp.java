@@ -33,4 +33,9 @@ public class TestApp extends App implements TestLifecycleApplication {
     protected void setupLeakCanary() {
         //Intentionally left blank
     }
+
+    @Override
+    protected void setupMultidex() {
+        //Intentionally left blank
+    }
 }
