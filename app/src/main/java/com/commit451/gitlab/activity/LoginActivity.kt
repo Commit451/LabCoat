@@ -28,6 +28,7 @@ import com.commit451.gitlab.data.Prefs
 import com.commit451.gitlab.dialog.HttpLoginDialog
 import com.commit451.gitlab.event.LoginEvent
 import com.commit451.gitlab.event.ReloadDataEvent
+import com.commit451.gitlab.extension.checkValid
 import com.commit451.gitlab.model.Account
 import com.commit451.gitlab.model.api.Message
 import com.commit451.gitlab.model.api.UserFull
@@ -115,7 +116,7 @@ class LoginActivity : BaseActivity() {
     fun onLoginClick() {
         teleprinter.hideKeyboard()
 
-        if (hasEmptyFields(textInputLayoutUrl)) {
+        if (!textInputLayoutUrl.checkValid()) {
             return
         }
 
@@ -125,11 +126,12 @@ class LoginActivity : BaseActivity() {
         val uri = Uri.parse(textInputLayoutUrl.editText!!.text.toString())
 
         if (isNormalLogin) {
-            if (hasEmptyFields(textInputLayoutUser, textInputLayoutPassword)) {
+            val valid = textInputLayoutUser.checkValid() and textInputLayoutPassword.checkValid()
+            if (!valid) {
                 return
             }
         } else {
-            if (hasEmptyFields(textInputLayoutToken)) {
+            if (!textInputLayoutToken.checkValid()) {
                 return
             }
             if (!sTokenPattern.matcher(textToken.text).matches()) {

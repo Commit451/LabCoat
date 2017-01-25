@@ -20,10 +20,10 @@ import butterknife.OnClick
 import com.afollestad.materialdialogs.color.ColorChooserDialog
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
+import com.commit451.gitlab.extension.checkValid
 import com.commit451.gitlab.model.api.Label
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.util.ColorUtil
-import com.commit451.gitlab.util.Validator
 import com.jakewharton.retrofit2.adapter.rxjava2.HttpException
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -101,7 +101,8 @@ class AddNewLabelActivity : BaseActivity(), ColorChooserDialog.ColorCallback {
         get() = intent.getLongExtra(KEY_PROJECT_ID, -1)
 
     private fun createLabel() {
-        if (Validator.validateFieldsNotEmpty(getString(R.string.required_field), textInputLayoutTitle)) {
+        val valid = textInputLayoutTitle.checkValid()
+        if (valid) {
             if (chosenColor == -1) {
                 Snackbar.make(root, R.string.add_new_label_color_is_required, Snackbar.LENGTH_SHORT)
                         .show()
