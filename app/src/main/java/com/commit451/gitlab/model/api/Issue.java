@@ -58,6 +58,8 @@ public class Issue {
     UserBasic assignee;
     @JsonField(name = "author")
     UserBasic author;
+    @JsonField(name = "confidential")
+    boolean confidential;
 
     public Issue() {
     }
@@ -115,6 +117,10 @@ public class Issue {
                 .appendPath("issues")
                 .appendPath(Long.toString(getId()))
                 .build();
+    }
+
+    public boolean isConfidential() {
+        return confidential;
     }
 
     @Override

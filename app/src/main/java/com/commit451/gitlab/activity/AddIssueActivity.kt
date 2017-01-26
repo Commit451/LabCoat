@@ -8,6 +8,7 @@ import android.os.Parcelable
 import android.support.design.widget.Snackbar
 import android.support.design.widget.TextInputLayout
 import android.support.v7.app.AlertDialog
+import android.support.v7.widget.SwitchCompat
 import android.support.v7.widget.Toolbar
 import android.text.TextUtils
 import android.view.View
@@ -87,6 +88,8 @@ class AddIssueActivity : MorphActivity() {
     lateinit var rootAddLabels: ViewGroup
     @BindView(R.id.list_labels)
     lateinit var listLabels: AdapterFlowLayout
+    @BindView(R.id.confidential_switch)
+    lateinit var switchConfidential: SwitchCompat
 
     lateinit var adapterLabels: AddIssueLabelAdapter
     lateinit var teleprinter: Teleprinter
@@ -239,6 +242,7 @@ class AddIssueActivity : MorphActivity() {
         if (!TextUtils.isEmpty(issue!!.description)) {
             textDescription.setText(issue!!.description)
         }
+        switchConfidential.isChecked = issue!!.isConfidential
     }
 
     private fun setAssignees() {
@@ -324,14 +328,15 @@ class AddIssueActivity : MorphActivity() {
                     textDescription.text.toString(),
                     assigneeId,
                     milestoneId,
-                    labelsCommaSeperated)
+                    labelsCommaSeperated,
+                    switchConfidential.isChecked)
         } else {
             textInputLayoutTitle.error = getString(R.string.required_field)
         }
     }
 
     private fun createOrSaveIssue(title: String, description: String, assigneeId: Long?,
-                                  milestoneId: Long?, labels: String?) {
+                                  milestoneId: Long?, labels: String?, isConfidential: Boolean) {
         if (issue == null) {
             observeUpdate(App.get().gitLab.createIssue(
                     project.id,
@@ -339,7 +344,8 @@ class AddIssueActivity : MorphActivity() {
                     description,
                     assigneeId,
                     milestoneId,
-                    labels))
+                    labels,
+                    isConfidential))
         } else {
             observeUpdate(App.get().gitLab.updateIssue(project.id,
                     issue!!.id,
@@ -347,7 +353,8 @@ class AddIssueActivity : MorphActivity() {
                     description,
                     assigneeId,
                     milestoneId,
-                    labels))
+                    labels,
+                    isConfidential))
         }
     }
 

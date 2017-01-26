@@ -252,7 +252,8 @@ interface GitLab {
                     @Field("description") description: String,
                     @Field("assignee_id") assigneeId: Long?,
                     @Field("milestone_id") milestoneId: Long?,
-                    @Field("labels") commaSeparatedLabelNames: String?): Single<Issue>
+                    @Field("labels") commaSeparatedLabelNames: String?,
+                    @Field("confidential") isConfidential: Boolean): Single<Issue>
 
     @PUT(API_VERSION + "/projects/{id}/issues/{issue_id}")
     fun updateIssue(@Path("id") projectId: Long,
@@ -261,7 +262,8 @@ interface GitLab {
                     @Query("description") description: String,
                     @Query("assignee_id") assigneeId: Long?,
                     @Query("milestone_id") milestoneId: Long?,
-                    @Query("labels") commaSeparatedLabelNames: String?): Single<Issue>
+                    @Query("labels") commaSeparatedLabelNames: String?,
+                    @Query("confidential") isConfidential: Boolean): Single<Issue>
 
     @PUT(API_VERSION + "/projects/{id}/issues/{issue_id}")
     fun updateIssueStatus(@Path("id") projectId: Long,
