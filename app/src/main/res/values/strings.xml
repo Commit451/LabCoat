@@ -220,6 +220,7 @@
     <string name="label_already_added">Label already added</string>
     <string name="failed_to_delete_issue">Failed to delete issue</string>
     <string name="issue_deleted">Issue deleted</string>
+    <string name="confidential">Confidential</string>
 
     <!-- Labels -->
     <string name="labels">Labels</string>
