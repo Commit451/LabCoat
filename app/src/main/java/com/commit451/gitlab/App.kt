@@ -93,7 +93,7 @@ open class App : Application() {
     fun setAccount(account: Account) {
         currentAccount = account
         //This is kinda weird, but basically, I don't want to see all the annoying logs from bitmap
-        //decoding since the Okhttpclient is going to log everything, but it does not matter in release
+        //decoding since the OkHttpClient is going to log everything, but it does not matter in release
         //builds, and will actually speed up the init time to share the same client between all these
         val clientBuilder = OkHttpClientFactory.create(account)
         if (BuildConfig.DEBUG) {

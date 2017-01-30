@@ -11,10 +11,10 @@ import butterknife.BindView
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.event.BuildChangedEvent
+import com.commit451.gitlab.extension.getRawBuildUrl
 import com.commit451.gitlab.model.api.Build
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.rx.CustomSingleObserver
-import com.commit451.gitlab.util.BuildUtil
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import org.greenrobot.eventbus.Subscribe
@@ -81,7 +81,7 @@ class BuildLogFragment : ButterKnifeFragment() {
 
         swipeRefreshLayout.isRefreshing = true
 
-        val url = BuildUtil.getRawBuildUrl(App.get().getAccount().serverUrl, project, build)
+        val url = build.getRawBuildUrl(App.get().getAccount().serverUrl, project)
 
         App.get().gitLab.getRaw(url)
                 .compose(this.bindToLifecycle<String>())

@@ -41,7 +41,7 @@ public class ApiTests {
 
     private static final long FAKE_GROUP_PROJECT_ID = 376651;
 
-    private static Project sFakeProject;
+    private static Project fakeProject;
     private static GitLab gitLab;
 
     @BeforeClass
@@ -58,7 +58,7 @@ public class ApiTests {
                 .blockingGet();
         assertNotNull(projectResponse);
 
-        sFakeProject = projectResponse;
+        fakeProject = projectResponse;
     }
 
     @Test
@@ -94,7 +94,7 @@ public class ApiTests {
     public void getIssues() throws Exception {
         String defaultState = RuntimeEnvironment.application.getResources().getString(R.string.issue_state_value_default);
         Response<List<Issue>> issuesResponse = gitLab
-                .getIssues(sFakeProject.getId(), defaultState)
+                .getIssues(fakeProject.getId(), defaultState)
                 .blockingGet();
         TestUtil.assertRetrofitResponseSuccess(issuesResponse);
         assertNotNull(issuesResponse.body());
@@ -105,7 +105,7 @@ public class ApiTests {
         String defaultBranch = "master";
         String currentPath = "";
         List<RepositoryTreeObject> treeResponse = gitLab
-                .getTree(sFakeProject.getId(), defaultBranch, currentPath)
+                .getTree(fakeProject.getId(), defaultBranch, currentPath)
                 .blockingGet();
         assertNotNull(treeResponse);
     }
@@ -114,7 +114,7 @@ public class ApiTests {
     public void getCommits() throws Exception {
         String defaultBranch = "master";
         List<RepositoryCommit> commitsResponse = gitLab
-                .getCommits(sFakeProject.getId(), defaultBranch, 0)
+                .getCommits(fakeProject.getId(), defaultBranch, 0)
                 .blockingGet();
         assertNotNull(commitsResponse);
     }
@@ -123,7 +123,7 @@ public class ApiTests {
     public void getMergeRequests() throws Exception {
         String defaultState = RuntimeEnvironment.application.getResources().getString(R.string.merge_request_state_value_default);
         Response<List<MergeRequest>> mergeRequestResponse = gitLab
-                .getMergeRequests(sFakeProject.getId(), defaultState)
+                .getMergeRequests(fakeProject.getId(), defaultState)
                 .blockingGet();
         TestUtil.assertRetrofitResponseSuccess(mergeRequestResponse);
         assertNotNull(mergeRequestResponse.body());
@@ -144,7 +144,7 @@ public class ApiTests {
         MultipartBody.Part part = FileUtil.INSTANCE.toPart(bitmap, "fork.png");
 
         FileUploadResponse uploadResponseResponse =
-                gitLab.uploadFile(sFakeProject.getId(), part)
+                gitLab.uploadFile(fakeProject.getId(), part)
                         .blockingGet();
         assertNotNull(uploadResponseResponse);
     }

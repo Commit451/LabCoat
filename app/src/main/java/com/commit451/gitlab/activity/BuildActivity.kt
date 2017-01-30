@@ -24,13 +24,13 @@ import com.commit451.gitlab.model.Account
 import com.commit451.gitlab.model.api.Build
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.rx.CustomSingleObserver
-import com.commit451.gitlab.util.BuildUtil
 import com.commit451.gitlab.util.DownloadUtil
 
 import org.parceler.Parcels
 
 import butterknife.BindView
 import butterknife.ButterKnife
+import com.commit451.gitlab.extension.getDownloadBuildUrl
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
@@ -207,7 +207,7 @@ class BuildActivity : BaseActivity() {
 
     private fun downloadBuild() {
         val account = App.get().getAccount()
-        val downloadUrl = BuildUtil.getDownloadBuildUrl(App.get().getAccount().serverUrl, project, build)
+        val downloadUrl = build.getDownloadBuildUrl(App.get().getAccount().serverUrl, project)
         Timber.d("Downloading build: " + downloadUrl)
         DownloadUtil.download(this@BuildActivity, account, downloadUrl, build.artifactsFile.fileName)
     }

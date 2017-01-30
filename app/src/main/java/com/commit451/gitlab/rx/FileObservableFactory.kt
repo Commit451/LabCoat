@@ -11,6 +11,8 @@ import java.io.File
 object FileObservableFactory {
 
     fun toPart(file: File): Single<MultipartBody.Part> {
-        return Single.defer { Single.just(FileUtil.toPart(file)) }
+        return Single.defer {
+            Single.just(FileUtil.toPart(file))
+        }
     }
 }

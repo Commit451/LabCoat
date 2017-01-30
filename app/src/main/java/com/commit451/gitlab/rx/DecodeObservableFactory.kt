@@ -9,6 +9,8 @@ import io.reactivex.Single
 object DecodeObservableFactory {
 
     fun newDecode(string: String): Single<ByteArray> {
-        return Single.defer { Single.just(Base64.decode(string, Base64.DEFAULT)) }
+        return Single.defer {
+            Single.just(Base64.decode(string, Base64.DEFAULT))
+        }
     }
 }
