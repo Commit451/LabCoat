@@ -9,22 +9,22 @@ import retrofit2.Retrofit
 import retrofit2.converter.scalars.ScalarsConverterFactory
 
 /**
- * Pulls all the GitLab stuff from the API
+ * Pulls all the GitLabService stuff from the API
  */
 object GitLabFactory {
 
     /**
-     * Create a GitLab get with the current account passed.
+     * Create a GitLabService get with the current account passed.
      * @param account the account to try and log in with
      * *
-     * @return the GitLab get
+     * @return the GitLabService configured client
      */
-    fun create(account: Account, client: OkHttpClient): GitLab {
+    fun create(account: Account, client: OkHttpClient): GitLabService {
         return create(account, client, false)
     }
 
     @VisibleForTesting
-    fun create(account: Account, client: OkHttpClient, dummyExecutor: Boolean): GitLab {
+    fun create(account: Account, client: OkHttpClient, dummyExecutor: Boolean): GitLabService {
         val retrofitBuilder = Retrofit.Builder()
                 .baseUrl(account.serverUrl.toString())
                 .client(client)
@@ -36,7 +36,7 @@ object GitLabFactory {
                 //dumb, to prevent tests from failing }
             }
         }
-        return retrofitBuilder.build().create(GitLab::class.java)
+        return retrofitBuilder.build().create(GitLabService::class.java)
     }
 }
 

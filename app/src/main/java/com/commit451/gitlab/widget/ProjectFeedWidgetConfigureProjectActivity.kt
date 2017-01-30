@@ -12,7 +12,7 @@ import butterknife.ButterKnife
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.BaseActivity
 import com.commit451.gitlab.adapter.ProjectPagerAdapter
-import com.commit451.gitlab.api.GitLab
+import com.commit451.gitlab.api.GitLabService
 import com.commit451.gitlab.api.GitLabFactory
 import com.commit451.gitlab.api.OkHttpClientFactory
 import com.commit451.gitlab.fragment.ProjectsFragment
@@ -42,7 +42,7 @@ class ProjectFeedWidgetConfigureProjectActivity : BaseActivity(), ProjectsFragme
     @BindView(R.id.pager)
     lateinit var viewPager: ViewPager
 
-    lateinit var gitLabInstance: GitLab
+    lateinit var gitLabInstance: GitLabService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,7 +63,7 @@ class ProjectFeedWidgetConfigureProjectActivity : BaseActivity(), ProjectsFragme
         finish()
     }
 
-    override fun getGitLab(): GitLab {
+    override fun getGitLab(): GitLabService {
         return gitLabInstance
     }
 }

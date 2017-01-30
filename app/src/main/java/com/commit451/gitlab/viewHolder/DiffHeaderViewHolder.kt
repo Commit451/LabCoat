@@ -60,7 +60,7 @@ class DiffHeaderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     }
 
     /**
-     * This extracts the trailing part of the textTitle as it is displayed in the GitLab web interface
+     * This extracts the trailing part of the textTitle as it is displayed in the GitLabService web interface
      * (the commit message also contains the commit textTitle)
      */
     private fun extractMessage(title: String, message: String): String {

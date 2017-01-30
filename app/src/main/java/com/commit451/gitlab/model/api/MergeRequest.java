@@ -159,7 +159,7 @@ public class MergeRequest {
     }
 
     /**
-     * Get the changes. Only not null if this merge request was retrieved via {@link com.commit451.gitlab.api.GitLab#getMergeRequestChanges(long, long)}
+     * Get the changes. Only not null if this merge request was retrieved via {@link com.commit451.gitlab.api.GitLabService#getMergeRequestChanges(long, long)}
      * @return the changes
      */
     @Nullable

@@ -8,7 +8,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.simplexml.SimpleXmlConverterFactory
 
 /**
- * Creates RSS get for GitLab
+ * Creates RSS get for GitLabService
  */
 object GitLabRssFactory {
 

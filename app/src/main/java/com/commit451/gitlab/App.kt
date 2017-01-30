@@ -30,14 +30,6 @@ open class App : Application() {
 
     companion object {
 
-        /**
-         * Register our type converters on our singleton LoganSquare get. Needs to be set here
-         * since we are fetching accounts immediately with LoganSquare
-         */
-        init {
-            LoganSquare.registerTypeConverter(Uri::class.java, UriTypeConverter())
-        }
-
         var bus: EventBus = EventBus.getDefault()
         lateinit private var instance: App
 
@@ -51,7 +43,7 @@ open class App : Application() {
     }
 
     lateinit var currentAccount: Account
-    lateinit var gitLab: GitLab
+    lateinit var gitLab: GitLabService
     lateinit var gitLabRss: GitLabRss
     lateinit var picasso: Picasso
 
@@ -64,6 +56,12 @@ open class App : Application() {
         }
         setupLeakCanary()
         instance = this
+
+        /**
+         * Register our type converters on our singleton LoganSquare get. Needs to be set here
+         * since we are fetching accounts immediately with LoganSquare
+         */
+        LoganSquare.registerTypeConverter(Uri::class.java, UriTypeConverter())
 
         Prefs.init(this)
         //So that we don't get weird half translations
