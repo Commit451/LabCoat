@@ -44,16 +44,11 @@ class GroupsActivity : BaseActivity() {
         }
     }
 
-    @BindView(R.id.drawer_layout)
-    lateinit var drawerLayout: DrawerLayout
-    @BindView(R.id.toolbar)
-    lateinit var toolbar: Toolbar
-    @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.list)
-    lateinit var listGroups: RecyclerView
-    @BindView(R.id.message_text)
-    lateinit var textMessage: TextView
+    @BindView(R.id.drawer_layout) lateinit var drawerLayout: DrawerLayout
+    @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
+    @BindView(R.id.swipe_layout) lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    @BindView(R.id.list) lateinit var listGroups: RecyclerView
+    @BindView(R.id.message_text) lateinit var textMessage: TextView
 
     lateinit var adapterGroup: GroupAdapter
     lateinit var layoutManager: DynamicGridLayoutManager
@@ -75,7 +70,7 @@ class GroupsActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Prefs.setStartingView(Prefs.STARTING_VIEW_GROUPS)
+        Prefs.startingView = Prefs.STARTING_VIEW_GROUPS
         setContentView(R.layout.activity_groups)
         ButterKnife.bind(this)
         App.bus().register(this)

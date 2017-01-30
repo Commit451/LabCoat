@@ -122,7 +122,7 @@ class ProjectActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Prefs.setStartingView(Prefs.STARTING_VIEW_PROJECTS)
+        Prefs.startingView = Prefs.STARTING_VIEW_PROJECTS
         setContentView(R.layout.activity_project)
         ButterKnife.bind(this)
         var project: Project? = Parcels.unwrap<Project>(intent.getParcelableExtra<Parcelable>(EXTRA_PROJECT))

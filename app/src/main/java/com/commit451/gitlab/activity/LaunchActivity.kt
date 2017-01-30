@@ -9,7 +9,6 @@ import android.os.Bundle
 import android.view.ViewGroup
 import butterknife.BindView
 import butterknife.ButterKnife
-import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.data.Prefs
 import com.commit451.gitlab.model.Account
@@ -56,7 +55,7 @@ class LaunchActivity : BaseActivity() {
         if (accounts.isEmpty()) {
             Navigator.navigateToLogin(this)
             finish()
-        } else if (Prefs.isRequiredDeviceAuth()) {
+        } else if (Prefs.isRequiredDeviceAuth) {
             showKeyguard()
         } else {
             if (PRIVATE_KEY_ENABLED) {

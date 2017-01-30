@@ -31,14 +31,12 @@ class ActivityActivity : BaseActivity() {
         }
     }
 
-    @BindView(R.id.drawer_layout)
-    lateinit var drawerLayout: DrawerLayout
-    @BindView(R.id.toolbar)
-    lateinit var toolbar: Toolbar
+    @BindView(R.id.drawer_layout) lateinit var drawerLayout: DrawerLayout
+    @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Prefs.setStartingView(Prefs.STARTING_VIEW_ACTIVITY)
+        Prefs.startingView = Prefs.STARTING_VIEW_ACTIVITY
         setContentView(R.layout.activity_activity)
         ButterKnife.bind(this)
 

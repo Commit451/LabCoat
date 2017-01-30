@@ -52,10 +52,12 @@ class SettingsActivity : BaseActivity() {
         }
 
         bindPrefs()
-        switchRequireAuth.setOnCheckedChangeListener { compoundButton, b -> Prefs.setRequiredDeviceAuth(b) }
+        switchRequireAuth.setOnCheckedChangeListener { compoundButton, b ->
+            Prefs.isRequiredDeviceAuth = b
+        }
     }
 
     fun bindPrefs() {
-        switchRequireAuth.isChecked = Prefs.isRequiredDeviceAuth()
+        switchRequireAuth.isChecked = Prefs.isRequiredDeviceAuth
     }
 }

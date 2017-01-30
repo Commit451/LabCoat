@@ -52,7 +52,7 @@ object Navigator {
     }
 
     fun navigateToStartingActivity(activity: Activity) {
-        val startingActivity = Prefs.getStartingView()
+        val startingActivity = Prefs.startingView
         when (startingActivity) {
             Prefs.STARTING_VIEW_PROJECTS -> navigateToProjects(activity)
             Prefs.STARTING_VIEW_GROUPS -> navigateToGroups(activity)

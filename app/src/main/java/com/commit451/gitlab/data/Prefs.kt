@@ -30,7 +30,7 @@ object Prefs {
 
     lateinit private var prefs: SharedPreferences
 
-    fun init(context : Context) {
+    fun init(context: Context) {
         if (context !is Application) {
             throw IllegalArgumentException("This should be the application context. Not the activity context")
         }
@@ -83,25 +83,16 @@ object Prefs {
         setAccounts(accounts)
     }
 
-    fun getStartingView(): Int {
-        @StartingView
-        val start = prefs.getInt(KEY_STARTING_VIEW, STARTING_VIEW_PROJECTS)
-        return start
-    }
-
-    fun setStartingView(@StartingView startingView: Int) {
-        prefs.edit()
-                .putInt(KEY_STARTING_VIEW, startingView)
+    @StartingView
+    var startingView: Int
+        get() = prefs.getInt(KEY_STARTING_VIEW, STARTING_VIEW_PROJECTS)
+        set(value) = prefs.edit()
+                .putInt(KEY_STARTING_VIEW, value)
                 .apply()
-    }
 
-    fun isRequiredDeviceAuth(): Boolean {
-        return prefs.getBoolean(KEY_REQUIRE_DEVICE_AUTH, false)
-    }
-
-    fun setRequiredDeviceAuth(require: Boolean) {
-        prefs.edit()
-                .putBoolean(KEY_REQUIRE_DEVICE_AUTH, require)
+    var isRequiredDeviceAuth: Boolean
+        get() = prefs.getBoolean(KEY_REQUIRE_DEVICE_AUTH, false)
+        set(value) = prefs.edit()
+                .putBoolean(KEY_REQUIRE_DEVICE_AUTH, value)
                 .apply()
-    }
 }
