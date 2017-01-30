@@ -1,6 +1,7 @@
 package com.commit451.gitlab
 
 import android.graphics.BitmapFactory
+import com.commit451.gitlab.api.GitLab
 import com.commit451.gitlab.api.GitLabService
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.util.FileUtil
@@ -34,7 +35,7 @@ class ApiTests {
             //for logging
             ShadowLog.stream = System.out
 
-            //LoganSquare.registerTypeConverter(Uri::class.java, NullTypeConverter())
+            GitLab.init()
 
             gitLab = TestUtil.login()
 

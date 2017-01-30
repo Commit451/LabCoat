@@ -3,12 +3,9 @@ package com.commit451.gitlab
 import android.app.Application
 import android.content.Context
 import android.content.res.Resources
-import android.net.Uri
 import android.support.annotation.VisibleForTesting
 import android.support.multidex.MultiDex
-import com.bluelinelabs.logansquare.LoganSquare
 import com.commit451.gitlab.api.*
-import com.commit451.gitlab.api.converter.UriTypeConverter
 import com.commit451.gitlab.data.Prefs
 import com.commit451.gitlab.model.Account
 import com.commit451.gitlab.util.FabricUtil
@@ -57,11 +54,7 @@ open class App : Application() {
         setupLeakCanary()
         instance = this
 
-        /**
-         * Register our type converters on our singleton LoganSquare get. Needs to be set here
-         * since we are fetching accounts immediately with LoganSquare
-         */
-        LoganSquare.registerTypeConverter(Uri::class.java, UriTypeConverter())
+        GitLab.init()
 
         Prefs.init(this)
         //So that we don't get weird half translations
