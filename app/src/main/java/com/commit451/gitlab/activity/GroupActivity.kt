@@ -28,6 +28,7 @@ import com.commit451.gitlab.model.api.Group
 import com.commit451.gitlab.model.api.GroupDetail
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.transformation.PaletteTransformation
+import com.squareup.picasso.Picasso
 import org.parceler.Parcels
 import timber.log.Timber
 
@@ -105,7 +106,7 @@ class GroupActivity : BaseActivity() {
     }
 
     fun bind(group: Group) {
-        App.get().picasso
+        Picasso.with(this)
                 .load(group.avatarUrl)
                 .transform(PaletteTransformation.instance())
                 .into(backdrop, object : PaletteTransformation.PaletteCallback(backdrop) {

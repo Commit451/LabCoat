@@ -9,10 +9,10 @@ import android.widget.PopupMenu
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
-import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.api.Member
 import com.commit451.gitlab.util.ImageUtil
+import com.squareup.picasso.Picasso
 
 /**
  * Shows a project member
@@ -48,7 +48,7 @@ class ProjectMemberViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         textUsername.text = member.username
         textAccess.text = Member.getAccessLevel(member.accessLevel)
 
-        App.get().picasso
+        Picasso.with(itemView.context)
                 .load(ImageUtil.getAvatarUrl(member, itemView.resources.getDimensionPixelSize(R.dimen.user_header_image_size)))
                 .into(image)
     }

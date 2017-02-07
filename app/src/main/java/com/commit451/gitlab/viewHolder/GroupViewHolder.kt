@@ -9,9 +9,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
-import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.api.Group
+import com.squareup.picasso.Picasso
 
 /**
  * View associated with a group
@@ -38,7 +38,7 @@ class GroupViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         textName.text = group.name
 
         if (group.avatarUrl != null && group.avatarUrl != Uri.EMPTY) {
-            App.get().picasso
+            Picasso.with(itemView.context)
                     .load(group.avatarUrl)
                     .into(image)
         }

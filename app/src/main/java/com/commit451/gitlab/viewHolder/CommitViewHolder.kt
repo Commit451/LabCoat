@@ -8,12 +8,12 @@ import android.widget.ImageView
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
-import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.api.RepositoryCommit
 import com.commit451.gitlab.transformation.CircleTransformation
 import com.commit451.gitlab.util.DateUtil
 import com.commit451.gitlab.util.ImageUtil
+import com.squareup.picasso.Picasso
 
 /**
  * Shows a commit
@@ -39,7 +39,7 @@ class CommitViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     }
 
     fun bind(commit: RepositoryCommit) {
-        App.get().picasso
+        Picasso.with(itemView.context)
                 .load(ImageUtil.getAvatarUrl(commit.authorEmail, itemView.resources.getDimensionPixelSize(R.dimen.image_size)))
                 .transform(CircleTransformation())
                 .into(image)

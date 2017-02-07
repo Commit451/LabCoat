@@ -8,11 +8,11 @@ import android.widget.ImageView
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
-import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.api.Member
 import com.commit451.gitlab.transformation.CircleTransformation
 import com.commit451.gitlab.util.ImageUtil
+import com.squareup.picasso.Picasso
 
 /**
  * Shows assignee in a spinner
@@ -41,7 +41,7 @@ class AssigneeSpinnerViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             image.setImageResource(R.drawable.ic_assign_24dp)
         } else {
             textUsername.text = user.username
-            App.get().picasso
+            Picasso.with(itemView.context)
                     .load(ImageUtil.getAvatarUrl(user, itemView.resources.getDimensionPixelSize(R.dimen.user_list_image_size)))
                     .transform(CircleTransformation())
                     .into(image)

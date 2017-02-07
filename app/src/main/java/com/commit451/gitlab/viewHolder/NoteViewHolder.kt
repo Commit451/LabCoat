@@ -18,6 +18,7 @@ import com.commit451.gitlab.util.BypassImageGetterFactory
 import com.commit451.gitlab.util.DateUtil
 import com.commit451.gitlab.util.ImageUtil
 import com.commit451.gitlab.util.InternalLinkMovementMethod
+import com.squareup.picasso.Picasso
 import com.vdurmont.emoji.EmojiParser
 
 /**
@@ -59,13 +60,13 @@ class NoteViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
 
         val getter = BypassImageGetterFactory.create(textSummary,
-                App.get().picasso,
+                Picasso.with(itemView.context),
                 App.get().getAccount().serverUrl.toString(),
                 project)
         textSummary.text = bypass.markdownToSpannable(summary, getter)
         textSummary.movementMethod = InternalLinkMovementMethod(App.get().getAccount().serverUrl)
 
-        App.get().picasso
+        Picasso.with(itemView.context)
                 .load(ImageUtil.getAvatarUrl(note.author, itemView.resources.getDimensionPixelSize(R.dimen.image_size)))
                 .transform(CircleTransformation())
                 .into(imageAvatar)

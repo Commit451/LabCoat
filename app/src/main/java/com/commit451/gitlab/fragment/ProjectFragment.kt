@@ -28,6 +28,7 @@ import com.commit451.gitlab.util.BypassImageGetterFactory
 import com.commit451.gitlab.util.InternalLinkMovementMethod
 import com.commit451.reptar.Result
 import com.jakewharton.retrofit2.adapter.rxjava2.HttpException
+import com.squareup.picasso.Picasso
 import com.vdurmont.emoji.EmojiParser
 import io.reactivex.Single
 import io.reactivex.SingleSource
@@ -221,7 +222,7 @@ class ProjectFragment : ButterKnifeFragment() {
                                     text = EmojiParser.parseToUnicode(text)
                                     textOverview.text = bypass.markdownToSpannable(text,
                                             BypassImageGetterFactory.create(textOverview,
-                                                    App.get().picasso,
+                                                    Picasso.with(context),
                                                     App.get().getAccount().serverUrl.toString(),
                                                     project!!))
                                 }

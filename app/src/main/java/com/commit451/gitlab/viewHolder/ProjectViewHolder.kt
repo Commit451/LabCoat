@@ -11,11 +11,11 @@ import android.widget.ImageView
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
-import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.transformation.CircleTransformation
 import com.github.ivbaranov.mli.MaterialLetterIcon
+import com.squareup.picasso.Picasso
 
 /**
  * Projects, yay!
@@ -46,7 +46,7 @@ class ProjectViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             iconLetter.visibility = View.GONE
 
             image.visibility = View.VISIBLE
-            App.get().picasso
+            Picasso.with(itemView.context)
                     .load(project.avatarUrl)
                     .transform(CircleTransformation())
                     .into(image)

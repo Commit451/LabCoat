@@ -9,11 +9,11 @@ import android.widget.PopupMenu
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
-import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.Account
 import com.commit451.gitlab.transformation.CircleTransformation
 import com.commit451.gitlab.util.ImageUtil
+import com.squareup.picasso.Picasso
 
 /**
  * A signed in account
@@ -55,7 +55,7 @@ class AccountViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             itemView.background = null
         }
 
-        App.get().picasso
+        Picasso.with(itemView.context)
                 .load(ImageUtil.getAvatarUrl(account.user, itemView.resources.getDimensionPixelSize(R.dimen.user_list_image_size)))
                 .transform(CircleTransformation())
                 .into(image)

@@ -8,11 +8,11 @@ import android.widget.ImageView
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
-import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.api.MergeRequest
 import com.commit451.gitlab.transformation.CircleTransformation
 import com.commit451.gitlab.util.ImageUtil
+import com.squareup.picasso.Picasso
 
 /**
  * Represents a merge request within a list
@@ -37,7 +37,7 @@ class MergeRequestViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     }
 
     fun bind(item: MergeRequest) {
-        App.get().picasso
+        Picasso.with(itemView.context)
                 .load(ImageUtil.getAvatarUrl(item.author, itemView.resources.getDimensionPixelSize(R.dimen.image_size)))
                 .transform(CircleTransformation())
                 .into(image)

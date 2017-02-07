@@ -29,6 +29,7 @@ import com.commit451.gitlab.util.IntentUtil
 import com.commit451.gitlab.view.PhysicsFlowLayout
 import com.jawnnypoo.physicslayout.Physics
 import com.jawnnypoo.physicslayout.PhysicsConfig
+import com.squareup.picasso.Picasso
 import com.wefika.flowlayout.FlowLayout
 import de.hdodenhof.circleimageview.CircleImageView
 import org.jbox2d.common.Vec2
@@ -144,7 +145,7 @@ class AboutActivity : BaseActivity() {
             physicsLayout.addView(imageView)
 
             val url = ImageUtil.getAvatarUrl(contributor.email, imageSize)
-            App.get().picasso
+            Picasso.with(this)
                     .load(url)
                     .into(imageView)
         }
