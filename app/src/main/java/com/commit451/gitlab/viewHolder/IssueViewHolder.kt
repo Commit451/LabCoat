@@ -8,12 +8,12 @@ import android.widget.ImageView
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
+import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.api.Issue
 import com.commit451.gitlab.transformation.CircleTransformation
 import com.commit451.gitlab.util.DateUtil
 import com.commit451.gitlab.util.ImageUtil
-import com.squareup.picasso.Picasso
 
 /**
  * issues, yay!
@@ -47,7 +47,7 @@ class IssueViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
 
         if (issue.assignee != null) {
-            Picasso.with(itemView.context)
+            App.get().picasso
                     .load(ImageUtil.getAvatarUrl(issue.assignee, itemView.resources.getDimensionPixelSize(R.dimen.image_size)))
                     .transform(CircleTransformation())
                     .into(image)

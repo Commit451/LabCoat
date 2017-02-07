@@ -32,7 +32,6 @@ import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.transformation.CircleTransformation
 import com.commit451.gitlab.util.ImageUtil
-import com.squareup.picasso.Picasso
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import org.greenrobot.eventbus.Subscribe
@@ -239,7 +238,7 @@ class LabCoatNavigationView : NavigationView {
             textEmail.text = user.email
         }
         val url = ImageUtil.getAvatarUrl(user, resources.getDimensionPixelSize(R.dimen.larger_image_size))
-        Picasso.with(context)
+        App.get().picasso
                 .load(url)
                 .transform(CircleTransformation())
                 .into(imageProfile)

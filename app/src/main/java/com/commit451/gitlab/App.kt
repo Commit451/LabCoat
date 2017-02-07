@@ -42,6 +42,7 @@ open class App : Application() {
     lateinit var currentAccount: Account
     lateinit var gitLab: GitLabService
     lateinit var gitLabRss: GitLabRss
+    lateinit var picasso: Picasso
 
     override fun onCreate() {
         super.onCreate()
@@ -143,6 +144,6 @@ open class App : Application() {
     }
 
     private fun initPicasso(client: OkHttpClient) {
-        Picasso.setSingletonInstance(PicassoFactory.createPicasso(client))
+        picasso = PicassoFactory.createPicasso(client)
     }
 }

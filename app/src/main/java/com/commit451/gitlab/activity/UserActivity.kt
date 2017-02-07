@@ -16,12 +16,12 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.commit451.alakazam.Alakazam
 import com.commit451.easel.Easel
+import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.fragment.FeedFragment
 import com.commit451.gitlab.model.api.UserBasic
 import com.commit451.gitlab.transformation.PaletteTransformation
 import com.commit451.gitlab.util.ImageUtil
-import com.squareup.picasso.Picasso
 import org.parceler.Parcels
 
 /**
@@ -61,7 +61,7 @@ class UserActivity : BaseActivity() {
         toolbar.title = user.username
         val url = ImageUtil.getAvatarUrl(user, resources.getDimensionPixelSize(R.dimen.user_header_image_size))
 
-        Picasso.with(this)
+        App.get().picasso
                 .load(url)
                 .transform(PaletteTransformation.instance())
                 .into(backdrop, object : PaletteTransformation.PaletteCallback(backdrop) {

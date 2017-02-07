@@ -19,7 +19,6 @@ import com.commit451.gitlab.util.BypassImageGetterFactory
 import com.commit451.gitlab.util.DateUtil
 import com.commit451.gitlab.util.ImageUtil
 import com.commit451.gitlab.util.InternalLinkMovementMethod
-import com.squareup.picasso.Picasso
 import com.vdurmont.emoji.EmojiParser
 
 /**
@@ -55,7 +54,7 @@ class IssueHeaderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         } else {
             textDescription.visibility = View.VISIBLE
             val getter = BypassImageGetterFactory.create(textDescription,
-                    Picasso.with(itemView.context),
+                    App.get().picasso,
                     App.get().getAccount().serverUrl.toString(),
                     project)
             var description = issue.description
@@ -64,7 +63,7 @@ class IssueHeaderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             textDescription.movementMethod = InternalLinkMovementMethod(App.get().getAccount().serverUrl)
         }
 
-        Picasso.with(itemView.context)
+        App.get().picasso
                 .load(ImageUtil.getAvatarUrl(issue.author, itemView.resources.getDimensionPixelSize(R.dimen.image_size)))
                 .transform(CircleTransformation())
                 .into(imageAuthor)

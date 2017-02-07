@@ -19,7 +19,6 @@ import com.commit451.gitlab.util.BypassImageGetterFactory
 import com.commit451.gitlab.util.DateUtil
 import com.commit451.gitlab.util.ImageUtil
 import com.commit451.gitlab.util.InternalLinkMovementMethod
-import com.squareup.picasso.Picasso
 import com.vdurmont.emoji.EmojiParser
 
 /**
@@ -53,13 +52,13 @@ class MergeRequestHeaderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             description = EmojiParser.parseToUnicode(description)
             textDescription.text = bypass.markdownToSpannable(description,
                     BypassImageGetterFactory.create(textDescription,
-                            Picasso.with(itemView.context),
+                            App.get().picasso,
                             App.get().getAccount().serverUrl.toString(),
                             project))
             textDescription.movementMethod = InternalLinkMovementMethod(App.get().getAccount().serverUrl)
         }
 
-        Picasso.with(itemView.context)
+        App.get().picasso
                 .load(ImageUtil.getAvatarUrl(mergeRequest.author, itemView.resources.getDimensionPixelSize(R.dimen.image_size)))
                 .transform(CircleTransformation())
                 .into(imageAuthor)

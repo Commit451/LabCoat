@@ -9,10 +9,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
+import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.rss.Entry
 import com.commit451.gitlab.transformation.CircleTransformation
-import com.squareup.picasso.Picasso
 
 /**
  * Represents the view of an item in the RSS feed
@@ -37,7 +37,7 @@ class FeedEntryViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     }
 
     fun bind(entry: Entry) {
-        Picasso.with(itemView.context)
+        App.get().picasso
                 .load(entry.thumbnail.url)
                 .transform(CircleTransformation())
                 .into(image)
