@@ -44,6 +44,7 @@
             android:name=".activity.TodosActivity"
             android:launchMode="singleTask"
             android:theme="@style/Activity.Todos" />
+
         <activity android:name=".activity.ProjectActivity" />
 
         <activity
@@ -59,9 +60,11 @@
         <activity android:name=".activity.AboutActivity" />
 
         <activity android:name=".activity.AddUserActivity" />
+
         <activity
             android:name=".activity.UserActivity"
             android:theme="@style/Activity.User" />
+
         <activity android:name=".activity.SearchActivity" />
 
         <activity
@@ -91,6 +94,7 @@
         <activity
             android:name=".activity.PickBranchOrTagActivity"
             android:theme="@style/Activity.Translucent" />
+
         <activity android:name=".activity.WebLoginActivity" />
 
         <activity

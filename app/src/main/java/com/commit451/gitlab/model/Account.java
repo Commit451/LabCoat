@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 
 import com.bluelinelabs.logansquare.annotation.JsonField;
 import com.bluelinelabs.logansquare.annotation.JsonObject;
-import com.commit451.gitlab.App;
+import com.commit451.gitlab.data.Prefs;
 import com.commit451.gitlab.model.api.UserFull;
 import com.commit451.gitlab.util.ObjectUtil;
 
@@ -25,7 +25,7 @@ public class Account implements Comparable<Account>{
 
     @NonNull
     public static List<Account> getAccounts() {
-        List<Account> accounts = new ArrayList<>(App.get().getPrefs().getAccounts());
+        List<Account> accounts = new ArrayList<>(Prefs.INSTANCE.getAccounts());
         Collections.sort(accounts);
         Collections.reverse(accounts);
         return accounts;
@@ -126,12 +126,12 @@ public class Account implements Comparable<Account>{
         }
 
         Account account = (Account) o;
-        return ObjectUtil.equals(serverUrl, account.serverUrl)
-                && ObjectUtil.equals(user, account.user);
+        return ObjectUtil.INSTANCE.equals(serverUrl, account.serverUrl)
+                && ObjectUtil.INSTANCE.equals(user, account.user);
     }
 
     @Override
     public int hashCode() {
-        return ObjectUtil.hash(serverUrl, user);
+        return ObjectUtil.INSTANCE.hash(serverUrl, user);
     }
 }

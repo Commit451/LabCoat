@@ -31,12 +31,12 @@ public class Branch {
         }
 
         Branch branch = (Branch) o;
-        return ObjectUtil.equals(name, branch.name);
+        return ObjectUtil.INSTANCE.equals(name, branch.name);
     }
 
     @Override
     public int hashCode() {
-        return ObjectUtil.hash(name);
+        return ObjectUtil.INSTANCE.hash(name);
     }
 
     @Override

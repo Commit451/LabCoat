@@ -54,12 +54,12 @@ public class Contributor {
         }
 
         Contributor contributor = (Contributor) o;
-        return ObjectUtil.equals(name, contributor.name) && ObjectUtil.equals(email, contributor.email);
+        return ObjectUtil.INSTANCE.equals(name, contributor.name) && ObjectUtil.INSTANCE.equals(email, contributor.email);
     }
 
     @Override
     public int hashCode() {
-        return ObjectUtil.hash(name, email);
+        return ObjectUtil.INSTANCE.hash(name, email);
     }
 
     public static List<Contributor> groupContributors(List<Contributor> contributors) {
