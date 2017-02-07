@@ -16,12 +16,11 @@ import com.commit451.gitlab.activity.ProjectActivity
 import com.commit451.gitlab.adapter.CommitAdapter
 import com.commit451.gitlab.adapter.DividerItemDecoration
 import com.commit451.gitlab.event.ProjectReloadEvent
+import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.model.api.RepositoryCommit
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomSingleObserver
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import org.greenrobot.eventbus.Subscribe
 import timber.log.Timber
 
@@ -34,12 +33,9 @@ class CommitsFragment : ButterKnifeFragment() {
         }
     }
 
-    @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.list)
-    lateinit var listCommits: RecyclerView
-    @BindView(R.id.message_text)
-    lateinit var textMessage: TextView
+    @BindView(R.id.swipe_layout) lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    @BindView(R.id.list) lateinit var listCommits: RecyclerView
+    @BindView(R.id.message_text) lateinit var textMessage: TextView
 
     lateinit var layoutManagerCommits: LinearLayoutManager
     lateinit var adapterCommits: CommitAdapter
@@ -113,9 +109,7 @@ class CommitsFragment : ButterKnifeFragment() {
         loading = true
 
         App.get().gitLab.getCommits(project!!.id, branchName!!, page)
-                .compose(this.bindToLifecycle<List<RepositoryCommit>>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .setup(bindToLifecycle())
                 .subscribe(object : CustomSingleObserver<List<RepositoryCommit>>() {
 
                     override fun error(t: Throwable) {
@@ -160,9 +154,7 @@ class CommitsFragment : ButterKnifeFragment() {
 
         Timber.d("loadMore called for %s", page)
         App.get().gitLab.getCommits(project!!.id, branchName!!, page)
-                .compose(this.bindToLifecycle<List<RepositoryCommit>>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .setup(bindToLifecycle())
                 .subscribe(object : CustomSingleObserver<List<RepositoryCommit>>() {
 
                     override fun error(e: Throwable) {

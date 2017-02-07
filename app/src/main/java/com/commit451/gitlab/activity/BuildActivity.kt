@@ -55,16 +55,11 @@ class BuildActivity : BaseActivity() {
         }
     }
 
-    @BindView(R.id.root)
-    lateinit var root: ViewGroup
-    @BindView(R.id.toolbar)
-    lateinit var toolbar: Toolbar
-    @BindView(R.id.tabs)
-    lateinit var tabLayout: TabLayout
-    @BindView(R.id.pager)
-    lateinit var viewPager: ViewPager
-    @BindView(R.id.progress)
-    lateinit var progress: View
+    @BindView(R.id.root) lateinit var root: ViewGroup
+    @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
+    @BindView(R.id.tabs) lateinit var tabLayout: TabLayout
+    @BindView(R.id.pager) lateinit var viewPager: ViewPager
+    @BindView(R.id.progress) lateinit var progress: View
 
     lateinit var menuItemDownload: MenuItem
 

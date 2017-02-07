@@ -22,6 +22,7 @@ import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.ProjectSectionsPagerAdapter
 import com.commit451.gitlab.data.Prefs
 import com.commit451.gitlab.event.ProjectReloadEvent
+import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.fragment.BaseFragment
 import com.commit451.gitlab.model.Ref
 import com.commit451.gitlab.model.api.Project
@@ -29,8 +30,6 @@ import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.util.IntentUtil
 import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import org.parceler.Parcels
 import timber.log.Timber
 
@@ -68,16 +67,11 @@ class ProjectActivity : BaseActivity() {
         }
     }
 
-    @BindView(R.id.root)
-    lateinit var root: ViewGroup
-    @BindView(R.id.toolbar)
-    lateinit var toolbar: Toolbar
-    @BindView(R.id.tabs)
-    lateinit var tabLayout: TabLayout
-    @BindView(R.id.progress)
-    lateinit var progress: View
-    @BindView(R.id.pager)
-    lateinit var viewPager: ViewPager
+    @BindView(R.id.root) lateinit var root: ViewGroup
+    @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
+    @BindView(R.id.tabs) lateinit var tabLayout: TabLayout
+    @BindView(R.id.progress) lateinit var progress: View
+    @BindView(R.id.pager) lateinit var viewPager: ViewPager
 
     var project: Project? = null
         internal set
@@ -194,9 +188,7 @@ class ProjectActivity : BaseActivity() {
     }
 
     fun loadProject(observable: Single<Project>) {
-        observable.compose(this.bindToLifecycle<Project>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+        observable.setup(bindToLifecycle())
                 .subscribe(object : CustomSingleObserver<Project>() {
 
                     override fun error(t: Throwable) {

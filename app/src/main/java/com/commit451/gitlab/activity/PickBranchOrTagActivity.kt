@@ -36,10 +36,8 @@ class PickBranchOrTagActivity : AppCompatActivity() {
         }
     }
 
-    @BindView(R.id.tabs)
-    lateinit var tabLayout: TabLayout
-    @BindView(R.id.pager)
-    lateinit var viewPager: ViewPager
+    @BindView(R.id.tabs) lateinit var tabLayout: TabLayout
+    @BindView(R.id.pager) lateinit var viewPager: ViewPager
 
     @OnClick(R.id.root)
     fun onRootClicked() {

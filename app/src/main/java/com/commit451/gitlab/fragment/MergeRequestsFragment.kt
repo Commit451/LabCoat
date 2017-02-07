@@ -20,15 +20,13 @@ import com.commit451.gitlab.adapter.DividerItemDecoration
 import com.commit451.gitlab.adapter.MergeRequestAdapter
 import com.commit451.gitlab.event.MergeRequestChangedEvent
 import com.commit451.gitlab.event.ProjectReloadEvent
+import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.MergeRequest
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import org.greenrobot.eventbus.Subscribe
-import retrofit2.Response
 import timber.log.Timber
 
 class MergeRequestsFragment : ButterKnifeFragment() {
@@ -40,14 +38,10 @@ class MergeRequestsFragment : ButterKnifeFragment() {
         }
     }
 
-    @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.list)
-    lateinit var listMergeRequests: RecyclerView
-    @BindView(R.id.message_text)
-    lateinit var textMessage: TextView
-    @BindView(R.id.state_spinner)
-    lateinit var spinnerState: Spinner
+    @BindView(R.id.swipe_layout) lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    @BindView(R.id.list) lateinit var listMergeRequests: RecyclerView
+    @BindView(R.id.message_text) lateinit var textMessage: TextView
+    @BindView(R.id.state_spinner) lateinit var spinnerState: Spinner
 
     lateinit var adapterMergeRequests: MergeRequestAdapter
     lateinit var layoutManagerMergeRequests: LinearLayoutManager
@@ -136,9 +130,7 @@ class MergeRequestsFragment : ButterKnifeFragment() {
         nextPageUrl = null
         loading = true
         App.get().gitLab.getMergeRequests(project!!.id, state)
-                .compose(this.bindToLifecycle<Response<List<MergeRequest>>>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .setup(bindToLifecycle())
                 .subscribe(object : CustomResponseSingleObserver<List<MergeRequest>>() {
 
                     override fun error(e: Throwable) {
@@ -176,9 +168,7 @@ class MergeRequestsFragment : ButterKnifeFragment() {
         loading = true
         Timber.d("loadMore called for " + nextPageUrl!!)
         App.get().gitLab.getMergeRequests(nextPageUrl!!.toString(), state)
-                .compose(this.bindToLifecycle<Response<List<MergeRequest>>>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .setup(bindToLifecycle())
                 .subscribe(object : CustomResponseSingleObserver<List<MergeRequest>>() {
 
                     override fun error(e: Throwable) {

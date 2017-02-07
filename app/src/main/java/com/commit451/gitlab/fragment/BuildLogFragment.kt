@@ -12,11 +12,10 @@ import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.event.BuildChangedEvent
 import com.commit451.gitlab.extension.getRawBuildUrl
+import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.Build
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.rx.CustomSingleObserver
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import org.greenrobot.eventbus.Subscribe
 import org.parceler.Parcels
 import timber.log.Timber
@@ -41,12 +40,9 @@ class BuildLogFragment : ButterKnifeFragment() {
         }
     }
 
-    @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.log)
-    lateinit var textLog: TextView
-    @BindView(R.id.message_text)
-    lateinit var textMessage: TextView
+    @BindView(R.id.swipe_layout) lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    @BindView(R.id.log) lateinit var textLog: TextView
+    @BindView(R.id.message_text) lateinit var textMessage: TextView
 
     lateinit var project: Project
     lateinit var build: Build
@@ -84,9 +80,7 @@ class BuildLogFragment : ButterKnifeFragment() {
         val url = build.getRawBuildUrl(App.get().getAccount().serverUrl, project)
 
         App.get().gitLab.getRaw(url)
-                .compose(this.bindToLifecycle<String>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .setup(bindToLifecycle())
                 .subscribe(object : CustomSingleObserver<String>() {
 
                     override fun error(t: Throwable) {

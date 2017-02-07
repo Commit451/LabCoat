@@ -32,6 +32,7 @@ import java.nio.charset.Charset
 
 import butterknife.BindView
 import butterknife.ButterKnife
+import com.commit451.gitlab.extension.setup
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
@@ -72,14 +73,10 @@ class FileActivity : BaseActivity() {
         }
     }
 
-    @BindView(R.id.root)
-    lateinit var root: ViewGroup
-    @BindView(R.id.toolbar)
-    lateinit var toolbar: Toolbar
-    @BindView(R.id.file_blob)
-    lateinit var webViewFileBlob: WebView
-    @BindView(R.id.progress)
-    lateinit var progress: View
+    @BindView(R.id.root) lateinit var root: ViewGroup
+    @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
+    @BindView(R.id.file_blob) lateinit var webViewFileBlob: WebView
+    @BindView(R.id.progress) lateinit var progress: View
 
     var projectId: Long = 0
     var path: String? = null
@@ -123,9 +120,7 @@ class FileActivity : BaseActivity() {
     private fun loadData() {
         progress.visibility = View.VISIBLE
         App.get().gitLab.getFile(projectId, path!!, ref!!)
-                .compose(this.bindToLifecycle<RepositoryFile>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .setup(bindToLifecycle())
                 .subscribe(object : CustomSingleObserver<RepositoryFile>() {
 
                     override fun error(t: Throwable) {
@@ -156,9 +151,7 @@ class FileActivity : BaseActivity() {
 
     private fun loadBlob(repositoryFile: RepositoryFile) {
         DecodeObservableFactory.newDecode(repositoryFile.content)
-                .compose(this.bindToLifecycle<ByteArray>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .setup(bindToLifecycle())
                 .subscribe(object : CustomSingleObserver<ByteArray>() {
 
                     override fun error(t: Throwable) {

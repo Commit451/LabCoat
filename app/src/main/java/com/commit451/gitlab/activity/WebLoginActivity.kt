@@ -41,12 +41,9 @@ class WebLoginActivity : BaseActivity() {
         }
     }
 
-    @BindView(R.id.toolbar)
-    lateinit var toolbar: Toolbar
-    @BindView(R.id.progress)
-    lateinit var progress: MaterialProgressBar
-    @BindView(R.id.webview)
-    lateinit var webView: WebView
+    @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
+    @BindView(R.id.progress) lateinit var progress: MaterialProgressBar
+    @BindView(R.id.webview) lateinit var webView: WebView
 
     lateinit var url: String
 

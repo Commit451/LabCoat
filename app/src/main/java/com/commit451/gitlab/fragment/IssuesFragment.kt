@@ -24,14 +24,13 @@ import com.commit451.gitlab.event.IssueChangedEvent
 import com.commit451.gitlab.event.IssueCreatedEvent
 import com.commit451.gitlab.event.IssueReloadEvent
 import com.commit451.gitlab.event.ProjectReloadEvent
+import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.Issue
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import org.greenrobot.eventbus.Subscribe
 import retrofit2.Response
 import timber.log.Timber
@@ -45,16 +44,11 @@ class IssuesFragment : ButterKnifeFragment() {
         }
     }
 
-    @BindView(R.id.root)
-    lateinit var root: ViewGroup
-    @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.list)
-    lateinit var listIssues: RecyclerView
-    @BindView(R.id.message_text)
-    lateinit var textMessage: TextView
-    @BindView(R.id.issue_spinner)
-    lateinit var spinnerIssue: Spinner
+    @BindView(R.id.root) lateinit var root: ViewGroup
+    @BindView(R.id.swipe_layout) lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    @BindView(R.id.list) lateinit var listIssues: RecyclerView
+    @BindView(R.id.message_text) lateinit var textMessage: TextView
+    @BindView(R.id.issue_spinner) lateinit var spinnerIssue: Spinner
 
     lateinit var adapterIssue: IssueAdapter
     lateinit var layoutManagerIssues: LinearLayoutManager
@@ -126,7 +120,6 @@ class IssuesFragment : ButterKnifeFragment() {
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
-
             }
         }
 
@@ -146,21 +139,12 @@ class IssuesFragment : ButterKnifeFragment() {
     }
 
     override fun loadData() {
-        if (view == null) {
-            return
-        }
-        if (project == null) {
-            swipeRefreshLayout.isRefreshing = false
-            return
-        }
         textMessage.visibility = View.GONE
         swipeRefreshLayout.isRefreshing = true
         nextPageUrl = null
         loading = true
         App.get().gitLab.getIssues(project!!.id, state)
-                .compose(this.bindToLifecycle<Response<List<Issue>>>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .setup(bindToLifecycle())
                 .subscribe(object : CustomResponseSingleObserver<List<Issue>>() {
 
                     override fun error(e: Throwable) {
@@ -188,10 +172,6 @@ class IssuesFragment : ButterKnifeFragment() {
     }
 
     fun loadMore() {
-        if (view == null) {
-            return
-        }
-
         if (nextPageUrl == null) {
             return
         }
@@ -201,9 +181,7 @@ class IssuesFragment : ButterKnifeFragment() {
 
         Timber.d("loadMore called for " + nextPageUrl!!)
         App.get().gitLab.getIssues(nextPageUrl!!.toString())
-                .compose(this.bindToLifecycle<Response<List<Issue>>>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .setup(bindToLifecycle())
                 .subscribe(object : CustomSingleObserver<Response<List<Issue>>>() {
 
                     override fun error(e: Throwable) {
@@ -222,13 +200,13 @@ class IssuesFragment : ButterKnifeFragment() {
     }
 
     @Subscribe
-    fun onProjectReload(event: ProjectReloadEvent) {
+    fun onEvent(event: ProjectReloadEvent) {
         project = event.project
         loadData()
     }
 
     @Subscribe
-    fun onIssueCreated(event: IssueCreatedEvent) {
+    fun onEvent(event: IssueCreatedEvent) {
         adapterIssue.addIssue(event.issue)
         if (view != null) {
             textMessage.visibility = View.GONE
@@ -237,12 +215,12 @@ class IssuesFragment : ButterKnifeFragment() {
     }
 
     @Subscribe
-    fun onIssueChanged(event: IssueChangedEvent) {
+    fun onEvent(event: IssueChangedEvent) {
         adapterIssue.updateIssue(event.issue)
     }
 
     @Subscribe
-    fun onIssueReload(event: IssueReloadEvent) {
+    fun onEvent(event: IssueReloadEvent) {
         loadData()
     }
 }

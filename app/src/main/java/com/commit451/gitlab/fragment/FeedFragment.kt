@@ -14,13 +14,12 @@ import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.DividerItemDecoration
 import com.commit451.gitlab.adapter.FeedAdapter
+import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.rss.Entry
 import com.commit451.gitlab.model.rss.Feed
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.novoda.simplechromecustomtabs.SimpleChromeCustomTabs
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 
 /**
@@ -42,12 +41,9 @@ class FeedFragment : ButterKnifeFragment() {
         }
     }
 
-    @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.list)
-    lateinit var listEntries: RecyclerView
-    @BindView(R.id.message_text)
-    lateinit var textMessage: TextView
+    @BindView(R.id.swipe_layout) lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    @BindView(R.id.list) lateinit var listEntries: RecyclerView
+    @BindView(R.id.message_text) lateinit var textMessage: TextView
 
     lateinit var adapterFeed: FeedAdapter
 
@@ -103,9 +99,7 @@ class FeedFragment : ButterKnifeFragment() {
         textMessage.visibility = View.GONE
         swipeRefreshLayout.isRefreshing = true
         App.get().gitLabRss.getFeed(feedUrl!!.toString())
-                .compose(this.bindToLifecycle<Feed>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .setup(bindToLifecycle())
                 .subscribe(object : CustomSingleObserver<Feed>() {
                     override fun success(feed: Feed) {
                         swipeRefreshLayout.isRefreshing = false

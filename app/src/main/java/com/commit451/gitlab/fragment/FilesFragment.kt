@@ -22,13 +22,12 @@ import com.commit451.gitlab.adapter.BreadcrumbAdapter
 import com.commit451.gitlab.adapter.DividerItemDecoration
 import com.commit451.gitlab.adapter.FileAdapter
 import com.commit451.gitlab.event.ProjectReloadEvent
+import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.model.api.RepositoryTreeObject
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.util.IntentUtil
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import org.greenrobot.eventbus.Subscribe
 import timber.log.Timber
 import java.util.*
@@ -42,16 +41,11 @@ class FilesFragment : ButterKnifeFragment() {
         }
     }
 
-    @BindView(R.id.root)
-    lateinit var root: View
-    @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.list)
-    lateinit var list: RecyclerView
-    @BindView(R.id.breadcrumb)
-    lateinit var listBreadcrumbs: RecyclerView
-    @BindView(R.id.message_text)
-    lateinit var textMessage: TextView
+    @BindView(R.id.root) lateinit var root: View
+    @BindView(R.id.swipe_layout) lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    @BindView(R.id.list) lateinit var list: RecyclerView
+    @BindView(R.id.breadcrumb) lateinit var listBreadcrumbs: RecyclerView
+    @BindView(R.id.message_text) lateinit var textMessage: TextView
 
     lateinit var adapterFiles: FileAdapter
     lateinit var adapterBreadcrumb: BreadcrumbAdapter
@@ -152,9 +146,7 @@ class FilesFragment : ButterKnifeFragment() {
         swipeRefreshLayout.isRefreshing = true
 
         App.get().gitLab.getTree(project!!.id, branchName!!, newPath)
-                .compose(this.bindToLifecycle<List<RepositoryTreeObject>>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .setup(bindToLifecycle())
                 .subscribe(object : CustomSingleObserver<List<RepositoryTreeObject>>() {
 
                     override fun error(e: Throwable) {

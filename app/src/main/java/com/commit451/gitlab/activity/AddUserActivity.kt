@@ -21,6 +21,7 @@ import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.UserAdapter
 import com.commit451.gitlab.dialog.AccessDialog
 import com.commit451.gitlab.event.MemberAddedEvent
+import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.Group
 import com.commit451.gitlab.model.api.Member
 import com.commit451.gitlab.model.api.UserBasic
@@ -30,8 +31,6 @@ import com.commit451.gitlab.viewHolder.UserViewHolder
 import com.commit451.teleprinter.Teleprinter
 import com.jakewharton.retrofit2.adapter.rxjava2.HttpException
 import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import org.parceler.Parcels
 import retrofit2.Response
 import timber.log.Timber
@@ -59,18 +58,12 @@ class AddUserActivity : MorphActivity() {
         }
     }
 
-    @BindView(R.id.root)
-    lateinit var root: ViewGroup
-    @BindView(R.id.toolbar)
-    lateinit var toolbar: Toolbar
-    @BindView(R.id.search)
-    lateinit var textSearch: EditText
-    @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.list)
-    lateinit var list: RecyclerView
-    @BindView(R.id.clear)
-    lateinit var buttonClear: View
+    @BindView(R.id.root) lateinit var root: ViewGroup
+    @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
+    @BindView(R.id.search) lateinit var textSearch: EditText
+    @BindView(R.id.swipe_layout) lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    @BindView(R.id.list) lateinit var list: RecyclerView
+    @BindView(R.id.clear) lateinit var buttonClear: View
 
     lateinit var layoutManager: GridLayoutManager
     lateinit var adapter: UserAdapter
@@ -165,9 +158,7 @@ class AddUserActivity : MorphActivity() {
         swipeRefreshLayout.isRefreshing = true
         loading = true
         App.get().gitLab.searchUsers(query!!)
-                .compose(this.bindToLifecycle<Response<List<UserBasic>>>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .setup(bindToLifecycle())
                 .subscribe(object : CustomResponseSingleObserver<List<UserBasic>>() {
 
                     override fun error(t: Throwable) {
@@ -193,9 +184,7 @@ class AddUserActivity : MorphActivity() {
         adapter.setLoading(true)
         Timber.d("loadMore " + nextPageUrl!!.toString() + " " + query)
         App.get().gitLab.searchUsers(nextPageUrl!!.toString(), query!!)
-                .compose(this.bindToLifecycle<Response<List<UserBasic>>>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .setup(bindToLifecycle())
                 .subscribe(object : CustomResponseSingleObserver<List<UserBasic>>() {
 
                     override fun error(t: Throwable) {
@@ -213,9 +202,7 @@ class AddUserActivity : MorphActivity() {
     }
 
     private fun add(observable: Single<Response<Member>>) {
-        observable.subscribeOn(Schedulers.io())
-                .compose(this.bindToLifecycle<Response<Member>>())
-                .observeOn(AndroidSchedulers.mainThread())
+        observable.setup(bindToLifecycle())
                 .subscribe(object : CustomResponseSingleObserver<Member>() {
 
                     override fun error(t: Throwable) {

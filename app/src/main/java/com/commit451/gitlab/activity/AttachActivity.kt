@@ -14,13 +14,12 @@ import butterknife.ButterKnife
 import butterknife.OnClick
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
+import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.FileUploadResponse
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.rx.FileObservableFactory
 import io.codetail.animation.ViewAnimationUtils
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import org.parceler.Parcels
 import pl.aprilapps.easyphotopicker.DefaultCallback
 import pl.aprilapps.easyphotopicker.EasyImage
@@ -45,12 +44,9 @@ class AttachActivity : BaseActivity() {
         }
     }
 
-    @BindView(R.id.root_buttons)
-    lateinit var rootButtons: ViewGroup
-    @BindView(R.id.progress)
-    lateinit var progress: View
-    @BindView(R.id.attachCard)
-    lateinit var card: View
+    @BindView(R.id.root_buttons) lateinit var rootButtons: ViewGroup
+    @BindView(R.id.progress) lateinit var progress: View
+    @BindView(R.id.attachCard) lateinit var card: View
 
     var project: Project?= null
 
@@ -126,9 +122,7 @@ class AttachActivity : BaseActivity() {
         rootButtons.visibility = View.INVISIBLE
         FileObservableFactory.toPart(photo)
                 .flatMap { part -> App.get().gitLab.uploadFile(project!!.id, part) }
-                .compose(this.bindToLifecycle<FileUploadResponse>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .setup(bindToLifecycle())
                 .subscribe(object : CustomSingleObserver<FileUploadResponse>() {
 
                     override fun success(fileUploadResponse: FileUploadResponse) {

@@ -10,11 +10,10 @@ import butterknife.ButterKnife
 import butterknife.OnClick
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
+import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.*
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomSingleObserver
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 
 
@@ -75,8 +74,7 @@ class LoadSomeInfoActivity : BaseActivity() {
         }
     }
 
-    @BindView(R.id.progress)
-    lateinit var progress: View
+    @BindView(R.id.progress) lateinit var progress: View
 
     private var loadType: Int = 0
 
@@ -100,8 +98,7 @@ class LoadSomeInfoActivity : BaseActivity() {
                 val namespace = intent.getStringExtra(EXTRA_PROJECT_NAMESPACE)
                 val project = intent.getStringExtra(EXTRA_PROJECT_NAME)
                 App.get().gitLab.getProject(namespace, project)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
+                        .setup(bindToLifecycle())
                         .subscribe(object : CustomSingleObserver<Project>() {
 
                             override fun error(t: Throwable) {
@@ -128,9 +125,7 @@ class LoadSomeInfoActivity : BaseActivity() {
             LOAD_TYPE_DIFF -> {
                 val sha = intent.getStringExtra(EXTRA_COMMIT_SHA)
                 App.get().gitLab.getCommit(response.id, sha)
-                        .compose(this@LoadSomeInfoActivity.bindToLifecycle<RepositoryCommit>())
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
+                        .setup(bindToLifecycle())
                         .subscribe(object : CustomSingleObserver<RepositoryCommit>() {
 
                             override fun error(t: Throwable) {
@@ -148,9 +143,7 @@ class LoadSomeInfoActivity : BaseActivity() {
             LOAD_TYPE_MERGE_REQUEST -> {
                 val mergeRequestId = intent.getStringExtra(EXTRA_MERGE_REQUEST)
                 App.get().gitLab.getMergeRequestsByIid(response.id, mergeRequestId)
-                        .compose(this@LoadSomeInfoActivity.bindToLifecycle<List<MergeRequest>>())
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
+                        .setup(bindToLifecycle())
                         .subscribe(object : CustomSingleObserver<List<MergeRequest>>() {
 
                             override fun error(t: Throwable) {
@@ -172,9 +165,7 @@ class LoadSomeInfoActivity : BaseActivity() {
             LOAD_TYPE_BUILD -> {
                 val buildId = intent.getLongExtra(EXTRA_BUILD_ID, -1)
                 App.get().gitLab.getBuild(response.id, buildId)
-                        .compose(this@LoadSomeInfoActivity.bindToLifecycle<Build>())
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
+                        .setup(bindToLifecycle())
                         .subscribe(object : CustomSingleObserver<Build>() {
 
                             override fun error(t: Throwable) {
@@ -192,9 +183,7 @@ class LoadSomeInfoActivity : BaseActivity() {
             LOAD_TYPE_MILESTONE -> {
                 val milestoneId = intent.getStringExtra(EXTRA_MILESTONE_ID)
                 App.get().gitLab.getMilestonesByIid(response.id, milestoneId)
-                        .compose(this@LoadSomeInfoActivity.bindToLifecycle<List<Milestone>>())
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
+                        .setup(bindToLifecycle())
                         .subscribe(object : CustomSingleObserver<List<Milestone>>() {
 
                             override fun error(t: Throwable) {

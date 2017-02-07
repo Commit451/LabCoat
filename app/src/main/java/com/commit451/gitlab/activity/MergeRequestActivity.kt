@@ -16,14 +16,12 @@ import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.MergeRequestSectionsPagerAdapter
 import com.commit451.gitlab.event.MergeRequestChangedEvent
+import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.MergeRequest
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.jakewharton.retrofit2.adapter.rxjava2.HttpException
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import org.parceler.Parcels
-import retrofit2.Response
 import timber.log.Timber
 
 /**
@@ -44,16 +42,11 @@ class MergeRequestActivity : BaseActivity() {
         }
     }
 
-    @BindView(R.id.root)
-    lateinit var root: ViewGroup
-    @BindView(R.id.toolbar)
-    lateinit var toolbar: Toolbar
-    @BindView(R.id.tabs)
-    lateinit var tabLayout: TabLayout
-    @BindView(R.id.pager)
-    lateinit var viewPager: ViewPager
-    @BindView(R.id.progress)
-    lateinit var progress: View
+    @BindView(R.id.root) lateinit var root: ViewGroup
+    @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
+    @BindView(R.id.tabs) lateinit var tabLayout: TabLayout
+    @BindView(R.id.pager) lateinit var viewPager: ViewPager
+    @BindView(R.id.progress) lateinit var progress: View
 
     lateinit var project: Project
     lateinit var mergeRequest: MergeRequest
@@ -95,9 +88,7 @@ class MergeRequestActivity : BaseActivity() {
     fun merge() {
         progress.visibility = View.VISIBLE
         App.get().gitLab.acceptMergeRequest(project.id, mergeRequest.id)
-                .compose(this@MergeRequestActivity.bindToLifecycle<Response<MergeRequest>>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .setup(bindToLifecycle())
                 .subscribe(object : CustomResponseSingleObserver<MergeRequest>() {
 
                     override fun error(e: Throwable) {

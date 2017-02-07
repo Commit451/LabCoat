@@ -22,6 +22,7 @@ import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.DividerItemDecoration
 import com.commit451.gitlab.adapter.MilestoneIssueAdapter
 import com.commit451.gitlab.event.MilestoneChangedEvent
+import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.Issue
 import com.commit451.gitlab.model.api.Milestone
 import com.commit451.gitlab.model.api.Project
@@ -30,11 +31,8 @@ import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
 import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import org.greenrobot.eventbus.Subscribe
 import org.parceler.Parcels
-import retrofit2.Response
 import timber.log.Timber
 
 class MilestoneActivity : BaseActivity() {
@@ -52,18 +50,12 @@ class MilestoneActivity : BaseActivity() {
         }
     }
 
-    @BindView(R.id.root)
-    lateinit var root: View
-    @BindView(R.id.toolbar)
-    lateinit var toolbar: Toolbar
-    @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.list)
-    lateinit var listIssues: RecyclerView
-    @BindView(R.id.message_text)
-    lateinit var textMessage: TextView
-    @BindView(R.id.progress)
-    lateinit var progress: View
+    @BindView(R.id.root) lateinit var root: View
+    @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
+    @BindView(R.id.swipe_layout) lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    @BindView(R.id.list) lateinit var listIssues: RecyclerView
+    @BindView(R.id.message_text) lateinit var textMessage: TextView
+    @BindView(R.id.progress) lateinit var progress: View
 
     lateinit var adapterMilestoneIssues: MilestoneIssueAdapter
     lateinit var layoutManagerIssues: LinearLayoutManager
@@ -151,9 +143,7 @@ class MilestoneActivity : BaseActivity() {
         loading = true
         swipeRefreshLayout.isRefreshing = true
         App.get().gitLab.getMilestoneIssues(project.id, milestone.id)
-                .compose(this.bindToLifecycle<Response<List<Issue>>>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .setup(bindToLifecycle())
                 .subscribe(object : CustomResponseSingleObserver<List<Issue>>() {
 
                     override fun error(t: Throwable) {
@@ -193,9 +183,7 @@ class MilestoneActivity : BaseActivity() {
 
         Timber.d("loadMore called for %s", nextPageUrl)
         App.get().gitLab.getMilestoneIssues(nextPageUrl!!.toString())
-                .compose(this.bindToLifecycle<Response<List<Issue>>>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .setup(bindToLifecycle())
                 .subscribe(object : CustomResponseSingleObserver<List<Issue>>() {
 
                     override fun error(e: Throwable) {
@@ -221,9 +209,7 @@ class MilestoneActivity : BaseActivity() {
     }
 
     fun updateMilestoneStatus(observable: Single<Milestone>) {
-        observable.compose(this.bindToLifecycle<Milestone>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+        observable.setup(bindToLifecycle())
                 .subscribe(object : CustomSingleObserver<Milestone>() {
 
                     override fun error(e: Throwable) {
@@ -247,7 +233,7 @@ class MilestoneActivity : BaseActivity() {
     }
 
     @Subscribe
-    fun onMilestoneChanged(event: MilestoneChangedEvent) {
+    fun onEvent(event: MilestoneChangedEvent) {
         if (milestone.id == event.milestone.id) {
             milestone = event.milestone
             bind(milestone)

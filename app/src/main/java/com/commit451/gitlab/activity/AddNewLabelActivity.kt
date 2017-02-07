@@ -49,18 +49,12 @@ class AddNewLabelActivity : BaseActivity(), ColorChooserDialog.ColorCallback {
         }
     }
 
-    @BindView(R.id.root)
-    lateinit var root: ViewGroup
-    @BindView(R.id.toolbar)
-    lateinit var toolbar: Toolbar
-    @BindView(R.id.title_text_input_layout)
-    lateinit var textInputLayoutTitle: TextInputLayout
-    @BindView(R.id.description)
-    lateinit var textDescription: TextView
-    @BindView(R.id.image_color)
-    lateinit var imageColor: ImageView
-    @BindView(R.id.progress)
-    lateinit var progress: View
+    @BindView(R.id.root) lateinit var root: ViewGroup
+    @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
+    @BindView(R.id.title_text_input_layout) lateinit var textInputLayoutTitle: TextInputLayout
+    @BindView(R.id.description) lateinit var textDescription: TextView
+    @BindView(R.id.image_color) lateinit var imageColor: ImageView
+    @BindView(R.id.progress) lateinit var progress: View
 
     var chosenColor = -1
 
@@ -95,6 +89,9 @@ class AddNewLabelActivity : BaseActivity(), ColorChooserDialog.ColorCallback {
     override fun onColorSelection(dialog: ColorChooserDialog, @ColorInt selectedColor: Int) {
         chosenColor = selectedColor
         imageColor.setImageDrawable(ColorDrawable(selectedColor))
+    }
+
+    override fun onColorChooserDismissed(dialog: ColorChooserDialog) {
     }
 
     private val projectId: Long

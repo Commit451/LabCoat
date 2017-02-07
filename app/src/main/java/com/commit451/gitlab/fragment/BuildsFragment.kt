@@ -21,15 +21,13 @@ import com.commit451.gitlab.adapter.BuildAdapter
 import com.commit451.gitlab.adapter.DividerItemDecoration
 import com.commit451.gitlab.event.BuildChangedEvent
 import com.commit451.gitlab.event.ProjectReloadEvent
+import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.Build
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import org.greenrobot.eventbus.Subscribe
-import retrofit2.Response
 import timber.log.Timber
 
 /**
@@ -44,16 +42,11 @@ class BuildsFragment : ButterKnifeFragment() {
         }
     }
 
-    @BindView(R.id.root)
-    lateinit var root: ViewGroup
-    @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.list)
-    lateinit var listBuilds: RecyclerView
-    @BindView(R.id.message_text)
-    lateinit var textMessage: TextView
-    @BindView(R.id.issue_spinner)
-    lateinit var spinnerIssue: Spinner
+    @BindView(R.id.root) lateinit var root: ViewGroup
+    @BindView(R.id.swipe_layout) lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    @BindView(R.id.list) lateinit var listBuilds: RecyclerView
+    @BindView(R.id.message_text) lateinit var textMessage: TextView
+    @BindView(R.id.issue_spinner) lateinit var spinnerIssue: Spinner
 
     lateinit var adapterBuilds: BuildAdapter
     lateinit var layoutManagerBuilds: LinearLayoutManager
@@ -135,21 +128,12 @@ class BuildsFragment : ButterKnifeFragment() {
     }
 
     override fun loadData() {
-        if (view == null) {
-            return
-        }
-        if (project == null) {
-            swipeRefreshLayout.isRefreshing = false
-            return
-        }
         textMessage.visibility = View.GONE
         swipeRefreshLayout.isRefreshing = true
         nextPageUrl = null
         loading = true
         App.get().gitLab.getBuilds(project!!.id, scope)
-                .compose(this.bindToLifecycle<Response<List<Build>>>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .setup(bindToLifecycle())
                 .subscribe(object : CustomResponseSingleObserver<List<Build>>() {
 
                     override fun error(e: Throwable) {
@@ -178,10 +162,6 @@ class BuildsFragment : ButterKnifeFragment() {
     }
 
     fun loadMore() {
-        if (view == null) {
-            return
-        }
-
         if (nextPageUrl == null) {
             return
         }
@@ -191,9 +171,7 @@ class BuildsFragment : ButterKnifeFragment() {
 
         Timber.d("loadMore called for %s", nextPageUrl)
         App.get().gitLab.getBuilds(nextPageUrl!!.toString(), scope)
-                .compose(this.bindToLifecycle<Response<List<Build>>>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .setup(bindToLifecycle())
                 .subscribe(object : CustomResponseSingleObserver<List<Build>>() {
 
                     override fun error(e: Throwable) {
@@ -212,13 +190,13 @@ class BuildsFragment : ButterKnifeFragment() {
     }
 
     @Subscribe
-    fun onProjectReload(event: ProjectReloadEvent) {
+    fun onEvent(event: ProjectReloadEvent) {
         project = event.project
         loadData()
     }
 
     @Subscribe
-    fun onBuildChangedEvent(event: BuildChangedEvent) {
+    fun onEvent(event: BuildChangedEvent) {
         adapterBuilds.updateBuild(event.build)
     }
 }

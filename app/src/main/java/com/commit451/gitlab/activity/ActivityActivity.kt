@@ -73,7 +73,7 @@ class ActivityActivity : BaseActivity() {
     }
 
     @Subscribe
-    fun onCloseDrawerEvent(event: CloseDrawerEvent) {
+    fun onEvent(event: CloseDrawerEvent) {
         drawerLayout.closeDrawers()
     }
 }

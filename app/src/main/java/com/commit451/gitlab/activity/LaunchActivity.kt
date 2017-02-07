@@ -29,8 +29,7 @@ class LaunchActivity : BaseActivity() {
         private val REQUEST_DEVICE_AUTH = 123
     }
 
-    @BindView(R.id.root)
-    lateinit var root: ViewGroup
+    @BindView(R.id.root) lateinit var root: ViewGroup
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

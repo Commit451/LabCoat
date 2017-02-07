@@ -24,6 +24,7 @@ import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.IssueDetailsAdapter
 import com.commit451.gitlab.event.IssueChangedEvent
 import com.commit451.gitlab.event.IssueReloadEvent
+import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.FileUploadResponse
 import com.commit451.gitlab.model.api.Issue
 import com.commit451.gitlab.model.api.Note
@@ -74,20 +75,13 @@ class IssueActivity : BaseActivity() {
         }
     }
 
-    @BindView(R.id.root)
-    lateinit var root: ViewGroup
-    @BindView(R.id.toolbar)
-    lateinit var toolbar: Toolbar
-    @BindView(R.id.issue_title)
-    lateinit var textTitle: TextView
-    @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.list)
-    lateinit var listNotes: RecyclerView
-    @BindView(R.id.send_message_view)
-    lateinit var sendMessageView: SendMessageView
-    @BindView(R.id.progress)
-    lateinit var progress: View
+    @BindView(R.id.root) lateinit var root: ViewGroup
+    @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
+    @BindView(R.id.issue_title) lateinit var textTitle: TextView
+    @BindView(R.id.swipe_layout) lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    @BindView(R.id.list) lateinit var listNotes: RecyclerView
+    @BindView(R.id.send_message_view) lateinit var sendMessageView: SendMessageView
+    @BindView(R.id.progress) lateinit var progress: View
 
     lateinit var menuItemOpenClose: MenuItem
     lateinit var adapterIssueDetails: IssueDetailsAdapter
@@ -124,9 +118,7 @@ class IssueActivity : BaseActivity() {
             }
             R.id.action_delete -> {
                 App.get().gitLab.deleteIssue(project!!.id, issue!!.id)
-                        .compose(this@IssueActivity.bindToLifecycle<String>())
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
+                        .setup(bindToLifecycle())
                         .subscribe(object : CustomSingleObserver<String>() {
 
                             override fun error(t: Throwable) {
@@ -326,9 +318,7 @@ class IssueActivity : BaseActivity() {
         sendMessageView.clearText()
 
         App.get().gitLab.addIssueNote(project!!.id, issue!!.id, message)
-                .compose(this.bindToLifecycle<Note>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .setup(bindToLifecycle())
                 .subscribe(object : CustomSingleObserver<Note>() {
 
                     override fun error(t: Throwable) {
@@ -357,9 +347,7 @@ class IssueActivity : BaseActivity() {
 
     fun updateIssueStatus(observable: Single<Issue>) {
         observable
-                .compose(this.bindToLifecycle<Issue>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .setup(bindToLifecycle())
                 .subscribe(object : CustomSingleObserver<Issue>() {
 
                     override fun error(t: Throwable) {
@@ -385,7 +373,7 @@ class IssueActivity : BaseActivity() {
     }
 
     @Subscribe
-    fun onIssueChanged(event: IssueChangedEvent) {
+    fun onEvent(event: IssueChangedEvent) {
         if (issue!!.id == event.issue.id) {
             issue = event.issue
             bindIssue()

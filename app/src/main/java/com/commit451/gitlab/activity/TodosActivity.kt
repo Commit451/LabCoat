@@ -3,7 +3,6 @@ package com.commit451.gitlab.activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.NavigationView
 import android.support.design.widget.TabLayout
 import android.support.v4.view.GravityCompat
 import android.support.v4.view.ViewPager
@@ -31,16 +30,10 @@ class TodosActivity : BaseActivity() {
         }
     }
 
-    @BindView(R.id.toolbar)
-    lateinit var toolbar: Toolbar
-    @BindView(R.id.tabs)
-    lateinit var tabLayout: TabLayout
-    @BindView(R.id.pager)
-    lateinit var viewPager: ViewPager
-    @BindView(R.id.navigation_view)
-    lateinit var navigationView: NavigationView
-    @BindView(R.id.drawer_layout)
-    lateinit var drawerLayout: DrawerLayout
+    @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
+    @BindView(R.id.tabs) lateinit var tabLayout: TabLayout
+    @BindView(R.id.pager) lateinit var viewPager: ViewPager
+    @BindView(R.id.drawer_layout) lateinit var drawerLayout: DrawerLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,7 +55,7 @@ class TodosActivity : BaseActivity() {
     }
 
     @Subscribe
-    fun onCloseDrawerEvent(event: CloseDrawerEvent) {
+    fun onEvent(event: CloseDrawerEvent) {
         drawerLayout.closeDrawers()
     }
 }

@@ -17,6 +17,7 @@ import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.ProjectActivity
 import com.commit451.gitlab.event.ProjectReloadEvent
+import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.model.api.RepositoryFile
 import com.commit451.gitlab.model.api.RepositoryTreeObject
@@ -30,9 +31,7 @@ import com.jakewharton.retrofit2.adapter.rxjava2.HttpException
 import com.vdurmont.emoji.EmojiParser
 import io.reactivex.Single
 import io.reactivex.SingleSource
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.Function
-import io.reactivex.schedulers.Schedulers
 import org.greenrobot.eventbus.Subscribe
 import retrofit2.Response
 import timber.log.Timber
@@ -55,16 +54,11 @@ class ProjectFragment : ButterKnifeFragment() {
         }
     }
 
-    @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.creator)
-    lateinit var textCreator: TextView
-    @BindView(R.id.star_count)
-    lateinit var textStarCount: TextView
-    @BindView(R.id.forks_count)
-    lateinit var textForksCount: TextView
-    @BindView(R.id.overview_text)
-    lateinit var textOverview: TextView
+    @BindView(R.id.swipe_layout) lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    @BindView(R.id.creator) lateinit var textCreator: TextView
+    @BindView(R.id.star_count) lateinit var textStarCount: TextView
+    @BindView(R.id.forks_count) lateinit var textForksCount: TextView
+    @BindView(R.id.overview_text) lateinit var textOverview: TextView
 
     lateinit var bypass: Bypass
 
@@ -91,9 +85,7 @@ class ProjectFragment : ButterKnifeFragment() {
                     .setNegativeButton(android.R.string.cancel, null)
                     .setPositiveButton(android.R.string.ok) { dialog, which ->
                         App.get().gitLab.forkProject(it.id)
-                                .compose(this@ProjectFragment.bindToLifecycle<String>())
-                                .subscribeOn(Schedulers.io())
-                                .observeOn(AndroidSchedulers.mainThread())
+                                .setup(bindToLifecycle())
                                 .subscribe(object : CustomSingleObserver<String>() {
 
                                     override fun error(t: Throwable) {
@@ -115,9 +107,7 @@ class ProjectFragment : ButterKnifeFragment() {
     fun onStarClicked() {
         if (project != null) {
             App.get().gitLab.starProject(project!!.id)
-                    .compose(this.bindToLifecycle<Response<Project>>())
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
+                    .setup(bindToLifecycle())
                     .subscribe(object : CustomSingleObserver<Response<Project>>() {
 
                         override fun error(t: Throwable) {
@@ -213,9 +203,7 @@ class ProjectFragment : ButterKnifeFragment() {
                     }
                     Single.just(result)
                 })
-                .compose(this.bindToLifecycle<ReadmeResult>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .setup(bindToLifecycle())
                 .subscribe(object : CustomSingleObserver<ReadmeResult>() {
 
                     override fun error(t: Throwable) {
@@ -274,9 +262,7 @@ class ProjectFragment : ButterKnifeFragment() {
 
     fun unstarProject() {
         App.get().gitLab.unstarProject(project!!.id)
-                .compose(this.bindToLifecycle<Project>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .setup(bindToLifecycle())
                 .subscribe(object : CustomSingleObserver<Project>() {
 
                     override fun error(t: Throwable) {

@@ -19,6 +19,7 @@ import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.GroupMembersAdapter
 import com.commit451.gitlab.dialog.AccessDialog
 import com.commit451.gitlab.event.MemberAddedEvent
+import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.Group
 import com.commit451.gitlab.model.api.Member
 import com.commit451.gitlab.navigation.Navigator
@@ -27,8 +28,6 @@ import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
 import com.commit451.gitlab.viewHolder.ProjectMemberViewHolder
 import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import org.greenrobot.eventbus.Subscribe
 import org.parceler.Parcels
 import retrofit2.Response
@@ -50,16 +49,11 @@ class GroupMembersFragment : ButterKnifeFragment() {
         }
     }
 
-    @BindView(R.id.root)
-    lateinit var root: View
-    @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.list)
-    lateinit var list: RecyclerView
-    @BindView(R.id.message_text)
-    lateinit var textMessage: TextView
-    @BindView(R.id.add_user_button)
-    lateinit var buttonAddUser: View
+    @BindView(R.id.root) lateinit var root: View
+    @BindView(R.id.swipe_layout) lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    @BindView(R.id.list) lateinit var list: RecyclerView
+    @BindView(R.id.message_text) lateinit var textMessage: TextView
+    @BindView(R.id.add_user_button) lateinit var buttonAddUser: View
 
     lateinit var adapterGroupMembers: GroupMembersAdapter
     lateinit var layoutManagerGroupMembers: DynamicGridLayoutManager
@@ -88,9 +82,7 @@ class GroupMembersFragment : ButterKnifeFragment() {
         override fun onUserRemoveClicked(member: Member) {
             this@GroupMembersFragment.member = member
             App.get().gitLab.removeGroupMember(group.id, member.id)
-                    .compose(this@GroupMembersFragment.bindToLifecycle<String>())
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
+                    .setup(bindToLifecycle())
                     .subscribe(object : CustomSingleObserver<String>() {
 
                         override fun error(e: Throwable) {
@@ -191,9 +183,7 @@ class GroupMembersFragment : ButterKnifeFragment() {
 
     private fun loadGroupMembers(observable: Single<Response<List<Member>>>) {
         observable
-                .compose(this.bindToLifecycle<Response<List<Member>>>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .setup(bindToLifecycle())
                 .subscribe(object : CustomResponseSingleObserver<List<Member>>() {
 
                     override fun error(e: Throwable) {

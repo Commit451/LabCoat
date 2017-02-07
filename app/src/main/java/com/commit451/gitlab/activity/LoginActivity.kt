@@ -29,6 +29,7 @@ import com.commit451.gitlab.dialog.HttpLoginDialog
 import com.commit451.gitlab.event.LoginEvent
 import com.commit451.gitlab.event.ReloadDataEvent
 import com.commit451.gitlab.extension.checkValid
+import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.Account
 import com.commit451.gitlab.model.api.Message
 import com.commit451.gitlab.model.api.UserFull
@@ -42,8 +43,6 @@ import com.commit451.gitlab.ssl.X509Util
 import com.commit451.teleprinter.Teleprinter
 import com.jakewharton.retrofit2.adapter.rxjava2.HttpException
 import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import okhttp3.Credentials
 import okhttp3.HttpUrl
 import okhttp3.logging.HttpLoggingInterceptor
@@ -74,32 +73,19 @@ class LoginActivity : BaseActivity() {
         }
     }
 
-    @BindView(R.id.root)
-    lateinit var root: View
-    @BindView(R.id.toolbar)
-    lateinit var toolbar: Toolbar
-    @BindView(R.id.url_hint)
-    lateinit var textInputLayoutUrl: TextInputLayout
-    @BindView(R.id.url_input)
-    lateinit var textUrl: TextView
-    @BindView(R.id.user_input_hint)
-    lateinit var textInputLayoutUser: TextInputLayout
-    @BindView(R.id.user_input)
-    lateinit var textUser: EditText
-    @BindView(R.id.password_hint)
-    lateinit var textInputLayoutPassword: TextInputLayout
-    @BindView(R.id.password_input)
-    lateinit var textPassword: TextView
-    @BindView(R.id.token_hint)
-    lateinit var textInputLayoutToken: TextInputLayout
-    @BindView(R.id.token_input)
-    lateinit var textToken: TextView
-    @BindView(R.id.normal_login)
-    lateinit var rootNormalLogin: View
-    @BindView(R.id.token_login)
-    lateinit var rootTokenLogin: View
-    @BindView(R.id.progress)
-    lateinit var progress: View
+    @BindView(R.id.root) lateinit var root: View
+    @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
+    @BindView(R.id.url_hint) lateinit var textInputLayoutUrl: TextInputLayout
+    @BindView(R.id.url_input) lateinit var textUrl: TextView
+    @BindView(R.id.user_input_hint) lateinit var textInputLayoutUser: TextInputLayout
+    @BindView(R.id.user_input) lateinit var textUser: EditText
+    @BindView(R.id.password_hint) lateinit var textInputLayoutPassword: TextInputLayout
+    @BindView(R.id.password_input) lateinit var textPassword: TextView
+    @BindView(R.id.token_hint) lateinit var textInputLayoutToken: TextInputLayout
+    @BindView(R.id.token_input) lateinit var textToken: TextView
+    @BindView(R.id.normal_login) lateinit var rootNormalLogin: View
+    @BindView(R.id.token_login) lateinit var rootTokenLogin: View
+    @BindView(R.id.progress) lateinit var progress: View
 
     lateinit var teleprinter: Teleprinter
 
@@ -244,9 +230,7 @@ class LoginActivity : BaseActivity() {
 
     fun attemptLogin(observable: Single<Response<UserLogin>>) {
         observable
-                .compose(this.bindToLifecycle<Response<UserLogin>>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .setup(bindToLifecycle())
                 .subscribe(object : CustomResponseSingleObserver<UserLogin>() {
 
                     override fun error(e: Throwable) {
@@ -345,9 +329,7 @@ class LoginActivity : BaseActivity() {
         }
         val gitLab = GitLabFactory.create(account, gitlabClientBuilder.build())
         gitLab.getThisUser()
-                .compose(this.bindToLifecycle<Response<UserFull>>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .setup(bindToLifecycle())
                 .subscribe(object : CustomResponseSingleObserver<UserFull>() {
 
                     override fun error(e: Throwable) {

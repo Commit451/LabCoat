@@ -15,11 +15,10 @@ import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.PickBranchOrTagActivity
 import com.commit451.gitlab.adapter.BranchAdapter
+import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.Ref
 import com.commit451.gitlab.model.api.Branch
 import com.commit451.gitlab.rx.CustomSingleObserver
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import org.parceler.Parcels
 import timber.log.Timber
 
@@ -43,12 +42,9 @@ class PickBranchFragment : ButterKnifeFragment() {
         }
     }
 
-    @BindView(R.id.list)
-    lateinit var listProjects: RecyclerView
-    @BindView(R.id.message_text)
-    lateinit var textMessage: TextView
-    @BindView(R.id.progress)
-    lateinit var progress: View
+    @BindView(R.id.list) lateinit var listProjects: RecyclerView
+    @BindView(R.id.message_text) lateinit var textMessage: TextView
+    @BindView(R.id.progress) lateinit var progress: View
 
     lateinit var adapterBranches: BranchAdapter
 
@@ -90,9 +86,7 @@ class PickBranchFragment : ButterKnifeFragment() {
         textMessage.visibility = View.GONE
 
         App.get().gitLab.getBranches(projectId)
-                .compose(this.bindToLifecycle<List<Branch>>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .setup(bindToLifecycle())
                 .subscribe(object : CustomSingleObserver<List<Branch>>() {
 
                     override fun error(e: Throwable) {

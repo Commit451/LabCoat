@@ -20,15 +20,13 @@ import com.commit451.gitlab.adapter.GroupAdapter
 import com.commit451.gitlab.data.Prefs
 import com.commit451.gitlab.event.CloseDrawerEvent
 import com.commit451.gitlab.event.ReloadDataEvent
+import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.Group
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
 import com.commit451.gitlab.viewHolder.GroupViewHolder
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import org.greenrobot.eventbus.Subscribe
-import retrofit2.Response
 import timber.log.Timber
 
 /**
@@ -106,9 +104,7 @@ class GroupsActivity : BaseActivity() {
         loading = true
 
         App.get().gitLab.getGroups()
-                .compose(this.bindToLifecycle<Response<List<Group>>>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .setup(bindToLifecycle())
                 .subscribe(object : CustomResponseSingleObserver<List<Group>>() {
 
                     override fun error(e: Throwable) {
@@ -147,9 +143,7 @@ class GroupsActivity : BaseActivity() {
 
         Timber.d("loadMore called for %s", nextPageUrl)
         App.get().gitLab.getGroups(nextPageUrl!!.toString())
-                .compose(this.bindToLifecycle<Response<List<Group>>>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .setup(bindToLifecycle())
                 .subscribe(object : CustomResponseSingleObserver<List<Group>>() {
 
                     override fun error(e: Throwable) {
@@ -166,12 +160,12 @@ class GroupsActivity : BaseActivity() {
     }
 
     @Subscribe
-    fun onCloseDrawerEvent(event: CloseDrawerEvent) {
+    fun onEvent(event: CloseDrawerEvent) {
         drawerLayout.closeDrawers()
     }
 
     @Subscribe
-    fun onReloadData(event: ReloadDataEvent) {
+    fun onEvent(event: ReloadDataEvent) {
         load()
     }
 }

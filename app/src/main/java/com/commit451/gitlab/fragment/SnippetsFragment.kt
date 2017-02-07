@@ -21,15 +21,13 @@ import com.commit451.gitlab.activity.ProjectActivity
 import com.commit451.gitlab.adapter.DividerItemDecoration
 import com.commit451.gitlab.adapter.SnippetAdapter
 import com.commit451.gitlab.event.ProjectReloadEvent
+import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.model.api.Snippet
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import org.greenrobot.eventbus.Subscribe
-import retrofit2.Response
 import timber.log.Timber
 
 class SnippetsFragment : ButterKnifeFragment() {
@@ -41,16 +39,11 @@ class SnippetsFragment : ButterKnifeFragment() {
         }
     }
 
-    @BindView(R.id.root)
-    lateinit var root: ViewGroup
-    @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.list)
-    lateinit var listSnippets: RecyclerView
-    @BindView(R.id.message_text)
-    lateinit var textMessage: TextView
-    @BindView(R.id.state_spinner)
-    lateinit var spinnerState: Spinner
+    @BindView(R.id.root) lateinit var root: ViewGroup
+    @BindView(R.id.swipe_layout) lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    @BindView(R.id.list) lateinit var listSnippets: RecyclerView
+    @BindView(R.id.message_text) lateinit var textMessage: TextView
+    @BindView(R.id.state_spinner) lateinit var spinnerState: Spinner
 
     lateinit var adapterSnippets: SnippetAdapter
     lateinit var layoutManagerSnippets: LinearLayoutManager
@@ -147,9 +140,7 @@ class SnippetsFragment : ButterKnifeFragment() {
         nextPageUrl = null
         loading = true
         App.get().gitLab.getSnippets(project!!.id)
-                .compose(this.bindToLifecycle<Response<List<Snippet>>>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .setup(bindToLifecycle())
                 .subscribe(object : CustomResponseSingleObserver<List<Snippet>>() {
 
                     override fun error(e: Throwable) {
@@ -190,9 +181,7 @@ class SnippetsFragment : ButterKnifeFragment() {
 
         Timber.d("loadMore called for %s", nextPageUrl)
         App.get().gitLab.getSnippets(nextPageUrl!!.toString())
-                .compose(this.bindToLifecycle<Response<List<Snippet>>>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .setup(bindToLifecycle())
                 .subscribe(object : CustomResponseSingleObserver<List<Snippet>>() {
 
                     override fun error(e: Throwable) {

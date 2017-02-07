@@ -13,13 +13,12 @@ import butterknife.BindView
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.TodoAdapter
+import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.Todo
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
 import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import retrofit2.Response
 import timber.log.Timber
 
@@ -42,12 +41,9 @@ class TodoFragment : ButterKnifeFragment() {
         }
     }
 
-    @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.list)
-    lateinit var listTodos: RecyclerView
-    @BindView(R.id.message_text)
-    lateinit var textMessage: TextView
+    @BindView(R.id.swipe_layout) lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    @BindView(R.id.list) lateinit var listTodos: RecyclerView
+    @BindView(R.id.message_text) lateinit var textMessage: TextView
 
     lateinit var layoutManagerTodos: LinearLayoutManager
     lateinit var adapterTodos: TodoAdapter
@@ -118,9 +114,7 @@ class TodoFragment : ButterKnifeFragment() {
 
     fun getTodos(observable: Single<Response<List<Todo>>>) {
         observable
-                .compose(this.bindToLifecycle<Response<List<Todo>>>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .setup(bindToLifecycle())
                 .subscribe(object : CustomResponseSingleObserver<List<Todo>>() {
 
                     override fun error(e: Throwable) {
@@ -160,9 +154,7 @@ class TodoFragment : ButterKnifeFragment() {
         adapterTodos.setLoading(true)
         Timber.d("loadMore called for " + nextPageUrl!!)
         App.get().gitLab.getTodosByUrl(nextPageUrl!!.toString())
-                .compose(this.bindToLifecycle<Response<List<Todo>>>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .setup(bindToLifecycle())
                 .subscribe(object : CustomResponseSingleObserver<List<Todo>>() {
 
                     override fun error(e: Throwable) {

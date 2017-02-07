@@ -18,12 +18,11 @@ import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.R.string.labels
 import com.commit451.gitlab.adapter.LabelAdapter
+import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.Label
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.viewHolder.LabelViewHolder
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import org.parceler.Parcels
 import timber.log.Timber
 
@@ -46,16 +45,11 @@ class AddLabelActivity : BaseActivity() {
         }
     }
 
-    @BindView(R.id.root)
-    lateinit var root: ViewGroup
-    @BindView(R.id.toolbar)
-    lateinit var toolbar: Toolbar
-    @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.list)
-    lateinit var list: RecyclerView
-    @BindView(R.id.message_text)
-    lateinit var textMessage: TextView
+    @BindView(R.id.root) lateinit var root: ViewGroup
+    @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
+    @BindView(R.id.swipe_layout) lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    @BindView(R.id.list) lateinit var list: RecyclerView
+    @BindView(R.id.message_text) lateinit var textMessage: TextView
 
     lateinit var adapterLabel: LabelAdapter
 
@@ -110,9 +104,7 @@ class AddLabelActivity : BaseActivity() {
         textMessage.visibility = View.GONE
         swipeRefreshLayout.isRefreshing = true
         App.get().gitLab.getLabels(projectId)
-                .compose(this.bindToLifecycle<List<Label>>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .setup(bindToLifecycle())
                 .subscribe(object : CustomSingleObserver<List<Label>>() {
 
                     override fun error(t: Throwable) {

@@ -20,13 +20,12 @@ import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.event.MilestoneChangedEvent
 import com.commit451.gitlab.event.MilestoneCreatedEvent
+import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.Milestone
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.teleprinter.Teleprinter
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
 import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import org.parceler.Parcels
 import timber.log.Timber
 import java.util.*
@@ -48,20 +47,13 @@ class AddMilestoneActivity : MorphActivity() {
         }
     }
 
-    @BindView(R.id.root)
-    lateinit var root: FrameLayout
-    @BindView(R.id.toolbar)
-    lateinit var toolbar: Toolbar
-    @BindView(R.id.title_text_input_layout)
-    lateinit var textInputLayoutTitle: TextInputLayout
-    @BindView(R.id.title)
-    lateinit var textTitle: EditText
-    @BindView(R.id.description)
-    lateinit var textDescription: EditText
-    @BindView(R.id.due_date)
-    lateinit var buttonDueDate: Button
-    @BindView(R.id.progress)
-    lateinit var progress: View
+    @BindView(R.id.root) lateinit var root: FrameLayout
+    @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
+    @BindView(R.id.title_text_input_layout) lateinit var textInputLayoutTitle: TextInputLayout
+    @BindView(R.id.title) lateinit var textTitle: EditText
+    @BindView(R.id.description) lateinit var textDescription: EditText
+    @BindView(R.id.due_date) lateinit var buttonDueDate: Button
+    @BindView(R.id.progress) lateinit var progress: View
 
     lateinit var teleprinter: Teleprinter
 
@@ -150,9 +142,7 @@ class AddMilestoneActivity : MorphActivity() {
     }
 
     fun createOrEditMilestone(observable: Single<Milestone>) {
-        observable.subscribeOn(Schedulers.io())
-                .compose(this.bindToLifecycle<Milestone>())
-                .observeOn(AndroidSchedulers.mainThread())
+        observable.setup(bindToLifecycle())
                 .subscribe(object : CustomSingleObserver<Milestone>() {
 
                     override fun error(t: Throwable) {

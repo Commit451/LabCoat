@@ -14,14 +14,12 @@ import butterknife.BindView
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.UserAdapter
+import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.UserBasic
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
 import com.commit451.gitlab.viewHolder.UserViewHolder
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-import retrofit2.Response
 import timber.log.Timber
 
 class UsersFragment : ButterKnifeFragment() {
@@ -44,12 +42,9 @@ class UsersFragment : ButterKnifeFragment() {
         }
     }
 
-    @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.list)
-    lateinit var listUsers: RecyclerView
-    @BindView(R.id.message_text)
-    lateinit var textMessage: TextView
+    @BindView(R.id.swipe_layout) lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    @BindView(R.id.list) lateinit var listUsers: RecyclerView
+    @BindView(R.id.message_text) lateinit var textMessage: TextView
 
     lateinit var adapterUser: UserAdapter
     lateinit var layoutManagerUser: GridLayoutManager
@@ -113,9 +108,7 @@ class UsersFragment : ButterKnifeFragment() {
         swipeRefreshLayout.isRefreshing = true
 
         App.get().gitLab.searchUsers(query!!)
-                .compose(this.bindToLifecycle<Response<List<UserBasic>>>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .setup(bindToLifecycle())
                 .subscribe(object : CustomResponseSingleObserver<List<UserBasic>>() {
 
                     override fun error(e: Throwable) {
@@ -145,9 +138,7 @@ class UsersFragment : ButterKnifeFragment() {
         adapterUser.setLoading(true)
         Timber.d("loadMore called for %s %s", nextPageUrl!!.toString(), query)
         App.get().gitLab.searchUsers(nextPageUrl!!.toString(), query!!)
-                .compose(this.bindToLifecycle<Response<List<UserBasic>>>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .setup(bindToLifecycle())
                 .subscribe(object : CustomResponseSingleObserver<List<UserBasic>>() {
 
                     override fun error(e: Throwable) {

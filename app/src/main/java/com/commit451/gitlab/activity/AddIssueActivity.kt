@@ -28,6 +28,7 @@ import com.commit451.gitlab.adapter.AssigneeSpinnerAdapter
 import com.commit451.gitlab.adapter.MilestoneSpinnerAdapter
 import com.commit451.gitlab.event.IssueChangedEvent
 import com.commit451.gitlab.event.IssueCreatedEvent
+import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.*
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
@@ -62,34 +63,20 @@ class AddIssueActivity : MorphActivity() {
         }
     }
 
-    @BindView(R.id.root)
-    lateinit var root: FrameLayout
-    @BindView(R.id.toolbar)
-    lateinit var toolbar: Toolbar
-    @BindView(R.id.title_text_input_layout)
-    lateinit var textInputLayoutTitle: TextInputLayout
-    @BindView(R.id.description)
-    lateinit var textDescription: EditText
-    @BindView(R.id.progress)
-    lateinit var progress: View
-    @BindView(R.id.assignee_progress)
-    lateinit var progressAssignee: View
-    @BindView(R.id.assignee_spinner)
-    lateinit var spinnerAssignee: Spinner
-    @BindView(R.id.milestone_progress)
-    lateinit var progressMilestone: View
-    @BindView(R.id.milestone_spinner)
-    lateinit var spinnerMilestone: Spinner
-    @BindView(R.id.label_label)
-    lateinit var textLabel: TextView
-    @BindView(R.id.labels_progress)
-    lateinit var progressLabels: View
-    @BindView(R.id.root_add_labels)
-    lateinit var rootAddLabels: ViewGroup
-    @BindView(R.id.list_labels)
-    lateinit var listLabels: AdapterFlowLayout
-    @BindView(R.id.confidential_switch)
-    lateinit var switchConfidential: SwitchCompat
+    @BindView(R.id.root) lateinit var root: FrameLayout
+    @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
+    @BindView(R.id.title_text_input_layout) lateinit var textInputLayoutTitle: TextInputLayout
+    @BindView(R.id.description) lateinit var textDescription: EditText
+    @BindView(R.id.progress) lateinit var progress: View
+    @BindView(R.id.assignee_progress) lateinit var progressAssignee: View
+    @BindView(R.id.assignee_spinner) lateinit var spinnerAssignee: Spinner
+    @BindView(R.id.milestone_progress) lateinit var progressMilestone: View
+    @BindView(R.id.milestone_spinner) lateinit var spinnerMilestone: Spinner
+    @BindView(R.id.label_label) lateinit var textLabel: TextView
+    @BindView(R.id.labels_progress) lateinit var progressLabels: View
+    @BindView(R.id.root_add_labels) lateinit var rootAddLabels: ViewGroup
+    @BindView(R.id.list_labels) lateinit var listLabels: AdapterFlowLayout
+    @BindView(R.id.confidential_switch) lateinit var switchConfidential: SwitchCompat
 
     lateinit var adapterLabels: AddIssueLabelAdapter
     lateinit var teleprinter: Teleprinter
@@ -148,9 +135,7 @@ class AddIssueActivity : MorphActivity() {
 
     private fun load() {
         App.get().gitLab.getMilestones(project.id, getString(R.string.milestone_state_value_default))
-                .compose(this.bindToLifecycle<Response<List<Milestone>>>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .setup(bindToLifecycle())
                 .subscribe(object : CustomResponseSingleObserver<List<Milestone>>() {
 
                     override fun error(t: Throwable) {
@@ -188,8 +173,7 @@ class AddIssueActivity : MorphActivity() {
                         if (project.belongsToGroup()) {
                             Timber.d("Project belongs to a group, loading those users too")
                             App.get().gitLab.getGroupMembers(project.namespace.id)
-                                    .subscribeOn(Schedulers.io())
-                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .setup(bindToLifecycle())
                                     .subscribe(object : CustomResponseSingleObserver<List<Member>>() {
 
                                         override fun error(t: Throwable) {
@@ -209,9 +193,7 @@ class AddIssueActivity : MorphActivity() {
                     }
                 })
         App.get().gitLab.getLabels(project.id)
-                .compose(this.bindToLifecycle<List<Label>>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .setup(bindToLifecycle())
                 .subscribe(object : CustomSingleObserver<List<Label>>() {
 
                     override fun error(t: Throwable) {
@@ -359,8 +341,7 @@ class AddIssueActivity : MorphActivity() {
     }
 
     private fun observeUpdate(observable: Single<Issue>) {
-        observable.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+        observable.setup(bindToLifecycle())
                 .subscribe(object : CustomSingleObserver<Issue>() {
 
                     override fun error(t: Throwable) {

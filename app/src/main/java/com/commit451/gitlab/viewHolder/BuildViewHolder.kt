@@ -35,7 +35,7 @@ class BuildViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     }
 
     fun bind(build: Build) {
-        textBuildNumber.text = itemView.resources.getString(R.string.build_number) + build.id
+        textBuildNumber.text = "${itemView.resources.getString(R.string.build_number)}  $build.id"
         val statusText = String.format(itemView.resources.getString(R.string.build_status), build.status)
         textStatus.text = statusText
         var finishedTime: Date? = build.finishedAt

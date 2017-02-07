@@ -17,14 +17,13 @@ import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.DividerItemDecoration
 import com.commit451.gitlab.adapter.ProjectAdapter
 import com.commit451.gitlab.api.GitLabService
+import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.Group
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
 import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import org.parceler.Parcels
 import retrofit2.Response
 import timber.log.Timber
@@ -71,12 +70,9 @@ class ProjectsFragment : ButterKnifeFragment() {
         }
     }
 
-    @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.list)
-    lateinit var listProjects: RecyclerView
-    @BindView(R.id.message_text)
-    lateinit var textMessage: TextView
+    @BindView(R.id.swipe_layout) lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    @BindView(R.id.list) lateinit var listProjects: RecyclerView
+    @BindView(R.id.message_text) lateinit var textMessage: TextView
 
     lateinit var layoutManagerProjects: LinearLayoutManager
     lateinit var adapterProjects: ProjectAdapter
@@ -140,9 +136,6 @@ class ProjectsFragment : ButterKnifeFragment() {
     }
 
     override fun loadData() {
-        if (view == null) {
-            return
-        }
         textMessage.visibility = View.GONE
 
         nextPageUrl = null
@@ -174,9 +167,7 @@ class ProjectsFragment : ButterKnifeFragment() {
     }
 
     private fun actuallyLoadIt(observable: Single<Response<List<Project>>>) {
-        observable.compose(this.bindToLifecycle<Response<List<Project>>>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+        observable.setup(bindToLifecycle())
                 .subscribe(object : CustomResponseSingleObserver<List<Project>>() {
 
                     override fun error(e: Throwable) {
@@ -204,10 +195,6 @@ class ProjectsFragment : ButterKnifeFragment() {
     }
 
     private fun loadMore() {
-        if (view == null) {
-            return
-        }
-
         if (nextPageUrl == null) {
             return
         }
@@ -215,9 +202,7 @@ class ProjectsFragment : ButterKnifeFragment() {
         adapterProjects.setLoading(true)
         Timber.d("loadMore called for %s", nextPageUrl)
         getGitLab().getProjects(nextPageUrl!!.toString())
-                .compose(this.bindToLifecycle<Response<List<Project>>>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .setup(bindToLifecycle())
                 .subscribe(object : CustomResponseSingleObserver<List<Project>>() {
 
                     override fun error(e: Throwable) {

@@ -30,18 +30,12 @@ class SearchActivity : BaseActivity() {
         }
     }
 
-    @BindView(R.id.root)
-    lateinit var root: View
-    @BindView(R.id.tabs)
-    lateinit var tabLayout: TabLayout
-    @BindView(R.id.pager)
-    lateinit var viewPager: ViewPager
-    @BindView(R.id.toolbar)
-    lateinit var toolbar: Toolbar
-    @BindView(R.id.search)
-    lateinit var textSearch: EditText
-    @BindView(R.id.clear)
-    lateinit var buttonClear: View
+    @BindView(R.id.root) lateinit var root: View
+    @BindView(R.id.tabs) lateinit var tabLayout: TabLayout
+    @BindView(R.id.pager) lateinit var viewPager: ViewPager
+    @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
+    @BindView(R.id.search) lateinit var textSearch: EditText
+    @BindView(R.id.clear) lateinit var buttonClear: View
 
     lateinit var adapterSearch: SearchPagerAdapter
     lateinit var mTeleprinter: Teleprinter
@@ -63,7 +57,7 @@ class SearchActivity : BaseActivity() {
     @OnEditorAction(R.id.search)
     fun onSearchEditorAction(): Boolean {
         if (TextUtils.isEmpty(textSearch.text)) {
-            textSearch.setText("unicorns")
+            textSearch.setText("labcoat")
         }
         search()
         mTeleprinter.hideKeyboard()

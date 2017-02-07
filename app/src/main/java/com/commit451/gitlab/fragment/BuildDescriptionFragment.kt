@@ -12,14 +12,13 @@ import butterknife.BindView
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.event.BuildChangedEvent
+import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.Build
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.model.api.RepositoryCommit
 import com.commit451.gitlab.model.api.Runner
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.util.DateUtil
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import org.greenrobot.eventbus.Subscribe
 import org.parceler.Parcels
 import timber.log.Timber
@@ -45,26 +44,16 @@ class BuildDescriptionFragment : ButterKnifeFragment() {
         }
     }
 
-    @BindView(R.id.root)
-    lateinit var root: ViewGroup
-    @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.text_status)
-    lateinit var textStatus: TextView
-    @BindView(R.id.text_duration)
-    lateinit var textDuration: TextView
-    @BindView(R.id.text_created)
-    lateinit var textCreated: TextView
-    @BindView(R.id.text_finished)
-    lateinit var textFinished: TextView
-    @BindView(R.id.text_runner)
-    lateinit var textRunner: TextView
-    @BindView(R.id.text_ref)
-    lateinit var textRef: TextView
-    @BindView(R.id.text_author)
-    lateinit var textAuthor: TextView
-    @BindView(R.id.text_message)
-    lateinit var textMessage: TextView
+    @BindView(R.id.root) lateinit var root: ViewGroup
+    @BindView(R.id.swipe_layout) lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    @BindView(R.id.text_status) lateinit var textStatus: TextView
+    @BindView(R.id.text_duration) lateinit var textDuration: TextView
+    @BindView(R.id.text_created) lateinit var textCreated: TextView
+    @BindView(R.id.text_finished) lateinit var textFinished: TextView
+    @BindView(R.id.text_runner) lateinit var textRunner: TextView
+    @BindView(R.id.text_ref) lateinit var textRef: TextView
+    @BindView(R.id.text_author) lateinit var textAuthor: TextView
+    @BindView(R.id.text_message) lateinit var textMessage: TextView
 
     lateinit var project: Project
     lateinit var build: Build
@@ -94,9 +83,7 @@ class BuildDescriptionFragment : ButterKnifeFragment() {
 
     fun load() {
         App.get().gitLab.getBuild(project.id, build.id)
-                .compose(this.bindToLifecycle<Build>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .setup(bindToLifecycle())
                 .subscribe(object : CustomSingleObserver<Build>() {
 
                     override fun error(t: Throwable) {

@@ -23,12 +23,11 @@ import com.commit451.easel.Easel
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.GroupPagerAdapter
+import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.Group
 import com.commit451.gitlab.model.api.GroupDetail
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.transformation.PaletteTransformation
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import org.parceler.Parcels
 import timber.log.Timber
 
@@ -55,20 +54,13 @@ class GroupActivity : BaseActivity() {
         }
     }
 
-    @BindView(R.id.root)
-    lateinit var root: View
-    @BindView(R.id.toolbar)
-    lateinit var toolbar: Toolbar
-    @BindView(R.id.collapsing_toolbar)
-    lateinit var collapsingToolbarLayout: CollapsingToolbarLayout
-    @BindView(R.id.viewpager)
-    lateinit var viewPager: ViewPager
-    @BindView(R.id.tabs)
-    lateinit var tabLayout: TabLayout
-    @BindView(R.id.backdrop)
-    lateinit var backdrop: ImageView
-    @BindView(R.id.progress)
-    lateinit var progress: View
+    @BindView(R.id.root) lateinit var root: View
+    @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
+    @BindView(R.id.collapsing_toolbar) lateinit var collapsingToolbarLayout: CollapsingToolbarLayout
+    @BindView(R.id.viewpager) lateinit var viewPager: ViewPager
+    @BindView(R.id.tabs) lateinit var tabLayout: TabLayout
+    @BindView(R.id.backdrop) lateinit var backdrop: ImageView
+    @BindView(R.id.progress) lateinit var progress: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,9 +79,7 @@ class GroupActivity : BaseActivity() {
             progress.visibility = View.VISIBLE
             val groupId = intent.getLongExtra(KEY_GROUP_ID, -1)
             App.get().gitLab.getGroup(groupId)
-                    .compose(this.bindToLifecycle<GroupDetail>())
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
+                    .setup(bindToLifecycle())
                     .subscribe(object : CustomSingleObserver<GroupDetail>() {
 
                         override fun error(t: Throwable) {

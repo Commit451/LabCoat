@@ -20,6 +20,7 @@ import com.commit451.gimbal.Gimbal
 import com.commit451.gitlab.App
 import com.commit451.gitlab.BuildConfig
 import com.commit451.gitlab.R
+import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.Contributor
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomSingleObserver
@@ -30,8 +31,6 @@ import com.jawnnypoo.physicslayout.Physics
 import com.jawnnypoo.physicslayout.PhysicsConfig
 import com.wefika.flowlayout.FlowLayout
 import de.hdodenhof.circleimageview.CircleImageView
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import org.jbox2d.common.Vec2
 import timber.log.Timber
 
@@ -49,29 +48,15 @@ class AboutActivity : BaseActivity() {
         }
     }
 
-    @BindView(R.id.root)
-    lateinit var root: ViewGroup
-    @BindView(R.id.toolbar)
-    lateinit var toolbar: Toolbar
-    @BindView(R.id.contributors)
-    lateinit var textContributors: TextView
-    @BindView(R.id.physics_layout)
-    lateinit var physicsLayout: PhysicsFlowLayout
-    @BindView(R.id.progress)
-    lateinit var progress: View
+    @BindView(R.id.root) lateinit var root: ViewGroup
+    @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
+    @BindView(R.id.contributors) lateinit var textContributors: TextView
+    @BindView(R.id.physics_layout) lateinit var physicsLayout: PhysicsFlowLayout
+    @BindView(R.id.progress) lateinit var progress: View
 
     lateinit var sensorManager: SensorManager
     lateinit var gimbal: Gimbal
     var gravitySensor: Sensor? = null
-
-    @OnClick(R.id.sauce)
-    fun onSauceClick() {
-        if (getString(R.string.url_gitlab) == App.get().getAccount().serverUrl.toString()) {
-            Navigator.navigateToProject(this@AboutActivity, REPO_ID)
-        } else {
-            IntentUtil.openPage(this@AboutActivity, getString(R.string.source_url))
-        }
-    }
 
     val sensorEventListener = object : SensorEventListener {
         override fun onSensorChanged(event: SensorEvent) {
@@ -84,6 +69,15 @@ class AboutActivity : BaseActivity() {
         }
 
         override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {}
+    }
+
+    @OnClick(R.id.sauce)
+    fun onSauceClick() {
+        if (getString(R.string.url_gitlab) == App.get().getAccount().serverUrl.toString()) {
+            Navigator.navigateToProject(this@AboutActivity, REPO_ID)
+        } else {
+            IntentUtil.openPage(this@AboutActivity, getString(R.string.source_url))
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -100,9 +94,7 @@ class AboutActivity : BaseActivity() {
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
         gravitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY)
         App.get().gitLab.getContributors(REPO_ID)
-                .compose(this.bindToLifecycle<List<Contributor>>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .setup(bindToLifecycle())
                 .subscribe(object : CustomSingleObserver<List<Contributor>>() {
 
                     override fun error(t: Throwable) {

@@ -23,15 +23,13 @@ import com.commit451.gitlab.adapter.MilestoneAdapter
 import com.commit451.gitlab.event.MilestoneChangedEvent
 import com.commit451.gitlab.event.MilestoneCreatedEvent
 import com.commit451.gitlab.event.ProjectReloadEvent
+import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.Milestone
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import org.greenrobot.eventbus.Subscribe
-import retrofit2.Response
 import timber.log.Timber
 
 class MilestonesFragment : ButterKnifeFragment() {
@@ -43,16 +41,11 @@ class MilestonesFragment : ButterKnifeFragment() {
         }
     }
 
-    @BindView(R.id.root)
-    lateinit var root: ViewGroup
-    @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.list)
-    lateinit var listMilestones: RecyclerView
-    @BindView(R.id.message_text)
-    lateinit var textMessage: TextView
-    @BindView(R.id.state_spinner)
-    lateinit var spinnerStates: Spinner
+    @BindView(R.id.root) lateinit var root: ViewGroup
+    @BindView(R.id.swipe_layout) lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    @BindView(R.id.list) lateinit var listMilestones: RecyclerView
+    @BindView(R.id.message_text) lateinit var textMessage: TextView
+    @BindView(R.id.state_spinner) lateinit var spinnerStates: Spinner
 
     lateinit var adapterMilestones: MilestoneAdapter
     lateinit var layoutManagerMilestones: LinearLayoutManager
@@ -119,7 +112,6 @@ class MilestonesFragment : ButterKnifeFragment() {
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
-
             }
         }
 
@@ -139,21 +131,12 @@ class MilestonesFragment : ButterKnifeFragment() {
     }
 
     override fun loadData() {
-        if (view == null) {
-            return
-        }
-        if (project == null) {
-            swipeRefreshLayout.isRefreshing = false
-            return
-        }
         textMessage.visibility = View.GONE
         swipeRefreshLayout.isRefreshing = true
         nextPageUrl = null
         loading = true
         App.get().gitLab.getMilestones(project!!.id, state)
-                .compose(this.bindToLifecycle<Response<List<Milestone>>>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .setup(bindToLifecycle())
                 .subscribe(object : CustomResponseSingleObserver<List<Milestone>>() {
 
                     override fun error(e: Throwable) {
@@ -181,10 +164,6 @@ class MilestonesFragment : ButterKnifeFragment() {
     }
 
     fun loadMore() {
-        if (view == null) {
-            return
-        }
-
         if (nextPageUrl == null) {
             return
         }
@@ -194,9 +173,7 @@ class MilestonesFragment : ButterKnifeFragment() {
 
         Timber.d("loadMore called for " + nextPageUrl!!)
         App.get().gitLab.getMilestones(nextPageUrl!!.toString())
-                .compose(this.bindToLifecycle<Response<List<Milestone>>>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .setup(bindToLifecycle())
                 .subscribe(object : CustomResponseSingleObserver<List<Milestone>>() {
 
                     override fun error(e: Throwable) {
@@ -215,20 +192,20 @@ class MilestonesFragment : ButterKnifeFragment() {
     }
 
     @Subscribe
-    fun onProjectReload(event: ProjectReloadEvent) {
+    fun onEvent(event: ProjectReloadEvent) {
         project = event.project
         loadData()
     }
 
     @Subscribe
-    fun onMilestoneCreated(event: MilestoneCreatedEvent) {
+    fun onEvent(event: MilestoneCreatedEvent) {
         adapterMilestones.addMilestone(event.milestone)
         textMessage.visibility = View.GONE
         listMilestones.smoothScrollToPosition(0)
     }
 
     @Subscribe
-    fun onMilestoneChanged(event: MilestoneChangedEvent) {
+    fun onEvent(event: MilestoneChangedEvent) {
         adapterMilestones.updateIssue(event.milestone)
     }
 }

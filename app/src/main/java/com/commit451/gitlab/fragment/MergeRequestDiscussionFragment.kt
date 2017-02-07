@@ -18,6 +18,7 @@ import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.AttachActivity
 import com.commit451.gitlab.adapter.MergeRequestDetailAdapter
 import com.commit451.gitlab.event.MergeRequestChangedEvent
+import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.FileUploadResponse
 import com.commit451.gitlab.model.api.MergeRequest
 import com.commit451.gitlab.model.api.Note
@@ -28,11 +29,8 @@ import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
 import com.commit451.gitlab.view.SendMessageView
 import com.commit451.teleprinter.Teleprinter
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import org.greenrobot.eventbus.Subscribe
 import org.parceler.Parcels
-import retrofit2.Response
 import timber.log.Timber
 
 /**
@@ -57,16 +55,11 @@ class MergeRequestDiscussionFragment : ButterKnifeFragment() {
         }
     }
 
-    @BindView(R.id.root)
-    lateinit var root: ViewGroup
-    @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.list)
-    lateinit var listNotes: RecyclerView
-    @BindView(R.id.send_message_view)
-    lateinit var sendMessageView: SendMessageView
-    @BindView(R.id.progress)
-    lateinit var progress: View
+    @BindView(R.id.root) lateinit var root: ViewGroup
+    @BindView(R.id.swipe_layout) lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    @BindView(R.id.list) lateinit var listNotes: RecyclerView
+    @BindView(R.id.send_message_view) lateinit var sendMessageView: SendMessageView
+    @BindView(R.id.progress) lateinit var progress: View
 
     lateinit var adapterMergeRequestDetail: MergeRequestDetailAdapter
     lateinit var layoutManagerNotes: LinearLayoutManager
@@ -151,9 +144,7 @@ class MergeRequestDiscussionFragment : ButterKnifeFragment() {
     fun loadNotes() {
         swipeRefreshLayout.isRefreshing = true
         App.get().gitLab.getMergeRequestNotes(project.id, mergeRequest.id)
-                .compose(this.bindToLifecycle<Response<List<Note>>>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .setup(bindToLifecycle())
                 .subscribe(object : CustomResponseSingleObserver<List<Note>>() {
 
                     override fun error(e: Throwable) {
@@ -176,9 +167,7 @@ class MergeRequestDiscussionFragment : ButterKnifeFragment() {
     fun loadMoreNotes() {
         adapterMergeRequestDetail.setLoading(true)
         App.get().gitLab.getMergeRequestNotes(nextPageUrl!!.toString())
-                .compose(this.bindToLifecycle<Response<List<Note>>>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .setup(bindToLifecycle())
                 .subscribe(object : CustomResponseSingleObserver<List<Note>>() {
 
                     override fun error(e: Throwable) {
@@ -212,9 +201,7 @@ class MergeRequestDiscussionFragment : ButterKnifeFragment() {
         sendMessageView.clearText()
 
         App.get().gitLab.addMergeRequestNote(project.id, mergeRequest.id, message)
-                .compose(this.bindToLifecycle<Note>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .setup(bindToLifecycle())
                 .subscribe(object : CustomSingleObserver<Note>() {
 
                     override fun error(e: Throwable) {

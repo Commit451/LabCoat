@@ -20,6 +20,7 @@ import com.commit451.gitlab.adapter.ProjectMembersAdapter
 import com.commit451.gitlab.dialog.AccessDialog
 import com.commit451.gitlab.event.MemberAddedEvent
 import com.commit451.gitlab.event.ProjectReloadEvent
+import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.Member
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.navigation.Navigator
@@ -28,8 +29,6 @@ import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
 import com.commit451.gitlab.viewHolder.ProjectMemberViewHolder
 import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import org.greenrobot.eventbus.Subscribe
 import retrofit2.Response
 import timber.log.Timber
@@ -43,16 +42,11 @@ class ProjectMembersFragment : ButterKnifeFragment() {
         }
     }
 
-    @BindView(R.id.root)
-    lateinit var root: View
-    @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.list)
-    lateinit var listMembers: RecyclerView
-    @BindView(R.id.message_text)
-    lateinit var textMessage: TextView
-    @BindView(R.id.add_user_button)
-    lateinit var buttonAddUser: FloatingActionButton
+    @BindView(R.id.root) lateinit var root: View
+    @BindView(R.id.swipe_layout) lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    @BindView(R.id.list) lateinit var listMembers: RecyclerView
+    @BindView(R.id.message_text) lateinit var textMessage: TextView
+    @BindView(R.id.add_user_button) lateinit var buttonAddUser: FloatingActionButton
 
     lateinit var adapterProjectMembers: ProjectMembersAdapter
     lateinit var layoutManagerMembers: GridLayoutManager
@@ -96,9 +90,7 @@ class ProjectMembersFragment : ButterKnifeFragment() {
             override fun onRemoveMember(member: Member) {
                 this@ProjectMembersFragment.member = member
                 App.get().gitLab.removeProjectMember(project!!.id, member.id)
-                        .compose(this@ProjectMembersFragment.bindToLifecycle<String>())
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
+                        .setup(bindToLifecycle())
                         .subscribe(object : CustomSingleObserver<String>() {
 
                             override fun error(t: Throwable) {
@@ -186,9 +178,7 @@ class ProjectMembersFragment : ButterKnifeFragment() {
 
     fun load(observable: Single<Response<List<Member>>>) {
         observable
-                .compose(this.bindToLifecycle<Response<List<Member>>>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .setup(bindToLifecycle())
                 .subscribe(object : CustomResponseSingleObserver<List<Member>>() {
 
                     override fun error(t: Throwable) {
