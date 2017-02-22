@@ -2,9 +2,9 @@ package com.commit451.gitlab.api
 
 import com.commit451.gitlab.api.rss.SimpleXmlPersisterFactory
 import com.commit451.gitlab.model.Account
-import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.simplexml.SimpleXmlConverterFactory
 
 /**

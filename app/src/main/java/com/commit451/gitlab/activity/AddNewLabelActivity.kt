@@ -24,10 +24,10 @@ import com.commit451.gitlab.extension.checkValid
 import com.commit451.gitlab.model.api.Label
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.util.ColorUtil
-import com.jakewharton.retrofit2.adapter.rxjava2.HttpException
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import org.parceler.Parcels
+import retrofit2.HttpException
 import retrofit2.Response
 import timber.log.Timber
 

@@ -27,12 +27,12 @@ import com.commit451.gitlab.rx.DecodeObservableFactory
 import com.commit451.gitlab.util.BypassImageGetterFactory
 import com.commit451.gitlab.util.InternalLinkMovementMethod
 import com.commit451.reptar.Result
-import com.jakewharton.retrofit2.adapter.rxjava2.HttpException
 import com.vdurmont.emoji.EmojiParser
 import io.reactivex.Single
 import io.reactivex.SingleSource
 import io.reactivex.functions.Function
 import org.greenrobot.eventbus.Subscribe
+import retrofit2.HttpException
 import retrofit2.Response
 import timber.log.Timber
 

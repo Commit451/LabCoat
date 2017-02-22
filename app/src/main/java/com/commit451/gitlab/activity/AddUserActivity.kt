@@ -29,9 +29,9 @@ import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
 import com.commit451.gitlab.viewHolder.UserViewHolder
 import com.commit451.teleprinter.Teleprinter
-import com.jakewharton.retrofit2.adapter.rxjava2.HttpException
 import io.reactivex.Single
 import org.parceler.Parcels
+import retrofit2.HttpException
 import retrofit2.Response
 import timber.log.Timber
 

@@ -3,9 +3,9 @@ package com.commit451.gitlab.api
 import android.support.annotation.VisibleForTesting
 import com.commit451.gitlab.model.Account
 import com.github.aurae.retrofit2.LoganSquareConverterFactory
-import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 
 /**

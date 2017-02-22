@@ -41,11 +41,11 @@ import com.commit451.gitlab.ssl.CustomKeyManager
 import com.commit451.gitlab.ssl.X509CertificateException
 import com.commit451.gitlab.ssl.X509Util
 import com.commit451.teleprinter.Teleprinter
-import com.jakewharton.retrofit2.adapter.rxjava2.HttpException
 import io.reactivex.Single
 import okhttp3.Credentials
 import okhttp3.HttpUrl
 import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.HttpException
 import retrofit2.Response
 import timber.log.Timber
 import java.io.IOException
