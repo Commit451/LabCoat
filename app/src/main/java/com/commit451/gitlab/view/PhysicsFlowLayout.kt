@@ -17,8 +17,7 @@ import com.wefika.flowlayout.FlowLayout
  */
 class PhysicsFlowLayout : FlowLayout {
 
-    var physics: Physics? = null
-        private set
+    lateinit var physics: Physics
 
     constructor(context: Context) : super(context) {
         init(null)
@@ -39,25 +38,25 @@ class PhysicsFlowLayout : FlowLayout {
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        physics!!.onSizeChanged(w, h)
+        physics.onSizeChanged(w, h)
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         super.onLayout(changed, l, t, r, b)
-        physics!!.onLayout(changed)
+        physics.onLayout(changed)
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        physics!!.onDraw(canvas)
+        physics.onDraw(canvas)
     }
 
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
-        return physics!!.onInterceptTouchEvent(ev)
+        return physics.onInterceptTouchEvent(ev)
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        return physics!!.onTouchEvent(event)
+        return physics.onTouchEvent(event)
     }
 
     override fun generateLayoutParams(attrs: AttributeSet?): LayoutParams {
