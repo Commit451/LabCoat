@@ -134,6 +134,10 @@ class ProjectFragment : ButterKnifeFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         bypass = Bypass(activity)
+        bypass.setImageSpanClickListener { view, imageSpan, s ->
+            Snackbar.make(swipeRefreshLayout, s, Snackbar.LENGTH_LONG)
+                    .show()
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
