@@ -98,6 +98,8 @@
             android:name=".activity.AttachActivity"
             android:theme="@style/Activity.Translucent" />
 
+        <activity android:name=".activity.DebugActivity" />
+
         <activity
             android:name=".activity.RoutingActivity"
             android:launchMode="singleTask"

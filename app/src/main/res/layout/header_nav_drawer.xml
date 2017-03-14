@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -13,7 +12,7 @@
         android:contentDescription="@null"
         android:fitsSystemWindows="false"
         android:scaleType="centerCrop"
-        app:srcCompat="@drawable/header"/>
+        app:srcCompat="@drawable/header" />
 
     <com.commit451.foregroundviews.ForegroundImageView
         android:id="@+id/profile_image"
@@ -24,20 +23,20 @@
         android:layout_marginTop="16dp"
         android:fitsSystemWindows="true"
         android:foreground="?attr/selectableItemBackgroundBorderless"
-        tools:src="@drawable/ic_assign_24dp"/>
+        tools:src="@drawable/ic_assign_24dp" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/gradient_header"/>
+        android:background="@drawable/gradient_header" />
 
     <FrameLayout
         android:id="@+id/drawer_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:padding="16dp"
-        android:background="?attr/selectableItemBackground">
+        android:background="?attr/selectableItemBackground"
+        android:padding="16dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -53,7 +52,7 @@
                 android:textColor="@color/white"
                 android:textSize="14sp"
                 app:typeface="roboto_medium"
-                tools:text="Jawnnypew"/>
+                tools:text="Jawnnypew" />
 
             <TextView
                 android:id="@+id/profile_email"
@@ -63,7 +62,7 @@
                 android:singleLine="true"
                 android:textColor="@color/white"
                 android:textSize="14sp"
-                tools:text="poop123@aol.com"/>
+                tools:text="poop123@aol.com" />
         </LinearLayout>
 
         <ImageView
@@ -75,12 +74,21 @@
             app:srcCompat="@drawable/ic_arrow_down_24dp" />
     </FrameLayout>
 
+    <ImageView
+        android:id="@+id/button_debug"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@null"
+        android:padding="8dp"
+        android:visibility="gone"
+        app:srcCompat="@drawable/ic_adb_white_24dp" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/account_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
-        />
+        android:visibility="gone" />
 
 </FrameLayout>

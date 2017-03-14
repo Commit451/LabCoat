@@ -134,7 +134,7 @@ dependencies {
     compile "com.github.Commit451.Reptar:reptar:$reptarVersion@aar"
     compile "com.github.Commit451.Reptar:reptar-retrofit:$reptarVersion@aar"
     compile "com.github.Commit451.Reptar:reptar-kotlin:$reptarVersion@aar"
-    compile 'com.github.Commit451:bypasses:1.0.4'
+    compile 'com.github.Commit451:bypasses:1.1.0'
     compile 'com.github.Commit451:ElasticDragDismissLayout:1.0.4'
     compile "com.github.Commit451.AdapterLayout:adapterlayout:$adapterLayout"
     compile "com.github.Commit451.AdapterLayout:adapterflowlayout:$adapterLayout"
