@@ -25,6 +25,7 @@ import android.net.Uri
 import android.widget.RemoteViews
 import com.commit451.gitlab.R
 import com.commit451.gitlab.navigation.DeepLinker
+import timber.log.Timber
 
 class UserFeedWidgetProvider : AppWidgetProvider() {
 
@@ -34,10 +35,8 @@ class UserFeedWidgetProvider : AppWidgetProvider() {
     }
 
     override fun onReceive(context: Context, intent: Intent) {
-        val mgr = AppWidgetManager.getInstance(context)
+        Timber.d("onReceive")
         if (intent.action == ACTION_FOLLOW_LINK) {
-            val appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
-                    AppWidgetManager.INVALID_APPWIDGET_ID)
             val uri = intent.getStringExtra(EXTRA_LINK)
             val launchIntent = DeepLinker.generateDeeplinkIntentFromUri(context, Uri.parse(uri))
             launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -48,15 +47,18 @@ class UserFeedWidgetProvider : AppWidgetProvider() {
 
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
         for (widgetId in appWidgetIds) {
+            Timber.d("onUpdate with id: $widgetId")
 
             // Here we setup the intent which points to the StackViewService which will
             // provide the views for this collection.
             val account = UserFeedWidgetPrefs.getAccount(context, widgetId)
             if (account == null || account.user.feedUrl == null) {
                 //TODO alert the user to this misfortune?
+                Timber.e("Error getting account or feed url")
                 return
             }
             val feedUrl = account.user.feedUrl!!.toString()
+            Timber.d("Updating widget with url $feedUrl")
             val intent = ProjectFeedWidgetService.newIntent(context, widgetId, account, feedUrl)
             // When intents are compared, the extras are ignored, so we need to embed the extras
             // into the data so that the extras will not be ignored.
@@ -70,13 +72,13 @@ class UserFeedWidgetProvider : AppWidgetProvider() {
             // cannot setup their own pending intents, instead, the collection as a whole can
             // setup a pending intent template, and the individual items can set a fillInIntent
             // to create unique before on an item to item basis.
-            val toastIntent = Intent(context, UserFeedWidgetProvider::class.java)
-            toastIntent.action = UserFeedWidgetProvider.ACTION_FOLLOW_LINK
-            toastIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
+            val actionIntent = Intent(context, UserFeedWidgetProvider::class.java)
+            actionIntent.action = UserFeedWidgetProvider.ACTION_FOLLOW_LINK
+            actionIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
             intent.data = Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME))
-            val toastPendingIntent = PendingIntent.getBroadcast(context, 0, toastIntent,
+            val actionPendingIntent = PendingIntent.getBroadcast(context, 0, actionIntent,
                     PendingIntent.FLAG_UPDATE_CURRENT)
-            rv.setPendingIntentTemplate(R.id.list_view, toastPendingIntent)
+            rv.setPendingIntentTemplate(R.id.list_view, actionPendingIntent)
 
             appWidgetManager.updateAppWidget(widgetId, rv)
         }
