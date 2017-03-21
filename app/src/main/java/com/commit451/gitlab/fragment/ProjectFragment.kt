@@ -14,6 +14,7 @@ import android.widget.TextView
 import butterknife.BindView
 import butterknife.OnClick
 import com.commit451.gitlab.App
+import com.commit451.gitlab.BuildConfig
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.ProjectActivity
 import com.commit451.gitlab.event.ProjectReloadEvent
@@ -136,8 +137,10 @@ class ProjectFragment : ButterKnifeFragment() {
         super.onCreate(savedInstanceState)
         bypass = Bypass(activity)
         bypass.setImageSpanClickListener { view, imageSpan, s ->
-            Snackbar.make(swipeRefreshLayout, s, Snackbar.LENGTH_LONG)
-                    .show()
+            if (BuildConfig.DEBUG) {
+                Snackbar.make(swipeRefreshLayout, s, Snackbar.LENGTH_LONG)
+                        .show()
+            }
         }
     }
 
