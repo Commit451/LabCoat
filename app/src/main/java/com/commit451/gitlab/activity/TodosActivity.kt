@@ -54,6 +54,10 @@ class TodosActivity : BaseActivity() {
         App.bus().unregister(this)
     }
 
+    override fun hasBrowsableLinks(): Boolean {
+        return true
+    }
+
     @Subscribe
     fun onEvent(event: CloseDrawerEvent) {
         drawerLayout.closeDrawers()

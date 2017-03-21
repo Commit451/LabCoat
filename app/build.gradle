@@ -73,7 +73,7 @@ android {
 }
 
 ext {
-    supportLibVersion = '25.2.0'
+    supportLibVersion = '25.3.0'
     retrofitVersion = '2.2.0'
     okHttpVersion = '3.6.0'
     butterknifeVersion = '8.5.1'
@@ -81,7 +81,7 @@ ext {
     parcelerVersion = '1.1.6'
     reptarVersion = '2.3.0'
     adapterLayout = '1.1.0'
-    materialDialogsVersion = '0.9.4.1'
+    materialDialogsVersion = '0.9.4.2'
 }
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -131,21 +131,21 @@ dependencies {
     compile "org.parceler:parceler-api:$parcelerVersion"
     kapt "org.parceler:parceler:$parcelerVersion"
 
-    compile "com.github.Commit451.Reptar:reptar:$reptarVersion@aar"
-    compile "com.github.Commit451.Reptar:reptar-retrofit:$reptarVersion@aar"
-    compile "com.github.Commit451.Reptar:reptar-kotlin:$reptarVersion@aar"
+    compile "com.github.Commit451.Reptar:reptar:$reptarVersion"
+    compile "com.github.Commit451.Reptar:reptar-retrofit:$reptarVersion"
+    compile "com.github.Commit451.Reptar:reptar-kotlin:$reptarVersion"
     compile 'com.github.Commit451:bypasses:1.1.0'
     compile 'com.github.Commit451:ElasticDragDismissLayout:1.0.4'
     compile "com.github.Commit451.AdapterLayout:adapterlayout:$adapterLayout"
     compile "com.github.Commit451.AdapterLayout:adapterflowlayout:$adapterLayout"
-    compile 'com.github.Commit451.Easel:easel:2.1.1@aar'
+    compile 'com.github.Commit451.Easel:easel:2.1.1'
     compile 'com.github.Commit451:Gimbal:2.0.2'
     compile 'com.github.Commit451:Teleprinter:1.0.2'
     compile 'com.github.Commit451:BypassPicassoImageGetter:1.1.1'
-    compile 'com.github.Commit451:Jounce:1.0.1'
+    compile 'com.github.Commit451:Jounce:1.0.2'
     compile 'com.github.Commit451:ForegroundViews:2.3.1'
     compile 'com.github.Commit451:MorphTransitions:2.0.0'
-    compile 'com.github.Commit451.Alakazam:alakazam:1.0.1@aar'
+    compile 'com.github.Commit451.Alakazam:alakazam:1.0.1'
     compile 'com.github.Commit451:Lift:1.2.0'
     compile 'com.github.Commit451:OkioProGuardRules:1.11.0.0'
     compile 'com.github.Commit451:RetrofitProguardRules:2.2.0.0'
