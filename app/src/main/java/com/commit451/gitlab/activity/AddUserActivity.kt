@@ -169,7 +169,7 @@ class AddUserActivity : MorphActivity() {
                                 .show()
                     }
 
-                    override fun responseSuccess(users: List<UserBasic>) {
+                    override fun responseNonNullSuccess(users: List<UserBasic>) {
                         swipeRefreshLayout.isRefreshing = false
                         loading = false
                         adapter.setData(users)
@@ -192,7 +192,7 @@ class AddUserActivity : MorphActivity() {
                         adapter.setLoading(false)
                     }
 
-                    override fun responseSuccess(users: List<UserBasic>) {
+                    override fun responseNonNullSuccess(users: List<UserBasic>) {
                         loading = false
                         adapter.setLoading(false)
                         adapter.addData(users)
@@ -217,7 +217,7 @@ class AddUserActivity : MorphActivity() {
                                 .show()
                     }
 
-                    override fun responseSuccess(member: Member) {
+                    override fun responseNonNullSuccess(member: Member) {
                         Snackbar.make(root, R.string.user_added_successfully, Snackbar.LENGTH_SHORT)
                                 .show()
                         dialogAccess.dismiss()

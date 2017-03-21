@@ -144,7 +144,7 @@ class AddIssueActivity : MorphActivity() {
                         spinnerMilestone.visibility = View.GONE
                     }
 
-                    override fun responseSuccess(milestones: List<Milestone>) {
+                    override fun responseNonNullSuccess(milestones: List<Milestone>) {
                         progressMilestone.visibility = View.GONE
                         spinnerMilestone.visibility = View.VISIBLE
                         val maybeNullMilestones = mutableListOf<Milestone?>()
@@ -168,7 +168,7 @@ class AddIssueActivity : MorphActivity() {
                         progressAssignee.visibility = View.GONE
                     }
 
-                    override fun responseSuccess(members: List<Member>) {
+                    override fun responseNonNullSuccess(members: List<Member>) {
                         this@AddIssueActivity.members.addAll(members)
                         if (project.belongsToGroup()) {
                             Timber.d("Project belongs to a group, loading those users too")
@@ -182,7 +182,7 @@ class AddIssueActivity : MorphActivity() {
                                             progressAssignee.visibility = View.GONE
                                         }
 
-                                        override fun responseSuccess(members: List<Member>) {
+                                        override fun responseNonNullSuccess(members: List<Member>) {
                                             this@AddIssueActivity.members.addAll(members)
                                             setAssignees()
                                         }

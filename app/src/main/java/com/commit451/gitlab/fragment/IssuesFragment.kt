@@ -31,6 +31,7 @@ import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
+import com.trello.rxlifecycle2.android.FragmentEvent
 import org.greenrobot.eventbus.Subscribe
 import retrofit2.Response
 import timber.log.Timber
@@ -144,7 +145,7 @@ class IssuesFragment : ButterKnifeFragment() {
         nextPageUrl = null
         loading = true
         App.get().gitLab.getIssues(project!!.id, state)
-                .setup(bindToLifecycle())
+                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .subscribe(object : CustomResponseSingleObserver<List<Issue>>() {
 
                     override fun error(e: Throwable) {
@@ -157,7 +158,7 @@ class IssuesFragment : ButterKnifeFragment() {
                         nextPageUrl = null
                     }
 
-                    override fun responseSuccess(issues: List<Issue>) {
+                    override fun responseNonNullSuccess(issues: List<Issue>) {
                         loading = false
                         swipeRefreshLayout.isRefreshing = false
                         if (issues.isEmpty()) {
@@ -181,7 +182,7 @@ class IssuesFragment : ButterKnifeFragment() {
 
         Timber.d("loadMore called for " + nextPageUrl!!)
         App.get().gitLab.getIssues(nextPageUrl!!.toString())
-                .setup(bindToLifecycle())
+                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .subscribe(object : CustomSingleObserver<Response<List<Issue>>>() {
 
                     override fun error(e: Throwable) {

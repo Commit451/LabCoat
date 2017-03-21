@@ -19,6 +19,7 @@ import com.commit451.gitlab.model.api.RepositoryCommit
 import com.commit451.gitlab.model.api.Runner
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.util.DateUtil
+import com.trello.rxlifecycle2.android.FragmentEvent
 import org.greenrobot.eventbus.Subscribe
 import org.parceler.Parcels
 import timber.log.Timber
@@ -83,7 +84,7 @@ class BuildDescriptionFragment : ButterKnifeFragment() {
 
     fun load() {
         App.get().gitLab.getBuild(project.id, build.id)
-                .setup(bindToLifecycle())
+                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .subscribe(object : CustomSingleObserver<Build>() {
 
                     override fun error(t: Throwable) {

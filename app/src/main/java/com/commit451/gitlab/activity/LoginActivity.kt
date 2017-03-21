@@ -242,7 +242,7 @@ class LoginActivity : BaseActivity() {
                         }
                     }
 
-                    override fun responseSuccess(userLogin: UserLogin) {
+                    override fun responseNonNullSuccess(userLogin: UserLogin) {
                         account.privateToken = userLogin.privateToken
                         loadUser()
                     }
@@ -341,7 +341,7 @@ class LoginActivity : BaseActivity() {
                         }
                     }
 
-                    override fun responseSuccess(userFull: UserFull) {
+                    override fun responseNonNullSuccess(userFull: UserFull) {
                         progress.visibility = View.GONE
                         account.user = userFull
                         account.lastUsed = Date()

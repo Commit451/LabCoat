@@ -27,6 +27,7 @@ import com.commit451.gitlab.rx.DecodeObservableFactory
 import com.commit451.gitlab.util.BypassImageGetterFactory
 import com.commit451.gitlab.util.InternalLinkMovementMethod
 import com.commit451.reptar.Result
+import com.trello.rxlifecycle2.android.FragmentEvent
 import com.vdurmont.emoji.EmojiParser
 import io.reactivex.Single
 import io.reactivex.SingleSource
@@ -85,7 +86,7 @@ class ProjectFragment : ButterKnifeFragment() {
                     .setNegativeButton(android.R.string.cancel, null)
                     .setPositiveButton(android.R.string.ok) { dialog, which ->
                         App.get().gitLab.forkProject(it.id)
-                                .setup(bindToLifecycle())
+                                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                                 .subscribe(object : CustomSingleObserver<String>() {
 
                                     override fun error(t: Throwable) {
@@ -107,7 +108,7 @@ class ProjectFragment : ButterKnifeFragment() {
     fun onStarClicked() {
         if (project != null) {
             App.get().gitLab.starProject(project!!.id)
-                    .setup(bindToLifecycle())
+                    .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                     .subscribe(object : CustomSingleObserver<Response<Project>>() {
 
                         override fun error(t: Throwable) {
@@ -207,7 +208,7 @@ class ProjectFragment : ButterKnifeFragment() {
                     }
                     Single.just(result)
                 })
-                .setup(bindToLifecycle())
+                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .subscribe(object : CustomSingleObserver<ReadmeResult>() {
 
                     override fun error(t: Throwable) {
@@ -266,7 +267,7 @@ class ProjectFragment : ButterKnifeFragment() {
 
     fun unstarProject() {
         App.get().gitLab.unstarProject(project!!.id)
-                .setup(bindToLifecycle())
+                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .subscribe(object : CustomSingleObserver<Project>() {
 
                     override fun error(t: Throwable) {

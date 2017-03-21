@@ -27,6 +27,7 @@ import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
+import com.trello.rxlifecycle2.android.FragmentEvent
 import org.greenrobot.eventbus.Subscribe
 import timber.log.Timber
 
@@ -133,7 +134,7 @@ class BuildsFragment : ButterKnifeFragment() {
         nextPageUrl = null
         loading = true
         App.get().gitLab.getBuilds(project!!.id, scope)
-                .setup(bindToLifecycle())
+                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .subscribe(object : CustomResponseSingleObserver<List<Build>>() {
 
                     override fun error(e: Throwable) {
@@ -146,7 +147,7 @@ class BuildsFragment : ButterKnifeFragment() {
                         nextPageUrl = null
                     }
 
-                    override fun responseSuccess(builds: List<Build>) {
+                    override fun responseNonNullSuccess(builds: List<Build>) {
                         loading = false
 
                         swipeRefreshLayout.isRefreshing = false
@@ -171,7 +172,7 @@ class BuildsFragment : ButterKnifeFragment() {
 
         Timber.d("loadMore called for %s", nextPageUrl)
         App.get().gitLab.getBuilds(nextPageUrl!!.toString(), scope)
-                .setup(bindToLifecycle())
+                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .subscribe(object : CustomResponseSingleObserver<List<Build>>() {
 
                     override fun error(e: Throwable) {
@@ -180,7 +181,7 @@ class BuildsFragment : ButterKnifeFragment() {
                         adapterBuilds.setLoading(false)
                     }
 
-                    override fun responseSuccess(builds: List<Build>) {
+                    override fun responseNonNullSuccess(builds: List<Build>) {
                         loading = false
                         adapterBuilds.setLoading(false)
                         nextPageUrl = LinkHeaderParser.parse(response()).next

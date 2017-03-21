@@ -27,6 +27,7 @@ import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
 import com.commit451.gitlab.viewHolder.ProjectMemberViewHolder
+import com.trello.rxlifecycle2.android.FragmentEvent
 import io.reactivex.Single
 import org.greenrobot.eventbus.Subscribe
 import org.parceler.Parcels
@@ -82,7 +83,7 @@ class GroupMembersFragment : ButterKnifeFragment() {
         override fun onUserRemoveClicked(member: Member) {
             this@GroupMembersFragment.member = member
             App.get().gitLab.removeGroupMember(group.id, member.id)
-                    .setup(bindToLifecycle())
+                    .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                     .subscribe(object : CustomSingleObserver<String>() {
 
                         override fun error(e: Throwable) {
@@ -183,7 +184,7 @@ class GroupMembersFragment : ButterKnifeFragment() {
 
     private fun loadGroupMembers(observable: Single<Response<List<Member>>>) {
         observable
-                .setup(bindToLifecycle())
+                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .subscribe(object : CustomResponseSingleObserver<List<Member>>() {
 
                     override fun error(e: Throwable) {
@@ -195,7 +196,7 @@ class GroupMembersFragment : ButterKnifeFragment() {
                         adapterGroupMembers.setData(null)
                     }
 
-                    override fun responseSuccess(members: List<Member>) {
+                    override fun responseNonNullSuccess(members: List<Member>) {
                         swipeRefreshLayout.isRefreshing = false
                         if (members.isEmpty()) {
                             textMessage.visibility = View.VISIBLE

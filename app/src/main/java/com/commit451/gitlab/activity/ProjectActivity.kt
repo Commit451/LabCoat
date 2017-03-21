@@ -22,6 +22,7 @@ import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.ProjectSectionsPagerAdapter
 import com.commit451.gitlab.data.Prefs
 import com.commit451.gitlab.event.ProjectReloadEvent
+import com.commit451.gitlab.extension.getParcelerParcelable
 import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.fragment.BaseFragment
 import com.commit451.gitlab.model.Ref
@@ -119,7 +120,7 @@ class ProjectActivity : BaseActivity() {
         Prefs.startingView = Prefs.STARTING_VIEW_PROJECTS
         setContentView(R.layout.activity_project)
         ButterKnife.bind(this)
-        var project: Project? = Parcels.unwrap<Project>(intent.getParcelableExtra<Parcelable>(EXTRA_PROJECT))
+        var project: Project? = intent.getParcelerParcelable(EXTRA_PROJECT)
 
         if (savedInstanceState != null) {
             project = Parcels.unwrap<Project>(savedInstanceState.getParcelable<Parcelable>(STATE_PROJECT))

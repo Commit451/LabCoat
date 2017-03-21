@@ -26,6 +26,7 @@ import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
+import com.trello.rxlifecycle2.android.FragmentEvent
 import org.greenrobot.eventbus.Subscribe
 import timber.log.Timber
 
@@ -130,7 +131,7 @@ class MergeRequestsFragment : ButterKnifeFragment() {
         nextPageUrl = null
         loading = true
         App.get().gitLab.getMergeRequests(project!!.id, state)
-                .setup(bindToLifecycle())
+                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .subscribe(object : CustomResponseSingleObserver<List<MergeRequest>>() {
 
                     override fun error(e: Throwable) {
@@ -143,7 +144,7 @@ class MergeRequestsFragment : ButterKnifeFragment() {
                         nextPageUrl = null
                     }
 
-                    override fun responseSuccess(mergeRequests: List<MergeRequest>) {
+                    override fun responseNonNullSuccess(mergeRequests: List<MergeRequest>) {
                         loading = false
                         swipeRefreshLayout.isRefreshing = false
                         if (mergeRequests.isEmpty()) {
@@ -168,7 +169,7 @@ class MergeRequestsFragment : ButterKnifeFragment() {
         loading = true
         Timber.d("loadMore called for " + nextPageUrl!!)
         App.get().gitLab.getMergeRequests(nextPageUrl!!.toString(), state)
-                .setup(bindToLifecycle())
+                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .subscribe(object : CustomResponseSingleObserver<List<MergeRequest>>() {
 
                     override fun error(e: Throwable) {
@@ -177,7 +178,7 @@ class MergeRequestsFragment : ButterKnifeFragment() {
                         loading = false
                     }
 
-                    override fun responseSuccess(mergeRequests: List<MergeRequest>) {
+                    override fun responseNonNullSuccess(mergeRequests: List<MergeRequest>) {
                         loading = false
                         adapterMergeRequests.setLoading(false)
                         nextPageUrl = LinkHeaderParser.parse(response()).next

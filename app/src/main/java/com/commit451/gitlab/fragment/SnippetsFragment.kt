@@ -27,6 +27,7 @@ import com.commit451.gitlab.model.api.Snippet
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
+import com.trello.rxlifecycle2.android.FragmentEvent
 import org.greenrobot.eventbus.Subscribe
 import timber.log.Timber
 
@@ -140,7 +141,7 @@ class SnippetsFragment : ButterKnifeFragment() {
         nextPageUrl = null
         loading = true
         App.get().gitLab.getSnippets(project!!.id)
-                .setup(bindToLifecycle())
+                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .subscribe(object : CustomResponseSingleObserver<List<Snippet>>() {
 
                     override fun error(e: Throwable) {
@@ -153,7 +154,7 @@ class SnippetsFragment : ButterKnifeFragment() {
                         nextPageUrl = null
                     }
 
-                    override fun responseSuccess(snippets: List<Snippet>) {
+                    override fun responseNonNullSuccess(snippets: List<Snippet>) {
                         loading = false
                         swipeRefreshLayout.isRefreshing = false
                         if (snippets.isEmpty()) {
@@ -181,7 +182,7 @@ class SnippetsFragment : ButterKnifeFragment() {
 
         Timber.d("loadMore called for %s", nextPageUrl)
         App.get().gitLab.getSnippets(nextPageUrl!!.toString())
-                .setup(bindToLifecycle())
+                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .subscribe(object : CustomResponseSingleObserver<List<Snippet>>() {
 
                     override fun error(e: Throwable) {
@@ -190,7 +191,7 @@ class SnippetsFragment : ButterKnifeFragment() {
                         loading = false
                     }
 
-                    override fun responseSuccess(snippets: List<Snippet>) {
+                    override fun responseNonNullSuccess(snippets: List<Snippet>) {
                         loading = false
                         adapterSnippets.setLoading(false)
                         nextPageUrl = LinkHeaderParser.parse(response()).next

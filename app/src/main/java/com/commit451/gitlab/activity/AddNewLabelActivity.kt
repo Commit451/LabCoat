@@ -136,7 +136,7 @@ class AddNewLabelActivity : BaseActivity(), ColorChooserDialog.ColorCallback {
                             }
                         }
 
-                        override fun responseSuccess(label: Label) {
+                        override fun responseNonNullSuccess(label: Label) {
                             val data = Intent()
                             data.putExtra(KEY_NEW_LABEL, Parcels.wrap(label))
                             setResult(Activity.RESULT_OK, data)

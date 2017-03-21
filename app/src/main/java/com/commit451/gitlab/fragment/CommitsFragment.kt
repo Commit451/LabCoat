@@ -21,6 +21,7 @@ import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.model.api.RepositoryCommit
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomSingleObserver
+import com.trello.rxlifecycle2.android.FragmentEvent
 import org.greenrobot.eventbus.Subscribe
 import timber.log.Timber
 
@@ -109,7 +110,7 @@ class CommitsFragment : ButterKnifeFragment() {
         loading = true
 
         App.get().gitLab.getCommits(project!!.id, branchName!!, page)
-                .setup(bindToLifecycle())
+                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .subscribe(object : CustomSingleObserver<List<RepositoryCommit>>() {
 
                     override fun error(t: Throwable) {
@@ -154,7 +155,7 @@ class CommitsFragment : ButterKnifeFragment() {
 
         Timber.d("loadMore called for %s", page)
         App.get().gitLab.getCommits(project!!.id, branchName!!, page)
-                .setup(bindToLifecycle())
+                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .subscribe(object : CustomSingleObserver<List<RepositoryCommit>>() {
 
                     override fun error(e: Throwable) {

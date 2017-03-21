@@ -79,7 +79,7 @@ ext {
     butterknifeVersion = '8.5.1'
     loganSquareVersion = '1.3.7'
     parcelerVersion = '1.1.6'
-    reptarVersion = '2.3.0'
+    reptarVersion = '2.4.1'
     adapterLayout = '1.1.0'
     materialDialogsVersion = '0.9.4.2'
 }
