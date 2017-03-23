@@ -11,6 +11,7 @@ import android.support.design.widget.Snackbar
 import android.support.design.widget.TextInputLayout
 import android.support.v7.widget.Toolbar
 import android.text.method.LinkMovementMethod
+import android.util.Patterns
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
@@ -24,12 +25,14 @@ import com.commit451.gitlab.BuildConfig
 import com.commit451.gitlab.R
 import com.commit451.gitlab.api.GitLabFactory
 import com.commit451.gitlab.api.OkHttpClientFactory
+import com.commit451.gitlab.api.request.SessionRequest
 import com.commit451.gitlab.data.Prefs
 import com.commit451.gitlab.dialog.HttpLoginDialog
 import com.commit451.gitlab.event.LoginEvent
 import com.commit451.gitlab.event.ReloadDataEvent
 import com.commit451.gitlab.extension.checkValid
 import com.commit451.gitlab.extension.setup
+import com.commit451.gitlab.extension.text
 import com.commit451.gitlab.model.Account
 import com.commit451.gitlab.model.api.Message
 import com.commit451.gitlab.model.api.UserFull
@@ -41,7 +44,6 @@ import com.commit451.gitlab.ssl.CustomKeyManager
 import com.commit451.gitlab.ssl.X509CertificateException
 import com.commit451.gitlab.ssl.X509Util
 import com.commit451.teleprinter.Teleprinter
-import io.reactivex.Single
 import okhttp3.Credentials
 import okhttp3.HttpUrl
 import okhttp3.logging.HttpLoggingInterceptor
@@ -90,6 +92,9 @@ class LoginActivity : BaseActivity() {
     lateinit var teleprinter: Teleprinter
 
     var isNormalLogin = true
+    val emailPattern : Pattern by lazy {
+        Patterns.EMAIL_ADDRESS
+    }
     var account: Account = Account()
 
     @OnEditorAction(R.id.password_input, R.id.token_input)
@@ -216,20 +221,24 @@ class LoginActivity : BaseActivity() {
     }
 
     fun connectByAuth() {
+        val request = SessionRequest()
+        request.setPassword(textInputLayoutPassword.text())
+        val usernameOrEmail = textInputLayoutUser.text()
+        if (emailPattern.matcher(usernameOrEmail).matches()) {
+            request.setEmail(usernameOrEmail)
+        } else {
+            request.setLogin(usernameOrEmail)
+        }
+        attemptLogin(request)
+    }
+
+    fun attemptLogin(request: SessionRequest) {
         val gitlabClientBuilder = OkHttpClientFactory.create(account)
         if (BuildConfig.DEBUG) {
             gitlabClientBuilder.addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
         }
         val gitLab = GitLabFactory.create(account, gitlabClientBuilder.build())
-        if (textUser.text.toString().contains("@")) {
-            attemptLogin(gitLab.loginWithEmail(textUser.text.toString(), textPassword.text.toString()))
-        } else {
-            attemptLogin(gitLab.loginWithEmail(textUser.text.toString(), textPassword.text.toString()))
-        }
-    }
-
-    fun attemptLogin(observable: Single<Response<UserLogin>>) {
-        observable
+        gitLab.login(request)
                 .setup(bindToLifecycle())
                 .subscribe(object : CustomResponseSingleObserver<UserLogin>() {
 
