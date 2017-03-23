@@ -16,11 +16,9 @@ import butterknife.OnClick
 import com.commit451.alakazam.HideRunnable
 import com.commit451.easel.Easel
 import com.commit451.gitlab.App
+import com.commit451.gitlab.BuildConfig
 import com.commit451.gitlab.R
-import com.commit451.gitlab.activity.ActivityActivity
-import com.commit451.gitlab.activity.GroupsActivity
-import com.commit451.gitlab.activity.ProjectsActivity
-import com.commit451.gitlab.activity.TodosActivity
+import com.commit451.gitlab.activity.*
 import com.commit451.gitlab.adapter.AccountAdapter
 import com.commit451.gitlab.data.Prefs
 import com.commit451.gitlab.event.CloseDrawerEvent
@@ -43,14 +41,11 @@ import java.util.*
  */
 class LabCoatNavigationView : NavigationView {
 
-    @BindView(R.id.profile_image)
-    lateinit var imageProfile: ImageView
-    @BindView(R.id.profile_user)
-    lateinit var textUserName: TextView
-    @BindView(R.id.profile_email)
-    lateinit var textEmail: TextView
-    @BindView(R.id.arrow)
-    lateinit var iconArrow: View
+    @BindView(R.id.profile_image) lateinit var imageProfile: ImageView
+    @BindView(R.id.profile_user) lateinit var textUserName: TextView
+    @BindView(R.id.profile_email) lateinit var textEmail: TextView
+    @BindView(R.id.arrow) lateinit var iconArrow: View
+    @BindView(R.id.button_debug) lateinit var buttonDebug: View
 
     lateinit var listAccounts: RecyclerView
     lateinit var adapterAccounts: AccountAdapter
@@ -138,6 +133,11 @@ class LabCoatNavigationView : NavigationView {
         Navigator.navigateToUser(context as Activity, imageView, App.get().getAccount().user)
     }
 
+    @OnClick(R.id.button_debug)
+    fun onDebugClicked() {
+        context.startActivity(DebugActivity.newIntent(context))
+    }
+
     @OnClick(R.id.drawer_header)
     fun onHeaderClick() {
         toggleAccounts()
@@ -165,6 +165,9 @@ class LabCoatNavigationView : NavigationView {
         val header = inflateHeaderView(R.layout.header_nav_drawer)
         ButterKnife.bind(this, header)
 
+        if (BuildConfig.DEBUG) {
+            buttonDebug.visibility = View.VISIBLE
+        }
         listAccounts = RecyclerView(context)
         listAccounts.layoutManager = LinearLayoutManager(context)
         addView(listAccounts)
@@ -216,7 +219,7 @@ class LabCoatNavigationView : NavigationView {
                         Timber.e(e)
                     }
 
-                    override fun responseSuccess(userFull: UserFull) {
+                    override fun responseNonNullSuccess(userFull: UserFull) {
                         //Store the newly retrieved user to the account so that it stays up to date
                         // in local storage
                         val account = App.get().getAccount()

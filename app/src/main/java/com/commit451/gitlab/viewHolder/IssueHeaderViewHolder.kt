@@ -2,7 +2,6 @@ package com.commit451.gitlab.viewHolder
 
 import `in`.uncod.android.bypass.Bypass
 import android.support.v7.widget.RecyclerView
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -49,7 +48,7 @@ class IssueHeaderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     fun bind(issue: Issue, project: Project) {
 
-        if (TextUtils.isEmpty(issue.description)) {
+        if (issue.description.isNullOrEmpty()) {
             textDescription.visibility = View.GONE
         } else {
             textDescription.visibility = View.VISIBLE

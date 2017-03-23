@@ -10,7 +10,6 @@ import android.support.design.widget.TextInputLayout
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.SwitchCompat
 import android.support.v7.widget.Toolbar
-import android.text.TextUtils
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
@@ -28,6 +27,7 @@ import com.commit451.gitlab.adapter.AssigneeSpinnerAdapter
 import com.commit451.gitlab.adapter.MilestoneSpinnerAdapter
 import com.commit451.gitlab.event.IssueChangedEvent
 import com.commit451.gitlab.event.IssueCreatedEvent
+import com.commit451.gitlab.extension.checkValid
 import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.*
 import com.commit451.gitlab.navigation.Navigator
@@ -144,7 +144,7 @@ class AddIssueActivity : MorphActivity() {
                         spinnerMilestone.visibility = View.GONE
                     }
 
-                    override fun responseSuccess(milestones: List<Milestone>) {
+                    override fun responseNonNullSuccess(milestones: List<Milestone>) {
                         progressMilestone.visibility = View.GONE
                         spinnerMilestone.visibility = View.VISIBLE
                         val maybeNullMilestones = mutableListOf<Milestone?>()
@@ -168,7 +168,7 @@ class AddIssueActivity : MorphActivity() {
                         progressAssignee.visibility = View.GONE
                     }
 
-                    override fun responseSuccess(members: List<Member>) {
+                    override fun responseNonNullSuccess(members: List<Member>) {
                         this@AddIssueActivity.members.addAll(members)
                         if (project.belongsToGroup()) {
                             Timber.d("Project belongs to a group, loading those users too")
@@ -182,7 +182,7 @@ class AddIssueActivity : MorphActivity() {
                                             progressAssignee.visibility = View.GONE
                                         }
 
-                                        override fun responseSuccess(members: List<Member>) {
+                                        override fun responseNonNullSuccess(members: List<Member>) {
                                             this@AddIssueActivity.members.addAll(members)
                                             setAssignees()
                                         }
@@ -218,10 +218,10 @@ class AddIssueActivity : MorphActivity() {
     }
 
     private fun bindIssue() {
-        if (!TextUtils.isEmpty(issue!!.title)) {
+        if (!issue?.title.isNullOrEmpty()) {
             textInputLayoutTitle.editText!!.setText(issue!!.title)
         }
-        if (!TextUtils.isEmpty(issue!!.description)) {
+        if (!issue?.description.isNullOrEmpty()) {
             textDescription.setText(issue!!.description)
         }
         switchConfidential.isChecked = issue!!.isConfidential
@@ -278,9 +278,8 @@ class AddIssueActivity : MorphActivity() {
     }
 
     private fun save() {
-        if (!TextUtils.isEmpty(textInputLayoutTitle.editText!!.text)) {
+        if (textInputLayoutTitle.checkValid()) {
             teleprinter.hideKeyboard()
-            textInputLayoutTitle.error = null
             showLoading()
             var assigneeId: Long? = null
             if (spinnerAssignee.adapter != null) {
@@ -312,8 +311,6 @@ class AddIssueActivity : MorphActivity() {
                     milestoneId,
                     labelsCommaSeperated,
                     switchConfidential.isChecked)
-        } else {
-            textInputLayoutTitle.error = getString(R.string.required_field)
         }
     }
 

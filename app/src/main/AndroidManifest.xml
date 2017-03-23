@@ -98,6 +98,8 @@
             android:name=".activity.AttachActivity"
             android:theme="@style/Activity.Translucent" />
 
+        <activity android:name=".activity.DebugActivity" />
+
         <activity
             android:name=".activity.RoutingActivity"
             android:launchMode="singleTask"
@@ -149,6 +151,11 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/widget_project_feed" />
         </receiver>
+
+        <service
+            android:name=".widget.ProjectFeedWidgetService"
+            android:exported="false"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
 
     </application>
 

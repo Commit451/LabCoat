@@ -19,6 +19,7 @@ import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.Ref
 import com.commit451.gitlab.model.api.Branch
 import com.commit451.gitlab.rx.CustomSingleObserver
+import com.trello.rxlifecycle2.android.FragmentEvent
 import org.parceler.Parcels
 import timber.log.Timber
 
@@ -86,7 +87,7 @@ class PickBranchFragment : ButterKnifeFragment() {
         textMessage.visibility = View.GONE
 
         App.get().gitLab.getBranches(projectId)
-                .setup(bindToLifecycle())
+                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .subscribe(object : CustomSingleObserver<List<Branch>>() {
 
                     override fun error(e: Throwable) {

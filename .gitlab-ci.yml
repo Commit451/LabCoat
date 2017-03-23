@@ -21,4 +21,4 @@ stages:
 build:
   stage: build
   script:
-    - ./gradlew testFdroidDevDebug
+    - ./gradlew testFdroidDebug

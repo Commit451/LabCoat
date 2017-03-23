@@ -13,11 +13,11 @@ import timber.log.Timber
  */
 object BypassImageGetterFactory {
 
-    fun create(textView: TextView, picasso: Picasso, baseUrl: String, project: Project): BypassPicassoImageGetter {
+    fun create(textView: TextView, picasso: Picasso, baseUrl: String, project: Project?): BypassPicassoImageGetter {
         val getter = BypassPicassoImageGetter(textView, picasso)
         getter.setSourceModifier(BypassPicassoImageGetter.SourceModifier { source ->
             if (source.startsWith("/")) {
-                val url = baseUrl + "/" + project.pathWithNamespace + source
+                val url = baseUrl + "/" + project?.pathWithNamespace + source
                 Timber.d(url)
                 return@SourceModifier url
             }

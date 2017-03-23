@@ -282,11 +282,12 @@ class FileActivity : BaseActivity() {
 
         val intent = Intent(Intent.ACTION_VIEW)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        intent.data = Uri.fromFile(file)
 
         val extension = fileExtension(file.name)
         if (extension != null) {
-            intent.setTypeAndNormalize(MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension))
+            intent.setDataAndType(Uri.fromFile(file), MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension))
+        } else {
+            intent.data = Uri.fromFile(file)
         }
 
         try {

@@ -2,11 +2,8 @@ package com.commit451.gitlab.widget
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.text.TextUtils
-
 import com.bluelinelabs.logansquare.LoganSquare
 import com.commit451.gitlab.model.Account
-
 import java.io.IOException
 
 /**
@@ -24,7 +21,7 @@ object UserFeedWidgetPrefs {
 
     fun getAccount(context: Context, widgetId: Int): Account? {
         val accountsJson = getSharedPrefs(context).getString(widgetId.toString() + KEY_ACCOUNT, null)
-        if (!TextUtils.isEmpty(accountsJson)) {
+        if (!accountsJson.isNullOrEmpty()) {
             try {
                 return LoganSquare.parse(accountsJson, Account::class.java)
             } catch (e: IOException) {

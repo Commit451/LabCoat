@@ -6,7 +6,6 @@ import android.support.design.widget.Snackbar
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AlertDialog
 import android.text.Html
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +13,7 @@ import android.widget.TextView
 import butterknife.BindView
 import butterknife.OnClick
 import com.commit451.gitlab.App
+import com.commit451.gitlab.BuildConfig
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.ProjectActivity
 import com.commit451.gitlab.event.ProjectReloadEvent
@@ -27,12 +27,13 @@ import com.commit451.gitlab.rx.DecodeObservableFactory
 import com.commit451.gitlab.util.BypassImageGetterFactory
 import com.commit451.gitlab.util.InternalLinkMovementMethod
 import com.commit451.reptar.Result
-import com.jakewharton.retrofit2.adapter.rxjava2.HttpException
+import com.trello.rxlifecycle2.android.FragmentEvent
 import com.vdurmont.emoji.EmojiParser
 import io.reactivex.Single
 import io.reactivex.SingleSource
 import io.reactivex.functions.Function
 import org.greenrobot.eventbus.Subscribe
+import retrofit2.HttpException
 import retrofit2.Response
 import timber.log.Timber
 
@@ -85,7 +86,7 @@ class ProjectFragment : ButterKnifeFragment() {
                     .setNegativeButton(android.R.string.cancel, null)
                     .setPositiveButton(android.R.string.ok) { dialog, which ->
                         App.get().gitLab.forkProject(it.id)
-                                .setup(bindToLifecycle())
+                                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                                 .subscribe(object : CustomSingleObserver<String>() {
 
                                     override fun error(t: Throwable) {
@@ -107,7 +108,7 @@ class ProjectFragment : ButterKnifeFragment() {
     fun onStarClicked() {
         if (project != null) {
             App.get().gitLab.starProject(project!!.id)
-                    .setup(bindToLifecycle())
+                    .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                     .subscribe(object : CustomSingleObserver<Response<Project>>() {
 
                         override fun error(t: Throwable) {
@@ -134,6 +135,12 @@ class ProjectFragment : ButterKnifeFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         bypass = Bypass(activity)
+        bypass.setImageSpanClickListener { view, imageSpan, s ->
+            if (BuildConfig.DEBUG) {
+                Snackbar.make(swipeRefreshLayout, s, Snackbar.LENGTH_LONG)
+                        .show()
+            }
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -169,7 +176,7 @@ class ProjectFragment : ButterKnifeFragment() {
             return
         }
 
-        if (project == null || TextUtils.isEmpty(branchName)) {
+        if (project == null || branchName.isNullOrEmpty()) {
             swipeRefreshLayout.isRefreshing = false
             return
         }
@@ -203,7 +210,7 @@ class ProjectFragment : ButterKnifeFragment() {
                     }
                     Single.just(result)
                 })
-                .setup(bindToLifecycle())
+                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .subscribe(object : CustomSingleObserver<ReadmeResult>() {
 
                     override fun error(t: Throwable) {
@@ -262,7 +269,7 @@ class ProjectFragment : ButterKnifeFragment() {
 
     fun unstarProject() {
         App.get().gitLab.unstarProject(project!!.id)
-                .setup(bindToLifecycle())
+                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .subscribe(object : CustomSingleObserver<Project>() {
 
                     override fun error(t: Throwable) {

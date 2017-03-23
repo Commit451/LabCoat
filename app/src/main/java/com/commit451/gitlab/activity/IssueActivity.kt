@@ -271,7 +271,7 @@ class IssueActivity : BaseActivity() {
                                 .show()
                     }
 
-                    override fun responseSuccess(notes: List<Note>) {
+                    override fun responseNonNullSuccess(notes: List<Note>) {
                         loading = false
                         swipeRefreshLayout.isRefreshing = false
                         nextPageUrl = LinkHeaderParser.parse(response()).next
@@ -295,7 +295,7 @@ class IssueActivity : BaseActivity() {
                         adapterIssueDetails.setLoading(false)
                     }
 
-                    override fun responseSuccess(notes: List<Note>) {
+                    override fun responseNonNullSuccess(notes: List<Note>) {
                         loading = false
                         adapterIssueDetails.setLoading(false)
                         nextPageUrl = LinkHeaderParser.parse(response()).next

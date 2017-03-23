@@ -20,8 +20,8 @@ import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.MergeRequest
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
-import com.jakewharton.retrofit2.adapter.rxjava2.HttpException
 import org.parceler.Parcels
+import retrofit2.HttpException
 import timber.log.Timber
 
 /**
@@ -105,7 +105,7 @@ class MergeRequestActivity : BaseActivity() {
                                 .show()
                     }
 
-                    override fun responseSuccess(mergeRequest: MergeRequest) {
+                    override fun responseNonNullSuccess(mergeRequest: MergeRequest) {
                         progress.visibility = View.GONE
                         Snackbar.make(root, R.string.merge_request_accepted, Snackbar.LENGTH_LONG)
                                 .show()

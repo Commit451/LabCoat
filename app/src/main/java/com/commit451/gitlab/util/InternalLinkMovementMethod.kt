@@ -17,7 +17,7 @@ class InternalLinkMovementMethod(private val serverUrl: Uri) : LinkMovementMetho
     override fun onTouchEvent(widget: TextView, buffer: android.text.Spannable, event: android.view.MotionEvent): Boolean {
         val action = event.action
 
-        //http://stackoverflow.com/questions/1697084/handle-textview-link-click-in-my-android-app
+        //http://stackoverflow.com/a/16644228/895797
         if (action == MotionEvent.ACTION_UP) {
             var x = event.x.toInt()
             var y = event.y.toInt()
@@ -32,15 +32,14 @@ class InternalLinkMovementMethod(private val serverUrl: Uri) : LinkMovementMetho
             val line = layout.getLineForVertical(y)
             val off = layout.getOffsetForHorizontal(line, x.toFloat())
 
-            val link = buffer.getSpans(off, off, URLSpan::class.java)
-            if (link.isNotEmpty()) {
-                val url = link[0].url
+            val links = buffer.getSpans(off, off, URLSpan::class.java)
+            if (links.isNotEmpty()) {
+                val url = links[0].url
                 if (url.startsWith(serverUrl.toString())) {
                     Timber.d("Looks like an internal server link: %s", url)
                     Navigator.navigateToUrl(widget.context, Uri.parse(url))
                     return true
                 }
-                return super.onTouchEvent(widget, buffer, event)
             }
         }
         return super.onTouchEvent(widget, buffer, event)

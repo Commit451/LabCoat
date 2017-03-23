@@ -1,5 +1,6 @@
 package com.commit451.gitlab.api
 
+import com.commit451.gitlab.api.request.SessionRequest
 import com.commit451.gitlab.model.api.*
 import io.reactivex.Single
 import okhttp3.MultipartBody
@@ -19,15 +20,8 @@ interface GitLabService {
 
     /* --- LOGIN --- */
 
-    @FormUrlEncoded
     @POST(API_VERSION + "/session")
-    fun loginWithUsername(@Field("login") login: String,
-                          @Field("password") password: String): Single<Response<UserLogin>>
-
-    @FormUrlEncoded
-    @POST(API_VERSION + "/session")
-    fun loginWithEmail(@Field("email") email: String,
-                       @Field("password") password: String): Single<Response<UserLogin>>
+    fun login(@Body request: SessionRequest): Single<Response<UserLogin>>
 
     /* --- USERS --- */
 

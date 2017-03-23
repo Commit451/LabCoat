@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.support.v4.view.ViewPager
 import android.support.v7.widget.Toolbar
-import android.text.TextUtils
 import android.view.View
 import android.widget.EditText
 import butterknife.*
@@ -56,7 +55,7 @@ class SearchActivity : BaseActivity() {
 
     @OnEditorAction(R.id.search)
     fun onSearchEditorAction(): Boolean {
-        if (TextUtils.isEmpty(textSearch.text)) {
+        if (textSearch.text.isNullOrEmpty()) {
             textSearch.setText("labcoat")
         }
         search()
@@ -66,7 +65,7 @@ class SearchActivity : BaseActivity() {
 
     @OnTextChanged(R.id.search)
     fun onSearchTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-        if (TextUtils.isEmpty(s)) {
+        if (s.isNullOrEmpty()) {
             buttonClear.animate().alpha(0.0f).withEndAction { buttonClear.visibility = View.GONE }
         } else if (count == 1) {
             buttonClear.visibility = View.VISIBLE

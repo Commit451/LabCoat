@@ -19,12 +19,10 @@ package com.commit451.gitlab.widget
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
-import android.os.Parcelable
 import android.widget.RemoteViewsService
-
+import com.bluelinelabs.logansquare.LoganSquare
 import com.commit451.gitlab.model.Account
-
-import org.parceler.Parcels
+import timber.log.Timber
 
 /**
  * Service that basically just defers everything to a Factory. Yay!
@@ -33,20 +31,28 @@ class ProjectFeedWidgetService : RemoteViewsService() {
 
     companion object {
 
-        val EXTRA_ACCOUNT = "account"
+        val EXTRA_ACCOUNT_JSON = "account_json"
         val EXTRA_FEED_URL = "feed_url"
 
+        /**
+         * Currently, when we pass this Intent along to certain launchers, they will not
+         * be able to un-marshall the Account class. So, we will just pass the account as json
+         * :(
+         */
         fun newIntent(context: Context, widgetId: Int, account: Account, feedUrl: String): Intent {
+            val accountJson = LoganSquare.serialize(account)
             val intent = Intent(context, ProjectFeedWidgetService::class.java)
             intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
-            intent.putExtra(EXTRA_ACCOUNT, Parcels.wrap(account))
+            intent.putExtra(EXTRA_ACCOUNT_JSON, accountJson)
             intent.putExtra(EXTRA_FEED_URL, feedUrl)
             return intent
         }
     }
 
     override fun onGetViewFactory(intent: Intent): RemoteViewsService.RemoteViewsFactory {
-        val account = Parcels.unwrap<Account>(intent.getParcelableExtra<Parcelable>(EXTRA_ACCOUNT))
+        Timber.d("onGetViewFactory")
+        val accountJson = intent.getStringExtra(EXTRA_ACCOUNT_JSON)
+        val account = LoganSquare.parse(accountJson, Account::class.java)
         val feedUrl = intent.getStringExtra(EXTRA_FEED_URL)
         return FeedRemoteViewsFactory(applicationContext, intent, account, feedUrl)
     }

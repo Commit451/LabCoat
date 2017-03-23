@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,6 +20,7 @@ import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.model.api.RepositoryCommit
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomSingleObserver
+import com.trello.rxlifecycle2.android.FragmentEvent
 import org.greenrobot.eventbus.Subscribe
 import timber.log.Timber
 
@@ -98,7 +98,7 @@ class CommitsFragment : ButterKnifeFragment() {
             return
         }
 
-        if (project == null || TextUtils.isEmpty(branchName)) {
+        if (project == null || branchName.isNullOrEmpty()) {
             swipeRefreshLayout.isRefreshing = false
             return
         }
@@ -109,7 +109,7 @@ class CommitsFragment : ButterKnifeFragment() {
         loading = true
 
         App.get().gitLab.getCommits(project!!.id, branchName!!, page)
-                .setup(bindToLifecycle())
+                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .subscribe(object : CustomSingleObserver<List<RepositoryCommit>>() {
 
                     override fun error(t: Throwable) {
@@ -144,7 +144,7 @@ class CommitsFragment : ButterKnifeFragment() {
             return
         }
 
-        if (project == null || TextUtils.isEmpty(branchName) || page < 0) {
+        if (project == null || branchName.isNullOrEmpty() || page < 0) {
             return
         }
 
@@ -154,7 +154,7 @@ class CommitsFragment : ButterKnifeFragment() {
 
         Timber.d("loadMore called for %s", page)
         App.get().gitLab.getCommits(project!!.id, branchName!!, page)
-                .setup(bindToLifecycle())
+                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .subscribe(object : CustomSingleObserver<List<RepositoryCommit>>() {
 
                     override fun error(e: Throwable) {

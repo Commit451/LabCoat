@@ -40,7 +40,7 @@ class ProjectFeedWidgetConfigureActivity : BaseActivity() {
     lateinit var adapterAccounts: AccountsAdapter
 
     var account: Account? = null
-    var mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
+    var appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
 
     public override fun onCreate(icicle: Bundle?) {
         super.onCreate(icicle)
@@ -52,11 +52,11 @@ class ProjectFeedWidgetConfigureActivity : BaseActivity() {
         val intent = intent
         val extras = intent.extras
         if (extras != null) {
-            mAppWidgetId = extras.getInt(
+            appWidgetId = extras.getInt(
                     AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
         }
         // If they gave us an intent without the widget id, just bail.
-        if (mAppWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
+        if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
             Timber.e("We did not get a widget id. Bail out")
             finish()
         }
@@ -103,12 +103,15 @@ class ProjectFeedWidgetConfigureActivity : BaseActivity() {
     }
 
     fun saveWidgetConfig(account: Account, project: Project) {
-        ProjectFeedWidgetPrefs.setAccount(this, mAppWidgetId, account)
-        ProjectFeedWidgetPrefs.setFeedUrl(this, mAppWidgetId, project.feedUrl!!.toString())
+        ProjectFeedWidgetPrefs.setAccount(this, appWidgetId, account)
+        ProjectFeedWidgetPrefs.setFeedUrl(this, appWidgetId, project.feedUrl!!.toString())
 
         val resultValue = Intent()
-        resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId)
+        resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
         setResult(Activity.RESULT_OK, resultValue)
         finish()
+
+        //Manually have to trigger on update here, it seems
+        WidgetUtil.triggerWidgetUpdate(this, UserFeedWidgetProvider::class.java, appWidgetId)
     }
 }

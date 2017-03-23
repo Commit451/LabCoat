@@ -51,23 +51,26 @@ class ProjectFeedWidgetProvider : AppWidgetProvider() {
 
             val account = ProjectFeedWidgetPrefs.getAccount(context, widgetId)
             val feedUrl = ProjectFeedWidgetPrefs.getFeedUrl(context, widgetId)
-            val intent = ProjectFeedWidgetService.newIntent(context, widgetId, account!!, feedUrl!!)
+            if (account != null && feedUrl!= null) {
+                val intent = ProjectFeedWidgetService.newIntent(context, widgetId, account, feedUrl)
 
-            intent.data = Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME))
-            val rv = RemoteViews(context.packageName, R.layout.widget_layout_entry)
-            rv.setRemoteAdapter(R.id.list_view, intent)
 
-            rv.setEmptyView(R.id.list_view, R.id.empty_view)
+                intent.data = Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME))
+                val rv = RemoteViews(context.packageName, R.layout.widget_layout_entry)
+                rv.setRemoteAdapter(R.id.list_view, intent)
 
-            val toastIntent = Intent(context, ProjectFeedWidgetProvider::class.java)
-            toastIntent.action = ProjectFeedWidgetProvider.ACTION_FOLLOW_LINK
-            toastIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
-            intent.data = Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME))
-            val toastPendingIntent = PendingIntent.getBroadcast(context, 0, toastIntent,
-                    PendingIntent.FLAG_UPDATE_CURRENT)
-            rv.setPendingIntentTemplate(R.id.list_view, toastPendingIntent)
+                rv.setEmptyView(R.id.list_view, R.id.empty_view)
 
-            appWidgetManager.updateAppWidget(widgetId, rv)
+                val toastIntent = Intent(context, ProjectFeedWidgetProvider::class.java)
+                toastIntent.action = ProjectFeedWidgetProvider.ACTION_FOLLOW_LINK
+                toastIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
+                intent.data = Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME))
+                val toastPendingIntent = PendingIntent.getBroadcast(context, 0, toastIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT)
+                rv.setPendingIntentTemplate(R.id.list_view, toastPendingIntent)
+
+                appWidgetManager.updateAppWidget(widgetId, rv)
+            }
         }
         super.onUpdate(context, appWidgetManager, appWidgetIds)
     }
