@@ -1,9 +1,10 @@
 package com.commit451.gitlab
 
 import android.net.Uri
-import com.commit451.gitlab.api.GitLabService
 import com.commit451.gitlab.api.GitLabFactory
+import com.commit451.gitlab.api.GitLabService
 import com.commit451.gitlab.api.OkHttpClientFactory
+import com.commit451.gitlab.api.request.SessionRequest
 import com.commit451.gitlab.model.Account
 import okhttp3.logging.HttpLoggingInterceptor
 import org.junit.Assert
@@ -27,8 +28,11 @@ object TestUtil {
             gitlabClientBuilder.addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
         }
         val gitLab = GitLabFactory.create(account, gitlabClientBuilder.build(), true)
+        val request = SessionRequest()
+                .setLogin("TestAllTheThings")
+                .setPassword("testing123")
         val loginResponse = gitLab
-                .loginWithUsername("TestAllTheThings", "testing123")
+                .login(request)
                 .blockingGet()
         assertTrue(loginResponse.isSuccessful)
         assertNotNull(loginResponse.body().privateToken)
