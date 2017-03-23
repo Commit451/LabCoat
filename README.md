@@ -1,8 +1,9 @@
 # LabCoat for GitLab
 
-[![build status](https://gitlab.com/ci/projects/7701/status.png?ref=master)](https://gitlab.com/ci/projects/7701?ref=master)
+[![build status](https://gitlab.com/Commit451/LabCoat/badges/master/build.svg)](https://gitlab.com/Commit451/LabCoat/commits/master)
 
 ![Image](https://gitlab.com/Commit451/LabCoat/raw/master/art/screenshot-1.png)
+
 [![Google Play](https://gitlab.com/Commit451/LabCoat/raw/master/art/google-play-badge.png)](https://play.google.com/store/apps/details?id=com.commit451.gitlab)
 
 ## Issues
