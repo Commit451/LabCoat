@@ -137,7 +137,13 @@ dependencies {
     compile 'com.github.Commit451:bypasses:1.1.0'
     compile 'com.github.Commit451:ElasticDragDismissLayout:1.0.4'
     compile "com.github.Commit451.AdapterLayout:adapterlayout:$adapterLayout"
-    compile "com.github.Commit451.AdapterLayout:adapterflowlayout:$adapterLayout"
+    compile ("com.github.Commit451.AdapterLayout:adapterflowlayout:$adapterLayout") {
+        exclude group: 'com.wefika', module: 'flowlayout'
+    }
+    //https://github.com/blazsolar/FlowLayout/issues/31
+    compile ("com.wefika:flowlayout:0.4.1") {
+        exclude group: 'com.intellij', module: 'annotations'
+    }
     compile 'com.github.Commit451.Easel:easel:2.1.1'
     compile 'com.github.Commit451:Gimbal:2.0.2'
     compile 'com.github.Commit451:Teleprinter:1.0.2'
