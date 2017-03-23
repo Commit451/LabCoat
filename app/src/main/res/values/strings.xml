@@ -42,7 +42,7 @@
     <string name="title_files">Files</string>
     <string name="title_merge_requests">Merge Requests</string>
     <string name="title_members">Members</string>
-    <string name="title_builds">Builds</string>
+    <string name="title_builds">Jobs</string>
     <string name="title_snippets">Snippets</string>
 
     <string-array name="main_tabs">
@@ -372,8 +372,8 @@
     <string name="settings">Settings</string>
 
     <!-- Builds -->
-    <string name="no_builds">No builds</string>
-    <string name="failed_to_load_builds">Failed to load builds</string>
+    <string name="no_builds">No jobs</string>
+    <string name="failed_to_load_builds">Failed to load jobs</string>
 
     <string-array name="build_scope_names">
         <item>All</item>
@@ -391,18 +391,21 @@
         <item>success</item>
         <item>canceled</item>
     </string-array>
-    <string name="build_number">Build #</string>
-    <string name="build_started">Build started</string>
-    <string name="build_erased">Build erased</string>
-    <string name="build_canceled">Build canceled</string>
-    <string name="unable_to_retry_build">Unable to retry build</string>
-    <string name="unable_to_erase_build">Unable to erase build</string>
-    <string name="unable_to_cancel_build">Unable to cancel build</string>
-    <string name="unable_to_load_build">Unable to load build</string>
+    <string name="build_number">Job #%1$s</string>
+    <string name="build_started">Job started</string>
+    <string name="build_erased">Job erased</string>
+    <string name="build_canceled">Job canceled</string>
+    <string name="unable_to_retry_build">Unable to retry job</string>
+    <string name="unable_to_erase_build">Unable to erase job</string>
+    <string name="unable_to_cancel_build">Unable to cancel job</string>
+    <string name="unable_to_load_build">Unable to load job</string>
     <string-array name="build_tabs">
         <item>Details</item>
         <item>Log</item>
     </string-array>
+    <string name="build_pipeline">Pipeline: #%1$s</string>
+    <string name="build_name">Name: %1$s</string>
+    <string name="build_stage">Stage: %1$s</string>
     <string name="build_ref">Ref: %1$s</string>
     <string name="build_status">Status: %1$s</string>
     <string name="build_duration">Duration: %1$s</string>
