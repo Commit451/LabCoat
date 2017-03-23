@@ -3,6 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_close"
-        app:showAsAction="ifRoom"
+        app:showAsAction="never"
         android:title="@string/action_close"/>
 </menu>
