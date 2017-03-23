@@ -2,7 +2,6 @@ package com.commit451.gitlab.viewHolder
 
 import `in`.uncod.android.bypass.Bypass
 import android.support.v7.widget.RecyclerView
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -44,7 +43,7 @@ class MergeRequestHeaderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     }
 
     fun bind(mergeRequest: MergeRequest, bypass: Bypass, project: Project) {
-        if (TextUtils.isEmpty(mergeRequest.description)) {
+        if (mergeRequest.description.isNullOrEmpty()) {
             textDescription.visibility = View.GONE
         } else {
             textDescription.visibility = View.VISIBLE

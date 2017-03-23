@@ -10,7 +10,6 @@ import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
-import android.text.TextUtils
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
@@ -87,8 +86,8 @@ class AddUserActivity : MorphActivity() {
     }
 
     @OnEditorAction(R.id.search)
-    internal fun onEditorAction(): Boolean {
-        if (!TextUtils.isEmpty(textSearch.text)) {
+    fun onEditorAction(): Boolean {
+        if (!textSearch.text.isNullOrEmpty()) {
             query = textSearch.text.toString()
             loadData()
         }
@@ -96,8 +95,8 @@ class AddUserActivity : MorphActivity() {
     }
 
     @OnTextChanged(R.id.search)
-    internal fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-        if (TextUtils.isEmpty(s)) {
+    fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+        if (s.isNullOrEmpty()) {
             buttonClear.animate()
                     .alpha(0.0f)
                     .withEndAction(HideRunnable(buttonClear))

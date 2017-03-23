@@ -9,7 +9,6 @@ import android.support.annotation.ColorInt
 import android.support.design.widget.Snackbar
 import android.support.design.widget.TextInputLayout
 import android.support.v7.widget.Toolbar
-import android.text.TextUtils
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -21,6 +20,7 @@ import com.afollestad.materialdialogs.color.ColorChooserDialog
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.extension.checkValid
+import com.commit451.gitlab.extension.text
 import com.commit451.gitlab.model.api.Label
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.util.ColorUtil
@@ -105,9 +105,9 @@ class AddNewLabelActivity : BaseActivity(), ColorChooserDialog.ColorCallback {
                         .show()
                 return
             }
-            val title = textInputLayoutTitle.editText!!.text.toString()
+            val title = textInputLayoutTitle.text()
             var description: String? = null
-            if (!TextUtils.isEmpty(textDescription.text)) {
+            if (!textDescription.text.isNullOrEmpty()) {
                 description = textDescription.text.toString()
             }
             var color: String? = null

@@ -10,7 +10,6 @@ import android.support.design.widget.TextInputLayout
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.SwitchCompat
 import android.support.v7.widget.Toolbar
-import android.text.TextUtils
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
@@ -28,6 +27,7 @@ import com.commit451.gitlab.adapter.AssigneeSpinnerAdapter
 import com.commit451.gitlab.adapter.MilestoneSpinnerAdapter
 import com.commit451.gitlab.event.IssueChangedEvent
 import com.commit451.gitlab.event.IssueCreatedEvent
+import com.commit451.gitlab.extension.checkValid
 import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.*
 import com.commit451.gitlab.navigation.Navigator
@@ -218,10 +218,10 @@ class AddIssueActivity : MorphActivity() {
     }
 
     private fun bindIssue() {
-        if (!TextUtils.isEmpty(issue!!.title)) {
+        if (!issue?.title.isNullOrEmpty()) {
             textInputLayoutTitle.editText!!.setText(issue!!.title)
         }
-        if (!TextUtils.isEmpty(issue!!.description)) {
+        if (!issue?.description.isNullOrEmpty()) {
             textDescription.setText(issue!!.description)
         }
         switchConfidential.isChecked = issue!!.isConfidential
@@ -278,9 +278,8 @@ class AddIssueActivity : MorphActivity() {
     }
 
     private fun save() {
-        if (!TextUtils.isEmpty(textInputLayoutTitle.editText!!.text)) {
+        if (textInputLayoutTitle.checkValid()) {
             teleprinter.hideKeyboard()
-            textInputLayoutTitle.error = null
             showLoading()
             var assigneeId: Long? = null
             if (spinnerAssignee.adapter != null) {
@@ -312,8 +311,6 @@ class AddIssueActivity : MorphActivity() {
                     milestoneId,
                     labelsCommaSeperated,
                     switchConfidential.isChecked)
-        } else {
-            textInputLayoutTitle.error = getString(R.string.required_field)
         }
     }
 

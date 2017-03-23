@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -99,7 +98,7 @@ class CommitsFragment : ButterKnifeFragment() {
             return
         }
 
-        if (project == null || TextUtils.isEmpty(branchName)) {
+        if (project == null || branchName.isNullOrEmpty()) {
             swipeRefreshLayout.isRefreshing = false
             return
         }
@@ -145,7 +144,7 @@ class CommitsFragment : ButterKnifeFragment() {
             return
         }
 
-        if (project == null || TextUtils.isEmpty(branchName) || page < 0) {
+        if (project == null || branchName.isNullOrEmpty() || page < 0) {
             return
         }
 

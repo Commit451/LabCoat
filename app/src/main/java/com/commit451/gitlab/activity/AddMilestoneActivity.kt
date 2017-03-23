@@ -7,7 +7,6 @@ import android.os.Parcelable
 import android.support.design.widget.Snackbar
 import android.support.design.widget.TextInputLayout
 import android.support.v7.widget.Toolbar
-import android.text.TextUtils
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -20,6 +19,7 @@ import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.event.MilestoneChangedEvent
 import com.commit451.gitlab.event.MilestoneCreatedEvent
+import com.commit451.gitlab.extension.checkValid
 import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.Milestone
 import com.commit451.gitlab.rx.CustomSingleObserver
@@ -115,8 +115,7 @@ class AddMilestoneActivity : MorphActivity() {
 
     fun createMilestone() {
         teleprinter.hideKeyboard()
-        if (TextUtils.isEmpty(textTitle.text)) {
-            textInputLayoutTitle.error = getString(R.string.required_field)
+        if (!textInputLayoutTitle.checkValid()) {
             return
         }
 
