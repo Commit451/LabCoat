@@ -82,7 +82,9 @@ ext {
     reptarVersion = '2.4.1'
     adapterLayout = '1.1.0'
     materialDialogsVersion = '0.9.4.2'
+    leakCanaryVersion = '1.5'
 }
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
@@ -193,9 +195,9 @@ dependencies {
         transitive = true;
     }
 
-    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
-    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
-    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+    debugCompile "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
+    releaseCompile "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
+    testCompile "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
 
     testCompile 'junit:junit:4.12'
     testCompile 'org.robolectric:robolectric:3.3.1'
