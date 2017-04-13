@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root"
     android:layout_width="match_parent"
@@ -15,19 +14,22 @@
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"/>
+            android:layout_height="?attr/actionBarSize" />
 
     </android.support.design.widget.AppBarLayout>
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="?attr/actionBarSize">
+        android:layout_height="wrap_content"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_marginBottom="32dp"
             android:orientation="vertical">
 
             <android.support.design.widget.TextInputLayout
@@ -41,7 +43,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/milestone_hint_title"
                     android:imeOptions="actionNone"
-                    android:inputType="textCapSentences|textAutoCorrect|textMultiLine"/>
+                    android:inputType="textCapSentences|textAutoCorrect|textMultiLine" />
 
             </android.support.design.widget.TextInputLayout>
 
@@ -56,14 +58,23 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/milestone_hint_description"
                     android:imeOptions="actionNone"
-                    android:inputType="textCapSentences|textAutoCorrect|textMultiLine"/>
+                    android:inputType="textCapSentences|textAutoCorrect|textMultiLine" />
 
             </android.support.design.widget.TextInputLayout>
+
+            <CheckBox
+                android:id="@+id/check_confidential"
+                android:layout_width="match_parent"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_height="wrap_content"
+                android:checked="false"
+                android:text="@string/confidential_message" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/assignee"/>
+                android:text="@string/assignee" />
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -73,20 +84,20 @@
                     android:id="@+id/assignee_progress"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:layout_gravity="center"/>
+                    android:layout_gravity="center" />
 
                 <Spinner
                     android:id="@+id/assignee_spinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:visibility="gone"/>
+                    android:visibility="gone" />
 
             </FrameLayout>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/milestone"/>
+                android:text="@string/milestone" />
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -98,13 +109,13 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_gravity="center"
-                    android:indeterminate="true"/>
+                    android:indeterminate="true" />
 
                 <Spinner
                     android:id="@+id/milestone_spinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:visibility="gone"/>
+                    android:visibility="gone" />
 
             </FrameLayout>
 
@@ -112,7 +123,7 @@
                 android:id="@+id/label_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/labels"/>
+                android:text="@string/labels" />
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -124,47 +135,41 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_gravity="center"
-                    android:indeterminate="true"/>
+                    android:indeterminate="true" />
 
                 <LinearLayout
                     android:id="@+id/root_add_labels"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingTop="16dp"
-                    android:paddingBottom="16dp"
-                    android:visibility="gone"
                     android:animateLayoutChanges="true"
-                    android:background="?attr/selectableItemBackground">
+                    android:background="?attr/selectableItemBackground"
+                    android:orientation="vertical"
+                    android:paddingBottom="16dp"
+                    android:paddingTop="16dp"
+                    android:visibility="gone">
 
                     <com.commit451.adapterflowlayout.AdapterFlowLayout
                         android:id="@+id/list_labels"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="4dp"/>
+                        android:layout_marginBottom="4dp" />
 
                     <TextView
                         android:id="@+id/text_add_labels"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="?attr/selectableItemBackground"
-                        android:paddingTop="4dp"
                         android:paddingBottom="4dp"
-                        android:text="@string/add_labels"/>
+                        android:paddingTop="4dp"
+                        android:text="@string/add_labels" />
 
                 </LinearLayout>
 
             </FrameLayout>
 
-            <android.support.v7.widget.SwitchCompat
-                android:id="@+id/confidential_switch"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:checked="false"
-                android:text="@string/confidential"/>
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 
+    <include layout="@layout/progress_fullscreen" />
 
-    <include layout="@layout/progress_fullscreen"/>
-</FrameLayout>
+</android.support.design.widget.CoordinatorLayout>

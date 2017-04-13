@@ -73,7 +73,7 @@ android {
 }
 
 ext {
-    supportLibVersion = '25.3.0'
+    supportLibVersion = '25.3.1'
     retrofitVersion = '2.2.0'
     okHttpVersion = '3.6.0'
     butterknifeVersion = '8.5.1'
@@ -81,7 +81,7 @@ ext {
     parcelerVersion = '1.1.6'
     reptarVersion = '2.4.1'
     adapterLayout = '1.1.0'
-    materialDialogsVersion = '0.9.4.2'
+    materialDialogsVersion = '0.9.4.3'
     leakCanaryVersion = '1.5'
 }
 
@@ -123,12 +123,12 @@ dependencies {
 
     compile 'org.greenrobot:eventbus:3.0.0'
 
-    compile 'io.reactivex.rxjava2:rxjava:2.0.7'
+    compile 'io.reactivex.rxjava2:rxjava:2.0.8'
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
 
     compile 'com.trello.rxlifecycle2:rxlifecycle-components:2.0.1'
 
-    compile 'net.danlew:android.joda:2.9.7'
+    compile 'net.danlew:android.joda:2.9.9'
 
     compile "org.parceler:parceler-api:$parcelerVersion"
     kapt "org.parceler:parceler:$parcelerVersion"
@@ -200,5 +200,5 @@ dependencies {
     testCompile "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
 
     testCompile 'junit:junit:4.12'
-    testCompile 'org.robolectric:robolectric:3.3.1'
+    testCompile 'org.robolectric:robolectric:3.3.2'
 }

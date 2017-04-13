@@ -8,12 +8,11 @@ import android.os.Parcelable
 import android.support.design.widget.Snackbar
 import android.support.design.widget.TextInputLayout
 import android.support.v7.app.AlertDialog
-import android.support.v7.widget.SwitchCompat
 import android.support.v7.widget.Toolbar
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
 import android.widget.EditText
-import android.widget.FrameLayout
 import android.widget.Spinner
 import android.widget.TextView
 import butterknife.BindView
@@ -63,7 +62,7 @@ class AddIssueActivity : MorphActivity() {
         }
     }
 
-    @BindView(R.id.root) lateinit var root: FrameLayout
+    @BindView(R.id.root) lateinit var root: ViewGroup
     @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
     @BindView(R.id.title_text_input_layout) lateinit var textInputLayoutTitle: TextInputLayout
     @BindView(R.id.description) lateinit var textDescription: EditText
@@ -76,7 +75,7 @@ class AddIssueActivity : MorphActivity() {
     @BindView(R.id.labels_progress) lateinit var progressLabels: View
     @BindView(R.id.root_add_labels) lateinit var rootAddLabels: ViewGroup
     @BindView(R.id.list_labels) lateinit var listLabels: AdapterFlowLayout
-    @BindView(R.id.confidential_switch) lateinit var switchConfidential: SwitchCompat
+    @BindView(R.id.check_confidential) lateinit var checkConfidential: CheckBox
 
     lateinit var adapterLabels: AddIssueLabelAdapter
     lateinit var teleprinter: Teleprinter
@@ -224,7 +223,7 @@ class AddIssueActivity : MorphActivity() {
         if (!issue?.description.isNullOrEmpty()) {
             textDescription.setText(issue!!.description)
         }
-        switchConfidential.isChecked = issue!!.isConfidential
+        checkConfidential.isChecked = issue!!.isConfidential
     }
 
     private fun setAssignees() {
@@ -310,7 +309,7 @@ class AddIssueActivity : MorphActivity() {
                     assigneeId,
                     milestoneId,
                     labelsCommaSeperated,
-                    switchConfidential.isChecked)
+                    checkConfidential.isChecked)
         }
     }
 
