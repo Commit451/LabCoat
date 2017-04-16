@@ -15,6 +15,7 @@ import butterknife.BindView
 import butterknife.OnClick
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
+import com.commit451.gitlab.activity.FullscreenImageActivity
 import com.commit451.gitlab.activity.ProjectActivity
 import com.commit451.gitlab.event.ProjectReloadEvent
 import com.commit451.gitlab.extension.setup
@@ -24,6 +25,7 @@ import com.commit451.gitlab.model.api.RepositoryTreeObject
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.rx.DecodeObservableFactory
+import com.commit451.gitlab.util.BypassFactory
 import com.commit451.gitlab.util.BypassImageGetterFactory
 import com.commit451.gitlab.util.InternalLinkMovementMethod
 import com.commit451.reptar.Result
@@ -133,10 +135,11 @@ class ProjectFragment : ButterKnifeFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        bypass = Bypass(activity)
-        bypass.setImageSpanClickListener { view, imageSpan, s ->
-            Snackbar.make(swipeRefreshLayout, s, Snackbar.LENGTH_LONG)
-                    .show()
+        bypass = BypassFactory.create(context)
+        bypass.setImageSpanClickListener { view, imageSpan, imageUrl ->
+            val intent = FullscreenImageActivity.newIntent(view.context, project!!)
+            intent.putExtra(FullscreenImageActivity.IMAGE_URL, imageUrl)
+            context.startActivity(intent)
         }
     }
 

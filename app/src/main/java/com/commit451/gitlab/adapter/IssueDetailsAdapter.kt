@@ -1,12 +1,15 @@
 package com.commit451.gitlab.adapter
 
 import `in`.uncod.android.bypass.Bypass
+import `in`.uncod.android.bypass.ImageSpanClickListener
 import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.view.ViewGroup
+import com.commit451.gitlab.activity.FullscreenImageActivity
 import com.commit451.gitlab.model.api.Issue
 import com.commit451.gitlab.model.api.Note
 import com.commit451.gitlab.model.api.Project
+import com.commit451.gitlab.util.BypassFactory
 import com.commit451.gitlab.viewHolder.IssueHeaderViewHolder
 import com.commit451.gitlab.viewHolder.IssueLabelsViewHolder
 import com.commit451.gitlab.viewHolder.LoadingFooterViewHolder
@@ -31,7 +34,13 @@ class IssueDetailsAdapter(context: Context, private var issue: Issue?, private v
 
     private val notes: LinkedList<Note> = LinkedList()
     private var loading = false
-    private val bypass: Bypass = Bypass(context)
+    private var imageClickListener = ImageSpanClickListener { view, imageSpan,
+                                                              imageUrl ->
+        val intent = FullscreenImageActivity.newIntent(view.context, project)
+        intent.putExtra(FullscreenImageActivity.IMAGE_URL, imageUrl)
+        context.startActivity(intent)
+    }
+    private val bypass: Bypass = BypassFactory.create(context, imageClickListener)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         if (viewType == TYPE_HEADER) {
@@ -48,7 +57,7 @@ class IssueDetailsAdapter(context: Context, private var issue: Issue?, private v
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is IssueHeaderViewHolder) {
-            holder.bind(issue!!, project)
+            holder.bind(issue!!, bypass, project)
         } else if (holder is IssueLabelsViewHolder) {
             holder.bind(issue!!.labels)
         } else if (holder is NoteViewHolder) {
