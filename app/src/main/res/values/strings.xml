@@ -462,4 +462,6 @@
     <string name="no_branches">No branches</string>
     <string name="no_tags">No tags</string>
     <string name="fetching_some_details">Fetching some details</string>
+
+    <string name="title_activity_fullscreen_image">FullscreenImageActivity</string>
 </resources>
