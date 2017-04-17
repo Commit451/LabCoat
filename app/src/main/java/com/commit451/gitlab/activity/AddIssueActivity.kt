@@ -8,13 +8,11 @@ import android.os.Parcelable
 import android.support.design.widget.Snackbar
 import android.support.design.widget.TextInputLayout
 import android.support.v7.app.AlertDialog
-import android.support.v7.widget.SwitchCompat
 import android.support.v7.widget.Toolbar
-import android.text.TextUtils
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
 import android.widget.EditText
-import android.widget.FrameLayout
 import android.widget.Spinner
 import android.widget.TextView
 import butterknife.BindView
@@ -28,6 +26,7 @@ import com.commit451.gitlab.adapter.AssigneeSpinnerAdapter
 import com.commit451.gitlab.adapter.MilestoneSpinnerAdapter
 import com.commit451.gitlab.event.IssueChangedEvent
 import com.commit451.gitlab.event.IssueCreatedEvent
+import com.commit451.gitlab.extension.checkValid
 import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.*
 import com.commit451.gitlab.navigation.Navigator
@@ -63,7 +62,7 @@ class AddIssueActivity : MorphActivity() {
         }
     }
 
-    @BindView(R.id.root) lateinit var root: FrameLayout
+    @BindView(R.id.root) lateinit var root: ViewGroup
     @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
     @BindView(R.id.title_text_input_layout) lateinit var textInputLayoutTitle: TextInputLayout
     @BindView(R.id.description) lateinit var textDescription: EditText
@@ -76,7 +75,7 @@ class AddIssueActivity : MorphActivity() {
     @BindView(R.id.labels_progress) lateinit var progressLabels: View
     @BindView(R.id.root_add_labels) lateinit var rootAddLabels: ViewGroup
     @BindView(R.id.list_labels) lateinit var listLabels: AdapterFlowLayout
-    @BindView(R.id.confidential_switch) lateinit var switchConfidential: SwitchCompat
+    @BindView(R.id.check_confidential) lateinit var checkConfidential: CheckBox
 
     lateinit var adapterLabels: AddIssueLabelAdapter
     lateinit var teleprinter: Teleprinter
@@ -144,7 +143,7 @@ class AddIssueActivity : MorphActivity() {
                         spinnerMilestone.visibility = View.GONE
                     }
 
-                    override fun responseSuccess(milestones: List<Milestone>) {
+                    override fun responseNonNullSuccess(milestones: List<Milestone>) {
                         progressMilestone.visibility = View.GONE
                         spinnerMilestone.visibility = View.VISIBLE
                         val maybeNullMilestones = mutableListOf<Milestone?>()
@@ -168,7 +167,7 @@ class AddIssueActivity : MorphActivity() {
                         progressAssignee.visibility = View.GONE
                     }
 
-                    override fun responseSuccess(members: List<Member>) {
+                    override fun responseNonNullSuccess(members: List<Member>) {
                         this@AddIssueActivity.members.addAll(members)
                         if (project.belongsToGroup()) {
                             Timber.d("Project belongs to a group, loading those users too")
@@ -182,7 +181,7 @@ class AddIssueActivity : MorphActivity() {
                                             progressAssignee.visibility = View.GONE
                                         }
 
-                                        override fun responseSuccess(members: List<Member>) {
+                                        override fun responseNonNullSuccess(members: List<Member>) {
                                             this@AddIssueActivity.members.addAll(members)
                                             setAssignees()
                                         }
@@ -218,13 +217,13 @@ class AddIssueActivity : MorphActivity() {
     }
 
     private fun bindIssue() {
-        if (!TextUtils.isEmpty(issue!!.title)) {
+        if (!issue?.title.isNullOrEmpty()) {
             textInputLayoutTitle.editText!!.setText(issue!!.title)
         }
-        if (!TextUtils.isEmpty(issue!!.description)) {
+        if (!issue?.description.isNullOrEmpty()) {
             textDescription.setText(issue!!.description)
         }
-        switchConfidential.isChecked = issue!!.isConfidential
+        checkConfidential.isChecked = issue!!.isConfidential
     }
 
     private fun setAssignees() {
@@ -278,9 +277,8 @@ class AddIssueActivity : MorphActivity() {
     }
 
     private fun save() {
-        if (!TextUtils.isEmpty(textInputLayoutTitle.editText!!.text)) {
+        if (textInputLayoutTitle.checkValid()) {
             teleprinter.hideKeyboard()
-            textInputLayoutTitle.error = null
             showLoading()
             var assigneeId: Long? = null
             if (spinnerAssignee.adapter != null) {
@@ -311,9 +309,7 @@ class AddIssueActivity : MorphActivity() {
                     assigneeId,
                     milestoneId,
                     labelsCommaSeperated,
-                    switchConfidential.isChecked)
-        } else {
-            textInputLayoutTitle.error = getString(R.string.required_field)
+                    checkConfidential.isChecked)
         }
     }
 

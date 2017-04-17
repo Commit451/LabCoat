@@ -77,15 +77,18 @@ class UserFeedWidgetConfigureActivity : BaseActivity() {
 
     fun saveWidgetConfig(account: Account) {
         UserFeedWidgetPrefs.setAccount(this@UserFeedWidgetConfigureActivity, appWidgetId, account)
-        // Push widget update to surface with newly set prefix
         val appWidgetManager = AppWidgetManager.getInstance(this@UserFeedWidgetConfigureActivity)
-        //        ExampleAppWidgetProvider.updateAppWidget(context, appWidgetManager,
-        //                appWidgetId, titlePrefix);
+
         // Make sure we pass back the original appWidgetId
-        val resultValue = Intent()
-        resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-        setResult(Activity.RESULT_OK, resultValue)
+        val data = Intent()
+        val extras = Bundle()
+        extras.putInt(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+        data.putExtras(extras)
+        setResult(Activity.RESULT_OK, data)
+        appWidgetManager.updateAppWidgetOptions(appWidgetId, extras)
         finish()
+        //Manually have to trigger on update here, it seems
+        WidgetUtil.triggerWidgetUpdate(this, UserFeedWidgetProvider::class.java, appWidgetId)
     }
 
 }

@@ -18,6 +18,7 @@ import com.commit451.gitlab.model.api.Todo
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
+import com.trello.rxlifecycle2.android.FragmentEvent
 import io.reactivex.Single
 import retrofit2.Response
 import timber.log.Timber
@@ -114,7 +115,7 @@ class TodoFragment : ButterKnifeFragment() {
 
     fun getTodos(observable: Single<Response<List<Todo>>>) {
         observable
-                .setup(bindToLifecycle())
+                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .subscribe(object : CustomResponseSingleObserver<List<Todo>>() {
 
                     override fun error(e: Throwable) {
@@ -127,7 +128,7 @@ class TodoFragment : ButterKnifeFragment() {
                         nextPageUrl = null
                     }
 
-                    override fun responseSuccess(todos: List<Todo>) {
+                    override fun responseNonNullSuccess(todos: List<Todo>) {
                         loading = false
 
                         swipeRefreshLayout.isRefreshing = false
@@ -154,7 +155,7 @@ class TodoFragment : ButterKnifeFragment() {
         adapterTodos.setLoading(true)
         Timber.d("loadMore called for " + nextPageUrl!!)
         App.get().gitLab.getTodosByUrl(nextPageUrl!!.toString())
-                .setup(bindToLifecycle())
+                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .subscribe(object : CustomResponseSingleObserver<List<Todo>>() {
 
                     override fun error(e: Throwable) {
@@ -163,7 +164,7 @@ class TodoFragment : ButterKnifeFragment() {
                         adapterTodos.setLoading(false)
                     }
 
-                    override fun responseSuccess(todos: List<Todo>) {
+                    override fun responseNonNullSuccess(todos: List<Todo>) {
                         loading = false
                         adapterTodos.setLoading(false)
                         adapterTodos.addData(todos)

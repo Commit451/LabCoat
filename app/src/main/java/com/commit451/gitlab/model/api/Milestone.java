@@ -2,21 +2,18 @@ package com.commit451.gitlab.model.api;
 
 import android.support.annotation.Nullable;
 import android.support.annotation.StringDef;
-import android.text.TextUtils;
 
 import com.bluelinelabs.logansquare.annotation.JsonField;
 import com.bluelinelabs.logansquare.annotation.JsonObject;
+import com.commit451.gitlab.api.converter.DueDateTypeConverter;
 
 import org.parceler.Parcel;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-
-import timber.log.Timber;
 
 @Parcel
 @JsonObject
@@ -53,8 +50,8 @@ public class Milestone {
     Date createdAt;
     @JsonField(name = "updated_at")
     Date updatedAt;
-    @JsonField(name = "due_date")
-    String dueDate;
+    @JsonField(name = "due_date", typeConverter = DueDateTypeConverter.class)
+    Date dueDate;
 
     public Milestone() {}
 
@@ -78,7 +75,6 @@ public class Milestone {
         return description;
     }
 
-
     @State
     public String getState() {
         return state;
@@ -94,15 +90,7 @@ public class Milestone {
 
     @Nullable
     public Date getDueDate() {
-        if (TextUtils.isEmpty(dueDate)) {
-            return null;
-        }
-        try {
-            return DUE_DATE_FORMAT.parse(dueDate);
-        } catch (ParseException e) {
-            Timber.e(e);
-        }
-        return null;
+        return dueDate;
     }
 
     @Override

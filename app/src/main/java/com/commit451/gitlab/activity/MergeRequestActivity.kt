@@ -105,7 +105,7 @@ class MergeRequestActivity : BaseActivity() {
                                 .show()
                     }
 
-                    override fun responseSuccess(mergeRequest: MergeRequest) {
+                    override fun responseNonNullSuccess(mergeRequest: MergeRequest) {
                         progress.visibility = View.GONE
                         Snackbar.make(root, R.string.merge_request_accepted, Snackbar.LENGTH_LONG)
                                 .show()

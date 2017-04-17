@@ -91,6 +91,14 @@ class GroupsActivity : BaseActivity() {
         load()
     }
 
+    override fun onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START)
+        } else {
+            super.onBackPressed()
+        }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         App.bus().unregister(this)
@@ -115,7 +123,7 @@ class GroupsActivity : BaseActivity() {
                         textMessage.setText(R.string.connection_error)
                     }
 
-                    override fun responseSuccess(groups: List<Group>) {
+                    override fun responseNonNullSuccess(groups: List<Group>) {
                         loading = false
                         swipeRefreshLayout.isRefreshing = false
                         if (groups.isEmpty()) {
@@ -151,7 +159,7 @@ class GroupsActivity : BaseActivity() {
                         loading = false
                     }
 
-                    override fun responseSuccess(groups: List<Group>) {
+                    override fun responseNonNullSuccess(groups: List<Group>) {
                         loading = false
                         adapterGroup.addGroups(groups)
                         nextPageUrl = LinkHeaderParser.parse(response()).next

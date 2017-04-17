@@ -49,9 +49,21 @@ class TodosActivity : BaseActivity() {
         tabLayout.setupWithViewPager(viewPager)
     }
 
+    override fun onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START)
+        } else {
+            super.onBackPressed()
+        }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         App.bus().unregister(this)
+    }
+
+    override fun hasBrowsableLinks(): Boolean {
+        return true
     }
 
     @Subscribe

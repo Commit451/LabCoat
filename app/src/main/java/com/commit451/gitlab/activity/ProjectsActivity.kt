@@ -66,6 +66,14 @@ class ProjectsActivity : BaseActivity() {
         App.bus().unregister(this)
     }
 
+    override fun onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START)
+        } else {
+            super.onBackPressed()
+        }
+    }
+
     @Subscribe
     fun onEvent(event: CloseDrawerEvent) {
         drawerLayout.closeDrawers()

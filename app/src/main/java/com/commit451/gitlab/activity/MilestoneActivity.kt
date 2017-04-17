@@ -155,7 +155,7 @@ class MilestoneActivity : BaseActivity() {
                         adapterMilestoneIssues.setIssues(null)
                     }
 
-                    override fun responseSuccess(issues: List<Issue>) {
+                    override fun responseNonNullSuccess(issues: List<Issue>) {
                         swipeRefreshLayout.isRefreshing = false
                         loading = false
 
@@ -191,7 +191,7 @@ class MilestoneActivity : BaseActivity() {
                         loading = false
                     }
 
-                    override fun responseSuccess(issues: List<Issue>) {
+                    override fun responseNonNullSuccess(issues: List<Issue>) {
                         loading = false
                         nextPageUrl = LinkHeaderParser.parse(response()).next
                         adapterMilestoneIssues.addIssues(issues)

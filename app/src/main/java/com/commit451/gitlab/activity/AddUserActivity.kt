@@ -10,7 +10,6 @@ import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
-import android.text.TextUtils
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
@@ -87,8 +86,8 @@ class AddUserActivity : MorphActivity() {
     }
 
     @OnEditorAction(R.id.search)
-    internal fun onEditorAction(): Boolean {
-        if (!TextUtils.isEmpty(textSearch.text)) {
+    fun onEditorAction(): Boolean {
+        if (!textSearch.text.isNullOrEmpty()) {
             query = textSearch.text.toString()
             loadData()
         }
@@ -96,8 +95,8 @@ class AddUserActivity : MorphActivity() {
     }
 
     @OnTextChanged(R.id.search)
-    internal fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-        if (TextUtils.isEmpty(s)) {
+    fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+        if (s.isNullOrEmpty()) {
             buttonClear.animate()
                     .alpha(0.0f)
                     .withEndAction(HideRunnable(buttonClear))
@@ -169,7 +168,7 @@ class AddUserActivity : MorphActivity() {
                                 .show()
                     }
 
-                    override fun responseSuccess(users: List<UserBasic>) {
+                    override fun responseNonNullSuccess(users: List<UserBasic>) {
                         swipeRefreshLayout.isRefreshing = false
                         loading = false
                         adapter.setData(users)
@@ -192,7 +191,7 @@ class AddUserActivity : MorphActivity() {
                         adapter.setLoading(false)
                     }
 
-                    override fun responseSuccess(users: List<UserBasic>) {
+                    override fun responseNonNullSuccess(users: List<UserBasic>) {
                         loading = false
                         adapter.setLoading(false)
                         adapter.addData(users)
@@ -217,7 +216,7 @@ class AddUserActivity : MorphActivity() {
                                 .show()
                     }
 
-                    override fun responseSuccess(member: Member) {
+                    override fun responseNonNullSuccess(member: Member) {
                         Snackbar.make(root, R.string.user_added_successfully, Snackbar.LENGTH_SHORT)
                                 .show()
                         dialogAccess.dismiss()

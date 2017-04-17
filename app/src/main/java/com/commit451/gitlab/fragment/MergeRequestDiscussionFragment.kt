@@ -29,6 +29,7 @@ import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
 import com.commit451.gitlab.view.SendMessageView
 import com.commit451.teleprinter.Teleprinter
+import com.trello.rxlifecycle2.android.FragmentEvent
 import org.greenrobot.eventbus.Subscribe
 import org.parceler.Parcels
 import timber.log.Timber
@@ -144,7 +145,7 @@ class MergeRequestDiscussionFragment : ButterKnifeFragment() {
     fun loadNotes() {
         swipeRefreshLayout.isRefreshing = true
         App.get().gitLab.getMergeRequestNotes(project.id, mergeRequest.id)
-                .setup(bindToLifecycle())
+                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .subscribe(object : CustomResponseSingleObserver<List<Note>>() {
 
                     override fun error(e: Throwable) {
@@ -155,7 +156,7 @@ class MergeRequestDiscussionFragment : ButterKnifeFragment() {
                                 .show()
                     }
 
-                    override fun responseSuccess(notes: List<Note>) {
+                    override fun responseNonNullSuccess(notes: List<Note>) {
                         swipeRefreshLayout.isRefreshing = false
                         loading = false
                         nextPageUrl = LinkHeaderParser.parse(response()).next
@@ -167,7 +168,7 @@ class MergeRequestDiscussionFragment : ButterKnifeFragment() {
     fun loadMoreNotes() {
         adapterMergeRequestDetail.setLoading(true)
         App.get().gitLab.getMergeRequestNotes(nextPageUrl!!.toString())
-                .setup(bindToLifecycle())
+                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .subscribe(object : CustomResponseSingleObserver<List<Note>>() {
 
                     override fun error(e: Throwable) {
@@ -178,7 +179,7 @@ class MergeRequestDiscussionFragment : ButterKnifeFragment() {
                                 .show()
                     }
 
-                    override fun responseSuccess(notes: List<Note>) {
+                    override fun responseNonNullSuccess(notes: List<Note>) {
                         adapterMergeRequestDetail.setLoading(false)
                         loading = false
                         nextPageUrl = LinkHeaderParser.parse(response()).next
@@ -201,7 +202,7 @@ class MergeRequestDiscussionFragment : ButterKnifeFragment() {
         sendMessageView.clearText()
 
         App.get().gitLab.addMergeRequestNote(project.id, mergeRequest.id, message)
-                .setup(bindToLifecycle())
+                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .subscribe(object : CustomSingleObserver<Note>() {
 
                     override fun error(e: Throwable) {

@@ -23,6 +23,7 @@ import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
+import com.trello.rxlifecycle2.android.FragmentEvent
 import io.reactivex.Single
 import org.parceler.Parcels
 import retrofit2.Response
@@ -167,7 +168,8 @@ class ProjectsFragment : ButterKnifeFragment() {
     }
 
     private fun actuallyLoadIt(observable: Single<Response<List<Project>>>) {
-        observable.setup(bindToLifecycle())
+        observable
+                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .subscribe(object : CustomResponseSingleObserver<List<Project>>() {
 
                     override fun error(e: Throwable) {
@@ -180,7 +182,7 @@ class ProjectsFragment : ButterKnifeFragment() {
                         nextPageUrl = null
                     }
 
-                    override fun responseSuccess(projects: List<Project>) {
+                    override fun responseNonNullSuccess(projects: List<Project>) {
                         loading = false
                         swipeRefreshLayout.isRefreshing = false
                         if (projects.isEmpty()) {
@@ -202,7 +204,7 @@ class ProjectsFragment : ButterKnifeFragment() {
         adapterProjects.setLoading(true)
         Timber.d("loadMore called for %s", nextPageUrl)
         getGitLab().getProjects(nextPageUrl!!.toString())
-                .setup(bindToLifecycle())
+                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .subscribe(object : CustomResponseSingleObserver<List<Project>>() {
 
                     override fun error(e: Throwable) {
@@ -211,7 +213,7 @@ class ProjectsFragment : ButterKnifeFragment() {
                         adapterProjects.setLoading(false)
                     }
 
-                    override fun responseSuccess(projects: List<Project>) {
+                    override fun responseNonNullSuccess(projects: List<Project>) {
                         loading = false
                         adapterProjects.setLoading(false)
                         adapterProjects.addData(projects)

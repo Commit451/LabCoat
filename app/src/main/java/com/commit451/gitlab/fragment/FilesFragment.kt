@@ -8,7 +8,6 @@ import android.support.design.widget.Snackbar
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,6 +27,7 @@ import com.commit451.gitlab.model.api.RepositoryTreeObject
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.util.IntentUtil
+import com.trello.rxlifecycle2.android.FragmentEvent
 import org.greenrobot.eventbus.Subscribe
 import timber.log.Timber
 import java.util.*
@@ -138,7 +138,7 @@ class FilesFragment : ButterKnifeFragment() {
             return
         }
 
-        if (project == null || TextUtils.isEmpty(branchName)) {
+        if (project == null || branchName.isNullOrEmpty()) {
             swipeRefreshLayout.isRefreshing = false
             return
         }
@@ -146,7 +146,7 @@ class FilesFragment : ButterKnifeFragment() {
         swipeRefreshLayout.isRefreshing = true
 
         App.get().gitLab.getTree(project!!.id, branchName!!, newPath)
-                .setup(bindToLifecycle())
+                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .subscribe(object : CustomSingleObserver<List<RepositoryTreeObject>>() {
 
                     override fun error(e: Throwable) {

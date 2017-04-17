@@ -127,6 +127,12 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/widget_project_feed"/>
         </receiver>
+
+        <service
+            android:name=".widget.ProjectFeedWidgetService"
+            android:exported="false"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
+
     </application>
 
 </manifest>

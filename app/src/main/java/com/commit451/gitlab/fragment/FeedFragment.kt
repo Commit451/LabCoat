@@ -20,6 +20,7 @@ import com.commit451.gitlab.model.rss.Feed
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.novoda.simplechromecustomtabs.SimpleChromeCustomTabs
+import com.trello.rxlifecycle2.android.FragmentEvent
 import timber.log.Timber
 
 /**
@@ -99,7 +100,7 @@ class FeedFragment : ButterKnifeFragment() {
         textMessage.visibility = View.GONE
         swipeRefreshLayout.isRefreshing = true
         App.get().gitLabRss.getFeed(feedUrl!!.toString())
-                .setup(bindToLifecycle())
+                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .subscribe(object : CustomSingleObserver<Feed>() {
                     override fun success(feed: Feed) {
                         swipeRefreshLayout.isRefreshing = false

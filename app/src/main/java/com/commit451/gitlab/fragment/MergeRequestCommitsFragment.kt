@@ -21,6 +21,7 @@ import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.model.api.RepositoryCommit
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomSingleObserver
+import com.trello.rxlifecycle2.android.FragmentEvent
 import org.greenrobot.eventbus.Subscribe
 import org.parceler.Parcels
 import timber.log.Timber
@@ -114,7 +115,7 @@ class MergeRequestCommitsFragment : ButterKnifeFragment() {
         loading = true
 
         App.get().gitLab.getMergeRequestCommits(project!!.id, mergeRequest!!.id)
-                .setup(bindToLifecycle())
+                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .subscribe(object : CustomSingleObserver<List<RepositoryCommit>>() {
 
                     override fun error(e: Throwable) {

@@ -28,6 +28,7 @@ import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
 import com.commit451.gitlab.viewHolder.ProjectMemberViewHolder
+import com.trello.rxlifecycle2.android.FragmentEvent
 import io.reactivex.Single
 import org.greenrobot.eventbus.Subscribe
 import retrofit2.Response
@@ -90,7 +91,7 @@ class ProjectMembersFragment : ButterKnifeFragment() {
             override fun onRemoveMember(member: Member) {
                 this@ProjectMembersFragment.member = member
                 App.get().gitLab.removeProjectMember(project!!.id, member.id)
-                        .setup(bindToLifecycle())
+                        .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                         .subscribe(object : CustomSingleObserver<String>() {
 
                             override fun error(t: Throwable) {
@@ -178,7 +179,7 @@ class ProjectMembersFragment : ButterKnifeFragment() {
 
     fun load(observable: Single<Response<List<Member>>>) {
         observable
-                .setup(bindToLifecycle())
+                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .subscribe(object : CustomResponseSingleObserver<List<Member>>() {
 
                     override fun error(t: Throwable) {
@@ -192,7 +193,7 @@ class ProjectMembersFragment : ButterKnifeFragment() {
                         nextPageUrl = null
                     }
 
-                    override fun responseSuccess(members: List<Member>) {
+                    override fun responseNonNullSuccess(members: List<Member>) {
                         loading = false
                         swipeRefreshLayout.isRefreshing = false
                         if (!members.isEmpty()) {

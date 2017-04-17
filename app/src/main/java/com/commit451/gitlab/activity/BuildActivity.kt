@@ -156,7 +156,7 @@ class BuildActivity : BaseActivity() {
         project = Parcels.unwrap<Project>(intent.getParcelableExtra<Parcelable>(KEY_PROJECT))
         build = Parcels.unwrap<Build>(intent.getParcelableExtra<Parcelable>(KEY_BUILD))
 
-        toolbar.title = getString(R.string.build_number) + build.id
+        toolbar.title = String.format(getString(R.string.build_number), build.id)
         toolbar.setNavigationIcon(R.drawable.ic_back_24dp)
         toolbar.setNavigationOnClickListener { onBackPressed() }
         toolbar.subtitle = project.nameWithNamespace

@@ -17,8 +17,10 @@ import com.commit451.gitlab.model.api.Build
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.model.api.RepositoryCommit
 import com.commit451.gitlab.model.api.Runner
+import com.commit451.gitlab.model.api.Pipeline
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.util.DateUtil
+import com.trello.rxlifecycle2.android.FragmentEvent
 import org.greenrobot.eventbus.Subscribe
 import org.parceler.Parcels
 import timber.log.Timber
@@ -46,6 +48,9 @@ class BuildDescriptionFragment : ButterKnifeFragment() {
 
     @BindView(R.id.root) lateinit var root: ViewGroup
     @BindView(R.id.swipe_layout) lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    @BindView(R.id.text_name) lateinit var textName: TextView
+    @BindView(R.id.text_pipeline) lateinit var textPipeline: TextView
+    @BindView(R.id.text_stage) lateinit var textStage: TextView
     @BindView(R.id.text_status) lateinit var textStatus: TextView
     @BindView(R.id.text_duration) lateinit var textDuration: TextView
     @BindView(R.id.text_created) lateinit var textCreated: TextView
@@ -83,7 +88,7 @@ class BuildDescriptionFragment : ButterKnifeFragment() {
 
     fun load() {
         App.get().gitLab.getBuild(project.id, build.id)
-                .setup(bindToLifecycle())
+                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .subscribe(object : CustomSingleObserver<Build>() {
 
                     override fun error(t: Throwable) {
@@ -110,6 +115,12 @@ class BuildDescriptionFragment : ButterKnifeFragment() {
         if (startedTime == null) {
             startedTime = Date()
         }
+        val name = String.format(getString(R.string.build_name), build.name)
+        textName.text = name
+        val pipeline = String.format(getString(R.string.build_pipeline), build.pipeline)
+        textPipeline.text = pipeline
+        val stage = String.format(getString(R.string.build_stage), build.stage)
+        textStage.text = stage
         val status = String.format(getString(R.string.build_status), build.status)
         textStatus.text = status
         val timeTaken = DateUtil.getTimeTaken(startedTime, finishedTime)
@@ -129,6 +140,9 @@ class BuildDescriptionFragment : ButterKnifeFragment() {
         if (build.runner != null) {
             bindRunner(build.runner)
         }
+        if (build.pipeline != null) {
+            bindPipeline(build.pipeline)
+        }
         if (build.commit != null) {
             bindCommit(build.commit)
         }
@@ -137,6 +151,10 @@ class BuildDescriptionFragment : ButterKnifeFragment() {
     fun bindRunner(runner: Runner) {
         val runnerNum = String.format(getString(R.string.runner_number), runner.id.toString())
         textRunner.text = runnerNum
+    }
+    fun bindPipeline(pipeline: Pipeline) {
+        val pipelineNum = String.format(getString(R.string.build_pipeline), pipeline.id.toString())
+        textPipeline.text = pipelineNum
     }
 
     fun bindCommit(commit: RepositoryCommit) {

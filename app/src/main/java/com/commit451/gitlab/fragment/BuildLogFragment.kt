@@ -16,6 +16,7 @@ import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.Build
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.rx.CustomSingleObserver
+import com.trello.rxlifecycle2.android.FragmentEvent
 import org.greenrobot.eventbus.Subscribe
 import org.parceler.Parcels
 import timber.log.Timber
@@ -80,7 +81,7 @@ class BuildLogFragment : ButterKnifeFragment() {
         val url = build.getRawBuildUrl(App.get().getAccount().serverUrl, project)
 
         App.get().gitLab.getRaw(url)
-                .setup(bindToLifecycle())
+                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .subscribe(object : CustomSingleObserver<String>() {
 
                     override fun error(t: Throwable) {

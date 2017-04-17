@@ -219,7 +219,7 @@ class LabCoatNavigationView : NavigationView {
                         Timber.e(e)
                     }
 
-                    override fun responseSuccess(userFull: UserFull) {
+                    override fun responseNonNullSuccess(userFull: UserFull) {
                         //Store the newly retrieved user to the account so that it stays up to date
                         // in local storage
                         val account = App.get().getAccount()

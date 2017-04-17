@@ -33,6 +33,33 @@
                         android:padding="8dp">
 
                         <TextView
+                            android:id="@+id/text_pipeline"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginRight="16dp"
+                            android:layout_marginTop="16dp"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            tools:text="Pipeline: #123"/>
+                        <TextView
+                            android:id="@+id/text_stage"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginRight="16dp"
+                            android:layout_marginTop="16dp"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            tools:text="Stage: build"/>
+                        <TextView
+                            android:id="@+id/text_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginRight="16dp"
+                            android:layout_marginTop="16dp"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            tools:text="Name: build"/>
+                        <TextView
                             android:id="@+id/text_status"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"

@@ -1,7 +1,6 @@
 package com.commit451.gitlab.viewHolder
 
 import android.support.v7.widget.RecyclerView
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -63,10 +62,10 @@ class DiffHeaderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
      * This extracts the trailing part of the textTitle as it is displayed in the GitLabService web interface
      * (the commit message also contains the commit textTitle)
      */
-    private fun extractMessage(title: String, message: String): String {
-        if (!TextUtils.isEmpty(message)) {
-            val ellipsis = title.endsWith("\u2026") && message[title.length - 1] != '\u2026'
-            val trailing = message.substring(title.length - if (ellipsis) 1 else 0)
+    private fun extractMessage(title: String, message: String?): String {
+        if (!message.isNullOrEmpty()) {
+            val ellipsis = title.endsWith("\u2026") && message!![title.length - 1] != '\u2026'
+            val trailing = message!!.substring(title.length - if (ellipsis) 1 else 0)
             return if (trailing == "\u2026") "" else ((if (ellipsis) "\u2026" else "") + trailing).trim { it <= ' ' }
         }
         return title

@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,6 +19,7 @@ import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
 import com.commit451.gitlab.viewHolder.UserViewHolder
+import com.trello.rxlifecycle2.android.FragmentEvent
 import timber.log.Timber
 
 class UsersFragment : ButterKnifeFragment() {
@@ -99,7 +99,7 @@ class UsersFragment : ButterKnifeFragment() {
             return
         }
 
-        if (TextUtils.isEmpty(query)) {
+        if (query.isNullOrEmpty()) {
             swipeRefreshLayout.isRefreshing = false
             return
         }
@@ -108,7 +108,7 @@ class UsersFragment : ButterKnifeFragment() {
         swipeRefreshLayout.isRefreshing = true
 
         App.get().gitLab.searchUsers(query!!)
-                .setup(bindToLifecycle())
+                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .subscribe(object : CustomResponseSingleObserver<List<UserBasic>>() {
 
                     override fun error(e: Throwable) {
@@ -120,7 +120,7 @@ class UsersFragment : ButterKnifeFragment() {
                         adapterUser.setData(null)
                     }
 
-                    override fun responseSuccess(users: List<UserBasic>) {
+                    override fun responseNonNullSuccess(users: List<UserBasic>) {
                         swipeRefreshLayout.isRefreshing = false
                         loading = false
                         if (users.isEmpty()) {
@@ -138,7 +138,7 @@ class UsersFragment : ButterKnifeFragment() {
         adapterUser.setLoading(true)
         Timber.d("loadMore called for %s %s", nextPageUrl!!.toString(), query)
         App.get().gitLab.searchUsers(nextPageUrl!!.toString(), query!!)
-                .setup(bindToLifecycle())
+                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .subscribe(object : CustomResponseSingleObserver<List<UserBasic>>() {
 
                     override fun error(e: Throwable) {
@@ -148,7 +148,7 @@ class UsersFragment : ButterKnifeFragment() {
                         adapterUser.setLoading(false)
                     }
 
-                    override fun responseSuccess(users: List<UserBasic>) {
+                    override fun responseNonNullSuccess(users: List<UserBasic>) {
                         loading = false
                         swipeRefreshLayout.isRefreshing = false
                         adapterUser.addData(users)

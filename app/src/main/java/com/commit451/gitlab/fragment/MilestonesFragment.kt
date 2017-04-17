@@ -29,6 +29,7 @@ import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
+import com.trello.rxlifecycle2.android.FragmentEvent
 import org.greenrobot.eventbus.Subscribe
 import timber.log.Timber
 
@@ -136,7 +137,7 @@ class MilestonesFragment : ButterKnifeFragment() {
         nextPageUrl = null
         loading = true
         App.get().gitLab.getMilestones(project!!.id, state)
-                .setup(bindToLifecycle())
+                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .subscribe(object : CustomResponseSingleObserver<List<Milestone>>() {
 
                     override fun error(e: Throwable) {
@@ -149,7 +150,7 @@ class MilestonesFragment : ButterKnifeFragment() {
                         nextPageUrl = null
                     }
 
-                    override fun responseSuccess(milestones: List<Milestone>) {
+                    override fun responseNonNullSuccess(milestones: List<Milestone>) {
                         loading = false
                         swipeRefreshLayout.isRefreshing = false
                         if (milestones.isEmpty()) {
@@ -173,7 +174,7 @@ class MilestonesFragment : ButterKnifeFragment() {
 
         Timber.d("loadMore called for " + nextPageUrl!!)
         App.get().gitLab.getMilestones(nextPageUrl!!.toString())
-                .setup(bindToLifecycle())
+                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .subscribe(object : CustomResponseSingleObserver<List<Milestone>>() {
 
                     override fun error(e: Throwable) {
@@ -182,7 +183,7 @@ class MilestonesFragment : ButterKnifeFragment() {
                         loading = false
                     }
 
-                    override fun responseSuccess(milestones: List<Milestone>) {
+                    override fun responseNonNullSuccess(milestones: List<Milestone>) {
                         loading = false
                         adapterMilestones.setLoading(false)
                         nextPageUrl = LinkHeaderParser.parse(response()).next

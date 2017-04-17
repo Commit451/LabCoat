@@ -32,6 +32,8 @@ public class Build {
     String ref;
     @JsonField(name = "runner")
     Runner runner;
+    @JsonField(name = "pipeline")
+    Pipeline pipeline;
     @JsonField(name = "stage")
     String stage;
     @JsonField(name = "started_at")
@@ -77,6 +79,10 @@ public class Build {
 
     public Runner getRunner() {
         return runner;
+    }
+
+    public Pipeline getPipeline() {
+        return pipeline;
     }
 
     public String getStage() {
