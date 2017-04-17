@@ -1,7 +1,6 @@
 buildscript {
     repositories {
         maven { url 'https://maven.fabric.io/public' }
-        maven { url "https://jitpack.io" }
     }
 
     dependencies {
@@ -98,6 +97,7 @@ dependencies {
     compile "com.android.support:cardview-v7:$supportLibVersion"
     compile "com.android.support:palette-v7:$supportLibVersion"
     compile "com.android.support:customtabs:$supportLibVersion"
+    compile 'com.android.support:multidex:1.0.1'
 
     compile "com.squareup.retrofit2:retrofit:$retrofitVersion"
     compile("com.squareup.retrofit2:converter-simplexml:$retrofitVersion") {
@@ -109,14 +109,19 @@ dependencies {
     compile "com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion"
     compile "com.squareup.okhttp3:okhttp:$okHttpVersion"
     compile "com.squareup.okhttp3:logging-interceptor:$okHttpVersion"
+    compile 'com.squareup.picasso:picasso:2.5.2'
 
+    compile 'com.github.aurae.retrofit2:converter-logansquare:1.4.1'
 
     compile "com.bluelinelabs:logansquare:$loganSquareVersion"
     kapt "com.bluelinelabs:logansquare-compiler:$loganSquareVersion"
 
+    compile 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.1.0'
     compile "com.jakewharton:butterknife:$butterknifeVersion"
     kapt "com.jakewharton:butterknife-compiler:$butterknifeVersion"
+    compile 'com.jakewharton.timber:timber:4.5.1'
 
+    compile 'org.greenrobot:eventbus:3.0.0'
 
     compile 'io.reactivex.rxjava2:rxjava:2.0.8'
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
@@ -175,11 +180,13 @@ dependencies {
     compile "com.afollestad.material-dialogs:core:$materialDialogsVersion"
     compile "com.afollestad.material-dialogs:commons:$materialDialogsVersion"
 
+    compile 'de.hdodenhof:circleimageview:2.1.0'
 
     compile('com.vdurmont:emoji-java:3.2.0') {
         exclude group: 'org.json', module: 'json'
     }
 
+    compile 'com.github.jkwiecien:EasyImage:1.4.1'
 
     compile('com.github.ozodrukh:CircularReveal:2.0.1@aar') {
         transitive = true;
