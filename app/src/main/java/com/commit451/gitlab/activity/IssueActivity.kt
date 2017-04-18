@@ -82,6 +82,8 @@ class IssueActivity : BaseActivity() {
     @BindView(R.id.list) lateinit var listNotes: RecyclerView
     @BindView(R.id.send_message_view) lateinit var sendMessageView: SendMessageView
     @BindView(R.id.progress) lateinit var progress: View
+    @BindView(R.id.toolbar_title) lateinit var toolbarTitle: TextView
+    @BindView(R.id.toolbar_subtitle) lateinit var toolbarSubTitle: TextView
 
     lateinit var menuItemOpenClose: MenuItem
     lateinit var adapterIssueDetails: IssueDetailsAdapter
@@ -244,13 +246,15 @@ class IssueActivity : BaseActivity() {
     }
 
     fun bindProject() {
-        toolbar.subtitle = project?.nameWithNamespace
+        toolbarSubTitle.text = project?.nameWithNamespace
     }
 
     fun bindIssue() {
-        toolbar.title = getString(R.string.issue_number) + issue?.iid
         setOpenCloseMenuStatus()
-        textTitle.text = issue?.title
+        toolbarTitle.text = getString(R.string.issue_number, issue?.iid)
+        if (issue?.isConfidential!!) {
+            toolbarTitle.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_confidential_24dp, 0)
+        }
         adapterIssueDetails.updateIssue(issue!!)
     }
 
