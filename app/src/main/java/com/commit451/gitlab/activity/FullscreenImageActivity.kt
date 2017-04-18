@@ -12,18 +12,28 @@ import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.api.Project
 import com.github.chrisbanes.photoview.PhotoViewAttacher
-import com.squareup.picasso.Callback
 import org.parceler.Parcels
 
 /**
- * An example full-screen activity that shows and hides the system UI (i.e.
- * status bar and navigation/system bar) with user interaction.
+ * A full-screen activity that opens the clicked images
  */
 class FullscreenImageActivity : BaseActivity() {
 
-    @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
+    companion object {
 
-    lateinit var contentView: ImageView
+        val IMAGE_URL = "url"
+
+        private val EXTRA_PROJECT = "extra_project"
+
+        fun newIntent(context: Context, project: Project): Intent {
+            val intent = Intent(context, FullscreenImageActivity::class.java)
+            intent.putExtra(EXTRA_PROJECT, Parcels.wrap(project))
+            return intent
+        }
+    }
+
+    @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
+    @BindView(R.id.fullscreen_content) lateinit var contentView: ImageView
     lateinit var photoViewAttacher: PhotoViewAttacher
     lateinit var project: Project
 
@@ -42,12 +52,7 @@ class FullscreenImageActivity : BaseActivity() {
         if (imageUrl.startsWith("/")) {
             imageUrl = App.get().getAccount().serverUrl.toString() + project?.pathWithNamespace + imageUrl
         }
-        App.get().picasso.load(imageUrl).into(contentView, object:Callback {
-            override fun onSuccess() {
-                photoViewAttacher.update()
-            }
-            override fun onError() {}
-        })
+        App.get().picasso.load(imageUrl).into(contentView)
     }
 
 
@@ -60,18 +65,5 @@ class FullscreenImageActivity : BaseActivity() {
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
         return true
-    }
-
-    companion object {
-
-        val IMAGE_URL = "url"
-
-        private val EXTRA_PROJECT = "extra_project"
-
-        fun newIntent(context: Context, project: Project): Intent {
-            val intent = Intent(context, FullscreenImageActivity::class.java)
-            intent.putExtra(EXTRA_PROJECT, Parcels.wrap(project))
-            return intent
-        }
     }
 }

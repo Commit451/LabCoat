@@ -38,7 +38,7 @@ class MergeRequestDetailAdapter(context: Context, private val mergeRequest: Merg
         intent.putExtra(FullscreenImageActivity.IMAGE_URL, imageUrl)
         context.startActivity(intent)
     }
-    private val bypass: Bypass = BypassFactory.create(context, imageClickListener)
+    private val bypass: Bypass = BypassFactory.create(context, project)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         if (viewType == TYPE_HEADER) {

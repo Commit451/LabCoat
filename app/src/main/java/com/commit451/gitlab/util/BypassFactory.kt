@@ -1,11 +1,12 @@
 package com.commit451.gitlab.util
 
 import `in`.uncod.android.bypass.Bypass
-import `in`.uncod.android.bypass.ImageSpanClickListener
 import android.content.Context
+import com.commit451.gitlab.activity.FullscreenImageActivity
+import com.commit451.gitlab.model.api.Project
 
 /**
- * Created by adibk on 4/15/17.
+ * Creates [BypassFactory]s which are configured to handle relative Urls
  */
 object BypassFactory {
 
@@ -13,9 +14,13 @@ object BypassFactory {
         return Bypass(context)
     }
 
-    fun create(context: Context, clickListener: ImageSpanClickListener): Bypass {
+    fun create(context: Context, project: Project): Bypass {
         val bypass = Bypass(context)
-        bypass.setImageSpanClickListener (clickListener)
+        bypass.setImageSpanClickListener { view, imageSpan, imageUrl ->
+            val intent = FullscreenImageActivity.newIntent(view.context, project)
+            intent.putExtra(FullscreenImageActivity.IMAGE_URL, imageUrl)
+            context.startActivity(intent)
+        }
         return bypass
     }
 }

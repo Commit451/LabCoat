@@ -13,9 +13,7 @@ import android.widget.TextView
 import butterknife.BindView
 import butterknife.OnClick
 import com.commit451.gitlab.App
-import com.commit451.gitlab.BuildConfig
 import com.commit451.gitlab.R
-import com.commit451.gitlab.activity.FullscreenImageActivity
 import com.commit451.gitlab.activity.ProjectActivity
 import com.commit451.gitlab.event.ProjectReloadEvent
 import com.commit451.gitlab.extension.setup
@@ -136,12 +134,6 @@ class ProjectFragment : ButterKnifeFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        bypass = BypassFactory.create(context)
-        bypass.setImageSpanClickListener { view, imageSpan, imageUrl ->
-            val intent = FullscreenImageActivity.newIntent(view.context, project!!)
-            intent.putExtra(FullscreenImageActivity.IMAGE_URL, imageUrl)
-            context.startActivity(intent)
-        }
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -160,6 +152,7 @@ class ProjectFragment : ButterKnifeFragment() {
         if (activity is ProjectActivity) {
             project = (activity as ProjectActivity).project
             branchName = (activity as ProjectActivity).getRefRef()
+            bypass = BypassFactory.create(context, project!!)
             bindProject(project)
             loadData()
         } else {
