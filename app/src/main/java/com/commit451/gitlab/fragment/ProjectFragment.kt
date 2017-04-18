@@ -13,7 +13,6 @@ import android.widget.TextView
 import butterknife.BindView
 import butterknife.OnClick
 import com.commit451.gitlab.App
-import com.commit451.gitlab.BuildConfig
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.ProjectActivity
 import com.commit451.gitlab.event.ProjectReloadEvent
@@ -24,6 +23,7 @@ import com.commit451.gitlab.model.api.RepositoryTreeObject
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.rx.DecodeObservableFactory
+import com.commit451.gitlab.util.BypassFactory
 import com.commit451.gitlab.util.BypassImageGetterFactory
 import com.commit451.gitlab.util.InternalLinkMovementMethod
 import com.commit451.reptar.Result
@@ -134,13 +134,6 @@ class ProjectFragment : ButterKnifeFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        bypass = Bypass(activity)
-        bypass.setImageSpanClickListener { view, imageSpan, s ->
-            if (BuildConfig.DEBUG) {
-                Snackbar.make(swipeRefreshLayout, s, Snackbar.LENGTH_LONG)
-                        .show()
-            }
-        }
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -159,6 +152,7 @@ class ProjectFragment : ButterKnifeFragment() {
         if (activity is ProjectActivity) {
             project = (activity as ProjectActivity).project
             branchName = (activity as ProjectActivity).getRefRef()
+            bypass = BypassFactory.create(context, project!!)
             bindProject(project)
             loadData()
         } else {
