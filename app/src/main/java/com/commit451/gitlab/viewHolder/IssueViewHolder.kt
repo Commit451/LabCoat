@@ -56,6 +56,10 @@ class IssueViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
 
         textMessage.text = issue.title
+        textMessage.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
+        if (issue.isConfidential) {
+            textMessage.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_confidential_24dp, 0, 0, 0)
+        }
 
         var time = ""
         if (issue.createdAt != null) {
