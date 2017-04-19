@@ -11,7 +11,6 @@ import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.extension.getParcelerParcelable
 import com.commit451.gitlab.model.api.Project
-import com.commit451.gitlab.widget.ProjectFeedWidgetConfigureProjectActivity.Companion.EXTRA_PROJECT
 import com.github.chrisbanes.photoview.PhotoView
 import org.parceler.Parcels
 
@@ -34,7 +33,7 @@ class FullscreenImageActivity : BaseActivity() {
     }
 
     @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
-    @BindView(R.id.fullscreen_content) lateinit var photoView: PhotoView
+    @BindView(R.id.photo_view) lateinit var photoView: PhotoView
 
     lateinit var project: Project
 

@@ -44,10 +44,10 @@ class IssueDiscussionFragment : ButterKnifeFragment() {
         private val REQUEST_ATTACH = 1
 
         fun newInstance(project: Project, issue: Issue): IssueDiscussionFragment{
-            val fragment = MergeRequestDiscussionFragment()
+            val fragment = IssueDiscussionFragment()
             val args = Bundle()
             args.putParcelable(KEY_PROJECT, Parcels.wrap(project))
-            args.putParcelable(KEY_MERGE_REQUEST, Parcels.wrap(mergeRequest))
+            args.putParcelable(KEY_MERGE_REQUEST, Parcels.wrap(issue))
             fragment.arguments = args
             return fragment
         }
