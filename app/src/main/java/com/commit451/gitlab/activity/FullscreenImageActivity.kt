@@ -50,7 +50,7 @@ class FullscreenImageActivity : BaseActivity() {
 
         var imageUrl: String = intent.getStringExtra(IMAGE_URL)
         if (imageUrl.startsWith("/")) {
-            imageUrl = App.get().getAccount().serverUrl.toString() + project?.pathWithNamespace + imageUrl
+            imageUrl = App.get().getAccount().serverUrl.toString() + project.pathWithNamespace + imageUrl
         }
         App.get().picasso.load(imageUrl).into(contentView)
     }

@@ -1,6 +1,7 @@
 package com.commit451.gitlab.activity
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.content.ActivityNotFoundException
 import android.content.Context
@@ -23,7 +24,6 @@ import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.api.RepositoryFile
 import com.commit451.gitlab.rx.CustomSingleObserver
-import com.commit451.gitlab.rx.DecodeObservableFactory
 
 import java.io.File
 import java.io.FileOutputStream
@@ -32,6 +32,7 @@ import java.nio.charset.Charset
 
 import butterknife.BindView
 import butterknife.ButterKnife
+import com.commit451.gitlab.extension.base64Decode
 import com.commit451.gitlab.extension.setup
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -150,7 +151,7 @@ class FileActivity : BaseActivity() {
     }
 
     private fun loadBlob(repositoryFile: RepositoryFile) {
-        DecodeObservableFactory.newDecode(repositoryFile.content)
+        repositoryFile.content.base64Decode()
                 .setup(bindToLifecycle())
                 .subscribe(object : CustomSingleObserver<ByteArray>() {
 
@@ -208,7 +209,7 @@ class FileActivity : BaseActivity() {
         toolbar.inflateMenu(R.menu.menu_file)
     }
 
-    @TargetApi(23)
+    @SuppressLint("NewApi")
     private fun checkAccountPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
             if (option == OPTION_SAVE) {

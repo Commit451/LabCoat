@@ -16,13 +16,13 @@ import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.ProjectActivity
 import com.commit451.gitlab.event.ProjectReloadEvent
+import com.commit451.gitlab.extension.base64Decode
 import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.model.api.RepositoryFile
 import com.commit451.gitlab.model.api.RepositoryTreeObject
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomSingleObserver
-import com.commit451.gitlab.rx.DecodeObservableFactory
 import com.commit451.gitlab.util.BypassFactory
 import com.commit451.gitlab.util.BypassImageGetterFactory
 import com.commit451.gitlab.util.InternalLinkMovementMethod
@@ -198,7 +198,7 @@ class ProjectFragment : ButterKnifeFragment() {
                 })
                 .flatMap(Function<Result<RepositoryFile>, SingleSource<ReadmeResult>> { repositoryFileResult ->
                     if (repositoryFileResult.isPresent) {
-                        result.bytes = DecodeObservableFactory.newDecode(repositoryFileResult.get().content)
+                        result.bytes = repositoryFileResult.get().content.base64Decode()
                                 .blockingGet()
                         return@Function Single.just(result)
                     }

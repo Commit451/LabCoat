@@ -39,9 +39,8 @@ open class App : Application() {
         }
     }
 
+    lateinit var gitLab: GitLab
     lateinit var currentAccount: Account
-    lateinit var gitLab: GitLabService
-    lateinit var gitLabRss: GitLabRss
     lateinit var picasso: Picasso
 
     override fun onCreate() {
@@ -92,7 +91,6 @@ open class App : Application() {
         }
         val client = clientBuilder.build()
         initGitLab(account, client)
-        initGitLabRss(account, client)
         if (BuildConfig.DEBUG) {
             initPicasso(OkHttpClientFactory.create(account).build())
         } else {
@@ -136,11 +134,9 @@ open class App : Application() {
     }
 
     private fun initGitLab(account: Account, client: OkHttpClient) {
-        gitLab = GitLabFactory.create(account, client)
-    }
-
-    private fun initGitLabRss(account: Account, client: OkHttpClient) {
-        gitLabRss = GitLabRssFactory.create(account, client)
+        val gitLabService = GitLabFactory.create(account, client)
+        val gitLabRss = GitLabRssFactory.create(account, client)
+        gitLab = GitLab(gitLabService, gitLabRss)
     }
 
     private fun initPicasso(client: OkHttpClient) {

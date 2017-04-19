@@ -15,10 +15,10 @@ import butterknife.OnClick
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.extension.setup
+import com.commit451.gitlab.extension.toPart
 import com.commit451.gitlab.model.api.FileUploadResponse
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.rx.CustomSingleObserver
-import com.commit451.gitlab.rx.FileObservableFactory
 import io.codetail.animation.ViewAnimationUtils
 import org.parceler.Parcels
 import pl.aprilapps.easyphotopicker.DefaultCallback
@@ -120,7 +120,7 @@ class AttachActivity : BaseActivity() {
     fun onPhotoReturned(photo: File) {
         progress.visibility = View.VISIBLE
         rootButtons.visibility = View.INVISIBLE
-        FileObservableFactory.toPart(photo)
+        photo.toPart()
                 .flatMap { part -> App.get().gitLab.uploadFile(project!!.id, part) }
                 .setup(bindToLifecycle())
                 .subscribe(object : CustomSingleObserver<FileUploadResponse>() {

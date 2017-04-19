@@ -75,7 +75,7 @@ android {
 ext {
     supportLibVersion = '25.3.1'
     retrofitVersion = '2.2.0'
-    okHttpVersion = '3.6.0'
+    okHttpVersion = '3.7.0'
     butterknifeVersion = '8.5.1'
     loganSquareVersion = '1.3.7'
     parcelerVersion = '1.1.6'
@@ -175,7 +175,7 @@ dependencies {
 
     compile 'com.wdullaer:materialdatetimepicker:3.1.3'
 
-    compile 'com.github.novoda:simple-chrome-custom-tabs:0.1.4'
+    compile 'com.github.novoda:simple-chrome-custom-tabs:0.1.5'
 
     compile "com.afollestad.material-dialogs:core:$materialDialogsVersion"
     compile "com.afollestad.material-dialogs:commons:$materialDialogsVersion"

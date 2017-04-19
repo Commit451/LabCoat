@@ -40,9 +40,9 @@ class AccessDialog private constructor(context: Context, internal var member: Me
         listener = accessAppliedListener
     }
 
-    constructor(context: Context, member: Member, group: Group) : this(context, member, group, -1) {}
+    constructor(context: Context, member: Member, group: Group) : this(context, member, group, -1)
 
-    constructor(context: Context, member: Member, projectId: Long) : this(context, member, null, projectId) {}
+    constructor(context: Context, member: Member, projectId: Long) : this(context, member, null, projectId)
 
     init {
         getActionButton(DialogAction.POSITIVE).setOnClickListener { onApply() }
