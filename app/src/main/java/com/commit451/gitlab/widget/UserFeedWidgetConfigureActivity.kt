@@ -55,7 +55,7 @@ class UserFeedWidgetConfigureActivity : BaseActivity() {
         toolbar.setTitle(R.string.widget_choose_account)
 
         adapterAccounts = AccountsAdapter()
-        adapterAccounts.setOnItemClickListener { adapter, view, position -> saveWidgetConfig(adapter.get(position)) }
+        adapterAccounts.setOnItemClickListener { adapter, _, position -> saveWidgetConfig(adapter.get(position)) }
         list.layoutManager = LinearLayoutManager(this)
         list.adapter = adapterAccounts
 

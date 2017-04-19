@@ -1,11 +1,9 @@
 package com.commit451.gitlab.adapter
 
 import `in`.uncod.android.bypass.Bypass
-import `in`.uncod.android.bypass.ImageSpanClickListener
 import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.view.ViewGroup
-import com.commit451.gitlab.activity.FullscreenImageActivity
 import com.commit451.gitlab.model.api.MergeRequest
 import com.commit451.gitlab.model.api.Note
 import com.commit451.gitlab.model.api.Project
@@ -32,12 +30,7 @@ class MergeRequestDetailAdapter(context: Context, private val mergeRequest: Merg
 
     private val notes: LinkedList<Note> = LinkedList()
     private var loading = false
-    private var imageClickListener = ImageSpanClickListener { view, imageSpan,
-                                                              imageUrl ->
-        val intent = FullscreenImageActivity.newIntent(view.context, project)
-        intent.putExtra(FullscreenImageActivity.IMAGE_URL, imageUrl)
-        context.startActivity(intent)
-    }
+
     private val bypass: Bypass = BypassFactory.create(context, project)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {

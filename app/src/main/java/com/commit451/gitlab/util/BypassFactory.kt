@@ -16,9 +16,8 @@ object BypassFactory {
 
     fun create(context: Context, project: Project): Bypass {
         val bypass = Bypass(context)
-        bypass.setImageSpanClickListener { view, imageSpan, imageUrl ->
-            val intent = FullscreenImageActivity.newIntent(view.context, project)
-            intent.putExtra(FullscreenImageActivity.IMAGE_URL, imageUrl)
+        bypass.setImageSpanClickListener { view, _, imageUrl ->
+            val intent = FullscreenImageActivity.newIntent(view.context, project, imageUrl)
             context.startActivity(intent)
         }
         return bypass

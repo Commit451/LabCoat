@@ -3,15 +3,16 @@ package com.commit451.gitlab.activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.Parcelable
 import android.support.v7.widget.Toolbar
 import android.widget.ImageView
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
+import com.commit451.gitlab.extension.getParcelerParcelable
 import com.commit451.gitlab.model.api.Project
-import com.github.chrisbanes.photoview.PhotoViewAttacher
+import com.commit451.gitlab.widget.ProjectFeedWidgetConfigureProjectActivity.Companion.EXTRA_PROJECT
+import com.github.chrisbanes.photoview.PhotoView
 import org.parceler.Parcels
 
 /**
@@ -21,49 +22,42 @@ class FullscreenImageActivity : BaseActivity() {
 
     companion object {
 
-        val IMAGE_URL = "url"
+        private val KEY_URL = "url"
+        private val KEY_PROJECT = "project"
 
-        private val EXTRA_PROJECT = "extra_project"
-
-        fun newIntent(context: Context, project: Project): Intent {
+        fun newIntent(context: Context, project: Project, url: String): Intent {
             val intent = Intent(context, FullscreenImageActivity::class.java)
-            intent.putExtra(EXTRA_PROJECT, Parcels.wrap(project))
+            intent.putExtra(KEY_PROJECT, Parcels.wrap(project))
+            intent.putExtra(KEY_URL, url)
             return intent
         }
     }
 
     @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
-    @BindView(R.id.fullscreen_content) lateinit var contentView: ImageView
-    lateinit var photoViewAttacher: PhotoViewAttacher
+    @BindView(R.id.fullscreen_content) lateinit var photoView: PhotoView
+
     lateinit var project: Project
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_fullscreen_image)
         ButterKnife.bind(this)
-        setToolbar()
 
-        project = Parcels.unwrap<Project>(intent.getParcelableExtra<Parcelable>(FullscreenImageActivity.EXTRA_PROJECT))
+        project = intent.getParcelerParcelable(KEY_PROJECT)
 
-        photoViewAttacher = PhotoViewAttacher(contentView)
-        photoViewAttacher.scaleType = ImageView.ScaleType.FIT_CENTER
+        toolbar.setNavigationIcon(R.drawable.ic_back_24dp)
+        toolbar.setNavigationOnClickListener {
+            onBackPressed()
+        }
 
-        var imageUrl: String = intent.getStringExtra(IMAGE_URL)
+        photoView.scaleType = ImageView.ScaleType.FIT_CENTER
+
+        var imageUrl: String = intent.getStringExtra(KEY_URL)
         if (imageUrl.startsWith("/")) {
             imageUrl = App.get().getAccount().serverUrl.toString() + project.pathWithNamespace + imageUrl
         }
-        App.get().picasso.load(imageUrl).into(contentView)
-    }
-
-
-    private fun setToolbar() {
-        toolbar.setNavigationIcon(R.drawable.ic_back_24dp)
-        toolbar.title = ""
-        setSupportActionBar(toolbar)
-    }
-
-    override fun onSupportNavigateUp(): Boolean {
-        onBackPressed()
-        return true
+        App.get().picasso
+                .load(imageUrl)
+                .into(photoView)
     }
 }

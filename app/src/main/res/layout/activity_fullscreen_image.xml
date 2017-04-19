@@ -3,11 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/black"
     tools:context="com.commit451.gitlab.activity.FullscreenImageActivity">
 
     <com.github.chrisbanes.photoview.PhotoView
-        android:id="@+id/fullscreen_content"
+        android:id="@+id/photo_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
