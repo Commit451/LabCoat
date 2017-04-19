@@ -15,11 +15,7 @@ import java.lang.ref.WeakReference
  */
 class BrowserFallback(context: Context) : NavigationFallback {
 
-    private val context: WeakReference<Context>
-
-    init {
-        this.context = WeakReference(context)
-    }
+    private val context: WeakReference<Context> = WeakReference(context)
 
     override fun onFallbackNavigateTo(url: Uri) {
         val intent = Intent(Intent.ACTION_VIEW)

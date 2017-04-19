@@ -13,11 +13,7 @@ import java.lang.ref.WeakReference
  */
 class LabCoatIntentCustomizer(activity: Activity, private val colorToolbar: Int) : IntentCustomizer {
 
-    private val activity: WeakReference<Activity>
-
-    init {
-        this.activity = WeakReference(activity)
-    }
+    private val activity: WeakReference<Activity> = WeakReference(activity)
 
     override fun onCustomiseIntent(simpleChromeCustomTabsIntentBuilder: SimpleChromeCustomTabsIntentBuilder): SimpleChromeCustomTabsIntentBuilder {
         val activity = this.activity.get() ?: return simpleChromeCustomTabsIntentBuilder
