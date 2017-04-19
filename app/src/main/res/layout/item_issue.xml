@@ -9,22 +9,15 @@
     android:baselineAligned="false">
     <!--baselineAligned="false" is recommended for better performance by Android Studio-->
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:layout_marginTop="8dp"
+        android:orientation="vertical"
         android:layout_weight="1">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/issue_confidential_image"
-            android:visibility="gone"
-            android:layout_marginRight="8dp"
-            tools:src="@drawable/ic_confidential_24dp"/>
 
         <TextView
             android:id="@+id/issue_message"
@@ -32,8 +25,8 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="2"
+            android:drawablePadding="8dp"
             android:textSize="@dimen/text_size_small"
-            android:layout_toRightOf="@id/issue_confidential_image"
             tools:text="I commited all the code at once cause I am cool. So sorry" />
 
         <TextView
@@ -41,10 +34,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/text_size_tiny"
-            android:layout_below="@+id/issue_message"
             tools:text="Created 45 days ago by Jawnnypoo" />
 
-    </RelativeLayout>
+    </LinearLayout>
 
     <LinearLayout
         android:orientation="vertical"

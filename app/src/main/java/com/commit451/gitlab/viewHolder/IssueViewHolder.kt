@@ -33,7 +33,6 @@ class IssueViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     @BindView(R.id.issue_image) lateinit var image: ImageView
     @BindView(R.id.issue_message) lateinit var textMessage: TextView
     @BindView(R.id.issue_creator) lateinit var textCreator: TextView
-    @BindView(R.id.issue_confidential_image) lateinit var imageConfidential: ImageView
 
     init {
         ButterKnife.bind(this, view)
@@ -57,6 +56,10 @@ class IssueViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
 
         textMessage.text = issue.title
+        textMessage.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
+        if (issue.isConfidential) {
+            textMessage.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_confidential_24dp, 0, 0, 0)
+        }
 
         var time = ""
         if (issue.createdAt != null) {
@@ -74,10 +77,5 @@ class IssueViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         id = "#" + issueId
 
         textCreator.text = String.format(itemView.context.getString(R.string.opened_time), id, time, author)
-
-        if (issue.isConfidential) {
-            imageConfidential.visibility = View.VISIBLE
-            imageConfidential.setImageResource(R.drawable.ic_confidential_24dp)
-        }
     }
 }

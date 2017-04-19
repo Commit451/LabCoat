@@ -251,6 +251,7 @@ class IssueActivity : BaseActivity() {
 
     fun bindIssue() {
         setOpenCloseMenuStatus()
+        textTitle.text = issue?.title
         toolbarTitle.text = getString(R.string.issue_number, issue?.iid)
         if (issue?.isConfidential!!) {
             toolbarTitle.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_confidential_24dp, 0)
