@@ -155,6 +155,7 @@ dependencies {
     compile 'com.github.Commit451:MorphTransitions:2.0.0'
     compile 'com.github.Commit451.Alakazam:alakazam:1.0.1'
     compile 'com.github.Commit451:Lift:1.2.0'
+    compile 'com.github.Commit451:okyo:1.2.0'
     compile 'com.github.Commit451:OkioProGuardRules:1.11.0.0'
     compile 'com.github.Commit451:RetrofitProguardRules:2.2.0.0'
     compile 'com.github.Commit451:LoganSquareProGuardRules:1.3.7.0'
