@@ -29,6 +29,8 @@ object OkHttpClientFactory {
 
         val builder = OkHttpClient.Builder()
                 .connectTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .writeTimeout(30, TimeUnit.SECONDS)
                 .addInterceptor(AuthenticationRequestInterceptor(account))
                 .sslSocketFactory(customTrustManager.getSSLSocketFactory(), X509TrustManagerProvider.x509TrustManager)
                 .hostnameVerifier(customTrustManager.getHostnameVerifier())
