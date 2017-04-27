@@ -1,7 +1,6 @@
 package com.commit451.gitlab.fragment
 
 import android.os.Bundle
-import android.os.Parcelable
 import android.support.design.widget.Snackbar
 import android.support.v4.widget.SwipeRefreshLayout
 import android.view.LayoutInflater
@@ -12,12 +11,10 @@ import butterknife.BindView
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.event.BuildChangedEvent
+import com.commit451.gitlab.extension.getParcelerParcelable
+import com.commit451.gitlab.extension.putParcelParcelableExtra
 import com.commit451.gitlab.extension.setup
-import com.commit451.gitlab.model.api.Build
-import com.commit451.gitlab.model.api.Project
-import com.commit451.gitlab.model.api.RepositoryCommit
-import com.commit451.gitlab.model.api.Runner
-import com.commit451.gitlab.model.api.Pipeline
+import com.commit451.gitlab.model.api.*
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.util.DateUtil
 import com.trello.rxlifecycle2.android.FragmentEvent
@@ -39,8 +36,8 @@ class BuildDescriptionFragment : ButterKnifeFragment() {
         fun newInstance(project: Project, build: Build): BuildDescriptionFragment {
             val fragment = BuildDescriptionFragment()
             val args = Bundle()
-            args.putParcelable(KEY_PROJECT, Parcels.wrap(project))
-            args.putParcelable(KEY_BUILD, Parcels.wrap(build))
+            args.putParcelParcelableExtra(KEY_PROJECT, project)
+            args.putParcelParcelableExtra(KEY_BUILD, build)
             fragment.arguments = args
             return fragment
         }
@@ -65,8 +62,8 @@ class BuildDescriptionFragment : ButterKnifeFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        project = Parcels.unwrap<Project>(arguments.getParcelable<Parcelable>(KEY_PROJECT))
-        build = Parcels.unwrap<Build>(arguments.getParcelable<Parcelable>(KEY_BUILD))
+        project = arguments.getParcelerParcelable<Project>(KEY_PROJECT)!!
+        build = arguments.getParcelerParcelable<Build>(KEY_BUILD)!!
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {

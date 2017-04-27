@@ -1,7 +1,6 @@
 package com.commit451.gitlab.fragment
 
 import android.os.Bundle
-import android.os.Parcelable
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -15,6 +14,8 @@ import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.CommitAdapter
 import com.commit451.gitlab.adapter.DividerItemDecoration
 import com.commit451.gitlab.event.MergeRequestChangedEvent
+import com.commit451.gitlab.extension.getParcelerParcelable
+import com.commit451.gitlab.extension.putParcelParcelableExtra
 import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.MergeRequest
 import com.commit451.gitlab.model.api.Project
@@ -23,7 +24,6 @@ import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.trello.rxlifecycle2.android.FragmentEvent
 import org.greenrobot.eventbus.Subscribe
-import org.parceler.Parcels
 import timber.log.Timber
 
 /**
@@ -39,8 +39,8 @@ class MergeRequestCommitsFragment : ButterKnifeFragment() {
         fun newInstance(project: Project, mergeRequest: MergeRequest): MergeRequestCommitsFragment {
             val fragment = MergeRequestCommitsFragment()
             val args = Bundle()
-            args.putParcelable(KEY_PROJECT, Parcels.wrap(project))
-            args.putParcelable(KEY_MERGE_REQUEST, Parcels.wrap(mergeRequest))
+            args.putParcelParcelableExtra(KEY_PROJECT, project)
+            args.putParcelParcelableExtra(KEY_MERGE_REQUEST, mergeRequest)
             fragment.arguments = args
             return fragment
         }
@@ -72,8 +72,8 @@ class MergeRequestCommitsFragment : ButterKnifeFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        project = Parcels.unwrap<Project>(arguments.getParcelable<Parcelable>(KEY_PROJECT))
-        mergeRequest = Parcels.unwrap<MergeRequest>(arguments.getParcelable<Parcelable>(KEY_MERGE_REQUEST))
+        project = arguments.getParcelerParcelable<Project>(KEY_PROJECT)
+        mergeRequest = arguments.getParcelerParcelable<MergeRequest>(KEY_MERGE_REQUEST)
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {

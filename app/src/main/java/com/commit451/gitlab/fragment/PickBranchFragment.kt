@@ -3,7 +3,6 @@ package com.commit451.gitlab.fragment
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.os.Parcelable
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -15,12 +14,13 @@ import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.PickBranchOrTagActivity
 import com.commit451.gitlab.adapter.BranchAdapter
+import com.commit451.gitlab.extension.getParcelerParcelable
+import com.commit451.gitlab.extension.putParcelParcelableExtra
 import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.Ref
 import com.commit451.gitlab.model.api.Branch
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.trello.rxlifecycle2.android.FragmentEvent
-import org.parceler.Parcels
 import timber.log.Timber
 
 /**
@@ -37,7 +37,7 @@ class PickBranchFragment : ButterKnifeFragment() {
             val fragment = PickBranchFragment()
             val args = Bundle()
             args.putLong(EXTRA_PROJECT_ID, projectId)
-            args.putParcelable(EXTRA_REF, Parcels.wrap<Ref>(ref))
+            args.putParcelParcelableExtra(EXTRA_REF, ref)
             fragment.arguments = args
             return fragment
         }
@@ -63,12 +63,12 @@ class PickBranchFragment : ButterKnifeFragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val existingRef = Parcels.unwrap<Ref>(arguments.getParcelable<Parcelable>(EXTRA_REF))
+        val existingRef = arguments.getParcelerParcelable<Ref>(EXTRA_REF)
         adapterBranches = BranchAdapter(existingRef, object : BranchAdapter.Listener {
             override fun onBranchClicked(entry: Branch) {
                 val data = Intent()
                 val ref = Ref(Ref.TYPE_BRANCH, entry.name)
-                data.putExtra(PickBranchOrTagActivity.EXTRA_REF, Parcels.wrap(ref))
+                data.putParcelParcelableExtra(PickBranchOrTagActivity.EXTRA_REF, ref)
                 activity.setResult(Activity.RESULT_OK, data)
                 activity.finish()
             }

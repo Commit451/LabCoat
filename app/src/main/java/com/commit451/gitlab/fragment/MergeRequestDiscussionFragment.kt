@@ -4,7 +4,6 @@ import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.os.Parcelable
 import android.support.design.widget.Snackbar
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
@@ -18,6 +17,8 @@ import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.AttachActivity
 import com.commit451.gitlab.adapter.MergeRequestDetailAdapter
 import com.commit451.gitlab.event.MergeRequestChangedEvent
+import com.commit451.gitlab.extension.getParcelerParcelable
+import com.commit451.gitlab.extension.putParcelParcelableExtra
 import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.FileUploadResponse
 import com.commit451.gitlab.model.api.MergeRequest
@@ -31,7 +32,6 @@ import com.commit451.gitlab.view.SendMessageView
 import com.commit451.teleprinter.Teleprinter
 import com.trello.rxlifecycle2.android.FragmentEvent
 import org.greenrobot.eventbus.Subscribe
-import org.parceler.Parcels
 import timber.log.Timber
 
 /**
@@ -49,8 +49,8 @@ class MergeRequestDiscussionFragment : ButterKnifeFragment() {
         fun newInstance(project: Project, mergeRequest: MergeRequest): MergeRequestDiscussionFragment {
             val fragment = MergeRequestDiscussionFragment()
             val args = Bundle()
-            args.putParcelable(KEY_PROJECT, Parcels.wrap(project))
-            args.putParcelable(KEY_MERGE_REQUEST, Parcels.wrap(mergeRequest))
+            args.putParcelParcelableExtra(KEY_PROJECT, project)
+            args.putParcelParcelableExtra(KEY_MERGE_REQUEST, mergeRequest)
             fragment.arguments = args
             return fragment
         }
@@ -85,8 +85,8 @@ class MergeRequestDiscussionFragment : ButterKnifeFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        project = Parcels.unwrap<Project>(arguments.getParcelable<Parcelable>(KEY_PROJECT))
-        mergeRequest = Parcels.unwrap<MergeRequest>(arguments.getParcelable<Parcelable>(KEY_MERGE_REQUEST))
+        project = arguments.getParcelerParcelable<Project>(KEY_PROJECT)!!
+        mergeRequest = arguments.getParcelerParcelable<MergeRequest>(KEY_MERGE_REQUEST)!!
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -126,7 +126,7 @@ class MergeRequestDiscussionFragment : ButterKnifeFragment() {
         when (requestCode) {
             REQUEST_ATTACH ->  {
                 if (resultCode == RESULT_OK) {
-                    val response = Parcels.unwrap<FileUploadResponse>(data!!.getParcelableExtra<Parcelable>(AttachActivity.KEY_FILE_UPLOAD_RESPONSE))
+                    val response = data!!.getParcelerParcelable<FileUploadResponse>(AttachActivity.KEY_FILE_UPLOAD_RESPONSE)!!
                     progress.visibility = View.GONE
                     sendMessageView.appendText(response.markdown)
                 } else {

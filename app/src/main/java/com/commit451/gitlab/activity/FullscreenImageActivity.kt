@@ -10,9 +10,9 @@ import butterknife.ButterKnife
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.extension.getParcelerParcelable
+import com.commit451.gitlab.extension.putParcelParcelableExtra
 import com.commit451.gitlab.model.api.Project
 import com.github.chrisbanes.photoview.PhotoView
-import org.parceler.Parcels
 
 /**
  * A full-screen activity that opens the clicked images
@@ -26,7 +26,7 @@ class FullscreenImageActivity : BaseActivity() {
 
         fun newIntent(context: Context, project: Project, url: String): Intent {
             val intent = Intent(context, FullscreenImageActivity::class.java)
-            intent.putExtra(KEY_PROJECT, Parcels.wrap(project))
+            intent.putParcelParcelableExtra(KEY_PROJECT, project)
             intent.putExtra(KEY_URL, url)
             return intent
         }
@@ -42,7 +42,7 @@ class FullscreenImageActivity : BaseActivity() {
         setContentView(R.layout.activity_fullscreen_image)
         ButterKnife.bind(this)
 
-        project = intent.getParcelerParcelable(KEY_PROJECT)
+        project = intent.getParcelerParcelable(KEY_PROJECT)!!
 
         toolbar.setNavigationIcon(R.drawable.ic_back_24dp)
         toolbar.setNavigationOnClickListener {

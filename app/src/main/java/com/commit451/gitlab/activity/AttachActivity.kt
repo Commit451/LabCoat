@@ -1,11 +1,11 @@
 package com.commit451.gitlab.activity
 
 
+import android.animation.TimeInterpolator
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.Parcelable
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
@@ -14,13 +14,14 @@ import butterknife.ButterKnife
 import butterknife.OnClick
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
+import com.commit451.gitlab.extension.getParcelerParcelable
+import com.commit451.gitlab.extension.putParcelParcelableExtra
 import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.extension.toPart
 import com.commit451.gitlab.model.api.FileUploadResponse
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.rx.CustomSingleObserver
 import io.codetail.animation.ViewAnimationUtils
-import org.parceler.Parcels
 import pl.aprilapps.easyphotopicker.DefaultCallback
 import pl.aprilapps.easyphotopicker.EasyImage
 import timber.log.Timber
@@ -39,7 +40,7 @@ class AttachActivity : BaseActivity() {
 
         fun newIntent(context: Context, project: Project): Intent {
             val intent = Intent(context, AttachActivity::class.java)
-            intent.putExtra(KEY_PROJECT, Parcels.wrap(project))
+            intent.putParcelParcelableExtra(KEY_PROJECT, project)
             return intent
         }
     }
@@ -84,11 +85,11 @@ class AttachActivity : BaseActivity() {
             val animator = ViewAnimationUtils
                     .createCircularReveal(card, 0, card.height, 0f, finalRadius)
             animator.duration = 500
-            animator.interpolator = AccelerateDecelerateInterpolator()
+            animator.interpolator = AccelerateDecelerateInterpolator() as TimeInterpolator?
             animator.start()
         }
 
-        project = Parcels.unwrap<Project>(intent.getParcelableExtra<Parcelable>(KEY_PROJECT))
+        project = intent.getParcelerParcelable<Project>(KEY_PROJECT)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -127,7 +128,7 @@ class AttachActivity : BaseActivity() {
 
                     override fun success(fileUploadResponse: FileUploadResponse) {
                         val data = Intent()
-                        data.putExtra(KEY_FILE_UPLOAD_RESPONSE, Parcels.wrap(fileUploadResponse))
+                        data.putParcelParcelableExtra(KEY_FILE_UPLOAD_RESPONSE, fileUploadResponse)
                         setResult(Activity.RESULT_OK, data)
                         finish()
                     }

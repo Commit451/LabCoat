@@ -3,7 +3,6 @@ package com.commit451.gitlab.fragment
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
-import android.os.Parcelable
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -17,6 +16,8 @@ import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.DividerItemDecoration
 import com.commit451.gitlab.adapter.ProjectAdapter
 import com.commit451.gitlab.api.GitLabService
+import com.commit451.gitlab.extension.getParcelerParcelable
+import com.commit451.gitlab.extension.putParcelParcelableExtra
 import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.Group
 import com.commit451.gitlab.model.api.Project
@@ -25,7 +26,6 @@ import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
 import com.trello.rxlifecycle2.android.FragmentEvent
 import io.reactivex.Single
-import org.parceler.Parcels
 import retrofit2.Response
 import timber.log.Timber
 
@@ -64,7 +64,7 @@ class ProjectsFragment : ButterKnifeFragment() {
         fun newInstance(group: Group): ProjectsFragment {
             val args = Bundle()
             args.putInt(EXTRA_MODE, MODE_GROUP)
-            args.putParcelable(EXTRA_GROUP, Parcels.wrap(group))
+            args.putParcelParcelableExtra(EXTRA_GROUP, group)
             val fragment = ProjectsFragment()
             fragment.arguments = args
             return fragment
@@ -160,7 +160,7 @@ class ProjectsFragment : ButterKnifeFragment() {
             }
             MODE_GROUP -> {
                 showLoading()
-                val group = Parcels.unwrap<Group>(arguments.getParcelable<Parcelable>(EXTRA_GROUP)) ?: throw IllegalStateException("You must also pass a group if you want to show a groups projects")
+                val group = arguments.getParcelerParcelable<Group>(EXTRA_GROUP) ?: throw IllegalStateException("You must also pass a group if you want to show a groups projects")
                 actuallyLoadIt(getGitLab().getGroupProjects(group.id))
             }
             else -> throw IllegalStateException(mode.toString() + " is not defined")

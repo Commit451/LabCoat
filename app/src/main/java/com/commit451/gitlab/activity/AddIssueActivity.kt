@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.Parcelable
 import android.support.design.widget.Snackbar
 import android.support.design.widget.TextInputLayout
 import android.support.v7.app.AlertDialog
@@ -27,6 +26,8 @@ import com.commit451.gitlab.adapter.MilestoneSpinnerAdapter
 import com.commit451.gitlab.event.IssueChangedEvent
 import com.commit451.gitlab.event.IssueCreatedEvent
 import com.commit451.gitlab.extension.checkValid
+import com.commit451.gitlab.extension.getParcelerParcelable
+import com.commit451.gitlab.extension.putParcelParcelableExtra
 import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.*
 import com.commit451.gitlab.navigation.Navigator
@@ -36,7 +37,6 @@ import com.commit451.teleprinter.Teleprinter
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import org.parceler.Parcels
 import retrofit2.Response
 import timber.log.Timber
 import java.util.*
@@ -54,9 +54,9 @@ class AddIssueActivity : MorphActivity() {
 
         fun newIntent(context: Context, project: Project, issue: Issue?): Intent {
             val intent = Intent(context, AddIssueActivity::class.java)
-            intent.putExtra(KEY_PROJECT, Parcels.wrap(project))
+            intent.putParcelParcelableExtra(KEY_PROJECT, project)
             if (issue != null) {
-                intent.putExtra(KEY_ISSUE, Parcels.wrap(issue))
+                intent.putParcelParcelableExtra(KEY_ISSUE, issue)
             }
             return intent
         }
@@ -96,8 +96,8 @@ class AddIssueActivity : MorphActivity() {
         morph(root)
         teleprinter = Teleprinter(this)
 
-        project = Parcels.unwrap<Project>(intent.getParcelableExtra<Parcelable>(KEY_PROJECT))
-        issue = Parcels.unwrap<Issue>(intent.getParcelableExtra<Parcelable>(KEY_ISSUE))
+        project = intent.getParcelerParcelable<Project>(KEY_PROJECT)!!
+        issue = intent.getParcelerParcelable<Issue>(KEY_ISSUE)
         members = HashSet<Member>()
         adapterLabels = AddIssueLabelAdapter(object : AddIssueLabelAdapter.Listener {
             override fun onLabelClicked(label: Label) {
@@ -255,15 +255,16 @@ class AddIssueActivity : MorphActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            REQUEST_LABEL -> if (resultCode == Activity.RESULT_OK) {
-                val label = Parcels.unwrap<Label>(data?.getParcelableExtra<Parcelable>(AddLabelActivity.KEY_LABEL))
-                if (adapterLabels.containsLabel(label)) {
-                    Snackbar.make(root, R.string.label_already_added, Snackbar.LENGTH_SHORT)
-                            .show()
-                } else {
-                    adapterLabels.addLabel(label)
+            REQUEST_LABEL ->
+                if (resultCode == Activity.RESULT_OK) {
+                    val label = data?.getParcelerParcelable<Label>(AddLabelActivity.KEY_LABEL)!!
+                    if (adapterLabels.containsLabel(label)) {
+                        Snackbar.make(root, R.string.label_already_added, Snackbar.LENGTH_SHORT)
+                                .show()
+                    } else {
+                        adapterLabels.addLabel(label)
+                    }
                 }
-            }
         }
     }
 

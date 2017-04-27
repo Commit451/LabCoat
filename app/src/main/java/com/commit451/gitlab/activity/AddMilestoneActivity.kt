@@ -3,7 +3,6 @@ package com.commit451.gitlab.activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.Parcelable
 import android.support.design.widget.Snackbar
 import android.support.design.widget.TextInputLayout
 import android.support.v7.widget.Toolbar
@@ -20,13 +19,14 @@ import com.commit451.gitlab.R
 import com.commit451.gitlab.event.MilestoneChangedEvent
 import com.commit451.gitlab.event.MilestoneCreatedEvent
 import com.commit451.gitlab.extension.checkValid
+import com.commit451.gitlab.extension.getParcelerParcelable
+import com.commit451.gitlab.extension.putParcelParcelableExtra
 import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.Milestone
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.teleprinter.Teleprinter
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
 import io.reactivex.Single
-import org.parceler.Parcels
 import timber.log.Timber
 import java.util.*
 
@@ -41,7 +41,7 @@ class AddMilestoneActivity : MorphActivity() {
             val intent = Intent(context, AddMilestoneActivity::class.java)
             intent.putExtra(KEY_PROJECT_ID, projectId)
             if (milestone != null) {
-                intent.putExtra(KEY_MILESTONE, Parcels.wrap(milestone))
+                intent.putParcelParcelableExtra(KEY_MILESTONE, milestone)
             }
             return intent
         }
@@ -93,7 +93,7 @@ class AddMilestoneActivity : MorphActivity() {
         morph(root)
         teleprinter = Teleprinter(this)
         projectId = intent.getLongExtra(KEY_PROJECT_ID, -1)
-        milestone = Parcels.unwrap<Milestone>(intent.getParcelableExtra<Parcelable>(KEY_MILESTONE))
+        milestone = intent.getParcelerParcelable<Milestone>(KEY_MILESTONE)
         if (milestone != null) {
             bind(milestone!!)
             toolbar.inflateMenu(R.menu.edit)

@@ -4,7 +4,6 @@ import android.app.Activity
 import android.appwidget.AppWidgetManager
 import android.content.Intent
 import android.os.Bundle
-import android.os.Parcelable
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
@@ -15,9 +14,9 @@ import butterknife.ButterKnife
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.BaseActivity
 import com.commit451.gitlab.data.Prefs
+import com.commit451.gitlab.extension.getParcelerParcelable
 import com.commit451.gitlab.model.Account
 import com.commit451.gitlab.model.api.Project
-import org.parceler.Parcels
 import timber.log.Timber
 import java.util.*
 
@@ -77,9 +76,11 @@ class ProjectFeedWidgetConfigureActivity : BaseActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            REQUEST_PROJECT -> if (resultCode == Activity.RESULT_OK) {
-                val project = Parcels.unwrap<Project>(data?.getParcelableExtra<Parcelable>(ProjectFeedWidgetConfigureProjectActivity.EXTRA_PROJECT))
-                saveWidgetConfig(account!!, project)
+            REQUEST_PROJECT -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    val project = data?.getParcelerParcelable<Project>(ProjectFeedWidgetConfigureProjectActivity.EXTRA_PROJECT)!!
+                    saveWidgetConfig(account!!, project)
+                }
             }
         }
     }

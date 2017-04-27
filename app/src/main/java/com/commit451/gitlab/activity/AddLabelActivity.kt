@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.Parcelable
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -18,12 +17,13 @@ import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.R.string.labels
 import com.commit451.gitlab.adapter.LabelAdapter
+import com.commit451.gitlab.extension.getParcelerParcelable
+import com.commit451.gitlab.extension.putParcelParcelableExtra
 import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.Label
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.viewHolder.LabelViewHolder
-import org.parceler.Parcels
 import timber.log.Timber
 
 /**
@@ -76,7 +76,7 @@ class AddLabelActivity : BaseActivity() {
         adapterLabel = LabelAdapter(object : LabelAdapter.Listener {
             override fun onLabelClicked(label: Label, viewHolder: LabelViewHolder) {
                 val data = Intent()
-                data.putExtra(KEY_LABEL, Parcels.wrap(label))
+                data.putParcelParcelableExtra(KEY_LABEL, label)
                 setResult(Activity.RESULT_OK, data)
                 finish()
             }
@@ -94,7 +94,7 @@ class AddLabelActivity : BaseActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             REQUEST_NEW_LABEL -> if (resultCode == Activity.RESULT_OK) {
-                val newLabel = Parcels.unwrap<Label>(data?.getParcelableExtra<Parcelable>(AddNewLabelActivity.KEY_NEW_LABEL))
+                val newLabel = data?.getParcelerParcelable<Label>(AddNewLabelActivity.KEY_NEW_LABEL)!!
                 adapterLabel.addLabel(newLabel)
             }
         }
