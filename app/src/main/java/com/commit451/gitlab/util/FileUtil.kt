@@ -73,7 +73,7 @@ object FileUtil {
     fun saveBlobToProviderDirectory(context: Context, bytes: ByteArray, fileName: String): File {
         val targetFile = File(getProviderDirectory(context), fileName)
         targetFile.createNewFile()
-        Okyo.writeByteArrayToFile(targetFile, bytes)
+        Okyo.writeByteArrayToFile(bytes, targetFile)
         return targetFile
     }
 
