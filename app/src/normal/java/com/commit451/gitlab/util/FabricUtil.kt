@@ -13,7 +13,7 @@ import timber.log.Timber
  */
 object FabricUtil {
 
-    fun init(@NonNull context: Context) {
+    fun init(context: Context) {
         // Start crashlytics if enabled
         if (!BuildConfig.DEBUG) {
             Fabric.with(context, Crashlytics())
