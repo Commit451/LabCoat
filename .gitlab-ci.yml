@@ -12,8 +12,6 @@ before_script:
   - export ANDROID_HOME=$PWD/android-sdk
   - echo y | $ANDROID_HOME/tools/bin/sdkmanager "platforms;android-$ANDROID_COMPILE_SDK"
   - echo y | $ANDROID_HOME/tools/bin/sdkmanager "build-tools;$ANDROID_BUILD_TOOLS"
-  - echo y | $ANDROID_HOME/tools/bin/sdkmanager "extras;android;m2repository"
-  - chmod +x ./gradlew
 
 stages:
   - build
@@ -22,7 +20,8 @@ stages:
 build:
   stage: build
   script:
-    - ./gradlew assembleDebug
+    - ./gradlew assembleFdroidDebug
+
 test:
   stage: test
   script:
