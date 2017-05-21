@@ -17,8 +17,13 @@ before_script:
 
 stages:
   - build
+  - test
 
 build:
   stage: build
+  script:
+    - ./gradlew assembleDebug
+test:
+  stage: test
   script:
     - ./gradlew testFdroidDebug

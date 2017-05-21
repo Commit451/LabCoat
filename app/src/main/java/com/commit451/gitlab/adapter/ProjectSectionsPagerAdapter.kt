@@ -20,12 +20,13 @@ class ProjectSectionsPagerAdapter(context: ProjectActivity, fm: FragmentManager)
         val ACTIVITY_POS = 1
         val FILES_POS = 2
         val COMMITS_POS = 3
-        val BUILDS_POS = 4
-        val MILESTONES_POS = 5
-        val ISSUES_POS = 6
-        val MERGE_REQUESTS_POS = 7
-        val PROJECT_MEMBERS_POS = 8
-        val SNIPPETS_POS = 9
+        val PIPELINES_POS = 4
+        val BUILDS_POS = 5
+        val MILESTONES_POS = 6
+        val ISSUES_POS = 7
+        val MERGE_REQUESTS_POS = 8
+        val PROJECT_MEMBERS_POS = 9
+        val SNIPPETS_POS = 10
     }
 
     private val project: Project = context.project!!
@@ -38,6 +39,7 @@ class ProjectSectionsPagerAdapter(context: ProjectActivity, fm: FragmentManager)
         if (!project!!.isBuildEnabled) {
             Timber.d("Builds are disabled")
             disabledSections.add(BUILDS_POS)
+            disabledSections.add(PIPELINES_POS)
         }
         if (!project.isIssuesEnabled) {
             Timber.d("Issues are disabled")
@@ -77,6 +79,7 @@ class ProjectSectionsPagerAdapter(context: ProjectActivity, fm: FragmentManager)
             ACTIVITY_POS -> return FeedFragment.newInstance(project.feedUrl)
             FILES_POS -> return FilesFragment.newInstance()
             COMMITS_POS -> return CommitsFragment.newInstance()
+            PIPELINES_POS -> return PipelinesFragment.newInstance()
             BUILDS_POS -> return BuildsFragment.newInstance()
             MILESTONES_POS -> return MilestonesFragment.newInstance()
             ISSUES_POS -> return IssuesFragment.newInstance()

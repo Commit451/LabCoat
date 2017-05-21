@@ -376,6 +376,35 @@ interface GitLabService {
     fun cancelBuild(@Path("id") projectId: Long,
                     @Path("build_id") buildId: Long): Single<Build>
 
+    /* --- Pipelines --- */
+    @GET(API_VERSION + "/projects/{id}/pipelines")
+    fun getPipelines(@Path("id") projectId: Long,
+                     @Query("scope") scope: String?): Single<Response<List<Pipeline>>>
+
+    @GET
+    fun getPipelines(@Url url: String,
+                     @Query("scope") state: String?): Single<Response<List<Pipeline>>>
+
+    @GET(API_VERSION + "/projects/{id}/pipelines/{pipeline_id}/jobs")
+    fun getPipelineJobs(@Path("id") projectId: Long, @Path("pipeline_id") pipelineId: Long,
+                        @Query("scope") scope: String?): Single<Response<List<Pipeline>>>
+
+    @GET
+    fun getPipelineJobs(@Url url: String,
+                        @Query("scope") state: String?): Single<Response<List<Pipeline>>>
+
+    @GET(API_VERSION + "/projects/{id}/pipelines/{pipeline_id}")
+    fun getPipeline(@Path("id") projectId: Long,
+                    @Path("pipeline_id") pipelineId: Long): Single<Pipeline>
+
+    @POST(API_VERSION + "/projects/{id}/pipelines/{pipeline_id}/retry")
+    fun retryPipeline(@Path("id") projectId: Long,
+                      @Path("pipeline_id") pipelineId: Long): Single<Pipeline>
+
+    @POST(API_VERSION + "/projects/{id}/pipelines/{pipeline_id}/cancel")
+    fun cancelPipeline(@Path("id") projectId: Long,
+                       @Path("pipeline_id") pipelineId: Long): Single<Pipeline>
+
     /* --- SNIPPETS --- */
     @GET(API_VERSION + "/projects/{id}/snippets")
     fun getSnippets(@Path("id") projectId: Long): Single<Response<List<Snippet>>>

@@ -8,32 +8,21 @@ import org.parceler.Parcel;
 import java.util.Date;
 
 /**
- * A pipeline.
+ * Represents a pipeline
  */
 @Parcel
 @JsonObject
-public class Pipeline {
+public class Pipelines {
 
-    @JsonField(name = "user")
-    CommitUser user;
-    @JsonField(name = "id")
-    long id;
     @JsonField(name = "sha")
     String sha;
+    @JsonField(name = "id")
+    long id;
     @JsonField(name = "ref")
     String ref;
     @JsonField(name = "status")
     String status;
-    @JsonField(name = "created_at")
-    Date createdAt;
-    @JsonField(name = "started_at")
-    Date startedAt;
-    @JsonField(name = "finished_at")
-    Date finishedAt;
 
-    public CommitUser getUser() {
-        return user;
-    }
     public long getId() {
         return id;
     }
@@ -49,12 +38,4 @@ public class Pipeline {
     public String getStatus() {
         return status;
     }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public Date getStartedAt() { return startedAt; }
-
-    public Date getFinishedAt() { return finishedAt; }
 }
