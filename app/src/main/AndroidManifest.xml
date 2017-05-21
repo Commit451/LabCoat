@@ -59,6 +59,7 @@
         <activity android:name=".activity.MilestoneActivity"/>
         <activity android:name=".activity.AddMilestoneActivity"/>
         <activity android:name=".activity.BuildActivity"/>
+        <activity android:name=".activity.PipelineActivity"/>
         <activity
             android:name=".activity.LoadSomeInfoActivity"
             android:theme="@style/Activity.Translucent"/>
