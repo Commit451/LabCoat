@@ -61,7 +61,7 @@ class AddMilestoneActivity : MorphActivity() {
     var milestone: Milestone? = null
     var currentDate: Date? = null
 
-    val onDateSetListener = DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+    val onDateSetListener = DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
         val calendar = Calendar.getInstance()
         calendar.set(Calendar.YEAR, year)
         calendar.set(Calendar.MONTH, monthOfYear)

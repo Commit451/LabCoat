@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AlertDialog
-import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +16,7 @@ import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.ProjectActivity
 import com.commit451.gitlab.event.ProjectReloadEvent
 import com.commit451.gitlab.extension.base64Decode
+import com.commit451.gitlab.extension.formatAsHtml
 import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.model.api.RepositoryFile
@@ -84,7 +84,7 @@ class ProjectFragment : ButterKnifeFragment() {
                     .setTitle(R.string.project_fork_title)
                     .setMessage(R.string.project_fork_message)
                     .setNegativeButton(android.R.string.cancel, null)
-                    .setPositiveButton(android.R.string.ok) { dialog, which ->
+                    .setPositiveButton(android.R.string.ok) { _, _ ->
                         App.get().gitLab.forkProject(it.id)
                                 .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                                 .subscribe(object : CustomSingleObserver<String>() {
@@ -226,7 +226,7 @@ class ProjectFragment : ButterKnifeFragment() {
                                                     App.get().getAccount().serverUrl.toString(),
                                                     project!!))
                                 }
-                                README_TYPE_HTML -> textOverview.text = Html.fromHtml(text)
+                                README_TYPE_HTML -> textOverview.text = text.formatAsHtml()
                                 README_TYPE_TEXT -> textOverview.text = text
                                 README_TYPE_NO_EXTENSION -> textOverview.text = text
                             }

@@ -150,13 +150,11 @@ class FileActivity : BaseActivity() {
     private fun bindBlob(blob: ByteArray) {
         this.blob = blob
         val content: String
-        var mimeType: String? = null
+        var mimeType: String?
         val extension = fileExtension(fileName!!)
-        if (extension != null) {
-            mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
-            if (mimeType != null) {
-                mimeType = mimeType.toLowerCase()
-            }
+        mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
+        if (mimeType != null) {
+            mimeType = mimeType.toLowerCase()
         }
 
         if (mimeType != null && mimeType.startsWith("image/")) {

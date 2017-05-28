@@ -1,7 +1,6 @@
 package com.commit451.gitlab.viewHolder
 
 import android.support.v7.widget.RecyclerView
-import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +10,7 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
+import com.commit451.gitlab.extension.formatAsHtml
 import com.commit451.gitlab.model.rss.Entry
 import com.commit451.gitlab.transformation.CircleTransformation
 
@@ -42,7 +42,7 @@ class FeedEntryViewHolder(view: View) : RecyclerView.ViewHolder(view) {
                 .transform(CircleTransformation())
                 .into(image)
 
-        textTitle.text = Html.fromHtml(entry.title)
-        textSummary.text = Html.fromHtml(entry.summary)
+        textTitle.text = entry.title.formatAsHtml()
+        textSummary.text = entry.summary.formatAsHtml()
     }
 }

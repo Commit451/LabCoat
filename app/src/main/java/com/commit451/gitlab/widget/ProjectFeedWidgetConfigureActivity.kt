@@ -63,7 +63,7 @@ class ProjectFeedWidgetConfigureActivity : BaseActivity() {
         toolbar.setTitle(R.string.widget_choose_account)
 
         adapterAccounts = AccountsAdapter()
-        adapterAccounts.setOnItemClickListener { adapter, view, position ->
+        adapterAccounts.setOnItemClickListener { adapter, _, position ->
             account = adapter.get(position)
             moveAlongToChooseProject(account!!)
         }

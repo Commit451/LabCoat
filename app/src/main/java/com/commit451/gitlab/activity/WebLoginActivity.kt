@@ -47,6 +47,10 @@ class WebLoginActivity : BaseActivity() {
 
     lateinit var url: String
 
+    val isExtracting: Boolean by lazy {
+        intent.getBooleanExtra(KEY_EXTRACTING_PRIVATE_TOKEN, false)
+    }
+
     val webChromeClient = object : WebChromeClient() {
         override fun onProgressChanged(view: WebView, newProgress: Int) {
             super.onProgressChanged(view, newProgress)
@@ -83,24 +87,26 @@ class WebLoginActivity : BaseActivity() {
         webView.clearFormData()
         webView.clearHistory()
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
-            CookieManager.getInstance().removeAllCookies(null)
-            CookieManager.getInstance().flush()
-        } else {
-            val cookieSyncMngr = CookieSyncManager.createInstance(this)
-            cookieSyncMngr.startSync()
-            val cookieManager = CookieManager.getInstance()
-            cookieManager.removeAllCookie()
-            cookieManager.removeSessionCookie()
-            cookieSyncMngr.stopSync()
-            cookieSyncMngr.sync()
-        }
+        clearCookies()
 
         webView.loadUrl(url + "/users/sign_in")
     }
 
-    val isExtracting: Boolean
-        get() = intent.getBooleanExtra(KEY_EXTRACTING_PRIVATE_TOKEN, false)
+    @Suppress("DEPRECATION")
+    fun clearCookies() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            CookieManager.getInstance().removeAllCookies(null)
+            CookieManager.getInstance().flush()
+        } else {
+            val cookieSyncManager = CookieSyncManager.createInstance(this)
+            cookieSyncManager.startSync()
+            val cookieManager = CookieManager.getInstance()
+            cookieManager.removeAllCookie()
+            cookieManager.removeSessionCookie()
+            cookieSyncManager.stopSync()
+            cookieSyncManager.sync()
+        }
+    }
 
     inner class ExtractionWebClient : WebViewClient() {
         override fun onPageFinished(view: WebView, url: String) {

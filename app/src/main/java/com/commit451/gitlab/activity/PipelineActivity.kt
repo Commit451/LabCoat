@@ -1,38 +1,25 @@
 package com.commit451.gitlab.activity
 
-import android.Manifest
-import android.annotation.TargetApi
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
-import android.os.Parcelable
 import android.support.design.widget.Snackbar
 import android.support.design.widget.TabLayout
-import android.support.v4.content.ContextCompat
 import android.support.v4.view.ViewPager
 import android.support.v7.widget.Toolbar
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-
+import butterknife.BindView
+import butterknife.ButterKnife
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.PipelineSectionsPagerAdapter
 import com.commit451.gitlab.event.PipelineChangedEvent
-import com.commit451.gitlab.model.Account
-import com.commit451.gitlab.model.api.Pipeline
-import com.commit451.gitlab.model.api.Build
-import com.commit451.gitlab.model.api.Project
-import com.commit451.gitlab.rx.CustomSingleObserver
-import com.commit451.gitlab.util.DownloadUtil
-
-import org.parceler.Parcels
 import com.commit451.gitlab.extension.getParcelerParcelable
 import com.commit451.gitlab.extension.putParcelParcelableExtra
-
-import butterknife.BindView
-import butterknife.ButterKnife
+import com.commit451.gitlab.model.api.Pipeline
+import com.commit451.gitlab.model.api.Project
+import com.commit451.gitlab.rx.CustomSingleObserver
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
@@ -123,7 +110,7 @@ class PipelineActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pipeline)
-        val bind = ButterKnife.bind(this)
+        ButterKnife.bind(this)
 
         project = intent.getParcelerParcelable<Project>(KEY_PROJECT)!!
         pipeline = intent.getParcelerParcelable<Pipeline>(KEY_PIPELINE)!!

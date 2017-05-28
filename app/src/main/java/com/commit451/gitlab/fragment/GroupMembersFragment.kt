@@ -157,10 +157,6 @@ class GroupMembersFragment : ButterKnifeFragment() {
         if (view == null) {
             return
         }
-        if (group == null) {
-            swipeRefreshLayout.isRefreshing = false
-            return
-        }
         textMessage.visibility = View.GONE
         swipeRefreshLayout.isRefreshing = true
         loadGroupMembers(App.get().gitLab.getGroupMembers(group.id))
@@ -218,7 +214,7 @@ class GroupMembersFragment : ButterKnifeFragment() {
 
     @Subscribe
     fun onMemberAdded(event: MemberAddedEvent) {
-        if (adapterGroupMembers != null) {
+        if (view != null) {
             adapterGroupMembers.addMember(event.member)
             textMessage.visibility = View.GONE
         }
