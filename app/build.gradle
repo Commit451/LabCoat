@@ -99,6 +99,8 @@ dependencies {
     compile "com.android.support:customtabs:$supportLibVersion"
     compile 'com.android.support:multidex:1.0.1'
 
+    compile 'com.google.code.findbugs:jsr305:3.0.2'
+
     compile "com.squareup.retrofit2:retrofit:$retrofitVersion"
     compile("com.squareup.retrofit2:converter-simplexml:$retrofitVersion") {
         exclude group: 'xpp3', module: 'xpp3'
