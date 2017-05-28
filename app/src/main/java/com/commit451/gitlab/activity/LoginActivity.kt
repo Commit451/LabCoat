@@ -434,7 +434,7 @@ class LoginActivity : BaseActivity() {
                 }
                 var errorMessage = getString(R.string.login_unauthorized)
                 try {
-                    val message = LoganSquare.parse(response.errorBody().byteStream(), Message::class.java)
+                    val message = LoganSquare.parse(response.errorBody()!!.byteStream(), Message::class.java)
                     if (message != null && message.message != null) {
                         errorMessage = message.message
                     }
@@ -457,7 +457,7 @@ class LoginActivity : BaseActivity() {
     }
 
     fun handleBasicAuthentication(response: Response<*>) {
-        val header = response.headers().get("WWW-Authenticate").trim { it <= ' ' }
+        val header = response.headers().get("WWW-Authenticate")!!.trim { it <= ' ' }
         if (!header.startsWith("Basic")) {
             Snackbar.make(root, getString(R.string.login_unsupported_authentication), Snackbar.LENGTH_LONG)
                     .show()

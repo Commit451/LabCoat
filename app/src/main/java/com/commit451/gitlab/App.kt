@@ -13,6 +13,7 @@ import com.commit451.lift.Lift
 import com.novoda.simplechromecustomtabs.SimpleChromeCustomTabs
 import com.squareup.leakcanary.LeakCanary
 import com.squareup.picasso.Picasso
+import io.reactivex.plugins.RxJavaPlugins
 import net.danlew.android.joda.JodaTimeAndroid
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -52,6 +53,10 @@ open class App : Application() {
         }
         setupLeakCanary()
         instance = this
+        RxJavaPlugins.setErrorHandler { error ->
+            //In case an error cannot be thrown properly anywhere else in the app
+            Timber.e(error)
+        }
 
         GitLab.init()
 
