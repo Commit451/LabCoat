@@ -35,16 +35,16 @@ object TestUtil {
                 .login(request)
                 .blockingGet()
         assertTrue(loginResponse.isSuccessful)
-        assertNotNull(loginResponse.body().privateToken)
+        assertNotNull(loginResponse.body()!!.privateToken)
         //attach the newly retrieved private token
-        account.privateToken = loginResponse.body().privateToken
+        account.privateToken = loginResponse.body()!!.privateToken
         return gitLab
     }
 
     @Throws(Exception::class)
     fun assertRetrofitResponseSuccess(response: Response<*>) {
         if (!response.isSuccessful) {
-            Assert.assertTrue(response.errorBody().string(), response.isSuccessful)
+            Assert.assertTrue(response.errorBody()!!.string(), response.isSuccessful)
         }
     }
 }
