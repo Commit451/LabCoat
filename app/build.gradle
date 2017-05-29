@@ -27,6 +27,10 @@ android {
 
     project.ext {
         LABCOAT_FABRIC_KEY = project.hasProperty("LABCOAT_FABRIC_KEY") ? project.LABCOAT_FABRIC_KEY : "";
+        KEYSTORE_PATH = project.hasProperty("KEYSTORE_PATH") ? project.KEYSTORE_PATH : " ";
+        KEYSTORE_PASSWORD = project.hasProperty("KEYSTORE_PASSWORD") ? project.KEYSTORE_PASSWORD : " ";
+        KEYSTORE_ALIAS = project.hasProperty("KEYSTORE_ALIAS") ? project.KEYSTORE_ALIAS : " ";
+        KEY_PASSWORD = project.hasProperty("KEY_PASSWORD") ? project.KEY_PASSWORD : " ";
     }
 
     defaultConfig {
@@ -51,12 +55,22 @@ android {
         }
     }
 
+    signingConfigs {
+        release {
+            storeFile file(project.ext.KEYSTORE_PATH)
+            storePassword project.ext.KEYSTORE_PASSWORD
+            keyAlias project.ext.KEYSTORE_ALIAS
+            keyPassword project.ext.KEY_PASSWORD
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             ext.enableCrashlytics = true
+            signingConfig signingConfigs.release
         }
         debug {
             minifyEnabled false
