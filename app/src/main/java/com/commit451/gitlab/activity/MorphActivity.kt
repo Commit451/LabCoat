@@ -6,7 +6,7 @@ import com.commit451.morphtransitions.FabTransform
 
 /**
  * Activity that morphs from a FAB. Make sure the view you want to morph has the view id R.id.root and
- * call [.morph] when the content view is set
+ * call [.morph] when the content view is set. Does nothing if not on 21+
  */
 open class MorphActivity : BaseActivity() {
 
@@ -14,7 +14,9 @@ open class MorphActivity : BaseActivity() {
         if (root == null) {
             throw IllegalStateException("Cannot pass an empty view")
         }
-        FabTransform.setup(this, root)
+        if (Build.VERSION.SDK_INT >= 21) {
+            FabTransform.setup(this, root)
+        }
     }
 
     override fun onBackPressed() {

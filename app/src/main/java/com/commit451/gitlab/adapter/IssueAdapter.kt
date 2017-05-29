@@ -28,7 +28,7 @@ class IssueAdapter(private val listener: IssueAdapter.Listener) : RecyclerView.A
         when (viewType) {
             TYPE_ITEM -> {
                 val holder = IssueViewHolder.inflate(parent)
-                holder.itemView.setOnClickListener { v ->
+                holder.itemView.setOnClickListener {
                     val position = holder.adapterPosition
                     listener.onIssueClicked(getValueAt(position))
                 }

@@ -2,13 +2,13 @@
 apply plugin: 'com.github.ben-manes.versions'
 apply plugin: 'com.commit451.updatewrapper'
 buildscript {
-    ext.kotlinVersion = '1.1.1'
+    ext.kotlinVersion = '1.1.2-3'
     repositories {
         jcenter()
         maven { url "https://jitpack.io" }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.0'
+        classpath 'com.android.tools.build:gradle:2.3.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         //check with ./gradlew dependencyUpdates
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.14.0'
@@ -20,6 +20,7 @@ allprojects {
     repositories {
         jcenter()
         maven { url "https://jitpack.io" }
+        maven { url "https://maven.google.com" }
     }
 }
 

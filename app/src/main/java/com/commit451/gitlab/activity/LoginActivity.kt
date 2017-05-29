@@ -382,7 +382,7 @@ class LoginActivity : BaseActivity() {
             val d = AlertDialog.Builder(this)
                     .setTitle(R.string.certificate_title)
                     .setMessage(String.format(resources.getString(R.string.certificate_message), finalFingerprint))
-                    .setPositiveButton(R.string.ok_button) { dialog, which ->
+                    .setPositiveButton(R.string.ok_button) { dialog, _ ->
                         if (finalFingerprint != null) {
                             account.trustedCertificate = finalFingerprint
                             login()
@@ -390,7 +390,7 @@ class LoginActivity : BaseActivity() {
 
                         dialog.dismiss()
                     }
-                    .setNegativeButton(R.string.cancel_button) { dialog, which -> dialog.dismiss() }
+                    .setNegativeButton(R.string.cancel_button) { dialog, _ -> dialog.dismiss() }
                     .show()
 
             (d.findViewById(android.R.id.message) as TextView).movementMethod = LinkMovementMethod.getInstance()
@@ -400,7 +400,7 @@ class LoginActivity : BaseActivity() {
             val d = AlertDialog.Builder(this)
                     .setTitle(R.string.hostname_title)
                     .setMessage(R.string.hostname_message)
-                    .setPositiveButton(R.string.ok_button) { dialog, which ->
+                    .setPositiveButton(R.string.ok_button) { dialog, _ ->
                         if (finalHostname != null) {
                             account.trustedHostname = finalHostname
                             login()
@@ -408,7 +408,7 @@ class LoginActivity : BaseActivity() {
 
                         dialog.dismiss()
                     }
-                    .setNegativeButton(R.string.cancel_button) { dialog, which -> dialog.dismiss() }
+                    .setNegativeButton(R.string.cancel_button) { dialog, _ -> dialog.dismiss() }
                     .show()
 
             (d.findViewById(android.R.id.message) as TextView).movementMethod = LinkMovementMethod.getInstance()
@@ -434,7 +434,7 @@ class LoginActivity : BaseActivity() {
                 }
                 var errorMessage = getString(R.string.login_unauthorized)
                 try {
-                    val message = LoganSquare.parse(response.errorBody().byteStream(), Message::class.java)
+                    val message = LoganSquare.parse(response.errorBody()!!.byteStream(), Message::class.java)
                     if (message != null && message.message != null) {
                         errorMessage = message.message
                     }
@@ -457,7 +457,7 @@ class LoginActivity : BaseActivity() {
     }
 
     fun handleBasicAuthentication(response: Response<*>) {
-        val header = response.headers().get("WWW-Authenticate").trim { it <= ' ' }
+        val header = response.headers().get("WWW-Authenticate")!!.trim { it <= ' ' }
         if (!header.startsWith("Basic")) {
             Snackbar.make(root, getString(R.string.login_unsupported_authentication), Snackbar.LENGTH_LONG)
                     .show()

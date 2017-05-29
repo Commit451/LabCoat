@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.os.Parcelable
 import android.support.design.widget.Snackbar
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.GridLayoutManager
@@ -20,6 +19,8 @@ import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.UserAdapter
 import com.commit451.gitlab.dialog.AccessDialog
 import com.commit451.gitlab.event.MemberAddedEvent
+import com.commit451.gitlab.extension.getParcelerParcelable
+import com.commit451.gitlab.extension.putParcelParcelableExtra
 import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.Group
 import com.commit451.gitlab.model.api.Member
@@ -29,7 +30,6 @@ import com.commit451.gitlab.util.LinkHeaderParser
 import com.commit451.gitlab.viewHolder.UserViewHolder
 import com.commit451.teleprinter.Teleprinter
 import io.reactivex.Single
-import org.parceler.Parcels
 import retrofit2.HttpException
 import retrofit2.Response
 import timber.log.Timber
@@ -52,7 +52,7 @@ class AddUserActivity : MorphActivity() {
 
         fun newIntent(context: Context, group: Group): Intent {
             val intent = Intent(context, AddUserActivity::class.java)
-            intent.putExtra(KEY_GROUP, Parcels.wrap(group))
+            intent.putParcelParcelableExtra(KEY_GROUP, group)
             return intent
         }
     }
@@ -112,7 +112,7 @@ class AddUserActivity : MorphActivity() {
         ButterKnife.bind(this)
         teleprinter = Teleprinter(this)
         projectId = intent.getLongExtra(KEY_PROJECT_ID, -1)
-        group = Parcels.unwrap<Group>(intent.getParcelableExtra<Parcelable>(KEY_GROUP))
+        group = intent.getParcelerParcelable<Group>(KEY_GROUP)
         dialogAccess = AccessDialog(this, object : AccessDialog.Listener {
             override fun onAccessApplied(accessLevel: Int) {
                 dialogAccess.showLoading()

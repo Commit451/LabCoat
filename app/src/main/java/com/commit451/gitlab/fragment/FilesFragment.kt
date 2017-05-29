@@ -115,7 +115,7 @@ class FilesFragment : ButterKnifeFragment() {
     override fun onBackPressed(): Boolean {
         if (adapterBreadcrumb.itemCount > 1) {
             val breadcrumb = adapterBreadcrumb.getValueAt(adapterBreadcrumb.itemCount - 2)
-            if (breadcrumb != null && breadcrumb.listener != null) {
+            if (breadcrumb != null) {
                 breadcrumb.listener.onClick()
                 return true
             }

@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import com.commit451.gitlab.model.api.MergeRequest
 import com.commit451.gitlab.model.api.Note
 import com.commit451.gitlab.model.api.Project
+import com.commit451.gitlab.util.BypassFactory
 import com.commit451.gitlab.viewHolder.LoadingFooterViewHolder
 import com.commit451.gitlab.viewHolder.MergeRequestHeaderViewHolder
 import com.commit451.gitlab.viewHolder.NoteViewHolder
@@ -29,7 +30,8 @@ class MergeRequestDetailAdapter(context: Context, private val mergeRequest: Merg
 
     private val notes: LinkedList<Note> = LinkedList()
     private var loading = false
-    private val bypass: Bypass = Bypass(context)
+
+    private val bypass: Bypass = BypassFactory.create(context, project)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         if (viewType == TYPE_HEADER) {

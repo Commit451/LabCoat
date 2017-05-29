@@ -42,7 +42,8 @@
     <string name="title_files">Files</string>
     <string name="title_merge_requests">Merge Requests</string>
     <string name="title_members">Members</string>
-    <string name="title_builds">Builds</string>
+    <string name="title_pipelines">Pipelines</string>
+    <string name="title_builds">Jobs</string>
     <string name="title_snippets">Snippets</string>
 
     <string-array name="main_tabs">
@@ -50,6 +51,7 @@
         <item>@string/title_activity</item>
         <item>@string/title_files</item>
         <item>@string/title_commits</item>
+        <item>@string/title_pipelines</item>
         <item>@string/title_builds</item>
         <item>@string/title_milestones</item>
         <item>@string/title_issues</item>
@@ -190,7 +192,7 @@
     <string name="title_hint">Title</string>
     <string name="description_hint">Description</string>
     <string name="add_note_content_description">Add note</string>
-    <string name="issue_number">Issue #</string>
+    <string name="issue_number">Issue #%1$d</string>
     <string name="reopen">Reopen</string>
     <string name="close">Close</string>
     <string name="created_issue">created issue</string>
@@ -220,7 +222,7 @@
     <string name="label_already_added">Label already added</string>
     <string name="failed_to_delete_issue">Failed to delete issue</string>
     <string name="issue_deleted">Issue deleted</string>
-    <string name="confidential">Confidential</string>
+    <string name="confidential_message">This issue is confidential and should only be visible to team members with at least Reporter access.</string>
 
     <!-- Labels -->
     <string name="labels">Labels</string>
@@ -371,9 +373,54 @@
     <!-- Settings -->
     <string name="settings">Settings</string>
 
+    <!-- Pipelines -->
+    <string name="no_pipelines">No pipeline</string>
+    <string name="failed_to_load_pipelines">Failed to load pipeline</string>
+
+    <string-array name="pipeline_scope_names">
+        <item>All</item>
+        <item>Pending</item>
+        <item>Running</item>
+        <item>Failed</item>
+        <item>Success</item>
+        <item>Canceled</item>
+    </string-array>
+    <string-array name="pipeline_scope_values">
+        <item>@null</item>
+        <item>pending</item>
+        <item>running</item>
+        <item>failed</item>
+        <item>success</item>
+        <item>canceled</item>
+    </string-array>
+    <string name="pipeline_number">Pipeline #%1$s</string>
+    <string name="pipeline_started">Pipeline started</string>
+    <string name="pipeline_erased">Pipeline erased</string>
+    <string name="pipeline_canceled">Pipeline canceled</string>
+    <string name="unable_to_retry_pipeline">Unable to retry pipeline</string>
+    <string name="unable_to_erase_pipeline">Unable to erase pipeline</string>
+    <string name="unable_to_cancel_pipeline">Unable to cancel pipeline</string>
+    <string name="unable_to_load_pipeline">Unable to load pipeline</string>
+    <string-array name="pipeline_tabs">
+        <item>Details</item>
+        <!--<item>Jobs</item>-->
+    </string-array>
+    <string name="pipeline_pipeline">Pipeline: #%1$s</string>
+    <string name="pipeline_name">Name: Pipeline #%1$s</string>
+    <string name="pipeline_ref">Ref: %1$s</string>
+    <string name="pipeline_status">Status: %1$s</string>
+    <string name="pipeline_duration">Duration: %1$s minutes</string>
+    <string name="pipeline_created">Created: %1$s</string>
+    <string name="pipeline_finished">Finished: %1$s</string>
+    <string name="pipeline_sha">Commit: %1$s</string>
+    <string name="pipeline_commit">Commit</string>
+    <string name="pipeline_commit_branch">Branch: %1$s</string>
+    <string name="pipeline_commit_author">Author: %1$s</string>
+    <string name="pipeline_commit_message">Message: %1$s</string>
+
     <!-- Builds -->
-    <string name="no_builds">No builds</string>
-    <string name="failed_to_load_builds">Failed to load builds</string>
+    <string name="no_builds">No jobs</string>
+    <string name="failed_to_load_builds">Failed to load jobs</string>
 
     <string-array name="build_scope_names">
         <item>All</item>
@@ -391,18 +438,21 @@
         <item>success</item>
         <item>canceled</item>
     </string-array>
-    <string name="build_number">Build #</string>
-    <string name="build_started">Build started</string>
-    <string name="build_erased">Build erased</string>
-    <string name="build_canceled">Build canceled</string>
-    <string name="unable_to_retry_build">Unable to retry build</string>
-    <string name="unable_to_erase_build">Unable to erase build</string>
-    <string name="unable_to_cancel_build">Unable to cancel build</string>
-    <string name="unable_to_load_build">Unable to load build</string>
+    <string name="build_number">Job #%1$s</string>
+    <string name="build_started">Job started</string>
+    <string name="build_erased">Job erased</string>
+    <string name="build_canceled">Job canceled</string>
+    <string name="unable_to_retry_build">Unable to retry job</string>
+    <string name="unable_to_erase_build">Unable to erase job</string>
+    <string name="unable_to_cancel_build">Unable to cancel job</string>
+    <string name="unable_to_load_build">Unable to load job</string>
     <string-array name="build_tabs">
         <item>Details</item>
         <item>Log</item>
     </string-array>
+    <string name="build_pipeline">Pipeline: #%1$s</string>
+    <string name="build_name">Name: %1$s</string>
+    <string name="build_stage">Stage: %1$s</string>
     <string name="build_ref">Ref: %1$s</string>
     <string name="build_status">Status: %1$s</string>
     <string name="build_duration">Duration: %1$s</string>
@@ -462,4 +512,6 @@
     <string name="no_branches">No branches</string>
     <string name="no_tags">No tags</string>
     <string name="fetching_some_details">Fetching some details</string>
+
+    <string name="title_activity_fullscreen_image">FullscreenImageActivity</string>
 </resources>

@@ -1,12 +1,11 @@
 package com.commit451.gitlab.activity
 
 import android.Manifest
-import android.annotation.TargetApi
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.os.Parcelable
 import android.support.design.widget.Snackbar
 import android.support.design.widget.TabLayout
 import android.support.v4.content.ContextCompat
@@ -15,22 +14,19 @@ import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-
+import butterknife.BindView
+import butterknife.ButterKnife
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.BuildSectionsPagerAdapter
 import com.commit451.gitlab.event.BuildChangedEvent
-import com.commit451.gitlab.model.Account
+import com.commit451.gitlab.extension.getDownloadBuildUrl
+import com.commit451.gitlab.extension.getParcelerParcelable
+import com.commit451.gitlab.extension.putParcelParcelableExtra
 import com.commit451.gitlab.model.api.Build
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.util.DownloadUtil
-
-import org.parceler.Parcels
-
-import butterknife.BindView
-import butterknife.ButterKnife
-import com.commit451.gitlab.extension.getDownloadBuildUrl
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
@@ -49,8 +45,8 @@ class BuildActivity : BaseActivity() {
 
         fun newIntent(context: Context, project: Project, build: Build): Intent {
             val intent = Intent(context, BuildActivity::class.java)
-            intent.putExtra(KEY_PROJECT, Parcels.wrap(project))
-            intent.putExtra(KEY_BUILD, Parcels.wrap(build))
+            intent.putParcelParcelableExtra(KEY_PROJECT, project)
+            intent.putParcelParcelableExtra(KEY_BUILD, build)
             return intent
         }
     }
@@ -153,10 +149,10 @@ class BuildActivity : BaseActivity() {
         setContentView(R.layout.activity_build)
         ButterKnife.bind(this)
 
-        project = Parcels.unwrap<Project>(intent.getParcelableExtra<Parcelable>(KEY_PROJECT))
-        build = Parcels.unwrap<Build>(intent.getParcelableExtra<Parcelable>(KEY_BUILD))
+        project = intent.getParcelerParcelable<Project>(KEY_PROJECT)!!
+        build = intent.getParcelerParcelable<Build>(KEY_BUILD)!!
 
-        toolbar.title = getString(R.string.build_number) + build.id
+        toolbar.title = String.format(getString(R.string.build_number), build.id)
         toolbar.setNavigationIcon(R.drawable.ic_back_24dp)
         toolbar.setNavigationOnClickListener { onBackPressed() }
         toolbar.subtitle = project.nameWithNamespace
@@ -191,7 +187,7 @@ class BuildActivity : BaseActivity() {
         tabLayout.setupWithViewPager(viewPager)
     }
 
-    @TargetApi(23)
+    @SuppressLint("NewApi")
     private fun checkDownloadBuild() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
             downloadBuild()

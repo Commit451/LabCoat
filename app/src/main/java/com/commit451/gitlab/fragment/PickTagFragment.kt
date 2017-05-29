@@ -3,7 +3,6 @@ package com.commit451.gitlab.fragment
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.os.Parcelable
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -15,6 +14,8 @@ import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.PickBranchOrTagActivity
 import com.commit451.gitlab.adapter.TagAdapter
+import com.commit451.gitlab.extension.getParcelerParcelable
+import com.commit451.gitlab.extension.putParcelParcelableExtra
 import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.Ref
 import com.commit451.gitlab.model.api.Tag
@@ -37,7 +38,7 @@ class PickTagFragment : ButterKnifeFragment() {
             val fragment = PickTagFragment()
             val args = Bundle()
             args.putLong(EXTRA_PROJECT_ID, projectId)
-            args.putParcelable(EXTRA_CURRENT_REF, Parcels.wrap<Ref>(ref))
+            args.putParcelParcelableExtra(EXTRA_CURRENT_REF, ref)
             fragment.arguments = args
             return fragment
         }
@@ -63,12 +64,12 @@ class PickTagFragment : ButterKnifeFragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val ref = Parcels.unwrap<Ref>(arguments.getParcelable<Parcelable>(EXTRA_CURRENT_REF))
+        val ref = arguments.getParcelerParcelable<Ref>(EXTRA_CURRENT_REF)
         adapterTags = TagAdapter(ref, object : TagAdapter.Listener {
             override fun onTagClicked(entry: Tag) {
                 val data = Intent()
                 val newRef = Ref(Ref.TYPE_TAG, entry.name)
-                data.putExtra(PickBranchOrTagActivity.EXTRA_REF, Parcels.wrap(newRef))
+                data.putParcelParcelableExtra(PickBranchOrTagActivity.EXTRA_REF, newRef)
                 activity.setResult(Activity.RESULT_OK, data)
                 activity.finish()
             }

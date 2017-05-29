@@ -6,7 +6,6 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.Parcelable
 import android.support.design.widget.Snackbar
 import android.support.design.widget.TabLayout
 import android.support.v4.view.ViewPager
@@ -23,6 +22,7 @@ import com.commit451.gitlab.adapter.ProjectSectionsPagerAdapter
 import com.commit451.gitlab.data.Prefs
 import com.commit451.gitlab.event.ProjectReloadEvent
 import com.commit451.gitlab.extension.getParcelerParcelable
+import com.commit451.gitlab.extension.putParcelParcelableExtra
 import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.fragment.BaseFragment
 import com.commit451.gitlab.model.Ref
@@ -31,7 +31,6 @@ import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.util.IntentUtil
 import io.reactivex.Single
-import org.parceler.Parcels
 import timber.log.Timber
 
 class ProjectActivity : BaseActivity() {
@@ -50,7 +49,7 @@ class ProjectActivity : BaseActivity() {
 
         fun newIntent(context: Context, project: Project): Intent {
             val intent = Intent(context, ProjectActivity::class.java)
-            intent.putExtra(EXTRA_PROJECT, Parcels.wrap(project))
+            intent.putParcelParcelableExtra(EXTRA_PROJECT, project)
             return intent
         }
 
@@ -123,8 +122,8 @@ class ProjectActivity : BaseActivity() {
         var project: Project? = intent.getParcelerParcelable(EXTRA_PROJECT)
 
         if (savedInstanceState != null) {
-            project = Parcels.unwrap<Project>(savedInstanceState.getParcelable<Parcelable>(STATE_PROJECT))
-            ref = Parcels.unwrap<Ref>(savedInstanceState.getParcelable<Parcelable>(STATE_REF))
+            project = savedInstanceState.getParcelerParcelable<Project>(STATE_PROJECT)
+            ref = savedInstanceState.getParcelerParcelable<Ref>(STATE_REF)
         }
         toolbar.setNavigationIcon(R.drawable.ic_back_24dp)
         toolbar.setNavigationOnClickListener { finish() }
@@ -151,7 +150,7 @@ class ProjectActivity : BaseActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             REQUEST_BRANCH_OR_TAG -> if (resultCode == Activity.RESULT_OK) {
-                ref = Parcels.unwrap<Ref>(data?.getParcelableExtra<Parcelable>(PickBranchOrTagActivity.EXTRA_REF))
+                ref = data?.getParcelerParcelable<Ref>(PickBranchOrTagActivity.EXTRA_REF)
                 broadcastLoad()
             }
         }
@@ -159,8 +158,8 @@ class ProjectActivity : BaseActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putParcelable(STATE_REF, Parcels.wrap<Ref>(ref))
-        outState.putParcelable(STATE_PROJECT, Parcels.wrap<Project>(project))
+        outState.putParcelParcelableExtra(STATE_REF, ref)
+        outState.putParcelParcelableExtra(STATE_PROJECT, project)
     }
 
     override fun onBackPressed() {

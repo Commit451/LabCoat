@@ -23,10 +23,10 @@ object ImageUtil {
             }
         }
 
-        return getAvatarUrl("", size)
+        return getAvatarUrl(null as? String?, size)
     }
 
-    fun getAvatarUrl(email: String, size: Int): Uri {
+    fun getAvatarUrl(email: String?, size: Int): Uri {
         return Gravatar
                 .init(email)
                 .ssl()

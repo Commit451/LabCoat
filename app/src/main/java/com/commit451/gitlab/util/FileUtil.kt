@@ -4,8 +4,11 @@ package com.commit451.gitlab.util
 import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
+import android.os.Environment
 import android.provider.MediaStore
 import android.provider.OpenableColumns
+import android.support.v4.content.FileProvider
+import com.commit451.okyo.Okyo
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -45,18 +48,51 @@ object FileUtil {
     }
 
     fun getFileName(context: Context, imageUri: Uri): String {
-        val returnCursor = context.contentResolver.query(imageUri, null, null, null, null) ?: //This should probably just return null, but oh well
-                return "file"
+        val returnCursor = context.contentResolver.query(imageUri, null, null, null, null)
+        var name = "file"
 
-        var nameIndex = returnCursor.getColumnIndex(MediaStore.Audio.Media.TITLE)
-        if (nameIndex == -1) {
-            nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-        }
-        returnCursor.moveToFirst()
-        val name = returnCursor.getString(nameIndex)
-        if (!returnCursor.isClosed) {
-            returnCursor.close()
+        if (returnCursor != null) {
+            var nameIndex = returnCursor.getColumnIndex(MediaStore.Audio.Media.TITLE)
+            if (nameIndex == -1) {
+                nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+            }
+            returnCursor.moveToFirst()
+            name = returnCursor.getString(nameIndex)
+            if (!returnCursor.isClosed) {
+                returnCursor.close()
+            }
         }
         return name
+    }
+
+    fun uriForFile(context: Context, file: File): Uri {
+        return FileProvider.getUriForFile(context, context.packageName + ".easyphotopicker.fileprovider", file)
+    }
+
+    @Throws(IOException::class)
+    fun saveBlobToProviderDirectory(context: Context, bytes: ByteArray, fileName: String): File {
+        val targetFile = File(getProviderDirectory(context), fileName)
+        targetFile.createNewFile()
+        Okyo.writeByteArrayToFile(bytes, targetFile)
+        return targetFile
+    }
+
+    /**
+     * Piggy back off of EasyImage directory
+     */
+    fun getProviderDirectory(context: Context): File {
+        var cacheDir = context.cacheDir
+
+        if (isExternalStorageWritable()) {
+            cacheDir = context.externalCacheDir
+        }
+        val dir = File(cacheDir, "EasyImage")
+        if (!dir.exists()) dir.mkdirs()
+        return dir
+    }
+
+    fun isExternalStorageWritable(): Boolean {
+        val state = Environment.getExternalStorageState()
+        return Environment.MEDIA_MOUNTED == state
     }
 }

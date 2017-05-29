@@ -14,6 +14,13 @@ You should be able to build the project from Android Studio without any further 
 ```Gradle
 LABCOAT_FABRIC_KEY = FABRIC_KEY_GOES_HERE_BUT_ONLY_REALLY_NEEDED_FOR_RELEASE_BUILDS
 ```
+
+To build, run the following.
+
+```bash
+./gradlew assembleDebug
+```
+
 ## Libraries
 The following 3rd party libraries and resources are the reason this app works. Rapid development is easily attainable thanks to these fine folks and the work they do:
 

@@ -16,8 +16,8 @@
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:layout_marginTop="8dp"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_weight="1">
 
         <TextView
             android:id="@+id/issue_message"
@@ -25,6 +25,7 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="2"
+            android:drawablePadding="8dp"
             android:textSize="@dimen/text_size_small"
             tools:text="I commited all the code at once cause I am cool. So sorry" />
 

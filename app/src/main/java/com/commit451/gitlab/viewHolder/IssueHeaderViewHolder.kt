@@ -40,13 +40,11 @@ class IssueHeaderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     @BindView(R.id.milestone_root) lateinit var rootMilestone: ViewGroup
     @BindView(R.id.milestone_text) lateinit var textMilestone: TextView
 
-    val bypass: Bypass = Bypass(view.context)
-
     init {
         ButterKnife.bind(this, view)
     }
 
-    fun bind(issue: Issue, project: Project) {
+    fun bind(issue: Issue, bypass: Bypass, project: Project) {
 
         if (issue.description.isNullOrEmpty()) {
             textDescription.visibility = View.GONE

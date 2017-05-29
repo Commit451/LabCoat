@@ -7,7 +7,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.os.Parcelable
 import android.support.design.widget.CollapsingToolbarLayout
 import android.support.design.widget.Snackbar
 import android.support.design.widget.TabLayout
@@ -23,12 +22,13 @@ import com.commit451.easel.Easel
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.GroupPagerAdapter
+import com.commit451.gitlab.extension.getParcelerParcelable
+import com.commit451.gitlab.extension.putParcelParcelableExtra
 import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.Group
 import com.commit451.gitlab.model.api.GroupDetail
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.transformation.PaletteTransformation
-import org.parceler.Parcels
 import timber.log.Timber
 
 /**
@@ -43,7 +43,7 @@ class GroupActivity : BaseActivity() {
 
         fun newIntent(context: Context, group: Group): Intent {
             val intent = Intent(context, GroupActivity::class.java)
-            intent.putExtra(KEY_GROUP, Parcels.wrap(group))
+            intent.putParcelParcelableExtra(KEY_GROUP, group)
             return intent
         }
 
@@ -73,7 +73,7 @@ class GroupActivity : BaseActivity() {
         toolbar.setNavigationOnClickListener { onBackPressed() }
 
         if (intent.hasExtra(KEY_GROUP)) {
-            val group = Parcels.unwrap<Group>(intent.getParcelableExtra<Parcelable>(KEY_GROUP))
+            val group = intent.getParcelerParcelable<Group>(KEY_GROUP)!!
             bind(group)
         } else {
             progress.visibility = View.VISIBLE

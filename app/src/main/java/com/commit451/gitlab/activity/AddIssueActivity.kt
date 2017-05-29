@@ -4,16 +4,14 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.Parcelable
 import android.support.design.widget.Snackbar
 import android.support.design.widget.TextInputLayout
 import android.support.v7.app.AlertDialog
-import android.support.v7.widget.SwitchCompat
 import android.support.v7.widget.Toolbar
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
 import android.widget.EditText
-import android.widget.FrameLayout
 import android.widget.Spinner
 import android.widget.TextView
 import butterknife.BindView
@@ -28,6 +26,8 @@ import com.commit451.gitlab.adapter.MilestoneSpinnerAdapter
 import com.commit451.gitlab.event.IssueChangedEvent
 import com.commit451.gitlab.event.IssueCreatedEvent
 import com.commit451.gitlab.extension.checkValid
+import com.commit451.gitlab.extension.getParcelerParcelable
+import com.commit451.gitlab.extension.putParcelParcelableExtra
 import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.*
 import com.commit451.gitlab.navigation.Navigator
@@ -37,7 +37,6 @@ import com.commit451.teleprinter.Teleprinter
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import org.parceler.Parcels
 import retrofit2.Response
 import timber.log.Timber
 import java.util.*
@@ -55,15 +54,15 @@ class AddIssueActivity : MorphActivity() {
 
         fun newIntent(context: Context, project: Project, issue: Issue?): Intent {
             val intent = Intent(context, AddIssueActivity::class.java)
-            intent.putExtra(KEY_PROJECT, Parcels.wrap(project))
+            intent.putParcelParcelableExtra(KEY_PROJECT, project)
             if (issue != null) {
-                intent.putExtra(KEY_ISSUE, Parcels.wrap(issue))
+                intent.putParcelParcelableExtra(KEY_ISSUE, issue)
             }
             return intent
         }
     }
 
-    @BindView(R.id.root) lateinit var root: FrameLayout
+    @BindView(R.id.root) lateinit var root: ViewGroup
     @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
     @BindView(R.id.title_text_input_layout) lateinit var textInputLayoutTitle: TextInputLayout
     @BindView(R.id.description) lateinit var textDescription: EditText
@@ -76,7 +75,7 @@ class AddIssueActivity : MorphActivity() {
     @BindView(R.id.labels_progress) lateinit var progressLabels: View
     @BindView(R.id.root_add_labels) lateinit var rootAddLabels: ViewGroup
     @BindView(R.id.list_labels) lateinit var listLabels: AdapterFlowLayout
-    @BindView(R.id.confidential_switch) lateinit var switchConfidential: SwitchCompat
+    @BindView(R.id.check_confidential) lateinit var checkConfidential: CheckBox
 
     lateinit var adapterLabels: AddIssueLabelAdapter
     lateinit var teleprinter: Teleprinter
@@ -97,16 +96,16 @@ class AddIssueActivity : MorphActivity() {
         morph(root)
         teleprinter = Teleprinter(this)
 
-        project = Parcels.unwrap<Project>(intent.getParcelableExtra<Parcelable>(KEY_PROJECT))
-        issue = Parcels.unwrap<Issue>(intent.getParcelableExtra<Parcelable>(KEY_ISSUE))
+        project = intent.getParcelerParcelable<Project>(KEY_PROJECT)!!
+        issue = intent.getParcelerParcelable<Issue>(KEY_ISSUE)
         members = HashSet<Member>()
         adapterLabels = AddIssueLabelAdapter(object : AddIssueLabelAdapter.Listener {
             override fun onLabelClicked(label: Label) {
                 AlertDialog.Builder(this@AddIssueActivity)
                         .setTitle(R.string.remove)
                         .setMessage(R.string.are_you_sure_you_want_to_remove)
-                        .setPositiveButton(android.R.string.yes) { dialog, which -> adapterLabels.removeLabel(label) }
-                        .setNegativeButton(android.R.string.no) { dialog, which -> dialog.dismiss() }
+                        .setPositiveButton(android.R.string.yes) { _, _ -> adapterLabels.removeLabel(label) }
+                        .setNegativeButton(android.R.string.no) { dialog, _ -> dialog.dismiss() }
                         .show()
             }
         })
@@ -224,7 +223,7 @@ class AddIssueActivity : MorphActivity() {
         if (!issue?.description.isNullOrEmpty()) {
             textDescription.setText(issue!!.description)
         }
-        switchConfidential.isChecked = issue!!.isConfidential
+        checkConfidential.isChecked = issue!!.isConfidential
     }
 
     private fun setAssignees() {
@@ -256,15 +255,16 @@ class AddIssueActivity : MorphActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            REQUEST_LABEL -> if (resultCode == Activity.RESULT_OK) {
-                val label = Parcels.unwrap<Label>(data?.getParcelableExtra<Parcelable>(AddLabelActivity.KEY_LABEL))
-                if (adapterLabels.containsLabel(label)) {
-                    Snackbar.make(root, R.string.label_already_added, Snackbar.LENGTH_SHORT)
-                            .show()
-                } else {
-                    adapterLabels.addLabel(label)
+            REQUEST_LABEL ->
+                if (resultCode == Activity.RESULT_OK) {
+                    val label = data?.getParcelerParcelable<Label>(AddLabelActivity.KEY_LABEL)!!
+                    if (adapterLabels.containsLabel(label)) {
+                        Snackbar.make(root, R.string.label_already_added, Snackbar.LENGTH_SHORT)
+                                .show()
+                    } else {
+                        adapterLabels.addLabel(label)
+                    }
                 }
-            }
         }
     }
 
@@ -272,8 +272,8 @@ class AddIssueActivity : MorphActivity() {
         AlertDialog.Builder(this)
                 .setTitle(R.string.discard)
                 .setMessage(R.string.are_you_sure_you_want_to_discard)
-                .setPositiveButton(android.R.string.yes) { dialog, which -> dismiss() }
-                .setNegativeButton(android.R.string.no) { dialog, which -> dialog.dismiss() }
+                .setPositiveButton(android.R.string.yes) { _, _ -> dismiss() }
+                .setNegativeButton(android.R.string.no) { dialog, _ -> dialog.dismiss() }
                 .show()
     }
 
@@ -310,7 +310,7 @@ class AddIssueActivity : MorphActivity() {
                     assigneeId,
                     milestoneId,
                     labelsCommaSeperated,
-                    switchConfidential.isChecked)
+                    checkConfidential.isChecked)
         }
     }
 

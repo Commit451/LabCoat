@@ -7,7 +7,7 @@ import java.text.DateFormat
 /**
  * Converts due dates
  */
-class DueDateTypeConverter() : DateTypeConverter() {
+class DueDateTypeConverter : DateTypeConverter() {
 
     override fun getDateFormat(): DateFormat {
         return Milestone.DUE_DATE_FORMAT

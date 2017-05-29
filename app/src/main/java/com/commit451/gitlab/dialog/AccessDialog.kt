@@ -21,7 +21,7 @@ import java.util.*
  */
 class AccessDialog private constructor(context: Context, internal var member: Member?, internal var group: Group?, projectId: Long) : MaterialDialog(MaterialDialog.Builder(context)
         .items(if (group == null) R.array.project_role_names else R.array.group_role_names)
-        .itemsCallbackSingleChoice(-1) { materialDialog, view, i, charSequence -> true }
+        .itemsCallbackSingleChoice(-1) { _, _, _, _ -> true }
         .theme(Theme.DARK)
         .progress(true, 0) // So we can later show loading progress
         .positiveText(R.string.action_apply)
@@ -40,9 +40,9 @@ class AccessDialog private constructor(context: Context, internal var member: Me
         listener = accessAppliedListener
     }
 
-    constructor(context: Context, member: Member, group: Group) : this(context, member, group, -1) {}
+    constructor(context: Context, member: Member, group: Group) : this(context, member, group, -1)
 
-    constructor(context: Context, member: Member, projectId: Long) : this(context, member, null, projectId) {}
+    constructor(context: Context, member: Member, projectId: Long) : this(context, member, null, projectId)
 
     init {
         getActionButton(DialogAction.POSITIVE).setOnClickListener { onApply() }
@@ -109,12 +109,7 @@ class AccessDialog private constructor(context: Context, internal var member: Me
             return
         }
         val accessLevel = roleNames[selectedIndex]
-        if (accessLevel == null) {
-            Toast.makeText(context, R.string.please_select_access_level, Toast.LENGTH_LONG)
-                    .show()
-        } else {
-            changeAccess(Member.getAccessLevel(accessLevel))
-        }
+        changeAccess(Member.getAccessLevel(accessLevel))
     }
 
     fun onCancel() {

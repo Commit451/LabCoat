@@ -63,7 +63,7 @@ class SendMessageView : LinearLayout {
             elevation = resources.getDimensionPixelSize(R.dimen.toolbar_elevation).toFloat()
         }
 
-        textNote.setOnEditorActionListener { v, actionId, event ->
+        textNote.setOnEditorActionListener { _, _, _ ->
             onSend()
             true
         }

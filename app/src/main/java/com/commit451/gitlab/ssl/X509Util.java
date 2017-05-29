@@ -22,7 +22,7 @@ public final class X509Util {
         return hexify(digest.digest());
     }
 
-    private static String hexify(byte[] bytes) {
+    public static String hexify(byte[] bytes) {
         char[] hexChars = new char[bytes.length * 3];
         for (int i = 0; i < bytes.length; i++) {
             int v = bytes[i] & 0xFF;

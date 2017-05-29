@@ -46,14 +46,14 @@ class CustomTrustManager : X509TrustManager {
 
     @Throws(CertificateException::class)
     override fun checkClientTrusted(chain: Array<X509Certificate>, authType: String) {
-        X509TrustManagerProvider.get().checkClientTrusted(chain, authType)
+        X509TrustManagerProvider.x509TrustManager.checkClientTrusted(chain, authType)
     }
 
     @Throws(CertificateException::class)
     override fun checkServerTrusted(chain: Array<X509Certificate>, authType: String) {
         val cause: CertificateException
         try {
-            X509TrustManagerProvider.get().checkServerTrusted(chain, authType)
+            X509TrustManagerProvider.x509TrustManager.checkServerTrusted(chain, authType)
             return
         } catch (e: CertificateException) {
             cause = e
@@ -67,7 +67,7 @@ class CustomTrustManager : X509TrustManager {
     }
 
     override fun getAcceptedIssuers(): Array<X509Certificate> {
-        return X509TrustManagerProvider.get().acceptedIssuers
+        return X509TrustManagerProvider.x509TrustManager.acceptedIssuers
     }
 
     fun getSSLSocketFactory(): SSLSocketFactory {

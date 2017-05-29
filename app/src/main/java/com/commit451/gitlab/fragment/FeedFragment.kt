@@ -99,7 +99,7 @@ class FeedFragment : ButterKnifeFragment() {
         }
         textMessage.visibility = View.GONE
         swipeRefreshLayout.isRefreshing = true
-        App.get().gitLabRss.getFeed(feedUrl!!.toString())
+        App.get().gitLab.getFeed(feedUrl!!.toString())
                 .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .subscribe(object : CustomSingleObserver<Feed>() {
                     override fun success(feed: Feed) {

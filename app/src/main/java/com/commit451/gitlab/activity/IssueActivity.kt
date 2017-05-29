@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.os.Parcelable
 import android.support.design.widget.Snackbar
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
@@ -24,6 +23,8 @@ import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.IssueDetailsAdapter
 import com.commit451.gitlab.event.IssueChangedEvent
 import com.commit451.gitlab.event.IssueReloadEvent
+import com.commit451.gitlab.extension.getParcelerParcelable
+import com.commit451.gitlab.extension.putParcelParcelableExtra
 import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.FileUploadResponse
 import com.commit451.gitlab.model.api.Issue
@@ -40,7 +41,6 @@ import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import org.greenrobot.eventbus.Subscribe
-import org.parceler.Parcels
 import retrofit2.Response
 import timber.log.Timber
 
@@ -61,8 +61,8 @@ class IssueActivity : BaseActivity() {
 
         fun newIntent(context: Context, project: Project, issue: Issue): Intent {
             val intent = Intent(context, IssueActivity::class.java)
-            intent.putExtra(EXTRA_PROJECT, Parcels.wrap(project))
-            intent.putExtra(EXTRA_SELECTED_ISSUE, Parcels.wrap(issue))
+            intent.putParcelParcelableExtra(EXTRA_PROJECT, project)
+            intent.putParcelParcelableExtra(EXTRA_SELECTED_ISSUE, issue)
             return intent
         }
 
@@ -82,6 +82,8 @@ class IssueActivity : BaseActivity() {
     @BindView(R.id.list) lateinit var listNotes: RecyclerView
     @BindView(R.id.send_message_view) lateinit var sendMessageView: SendMessageView
     @BindView(R.id.progress) lateinit var progress: View
+    @BindView(R.id.toolbar_title) lateinit var toolbarTitle: TextView
+    @BindView(R.id.toolbar_subtitle) lateinit var toolbarSubTitle: TextView
 
     lateinit var menuItemOpenClose: MenuItem
     lateinit var adapterIssueDetails: IssueDetailsAdapter
@@ -177,8 +179,8 @@ class IssueActivity : BaseActivity() {
         swipeRefreshLayout.setOnRefreshListener { loadNotes() }
 
         if (intent.hasExtra(EXTRA_SELECTED_ISSUE)) {
-            project = Parcels.unwrap<Project>(intent.getParcelableExtra<Parcelable>(EXTRA_PROJECT))
-            issue = Parcels.unwrap<Issue>(intent.getParcelableExtra<Parcelable>(EXTRA_SELECTED_ISSUE))
+            project = intent.getParcelerParcelable<Project>(EXTRA_PROJECT)
+            issue = intent.getParcelerParcelable<Issue>(EXTRA_SELECTED_ISSUE)
             adapterIssueDetails = IssueDetailsAdapter(this@IssueActivity, issue, project!!)
             listNotes.adapter = adapterIssueDetails
             bindIssue()
@@ -227,14 +229,15 @@ class IssueActivity : BaseActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            REQUEST_ATTACH -> if (resultCode == Activity.RESULT_OK) {
-                val response = Parcels.unwrap<FileUploadResponse>(data?.getParcelableExtra<Parcelable>(AttachActivity.KEY_FILE_UPLOAD_RESPONSE))
-                progress.visibility = View.GONE
-                sendMessageView.appendText(response.markdown)
-            } else {
-                Snackbar.make(root, R.string.failed_to_upload_file, Snackbar.LENGTH_LONG)
-                        .show()
-            }
+            REQUEST_ATTACH ->
+                if (resultCode == Activity.RESULT_OK) {
+                    val response = data?.getParcelerParcelable<FileUploadResponse>(AttachActivity.KEY_FILE_UPLOAD_RESPONSE)!!
+                    progress.visibility = View.GONE
+                    sendMessageView.appendText(response.markdown)
+                } else {
+                    Snackbar.make(root, R.string.failed_to_upload_file, Snackbar.LENGTH_LONG)
+                            .show()
+                }
         }
     }
 
@@ -244,13 +247,16 @@ class IssueActivity : BaseActivity() {
     }
 
     fun bindProject() {
-        toolbar.subtitle = project?.nameWithNamespace
+        toolbarSubTitle.text = project?.nameWithNamespace
     }
 
     fun bindIssue() {
-        toolbar.title = getString(R.string.issue_number) + issue?.iid
         setOpenCloseMenuStatus()
         textTitle.text = issue?.title
+        toolbarTitle.text = getString(R.string.issue_number, issue?.iid)
+        if (issue?.isConfidential!!) {
+            toolbarTitle.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_confidential_24dp, 0)
+        }
         adapterIssueDetails.updateIssue(issue!!)
     }
 

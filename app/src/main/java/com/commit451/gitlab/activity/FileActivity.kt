@@ -1,15 +1,12 @@
 package com.commit451.gitlab.activity
 
 import android.Manifest
-import android.annotation.TargetApi
-import android.content.ActivityNotFoundException
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
-import android.support.annotation.IntDef
 import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.Toolbar
@@ -18,24 +15,20 @@ import android.view.View
 import android.view.ViewGroup
 import android.webkit.MimeTypeMap
 import android.webkit.WebView
-
+import butterknife.BindView
+import butterknife.ButterKnife
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
+import com.commit451.gitlab.extension.base64Decode
+import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.RepositoryFile
 import com.commit451.gitlab.rx.CustomSingleObserver
-import com.commit451.gitlab.rx.DecodeObservableFactory
-
+import com.commit451.gitlab.util.FileUtil
+import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.nio.charset.Charset
-
-import butterknife.BindView
-import butterknife.ButterKnife
-import com.commit451.gitlab.extension.setup
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-import timber.log.Timber
 
 class FileActivity : BaseActivity() {
 
@@ -48,13 +41,6 @@ class FileActivity : BaseActivity() {
         private val EXTRA_PATH = "extra_path"
         private val EXTRA_REF = "extra_ref"
 
-        const val OPTION_SAVE = 0
-        const val OPTION_OPEN = 1
-
-        @Retention(AnnotationRetention.SOURCE)
-        @IntDef(OPTION_SAVE.toLong(), OPTION_OPEN.toLong())
-        annotation class Option
-
         fun newIntent(context: Context, projectId: Long, path: String, ref: String): Intent {
             val intent = Intent(context, FileActivity::class.java)
             intent.putExtra(EXTRA_PROJECT_ID, projectId)
@@ -63,10 +49,10 @@ class FileActivity : BaseActivity() {
             return intent
         }
 
-        fun fileExtension(filename: String): String? {
+        fun fileExtension(filename: String): String {
             val extStart = filename.lastIndexOf(".") + 1
             if (extStart < 1) {
-                return null
+                return ""
             }
 
             return filename.substring(extStart)
@@ -84,8 +70,6 @@ class FileActivity : BaseActivity() {
     var repositoryFile: RepositoryFile? = null
     var fileName: String? = null
     var blob: ByteArray? = null
-    @Option
-    private var option: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -101,12 +85,10 @@ class FileActivity : BaseActivity() {
         toolbar.setOnMenuItemClickListener(Toolbar.OnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.action_open -> {
-                    option = OPTION_OPEN
-                    checkAccountPermission()
+                    openFile()
                     return@OnMenuItemClickListener true
                 }
                 R.id.action_save -> {
-                    option = OPTION_SAVE
                     checkAccountPermission()
                     return@OnMenuItemClickListener true
                 }
@@ -150,7 +132,7 @@ class FileActivity : BaseActivity() {
     }
 
     private fun loadBlob(repositoryFile: RepositoryFile) {
-        DecodeObservableFactory.newDecode(repositoryFile.content)
+        repositoryFile.content.base64Decode()
                 .setup(bindToLifecycle())
                 .subscribe(object : CustomSingleObserver<ByteArray>() {
 
@@ -168,13 +150,11 @@ class FileActivity : BaseActivity() {
     private fun bindBlob(blob: ByteArray) {
         this.blob = blob
         val content: String
-        var mimeType: String? = null
+        var mimeType: String?
         val extension = fileExtension(fileName!!)
-        if (extension != null) {
-            mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
-            if (mimeType != null) {
-                mimeType = mimeType.toLowerCase()
-            }
+        mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
+        if (mimeType != null) {
+            mimeType = mimeType.toLowerCase()
         }
 
         if (mimeType != null && mimeType.startsWith("image/")) {
@@ -208,14 +188,10 @@ class FileActivity : BaseActivity() {
         toolbar.inflateMenu(R.menu.menu_file)
     }
 
-    @TargetApi(23)
+    @SuppressLint("NewApi")
     private fun checkAccountPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-            if (option == OPTION_SAVE) {
-                saveBlob()
-            } else {
-                openFile()
-            }
+            saveBlob()
         } else {
             requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), REQUEST_PERMISSION_WRITE_STORAGE)
         }
@@ -225,11 +201,7 @@ class FileActivity : BaseActivity() {
         when (requestCode) {
             REQUEST_PERMISSION_WRITE_STORAGE -> {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if (option == OPTION_SAVE) {
-                        saveBlob()
-                    } else {
-                        openFile()
-                    }
+                    saveBlob()
                 }
             }
         }
@@ -272,34 +244,30 @@ class FileActivity : BaseActivity() {
         return null
     }
 
-    private fun openFile() {
-        val file = saveBlob()
-        if (file == null) {
-            Snackbar.make(root, getString(R.string.open_error), Snackbar.LENGTH_SHORT)
-                    .show()
-            return
-        }
+    fun openFile() {
 
-        val intent = Intent(Intent.ACTION_VIEW)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        if (blob != null && fileName != null) {
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
 
-        val extension = fileExtension(file.name)
-        if (extension != null) {
-            intent.setDataAndType(Uri.fromFile(file), MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension))
+            val file = FileUtil.saveBlobToProviderDirectory(this, blob!!, fileName!!)
+            val extension = fileExtension(fileName!!)
+            if (extension.isNotEmpty()) {
+                intent.type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
+            }
+            intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+            intent.data = FileUtil.uriForFile(this, file)
+
+            try {
+                startActivity(intent)
+            } catch (e: Exception) {
+                Timber.e(e)
+                Snackbar.make(root, getString(R.string.open_error), Snackbar.LENGTH_SHORT)
+                        .show()
+            }
         } else {
-            intent.data = Uri.fromFile(file)
-        }
-
-        try {
-            startActivity(intent)
-        } catch (e: ActivityNotFoundException) {
-            Timber.e(e)
             Snackbar.make(root, getString(R.string.open_error), Snackbar.LENGTH_SHORT)
                     .show()
-        } catch (e: SecurityException) {
-            Timber.e(e)
-            Snackbar.make(root, getString(R.string.open_error), Snackbar.LENGTH_SHORT).show()
         }
-
     }
 }

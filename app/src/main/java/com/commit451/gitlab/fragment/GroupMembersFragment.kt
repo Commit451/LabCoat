@@ -2,7 +2,6 @@ package com.commit451.gitlab.fragment
 
 import android.net.Uri
 import android.os.Bundle
-import android.os.Parcelable
 import android.support.design.widget.Snackbar
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.GridLayoutManager
@@ -19,6 +18,8 @@ import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.GroupMembersAdapter
 import com.commit451.gitlab.dialog.AccessDialog
 import com.commit451.gitlab.event.MemberAddedEvent
+import com.commit451.gitlab.extension.getParcelerParcelable
+import com.commit451.gitlab.extension.putParcelParcelableExtra
 import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.Group
 import com.commit451.gitlab.model.api.Member
@@ -30,7 +31,6 @@ import com.commit451.gitlab.viewHolder.ProjectMemberViewHolder
 import com.trello.rxlifecycle2.android.FragmentEvent
 import io.reactivex.Single
 import org.greenrobot.eventbus.Subscribe
-import org.parceler.Parcels
 import retrofit2.Response
 import timber.log.Timber
 
@@ -42,7 +42,7 @@ class GroupMembersFragment : ButterKnifeFragment() {
 
         fun newInstance(group: Group): GroupMembersFragment {
             val args = Bundle()
-            args.putParcelable(KEY_GROUP, Parcels.wrap(group))
+            args.putParcelParcelableExtra(KEY_GROUP, group)
 
             val fragment = GroupMembersFragment()
             fragment.arguments = args
@@ -111,7 +111,7 @@ class GroupMembersFragment : ButterKnifeFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        group = Parcels.unwrap<Group>(arguments.getParcelable<Parcelable>(KEY_GROUP))
+        group = arguments.getParcelerParcelable<Group>(KEY_GROUP)!!
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -155,10 +155,6 @@ class GroupMembersFragment : ButterKnifeFragment() {
 
     override fun loadData() {
         if (view == null) {
-            return
-        }
-        if (group == null) {
-            swipeRefreshLayout.isRefreshing = false
             return
         }
         textMessage.visibility = View.GONE
@@ -218,7 +214,7 @@ class GroupMembersFragment : ButterKnifeFragment() {
 
     @Subscribe
     fun onMemberAdded(event: MemberAddedEvent) {
-        if (adapterGroupMembers != null) {
+        if (view != null) {
             adapterGroupMembers.addMember(event.member)
             textMessage.visibility = View.GONE
         }

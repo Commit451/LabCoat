@@ -4,7 +4,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
-import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.Account
 import com.commit451.gitlab.navigation.DeepLinker
@@ -98,7 +97,7 @@ class RoutingActivity : BaseActivity() {
 
         //okay so last thing, if the user has followed a link, but the user
         //is not actually signed in, we want to direct them to signin
-        if (App.get().getAccount() == null && Account.getAccounts().isEmpty()) {
+        if (Account.getAccounts().isEmpty()) {
             Navigator.navigateToLogin(this)
             finish()
             return

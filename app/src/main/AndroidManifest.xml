@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.commit451.gitlab">
+          package="com.commit451.gitlab">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
         android:name=".App"
@@ -13,149 +13,129 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
-
         <activity
             android:name=".activity.LaunchActivity"
             android:theme="@style/Activity.Launch">
-
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
-
         </activity>
-
         <activity
             android:name=".activity.ProjectsActivity"
             android:launchMode="singleTask"
-            android:theme="@style/Activity.Projects" />
-
+            android:theme="@style/Activity.Projects"/>
         <activity
             android:name=".activity.GroupsActivity"
             android:launchMode="singleTask"
-            android:theme="@style/Activity.Groups" />
-
+            android:theme="@style/Activity.Groups"/>
         <activity
             android:name=".activity.ActivityActivity"
             android:launchMode="singleTask"
-            android:theme="@style/Activity.Activity" />
-
+            android:theme="@style/Activity.Activity"/>
         <activity
             android:name=".activity.TodosActivity"
             android:launchMode="singleTask"
-            android:theme="@style/Activity.Todos" />
-
-        <activity android:name=".activity.ProjectActivity" />
-
+            android:theme="@style/Activity.Todos"/>
+        <activity android:name=".activity.ProjectActivity"/>
         <activity
             android:name=".activity.LoginActivity"
-            android:theme="@style/Activity.Login" />
-
-        <activity android:name=".activity.FileActivity" />
-
-        <activity android:name=".activity.IssueActivity" />
-
-        <activity android:name=".activity.DiffActivity" />
-
-        <activity android:name=".activity.AboutActivity" />
-
-        <activity android:name=".activity.AddUserActivity" />
+            android:theme="@style/Activity.Login"/>
+        <activity android:name=".activity.FileActivity"/>
+        <activity android:name=".activity.IssueActivity"/>
+        <activity android:name=".activity.DiffActivity"/>
+        <activity android:name=".activity.AboutActivity"/>
+        <activity android:name=".activity.AddUserActivity"/>
         <activity
             android:name=".activity.UserActivity"
-            android:theme="@style/Activity.User" />
-        <activity android:name=".activity.SearchActivity" />
-
+            android:theme="@style/Activity.User"/>
+        <activity android:name=".activity.SearchActivity"/>
         <activity
             android:name=".activity.GroupActivity"
-            android:theme="@style/Activity.Group" />
-
-        <activity android:name=".activity.MergeRequestActivity" />
-
-        <activity android:name=".activity.AddIssueActivity" />
-
-        <activity android:name=".activity.MilestoneActivity" />
-
-        <activity android:name=".activity.AddMilestoneActivity" />
-
-        <activity android:name=".activity.BuildActivity" />
-
+            android:theme="@style/Activity.Group"/>
+        <activity android:name=".activity.MergeRequestActivity"/>
+        <activity android:name=".activity.AddIssueActivity"/>
+        <activity android:name=".activity.MilestoneActivity"/>
+        <activity android:name=".activity.AddMilestoneActivity"/>
+        <activity android:name=".activity.BuildActivity"/>
+        <activity android:name=".activity.PipelineActivity"/>
         <activity
             android:name=".activity.LoadSomeInfoActivity"
-            android:theme="@style/Activity.Translucent" />
-
-        <activity android:name=".activity.SettingsActivity" />
-
-        <activity android:name=".activity.AddLabelActivity" />
-
-        <activity android:name=".activity.AddNewLabelActivity" />
-
+            android:theme="@style/Activity.Translucent"/>
+        <activity android:name=".activity.SettingsActivity"/>
+        <activity android:name=".activity.AddLabelActivity"/>
+        <activity android:name=".activity.AddNewLabelActivity"/>
         <activity
             android:name=".activity.PickBranchOrTagActivity"
-            android:theme="@style/Activity.Translucent" />
-        <activity android:name=".activity.WebLoginActivity" />
-
+            android:theme="@style/Activity.Translucent"/>
+        <activity android:name=".activity.WebLoginActivity"/>
         <activity
             android:name=".activity.AttachActivity"
-            android:theme="@style/Activity.Translucent" />
-
-        <activity android:name=".activity.DebugActivity" />
-
+            android:theme="@style/Activity.Translucent"/>
         <activity
             android:name=".activity.RoutingActivity"
             android:launchMode="singleTask"
             android:noHistory="true"
             android:theme="@android:style/Theme.NoDisplay">
+
             <!-- Standard Url -->
             <intent-filter android:label="@string/deeplink_text">
-                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.VIEW"/>
 
-                <category android:name="android.intent.category.BROWSABLE" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <category android:name="android.intent.category.DEFAULT"/>
 
-                <data android:scheme="@string/deeplink_scheme" />
+                <data android:scheme="@string/deeplink_scheme"/>
             </intent-filter>
         </activity>
-
         <activity android:name=".widget.UserFeedWidgetConfigureActivity">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
             </intent-filter>
         </activity>
-
         <activity android:name=".widget.ProjectFeedWidgetConfigureActivity">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
             </intent-filter>
         </activity>
+        <activity android:name=".widget.ProjectFeedWidgetConfigureProjectActivity"/>
+        <activity
+            android:name=".activity.FullscreenImageActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_fullscreen_image"
+            android:theme="@style/FullscreenTheme">
+        </activity>
 
-        <activity android:name=".widget.ProjectFeedWidgetConfigureProjectActivity" />
+        <activity android:name=".activity.DebugActivity"/>
 
         <receiver
             android:name=".widget.UserFeedWidgetProvider"
             android:label="User Feed">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
             </intent-filter>
+
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/widget_user_feed" />
+                android:resource="@xml/widget_user_feed"/>
         </receiver>
-
         <receiver
             android:name=".widget.ProjectFeedWidgetProvider"
             android:label="Project Feed">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
             </intent-filter>
+
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/widget_project_feed" />
+                android:resource="@xml/widget_project_feed"/>
         </receiver>
 
         <service
             android:name=".widget.ProjectFeedWidgetService"
             android:exported="false"
-            android:permission="android.permission.BIND_REMOTEVIEWS" />
+            android:permission="android.permission.BIND_REMOTEVIEWS"/>
 
     </application>
 
