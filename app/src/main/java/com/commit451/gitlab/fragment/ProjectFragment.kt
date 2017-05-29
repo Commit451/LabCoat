@@ -33,7 +33,6 @@ import io.reactivex.Single
 import io.reactivex.SingleSource
 import io.reactivex.functions.Function
 import org.greenrobot.eventbus.Subscribe
-import retrofit2.HttpException
 import retrofit2.Response
 import timber.log.Timber
 
@@ -112,21 +111,19 @@ class ProjectFragment : ButterKnifeFragment() {
                     .subscribe(object : CustomSingleObserver<Response<Project>>() {
 
                         override fun error(t: Throwable) {
-                            if (t is HttpException) {
-                                if (t.response().code() == 304) {
-                                    Snackbar.make(swipeRefreshLayout, R.string.project_already_starred, Snackbar.LENGTH_SHORT)
-                                            .setAction(R.string.project_unstar) { unstarProject() }
-                                            .show()
-                                    return
-                                }
-                            }
                             Snackbar.make(swipeRefreshLayout, R.string.project_star_failed, Snackbar.LENGTH_SHORT)
                                     .show()
                         }
 
                         override fun success(projectResponse: Response<Project>) {
-                            Snackbar.make(swipeRefreshLayout, R.string.project_starred, Snackbar.LENGTH_SHORT)
-                                    .show()
+                            if (projectResponse.raw().code() == 304) {
+                                Snackbar.make(swipeRefreshLayout, R.string.project_already_starred, Snackbar.LENGTH_LONG)
+                                        .setAction(R.string.project_unstar) { unstarProject() }
+                                        .show()
+                            } else {
+                                Snackbar.make(swipeRefreshLayout, R.string.project_starred, Snackbar.LENGTH_SHORT)
+                                        .show()
+                            }
                         }
                     })
         }
