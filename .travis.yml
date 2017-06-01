@@ -1,15 +1,14 @@
-language: android
+language: java
+
+env:
+  - ANDROID_HOME=$PWD/android-sdk
 
 jdk:
   - oraclejdk8
 
-android:
-  components:
-    - platform-tools
-    - tools
-    - build-tools-25.0.3
-    - android-25
-    - extra-android-m2repository
-    - extra-google-m2repository
+before_install:
+  - rvm install 2.3.4
+  - gem install android-sdk-installer
+  - android-sdk-installer -i
 
 script: "./gradlew testFdroidDebug"

@@ -1,17 +1,7 @@
-#Derived from https://about.gitlab.com/2016/11/30/setting-up-gitlab-ci-for-android-projects/
-image: openjdk:8-jdk
-
-variables:
-  ANDROID_COMPILE_SDK: "25"
-  ANDROID_BUILD_TOOLS: "25.0.3"
-  ANDROID_SDK_TOOLS: "25.2.3"
+image: commit451/android-sdk:latest
 
 before_script:
-  - wget --quiet --output-document=android-sdk.zip https://dl.google.com/android/repository/tools_r${ANDROID_SDK_TOOLS}-linux.zip
-  - unzip -q android-sdk.zip -d android-sdk
-  - export ANDROID_HOME=$PWD/android-sdk
-  - echo y | $ANDROID_HOME/tools/bin/sdkmanager "platforms;android-$ANDROID_COMPILE_SDK"
-  - echo y | $ANDROID_HOME/tools/bin/sdkmanager "build-tools;$ANDROID_BUILD_TOOLS"
+  - android-sdk-installer
 
 stages:
   - build
