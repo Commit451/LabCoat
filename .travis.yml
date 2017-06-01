@@ -3,6 +3,9 @@ language: java
 env:
   - ANDROID_HOME=$PWD/android-sdk
 
+# Skip the install step, gradlew assemble will fail due to Crashlytics
+install: true
+
 jdk:
   - oraclejdk8
 
