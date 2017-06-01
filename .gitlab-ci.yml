@@ -1,4 +1,4 @@
-image: commit451/android-sdk:latest
+image: commit451/android-sdk-installer:latest
 
 before_script:
   - android-sdk-installer
