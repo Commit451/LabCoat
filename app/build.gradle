@@ -4,7 +4,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'io.fabric.tools:gradle:1.22.1'
+        classpath 'io.fabric.tools:gradle:1.22.2'
     }
 }
 
@@ -203,7 +203,7 @@ dependencies {
         exclude group: 'org.json', module: 'json'
     }
 
-    compile 'com.github.jkwiecien:EasyImage:1.4.1'
+    compile 'com.github.jkwiecien:EasyImage:2.0.2'
 
     compile('com.github.ozodrukh:CircularReveal:2.0.1@aar') {
         transitive = true;

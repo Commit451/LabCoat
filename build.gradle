@@ -11,7 +11,7 @@ buildscript {
         classpath 'com.android.tools.build:gradle:2.3.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         //check with ./gradlew dependencyUpdates
-        classpath 'com.github.ben-manes:gradle-versions-plugin:0.14.0'
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.15.0'
         classpath 'com.github.Commit451:updatewrapper:1.1.1'
     }
 }
