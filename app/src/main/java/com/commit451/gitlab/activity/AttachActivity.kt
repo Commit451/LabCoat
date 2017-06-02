@@ -58,7 +58,7 @@ class AttachActivity : BaseActivity() {
 
     @OnClick(R.id.button_choose_photo)
     fun onChoosePhotoClicked() {
-        EasyImage.openGallery(this, 0, false)
+        EasyImage.openGallery(this, 0)
     }
 
     @OnClick(R.id.button_take_photo)
