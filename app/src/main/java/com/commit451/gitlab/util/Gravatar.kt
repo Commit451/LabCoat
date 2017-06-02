@@ -2,31 +2,10 @@ package com.commit451.gitlab.util
 
 import android.net.Uri
 
-import com.commit451.gitlab.ssl.X509Util
-
-import java.io.UnsupportedEncodingException
-import java.net.URLEncoder
-import java.nio.charset.Charset
-import java.security.MessageDigest
-import java.security.NoSuchAlgorithmException
-
 object Gravatar {
 
-    @JvmOverloads
     fun init(email: String? = null): Builder {
-
         return Builder(email)
-    }
-
-    private fun md5(raw: String): String {
-        try {
-            val digest = MessageDigest.getInstance("MD5")
-            digest.update(raw.toByteArray(Charset.forName("UTF-8")))
-            return X509Util.hexify(digest.digest())
-        } catch (e: NoSuchAlgorithmException) {
-            throw IllegalStateException(e)
-        }
-
     }
 
     class Builder constructor(private val mEmail: String?) {
@@ -79,7 +58,7 @@ object Gravatar {
                 uriBuilder.append("http://www.gravatar.com/avatar/")
             }
             if (mEmail != null) {
-                uriBuilder.append(md5(mEmail))
+                uriBuilder.append(Hash.md5(mEmail))
             } else {
                 uriBuilder.append("00000000000000000000000000000000")
             }
@@ -101,16 +80,12 @@ object Gravatar {
                 queryBuilder.append("&r=").append(mRating)
             }
             val query = queryBuilder.toString()
-            if (query.length > 0) {
+            if (query.isNotEmpty()) {
                 uriBuilder.append("?").append(query.substring(1))
             }
 
             return Uri.parse(uriBuilder.toString())
         }
-    }
-
-    enum class Rating {
-        G, PG, R, X
     }
 
     enum class DefaultImage {
