@@ -13,6 +13,12 @@ import retrofit2.converter.scalars.ScalarsConverterFactory
  */
 object GitLabFactory {
 
+    fun createGitLab(account: Account, client: OkHttpClient): GitLab {
+        val gitLabService = GitLabFactory.create(account, client)
+        val gitLabRss = GitLabRssFactory.create(account, client)
+        return GitLab(client, gitLabService, gitLabRss)
+    }
+
     /**
      * Create a GitLabService get with the current account passed.
      * @param account the account to try and log in with

@@ -5,7 +5,10 @@ import android.content.Context
 import android.content.res.Resources
 import android.support.annotation.VisibleForTesting
 import android.support.multidex.MultiDex
-import com.commit451.gitlab.api.*
+import com.commit451.gitlab.api.GitLab
+import com.commit451.gitlab.api.GitLabFactory
+import com.commit451.gitlab.api.OkHttpClientFactory
+import com.commit451.gitlab.api.PicassoFactory
 import com.commit451.gitlab.data.Prefs
 import com.commit451.gitlab.model.Account
 import com.commit451.gitlab.util.FabricUtil
@@ -139,9 +142,7 @@ open class App : Application() {
     }
 
     private fun initGitLab(account: Account, client: OkHttpClient) {
-        val gitLabService = GitLabFactory.create(account, client)
-        val gitLabRss = GitLabRssFactory.create(account, client)
-        gitLab = GitLab(gitLabService, gitLabRss)
+        gitLab = GitLabFactory.createGitLab(account, client)
     }
 
     private fun initPicasso(client: OkHttpClient) {

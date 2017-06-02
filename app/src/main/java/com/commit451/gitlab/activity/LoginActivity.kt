@@ -23,6 +23,7 @@ import com.bluelinelabs.logansquare.LoganSquare
 import com.commit451.gitlab.App
 import com.commit451.gitlab.BuildConfig
 import com.commit451.gitlab.R
+import com.commit451.gitlab.api.GitLab
 import com.commit451.gitlab.api.GitLabFactory
 import com.commit451.gitlab.api.OkHttpClientFactory
 import com.commit451.gitlab.api.request.SessionRequest
@@ -52,7 +53,6 @@ import retrofit2.Response
 import timber.log.Timber
 import java.io.IOException
 import java.net.ConnectException
-import java.security.cert.CertificateEncodingException
 import java.util.*
 import java.util.regex.Pattern
 import javax.net.ssl.SSLHandshakeException
@@ -66,9 +66,8 @@ class LoginActivity : BaseActivity() {
         private val EXTRA_SHOW_CLOSE = "show_close"
 
         private val REQUEST_PRIVATE_TOKEN = 123
-        private val sTokenPattern = Pattern.compile("^[A-Za-z0-9-_]*$")
 
-        @JvmOverloads fun newIntent(context: Context, showClose: Boolean = false): Intent {
+        fun newIntent(context: Context, showClose: Boolean = false): Intent {
             val intent = Intent(context, LoginActivity::class.java)
             intent.putExtra(EXTRA_SHOW_CLOSE, showClose)
             return intent
@@ -92,10 +91,14 @@ class LoginActivity : BaseActivity() {
     lateinit var teleprinter: Teleprinter
 
     var isNormalLogin = true
-    val emailPattern : Pattern by lazy {
+    val emailPattern: Pattern by lazy {
         Patterns.EMAIL_ADDRESS
     }
+    val tokenPattern: Pattern by lazy {
+        Pattern.compile("^[A-Za-z0-9-_]*$")
+    }
     var account: Account = Account()
+    var gitLab: GitLab? = null
 
     @OnEditorAction(R.id.password_input, R.id.token_input)
     fun onPasswordEditorAction(): Boolean {
@@ -125,7 +128,7 @@ class LoginActivity : BaseActivity() {
             if (!textInputLayoutToken.checkValid()) {
                 return
             }
-            if (!sTokenPattern.matcher(textToken.text).matches()) {
+            if (!tokenPattern.matcher(textToken.text).matches()) {
                 textInputLayoutToken.error = getString(R.string.not_a_valid_private_token)
                 return
             } else {
@@ -233,12 +236,14 @@ class LoginActivity : BaseActivity() {
     }
 
     fun attemptLogin(request: SessionRequest) {
-        val gitlabClientBuilder = OkHttpClientFactory.create(account)
+        val clientBuilder = OkHttpClientFactory.create(account)
         if (BuildConfig.DEBUG) {
-            gitlabClientBuilder.addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
+            clientBuilder.addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
         }
-        val gitLab = GitLabFactory.create(account, gitlabClientBuilder.build())
-        gitLab.login(request)
+
+        gitLab = GitLabFactory.createGitLab(account, clientBuilder.build())
+
+        gitLab!!.login(request)
                 .setup(bindToLifecycle())
                 .subscribe(object : CustomResponseSingleObserver<UserLogin>() {
 
@@ -370,12 +375,7 @@ class LoginActivity : BaseActivity() {
 
         if (t is SSLHandshakeException && t.cause is X509CertificateException) {
             account.trustedCertificate = null
-            var fingerprint: String? = null
-            try {
-                fingerprint = X509Util.getFingerPrint((t.cause as X509CertificateException).chain[0])
-            } catch (e: CertificateEncodingException) {
-                Timber.e(e)
-            }
+            val fingerprint = X509Util.getFingerPrint((t.cause as X509CertificateException).chain[0])
 
             val finalFingerprint = fingerprint
 
@@ -383,11 +383,8 @@ class LoginActivity : BaseActivity() {
                     .setTitle(R.string.certificate_title)
                     .setMessage(String.format(resources.getString(R.string.certificate_message), finalFingerprint))
                     .setPositiveButton(R.string.ok_button) { dialog, _ ->
-                        if (finalFingerprint != null) {
-                            account.trustedCertificate = finalFingerprint
-                            login()
-                        }
-
+                        account.trustedCertificate = finalFingerprint
+                        login()
                         dialog.dismiss()
                     }
                     .setNegativeButton(R.string.cancel_button) { dialog, _ -> dialog.dismiss() }
@@ -396,7 +393,8 @@ class LoginActivity : BaseActivity() {
             (d.findViewById(android.R.id.message) as TextView).movementMethod = LinkMovementMethod.getInstance()
         } else if (t is SSLPeerUnverifiedException && t.message?.toLowerCase()!!.contains("hostname")) {
             account.trustedHostname = null
-            val finalHostname = CustomHostnameVerifier.lastFailedHostname
+            val hostNameVerifier = gitLab?.client?.hostnameVerifier() as CustomHostnameVerifier
+            val finalHostname = hostNameVerifier.lastFailedHostname
             val d = AlertDialog.Builder(this)
                     .setTitle(R.string.hostname_title)
                     .setMessage(R.string.hostname_message)
@@ -484,15 +482,10 @@ class LoginActivity : BaseActivity() {
 
     fun isAlreadySignedIn(url: String, usernameOrEmailOrPrivateToken: String): Boolean {
         val accounts = Prefs.getAccounts()
-        for (account in accounts) {
-            if (account.serverUrl == Uri.parse(url)) {
-                if (usernameOrEmailOrPrivateToken == account.user.username
-                        || usernameOrEmailOrPrivateToken.equals(account.user.email, ignoreCase = true)
-                        || usernameOrEmailOrPrivateToken.equals(account.privateToken, ignoreCase = true)) {
-                    return true
-                }
-            }
+        return accounts.any {
+            it.serverUrl == Uri.parse(url) && (usernameOrEmailOrPrivateToken == it.user.username
+                    || usernameOrEmailOrPrivateToken.equals(it.user.email, ignoreCase = true)
+                    || usernameOrEmailOrPrivateToken.equals(it.privateToken, ignoreCase = true))
         }
-        return false
     }
 }
