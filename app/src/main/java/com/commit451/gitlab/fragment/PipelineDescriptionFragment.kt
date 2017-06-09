@@ -12,6 +12,8 @@ import butterknife.BindView
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.event.PipelineChangedEvent
+import com.commit451.gitlab.extension.getParcelerParcelable
+import com.commit451.gitlab.extension.putParcelParcelableExtra
 import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.*
 import com.commit451.gitlab.rx.CustomSingleObserver
@@ -35,8 +37,8 @@ class PipelineDescriptionFragment : ButterKnifeFragment() {
         fun newInstance(project: Project, pipeline: Pipeline): PipelineDescriptionFragment {
             val fragment = PipelineDescriptionFragment()
             val args = Bundle()
-            args.putParcelable(KEY_PROJECT, Parcels.wrap(project))
-            args.putParcelable(KEY_PIPELINE, Parcels.wrap(pipeline))
+            args.putParcelParcelableExtra(KEY_PROJECT, project)
+            args.putParcelParcelableExtra(KEY_PIPELINE, pipeline)
             fragment.arguments = args
             return fragment
         }
@@ -59,8 +61,8 @@ class PipelineDescriptionFragment : ButterKnifeFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        project = Parcels.unwrap<Project>(arguments.getParcelable<Parcelable>(KEY_PROJECT))
-        pipeline = Parcels.unwrap<Pipeline>(arguments.getParcelable<Parcelable>(KEY_PIPELINE))
+        project = arguments.getParcelerParcelable<Project>(KEY_PROJECT)!!
+        pipeline = arguments.getParcelerParcelable<Pipeline>(KEY_PIPELINE)!!
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
