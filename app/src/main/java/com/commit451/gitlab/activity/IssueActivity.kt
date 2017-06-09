@@ -119,7 +119,7 @@ class IssueActivity : BaseActivity() {
                 return@OnMenuItemClickListener true
             }
             R.id.action_delete -> {
-                App.get().gitLab.deleteIssue(project!!.id, issue!!.id)
+                App.get().gitLab.deleteIssue(project!!.id, issue!!.iid)
                         .setup(bindToLifecycle())
                         .subscribe(object : CustomSingleObserver<String>() {
 
@@ -194,7 +194,7 @@ class IssueActivity : BaseActivity() {
             App.get().gitLab.getProject(projectNamespace, projectName)
                     .flatMap { project ->
                         this@IssueActivity.project = project
-                        App.get().gitLab.getIssuesByIid(project.id, issueIid!!)
+                        App.get().gitLab.getIssuesByIid(project.id)
                     }
                     .compose(this.bindToLifecycle<List<Issue>>())
                     .subscribeOn(Schedulers.io())
@@ -263,7 +263,7 @@ class IssueActivity : BaseActivity() {
     fun loadNotes() {
         swipeRefreshLayout.isRefreshing = true
         loading = true
-        App.get().gitLab.getIssueNotes(project!!.id, issue!!.id)
+        App.get().gitLab.getIssueNotes(project!!.id, issue!!.iid)
                 .compose(this.bindToLifecycle<Response<List<Note>>>())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -323,7 +323,7 @@ class IssueActivity : BaseActivity() {
         teleprinter.hideKeyboard()
         sendMessageView.clearText()
 
-        App.get().gitLab.addIssueNote(project!!.id, issue!!.id, message)
+        App.get().gitLab.addIssueNote(project!!.id, issue!!.iid, message)
                 .setup(bindToLifecycle())
                 .subscribe(object : CustomSingleObserver<Note>() {
 
@@ -345,9 +345,9 @@ class IssueActivity : BaseActivity() {
     fun closeOrOpenIssue() {
         progress.visibility = View.VISIBLE
         if (issue!!.state == Issue.STATE_CLOSED) {
-            updateIssueStatus(App.get().gitLab.updateIssueStatus(project!!.id, issue!!.id, Issue.STATE_REOPEN))
+            updateIssueStatus(App.get().gitLab.updateIssueStatus(project!!.id, issue!!.iid, Issue.STATE_REOPEN))
         } else {
-            updateIssueStatus(App.get().gitLab.updateIssueStatus(project!!.id, issue!!.id, Issue.STATE_CLOSE))
+            updateIssueStatus(App.get().gitLab.updateIssueStatus(project!!.id, issue!!.iid, Issue.STATE_CLOSE))
         }
     }
 
