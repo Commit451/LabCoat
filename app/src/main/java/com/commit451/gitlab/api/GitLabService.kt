@@ -101,7 +101,7 @@ interface GitLabService {
     fun getProjects(@Url url: String): Single<Response<List<Project>>>
 
     @GET(API_VERSION + "/projects")
-    fun searchAllProjects(@Query("query") query: String): Single<Response<List<Project>>>
+    fun searchAllProjects(@Query("search") query: String): Single<Response<List<Project>>>
 
     @GET(API_VERSION + "/projects/{id}/members")
     fun getProjectMembers(@Path("id") projectId: Long): Single<Response<List<Member>>>
