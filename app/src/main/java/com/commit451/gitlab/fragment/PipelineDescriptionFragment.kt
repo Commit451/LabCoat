@@ -30,7 +30,6 @@ import java.util.*
 class PipelineDescriptionFragment : ButterKnifeFragment() {
 
     companion object {
-
         private val KEY_PROJECT = "project"
         private val KEY_PIPELINE = "pipeline"
 
@@ -111,13 +110,17 @@ class PipelineDescriptionFragment : ButterKnifeFragment() {
         if (startedTime == null) {
             startedTime = Date()
         }
+        var createdTime: Date? = pipeline.createdAt
+        if (createdTime == null) {
+            createdTime = Date()
+        }
         val status = String.format(getString(R.string.pipeline_status), pipeline.status)
         textStatus.text = status
 
         val name = String.format(getString(R.string.pipeline_name), pipeline.id)
         textName.text = name
 
-        val created = String.format(getString(R.string.build_created), DateUtil.getRelativeTimeSpanString(activity, pipeline.createdAt))
+        val created = String.format(getString(R.string.pipeline_created), DateUtil.getRelativeTimeSpanString(activity, createdTime))
         textCreated.text = created
 
         val finished = String.format(getString(R.string.pipeline_finished), pipeline.finishedAt)
