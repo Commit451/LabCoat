@@ -114,7 +114,7 @@ class MergeRequestCommitsFragment : ButterKnifeFragment() {
         page = 0
         loading = true
 
-        App.get().gitLab.getMergeRequestCommits(project!!.id, mergeRequest!!.id)
+        App.get().gitLab.getMergeRequestCommits(project!!.id, mergeRequest!!.iid)
                 .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .subscribe(object : CustomSingleObserver<List<RepositoryCommit>>() {
 
@@ -156,7 +156,7 @@ class MergeRequestCommitsFragment : ButterKnifeFragment() {
 
     @Subscribe
     fun onMergeRequestChangedEvent(event: MergeRequestChangedEvent) {
-        if (mergeRequest!!.id == event.mergeRequest.id) {
+        if (mergeRequest!!.iid == event.mergeRequest.id) {
             mergeRequest = event.mergeRequest
             loadData()
         }
