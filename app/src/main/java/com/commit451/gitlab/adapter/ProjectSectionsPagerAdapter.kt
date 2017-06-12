@@ -35,21 +35,21 @@ class ProjectSectionsPagerAdapter(context: ProjectActivity, fm: FragmentManager)
 
     init {
 
-        val project = context.project
-        if (!project!!.isBuildEnabled) {
+        val project = context.project!!
+        if (isDisabled(project.isBuildEnabled)) {
             Timber.d("Builds are disabled")
             disabledSections.add(BUILDS_POS)
             disabledSections.add(PIPELINES_POS)
         }
-        if (!project.isIssuesEnabled) {
+        if (isDisabled(project.isIssuesEnabled)) {
             Timber.d("Issues are disabled")
             disabledSections.add(ISSUES_POS)
         }
-        if (!project.isMergeRequestsEnabled) {
+        if (isDisabled(project.isMergeRequestsEnabled)) {
             Timber.d("Merge requests are disabled")
             disabledSections.add(MERGE_REQUESTS_POS)
         }
-        if (!project.isIssuesEnabled && !project.isMergeRequestsEnabled) {
+        if (isDisabled(project.isIssuesEnabled) && isDisabled(project.isMergeRequestsEnabled)) {
             Timber.d("Milestones are disabled")
             disabledSections.add(MILESTONES_POS)
         }
@@ -65,10 +65,7 @@ class ProjectSectionsPagerAdapter(context: ProjectActivity, fm: FragmentManager)
     }
 
     override fun getPageTitle(position: Int): CharSequence {
-        var position = position
-        position = getCorrectPosition(position)
-
-        return titles[position]
+        return titles[getCorrectPosition(position)]
     }
 
     override fun getItem(position: Int): Fragment {
@@ -91,6 +88,13 @@ class ProjectSectionsPagerAdapter(context: ProjectActivity, fm: FragmentManager)
         throw IllegalStateException("Position exceeded on view pager")
     }
 
+    private fun isDisabled(enabledState: Boolean?) : Boolean{
+        if (enabledState != null && !enabledState) {
+            return true
+        }
+        return false
+    }
+
     private fun getCorrectPosition(position: Int): Int {
         var correctPosition = position
         for (i in 0..position) {
@@ -99,6 +103,6 @@ class ProjectSectionsPagerAdapter(context: ProjectActivity, fm: FragmentManager)
             }
         }
 
-        return position
+        return correctPosition
     }
 }

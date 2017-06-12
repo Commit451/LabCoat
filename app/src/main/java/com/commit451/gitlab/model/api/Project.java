@@ -45,15 +45,15 @@ public class Project {
     @JsonField(name = "path_with_namespace")
     String pathWithNamespace;
     @JsonField(name = "issues_enabled")
-    boolean issuesEnabled;
+    Boolean issuesEnabled;
     @JsonField(name = "merge_requests_enabled")
-    boolean mergeRequestsEnabled;
+    Boolean mergeRequestsEnabled;
     @JsonField(name = "wiki_enabled")
-    boolean wikiEnabled;
+    Boolean wikiEnabled;
     @JsonField(name = "builds_enabled")
-    boolean buildEnabled;
+    Boolean buildEnabled;
     @JsonField(name = "snippets_enabled")
-    boolean snippetsEnabled;
+    Boolean snippetsEnabled;
     @JsonField(name = "created_at")
     Date createdAt;
     @JsonField(name = "last_activity_at")
@@ -135,23 +135,23 @@ public class Project {
         return pathWithNamespace;
     }
 
-    public boolean isIssuesEnabled() {
+    public Boolean isIssuesEnabled() {
         return issuesEnabled;
     }
 
-    public boolean isMergeRequestsEnabled() {
+    public Boolean isMergeRequestsEnabled() {
         return mergeRequestsEnabled;
     }
 
-    public boolean isWikiEnabled() {
+    public Boolean isWikiEnabled() {
         return wikiEnabled;
     }
 
-    public boolean isBuildEnabled() {
+    public Boolean isBuildEnabled() {
         return buildEnabled;
     }
 
-    public boolean isSnippetsEnabled() {
+    public Boolean isSnippetsEnabled() {
         return snippetsEnabled;
     }
 
