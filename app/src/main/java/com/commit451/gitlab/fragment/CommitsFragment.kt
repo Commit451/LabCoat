@@ -105,7 +105,7 @@ class CommitsFragment : ButterKnifeFragment() {
 
         swipeRefreshLayout.isRefreshing = true
 
-        page = 0
+        page = 1
         loading = true
 
         App.get().gitLab.getCommits(project!!.id, branchName!!, page)

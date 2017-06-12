@@ -76,6 +76,8 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             ext.enableCrashlytics = false
+            applicationIdSuffix ".debug"
+            versionNameSuffix "-debug"
         }
     }
     lintOptions {
