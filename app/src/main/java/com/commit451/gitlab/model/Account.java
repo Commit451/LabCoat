@@ -1,6 +1,5 @@
 package com.commit451.gitlab.model;
 
-import android.net.Uri;
 import android.support.annotation.NonNull;
 
 import com.bluelinelabs.logansquare.annotation.JsonField;
@@ -32,7 +31,7 @@ public class Account implements Comparable<Account>{
     }
 
     @JsonField(name = "server_url")
-    Uri serverUrl;
+    String serverUrl;
     @JsonField(name = "authorization_header")
     String authorizationHeader;
     @JsonField(name = "private_token")
@@ -50,11 +49,11 @@ public class Account implements Comparable<Account>{
 
     public Account() {}
 
-    public Uri getServerUrl() {
+    public String getServerUrl() {
         return serverUrl;
     }
 
-    public void setServerUrl(Uri url) {
+    public void setServerUrl(String url) {
         serverUrl = url;
     }
 

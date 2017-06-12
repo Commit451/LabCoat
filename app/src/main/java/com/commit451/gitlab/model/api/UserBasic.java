@@ -29,9 +29,9 @@ public class UserBasic extends UserSafe {
     @State
     String state;
     @JsonField(name = "avatar_url")
-    Uri avatarUrl;
+    String avatarUrl;
     @JsonField(name = "web_url")
-    Uri webUrl;
+    String webUrl;
 
     public UserBasic() {}
 
@@ -39,15 +39,16 @@ public class UserBasic extends UserSafe {
         return id;
     }
 
-    public @State String getState() {
+    @State
+    public String getState() {
         return state;
     }
 
-    public Uri getAvatarUrl() {
+    public String getAvatarUrl() {
         return avatarUrl;
     }
 
-    public Uri getWebUrl() {
+    public String getWebUrl() {
         return webUrl;
     }
 
@@ -56,7 +57,7 @@ public class UserBasic extends UserSafe {
         if (webUrl == null) {
             return null;
         }
-        return Uri.parse(webUrl.toString() + ".atom");
+        return Uri.parse(webUrl + ".atom");
     }
 
     @Override

@@ -1,7 +1,6 @@
 package com.commit451.gitlab.viewHolder
 
 import android.graphics.Color
-import android.net.Uri
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -41,7 +40,7 @@ class ProjectViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     }
 
     fun bind(project: Project, color: Int) {
-        if (project.avatarUrl != null && project.avatarUrl != Uri.EMPTY) {
+        if (!project.avatarUrl.isNullOrEmpty()) {
             iconLetter.visibility = View.GONE
 
             image.visibility = View.VISIBLE

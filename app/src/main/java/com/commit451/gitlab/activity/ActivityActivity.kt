@@ -2,6 +2,7 @@ package com.commit451.gitlab.activity
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
@@ -48,7 +49,7 @@ class ActivityActivity : BaseActivity() {
 
         var feedFragment: FeedFragment? = supportFragmentManager.findFragmentByTag(TAG_FEED_FRAGMENT) as? FeedFragment
         if (feedFragment == null) {
-            var feedUri = App.get().getAccount().serverUrl
+            var feedUri = Uri.parse(App.get().getAccount().serverUrl)
 
             feedUri = feedUri.buildUpon()
                     .appendPath("dashboard")

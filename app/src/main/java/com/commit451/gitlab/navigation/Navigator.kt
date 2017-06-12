@@ -221,7 +221,8 @@ object Navigator {
 
     fun navigateToUrl(activity: Activity, uri: Uri, account: Account) {
         Timber.d("navigateToUrl: %s", uri)
-        if (account.serverUrl.host == uri.host) {
+        val serverUri = Uri.parse(account.serverUrl)
+        if (serverUri.host == uri.host) {
             activity.startActivity(DeepLinker.generateDeeplinkIntentFromUri(activity, uri))
         } else {
             IntentUtil.openPage(activity as BaseActivity, uri.toString())

@@ -48,7 +48,8 @@ object ConversionUtil {
             return uri
         }
 
-        val builder = account.serverUrl
+        val serverUri = Uri.parse(account.serverUrl)
+        val builder = serverUri
                 .buildUpon()
                 .encodedQuery(uri.encodedQuery)
                 .encodedFragment(uri.encodedFragment)

@@ -11,7 +11,7 @@ import com.commit451.gitlab.model.api.UserFull
 object ImageUtil {
     fun getAvatarUrl(user: UserBasic?, size: Int): Uri {
         if (user != null) {
-            val avatarUrl = user.avatarUrl
+            val avatarUrl = Uri.parse(user.avatarUrl)
             if (avatarUrl != null && avatarUrl != Uri.EMPTY) {
                 return avatarUrl.buildUpon()
                         .appendQueryParameter("s", Integer.toString(size))

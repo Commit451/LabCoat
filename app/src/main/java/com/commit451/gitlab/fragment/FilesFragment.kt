@@ -21,6 +21,7 @@ import com.commit451.gitlab.adapter.BreadcrumbAdapter
 import com.commit451.gitlab.adapter.DividerItemDecoration
 import com.commit451.gitlab.adapter.FileAdapter
 import com.commit451.gitlab.event.ProjectReloadEvent
+import com.commit451.gitlab.extension.getUrl
 import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.model.api.RepositoryTreeObject
@@ -54,7 +55,7 @@ class FilesFragment : ButterKnifeFragment() {
     var branchName: String? = null
     var currentPath = ""
 
-    val mFilesAdapterListener = object : FileAdapter.Listener {
+    val filesAdapterListener = object : FileAdapter.Listener {
         override fun onFolderClicked(treeItem: RepositoryTreeObject) {
             loadData(currentPath + treeItem.name + "/")
         }
@@ -68,18 +69,18 @@ class FilesFragment : ButterKnifeFragment() {
             val clipboard = activity.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
             // Creates a new text clip to put on the clipboard
-            val clip = ClipData.newPlainText(treeItem.name, treeItem.getUrl(project, branchName, currentPath).toString())
+            val clip = ClipData.newPlainText(treeItem.name, treeItem.getUrl(project!!, branchName!!, currentPath).toString())
             clipboard.primaryClip = clip
             Snackbar.make(root, R.string.copied_to_clipboard, Snackbar.LENGTH_SHORT)
                     .show()
         }
 
         override fun onShareClicked(treeItem: RepositoryTreeObject) {
-            IntentUtil.share(view!!, treeItem.getUrl(project, branchName, currentPath))
+            IntentUtil.share(view!!, treeItem.getUrl(project!!, branchName!!, currentPath))
         }
 
         override fun onOpenInBrowserClicked(treeItem: RepositoryTreeObject) {
-            IntentUtil.openPage(activity as BaseActivity, treeItem.getUrl(project, branchName, currentPath).toString())
+            IntentUtil.openPage(activity as BaseActivity, treeItem.getUrl(project!!, branchName!!, currentPath).toString())
         }
     }
 
@@ -92,7 +93,7 @@ class FilesFragment : ButterKnifeFragment() {
 
         App.bus().register(this)
 
-        adapterFiles = FileAdapter(mFilesAdapterListener)
+        adapterFiles = FileAdapter(filesAdapterListener)
         list.layoutManager = LinearLayoutManager(activity)
         list.addItemDecoration(DividerItemDecoration(activity))
         list.adapter = adapterFiles

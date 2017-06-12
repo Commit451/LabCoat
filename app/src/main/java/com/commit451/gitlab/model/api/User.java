@@ -1,7 +1,5 @@
 package com.commit451.gitlab.model.api;
 
-import android.net.Uri;
-
 import com.bluelinelabs.logansquare.annotation.JsonField;
 import com.bluelinelabs.logansquare.annotation.JsonObject;
 
@@ -25,7 +23,7 @@ public class User extends UserBasic {
     @JsonField(name = "twitter")
     String twitter;
     @JsonField(name = "website_url")
-    Uri websiteUrl;
+    String websiteUrl;
 
     public User() {}
 
@@ -53,7 +51,7 @@ public class User extends UserBasic {
         return twitter;
     }
 
-    public Uri getWebsiteUrl() {
+    public String getWebsiteUrl() {
         return websiteUrl;
     }
 }

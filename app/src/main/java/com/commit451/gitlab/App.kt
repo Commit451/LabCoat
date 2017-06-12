@@ -61,8 +61,6 @@ open class App : Application() {
             Timber.e(error)
         }
 
-        GitLab.init()
-
         Prefs.init(this)
         //So that we don't get weird half translations
         forceLocale(Locale.ENGLISH)
@@ -98,7 +96,7 @@ open class App : Application() {
             clientBuilder.addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
         }
         val client = clientBuilder.build()
-        initGitLab(account, client)
+        initGitLab(account, clientBuilder)
         if (BuildConfig.DEBUG) {
             initPicasso(OkHttpClientFactory.create(account).build())
         } else {
@@ -141,8 +139,8 @@ open class App : Application() {
 
     }
 
-    private fun initGitLab(account: Account, client: OkHttpClient) {
-        gitLab = GitLabFactory.createGitLab(account, client)
+    private fun initGitLab(account: Account, clientBuilder: OkHttpClient.Builder) {
+        gitLab = GitLabFactory.createGitLab(account, clientBuilder)
     }
 
     private fun initPicasso(client: OkHttpClient) {

@@ -1,11 +1,9 @@
 package com.commit451.gitlab.model.api;
 
-import android.net.Uri;
 import android.support.annotation.StringDef;
 
 import com.bluelinelabs.logansquare.annotation.JsonField;
 import com.bluelinelabs.logansquare.annotation.JsonObject;
-import com.commit451.gitlab.R;
 
 import org.parceler.Parcel;
 
@@ -51,30 +49,5 @@ public class RepositoryTreeObject {
 
     public String getMode() {
         return mode;
-    }
-
-    public int getDrawableForType() {
-        if (type == null) {
-            return R.drawable.ic_unknown_24dp;
-        }
-        switch (type) {
-            case TYPE_FILE:
-                return R.drawable.ic_file_24dp;
-            case TYPE_FOLDER:
-                return R.drawable.ic_folder_24dp;
-            case TYPE_REPO:
-                return R.drawable.ic_repo_24dp;
-        }
-
-        return R.drawable.ic_unknown_24dp;
-    }
-
-    public Uri getUrl(Project project, String branchName, String currentPath) {
-        return project.getWebUrl().buildUpon()
-                .appendPath("tree")
-                .appendPath(branchName)
-                .appendEncodedPath(currentPath)
-                .appendPath(name)
-                .build();
     }
 }

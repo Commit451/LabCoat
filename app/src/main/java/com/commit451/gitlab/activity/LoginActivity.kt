@@ -117,7 +117,7 @@ class LoginActivity : BaseActivity() {
         if (!verifyUrl()) {
             return
         }
-        val uri = Uri.parse(textInputLayoutUrl.editText!!.text.toString())
+        val uri = textInputLayoutUrl.text()
 
         if (isNormalLogin) {
             val valid = textInputLayoutUser.checkValid() and textInputLayoutPassword.checkValid()
@@ -241,7 +241,7 @@ class LoginActivity : BaseActivity() {
             clientBuilder.addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
         }
 
-        gitLab = GitLabFactory.createGitLab(account, clientBuilder.build())
+        gitLab = GitLabFactory.createGitLab(account, clientBuilder)
 
         gitLab!!.login(request)
                 .setup(bindToLifecycle())
@@ -269,6 +269,7 @@ class LoginActivity : BaseActivity() {
     }
 
     fun loginWithPrivateToken() {
+        val serverUri = Uri.parse(account.serverUrl)
         KeyChain.choosePrivateKeyAlias(this, { alias ->
             account.privateKeyAlias = alias
 
@@ -288,7 +289,7 @@ class LoginActivity : BaseActivity() {
                     runOnUiThread { login() }
                 }
             }
-        }, null, null, account.serverUrl.host, account.serverUrl.port, null)
+        }, null, null, serverUri.host, serverUri.port, null)
     }
 
     fun verifyUrl(): Boolean {
@@ -483,7 +484,7 @@ class LoginActivity : BaseActivity() {
     fun isAlreadySignedIn(url: String, usernameOrEmailOrPrivateToken: String): Boolean {
         val accounts = Prefs.getAccounts()
         return accounts.any {
-            it.serverUrl == Uri.parse(url) && (usernameOrEmailOrPrivateToken == it.user.username
+            it.serverUrl == url && (usernameOrEmailOrPrivateToken == it.user.username
                     || usernameOrEmailOrPrivateToken.equals(it.user.email, ignoreCase = true)
                     || usernameOrEmailOrPrivateToken.equals(it.privateToken, ignoreCase = true))
         }

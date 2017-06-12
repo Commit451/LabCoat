@@ -5,6 +5,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.design.widget.TabLayout
@@ -88,7 +89,7 @@ class ProjectActivity : BaseActivity() {
             }
             R.id.action_share -> {
                 if (project != null) {
-                    IntentUtil.share(root, project!!.webUrl)
+                    IntentUtil.share(root, Uri.parse(project!!.webUrl))
                 }
                 return@OnMenuItemClickListener true
             }

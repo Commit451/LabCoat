@@ -1,6 +1,5 @@
 package com.commit451.gitlab.model.api;
 
-import android.net.Uri;
 import android.support.annotation.StringDef;
 
 import com.bluelinelabs.logansquare.annotation.JsonField;
@@ -110,13 +109,6 @@ public class Issue {
 
     public UserBasic getAuthor() {
         return author;
-    }
-
-    public Uri getUrl(Project project) {
-        return project.getWebUrl().buildUpon()
-                .appendPath("issues")
-                .appendPath(Long.toString(getId()))
-                .build();
     }
 
     public boolean isConfidential() {

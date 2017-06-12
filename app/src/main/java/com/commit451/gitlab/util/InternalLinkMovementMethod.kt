@@ -12,7 +12,7 @@ import timber.log.Timber
 /**
  * Set this on a textview and then you can potentially open links locally if applicable
  */
-class InternalLinkMovementMethod(private val serverUrl: Uri) : LinkMovementMethod() {
+class InternalLinkMovementMethod(private val serverUrl: String) : LinkMovementMethod() {
 
     override fun onTouchEvent(widget: TextView, buffer: android.text.Spannable, event: android.view.MotionEvent): Boolean {
         val action = event.action
@@ -35,7 +35,7 @@ class InternalLinkMovementMethod(private val serverUrl: Uri) : LinkMovementMetho
             val links = buffer.getSpans(off, off, URLSpan::class.java)
             if (links.isNotEmpty()) {
                 val url = links[0].url
-                if (url.startsWith(serverUrl.toString())) {
+                if (url.startsWith(serverUrl)) {
                     Timber.d("Looks like an internal server link: %s", url)
                     Navigator.navigateToUrl(widget.context, Uri.parse(url))
                     return true

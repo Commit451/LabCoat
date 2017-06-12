@@ -33,7 +33,7 @@ public class Project {
     @JsonField(name = "http_url_to_repo")
     String httpUrlToRepo;
     @JsonField(name = "web_url")
-    Uri webUrl;
+    String webUrl;
     @JsonField(name = "owner")
     UserBasic owner;
     @JsonField(name = "name")
@@ -65,7 +65,7 @@ public class Project {
     @JsonField(name = "forked_from_project")
     ForkedFromProject forkedFromProject;
     @JsonField(name = "avatar_url")
-    Uri avatarUrl;
+    String avatarUrl;
     @JsonField(name = "star_count")
     int starCount;
     @JsonField(name = "forks_count")
@@ -111,7 +111,7 @@ public class Project {
         return httpUrlToRepo;
     }
 
-    public Uri getWebUrl() {
+    public String getWebUrl() {
         return webUrl;
     }
 
@@ -175,7 +175,7 @@ public class Project {
         return forkedFromProject;
     }
 
-    public Uri getAvatarUrl() {
+    public String getAvatarUrl() {
         return avatarUrl;
     }
 

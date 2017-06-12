@@ -24,6 +24,7 @@ import com.commit451.gitlab.adapter.IssueDetailsAdapter
 import com.commit451.gitlab.event.IssueChangedEvent
 import com.commit451.gitlab.event.IssueReloadEvent
 import com.commit451.gitlab.extension.getParcelerParcelable
+import com.commit451.gitlab.extension.getUrl
 import com.commit451.gitlab.extension.putParcelParcelableExtra
 import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.FileUploadResponse
@@ -111,7 +112,7 @@ class IssueActivity : BaseActivity() {
     val onMenuItemClickListener = Toolbar.OnMenuItemClickListener { item ->
         when (item.itemId) {
             R.id.action_share -> {
-                IntentUtil.share(root, issue!!.getUrl(project))
+                IntentUtil.share(root, issue!!.getUrl(project!!))
                 return@OnMenuItemClickListener true
             }
             R.id.action_close -> {
