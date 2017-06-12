@@ -327,7 +327,7 @@ class AddIssueActivity : MorphActivity() {
                     isConfidential))
         } else {
             observeUpdate(App.get().gitLab.updateIssue(project.id,
-                    issue!!.id,
+                    issue!!.iid,
                     title,
                     description,
                     assigneeId,

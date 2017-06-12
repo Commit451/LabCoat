@@ -107,7 +107,7 @@ class ApiTests {
     fun getCommits() {
         val defaultBranch = "master"
         val commitsResponse = gitLab!!
-                .getCommits(fakeProject!!.id, defaultBranch, 0)
+                .getCommits(fakeProject!!.id, defaultBranch, 1)
                 .blockingGet()
         assertNotNull(commitsResponse)
     }

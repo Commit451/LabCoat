@@ -141,7 +141,7 @@ class IssueDiscussionFragment : ButterKnifeFragment() {
 
     fun loadNotes() {
         swipeRefreshLayout.isRefreshing = true
-        App.get().gitLab.getMergeRequestNotes(project.id, mergeRequest.id)
+        App.get().gitLab.getMergeRequestNotes(project.id, mergeRequest.iid)
                 .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .subscribe(object : CustomResponseSingleObserver<List<Note>>() {
 
