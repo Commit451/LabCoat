@@ -47,6 +47,14 @@
             android:textSize="14sp"
             app:typeface="roboto_regular"
             tools:text="I like this project because its called a project and it has a really long description that should cut off after a few lines" />
+        <com.devspark.robototextview.widget.RobotoTextView
+            android:id="@+id/updated"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:textSize="14sp"
+            app:typeface="roboto_regular"
+            tools:text="2:00 AM 6/14/2017" />
 
     </LinearLayout>
 
