@@ -13,6 +13,8 @@ import com.commit451.gitlab.R
 import com.commit451.gitlab.extension.formatAsHtml
 import com.commit451.gitlab.model.rss.Entry
 import com.commit451.gitlab.transformation.CircleTransformation
+import com.commit451.gitlab.util.DateUtil
+import java.util.*
 
 /**
  * Represents the view of an item in the RSS feed
@@ -31,6 +33,7 @@ class FeedEntryViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     @BindView(R.id.image) lateinit var image: ImageView
     @BindView(R.id.title) lateinit var textTitle: TextView
     @BindView(R.id.description) lateinit var textSummary: TextView
+    @BindView(R.id.updated) lateinit var textUpdated: TextView
 
     init {
         ButterKnife.bind(this, view)
@@ -44,5 +47,8 @@ class FeedEntryViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
         textTitle.text = entry.title.formatAsHtml()
         textSummary.text = entry.summary.formatAsHtml()
+        val updatedRelative = DateUtil.getRelativeTimeSpanString(itemView.context, entry.updated)
+
+        textUpdated.text = updatedRelative
     }
 }
