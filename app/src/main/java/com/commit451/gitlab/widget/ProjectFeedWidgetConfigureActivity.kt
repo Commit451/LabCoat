@@ -113,6 +113,6 @@ class ProjectFeedWidgetConfigureActivity : BaseActivity() {
         finish()
 
         //Manually have to trigger on update here, it seems
-        WidgetUtil.triggerWidgetUpdate(this, UserFeedWidgetProvider::class.java, appWidgetId)
+        WidgetUtil.triggerWidgetUpdate(this, ProjectFeedWidgetProvider::class.java, appWidgetId)
     }
 }
