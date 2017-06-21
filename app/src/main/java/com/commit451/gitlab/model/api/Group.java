@@ -20,9 +20,9 @@ public class Group {
     @JsonField(name = "description")
     String description;
     @JsonField(name = "avatar_url")
-    Uri avatarUrl;
+    String avatarUrl;
     @JsonField(name = "web_url")
-    Uri webUrl;
+    String webUrl;
 
     public Group() {}
 
@@ -42,11 +42,11 @@ public class Group {
         return description;
     }
 
-    public Uri getAvatarUrl() {
+    public String getAvatarUrl() {
         return avatarUrl;
     }
 
-    public Uri getWebUrl() {
+    public String getWebUrl() {
         return webUrl;
     }
 
@@ -56,7 +56,7 @@ public class Group {
             return null;
         }
 
-        return Uri.parse(webUrl.toString() + ".atom");
+        return Uri.parse(webUrl + ".atom");
     }
 
     @Override

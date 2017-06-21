@@ -1,6 +1,5 @@
 package com.commit451.gitlab.viewHolder
 
-import android.net.Uri
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -37,7 +36,7 @@ class GroupViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     fun bind(group: Group) {
         textName.text = group.name
 
-        if (group.avatarUrl != null && group.avatarUrl != Uri.EMPTY) {
+        if (!group.avatarUrl.isNullOrEmpty()) {
             App.get().picasso
                     .load(group.avatarUrl)
                     .into(image)
