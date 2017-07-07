@@ -154,7 +154,6 @@ dependencies {
     compile "com.github.Commit451.Reptar:reptar:$reptarVersion"
     compile "com.github.Commit451.Reptar:reptar-retrofit:$reptarVersion"
     compile "com.github.Commit451.Reptar:reptar-kotlin:$reptarVersion"
-    compile 'com.github.Commit451:bypasses:1.1.0'
     compile 'com.github.Commit451:ElasticDragDismissLayout:1.0.4'
     compile "com.github.Commit451.AdapterLayout:adapterlayout:$adapterLayout"
     compile ("com.github.Commit451.AdapterLayout:adapterflowlayout:$adapterLayout") {
@@ -167,7 +166,6 @@ dependencies {
     compile 'com.github.Commit451.Easel:easel:2.1.1'
     compile 'com.github.Commit451:Gimbal:2.0.2'
     compile 'com.github.Commit451:Teleprinter:1.0.2'
-    compile 'com.github.Commit451:BypassPicassoImageGetter:1.1.1'
     compile 'com.github.Commit451:Jounce:1.0.2'
     compile 'com.github.Commit451:ForegroundViews:2.4.0'
     compile 'com.github.Commit451:MorphTransitions:2.0.0'
@@ -206,6 +204,8 @@ dependencies {
     }
 
     compile 'com.github.jkwiecien:EasyImage:2.0.2'
+
+    compile 'com.atlassian.commonmark:commonmark:0.9.0'
 
     compile('com.github.ozodrukh:CircularReveal:2.0.1@aar') {
         transitive = true;
