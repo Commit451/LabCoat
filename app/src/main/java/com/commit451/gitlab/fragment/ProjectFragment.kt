@@ -26,7 +26,8 @@ import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.util.BypassFactory
 import com.commit451.gitlab.util.BypassImageGetterFactory
 import com.commit451.gitlab.util.InternalLinkMovementMethod
-import com.commit451.reptar.Result
+import com.commit451.reptar.Optional
+
 import com.trello.rxlifecycle2.android.FragmentEvent
 import com.vdurmont.emoji.EmojiParser
 import io.reactivex.Single
@@ -176,24 +177,24 @@ class ProjectFragment : ButterKnifeFragment() {
 
         val result = ReadmeResult()
         App.get().gitLab.getTree(project!!.id, branchName!!, null)
-                .flatMap(Function<List<RepositoryTreeObject>, SingleSource<Result<RepositoryTreeObject>>> { repositoryTreeObjects ->
+                .flatMap(Function<List<RepositoryTreeObject>, SingleSource<Optional<RepositoryTreeObject>>> { repositoryTreeObjects ->
                     for (treeItem in repositoryTreeObjects) {
                         if (getReadmeType(treeItem.name) != README_TYPE_UNKNOWN) {
-                            return@Function Single.just(Result(treeItem))
+                            return@Function Single.just(Optional(treeItem))
                         }
                     }
-                    Single.just(Result.empty<RepositoryTreeObject>())
+                    Single.just(Optional.empty())
                 })
-                .flatMap(Function<Result<RepositoryTreeObject>, SingleSource<Result<RepositoryFile>>> { repositoryTreeObjectResult ->
+                .flatMap(Function<Optional<RepositoryTreeObject>, SingleSource<Optional<RepositoryFile>>> { repositoryTreeObjectResult ->
                     if (repositoryTreeObjectResult.isPresent) {
                         val repositoryFile = App.get().gitLab.getFile(project!!.id, repositoryTreeObjectResult.get().name, branchName!!)
                                 .blockingGet()
                         result.repositoryFile = repositoryFile
-                        return@Function Single.just(Result(repositoryFile))
+                        return@Function Single.just(Optional(repositoryFile))
                     }
-                    Single.just(Result.empty<RepositoryFile>())
+                    Single.just(Optional.empty<RepositoryFile>())
                 })
-                .flatMap(Function<Result<RepositoryFile>, SingleSource<ReadmeResult>> { repositoryFileResult ->
+                .flatMap(Function<Optional<RepositoryFile>, SingleSource<ReadmeResult>> { repositoryFileResult ->
                     if (repositoryFileResult.isPresent) {
                         result.bytes = repositoryFileResult.get().content.base64Decode()
                                 .blockingGet()
@@ -283,7 +284,7 @@ class ProjectFragment : ButterKnifeFragment() {
     }
 
     class ReadmeResult {
-        internal var bytes: ByteArray? = null
-        internal var repositoryFile: RepositoryFile? = null
+        var bytes: ByteArray? = null
+        var repositoryFile: RepositoryFile? = null
     }
 }
