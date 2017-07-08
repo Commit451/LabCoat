@@ -18,14 +18,14 @@ import android.widget.Toast
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
+import com.commit451.addendum.parceler.getParcelerParcelableExtra
+import com.commit451.addendum.parceler.putParcelerParcelableExtra
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.IssueDetailsAdapter
 import com.commit451.gitlab.event.IssueChangedEvent
 import com.commit451.gitlab.event.IssueReloadEvent
-import com.commit451.gitlab.extension.getParcelerParcelable
 import com.commit451.gitlab.extension.getUrl
-import com.commit451.gitlab.extension.putParcelParcelableExtra
 import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.FileUploadResponse
 import com.commit451.gitlab.model.api.Issue
@@ -62,8 +62,8 @@ class IssueActivity : BaseActivity() {
 
         fun newIntent(context: Context, project: Project, issue: Issue): Intent {
             val intent = Intent(context, IssueActivity::class.java)
-            intent.putParcelParcelableExtra(EXTRA_PROJECT, project)
-            intent.putParcelParcelableExtra(EXTRA_SELECTED_ISSUE, issue)
+            intent.putParcelerParcelableExtra(EXTRA_PROJECT, project)
+            intent.putParcelerParcelableExtra(EXTRA_SELECTED_ISSUE, issue)
             return intent
         }
 
@@ -180,8 +180,8 @@ class IssueActivity : BaseActivity() {
         swipeRefreshLayout.setOnRefreshListener { loadNotes() }
 
         if (intent.hasExtra(EXTRA_SELECTED_ISSUE)) {
-            project = intent.getParcelerParcelable<Project>(EXTRA_PROJECT)
-            issue = intent.getParcelerParcelable<Issue>(EXTRA_SELECTED_ISSUE)
+            project = intent.getParcelerParcelableExtra<Project>(EXTRA_PROJECT)
+            issue = intent.getParcelerParcelableExtra<Issue>(EXTRA_SELECTED_ISSUE)
             adapterIssueDetails = IssueDetailsAdapter(this@IssueActivity, issue, project!!)
             listNotes.adapter = adapterIssueDetails
             bindIssue()
@@ -232,7 +232,7 @@ class IssueActivity : BaseActivity() {
         when (requestCode) {
             REQUEST_ATTACH ->
                 if (resultCode == Activity.RESULT_OK) {
-                    val response = data?.getParcelerParcelable<FileUploadResponse>(AttachActivity.KEY_FILE_UPLOAD_RESPONSE)!!
+                    val response = data?.getParcelerParcelableExtra<FileUploadResponse>(AttachActivity.KEY_FILE_UPLOAD_RESPONSE)!!
                     progress.visibility = View.GONE
                     sendMessageView.appendText(response.markdown)
                 } else {

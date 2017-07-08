@@ -9,13 +9,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import butterknife.BindView
+import com.commit451.addendum.parceler.getParcelerParcelable
+import com.commit451.addendum.parceler.putParcelerParcelable
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.CommitAdapter
 import com.commit451.gitlab.adapter.DividerItemDecoration
 import com.commit451.gitlab.event.MergeRequestChangedEvent
-import com.commit451.gitlab.extension.getParcelerParcelable
-import com.commit451.gitlab.extension.putParcelParcelableExtra
 import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.MergeRequest
 import com.commit451.gitlab.model.api.Project
@@ -39,8 +39,8 @@ class MergeRequestCommitsFragment : ButterKnifeFragment() {
         fun newInstance(project: Project, mergeRequest: MergeRequest): MergeRequestCommitsFragment {
             val fragment = MergeRequestCommitsFragment()
             val args = Bundle()
-            args.putParcelParcelableExtra(KEY_PROJECT, project)
-            args.putParcelParcelableExtra(KEY_MERGE_REQUEST, mergeRequest)
+            args.putParcelerParcelable(KEY_PROJECT, project)
+            args.putParcelerParcelable(KEY_MERGE_REQUEST, mergeRequest)
             fragment.arguments = args
             return fragment
         }

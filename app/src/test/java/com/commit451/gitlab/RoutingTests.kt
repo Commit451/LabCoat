@@ -2,7 +2,8 @@ package com.commit451.gitlab
 
 import android.net.Uri
 import com.commit451.gitlab.navigation.RoutingRouter
-import junit.framework.Assert
+import org.junit.Assert
+
 import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith

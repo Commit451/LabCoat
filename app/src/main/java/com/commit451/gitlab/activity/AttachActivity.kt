@@ -1,7 +1,6 @@
 package com.commit451.gitlab.activity
 
 
-import android.animation.TimeInterpolator
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -12,10 +11,10 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
+import com.commit451.addendum.parceler.getParcelerParcelableExtra
+import com.commit451.addendum.parceler.putParcelerParcelableExtra
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
-import com.commit451.gitlab.extension.getParcelerParcelable
-import com.commit451.gitlab.extension.putParcelParcelableExtra
 import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.extension.toPart
 import com.commit451.gitlab.model.api.FileUploadResponse
@@ -40,7 +39,7 @@ class AttachActivity : BaseActivity() {
 
         fun newIntent(context: Context, project: Project): Intent {
             val intent = Intent(context, AttachActivity::class.java)
-            intent.putParcelParcelableExtra(KEY_PROJECT, project)
+            intent.putParcelerParcelableExtra(KEY_PROJECT, project)
             return intent
         }
     }
@@ -85,11 +84,11 @@ class AttachActivity : BaseActivity() {
             val animator = ViewAnimationUtils
                     .createCircularReveal(card, 0, card.height, 0f, finalRadius)
             animator.duration = 500
-            animator.interpolator = AccelerateDecelerateInterpolator() as TimeInterpolator?
+            animator.interpolator = AccelerateDecelerateInterpolator()
             animator.start()
         }
 
-        project = intent.getParcelerParcelable<Project>(KEY_PROJECT)
+        project = intent.getParcelerParcelableExtra<Project>(KEY_PROJECT)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -128,7 +127,7 @@ class AttachActivity : BaseActivity() {
 
                     override fun success(fileUploadResponse: FileUploadResponse) {
                         val data = Intent()
-                        data.putParcelParcelableExtra(KEY_FILE_UPLOAD_RESPONSE, fileUploadResponse)
+                        data.putParcelerParcelableExtra(KEY_FILE_UPLOAD_RESPONSE, fileUploadResponse)
                         setResult(Activity.RESULT_OK, data)
                         finish()
                     }

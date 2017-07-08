@@ -18,6 +18,8 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import com.commit451.adapterflowlayout.AdapterFlowLayout
+import com.commit451.addendum.parceler.getParcelerParcelableExtra
+import com.commit451.addendum.parceler.putParcelerParcelableExtra
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.AddIssueLabelAdapter
@@ -26,8 +28,6 @@ import com.commit451.gitlab.adapter.MilestoneSpinnerAdapter
 import com.commit451.gitlab.event.IssueChangedEvent
 import com.commit451.gitlab.event.IssueCreatedEvent
 import com.commit451.gitlab.extension.checkValid
-import com.commit451.gitlab.extension.getParcelerParcelable
-import com.commit451.gitlab.extension.putParcelParcelableExtra
 import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.*
 import com.commit451.gitlab.navigation.Navigator
@@ -54,9 +54,9 @@ class AddIssueActivity : MorphActivity() {
 
         fun newIntent(context: Context, project: Project, issue: Issue?): Intent {
             val intent = Intent(context, AddIssueActivity::class.java)
-            intent.putParcelParcelableExtra(KEY_PROJECT, project)
+            intent.putParcelerParcelableExtra(KEY_PROJECT, project)
             if (issue != null) {
-                intent.putParcelParcelableExtra(KEY_ISSUE, issue)
+                intent.putParcelerParcelableExtra(KEY_ISSUE, issue)
             }
             return intent
         }
@@ -96,8 +96,8 @@ class AddIssueActivity : MorphActivity() {
         morph(root)
         teleprinter = Teleprinter(this)
 
-        project = intent.getParcelerParcelable<Project>(KEY_PROJECT)!!
-        issue = intent.getParcelerParcelable<Issue>(KEY_ISSUE)
+        project = intent.getParcelerParcelableExtra<Project>(KEY_PROJECT)!!
+        issue = intent.getParcelerParcelableExtra<Issue>(KEY_ISSUE)
         members = HashSet<Member>()
         adapterLabels = AddIssueLabelAdapter(object : AddIssueLabelAdapter.Listener {
             override fun onLabelClicked(label: Label) {
@@ -257,7 +257,7 @@ class AddIssueActivity : MorphActivity() {
         when (requestCode) {
             REQUEST_LABEL ->
                 if (resultCode == Activity.RESULT_OK) {
-                    val label = data?.getParcelerParcelable<Label>(AddLabelActivity.KEY_LABEL)!!
+                    val label = data?.getParcelerParcelableExtra<Label>(AddLabelActivity.KEY_LABEL)!!
                     if (adapterLabels.containsLabel(label)) {
                         Snackbar.make(root, R.string.label_already_added, Snackbar.LENGTH_SHORT)
                                 .show()

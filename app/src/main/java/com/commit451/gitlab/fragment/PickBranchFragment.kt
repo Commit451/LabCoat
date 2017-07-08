@@ -10,12 +10,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import butterknife.BindView
+import com.commit451.addendum.parceler.getParcelerParcelable
+import com.commit451.addendum.parceler.putParcelerParcelable
+import com.commit451.addendum.parceler.putParcelerParcelableExtra
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.PickBranchOrTagActivity
 import com.commit451.gitlab.adapter.BranchAdapter
-import com.commit451.gitlab.extension.getParcelerParcelable
-import com.commit451.gitlab.extension.putParcelParcelableExtra
 import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.Ref
 import com.commit451.gitlab.model.api.Branch
@@ -37,7 +38,7 @@ class PickBranchFragment : ButterKnifeFragment() {
             val fragment = PickBranchFragment()
             val args = Bundle()
             args.putLong(EXTRA_PROJECT_ID, projectId)
-            args.putParcelParcelableExtra(EXTRA_REF, ref)
+            args.putParcelerParcelable(EXTRA_REF, ref)
             fragment.arguments = args
             return fragment
         }
@@ -68,7 +69,7 @@ class PickBranchFragment : ButterKnifeFragment() {
             override fun onBranchClicked(entry: Branch) {
                 val data = Intent()
                 val ref = Ref(Ref.TYPE_BRANCH, entry.name)
-                data.putParcelParcelableExtra(PickBranchOrTagActivity.EXTRA_REF, ref)
+                data.putParcelerParcelableExtra(PickBranchOrTagActivity.EXTRA_REF, ref)
                 activity.setResult(Activity.RESULT_OK, data)
                 activity.finish()
             }

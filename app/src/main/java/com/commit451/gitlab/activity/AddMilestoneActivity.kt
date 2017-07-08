@@ -13,14 +13,14 @@ import android.widget.FrameLayout
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
+import com.commit451.addendum.parceler.getParcelerParcelableExtra
+import com.commit451.addendum.parceler.putParcelerParcelableExtra
 import com.commit451.easel.Easel
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.event.MilestoneChangedEvent
 import com.commit451.gitlab.event.MilestoneCreatedEvent
 import com.commit451.gitlab.extension.checkValid
-import com.commit451.gitlab.extension.getParcelerParcelable
-import com.commit451.gitlab.extension.putParcelParcelableExtra
 import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.Milestone
 import com.commit451.gitlab.rx.CustomSingleObserver
@@ -41,7 +41,7 @@ class AddMilestoneActivity : MorphActivity() {
             val intent = Intent(context, AddMilestoneActivity::class.java)
             intent.putExtra(KEY_PROJECT_ID, projectId)
             if (milestone != null) {
-                intent.putParcelParcelableExtra(KEY_MILESTONE, milestone)
+                intent.putParcelerParcelableExtra(KEY_MILESTONE, milestone)
             }
             return intent
         }
@@ -93,7 +93,7 @@ class AddMilestoneActivity : MorphActivity() {
         morph(root)
         teleprinter = Teleprinter(this)
         projectId = intent.getLongExtra(KEY_PROJECT_ID, -1)
-        milestone = intent.getParcelerParcelable<Milestone>(KEY_MILESTONE)
+        milestone = intent.getParcelerParcelableExtra<Milestone>(KEY_MILESTONE)
         if (milestone != null) {
             bind(milestone!!)
             toolbar.inflateMenu(R.menu.edit)

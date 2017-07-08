@@ -16,13 +16,13 @@ import android.view.View
 import android.view.ViewGroup
 import butterknife.BindView
 import butterknife.ButterKnife
+import com.commit451.addendum.parceler.getParcelerParcelableExtra
+import com.commit451.addendum.parceler.putParcelerParcelableExtra
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.BuildSectionsPagerAdapter
 import com.commit451.gitlab.event.BuildChangedEvent
 import com.commit451.gitlab.extension.getDownloadBuildUrl
-import com.commit451.gitlab.extension.getParcelerParcelable
-import com.commit451.gitlab.extension.putParcelParcelableExtra
 import com.commit451.gitlab.model.api.Build
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.rx.CustomSingleObserver
@@ -45,8 +45,8 @@ class BuildActivity : BaseActivity() {
 
         fun newIntent(context: Context, project: Project, build: Build): Intent {
             val intent = Intent(context, BuildActivity::class.java)
-            intent.putParcelParcelableExtra(KEY_PROJECT, project)
-            intent.putParcelParcelableExtra(KEY_BUILD, build)
+            intent.putParcelerParcelableExtra(KEY_PROJECT, project)
+            intent.putParcelerParcelableExtra(KEY_BUILD, build)
             return intent
         }
     }
@@ -149,8 +149,8 @@ class BuildActivity : BaseActivity() {
         setContentView(R.layout.activity_build)
         ButterKnife.bind(this)
 
-        project = intent.getParcelerParcelable<Project>(KEY_PROJECT)!!
-        build = intent.getParcelerParcelable<Build>(KEY_BUILD)!!
+        project = intent.getParcelerParcelableExtra<Project>(KEY_PROJECT)!!
+        build = intent.getParcelerParcelableExtra<Build>(KEY_BUILD)!!
 
         toolbar.title = String.format(getString(R.string.build_number), build.id)
         toolbar.setNavigationIcon(R.drawable.ic_back_24dp)

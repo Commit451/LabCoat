@@ -7,19 +7,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import butterknife.BindView
+import com.commit451.addendum.parceler.getParcelerParcelable
+import com.commit451.addendum.parceler.putParcelerParcelable
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.event.BuildChangedEvent
-import com.commit451.gitlab.extension.getParcelerParcelable
 import com.commit451.gitlab.extension.getRawBuildUrl
-import com.commit451.gitlab.extension.putParcelParcelableExtra
 import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.Build
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.trello.rxlifecycle2.android.FragmentEvent
 import org.greenrobot.eventbus.Subscribe
-import org.parceler.Parcels
 import timber.log.Timber
 
 /**
@@ -35,8 +34,8 @@ class BuildLogFragment : ButterKnifeFragment() {
         fun newInstance(project: Project, build: Build): BuildLogFragment {
             val fragment = BuildLogFragment()
             val args = Bundle()
-            args.putParcelParcelableExtra(KEY_PROJECT, project)
-            args.putParcelParcelableExtra(KEY_BUILD, build)
+            args.putParcelerParcelable(KEY_PROJECT, project)
+            args.putParcelerParcelable(KEY_BUILD, build)
             fragment.arguments = args
             return fragment
         }

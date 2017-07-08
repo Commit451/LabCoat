@@ -16,13 +16,13 @@ import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
+import com.commit451.addendum.parceler.getParcelerParcelableExtra
+import com.commit451.addendum.parceler.putParcelerParcelableExtra
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.DividerItemDecoration
 import com.commit451.gitlab.adapter.MilestoneIssueAdapter
 import com.commit451.gitlab.event.MilestoneChangedEvent
-import com.commit451.gitlab.extension.getParcelerParcelable
-import com.commit451.gitlab.extension.putParcelParcelableExtra
 import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.Issue
 import com.commit451.gitlab.model.api.Milestone
@@ -44,8 +44,8 @@ class MilestoneActivity : BaseActivity() {
 
         fun newIntent(context: Context, project: Project, milestone: Milestone): Intent {
             val intent = Intent(context, MilestoneActivity::class.java)
-            intent.putParcelParcelableExtra(EXTRA_PROJECT, project)
-            intent.putParcelParcelableExtra(EXTRA_MILESTONE, milestone)
+            intent.putParcelerParcelableExtra(EXTRA_PROJECT, project)
+            intent.putParcelerParcelableExtra(EXTRA_MILESTONE, milestone)
             return intent
         }
     }
@@ -94,8 +94,8 @@ class MilestoneActivity : BaseActivity() {
         ButterKnife.bind(this)
         App.bus().register(this)
 
-        project = intent.getParcelerParcelable<Project>(EXTRA_PROJECT)!!
-        milestone = intent.getParcelerParcelable<Milestone>(EXTRA_MILESTONE)!!
+        project = intent.getParcelerParcelableExtra<Project>(EXTRA_PROJECT)!!
+        milestone = intent.getParcelerParcelableExtra<Milestone>(EXTRA_MILESTONE)!!
 
         toolbar.setNavigationIcon(R.drawable.ic_back_24dp)
         toolbar.setNavigationOnClickListener { onBackPressed() }

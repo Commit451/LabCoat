@@ -13,14 +13,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import butterknife.*
+import com.commit451.addendum.parceler.getParcelerParcelableExtra
+import com.commit451.addendum.parceler.putParcelerParcelableExtra
 import com.commit451.alakazam.HideRunnable
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.UserAdapter
 import com.commit451.gitlab.dialog.AccessDialog
 import com.commit451.gitlab.event.MemberAddedEvent
-import com.commit451.gitlab.extension.getParcelerParcelable
-import com.commit451.gitlab.extension.putParcelParcelableExtra
 import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.Group
 import com.commit451.gitlab.model.api.Member
@@ -52,7 +52,7 @@ class AddUserActivity : MorphActivity() {
 
         fun newIntent(context: Context, group: Group): Intent {
             val intent = Intent(context, AddUserActivity::class.java)
-            intent.putParcelParcelableExtra(KEY_GROUP, group)
+            intent.putParcelerParcelableExtra(KEY_GROUP, group)
             return intent
         }
     }
@@ -112,7 +112,7 @@ class AddUserActivity : MorphActivity() {
         ButterKnife.bind(this)
         teleprinter = Teleprinter(this)
         projectId = intent.getLongExtra(KEY_PROJECT_ID, -1)
-        group = intent.getParcelerParcelable<Group>(KEY_GROUP)
+        group = intent.getParcelerParcelableExtra<Group>(KEY_GROUP)
         dialogAccess = AccessDialog(this, object : AccessDialog.Listener {
             override fun onAccessApplied(accessLevel: Int) {
                 dialogAccess.showLoading()

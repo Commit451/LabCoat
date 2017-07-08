@@ -1,7 +1,6 @@
 package com.commit451.gitlab.fragment
 
 import android.os.Bundle
-import android.os.Parcelable
 import android.support.design.widget.Snackbar
 import android.support.v4.widget.SwipeRefreshLayout
 import android.view.LayoutInflater
@@ -9,18 +8,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import butterknife.BindView
+import com.commit451.addendum.parceler.getParcelerParcelable
+import com.commit451.addendum.parceler.putParcelerParcelable
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.event.PipelineChangedEvent
-import com.commit451.gitlab.extension.getParcelerParcelable
-import com.commit451.gitlab.extension.putParcelParcelableExtra
 import com.commit451.gitlab.extension.setup
-import com.commit451.gitlab.model.api.*
+import com.commit451.gitlab.model.api.CommitUser
+import com.commit451.gitlab.model.api.Pipeline
+import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.util.DateUtil
 import com.trello.rxlifecycle2.android.FragmentEvent
 import org.greenrobot.eventbus.Subscribe
-import org.parceler.Parcels
 import timber.log.Timber
 import java.util.*
 
@@ -36,8 +36,8 @@ class PipelineDescriptionFragment : ButterKnifeFragment() {
         fun newInstance(project: Project, pipeline: Pipeline): PipelineDescriptionFragment {
             val fragment = PipelineDescriptionFragment()
             val args = Bundle()
-            args.putParcelParcelableExtra(KEY_PROJECT, project)
-            args.putParcelParcelableExtra(KEY_PIPELINE, pipeline)
+            args.putParcelerParcelable(KEY_PROJECT, project)
+            args.putParcelerParcelable(KEY_PIPELINE, pipeline)
             fragment.arguments = args
             return fragment
         }

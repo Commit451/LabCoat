@@ -11,13 +11,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import butterknife.BindView
+import com.commit451.addendum.parceler.getParcelerParcelable
+import com.commit451.addendum.parceler.putParcelerParcelable
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.DividerItemDecoration
 import com.commit451.gitlab.adapter.ProjectAdapter
 import com.commit451.gitlab.api.GitLabService
-import com.commit451.gitlab.extension.getParcelerParcelable
-import com.commit451.gitlab.extension.putParcelParcelableExtra
 import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.Group
 import com.commit451.gitlab.model.api.Project
@@ -64,7 +64,7 @@ class ProjectsFragment : ButterKnifeFragment() {
         fun newInstance(group: Group): ProjectsFragment {
             val args = Bundle()
             args.putInt(EXTRA_MODE, MODE_GROUP)
-            args.putParcelParcelableExtra(EXTRA_GROUP, group)
+            args.putParcelerParcelable(EXTRA_GROUP, group)
             val fragment = ProjectsFragment()
             fragment.arguments = args
             return fragment

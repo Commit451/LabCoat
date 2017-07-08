@@ -12,13 +12,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import butterknife.BindView
+import com.commit451.addendum.parceler.getParcelerParcelable
+import com.commit451.addendum.parceler.getParcelerParcelableExtra
+import com.commit451.addendum.parceler.putParcelerParcelable
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.AttachActivity
 import com.commit451.gitlab.adapter.MergeRequestDetailAdapter
 import com.commit451.gitlab.event.MergeRequestChangedEvent
-import com.commit451.gitlab.extension.getParcelerParcelable
-import com.commit451.gitlab.extension.putParcelParcelableExtra
 import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.*
 import com.commit451.gitlab.navigation.TransitionFactory
@@ -46,8 +47,8 @@ class IssueDiscussionFragment : ButterKnifeFragment() {
         fun newInstance(project: Project, issue: Issue): IssueDiscussionFragment{
             val fragment = IssueDiscussionFragment()
             val args = Bundle()
-            args.putParcelParcelableExtra(KEY_PROJECT, project)
-            args.putParcelParcelableExtra(KEY_MERGE_REQUEST, issue)
+            args.putParcelerParcelable(KEY_PROJECT, project)
+            args.putParcelerParcelable(KEY_MERGE_REQUEST, issue)
             fragment.arguments = args
             return fragment
         }
@@ -123,7 +124,7 @@ class IssueDiscussionFragment : ButterKnifeFragment() {
         when (requestCode) {
             REQUEST_ATTACH ->  {
                 if (resultCode == RESULT_OK) {
-                    val response = data!!.getParcelerParcelable<FileUploadResponse>(AttachActivity.KEY_FILE_UPLOAD_RESPONSE)!!
+                    val response = data!!.getParcelerParcelableExtra<FileUploadResponse>(AttachActivity.KEY_FILE_UPLOAD_RESPONSE)!!
                     progress.visibility = View.GONE
                     sendMessageView.appendText(response.markdown)
                 } else {

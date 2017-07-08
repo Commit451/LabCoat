@@ -13,13 +13,13 @@ import android.widget.TextView
 import butterknife.BindView
 import butterknife.OnClick
 import com.alexgwyn.recyclerviewsquire.DynamicGridLayoutManager
+import com.commit451.addendum.parceler.getParcelerParcelable
+import com.commit451.addendum.parceler.putParcelerParcelable
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.GroupMembersAdapter
 import com.commit451.gitlab.dialog.AccessDialog
 import com.commit451.gitlab.event.MemberAddedEvent
-import com.commit451.gitlab.extension.getParcelerParcelable
-import com.commit451.gitlab.extension.putParcelParcelableExtra
 import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.Group
 import com.commit451.gitlab.model.api.Member
@@ -42,7 +42,7 @@ class GroupMembersFragment : ButterKnifeFragment() {
 
         fun newInstance(group: Group): GroupMembersFragment {
             val args = Bundle()
-            args.putParcelParcelableExtra(KEY_GROUP, group)
+            args.putParcelerParcelable(KEY_GROUP, group)
 
             val fragment = GroupMembersFragment()
             fragment.arguments = args

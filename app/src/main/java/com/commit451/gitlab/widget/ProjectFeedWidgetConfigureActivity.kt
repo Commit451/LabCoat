@@ -11,10 +11,10 @@ import android.view.View
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
+import com.commit451.addendum.parceler.getParcelerParcelableExtra
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.BaseActivity
 import com.commit451.gitlab.data.Prefs
-import com.commit451.gitlab.extension.getParcelerParcelable
 import com.commit451.gitlab.model.Account
 import com.commit451.gitlab.model.api.Project
 import timber.log.Timber
@@ -78,7 +78,7 @@ class ProjectFeedWidgetConfigureActivity : BaseActivity() {
         when (requestCode) {
             REQUEST_PROJECT -> {
                 if (resultCode == Activity.RESULT_OK) {
-                    val project = data?.getParcelerParcelable<Project>(ProjectFeedWidgetConfigureProjectActivity.EXTRA_PROJECT)!!
+                    val project = data?.getParcelerParcelableExtra<Project>(ProjectFeedWidgetConfigureProjectActivity.EXTRA_PROJECT)!!
                     saveWidgetConfig(account!!, project)
                 }
             }
