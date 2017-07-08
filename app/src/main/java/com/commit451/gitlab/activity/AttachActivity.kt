@@ -4,8 +4,10 @@ package com.commit451.gitlab.activity
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.view.ViewAnimationUtils
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import butterknife.BindView
@@ -13,6 +15,7 @@ import butterknife.ButterKnife
 import butterknife.OnClick
 import com.commit451.addendum.parceler.getParcelerParcelableExtra
 import com.commit451.addendum.parceler.putParcelerParcelableExtra
+import com.commit451.alakazam.kotlin.fadeIn
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.extension.setup
@@ -20,7 +23,6 @@ import com.commit451.gitlab.extension.toPart
 import com.commit451.gitlab.model.api.FileUploadResponse
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.rx.CustomSingleObserver
-import io.codetail.animation.ViewAnimationUtils
 import pl.aprilapps.easyphotopicker.DefaultCallback
 import pl.aprilapps.easyphotopicker.EasyImage
 import timber.log.Timber
@@ -75,18 +77,7 @@ class AttachActivity : BaseActivity() {
         setContentView(R.layout.activity_attach)
         ButterKnife.bind(this)
 
-        //Run the runnable after the view has been measured
-        card.post {
-            //we need the radius of the animation circle, which is the diagonal of the view
-            val finalRadius = Math.hypot(card.width.toDouble(), card.height.toDouble()).toFloat()
-
-            //it's using a 3rd-party ViewAnimationUtils class for compat reasons (up to API 14)
-            val animator = ViewAnimationUtils
-                    .createCircularReveal(card, 0, card.height, 0f, finalRadius)
-            animator.duration = 500
-            animator.interpolator = AccelerateDecelerateInterpolator()
-            animator.start()
-        }
+        reveal()
 
         project = intent.getParcelerParcelableExtra<Project>(KEY_PROJECT)
     }
@@ -115,6 +106,25 @@ class AttachActivity : BaseActivity() {
     override fun finish() {
         super.finish()
         overridePendingTransition(R.anim.do_nothing, R.anim.fade_out)
+    }
+
+    fun reveal() {
+        if (Build.VERSION.SDK_INT >= 21) {
+            //Run the runnable after the view has been measured
+            card.post {
+                //we need the radius of the animation circle, which is the diagonal of the view
+                val finalRadius = Math.hypot(card.width.toDouble(), card.height.toDouble()).toFloat()
+
+                //it's using a 3rd-party ViewAnimationUtils class for compat reasons (up to API 14)
+                val animator = ViewAnimationUtils
+                        .createCircularReveal(card, 0, card.height, 0f, finalRadius)
+                animator.duration = 500
+                animator.interpolator = AccelerateDecelerateInterpolator()
+                animator.start()
+            }
+        } else {
+            card.fadeIn()
+        }
     }
 
     fun onPhotoReturned(photo: File) {

@@ -100,6 +100,7 @@ ext {
     materialDialogsVersion = '0.9.4.5'
     leakCanaryVersion = '1.5'
     addendumVersion = '1.2.1'
+    alakazamVersion = '1.0.1'
 }
 
 dependencies {
@@ -169,7 +170,8 @@ dependencies {
     compile 'com.github.Commit451:Jounce:1.0.2'
     compile 'com.github.Commit451:ForegroundViews:2.4.0'
     compile 'com.github.Commit451:MorphTransitions:2.0.0'
-    compile 'com.github.Commit451.Alakazam:alakazam:1.0.1'
+    compile "com.github.Commit451.Alakazam:alakazam:$alakazamVersion"
+    compile "com.github.Commit451.Alakazam:alakazam-kotlin:$alakazamVersion"
     compile 'com.github.Commit451:Lift:1.2.0'
     compile 'com.github.Commit451:okyo:2.0.0'
     compile 'com.github.Commit451:OkioProGuardRules:1.11.0.0'
@@ -209,10 +211,6 @@ dependencies {
     compile 'com.github.jkwiecien:EasyImage:2.0.2'
 
     compile 'com.atlassian.commonmark:commonmark:0.9.0'
-
-    compile('com.github.ozodrukh:CircularReveal:2.0.1@aar') {
-        transitive = true;
-    }
 
     normalCompile('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
         transitive = true;

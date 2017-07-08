@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--We need to use RevealFrameLayout (FrameLayout) to be able to use the circular animation-->
-<io.codetail.widget.RevealFrameLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root"
@@ -57,4 +56,4 @@
 
     </android.support.v7.widget.CardView>
 
-</io.codetail.widget.RevealFrameLayout>
+</FrameLayout>
