@@ -138,6 +138,7 @@ dependencies {
     compile "com.jakewharton:butterknife:$butterknifeVersion"
     kapt "com.jakewharton:butterknife-compiler:$butterknifeVersion"
     compile 'com.jakewharton.timber:timber:4.5.1'
+    compile 'com.jakewharton.threetenabp:threetenabp:1.0.5'
 
     compile 'org.greenrobot:eventbus:3.0.0'
 
@@ -145,8 +146,6 @@ dependencies {
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
 
     compile 'com.trello.rxlifecycle2:rxlifecycle-components:2.1.0'
-
-    compile 'net.danlew:android.joda:2.9.9'
 
     compile "org.parceler:parceler-api:$parcelerVersion"
     kapt "org.parceler:parceler:$parcelerVersion"

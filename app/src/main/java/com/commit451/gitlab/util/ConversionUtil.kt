@@ -2,26 +2,11 @@ package com.commit451.gitlab.util
 
 import android.net.Uri
 import com.commit451.gitlab.model.Account
-import org.joda.time.DateTime
-import org.joda.time.format.ISODateTimeFormat
-import java.util.*
 
 /**
  * Converts things!
  */
 object ConversionUtil {
-
-    fun fromDate(date: Date): String {
-        return ISODateTimeFormat.dateTime().print(DateTime(date))
-    }
-
-    fun toDate(dateString: String?): Date? {
-        if (dateString == null || dateString.isEmpty()) {
-            return null
-        }
-
-        return ISODateTimeFormat.dateTimeParser().parseDateTime(dateString).toDate()
-    }
 
     fun fromUri(uri: Uri?): String? {
         if (uri == null) {

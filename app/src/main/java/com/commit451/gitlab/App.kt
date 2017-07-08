@@ -13,11 +13,11 @@ import com.commit451.gitlab.data.Prefs
 import com.commit451.gitlab.model.Account
 import com.commit451.gitlab.util.FabricUtil
 import com.commit451.lift.Lift
+import com.jakewharton.threetenabp.AndroidThreeTen
 import com.novoda.simplechromecustomtabs.SimpleChromeCustomTabs
 import com.squareup.leakcanary.LeakCanary
 import com.squareup.picasso.Picasso
 import io.reactivex.plugins.RxJavaPlugins
-import net.danlew.android.joda.JodaTimeAndroid
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.greenrobot.eventbus.EventBus
@@ -61,6 +61,8 @@ open class App : Application() {
             Timber.e(error)
         }
 
+        AndroidThreeTen.init(this)
+
         Prefs.init(this)
         //So that we don't get weird half translations
         forceLocale(Locale.ENGLISH)
@@ -70,7 +72,6 @@ open class App : Application() {
             Timber.plant(Timber.DebugTree())
         }
 
-        JodaTimeAndroid.init(this)
         SimpleChromeCustomTabs.initialize(this)
 
         val accounts = Account.getAccounts()
