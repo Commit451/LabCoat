@@ -6,6 +6,7 @@ before_script:
 stages:
   - build
   - test
+  - deploy
 
 build:
   stage: build
@@ -16,3 +17,25 @@ test:
   stage: test
   script:
     - ./gradlew testFdroidDebug
+  artifacts:
+    when: always
+    paths:
+      - app/build/reports/tests/testFdroidDebugUnitTest
+    expire_in: 15 days
+
+pages:
+  stage: deploy
+  dependencies:
+    - test
+  allow_failure: true
+  before_script:
+  - echo "Overide global before_script and don't do anything."
+  script:
+    - mkdir -p public/tests
+    - cp -r app/build/reports/tests/testFdroidDebugUnitTest/ public/tests
+  artifacts:
+    paths:
+      - public
+  when: always
+  only:
+    - develop
