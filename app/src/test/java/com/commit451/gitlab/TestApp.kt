@@ -32,4 +32,8 @@ class TestApp : App(), TestLifecycleApplication {
     override fun setupMultidex() {
         //Intentionally left blank
     }
+
+    override fun setupThreeTen() {
+        //Intentionally left blank
+    }
 }

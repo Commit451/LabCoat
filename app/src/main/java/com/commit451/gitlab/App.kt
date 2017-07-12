@@ -61,7 +61,7 @@ open class App : Application() {
             Timber.e(error)
         }
 
-        AndroidThreeTen.init(this)
+        setupThreeTen()
 
         Prefs.init(this)
         //So that we don't get weird half translations
@@ -122,6 +122,11 @@ open class App : Application() {
     @VisibleForTesting
     protected open fun setupLeakCanary() {
         LeakCanary.install(this)
+    }
+
+    @VisibleForTesting
+    protected open fun setupThreeTen() {
+        AndroidThreeTen.init(this)
     }
 
     private fun forceLocale(locale: Locale) {

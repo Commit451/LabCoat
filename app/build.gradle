@@ -157,11 +157,11 @@ dependencies {
     compile "com.github.Commit451.Reptar:reptar-kotlin:$reptarVersion"
     compile 'com.github.Commit451:ElasticDragDismissLayout:1.0.4'
     compile "com.github.Commit451.AdapterLayout:adapterlayout:$adapterLayout"
-    compile ("com.github.Commit451.AdapterLayout:adapterflowlayout:$adapterLayout") {
+    compile("com.github.Commit451.AdapterLayout:adapterflowlayout:$adapterLayout") {
         exclude group: 'com.wefika', module: 'flowlayout'
     }
     //https://github.com/blazsolar/FlowLayout/issues/31
-    compile ("com.wefika:flowlayout:0.4.1") {
+    compile("com.wefika:flowlayout:0.4.1") {
         exclude group: 'com.intellij', module: 'annotations'
     }
     compile 'com.github.Commit451.Easel:easel:2.1.1'
@@ -222,4 +222,7 @@ dependencies {
 
     testCompile 'junit:junit:4.12'
     testCompile 'org.robolectric:robolectric:3.3.2'
+    testCompile('org.threeten:threetenbp:1.3.6') {
+        exclude group: 'com.jakewharton.threetenabp', module: 'threetenabp'
+    }
 }
