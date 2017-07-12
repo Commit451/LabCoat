@@ -8,6 +8,6 @@ fun Issue.getUrl(project: Project): Uri {
     val projectUri = Uri.parse(project.webUrl)
     return projectUri.buildUpon()
             .appendPath("issues")
-            .appendPath(id.toString())
+            .appendPath(iid.toString())
             .build()
 }
