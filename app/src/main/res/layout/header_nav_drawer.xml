@@ -43,7 +43,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <com.devspark.robototextview.widget.RobotoTextView
+            <TextView
                 android:id="@+id/profile_user"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -51,7 +51,7 @@
                 android:singleLine="true"
                 android:textColor="@color/white"
                 android:textSize="14sp"
-                app:typeface="roboto_medium"
+                app:fontFamily="@font/roboto_medium"
                 tools:text="Jawnnypew" />
 
             <TextView

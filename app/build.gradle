@@ -22,8 +22,8 @@ def versionPatch = 6
 def versionBuild = 0 // bump for dogfood builds, public betas, etc.
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.3"
+    compileSdkVersion 26
+    buildToolsVersion "26.0.0"
 
     project.ext {
         LABCOAT_FABRIC_KEY = project.hasProperty("LABCOAT_FABRIC_KEY") ? project.LABCOAT_FABRIC_KEY : "";
@@ -36,7 +36,7 @@ android {
     defaultConfig {
         applicationId "com.commit451.gitlab"
         minSdkVersion 16
-        targetSdkVersion 25
+        targetSdkVersion 26
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         versionCode versionMajor * 1000000 + versionMinor * 10000 + versionPatch * 100 + versionBuild
         versionName "${versionMajor}.${versionMinor}.${versionPatch}"
@@ -46,12 +46,16 @@ android {
         multiDexEnabled true
     }
 
+    flavorDimensions "type"
+
     productFlavors {
 
         normal {
+            dimension "type"
         }
 
         fdroid {
+            dimension "type"
         }
     }
 
@@ -89,140 +93,138 @@ android {
 }
 
 ext {
-    supportLibVersion = '25.4.0'
+    supportLibVersion = '26.0.0'
     retrofitVersion = '2.3.0'
     okHttpVersion = '3.8.1'
-    butterknifeVersion = '8.6.0'
+    butterknifeVersion = '8.7.0'
     loganSquareVersion = '1.3.7'
     parcelerVersion = '1.1.9'
     reptarVersion = '2.5.0'
     adapterLayout = '1.1.1'
     materialDialogsVersion = '0.9.4.5'
     leakCanaryVersion = '1.5'
-    addendumVersion = '1.2.1'
+    addendumVersion = '1.3.1'
     alakazamVersion = '1.0.1'
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlinVersion"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlinVersion"
 
-    compile "com.android.support:appcompat-v7:$supportLibVersion"
-    compile "com.android.support:support-v13:$supportLibVersion"
-    compile "com.android.support:design:$supportLibVersion"
-    compile "com.android.support:recyclerview-v7:$supportLibVersion"
-    compile "com.android.support:cardview-v7:$supportLibVersion"
-    compile "com.android.support:palette-v7:$supportLibVersion"
-    compile "com.android.support:customtabs:$supportLibVersion"
-    compile 'com.android.support:multidex:1.0.1'
+    implementation "com.android.support:appcompat-v7:$supportLibVersion"
+    implementation "com.android.support:support-v13:$supportLibVersion"
+    implementation "com.android.support:design:$supportLibVersion"
+    implementation "com.android.support:recyclerview-v7:$supportLibVersion"
+    implementation "com.android.support:cardview-v7:$supportLibVersion"
+    implementation "com.android.support:palette-v7:$supportLibVersion"
+    implementation "com.android.support:customtabs:$supportLibVersion"
+    implementation 'com.android.support:multidex:1.0.1'
 
-    compile 'com.google.code.findbugs:jsr305:3.0.2'
+    implementation 'com.google.code.findbugs:jsr305:3.0.2'
 
-    compile "com.squareup.retrofit2:retrofit:$retrofitVersion"
-    compile("com.squareup.retrofit2:converter-simplexml:$retrofitVersion") {
+    implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
+    implementation("com.squareup.retrofit2:converter-simplexml:$retrofitVersion") {
         exclude group: 'xpp3', module: 'xpp3'
         exclude group: 'stax', module: 'stax-api'
         exclude group: 'stax', module: 'stax'
     }
-    compile "com.squareup.retrofit2:converter-scalars:$retrofitVersion"
-    compile "com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion"
-    compile "com.squareup.okhttp3:okhttp:$okHttpVersion"
-    compile "com.squareup.okhttp3:logging-interceptor:$okHttpVersion"
-    compile 'com.squareup.picasso:picasso:2.5.2'
+    implementation "com.squareup.retrofit2:converter-scalars:$retrofitVersion"
+    implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion"
+    implementation "com.squareup.okhttp3:okhttp:$okHttpVersion"
+    implementation "com.squareup.okhttp3:logging-interceptor:$okHttpVersion"
+    implementation 'com.squareup.picasso:picasso:2.5.2'
 
-    compile 'com.github.aurae.retrofit2:converter-logansquare:1.4.1'
+    implementation 'com.github.aurae.retrofit2:converter-logansquare:1.4.1'
 
-    compile "com.bluelinelabs:logansquare:$loganSquareVersion"
+    implementation "com.bluelinelabs:logansquare:$loganSquareVersion"
     kapt "com.bluelinelabs:logansquare-compiler:$loganSquareVersion"
 
-    compile 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.1.0'
-    compile "com.jakewharton:butterknife:$butterknifeVersion"
+    implementation 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.1.0'
+    implementation "com.jakewharton:butterknife:$butterknifeVersion"
     kapt "com.jakewharton:butterknife-compiler:$butterknifeVersion"
-    compile 'com.jakewharton.timber:timber:4.5.1'
-    compile 'com.jakewharton.threetenabp:threetenabp:1.0.5'
+    implementation 'com.jakewharton.timber:timber:4.5.1'
+    implementation 'com.jakewharton.threetenabp:threetenabp:1.0.5'
 
-    compile 'org.greenrobot:eventbus:3.0.0'
+    implementation 'org.greenrobot:eventbus:3.0.0'
 
-    compile 'io.reactivex.rxjava2:rxjava:2.1.1'
-    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.2'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
 
-    compile 'com.trello.rxlifecycle2:rxlifecycle-components:2.1.0'
+    implementation 'com.trello.rxlifecycle2:rxlifecycle-components:2.1.0'
 
-    compile "org.parceler:parceler-api:$parcelerVersion"
+    implementation "org.parceler:parceler-api:$parcelerVersion"
     kapt "org.parceler:parceler:$parcelerVersion"
 
-    compile "com.github.Commit451.Reptar:reptar:$reptarVersion"
-    compile "com.github.Commit451.Reptar:reptar-retrofit:$reptarVersion"
-    compile "com.github.Commit451.Reptar:reptar-kotlin:$reptarVersion"
-    compile 'com.github.Commit451:ElasticDragDismissLayout:1.0.4'
-    compile "com.github.Commit451.AdapterLayout:adapterlayout:$adapterLayout"
-    compile("com.github.Commit451.AdapterLayout:adapterflowlayout:$adapterLayout") {
+    implementation "com.github.Commit451.Reptar:reptar:$reptarVersion"
+    implementation "com.github.Commit451.Reptar:reptar-retrofit:$reptarVersion"
+    implementation "com.github.Commit451.Reptar:reptar-kotlin:$reptarVersion"
+    implementation 'com.github.Commit451:ElasticDragDismissLayout:1.0.4'
+    implementation "com.github.Commit451.AdapterLayout:adapterlayout:$adapterLayout"
+    implementation("com.github.Commit451.AdapterLayout:adapterflowlayout:$adapterLayout") {
         exclude group: 'com.wefika', module: 'flowlayout'
     }
     //https://github.com/blazsolar/FlowLayout/issues/31
-    compile("com.wefika:flowlayout:0.4.1") {
+    implementation("com.wefika:flowlayout:0.4.1") {
         exclude group: 'com.intellij', module: 'annotations'
     }
-    compile 'com.github.Commit451.Easel:easel:2.1.1'
-    compile 'com.github.Commit451:Gimbal:2.0.2'
-    compile 'com.github.Commit451:Teleprinter:1.0.2'
-    compile 'com.github.Commit451:Jounce:1.0.2'
-    compile 'com.github.Commit451:ForegroundViews:2.4.0'
-    compile 'com.github.Commit451:MorphTransitions:2.0.0'
-    compile "com.github.Commit451.Alakazam:alakazam:$alakazamVersion"
-    compile "com.github.Commit451.Alakazam:alakazam-kotlin:$alakazamVersion"
-    compile 'com.github.Commit451:Lift:1.2.0'
-    compile 'com.github.Commit451:okyo:2.0.0'
-    compile 'com.github.Commit451:OkioProGuardRules:1.11.0.0'
-    compile 'com.github.Commit451:RetrofitProguardRules:2.2.0.0'
-    compile 'com.github.Commit451:LoganSquareProGuardRules:1.3.7.0'
-    compile 'com.github.Commit451:EventBusProGuardRules:3.0.0.0'
-    compile "com.github.Commit451.Addendum:addendum:$addendumVersion"
-    compile "com.github.Commit451.Addendum:addendum-parceler:$addendumVersion"
+    implementation 'com.github.Commit451.Easel:easel:2.1.1'
+    implementation 'com.github.Commit451:Gimbal:2.0.2'
+    implementation 'com.github.Commit451:Teleprinter:1.0.2'
+    implementation 'com.github.Commit451:Jounce:1.0.2'
+    implementation 'com.github.Commit451:ForegroundViews:2.4.0'
+    implementation 'com.github.Commit451:MorphTransitions:2.0.0'
+    implementation "com.github.Commit451.Alakazam:alakazam:$alakazamVersion"
+    implementation "com.github.Commit451.Alakazam:alakazam-kotlin:$alakazamVersion"
+    implementation 'com.github.Commit451:Lift:1.2.0'
+    implementation 'com.github.Commit451:okyo:2.0.0'
+    implementation 'com.github.Commit451:OkioProGuardRules:1.11.0.0'
+    implementation 'com.github.Commit451:RetrofitProguardRules:2.2.0.0'
+    implementation 'com.github.Commit451:LoganSquareProGuardRules:1.3.7.0'
+    implementation 'com.github.Commit451:EventBusProGuardRules:3.0.0.0'
+    implementation "com.github.Commit451.Addendum:addendum:$addendumVersion"
+    implementation "com.github.Commit451.Addendum:addendum-parceler:$addendumVersion"
 
-    compile 'com.github.chrisbanes:PhotoView:2.1.2'
+    implementation 'com.github.chrisbanes:PhotoView:2.1.2'
 
-    compile 'me.zhanghai.android.materialprogressbar:library:1.4.1'
+    implementation 'me.zhanghai.android.materialprogressbar:library:1.4.1'
 
-    compile 'com.github.Jawnnypoo:PhysicsLayout:2.1.0'
+    implementation 'com.github.Jawnnypoo:PhysicsLayout:2.1.0'
 
-    compile 'com.alexgwyn.recyclerviewsquire:recyclerviewsquire:0.0.6'
+    implementation 'com.alexgwyn.recyclerviewsquire:recyclerviewsquire:0.0.6'
 
-    compile 'com.github.ivbaranov:materiallettericon:0.2.2'
+    implementation 'com.github.ivbaranov:materiallettericon:0.2.2'
 
-    compile 'com.github.johnkil.android-robototextview:robototextview:3.0.0'
+    implementation 'com.github.alorma:diff-textview:1.3.0'
 
-    compile 'com.github.alorma:diff-textview:1.3.0'
+    implementation 'com.wdullaer:materialdatetimepicker:3.2.2'
 
-    compile 'com.wdullaer:materialdatetimepicker:3.2.2'
+    implementation 'com.github.novoda:simple-chrome-custom-tabs:0.1.5'
 
-    compile 'com.github.novoda:simple-chrome-custom-tabs:0.1.5'
+    implementation "com.afollestad.material-dialogs:core:$materialDialogsVersion"
+    implementation "com.afollestad.material-dialogs:commons:$materialDialogsVersion"
 
-    compile "com.afollestad.material-dialogs:core:$materialDialogsVersion"
-    compile "com.afollestad.material-dialogs:commons:$materialDialogsVersion"
+    implementation 'de.hdodenhof:circleimageview:2.1.0'
 
-    compile 'de.hdodenhof:circleimageview:2.1.0'
-
-    compile('com.vdurmont:emoji-java:3.2.0') {
+    implementation('com.vdurmont:emoji-java:3.2.0') {
         exclude group: 'org.json', module: 'json'
     }
 
-    compile 'com.github.jkwiecien:EasyImage:2.0.2'
+    implementation 'com.github.jkwiecien:EasyImage:2.0.2'
 
-    compile 'com.atlassian.commonmark:commonmark:0.9.0'
+    implementation 'com.atlassian.commonmark:commonmark:0.9.0'
 
-    normalCompile('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
-        transitive = true;
+    normalImplementation('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
+        transitive = true
     }
 
-    debugCompile "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
-    releaseCompile "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
-    testCompile "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
+    debugImplementation "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
+    releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
+    testImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
 
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.robolectric:robolectric:3.3.2'
-    testCompile('org.threeten:threetenbp:1.3.6') {
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.robolectric:robolectric:3.3.2'
+    testImplementation('org.threeten:threetenbp:1.3.6') {
         exclude group: 'com.jakewharton.threetenabp', module: 'threetenabp'
     }
 }

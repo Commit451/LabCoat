@@ -391,7 +391,7 @@ class LoginActivity : BaseActivity() {
                     .setNegativeButton(R.string.cancel_button) { dialog, _ -> dialog.dismiss() }
                     .show()
 
-            (d.findViewById(android.R.id.message) as TextView).movementMethod = LinkMovementMethod.getInstance()
+            d.findViewById<TextView>(android.R.id.message).movementMethod = LinkMovementMethod.getInstance()
         } else if (t is SSLPeerUnverifiedException && t.message?.toLowerCase()!!.contains("hostname")) {
             account.trustedHostname = null
             val hostNameVerifier = gitLab?.client?.hostnameVerifier() as CustomHostnameVerifier
@@ -410,7 +410,7 @@ class LoginActivity : BaseActivity() {
                     .setNegativeButton(R.string.cancel_button) { dialog, _ -> dialog.dismiss() }
                     .show()
 
-            (d.findViewById(android.R.id.message) as TextView).movementMethod = LinkMovementMethod.getInstance()
+            d.findViewById<TextView>(android.R.id.message).movementMethod = LinkMovementMethod.getInstance()
         } else if (t is ConnectException) {
             Snackbar.make(root, t.message!!, Snackbar.LENGTH_LONG)
                     .show()
