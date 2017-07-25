@@ -1,5 +1,5 @@
 debug: true
 components:
-  - build-tools;26.0.0
+  - build-tools;26.0.1
   - platforms;android-26
   - extras;google;m2repository
