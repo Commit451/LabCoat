@@ -1,16 +1,14 @@
 package com.commit451.gitlab.model.api;
 
-import com.bluelinelabs.logansquare.annotation.JsonField;
-import com.bluelinelabs.logansquare.annotation.JsonObject;
+import com.squareup.moshi.Json;
 
 import org.parceler.Parcel;
 
 import java.util.List;
 
 @Parcel
-@JsonObject
 public class GroupDetail extends Group {
-    @JsonField(name = "projects")
+    @Json(name = "projects")
     List<Project> projects;
 
     public GroupDetail() {}

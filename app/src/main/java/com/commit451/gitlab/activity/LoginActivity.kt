@@ -19,12 +19,12 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import butterknife.OnEditorAction
-import com.bluelinelabs.logansquare.LoganSquare
 import com.commit451.gitlab.App
 import com.commit451.gitlab.BuildConfig
 import com.commit451.gitlab.R
 import com.commit451.gitlab.api.GitLab
 import com.commit451.gitlab.api.GitLabFactory
+import com.commit451.gitlab.api.MoshiProvider
 import com.commit451.gitlab.api.OkHttpClientFactory
 import com.commit451.gitlab.api.request.SessionRequest
 import com.commit451.gitlab.data.Prefs
@@ -225,12 +225,12 @@ class LoginActivity : BaseActivity() {
 
     fun connectByAuth() {
         val request = SessionRequest()
-        request.setPassword(textInputLayoutPassword.text())
+        request.password = textInputLayoutPassword.text()
         val usernameOrEmail = textInputLayoutUser.text()
         if (emailPattern.matcher(usernameOrEmail).matches()) {
-            request.setEmail(usernameOrEmail)
+            request.email = usernameOrEmail
         } else {
-            request.setLogin(usernameOrEmail)
+            request.login = usernameOrEmail
         }
         attemptLogin(request)
     }
@@ -433,7 +433,9 @@ class LoginActivity : BaseActivity() {
                 }
                 var errorMessage = getString(R.string.login_unauthorized)
                 try {
-                    val message = LoganSquare.parse(response.errorBody()!!.byteStream(), Message::class.java)
+
+                    val adapter = MoshiProvider.moshi.adapter<Message>(Message::class.java)
+                    val message = adapter.fromJson(response.errorBody()!!.string())
                     if (message != null && message.message != null) {
                         errorMessage = message.message
                     }

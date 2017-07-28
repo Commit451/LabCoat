@@ -1,14 +1,12 @@
 package com.commit451.gitlab.model.api;
 
-import com.bluelinelabs.logansquare.annotation.JsonField;
-import com.bluelinelabs.logansquare.annotation.JsonObject;
+import com.squareup.moshi.Json;
 
 import org.parceler.Parcel;
 
 @Parcel
-@JsonObject
 public class Member extends UserBasic {
-    @JsonField(name = "access_level")
+    @Json(name = "access_level")
     int accessLevel;
 
     public Member() {}

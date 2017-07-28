@@ -1,7 +1,6 @@
 package com.commit451.gitlab.model.api;
 
-import com.bluelinelabs.logansquare.annotation.JsonField;
-import com.bluelinelabs.logansquare.annotation.JsonObject;
+import com.squareup.moshi.Json;
 
 import org.parceler.Parcel;
 
@@ -9,25 +8,24 @@ import java.util.Date;
 import java.util.List;
 
 @Parcel
-@JsonObject
 public class UserFull extends User {
-    @JsonField(name = "email")
+    @Json(name = "email")
     String email;
-    @JsonField(name = "theme_id")
+    @Json(name = "theme_id")
     int themeId;
-    @JsonField(name = "color_scheme_id")
+    @Json(name = "color_scheme_id")
     int colorSchemeId;
-    @JsonField(name = "projects_limit")
+    @Json(name = "projects_limit")
     int projectsLimit;
-    @JsonField(name = "current_sign_in_at")
+    @Json(name = "current_sign_in_at")
     Date currentSignInAt;
-    @JsonField(name = "identities")
+    @Json(name = "identities")
     List<Identity> identities;
-    @JsonField(name = "can_create_group")
+    @Json(name = "can_create_group")
     boolean canCreateGroup;
-    @JsonField(name = "can_create_project")
+    @Json(name = "can_create_project")
     boolean canCreateProject;
-    @JsonField(name = "two_factor_enabled")
+    @Json(name = "two_factor_enabled")
     boolean twoFactorEnabled;
 
     public UserFull() {}

@@ -1,16 +1,14 @@
 package com.commit451.gitlab.model.api;
 
-import com.bluelinelabs.logansquare.annotation.JsonField;
-import com.bluelinelabs.logansquare.annotation.JsonObject;
+import com.squareup.moshi.Json;
 
 import org.parceler.Parcel;
 
 @Parcel
-@JsonObject
 public class UserSafe {
-    @JsonField(name = "name")
+    @Json(name = "name")
     String name;
-    @JsonField(name = "username")
+    @Json(name = "username")
     String username;
 
     public UserSafe() {}

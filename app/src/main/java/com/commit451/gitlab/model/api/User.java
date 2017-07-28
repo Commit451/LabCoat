@@ -1,28 +1,26 @@
 package com.commit451.gitlab.model.api;
 
-import com.bluelinelabs.logansquare.annotation.JsonField;
-import com.bluelinelabs.logansquare.annotation.JsonObject;
+import com.squareup.moshi.Json;
 
 import org.parceler.Parcel;
 
 import java.util.Date;
 
 @Parcel
-@JsonObject
 public class User extends UserBasic {
-    @JsonField(name = "created_at")
+    @Json(name = "created_at")
     Date createdAt;
-    @JsonField(name = "is_admin")
+    @Json(name = "is_admin")
     boolean isAdmin;
-    @JsonField(name = "bio")
+    @Json(name = "bio")
     String bio;
-    @JsonField(name = "skype")
+    @Json(name = "skype")
     String skype;
-    @JsonField(name = "linkedin")
+    @Json(name = "linkedin")
     String linkedin;
-    @JsonField(name = "twitter")
+    @Json(name = "twitter")
     String twitter;
-    @JsonField(name = "website_url")
+    @Json(name = "website_url")
     String websiteUrl;
 
     public User() {}

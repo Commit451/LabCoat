@@ -20,7 +20,7 @@ import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViewsService
-import com.bluelinelabs.logansquare.LoganSquare
+import com.commit451.gitlab.api.MoshiProvider
 import com.commit451.gitlab.model.Account
 import timber.log.Timber
 
@@ -40,7 +40,8 @@ class ProjectFeedWidgetService : RemoteViewsService() {
          * :(
          */
         fun newIntent(context: Context, widgetId: Int, account: Account, feedUrl: String): Intent {
-            val accountJson = LoganSquare.serialize(account)
+            val adapter = MoshiProvider.moshi.adapter<Account>(Account::class.java)
+            val accountJson = adapter.toJson(account)
             val intent = Intent(context, ProjectFeedWidgetService::class.java)
             intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
             intent.putExtra(EXTRA_ACCOUNT_JSON, accountJson)
@@ -52,7 +53,8 @@ class ProjectFeedWidgetService : RemoteViewsService() {
     override fun onGetViewFactory(intent: Intent): RemoteViewsService.RemoteViewsFactory {
         Timber.d("onGetViewFactory")
         val accountJson = intent.getStringExtra(EXTRA_ACCOUNT_JSON)
-        val account = LoganSquare.parse(accountJson, Account::class.java)
+        val adapter = MoshiProvider.moshi.adapter<Account>(Account::class.java)
+        val account = adapter.fromJson(accountJson)!!
         val feedUrl = intent.getStringExtra(EXTRA_FEED_URL)
         return FeedRemoteViewsFactory(applicationContext, intent, account, feedUrl)
     }

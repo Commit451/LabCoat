@@ -2,8 +2,7 @@ package com.commit451.gitlab.model.api;
 
 import android.support.annotation.StringDef;
 
-import com.bluelinelabs.logansquare.annotation.JsonField;
-import com.bluelinelabs.logansquare.annotation.JsonObject;
+import com.squareup.moshi.Json;
 
 import org.parceler.Parcel;
 
@@ -12,7 +11,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.Date;
 
 @Parcel
-@JsonObject
 public class Note {
 
     public static final String TYPE_ISSUE = "Issue";
@@ -22,24 +20,24 @@ public class Note {
     @Retention(RetentionPolicy.SOURCE)
     public @interface Type {}
 
-    @JsonField(name = "id")
+    @Json(name = "id")
     long id;
-    @JsonField(name = "body")
+    @Json(name = "body")
     String body;
-    @JsonField(name = "author")
+    @Json(name = "author")
     UserBasic author;
-    @JsonField(name = "created_at")
+    @Json(name = "created_at")
     Date createdAt;
-    @JsonField(name = "system")
+    @Json(name = "system")
     boolean system;
-    @JsonField(name = "noteable_id")
+    @Json(name = "noteable_id")
     long noteableId;
-    @JsonField(name = "noteable_type")
+    @Json(name = "noteable_type")
     @Type
     String noteableType;
-    @JsonField(name = "upvote?")
+    @Json(name = "upvote?")
     boolean upvote;
-    @JsonField(name = "downvote?")
+    @Json(name = "downvote?")
     boolean downvote;
 
     public Note() {}

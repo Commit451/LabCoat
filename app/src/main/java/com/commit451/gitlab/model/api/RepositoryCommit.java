@@ -1,29 +1,27 @@
 package com.commit451.gitlab.model.api;
 
-import com.bluelinelabs.logansquare.annotation.JsonField;
-import com.bluelinelabs.logansquare.annotation.JsonObject;
 import com.commit451.gitlab.util.ObjectUtil;
+import com.squareup.moshi.Json;
 
 import org.parceler.Parcel;
 
 import java.util.Date;
 
 @Parcel
-@JsonObject
 public class RepositoryCommit {
-    @JsonField(name = "id")
+    @Json(name = "id")
     String id;
-    @JsonField(name = "short_id")
+    @Json(name = "short_id")
     String shortId;
-    @JsonField(name = "title")
+    @Json(name = "title")
     String title;
-    @JsonField(name = "author_name")
+    @Json(name = "author_name")
     String authorName;
-    @JsonField(name = "author_email")
+    @Json(name = "author_email")
     String authorEmail;
-    @JsonField(name = "created_at")
+    @Json(name = "created_at")
     Date createdAt;
-    @JsonField(name = "message")
+    @Json(name = "message")
     String message;
 
     public RepositoryCommit() {}

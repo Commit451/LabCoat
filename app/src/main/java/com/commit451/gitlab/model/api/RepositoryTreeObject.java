@@ -2,8 +2,7 @@ package com.commit451.gitlab.model.api;
 
 import android.support.annotation.StringDef;
 
-import com.bluelinelabs.logansquare.annotation.JsonField;
-import com.bluelinelabs.logansquare.annotation.JsonObject;
+import com.squareup.moshi.Json;
 
 import org.parceler.Parcel;
 
@@ -11,7 +10,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 @Parcel
-@JsonObject
 public class RepositoryTreeObject {
 
     public static final String TYPE_FOLDER = "tree";
@@ -23,14 +21,14 @@ public class RepositoryTreeObject {
     public @interface Type {
     }
 
-    @JsonField(name = "id")
+    @Json(name = "id")
     String id;
-    @JsonField(name = "name")
+    @Json(name = "name")
     String name;
-    @JsonField(name = "type")
+    @Json(name = "type")
     @Type
     String type;
-    @JsonField(name = "mode")
+    @Json(name = "mode")
     String mode;
 
     public RepositoryTreeObject() {}

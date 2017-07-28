@@ -1,7 +1,6 @@
 package com.commit451.gitlab.model.api;
 
-import com.bluelinelabs.logansquare.annotation.JsonField;
-import com.bluelinelabs.logansquare.annotation.JsonObject;
+import com.squareup.moshi.Json;
 
 import org.parceler.Parcel;
 
@@ -11,21 +10,20 @@ import java.util.Date;
  * A snippet!
  */
 @Parcel
-@JsonObject
 public class Snippet {
-    @JsonField(name = "id")
+    @Json(name = "id")
     long id;
-    @JsonField(name = "title")
+    @Json(name = "title")
     String title;
-    @JsonField(name = "file_name")
+    @Json(name = "file_name")
     String fileName;
-    @JsonField(name = "author")
+    @Json(name = "author")
     Author author;
-    @JsonField(name = "expires_at")
+    @Json(name = "expires_at")
     Date expiresAt;
-    @JsonField(name = "updated_at")
+    @Json(name = "updated_at")
     Date updatedAt;
-    @JsonField(name = "created_at")
+    @Json(name = "created_at")
     Date createdAt;
 
     protected Snippet() {
@@ -45,19 +43,18 @@ public class Snippet {
     }
 
     @Parcel
-    @JsonObject
     public static class Author {
-        @JsonField(name = "id")
+        @Json(name = "id")
         long mId;
-        @JsonField(name = "username")
+        @Json(name = "username")
         String mUsername;
-        @JsonField(name = "email")
+        @Json(name = "email")
         String mEmail;
-        @JsonField(name = "name")
+        @Json(name = "name")
         String mName;
-        @JsonField(name = "state")
+        @Json(name = "state")
         String mState;
-        @JsonField(name = "created_at")
+        @Json(name = "created_at")
         Date mCreatedAt;
 
         protected Author() {

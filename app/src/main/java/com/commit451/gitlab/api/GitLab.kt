@@ -1,6 +1,7 @@
 package com.commit451.gitlab.api
 
 import com.commit451.gitlab.model.Account
+import com.squareup.moshi.Moshi
 import okhttp3.OkHttpClient
 
 /**
@@ -9,6 +10,8 @@ import okhttp3.OkHttpClient
  */
 class GitLab private constructor(val account: Account, val client: OkHttpClient, gitLabService: GitLabService, gitLabRss: GitLabRss): GitLabService by gitLabService,
         GitLabRss by gitLabRss {
+
+    lateinit var moshi: Moshi
 
     class Builder(private val account: Account) {
 

@@ -2,11 +2,10 @@ package com.commit451.gitlab.model;
 
 import android.support.annotation.NonNull;
 
-import com.bluelinelabs.logansquare.annotation.JsonField;
-import com.bluelinelabs.logansquare.annotation.JsonObject;
 import com.commit451.gitlab.data.Prefs;
 import com.commit451.gitlab.model.api.UserFull;
 import com.commit451.gitlab.util.ObjectUtil;
+import com.squareup.moshi.Json;
 
 import org.parceler.Parcel;
 
@@ -19,7 +18,6 @@ import java.util.List;
  * An account, stored locally, which references the needed info to connect to a server
  */
 @Parcel
-@JsonObject
 public class Account implements Comparable<Account>{
 
     @NonNull
@@ -30,21 +28,21 @@ public class Account implements Comparable<Account>{
         return accounts;
     }
 
-    @JsonField(name = "server_url")
+    @Json(name = "server_url")
     String serverUrl;
-    @JsonField(name = "authorization_header")
+    @Json(name = "authorization_header")
     String authorizationHeader;
-    @JsonField(name = "private_token")
+    @Json(name = "private_token")
     String privateToken;
-    @JsonField(name = "trusted_certificate")
+    @Json(name = "trusted_certificate")
     String trustedCertificate;
-    @JsonField(name = "trusted_hostname")
+    @Json(name = "trusted_hostname")
     String trustedHostname;
-    @JsonField(name = "private_key_alias")
+    @Json(name = "private_key_alias")
     String privateKeyAlias;
-    @JsonField(name = "user")
+    @Json(name = "user")
     UserFull user;
-    @JsonField(name = "last_used")
+    @Json(name = "last_used")
     Date lastUsed;
 
     public Account() {}

@@ -1,7 +1,6 @@
 package com.commit451.gitlab.model.api;
 
-import com.bluelinelabs.logansquare.annotation.JsonField;
-import com.bluelinelabs.logansquare.annotation.JsonObject;
+import com.squareup.moshi.Json;
 
 import org.parceler.Parcel;
 
@@ -11,24 +10,23 @@ import java.util.Date;
  * A pipeline.
  */
 @Parcel
-@JsonObject
 public class Pipeline {
 
-    @JsonField(name = "user")
+    @Json(name = "user")
     CommitUser user;
-    @JsonField(name = "id")
+    @Json(name = "id")
     long id;
-    @JsonField(name = "sha")
+    @Json(name = "sha")
     String sha;
-    @JsonField(name = "ref")
+    @Json(name = "ref")
     String ref;
-    @JsonField(name = "status")
+    @Json(name = "status")
     String status;
-    @JsonField(name = "created_at")
+    @Json(name = "created_at")
     Date createdAt;
-    @JsonField(name = "started_at")
+    @Json(name = "started_at")
     Date startedAt;
-    @JsonField(name = "finished_at")
+    @Json(name = "finished_at")
     Date finishedAt;
 
     public CommitUser getUser() {

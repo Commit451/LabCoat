@@ -97,7 +97,6 @@ ext {
     retrofitVersion = '2.3.0'
     okHttpVersion = '3.8.1'
     butterknifeVersion = '8.7.0'
-    loganSquareVersion = '1.3.7'
     parcelerVersion = '1.1.9'
     reptarVersion = '2.5.0'
     adapterLayout = '1.1.1'
@@ -119,7 +118,7 @@ dependencies {
     implementation "com.android.support:cardview-v7:$supportLibVersion"
     implementation "com.android.support:palette-v7:$supportLibVersion"
     implementation "com.android.support:customtabs:$supportLibVersion"
-    implementation 'com.android.support:multidex:1.0.1'
+    implementation 'com.android.support:multidex:1.0.2'
 
     implementation 'com.google.code.findbugs:jsr305:3.0.2'
 
@@ -131,14 +130,11 @@ dependencies {
     }
     implementation "com.squareup.retrofit2:converter-scalars:$retrofitVersion"
     implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion"
+    implementation "com.squareup.retrofit2:converter-moshi:$retrofitVersion"
     implementation "com.squareup.okhttp3:okhttp:$okHttpVersion"
     implementation "com.squareup.okhttp3:logging-interceptor:$okHttpVersion"
     implementation 'com.squareup.picasso:picasso:2.5.2'
-
-    implementation 'com.github.aurae.retrofit2:converter-logansquare:1.4.1'
-
-    implementation "com.bluelinelabs:logansquare:$loganSquareVersion"
-    kapt "com.bluelinelabs:logansquare-compiler:$loganSquareVersion"
+    implementation 'com.squareup.moshi:moshi:1.5.0'
 
     implementation 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.1.0'
     implementation "com.jakewharton:butterknife:$butterknifeVersion"
@@ -185,7 +181,7 @@ dependencies {
     implementation "com.github.Commit451.Addendum:addendum:$addendumVersion"
     implementation "com.github.Commit451.Addendum:addendum-parceler:$addendumVersion"
 
-    implementation 'com.github.chrisbanes:PhotoView:2.1.2'
+    implementation 'com.github.chrisbanes:PhotoView:2.1.3'
 
     implementation 'me.zhanghai.android.materialprogressbar:library:1.4.1'
 
@@ -223,7 +219,7 @@ dependencies {
     testImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
 
     testImplementation 'junit:junit:4.12'
-    testImplementation 'org.robolectric:robolectric:3.3.2'
+    testImplementation 'org.robolectric:robolectric:3.4'
     testImplementation('org.threeten:threetenbp:1.3.6') {
         exclude group: 'com.jakewharton.threetenabp', module: 'threetenabp'
     }

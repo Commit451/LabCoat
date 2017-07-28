@@ -2,8 +2,7 @@ package com.commit451.gitlab.model.api;
 
 import android.support.annotation.StringDef;
 
-import com.bluelinelabs.logansquare.annotation.JsonField;
-import com.bluelinelabs.logansquare.annotation.JsonObject;
+import com.squareup.moshi.Json;
 
 import org.parceler.Parcel;
 
@@ -13,7 +12,6 @@ import java.util.Date;
 import java.util.List;
 
 @Parcel
-@JsonObject
 public class Issue {
     public static final String STATE_REOPEN = "reopen";
     public static final String STATE_CLOSE = "close";
@@ -32,32 +30,32 @@ public class Issue {
     public @interface State {
     }
 
-    @JsonField(name = "id")
+    @Json(name = "id")
     long id;
-    @JsonField(name = "iid")
+    @Json(name = "iid")
     long iId;
-    @JsonField(name = "project_id")
+    @Json(name = "project_id")
     long projectId;
-    @JsonField(name = "title")
+    @Json(name = "title")
     String title;
-    @JsonField(name = "description")
+    @Json(name = "description")
     String description;
-    @JsonField(name = "state")
+    @Json(name = "state")
     @State
     String state;
-    @JsonField(name = "created_at")
+    @Json(name = "created_at")
     Date createdAt;
-    @JsonField(name = "updated_at")
+    @Json(name = "updated_at")
     Date updatedAt;
-    @JsonField(name = "labels")
+    @Json(name = "labels")
     List<String> labels;
-    @JsonField(name = "milestone")
+    @Json(name = "milestone")
     Milestone milestone;
-    @JsonField(name = "assignee")
+    @Json(name = "assignee")
     UserBasic assignee;
-    @JsonField(name = "author")
+    @Json(name = "author")
     UserBasic author;
-    @JsonField(name = "confidential")
+    @Json(name = "confidential")
     boolean confidential;
 
     public Issue() {

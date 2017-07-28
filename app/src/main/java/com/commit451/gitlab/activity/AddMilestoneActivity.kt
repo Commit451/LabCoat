@@ -18,6 +18,7 @@ import com.commit451.addendum.parceler.putParcelerParcelableExtra
 import com.commit451.easel.Easel
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
+import com.commit451.gitlab.api.converter.DashDateAdapter
 import com.commit451.gitlab.event.MilestoneChangedEvent
 import com.commit451.gitlab.event.MilestoneCreatedEvent
 import com.commit451.gitlab.extension.checkValid
@@ -122,7 +123,7 @@ class AddMilestoneActivity : MorphActivity() {
         progress.visibility = View.VISIBLE
         var dueDate: String? = null
         if (currentDate != null) {
-            dueDate = Milestone.DUE_DATE_FORMAT.format(currentDate)
+            dueDate = DashDateAdapter.format.format(currentDate)
         }
 
         if (milestone == null) {
@@ -168,7 +169,7 @@ class AddMilestoneActivity : MorphActivity() {
     }
 
     fun bind(date: Date) {
-        buttonDueDate.text = Milestone.DUE_DATE_FORMAT.format(date)
+        buttonDueDate.text = DashDateAdapter.format.format(date)
     }
 
     fun bind(milestone: Milestone) {

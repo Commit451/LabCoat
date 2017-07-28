@@ -4,8 +4,7 @@ import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringDef;
 
-import com.bluelinelabs.logansquare.annotation.JsonField;
-import com.bluelinelabs.logansquare.annotation.JsonObject;
+import com.squareup.moshi.Json;
 
 import org.parceler.Parcel;
 
@@ -13,7 +12,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 @Parcel
-@JsonObject
 public class UserBasic extends UserSafe {
 
     public static final String STATE_ACTIVE = "active";
@@ -23,14 +21,14 @@ public class UserBasic extends UserSafe {
     @Retention(RetentionPolicy.SOURCE)
     public @interface State {}
 
-    @JsonField(name = "id")
+    @Json(name = "id")
     long id;
-    @JsonField(name = "state")
+    @Json(name = "state")
     @State
     String state;
-    @JsonField(name = "avatar_url")
+    @Json(name = "avatar_url")
     String avatarUrl;
-    @JsonField(name = "web_url")
+    @Json(name = "web_url")
     String webUrl;
 
     public UserBasic() {}

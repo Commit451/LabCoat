@@ -2,33 +2,31 @@ package com.commit451.gitlab.model.api;
 
 import android.net.Uri;
 
-import com.bluelinelabs.logansquare.annotation.JsonField;
-import com.bluelinelabs.logansquare.annotation.JsonObject;
+import com.squareup.moshi.Json;
 
 import org.parceler.Parcel;
 
 import java.util.Date;
 
 @Parcel
-@JsonObject
 public class ProjectNamespace {
-    @JsonField(name = "id")
+    @Json(name = "id")
     long id;
-    @JsonField(name = "name")
+    @Json(name = "name")
     String name;
-    @JsonField(name = "path")
+    @Json(name = "path")
     String path;
-    @JsonField(name = "owner_id")
+    @Json(name = "owner_id")
     long ownerId;
-    @JsonField(name = "created_at")
+    @Json(name = "created_at")
     Date createdAt;
-    @JsonField(name = "updated_at")
+    @Json(name = "updated_at")
     Date updatedAt;
-    @JsonField(name = "description")
+    @Json(name = "description")
     String description;
-    @JsonField(name = "avatar")
+    @Json(name = "avatar")
     Avatar avatar;
-    @JsonField(name = "public")
+    @Json(name = "public")
     boolean isPublic;
 
     public ProjectNamespace() {
@@ -86,9 +84,8 @@ public class ProjectNamespace {
     }
 
     @Parcel
-    @JsonObject
     public static class Avatar {
-        @JsonField(name = "url")
+        @Json(name = "url")
         Uri url;
 
         public Avatar() {

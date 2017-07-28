@@ -3,8 +3,7 @@ package com.commit451.gitlab.model.api;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringDef;
 
-import com.bluelinelabs.logansquare.annotation.JsonField;
-import com.bluelinelabs.logansquare.annotation.JsonObject;
+import com.squareup.moshi.Json;
 
 import org.parceler.Parcel;
 
@@ -14,7 +13,6 @@ import java.util.Date;
 import java.util.List;
 
 @Parcel
-@JsonObject
 public class MergeRequest {
 
     public static final String STATE_OPENED = "opened";
@@ -25,50 +23,50 @@ public class MergeRequest {
     @Retention(RetentionPolicy.SOURCE)
     public @interface State {}
 
-    @JsonField(name = "id")
+    @Json(name = "id")
     long id;
-    @JsonField(name = "iid")
+    @Json(name = "iid")
     long iId;
-    @JsonField(name = "project_id")
+    @Json(name = "project_id")
     long projectId;
-    @JsonField(name = "title")
+    @Json(name = "title")
     String title;
-    @JsonField(name = "description")
+    @Json(name = "description")
     String description;
-    @JsonField(name = "state")
+    @Json(name = "state")
     @State
     String state;
-    @JsonField(name = "updated_at")
+    @Json(name = "updated_at")
     Date updatedAt;
-    @JsonField(name = "created_at")
+    @Json(name = "created_at")
     Date createdAt;
-    @JsonField(name = "target_branch")
+    @Json(name = "target_branch")
     String targetBranch;
-    @JsonField(name = "source_branch")
+    @Json(name = "source_branch")
     String sourceBranch;
-    @JsonField(name = "upvotes")
+    @Json(name = "upvotes")
     long upvotes;
-    @JsonField(name = "downvotes")
+    @Json(name = "downvotes")
     long downvotes;
-    @JsonField(name = "author")
+    @Json(name = "author")
     UserBasic author;
-    @JsonField(name = "assignee")
+    @Json(name = "assignee")
     UserBasic assignee;
-    @JsonField(name = "source_project_id")
+    @Json(name = "source_project_id")
     long sourceProjectId;
-    @JsonField(name = "target_project_id")
+    @Json(name = "target_project_id")
     long targetProjectId;
-    @JsonField(name = "labels")
+    @Json(name = "labels")
     List<String> labels;
-    @JsonField(name = "work_in_progress")
+    @Json(name = "work_in_progress")
     boolean workInProgress;
-    @JsonField(name = "milestone")
+    @Json(name = "milestone")
     Milestone milestone;
-    @JsonField(name = "merge_when_build_succeeds")
+    @Json(name = "merge_when_build_succeeds")
     boolean mergeWhenBuildSucceeds;
-    @JsonField(name = "merge_status")
+    @Json(name = "merge_status")
     String mergeStatus;
-    @JsonField(name = "changes")
+    @Json(name = "changes")
     @Nullable
     List<Diff> changes;
 

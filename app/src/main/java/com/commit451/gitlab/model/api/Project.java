@@ -3,8 +3,7 @@ package com.commit451.gitlab.model.api;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 
-import com.bluelinelabs.logansquare.annotation.JsonField;
-import com.bluelinelabs.logansquare.annotation.JsonObject;
+import com.squareup.moshi.Json;
 
 import org.parceler.Parcel;
 
@@ -12,65 +11,64 @@ import java.util.Date;
 import java.util.List;
 
 @Parcel
-@JsonObject
 public class Project {
-    @JsonField(name = "id")
+    @Json(name = "id")
     long id;
-    @JsonField(name = "description")
+    @Json(name = "description")
     String description;
-    @JsonField(name = "default_branch")
+    @Json(name = "default_branch")
     String defaultBranch;
-    @JsonField(name = "tag_list")
+    @Json(name = "tag_list")
     List<String> tagList;
-    @JsonField(name = "public")
+    @Json(name = "public")
     boolean isPublic;
-    @JsonField(name = "archived")
+    @Json(name = "archived")
     boolean archived;
-    @JsonField(name = "visibility_level")
+    @Json(name = "visibility_level")
     int visibilityLevel;
-    @JsonField(name = "ssh_url_to_repo")
+    @Json(name = "ssh_url_to_repo")
     String sshUrlToRepo;
-    @JsonField(name = "http_url_to_repo")
+    @Json(name = "http_url_to_repo")
     String httpUrlToRepo;
-    @JsonField(name = "web_url")
+    @Json(name = "web_url")
     String webUrl;
-    @JsonField(name = "owner")
+    @Json(name = "owner")
     UserBasic owner;
-    @JsonField(name = "name")
+    @Json(name = "name")
     String name;
-    @JsonField(name = "name_with_namespace")
+    @Json(name = "name_with_namespace")
     String nameWithNamespace;
-    @JsonField(name = "path")
+    @Json(name = "path")
     String path;
-    @JsonField(name = "path_with_namespace")
+    @Json(name = "path_with_namespace")
     String pathWithNamespace;
-    @JsonField(name = "issues_enabled")
+    @Json(name = "issues_enabled")
     Boolean issuesEnabled;
-    @JsonField(name = "merge_requests_enabled")
+    @Json(name = "merge_requests_enabled")
     Boolean mergeRequestsEnabled;
-    @JsonField(name = "wiki_enabled")
+    @Json(name = "wiki_enabled")
     Boolean wikiEnabled;
-    @JsonField(name = "builds_enabled")
+    @Json(name = "builds_enabled")
     Boolean buildEnabled;
-    @JsonField(name = "snippets_enabled")
+    @Json(name = "snippets_enabled")
     Boolean snippetsEnabled;
-    @JsonField(name = "created_at")
+    @Json(name = "created_at")
     Date createdAt;
-    @JsonField(name = "last_activity_at")
+    @Json(name = "last_activity_at")
     Date lastActivityAt;
-    @JsonField(name = "creator_id")
+    @Json(name = "creator_id")
     long creatorId;
-    @JsonField(name = "namespace")
+    @Json(name = "namespace")
     ProjectNamespace namespace;
-    @JsonField(name = "forked_from_project")
+    @Json(name = "forked_from_project")
     ForkedFromProject forkedFromProject;
-    @JsonField(name = "avatar_url")
+    @Json(name = "avatar_url")
     String avatarUrl;
-    @JsonField(name = "star_count")
+    @Json(name = "star_count")
     int starCount;
-    @JsonField(name = "forks_count")
+    @Json(name = "forks_count")
     int forksCount;
-    @JsonField(name = "open_issues_count")
+    @Json(name = "open_issues_count")
     int openIssuesCount;
 
     public Project() {}

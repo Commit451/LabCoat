@@ -1,10 +1,10 @@
 package com.commit451.gitlab.api
 
 import com.commit451.gitlab.model.Account
-import com.github.aurae.retrofit2.LoganSquareConverterFactory
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 
 /**
@@ -30,7 +30,7 @@ object GitLabFactory {
                 .client(client)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(ScalarsConverterFactory.create())
-                .addConverterFactory(LoganSquareConverterFactory.create())
+                .addConverterFactory(MoshiConverterFactory.create(MoshiProvider.moshi))
 
         return retrofitBuilder.build().create(GitLabService::class.java)
     }

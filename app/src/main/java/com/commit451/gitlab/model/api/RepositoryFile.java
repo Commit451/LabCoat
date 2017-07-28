@@ -1,30 +1,28 @@
 package com.commit451.gitlab.model.api;
 
-import com.bluelinelabs.logansquare.annotation.JsonField;
-import com.bluelinelabs.logansquare.annotation.JsonObject;
+import com.squareup.moshi.Json;
 
 import org.parceler.Parcel;
 
 @Parcel
-@JsonObject
 public class RepositoryFile {
-    @JsonField(name = "file_name")
+    @Json(name = "file_name")
     String fileName;
-    @JsonField(name = "file_path")
+    @Json(name = "file_path")
     String filePath;
-    @JsonField(name = "size")
+    @Json(name = "size")
     long size;
-    @JsonField(name = "encoding")
+    @Json(name = "encoding")
     String encoding;
-    @JsonField(name = "content")
+    @Json(name = "content")
     String content;
-    @JsonField(name = "ref")
+    @Json(name = "ref")
     String ref;
-    @JsonField(name = "blob_id")
+    @Json(name = "blob_id")
     String blobId;
-    @JsonField(name = "commit_id")
+    @Json(name = "commit_id")
     String commitId;
-    @JsonField(name = "last_commit_id")
+    @Json(name = "last_commit_id")
     String lastCommitId;
 
     public RepositoryFile() {}
