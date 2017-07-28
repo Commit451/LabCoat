@@ -5,6 +5,7 @@ import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.ProjectActivity
+import com.commit451.gitlab.extension.getFeedUrl
 import com.commit451.gitlab.fragment.*
 import com.commit451.gitlab.model.api.Project
 import timber.log.Timber
@@ -73,7 +74,7 @@ class ProjectSectionsPagerAdapter(context: ProjectActivity, fm: FragmentManager)
 
         when (correctPosition) {
             PROJECT_POS -> return ProjectFragment.newInstance()
-            ACTIVITY_POS -> return FeedFragment.newInstance(project.feedUrl)
+            ACTIVITY_POS -> return FeedFragment.newInstance(project.getFeedUrl())
             FILES_POS -> return FilesFragment.newInstance()
             COMMITS_POS -> return CommitsFragment.newInstance()
             PIPELINES_POS -> return PipelinesFragment.newInstance()

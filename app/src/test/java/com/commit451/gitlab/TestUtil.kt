@@ -28,8 +28,8 @@ object TestUtil {
         }
         val gitLab = GitLabFactory.create(account, gitlabClientBuilder.build())
         val request = SessionRequest()
-                .setLogin("TestAllTheThings")
-                .setPassword("testing123")
+        request.login = "TestAllTheThings"
+        request.password = "testing123"
         val loginResponse = gitLab
                 .login(request)
                 .blockingGet()

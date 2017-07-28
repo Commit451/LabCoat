@@ -1,7 +1,5 @@
 package com.commit451.gitlab.model.api;
 
-import android.net.Uri;
-
 import com.squareup.moshi.Json;
 
 import org.parceler.Parcel;
@@ -86,12 +84,12 @@ public class ProjectNamespace {
     @Parcel
     public static class Avatar {
         @Json(name = "url")
-        Uri url;
+        String url;
 
         public Avatar() {
         }
 
-        public Uri getUrl() {
+        public String getUrl() {
             return url;
         }
     }

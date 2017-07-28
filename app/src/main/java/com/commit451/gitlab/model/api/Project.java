@@ -1,8 +1,5 @@
 package com.commit451.gitlab.model.api;
 
-import android.net.Uri;
-import android.support.annotation.Nullable;
-
 import com.squareup.moshi.Json;
 
 import org.parceler.Parcel;
@@ -187,14 +184,6 @@ public class Project {
 
     public int getOpenIssuesCount() {
         return openIssuesCount;
-    }
-
-    @Nullable
-    public Uri getFeedUrl() {
-        if (webUrl == null) {
-            return null;
-        }
-        return Uri.parse(webUrl + ".atom");
     }
 
     public boolean belongsToGroup() {
