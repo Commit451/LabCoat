@@ -3,20 +3,16 @@ package com.commit451.gitlab.model.api;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringDef;
 
-import com.bluelinelabs.logansquare.annotation.JsonField;
-import com.bluelinelabs.logansquare.annotation.JsonObject;
-import com.commit451.gitlab.api.converter.DueDateTypeConverter;
+import com.commit451.gitlab.api.converter.DashDateAdapter;
+import com.squareup.moshi.Json;
 
 import org.parceler.Parcel;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 @Parcel
-@JsonObject
 public class Milestone {
     public static final String STATE_ACTIVE = "active";
     public static final String STATE_CLOSED = "closed";
@@ -32,25 +28,24 @@ public class Milestone {
     @Retention(RetentionPolicy.SOURCE)
     public @interface StateEvent {}
 
-    public static final SimpleDateFormat DUE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-d", Locale.US);
-
-    @JsonField(name = "id")
+    @Json(name = "id")
     long id;
-    @JsonField(name = "iid")
+    @Json(name = "iid")
     long iId;
-    @JsonField(name = "project_id")
+    @Json(name = "project_id")
     long projectId;
-    @JsonField(name = "title")
+    @Json(name = "title")
     String title;
-    @JsonField(name = "description")
+    @Json(name = "description")
     String description;
-    @JsonField(name = "state")
+    @Json(name = "state")
     String state;
-    @JsonField(name = "created_at")
+    @Json(name = "created_at")
     Date createdAt;
-    @JsonField(name = "updated_at")
+    @Json(name = "updated_at")
     Date updatedAt;
-    @JsonField(name = "due_date", typeConverter = DueDateTypeConverter.class)
+    @DashDateAdapter.DueDate
+    @Json(name = "due_date")
     Date dueDate;
 
     public Milestone() {}

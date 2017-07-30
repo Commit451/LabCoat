@@ -1,7 +1,6 @@
 package com.commit451.gitlab.fragment
 
 import android.os.Bundle
-import android.os.Parcelable
 import android.support.design.widget.Snackbar
 import android.support.v4.widget.SwipeRefreshLayout
 import android.view.LayoutInflater
@@ -9,16 +8,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import butterknife.BindView
+import com.commit451.addendum.parceler.getParcelerParcelable
+import com.commit451.addendum.parceler.putParcelerParcelable
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.event.PipelineChangedEvent
 import com.commit451.gitlab.extension.setup
-import com.commit451.gitlab.model.api.*
+import com.commit451.gitlab.model.api.CommitUser
+import com.commit451.gitlab.model.api.Pipeline
+import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.util.DateUtil
 import com.trello.rxlifecycle2.android.FragmentEvent
 import org.greenrobot.eventbus.Subscribe
-import org.parceler.Parcels
 import timber.log.Timber
 import java.util.*
 
@@ -28,15 +30,14 @@ import java.util.*
 class PipelineDescriptionFragment : ButterKnifeFragment() {
 
     companion object {
-
         private val KEY_PROJECT = "project"
         private val KEY_PIPELINE = "pipeline"
 
         fun newInstance(project: Project, pipeline: Pipeline): PipelineDescriptionFragment {
             val fragment = PipelineDescriptionFragment()
             val args = Bundle()
-            args.putParcelable(KEY_PROJECT, Parcels.wrap(project))
-            args.putParcelable(KEY_PIPELINE, Parcels.wrap(pipeline))
+            args.putParcelerParcelable(KEY_PROJECT, project)
+            args.putParcelerParcelable(KEY_PIPELINE, pipeline)
             fragment.arguments = args
             return fragment
         }
@@ -59,8 +60,8 @@ class PipelineDescriptionFragment : ButterKnifeFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        project = Parcels.unwrap<Project>(arguments.getParcelable<Parcelable>(KEY_PROJECT))
-        pipeline = Parcels.unwrap<Pipeline>(arguments.getParcelable<Parcelable>(KEY_PIPELINE))
+        project = arguments.getParcelerParcelable<Project>(KEY_PROJECT)!!
+        pipeline = arguments.getParcelerParcelable<Pipeline>(KEY_PIPELINE)!!
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -109,13 +110,17 @@ class PipelineDescriptionFragment : ButterKnifeFragment() {
         if (startedTime == null) {
             startedTime = Date()
         }
+        var createdTime: Date? = pipeline.createdAt
+        if (createdTime == null) {
+            createdTime = Date()
+        }
         val status = String.format(getString(R.string.pipeline_status), pipeline.status)
         textStatus.text = status
 
         val name = String.format(getString(R.string.pipeline_name), pipeline.id)
         textName.text = name
 
-        val created = String.format(getString(R.string.build_created), DateUtil.getRelativeTimeSpanString(activity, pipeline.createdAt))
+        val created = String.format(getString(R.string.pipeline_created), DateUtil.getRelativeTimeSpanString(activity, createdTime))
         textCreated.text = created
 
         val finished = String.format(getString(R.string.pipeline_finished), pipeline.finishedAt)

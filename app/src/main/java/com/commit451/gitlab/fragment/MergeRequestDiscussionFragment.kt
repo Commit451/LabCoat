@@ -12,13 +12,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import butterknife.BindView
+import com.commit451.addendum.parceler.getParcelerParcelable
+import com.commit451.addendum.parceler.getParcelerParcelableExtra
+import com.commit451.addendum.parceler.putParcelerParcelable
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.AttachActivity
 import com.commit451.gitlab.adapter.MergeRequestDetailAdapter
 import com.commit451.gitlab.event.MergeRequestChangedEvent
-import com.commit451.gitlab.extension.getParcelerParcelable
-import com.commit451.gitlab.extension.putParcelParcelableExtra
 import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.FileUploadResponse
 import com.commit451.gitlab.model.api.MergeRequest
@@ -49,8 +50,8 @@ class MergeRequestDiscussionFragment : ButterKnifeFragment() {
         fun newInstance(project: Project, mergeRequest: MergeRequest): MergeRequestDiscussionFragment {
             val fragment = MergeRequestDiscussionFragment()
             val args = Bundle()
-            args.putParcelParcelableExtra(KEY_PROJECT, project)
-            args.putParcelParcelableExtra(KEY_MERGE_REQUEST, mergeRequest)
+            args.putParcelerParcelable(KEY_PROJECT, project)
+            args.putParcelerParcelable(KEY_MERGE_REQUEST, mergeRequest)
             fragment.arguments = args
             return fragment
         }
@@ -126,7 +127,7 @@ class MergeRequestDiscussionFragment : ButterKnifeFragment() {
         when (requestCode) {
             REQUEST_ATTACH ->  {
                 if (resultCode == RESULT_OK) {
-                    val response = data!!.getParcelerParcelable<FileUploadResponse>(AttachActivity.KEY_FILE_UPLOAD_RESPONSE)!!
+                    val response = data!!.getParcelerParcelableExtra<FileUploadResponse>(AttachActivity.KEY_FILE_UPLOAD_RESPONSE)!!
                     progress.visibility = View.GONE
                     sendMessageView.appendText(response.markdown)
                 } else {
@@ -144,7 +145,7 @@ class MergeRequestDiscussionFragment : ButterKnifeFragment() {
 
     fun loadNotes() {
         swipeRefreshLayout.isRefreshing = true
-        App.get().gitLab.getMergeRequestNotes(project.id, mergeRequest.id)
+        App.get().gitLab.getMergeRequestNotes(project.id, mergeRequest.iid)
                 .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .subscribe(object : CustomResponseSingleObserver<List<Note>>() {
 

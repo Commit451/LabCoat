@@ -5,10 +5,16 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import android.support.annotation.IntDef
-import com.bluelinelabs.logansquare.LoganSquare
+import com.commit451.gitlab.api.MoshiProvider
 import com.commit451.gitlab.model.Account
 import java.io.IOException
 import java.util.*
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.Types.newParameterizedType
+import com.squareup.moshi.Types
+
+
 
 /**
  * Shared prefs things
@@ -40,12 +46,9 @@ object Prefs {
     fun getAccounts(): MutableList<Account> {
         val accountsJson = prefs.getString(KEY_ACCOUNTS, null)
         if (!accountsJson.isNullOrEmpty()) {
-            try {
-                return LoganSquare.parseList(accountsJson, Account::class.java)
-            } catch (e: IOException) {
-                prefs.edit().remove(KEY_ACCOUNTS).apply()
-            }
-            return ArrayList()
+            val type = Types.newParameterizedType(List::class.java, Account::class.java)
+            val adapter = MoshiProvider.moshi.adapter<List<Account>>(type)
+            return adapter.fromJson(accountsJson)!!.toMutableList()
         } else {
             return ArrayList()
         }
@@ -53,7 +56,9 @@ object Prefs {
 
     fun setAccounts(accounts: List<Account>) {
         try {
-            val json = LoganSquare.serialize<List<Account>>(accounts)
+            val type = Types.newParameterizedType(List::class.java, Account::class.java)
+            val adapter = MoshiProvider.moshi.adapter<List<Account>>(type)
+            val json = adapter.toJson(accounts)
             prefs.edit()
                     .putString(KEY_ACCOUNTS, json)
                     .apply()

@@ -1,7 +1,6 @@
 package com.commit451.gitlab.model.api;
 
-import com.bluelinelabs.logansquare.annotation.JsonField;
-import com.bluelinelabs.logansquare.annotation.JsonObject;
+import com.squareup.moshi.Json;
 
 import org.parceler.Parcel;
 
@@ -11,38 +10,37 @@ import java.util.Date;
  * Represents a build
  */
 @Parcel
-@JsonObject
 public class Build {
 
-    @JsonField(name = "commit")
+    @Json(name = "commit")
     RepositoryCommit commit;
-    @JsonField(name = "coverage")
+    @Json(name = "coverage")
     String coverage;
-    @JsonField(name = "created_at")
+    @Json(name = "created_at")
     Date createdAt;
-    @JsonField(name = "artifacts_file")
+    @Json(name = "artifacts_file")
     ArtifactsFile artifactsFile;
-    @JsonField(name = "finished_at")
+    @Json(name = "finished_at")
     Date finishedAt;
-    @JsonField(name = "id")
+    @Json(name = "id")
     long id;
-    @JsonField(name = "name")
+    @Json(name = "name")
     String name;
-    @JsonField(name = "ref")
+    @Json(name = "ref")
     String ref;
-    @JsonField(name = "runner")
+    @Json(name = "runner")
     Runner runner;
-    @JsonField(name = "pipeline")
+    @Json(name = "pipeline")
     Pipeline pipeline;
-    @JsonField(name = "stage")
+    @Json(name = "stage")
     String stage;
-    @JsonField(name = "started_at")
+    @Json(name = "started_at")
     Date startedAt;
-    @JsonField(name = "status")
+    @Json(name = "status")
     String status;
-    @JsonField(name = "tag")
+    @Json(name = "tag")
     boolean tag;
-    @JsonField(name = "user")
+    @Json(name = "user")
     User user;
 
     public RepositoryCommit getCommit() {

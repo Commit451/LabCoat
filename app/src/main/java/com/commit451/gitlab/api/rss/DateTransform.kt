@@ -1,7 +1,8 @@
 package com.commit451.gitlab.api.rss
 
-import com.commit451.gitlab.util.ConversionUtil
 import org.simpleframework.xml.transform.Transform
+import org.threeten.bp.Instant
+import org.threeten.bp.format.DateTimeFormatter
 import java.util.*
 
 /**
@@ -11,11 +12,11 @@ class DateTransform : Transform<Date> {
 
     @Throws(Exception::class)
     override fun read(value: String): Date? {
-        return ConversionUtil.toDate(value)
+        return Date(Instant.from(DateTimeFormatter.ISO_OFFSET_DATE_TIME.parse(value)).toEpochMilli())
     }
 
     @Throws(Exception::class)
     override fun write(value: Date): String {
-        return ConversionUtil.fromDate(value)
+        return DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(Instant.ofEpochMilli(value.time))
     }
 }

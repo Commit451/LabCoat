@@ -1,28 +1,26 @@
 package com.commit451.gitlab.model.api;
 
-import com.bluelinelabs.logansquare.annotation.JsonField;
-import com.bluelinelabs.logansquare.annotation.JsonObject;
+import com.squareup.moshi.Json;
 
 import org.parceler.Parcel;
 
 @Parcel
-@JsonObject
 public class Diff {
-    @JsonField(name = "old_path")
+    @Json(name = "old_path")
     String oldPath;
-    @JsonField(name = "new_path")
+    @Json(name = "new_path")
     String newPath;
-    @JsonField(name = "a_mode")
+    @Json(name = "a_mode")
     int aMode;
-    @JsonField(name = "b_mode")
+    @Json(name = "b_mode")
     int bMode;
-    @JsonField(name = "diff")
+    @Json(name = "diff")
     String diff;
-    @JsonField(name = "new_file")
+    @Json(name = "new_file")
     boolean newFile;
-    @JsonField(name = "renamed_file")
+    @Json(name = "renamed_file")
     boolean renamedFile;
-    @JsonField(name = "deleted_file")
+    @Json(name = "deleted_file")
     boolean deletedFile;
 
     public Diff() {}

@@ -1,26 +1,22 @@
 package com.commit451.gitlab.model.api;
 
-import com.bluelinelabs.logansquare.annotation.JsonField;
-import com.bluelinelabs.logansquare.annotation.JsonObject;
+import com.squareup.moshi.Json;
 
 import org.parceler.Parcel;
-
-import java.util.Date;
 
 /**
  * Represents a pipeline
  */
 @Parcel
-@JsonObject
 public class Pipelines {
 
-    @JsonField(name = "sha")
+    @Json(name = "sha")
     String sha;
-    @JsonField(name = "id")
+    @Json(name = "id")
     long id;
-    @JsonField(name = "ref")
+    @Json(name = "ref")
     String ref;
-    @JsonField(name = "status")
+    @Json(name = "status")
     String status;
 
     public long getId() {

@@ -11,12 +11,12 @@ import android.view.View
 import android.view.ViewGroup
 import butterknife.BindView
 import butterknife.ButterKnife
+import com.commit451.addendum.parceler.getParcelerParcelableExtra
+import com.commit451.addendum.parceler.putParcelerParcelableExtra
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.PipelineSectionsPagerAdapter
 import com.commit451.gitlab.event.PipelineChangedEvent
-import com.commit451.gitlab.extension.getParcelerParcelable
-import com.commit451.gitlab.extension.putParcelParcelableExtra
 import com.commit451.gitlab.model.api.Pipeline
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.rx.CustomSingleObserver
@@ -38,8 +38,8 @@ class PipelineActivity : BaseActivity() {
 
         fun newIntent(context: Context, project: Project, pipeline: Pipeline): Intent {
             val intent = Intent(context, PipelineActivity::class.java)
-            intent.putParcelParcelableExtra(KEY_PROJECT, project)
-            intent.putParcelParcelableExtra(KEY_PIPELINE, pipeline)
+            intent.putParcelerParcelableExtra(KEY_PROJECT, project)
+            intent.putParcelerParcelableExtra(KEY_PIPELINE, pipeline)
             return intent
         }
     }
@@ -112,8 +112,8 @@ class PipelineActivity : BaseActivity() {
         setContentView(R.layout.activity_pipeline)
         ButterKnife.bind(this)
 
-        project = intent.getParcelerParcelable<Project>(KEY_PROJECT)!!
-        pipeline = intent.getParcelerParcelable<Pipeline>(KEY_PIPELINE)!!
+        project = intent.getParcelerParcelableExtra<Project>(KEY_PROJECT)!!
+        pipeline = intent.getParcelerParcelableExtra<Pipeline>(KEY_PIPELINE)!!
 
         toolbar.title = String.format(getString(R.string.pipeline_number), pipeline.id)
         toolbar.setNavigationIcon(R.drawable.ic_back_24dp)

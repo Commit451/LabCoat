@@ -1,17 +1,15 @@
 package com.commit451.gitlab.model.api;
 
-import com.bluelinelabs.logansquare.annotation.JsonField;
-import com.bluelinelabs.logansquare.annotation.JsonObject;
+import com.squareup.moshi.Json;
 
 import org.parceler.Parcel;
 
-@JsonObject
 @Parcel
 public class ArtifactsFile {
 
-    @JsonField(name = "filename")
+    @Json(name = "filename")
     String fileName;
-    @JsonField(name = "size")
+    @Json(name = "size")
     long size;
 
     public String getFileName() {

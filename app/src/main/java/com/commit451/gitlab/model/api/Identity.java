@@ -1,16 +1,14 @@
 package com.commit451.gitlab.model.api;
 
-import com.bluelinelabs.logansquare.annotation.JsonField;
-import com.bluelinelabs.logansquare.annotation.JsonObject;
+import com.squareup.moshi.Json;
 
 import org.parceler.Parcel;
 
 @Parcel
-@JsonObject
 public class Identity {
-    @JsonField(name = "provider")
+    @Json(name = "provider")
     String provider;
-    @JsonField(name = "extern_uid")
+    @Json(name = "extern_uid")
     String externUid;
 
     public Identity() {}

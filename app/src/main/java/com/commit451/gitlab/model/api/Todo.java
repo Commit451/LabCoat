@@ -2,8 +2,7 @@ package com.commit451.gitlab.model.api;
 
 import android.support.annotation.StringDef;
 
-import com.bluelinelabs.logansquare.annotation.JsonField;
-import com.bluelinelabs.logansquare.annotation.JsonObject;
+import com.squareup.moshi.Json;
 
 import org.parceler.Parcel;
 
@@ -16,7 +15,6 @@ import java.util.Date;
  * makes it not play nice with any automated json parsing
  */
 @Parcel
-@JsonObject
 public class Todo {
 
     public static final String TARGET_ISSUE = "Issue";
@@ -35,25 +33,25 @@ public class Todo {
     public @interface State {
     }
 
-    @JsonField(name = "id")
+    @Json(name = "id")
     String id;
-    @JsonField(name = "project")
+    @Json(name = "project")
     Project project;
-    @JsonField(name = "author")
+    @Json(name = "author")
     UserBasic author;
-    @JsonField(name = "action_name")
+    @Json(name = "action_name")
     String actionName;
-    @JsonField(name = "target_type")
+    @Json(name = "target_type")
     @TargetType
     String targetType;
-    @JsonField(name = "target_url")
+    @Json(name = "target_url")
     String targetUrl;
-    @JsonField(name = "body")
+    @Json(name = "body")
     String body;
-    @JsonField(name = "state")
+    @Json(name = "state")
     @State
     String state;
-    @JsonField(name = "created_at")
+    @Json(name = "created_at")
     Date createdAt;
 
     public Todo() {}

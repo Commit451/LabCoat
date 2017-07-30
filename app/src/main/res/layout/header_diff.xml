@@ -37,7 +37,7 @@
                 android:orientation="vertical"
                 android:paddingLeft="@dimen/activity_horizontal_margin">
 
-                <com.devspark.robototextview.widget.RobotoTextView
+                <TextView
                     android:id="@+id/commit_author"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -45,7 +45,7 @@
                     android:textSize="14sp"
                     tools:text="Jawnnypoo" />
 
-                <com.devspark.robototextview.widget.RobotoTextView
+                <TextView
                     android:id="@+id/commit_time"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -54,7 +54,7 @@
             </LinearLayout>
         </LinearLayout>
 
-        <com.devspark.robototextview.widget.RobotoTextView
+        <TextView
             android:id="@+id/commit_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -62,7 +62,7 @@
             android:textSize="16sp"
             tools:text="I commited all the code at once cause I am cool. So sorry, the message is so long that..." />
 
-        <com.devspark.robototextview.widget.RobotoTextView
+        <TextView
             android:id="@+id/commit_message"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

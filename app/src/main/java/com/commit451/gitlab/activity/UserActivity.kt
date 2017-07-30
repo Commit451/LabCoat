@@ -13,12 +13,12 @@ import android.support.v7.widget.Toolbar
 import android.widget.ImageView
 import butterknife.BindView
 import butterknife.ButterKnife
+import com.commit451.addendum.parceler.getParcelerParcelableExtra
+import com.commit451.addendum.parceler.putParcelerParcelableExtra
 import com.commit451.alakazam.Alakazam
 import com.commit451.easel.Easel
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
-import com.commit451.gitlab.extension.getParcelerParcelable
-import com.commit451.gitlab.extension.putParcelParcelableExtra
 import com.commit451.gitlab.fragment.FeedFragment
 import com.commit451.gitlab.model.api.UserBasic
 import com.commit451.gitlab.transformation.PaletteTransformation
@@ -35,7 +35,7 @@ class UserActivity : BaseActivity() {
 
         fun newIntent(context: Context, user: UserBasic): Intent {
             val intent = Intent(context, UserActivity::class.java)
-            intent.putParcelParcelableExtra(KEY_USER, user)
+            intent.putParcelerParcelableExtra(KEY_USER, user)
             return intent
         }
     }
@@ -50,7 +50,7 @@ class UserActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user)
         ButterKnife.bind(this)
-        user = intent.getParcelerParcelable<UserBasic>(KEY_USER)!!
+        user = intent.getParcelerParcelableExtra<UserBasic>(KEY_USER)!!
 
         // Default content and scrim colors
         collapsingToolbarLayout.setCollapsedTitleTextColor(Color.WHITE)

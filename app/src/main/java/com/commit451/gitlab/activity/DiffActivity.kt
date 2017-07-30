@@ -12,11 +12,11 @@ import android.view.ViewGroup
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
+import com.commit451.addendum.parceler.getParcelerParcelableExtra
+import com.commit451.addendum.parceler.putParcelerParcelableExtra
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.DiffAdapter
-import com.commit451.gitlab.extension.getParcelerParcelable
-import com.commit451.gitlab.extension.putParcelParcelableExtra
 import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.Diff
 import com.commit451.gitlab.model.api.Project
@@ -36,8 +36,8 @@ class DiffActivity : BaseActivity() {
 
         fun newIntent(context: Context, project: Project, commit: RepositoryCommit): Intent {
             val intent = Intent(context, DiffActivity::class.java)
-            intent.putParcelParcelableExtra(EXTRA_PROJECT, project)
-            intent.putParcelParcelableExtra(EXTRA_COMMIT, commit)
+            intent.putParcelerParcelableExtra(EXTRA_PROJECT, project)
+            intent.putParcelerParcelableExtra(EXTRA_COMMIT, commit)
             return intent
         }
     }
@@ -58,8 +58,8 @@ class DiffActivity : BaseActivity() {
         setContentView(R.layout.activity_diff)
         ButterKnife.bind(this)
 
-        project = intent.getParcelerParcelable<Project>(EXTRA_PROJECT)!!
-        commit = intent.getParcelerParcelable<RepositoryCommit>(EXTRA_COMMIT)!!
+        project = intent.getParcelerParcelableExtra<Project>(EXTRA_PROJECT)!!
+        commit = intent.getParcelerParcelableExtra<RepositoryCommit>(EXTRA_COMMIT)!!
 
         toolbar.setNavigationIcon(R.drawable.ic_back_24dp)
         toolbar.setNavigationOnClickListener { onBackPressed() }

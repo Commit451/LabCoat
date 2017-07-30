@@ -3,8 +3,7 @@ package com.commit451.gitlab.model.api;
 import android.graphics.Color;
 import android.support.annotation.ColorInt;
 
-import com.bluelinelabs.logansquare.annotation.JsonField;
-import com.bluelinelabs.logansquare.annotation.JsonObject;
+import com.squareup.moshi.Json;
 
 import org.parceler.Parcel;
 
@@ -12,22 +11,21 @@ import org.parceler.Parcel;
  * A label
  */
 @Parcel
-@JsonObject
 public class Label {
 
-    @JsonField(name = "color")
+    @Json(name = "color")
     String color;
-    @JsonField(name = "name")
+    @Json(name = "name")
     String name;
-    @JsonField(name = "description")
+    @Json(name = "description")
     String description;
-    @JsonField(name = "open_issues_count")
+    @Json(name = "open_issues_count")
     int openIssuesCount;
-    @JsonField(name = "closed_issues_count")
+    @Json(name = "closed_issues_count")
     int closedIssuesCount;
-    @JsonField(name = "open_merge_requests_count")
+    @Json(name = "open_merge_requests_count")
     int openMergeRequestsCount;
-    @JsonField(name = "subscribed")
+    @Json(name = "subscribed")
     boolean subscribed;
 
     protected Label() {

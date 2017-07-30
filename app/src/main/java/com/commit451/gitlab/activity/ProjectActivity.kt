@@ -5,6 +5,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.design.widget.TabLayout
@@ -15,14 +16,16 @@ import android.view.ViewGroup
 import android.widget.Toast
 import butterknife.BindView
 import butterknife.ButterKnife
+import com.commit451.addendum.parceler.getParcelerParcelable
+import com.commit451.addendum.parceler.getParcelerParcelableExtra
+import com.commit451.addendum.parceler.putParcelerParcelable
+import com.commit451.addendum.parceler.putParcelerParcelableExtra
 import com.commit451.alakazam.HideRunnable
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.ProjectSectionsPagerAdapter
 import com.commit451.gitlab.data.Prefs
 import com.commit451.gitlab.event.ProjectReloadEvent
-import com.commit451.gitlab.extension.getParcelerParcelable
-import com.commit451.gitlab.extension.putParcelParcelableExtra
 import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.fragment.BaseFragment
 import com.commit451.gitlab.model.Ref
@@ -49,7 +52,7 @@ class ProjectActivity : BaseActivity() {
 
         fun newIntent(context: Context, project: Project): Intent {
             val intent = Intent(context, ProjectActivity::class.java)
-            intent.putParcelParcelableExtra(EXTRA_PROJECT, project)
+            intent.putParcelerParcelableExtra(EXTRA_PROJECT, project)
             return intent
         }
 
@@ -88,7 +91,7 @@ class ProjectActivity : BaseActivity() {
             }
             R.id.action_share -> {
                 if (project != null) {
-                    IntentUtil.share(root, project!!.webUrl)
+                    IntentUtil.share(root, Uri.parse(project!!.webUrl))
                 }
                 return@OnMenuItemClickListener true
             }
@@ -119,7 +122,7 @@ class ProjectActivity : BaseActivity() {
         Prefs.startingView = Prefs.STARTING_VIEW_PROJECTS
         setContentView(R.layout.activity_project)
         ButterKnife.bind(this)
-        var project: Project? = intent.getParcelerParcelable(EXTRA_PROJECT)
+        var project: Project? = intent.getParcelerParcelableExtra(EXTRA_PROJECT)
 
         if (savedInstanceState != null) {
             project = savedInstanceState.getParcelerParcelable<Project>(STATE_PROJECT)
@@ -150,7 +153,7 @@ class ProjectActivity : BaseActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             REQUEST_BRANCH_OR_TAG -> if (resultCode == Activity.RESULT_OK) {
-                ref = data?.getParcelerParcelable<Ref>(PickBranchOrTagActivity.EXTRA_REF)
+                ref = data?.getParcelerParcelableExtra<Ref>(PickBranchOrTagActivity.EXTRA_REF)
                 broadcastLoad()
             }
         }
@@ -158,8 +161,8 @@ class ProjectActivity : BaseActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putParcelParcelableExtra(STATE_REF, ref)
-        outState.putParcelParcelableExtra(STATE_PROJECT, project)
+        outState.putParcelerParcelable(STATE_REF, ref)
+        outState.putParcelerParcelable(STATE_PROJECT, project)
     }
 
     override fun onBackPressed() {
@@ -216,7 +219,7 @@ class ProjectActivity : BaseActivity() {
     }
 
     fun broadcastLoad() {
-        App.bus().post(ProjectReloadEvent(project!!, ref!!.ref))
+        App.bus().post(ProjectReloadEvent(project!!, ref!!.ref!!))
     }
 
     fun getRefRef(): String? {

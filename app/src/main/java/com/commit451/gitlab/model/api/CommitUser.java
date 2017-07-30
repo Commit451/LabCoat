@@ -1,27 +1,23 @@
 package com.commit451.gitlab.model.api;
 
-import com.bluelinelabs.logansquare.annotation.JsonField;
-import com.bluelinelabs.logansquare.annotation.JsonObject;
 import com.commit451.gitlab.util.ObjectUtil;
+import com.squareup.moshi.Json;
 
 import org.parceler.Parcel;
 
-import java.util.Date;
-
 @Parcel
-@JsonObject
 public class CommitUser {
-    @JsonField(name = "id")
+    @Json(name = "id")
     String id;
-    @JsonField(name = "name")
+    @Json(name = "name")
     String name;
-    @JsonField(name = "username")
+    @Json(name = "username")
     String username;
-    @JsonField(name = "state")
+    @Json(name = "state")
     String state;
-    @JsonField(name = "avatar_url")
+    @Json(name = "avatar_url")
     String avatarUrl;
-    @JsonField(name = "web_url")
+    @Json(name = "web_url")
     String webUrl;
 
     public CommitUser() {}

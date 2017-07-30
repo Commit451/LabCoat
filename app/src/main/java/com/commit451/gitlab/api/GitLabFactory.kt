@@ -1,17 +1,22 @@
 package com.commit451.gitlab.api
 
-import android.support.annotation.VisibleForTesting
 import com.commit451.gitlab.model.Account
-import com.github.aurae.retrofit2.LoganSquareConverterFactory
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 
 /**
  * Pulls all the GitLabService stuff from the API
  */
 object GitLabFactory {
+
+    fun createGitLab(account: Account, clientBuilder: OkHttpClient.Builder): GitLab {
+        return GitLab.Builder(account)
+                .clientBuilder(clientBuilder)
+                .build()
+    }
 
     /**
      * Create a GitLabService get with the current account passed.
@@ -20,22 +25,13 @@ object GitLabFactory {
      * @return the GitLabService configured client
      */
     fun create(account: Account, client: OkHttpClient): GitLabService {
-        return create(account, client, false)
-    }
-
-    @VisibleForTesting
-    fun create(account: Account, client: OkHttpClient, dummyExecutor: Boolean): GitLabService {
         val retrofitBuilder = Retrofit.Builder()
                 .baseUrl(account.serverUrl.toString())
                 .client(client)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(ScalarsConverterFactory.create())
-                .addConverterFactory(LoganSquareConverterFactory.create())
-        if (dummyExecutor) {
-            retrofitBuilder.callbackExecutor {
-                //dumb, to prevent tests from failing }
-            }
-        }
+                .addConverterFactory(MoshiConverterFactory.create(MoshiProvider.moshi))
+
         return retrofitBuilder.build().create(GitLabService::class.java)
     }
 }

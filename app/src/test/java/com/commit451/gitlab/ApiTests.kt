@@ -1,24 +1,15 @@
 package com.commit451.gitlab
 
-import android.graphics.BitmapFactory
-import com.commit451.gitlab.api.GitLab
 import com.commit451.gitlab.api.GitLabService
 import com.commit451.gitlab.model.api.Project
-import com.commit451.gitlab.util.FileUtil
 import org.junit.Assert.assertNotNull
 import org.junit.BeforeClass
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
-import org.robolectric.RuntimeEnvironment
-import org.robolectric.annotation.Config
-import org.robolectric.shadows.ShadowLog
+
 
 /**
  * Tests account login and basic retrieval stuff
  */
-@RunWith(RobolectricTestRunner::class)
-@Config(constants = BuildConfig::class, sdk = intArrayOf(23))
 class ApiTests {
 
     companion object {
@@ -33,9 +24,6 @@ class ApiTests {
         @Throws(Exception::class)
         fun setUp() {
             //for logging
-            ShadowLog.stream = System.out
-
-            GitLab.init()
 
             gitLab = TestUtil.login()
 
@@ -83,7 +71,7 @@ class ApiTests {
     @Test
     @Throws(Exception::class)
     fun getIssues() {
-        val defaultState = RuntimeEnvironment.application.resources.getString(R.string.issue_state_value_default)
+        val defaultState = "opened"
         val issuesResponse = gitLab!!
                 .getIssues(fakeProject!!.id, defaultState)
                 .blockingGet()
@@ -107,7 +95,7 @@ class ApiTests {
     fun getCommits() {
         val defaultBranch = "master"
         val commitsResponse = gitLab!!
-                .getCommits(fakeProject!!.id, defaultBranch, 0)
+                .getCommits(fakeProject!!.id, defaultBranch, 1)
                 .blockingGet()
         assertNotNull(commitsResponse)
     }
@@ -115,7 +103,7 @@ class ApiTests {
     @Test
     @Throws(Exception::class)
     fun getMergeRequests() {
-        val defaultState = RuntimeEnvironment.application.resources.getString(R.string.merge_request_state_value_default)
+        val defaultState = "opened"
         val mergeRequestResponse = gitLab!!
                 .getMergeRequests(fakeProject!!.id, defaultState)
                 .blockingGet()
@@ -131,16 +119,5 @@ class ApiTests {
                 .blockingGet()
         TestUtil.assertRetrofitResponseSuccess(userFullResponse)
         assertNotNull(userFullResponse.body())
-    }
-
-    //    @Test
-    @Throws(Exception::class)
-    fun uploadFile() {
-        val bitmap = BitmapFactory.decodeResource(RuntimeEnvironment.application.resources, R.drawable.ic_fork)
-        val part = FileUtil.toPart(bitmap, "fork.png")
-
-        val uploadResponseResponse = gitLab!!.uploadFile(fakeProject!!.id, part)
-                .blockingGet()
-        assertNotNull(uploadResponseResponse)
     }
 }

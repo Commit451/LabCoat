@@ -1,22 +1,20 @@
 package com.commit451.gitlab.model.api;
 
-import com.bluelinelabs.logansquare.annotation.JsonField;
-import com.bluelinelabs.logansquare.annotation.JsonObject;
+import com.squareup.moshi.Json;
 
 import org.parceler.Parcel;
 
 @Parcel
-@JsonObject
 public class ForkedFromProject {
-    @JsonField(name = "id")
+    @Json(name = "id")
     long id;
-    @JsonField(name = "name")
+    @Json(name = "name")
     String name;
-    @JsonField(name = "name_with_namespace")
+    @Json(name = "name_with_namespace")
     String nameWithNamespace;
-    @JsonField(name = "path")
+    @Json(name = "path")
     String path;
-    @JsonField(name = "path_with_namespace")
+    @Json(name = "path_with_namespace")
     String pathWithNamespace;
 
     public ForkedFromProject() {}

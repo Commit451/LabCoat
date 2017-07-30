@@ -5,16 +5,19 @@ import android.content.Context
 import android.content.res.Resources
 import android.support.annotation.VisibleForTesting
 import android.support.multidex.MultiDex
-import com.commit451.gitlab.api.*
+import com.commit451.gitlab.api.GitLab
+import com.commit451.gitlab.api.GitLabFactory
+import com.commit451.gitlab.api.OkHttpClientFactory
+import com.commit451.gitlab.api.PicassoFactory
 import com.commit451.gitlab.data.Prefs
 import com.commit451.gitlab.model.Account
 import com.commit451.gitlab.util.FabricUtil
 import com.commit451.lift.Lift
+import com.jakewharton.threetenabp.AndroidThreeTen
 import com.novoda.simplechromecustomtabs.SimpleChromeCustomTabs
 import com.squareup.leakcanary.LeakCanary
 import com.squareup.picasso.Picasso
 import io.reactivex.plugins.RxJavaPlugins
-import net.danlew.android.joda.JodaTimeAndroid
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.greenrobot.eventbus.EventBus
@@ -58,7 +61,7 @@ open class App : Application() {
             Timber.e(error)
         }
 
-        GitLab.init()
+        setupThreeTen()
 
         Prefs.init(this)
         //So that we don't get weird half translations
@@ -69,7 +72,6 @@ open class App : Application() {
             Timber.plant(Timber.DebugTree())
         }
 
-        JodaTimeAndroid.init(this)
         SimpleChromeCustomTabs.initialize(this)
 
         val accounts = Account.getAccounts()
@@ -95,7 +97,7 @@ open class App : Application() {
             clientBuilder.addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
         }
         val client = clientBuilder.build()
-        initGitLab(account, client)
+        initGitLab(account, clientBuilder)
         if (BuildConfig.DEBUG) {
             initPicasso(OkHttpClientFactory.create(account).build())
         } else {
@@ -122,6 +124,11 @@ open class App : Application() {
         LeakCanary.install(this)
     }
 
+    @VisibleForTesting
+    protected open fun setupThreeTen() {
+        AndroidThreeTen.init(this)
+    }
+
     private fun forceLocale(locale: Locale) {
         try {
             Locale.setDefault(locale)
@@ -138,10 +145,8 @@ open class App : Application() {
 
     }
 
-    private fun initGitLab(account: Account, client: OkHttpClient) {
-        val gitLabService = GitLabFactory.create(account, client)
-        val gitLabRss = GitLabRssFactory.create(account, client)
-        gitLab = GitLab(gitLabService, gitLabRss)
+    private fun initGitLab(account: Account, clientBuilder: OkHttpClient.Builder) {
+        gitLab = GitLabFactory.createGitLab(account, clientBuilder)
     }
 
     private fun initPicasso(client: OkHttpClient) {

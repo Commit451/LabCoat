@@ -38,18 +38,18 @@
 -dontwarn javax.xml.stream.events.**
 -dontwarn javax.xml.**
 
-## joda-time-android 2.8.0
-# This is only necessary if you are not including the optional joda-convert dependency
+# Parceler library
+-keep interface org.parceler.Parcel
+-keep @org.parceler.Parcel class * { *; }
+-keep class **$$Parcelable { *; }
 
--dontwarn org.joda.convert.FromString
--dontwarn org.joda.convert.ToString
-
-# Parcel library
--keep class * implements android.os.Parcelable {
-  public static final android.os.Parcelable$Creator *;
+# Moshi
+-dontwarn okio.**
+-dontwarn javax.annotation.Nullable
+-dontwarn javax.annotation.ParametersAreNonnullByDefault
+-keepclasseswithmembers class * {
+    @com.squareup.moshi.* <methods>;
 }
-
--keep class org.parceler.Parceler$$Parcels
 
 # Custom rules
 -keep class com.commit451.gitlab.ssl.CustomSSLSocketFactory

@@ -1,17 +1,15 @@
 package com.commit451.gitlab.model.api;
 
-import com.bluelinelabs.logansquare.annotation.JsonField;
-import com.bluelinelabs.logansquare.annotation.JsonObject;
 import com.commit451.gitlab.util.ObjectUtil;
+import com.squareup.moshi.Json;
 
 import org.parceler.Parcel;
 
 @Parcel
-@JsonObject
 public class Branch {
-    @JsonField(name = "name")
+    @Json(name = "name")
     String name;
-    @JsonField(name = "protected")
+    @Json(name = "protected")
     boolean isProtected;
 
     public Branch() {}

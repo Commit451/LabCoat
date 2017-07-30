@@ -1,6 +1,5 @@
 package com.commit451.gitlab.viewHolder
 
-import `in`.uncod.android.bypass.Bypass
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -11,14 +10,13 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
+import com.commit451.gitlab.extension.setMarkdownText
 import com.commit451.gitlab.model.api.MergeRequest
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.transformation.CircleTransformation
-import com.commit451.gitlab.util.BypassImageGetterFactory
 import com.commit451.gitlab.util.DateUtil
 import com.commit451.gitlab.util.ImageUtil
 import com.commit451.gitlab.util.InternalLinkMovementMethod
-import com.vdurmont.emoji.EmojiParser
 
 /**
  * Header that gives the details of a merge request
@@ -42,18 +40,12 @@ class MergeRequestHeaderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         ButterKnife.bind(this, view)
     }
 
-    fun bind(mergeRequest: MergeRequest, bypass: Bypass, project: Project) {
+    fun bind(mergeRequest: MergeRequest, project: Project) {
         if (mergeRequest.description.isNullOrEmpty()) {
             textDescription.visibility = View.GONE
         } else {
             textDescription.visibility = View.VISIBLE
-            var description = mergeRequest.description
-            description = EmojiParser.parseToUnicode(description)
-            textDescription.text = bypass.markdownToSpannable(description,
-                    BypassImageGetterFactory.create(textDescription,
-                            App.get().picasso,
-                            App.get().getAccount().serverUrl.toString(),
-                            project))
+            textDescription.setMarkdownText(mergeRequest.description, project)
             textDescription.movementMethod = InternalLinkMovementMethod(App.get().getAccount().serverUrl)
         }
 

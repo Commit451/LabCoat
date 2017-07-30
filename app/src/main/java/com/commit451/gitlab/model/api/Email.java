@@ -1,16 +1,14 @@
 package com.commit451.gitlab.model.api;
 
-import com.bluelinelabs.logansquare.annotation.JsonField;
-import com.bluelinelabs.logansquare.annotation.JsonObject;
+import com.squareup.moshi.Json;
 
 import org.parceler.Parcel;
 
 @Parcel
-@JsonObject
 public class Email {
-    @JsonField(name = "id")
+    @Json(name = "id")
     long id;
-    @JsonField(name = "email")
+    @Json(name = "email")
     String email;
 
     public Email() {}

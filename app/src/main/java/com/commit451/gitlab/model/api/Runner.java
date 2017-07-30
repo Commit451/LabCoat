@@ -1,7 +1,6 @@
 package com.commit451.gitlab.model.api;
 
-import com.bluelinelabs.logansquare.annotation.JsonField;
-import com.bluelinelabs.logansquare.annotation.JsonObject;
+import com.squareup.moshi.Json;
 
 import org.parceler.Parcel;
 
@@ -9,18 +8,17 @@ import org.parceler.Parcel;
  * A runner. It runs builds. yeah
  */
 @Parcel
-@JsonObject
 public class Runner {
 
-    @JsonField(name = "id")
+    @Json(name = "id")
     long id;
-    @JsonField(name = "description")
+    @Json(name = "description")
     String description;
-    @JsonField(name = "active")
+    @Json(name = "active")
     boolean active;
-    @JsonField(name = "is_shared")
+    @Json(name = "is_shared")
     boolean isShared;
-    @JsonField(name = "name")
+    @Json(name = "name")
     String name;
 
     public long getId() {

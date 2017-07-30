@@ -17,13 +17,13 @@ import android.view.View
 import android.widget.ImageView
 import butterknife.BindView
 import butterknife.ButterKnife
+import com.commit451.addendum.parceler.getParcelerParcelableExtra
+import com.commit451.addendum.parceler.putParcelerParcelableExtra
 import com.commit451.alakazam.Alakazam
 import com.commit451.easel.Easel
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.GroupPagerAdapter
-import com.commit451.gitlab.extension.getParcelerParcelable
-import com.commit451.gitlab.extension.putParcelParcelableExtra
 import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.Group
 import com.commit451.gitlab.model.api.GroupDetail
@@ -43,7 +43,7 @@ class GroupActivity : BaseActivity() {
 
         fun newIntent(context: Context, group: Group): Intent {
             val intent = Intent(context, GroupActivity::class.java)
-            intent.putParcelParcelableExtra(KEY_GROUP, group)
+            intent.putParcelerParcelableExtra(KEY_GROUP, group)
             return intent
         }
 
@@ -73,7 +73,7 @@ class GroupActivity : BaseActivity() {
         toolbar.setNavigationOnClickListener { onBackPressed() }
 
         if (intent.hasExtra(KEY_GROUP)) {
-            val group = intent.getParcelerParcelable<Group>(KEY_GROUP)!!
+            val group = intent.getParcelerParcelableExtra<Group>(KEY_GROUP)!!
             bind(group)
         } else {
             progress.visibility = View.VISIBLE

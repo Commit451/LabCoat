@@ -4,8 +4,7 @@ import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringDef;
 
-import com.bluelinelabs.logansquare.annotation.JsonField;
-import com.bluelinelabs.logansquare.annotation.JsonObject;
+import com.squareup.moshi.Json;
 
 import org.parceler.Parcel;
 
@@ -13,7 +12,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 @Parcel
-@JsonObject
 public class UserBasic extends UserSafe {
 
     public static final String STATE_ACTIVE = "active";
@@ -23,15 +21,15 @@ public class UserBasic extends UserSafe {
     @Retention(RetentionPolicy.SOURCE)
     public @interface State {}
 
-    @JsonField(name = "id")
+    @Json(name = "id")
     long id;
-    @JsonField(name = "state")
+    @Json(name = "state")
     @State
     String state;
-    @JsonField(name = "avatar_url")
-    Uri avatarUrl;
-    @JsonField(name = "web_url")
-    Uri webUrl;
+    @Json(name = "avatar_url")
+    String avatarUrl;
+    @Json(name = "web_url")
+    String webUrl;
 
     public UserBasic() {}
 
@@ -39,15 +37,16 @@ public class UserBasic extends UserSafe {
         return id;
     }
 
-    public @State String getState() {
+    @State
+    public String getState() {
         return state;
     }
 
-    public Uri getAvatarUrl() {
+    public String getAvatarUrl() {
         return avatarUrl;
     }
 
-    public Uri getWebUrl() {
+    public String getWebUrl() {
         return webUrl;
     }
 
@@ -56,7 +55,7 @@ public class UserBasic extends UserSafe {
         if (webUrl == null) {
             return null;
         }
-        return Uri.parse(webUrl.toString() + ".atom");
+        return Uri.parse(webUrl + ".atom");
     }
 
     @Override

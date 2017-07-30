@@ -11,10 +11,11 @@ import android.view.View
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
+import com.commit451.addendum.parceler.getParcelerParcelableExtra
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.BaseActivity
 import com.commit451.gitlab.data.Prefs
-import com.commit451.gitlab.extension.getParcelerParcelable
+import com.commit451.gitlab.extension.getFeedUrl
 import com.commit451.gitlab.model.Account
 import com.commit451.gitlab.model.api.Project
 import timber.log.Timber
@@ -78,7 +79,7 @@ class ProjectFeedWidgetConfigureActivity : BaseActivity() {
         when (requestCode) {
             REQUEST_PROJECT -> {
                 if (resultCode == Activity.RESULT_OK) {
-                    val project = data?.getParcelerParcelable<Project>(ProjectFeedWidgetConfigureProjectActivity.EXTRA_PROJECT)!!
+                    val project = data?.getParcelerParcelableExtra<Project>(ProjectFeedWidgetConfigureProjectActivity.EXTRA_PROJECT)!!
                     saveWidgetConfig(account!!, project)
                 }
             }
@@ -105,7 +106,7 @@ class ProjectFeedWidgetConfigureActivity : BaseActivity() {
 
     fun saveWidgetConfig(account: Account, project: Project) {
         ProjectFeedWidgetPrefs.setAccount(this, appWidgetId, account)
-        ProjectFeedWidgetPrefs.setFeedUrl(this, appWidgetId, project.feedUrl!!.toString())
+        ProjectFeedWidgetPrefs.setFeedUrl(this, appWidgetId, project.getFeedUrl()!!.toString())
 
         val resultValue = Intent()
         resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
@@ -113,6 +114,6 @@ class ProjectFeedWidgetConfigureActivity : BaseActivity() {
         finish()
 
         //Manually have to trigger on update here, it seems
-        WidgetUtil.triggerWidgetUpdate(this, UserFeedWidgetProvider::class.java, appWidgetId)
+        WidgetUtil.triggerWidgetUpdate(this, ProjectFeedWidgetProvider::class.java, appWidgetId)
     }
 }

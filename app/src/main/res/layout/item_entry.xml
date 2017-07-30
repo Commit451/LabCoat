@@ -30,23 +30,30 @@
         android:layout_weight="1"
         android:orientation="vertical">
 
-        <com.devspark.robototextview.widget.RobotoTextView
+        <TextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:textSize="16sp"
-            app:typeface="roboto_medium"
+            app:fontFamily="@font/roboto_medium"
             tools:text="Project" />
 
-        <com.devspark.robototextview.widget.RobotoTextView
+        <TextView
             android:id="@+id/description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:textSize="14sp"
-            app:typeface="roboto_regular"
             tools:text="I like this project because its called a project and it has a really long description that should cut off after a few lines" />
+
+        <TextView
+            android:id="@+id/updated"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:textSize="14sp"
+            tools:text="2:00 AM 6/14/2017" />
 
     </LinearLayout>
 

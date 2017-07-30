@@ -8,11 +8,10 @@ class CustomHostnameVerifier(private val trustedHostname: String?) : HostnameVer
 
     companion object {
         private val DEFAULT_HOSTNAME_VERIFIER = OkHostnameVerifier.INSTANCE
-
-        //TODO make this not static, its kinda dirty
-        var lastFailedHostname: String? = null
-            private set
     }
+
+    var lastFailedHostname: String? = null
+        private set
 
     override fun verify(hostname: String, session: SSLSession): Boolean {
         if (DEFAULT_HOSTNAME_VERIFIER.verify(hostname, session)) {

@@ -5,6 +5,7 @@ import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.ProjectActivity
+import com.commit451.gitlab.extension.getFeedUrl
 import com.commit451.gitlab.fragment.*
 import com.commit451.gitlab.model.api.Project
 import timber.log.Timber
@@ -35,21 +36,21 @@ class ProjectSectionsPagerAdapter(context: ProjectActivity, fm: FragmentManager)
 
     init {
 
-        val project = context.project
-        if (!project!!.isBuildEnabled) {
+        val project = context.project!!
+        if (isDisabled(project.isBuildEnabled)) {
             Timber.d("Builds are disabled")
             disabledSections.add(BUILDS_POS)
             disabledSections.add(PIPELINES_POS)
         }
-        if (!project.isIssuesEnabled) {
+        if (isDisabled(project.isIssuesEnabled)) {
             Timber.d("Issues are disabled")
             disabledSections.add(ISSUES_POS)
         }
-        if (!project.isMergeRequestsEnabled) {
+        if (isDisabled(project.isMergeRequestsEnabled)) {
             Timber.d("Merge requests are disabled")
             disabledSections.add(MERGE_REQUESTS_POS)
         }
-        if (!project.isIssuesEnabled && !project.isMergeRequestsEnabled) {
+        if (isDisabled(project.isIssuesEnabled) && isDisabled(project.isMergeRequestsEnabled)) {
             Timber.d("Milestones are disabled")
             disabledSections.add(MILESTONES_POS)
         }
@@ -65,10 +66,7 @@ class ProjectSectionsPagerAdapter(context: ProjectActivity, fm: FragmentManager)
     }
 
     override fun getPageTitle(position: Int): CharSequence {
-        var position = position
-        position = getCorrectPosition(position)
-
-        return titles[position]
+        return titles[getCorrectPosition(position)]
     }
 
     override fun getItem(position: Int): Fragment {
@@ -76,7 +74,7 @@ class ProjectSectionsPagerAdapter(context: ProjectActivity, fm: FragmentManager)
 
         when (correctPosition) {
             PROJECT_POS -> return ProjectFragment.newInstance()
-            ACTIVITY_POS -> return FeedFragment.newInstance(project.feedUrl)
+            ACTIVITY_POS -> return FeedFragment.newInstance(project.getFeedUrl())
             FILES_POS -> return FilesFragment.newInstance()
             COMMITS_POS -> return CommitsFragment.newInstance()
             PIPELINES_POS -> return PipelinesFragment.newInstance()
@@ -91,6 +89,13 @@ class ProjectSectionsPagerAdapter(context: ProjectActivity, fm: FragmentManager)
         throw IllegalStateException("Position exceeded on view pager")
     }
 
+    private fun isDisabled(enabledState: Boolean?) : Boolean{
+        if (enabledState != null && !enabledState) {
+            return true
+        }
+        return false
+    }
+
     private fun getCorrectPosition(position: Int): Int {
         var correctPosition = position
         for (i in 0..position) {
@@ -99,6 +104,6 @@ class ProjectSectionsPagerAdapter(context: ProjectActivity, fm: FragmentManager)
             }
         }
 
-        return position
+        return correctPosition
     }
 }

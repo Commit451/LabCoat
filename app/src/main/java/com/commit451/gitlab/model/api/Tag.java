@@ -1,21 +1,19 @@
 package com.commit451.gitlab.model.api;
 
-import com.bluelinelabs.logansquare.annotation.JsonField;
-import com.bluelinelabs.logansquare.annotation.JsonObject;
+import com.squareup.moshi.Json;
 
 /**
  * A tag in Git
  */
-@JsonObject
 public class Tag {
 
-    @JsonField(name = "name")
+    @Json(name = "name")
     String name;
-    @JsonField(name = "message")
+    @Json(name = "message")
     String message;
-    @JsonField(name = "commit")
+    @Json(name = "commit")
     Commit commit;
-    @JsonField(name = "release")
+    @Json(name = "release")
     Release release;
 
     protected Tag() {
@@ -38,20 +36,18 @@ public class Tag {
         return release;
     }
 
-    @JsonObject
     public static class Commit {
 
-        @JsonField(name = "id")
+        @Json(name = "id")
         String mId;
-        @JsonField(name = "message")
+        @Json(name = "message")
         String mMessage;
     }
 
-    @JsonObject
     public static class Release {
-        @JsonField(name = "tag_name")
+        @Json(name = "tag_name")
         String mTagName;
-        @JsonField(name = "description")
+        @Json(name = "description")
         String mDescription;
     }
 }

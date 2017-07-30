@@ -20,7 +20,9 @@ import com.commit451.gimbal.Gimbal
 import com.commit451.gitlab.App
 import com.commit451.gitlab.BuildConfig
 import com.commit451.gitlab.R
+import com.commit451.gitlab.api.GitLab
 import com.commit451.gitlab.extension.setup
+import com.commit451.gitlab.model.Account
 import com.commit451.gitlab.model.api.Contributor
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomSingleObserver
@@ -93,7 +95,15 @@ class AboutActivity : BaseActivity() {
         physicsLayout.physics.enableFling()
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
         gravitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY)
-        App.get().gitLab.getContributors(REPO_ID)
+        var gitLab = App.get().gitLab
+        val gitLabUrl = getString(R.string.url_gitlab)
+        if (!gitLab.account.serverUrl.toString().contains(gitLabUrl)) {
+            val account = Account()
+            account.serverUrl = gitLabUrl
+            gitLab = GitLab.Builder(account)
+                    .build()
+        }
+        gitLab.getContributors(REPO_ID)
                 .setup(bindToLifecycle())
                 .subscribe(object : CustomSingleObserver<List<Contributor>>() {
 

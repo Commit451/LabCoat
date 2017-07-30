@@ -1,8 +1,7 @@
 package com.commit451.gitlab.model.api;
 
-import com.bluelinelabs.logansquare.annotation.JsonField;
-import com.bluelinelabs.logansquare.annotation.JsonObject;
 import com.commit451.gitlab.util.ObjectUtil;
+import com.squareup.moshi.Json;
 
 import org.parceler.Parcel;
 
@@ -12,17 +11,16 @@ import java.util.List;
 import java.util.Set;
 
 @Parcel
-@JsonObject
 public class Contributor {
-    @JsonField(name = "name")
+    @Json(name = "name")
     String name;
-    @JsonField(name = "email")
+    @Json(name = "email")
     String email;
-    @JsonField(name = "commits")
+    @Json(name = "commits")
     int commits;
-    @JsonField(name = "additions")
+    @Json(name = "additions")
     int additions;
-    @JsonField(name = "deletions")
+    @Json(name = "deletions")
     int deletions;
 
     public Contributor() {}

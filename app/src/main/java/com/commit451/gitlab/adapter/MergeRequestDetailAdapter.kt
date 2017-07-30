@@ -1,13 +1,11 @@
 package com.commit451.gitlab.adapter
 
-import `in`.uncod.android.bypass.Bypass
 import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.view.ViewGroup
 import com.commit451.gitlab.model.api.MergeRequest
 import com.commit451.gitlab.model.api.Note
 import com.commit451.gitlab.model.api.Project
-import com.commit451.gitlab.util.BypassFactory
 import com.commit451.gitlab.viewHolder.LoadingFooterViewHolder
 import com.commit451.gitlab.viewHolder.MergeRequestHeaderViewHolder
 import com.commit451.gitlab.viewHolder.NoteViewHolder
@@ -31,8 +29,6 @@ class MergeRequestDetailAdapter(context: Context, private val mergeRequest: Merg
     private val notes: LinkedList<Note> = LinkedList()
     private var loading = false
 
-    private val bypass: Bypass = BypassFactory.create(context, project)
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         if (viewType == TYPE_HEADER) {
             return MergeRequestHeaderViewHolder.inflate(parent)
@@ -46,10 +42,10 @@ class MergeRequestDetailAdapter(context: Context, private val mergeRequest: Merg
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is MergeRequestHeaderViewHolder) {
-            holder.bind(mergeRequest, bypass, project)
+            holder.bind(mergeRequest, project)
         } else if (holder is NoteViewHolder) {
             val note = getNoteAt(position)
-            holder.bind(note, bypass, project)
+            holder.bind(note, project)
         } else if (holder is LoadingFooterViewHolder) {
             holder.bind(loading)
         }

@@ -100,12 +100,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".widget.ProjectFeedWidgetConfigureProjectActivity"/>
-        <activity
-            android:name=".activity.FullscreenImageActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/title_activity_fullscreen_image"
-            android:theme="@style/FullscreenTheme">
-        </activity>
+
+        <activity android:name=".activity.FullscreenImageActivity"/>
 
         <activity android:name=".activity.DebugActivity"/>
 

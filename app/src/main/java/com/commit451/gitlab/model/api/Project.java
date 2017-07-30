@@ -1,10 +1,6 @@
 package com.commit451.gitlab.model.api;
 
-import android.net.Uri;
-import android.support.annotation.Nullable;
-
-import com.bluelinelabs.logansquare.annotation.JsonField;
-import com.bluelinelabs.logansquare.annotation.JsonObject;
+import com.squareup.moshi.Json;
 
 import org.parceler.Parcel;
 
@@ -12,65 +8,64 @@ import java.util.Date;
 import java.util.List;
 
 @Parcel
-@JsonObject
 public class Project {
-    @JsonField(name = "id")
+    @Json(name = "id")
     long id;
-    @JsonField(name = "description")
+    @Json(name = "description")
     String description;
-    @JsonField(name = "default_branch")
+    @Json(name = "default_branch")
     String defaultBranch;
-    @JsonField(name = "tag_list")
+    @Json(name = "tag_list")
     List<String> tagList;
-    @JsonField(name = "public")
+    @Json(name = "public")
     boolean isPublic;
-    @JsonField(name = "archived")
+    @Json(name = "archived")
     boolean archived;
-    @JsonField(name = "visibility_level")
+    @Json(name = "visibility_level")
     int visibilityLevel;
-    @JsonField(name = "ssh_url_to_repo")
+    @Json(name = "ssh_url_to_repo")
     String sshUrlToRepo;
-    @JsonField(name = "http_url_to_repo")
+    @Json(name = "http_url_to_repo")
     String httpUrlToRepo;
-    @JsonField(name = "web_url")
-    Uri webUrl;
-    @JsonField(name = "owner")
+    @Json(name = "web_url")
+    String webUrl;
+    @Json(name = "owner")
     UserBasic owner;
-    @JsonField(name = "name")
+    @Json(name = "name")
     String name;
-    @JsonField(name = "name_with_namespace")
+    @Json(name = "name_with_namespace")
     String nameWithNamespace;
-    @JsonField(name = "path")
+    @Json(name = "path")
     String path;
-    @JsonField(name = "path_with_namespace")
+    @Json(name = "path_with_namespace")
     String pathWithNamespace;
-    @JsonField(name = "issues_enabled")
-    boolean issuesEnabled;
-    @JsonField(name = "merge_requests_enabled")
-    boolean mergeRequestsEnabled;
-    @JsonField(name = "wiki_enabled")
-    boolean wikiEnabled;
-    @JsonField(name = "builds_enabled")
-    boolean buildEnabled;
-    @JsonField(name = "snippets_enabled")
-    boolean snippetsEnabled;
-    @JsonField(name = "created_at")
+    @Json(name = "issues_enabled")
+    Boolean issuesEnabled;
+    @Json(name = "merge_requests_enabled")
+    Boolean mergeRequestsEnabled;
+    @Json(name = "wiki_enabled")
+    Boolean wikiEnabled;
+    @Json(name = "builds_enabled")
+    Boolean buildEnabled;
+    @Json(name = "snippets_enabled")
+    Boolean snippetsEnabled;
+    @Json(name = "created_at")
     Date createdAt;
-    @JsonField(name = "last_activity_at")
+    @Json(name = "last_activity_at")
     Date lastActivityAt;
-    @JsonField(name = "creator_id")
+    @Json(name = "creator_id")
     long creatorId;
-    @JsonField(name = "namespace")
+    @Json(name = "namespace")
     ProjectNamespace namespace;
-    @JsonField(name = "forked_from_project")
+    @Json(name = "forked_from_project")
     ForkedFromProject forkedFromProject;
-    @JsonField(name = "avatar_url")
-    Uri avatarUrl;
-    @JsonField(name = "star_count")
+    @Json(name = "avatar_url")
+    String avatarUrl;
+    @Json(name = "star_count")
     int starCount;
-    @JsonField(name = "forks_count")
+    @Json(name = "forks_count")
     int forksCount;
-    @JsonField(name = "open_issues_count")
+    @Json(name = "open_issues_count")
     int openIssuesCount;
 
     public Project() {}
@@ -111,7 +106,7 @@ public class Project {
         return httpUrlToRepo;
     }
 
-    public Uri getWebUrl() {
+    public String getWebUrl() {
         return webUrl;
     }
 
@@ -135,23 +130,23 @@ public class Project {
         return pathWithNamespace;
     }
 
-    public boolean isIssuesEnabled() {
+    public Boolean isIssuesEnabled() {
         return issuesEnabled;
     }
 
-    public boolean isMergeRequestsEnabled() {
+    public Boolean isMergeRequestsEnabled() {
         return mergeRequestsEnabled;
     }
 
-    public boolean isWikiEnabled() {
+    public Boolean isWikiEnabled() {
         return wikiEnabled;
     }
 
-    public boolean isBuildEnabled() {
+    public Boolean isBuildEnabled() {
         return buildEnabled;
     }
 
-    public boolean isSnippetsEnabled() {
+    public Boolean isSnippetsEnabled() {
         return snippetsEnabled;
     }
 
@@ -175,7 +170,7 @@ public class Project {
         return forkedFromProject;
     }
 
-    public Uri getAvatarUrl() {
+    public String getAvatarUrl() {
         return avatarUrl;
     }
 
@@ -189,14 +184,6 @@ public class Project {
 
     public int getOpenIssuesCount() {
         return openIssuesCount;
-    }
-
-    @Nullable
-    public Uri getFeedUrl() {
-        if (webUrl == null) {
-            return null;
-        }
-        return Uri.parse(webUrl + ".atom");
     }
 
     public boolean belongsToGroup() {

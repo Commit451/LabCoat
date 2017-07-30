@@ -17,17 +17,16 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import com.afollestad.materialdialogs.color.ColorChooserDialog
+import com.commit451.addendum.parceler.putParcelerParcelableExtra
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.extension.checkValid
-import com.commit451.gitlab.extension.putParcelParcelableExtra
 import com.commit451.gitlab.extension.text
 import com.commit451.gitlab.model.api.Label
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.util.ColorUtil
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import org.parceler.Parcels
 import retrofit2.HttpException
 import retrofit2.Response
 import timber.log.Timber
@@ -139,7 +138,7 @@ class AddNewLabelActivity : BaseActivity(), ColorChooserDialog.ColorCallback {
 
                         override fun responseNonNullSuccess(label: Label) {
                             val data = Intent()
-                            data.putParcelParcelableExtra(KEY_NEW_LABEL, label)
+                            data.putParcelerParcelableExtra(KEY_NEW_LABEL, label)
                             setResult(Activity.RESULT_OK, data)
                             finish()
                         }

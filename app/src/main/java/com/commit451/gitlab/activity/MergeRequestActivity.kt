@@ -11,12 +11,12 @@ import android.view.View
 import android.view.ViewGroup
 import butterknife.BindView
 import butterknife.ButterKnife
+import com.commit451.addendum.parceler.getParcelerParcelableExtra
+import com.commit451.addendum.parceler.putParcelerParcelableExtra
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.MergeRequestSectionsPagerAdapter
 import com.commit451.gitlab.event.MergeRequestChangedEvent
-import com.commit451.gitlab.extension.getParcelerParcelable
-import com.commit451.gitlab.extension.putParcelParcelableExtra
 import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.MergeRequest
 import com.commit451.gitlab.model.api.Project
@@ -36,8 +36,8 @@ class MergeRequestActivity : BaseActivity() {
 
         fun newIntent(context: Context, project: Project, mergeRequest: MergeRequest): Intent {
             val intent = Intent(context, MergeRequestActivity::class.java)
-            intent.putParcelParcelableExtra(KEY_PROJECT, project)
-            intent.putParcelParcelableExtra(KEY_MERGE_REQUEST, mergeRequest)
+            intent.putParcelerParcelableExtra(KEY_PROJECT, project)
+            intent.putParcelerParcelableExtra(KEY_MERGE_REQUEST, mergeRequest)
             return intent
         }
     }
@@ -56,8 +56,8 @@ class MergeRequestActivity : BaseActivity() {
         setContentView(R.layout.activity_merge_request)
         ButterKnife.bind(this)
 
-        project = intent.getParcelerParcelable<Project>(KEY_PROJECT)!!
-        mergeRequest = intent.getParcelerParcelable<MergeRequest>(KEY_MERGE_REQUEST)!!
+        project = intent.getParcelerParcelableExtra<Project>(KEY_PROJECT)!!
+        mergeRequest = intent.getParcelerParcelableExtra<MergeRequest>(KEY_MERGE_REQUEST)!!
 
         toolbar.title = getString(R.string.merge_request_number) + mergeRequest.iid
         toolbar.setNavigationIcon(R.drawable.ic_back_24dp)

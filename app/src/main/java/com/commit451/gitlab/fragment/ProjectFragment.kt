@@ -1,6 +1,5 @@
 package com.commit451.gitlab.fragment
 
-import `in`.uncod.android.bypass.Bypass
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.widget.SwipeRefreshLayout
@@ -17,18 +16,16 @@ import com.commit451.gitlab.activity.ProjectActivity
 import com.commit451.gitlab.event.ProjectReloadEvent
 import com.commit451.gitlab.extension.base64Decode
 import com.commit451.gitlab.extension.formatAsHtml
+import com.commit451.gitlab.extension.setMarkdownText
 import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.model.api.RepositoryFile
 import com.commit451.gitlab.model.api.RepositoryTreeObject
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomSingleObserver
-import com.commit451.gitlab.util.BypassFactory
-import com.commit451.gitlab.util.BypassImageGetterFactory
 import com.commit451.gitlab.util.InternalLinkMovementMethod
-import com.commit451.reptar.Result
+import com.commit451.reptar.Optional
 import com.trello.rxlifecycle2.android.FragmentEvent
-import com.vdurmont.emoji.EmojiParser
 import io.reactivex.Single
 import io.reactivex.SingleSource
 import io.reactivex.functions.Function
@@ -59,8 +56,6 @@ class ProjectFragment : ButterKnifeFragment() {
     @BindView(R.id.star_count) lateinit var textStarCount: TextView
     @BindView(R.id.forks_count) lateinit var textForksCount: TextView
     @BindView(R.id.overview_text) lateinit var textOverview: TextView
-
-    lateinit var bypass: Bypass
 
     var project: Project? = null
     var branchName: String? = null
@@ -149,7 +144,6 @@ class ProjectFragment : ButterKnifeFragment() {
         if (activity is ProjectActivity) {
             project = (activity as ProjectActivity).project
             branchName = (activity as ProjectActivity).getRefRef()
-            bypass = BypassFactory.create(context, project!!)
             bindProject(project)
             loadData()
         } else {
@@ -176,24 +170,24 @@ class ProjectFragment : ButterKnifeFragment() {
 
         val result = ReadmeResult()
         App.get().gitLab.getTree(project!!.id, branchName!!, null)
-                .flatMap(Function<List<RepositoryTreeObject>, SingleSource<Result<RepositoryTreeObject>>> { repositoryTreeObjects ->
+                .flatMap(Function<List<RepositoryTreeObject>, SingleSource<Optional<RepositoryTreeObject>>> { repositoryTreeObjects ->
                     for (treeItem in repositoryTreeObjects) {
                         if (getReadmeType(treeItem.name) != README_TYPE_UNKNOWN) {
-                            return@Function Single.just(Result(treeItem))
+                            return@Function Single.just(Optional(treeItem))
                         }
                     }
-                    Single.just(Result.empty<RepositoryTreeObject>())
+                    Single.just(Optional.empty())
                 })
-                .flatMap(Function<Result<RepositoryTreeObject>, SingleSource<Result<RepositoryFile>>> { repositoryTreeObjectResult ->
+                .flatMap(Function<Optional<RepositoryTreeObject>, SingleSource<Optional<RepositoryFile>>> { repositoryTreeObjectResult ->
                     if (repositoryTreeObjectResult.isPresent) {
                         val repositoryFile = App.get().gitLab.getFile(project!!.id, repositoryTreeObjectResult.get().name, branchName!!)
                                 .blockingGet()
                         result.repositoryFile = repositoryFile
-                        return@Function Single.just(Result(repositoryFile))
+                        return@Function Single.just(Optional(repositoryFile))
                     }
-                    Single.just(Result.empty<RepositoryFile>())
+                    Single.just(Optional.empty<RepositoryFile>())
                 })
-                .flatMap(Function<Result<RepositoryFile>, SingleSource<ReadmeResult>> { repositoryFileResult ->
+                .flatMap(Function<Optional<RepositoryFile>, SingleSource<ReadmeResult>> { repositoryFileResult ->
                     if (repositoryFileResult.isPresent) {
                         result.bytes = repositoryFileResult.get().content.base64Decode()
                                 .blockingGet()
@@ -213,15 +207,10 @@ class ProjectFragment : ButterKnifeFragment() {
                     override fun success(readmeResult: ReadmeResult) {
                         swipeRefreshLayout.isRefreshing = false
                         if (result.repositoryFile != null && result.bytes != null) {
-                            var text = String(result.bytes!!)
+                            val text = String(result.bytes!!)
                             when (getReadmeType(result.repositoryFile!!.fileName)) {
                                 README_TYPE_MARKDOWN -> {
-                                    text = EmojiParser.parseToUnicode(text)
-                                    textOverview.text = bypass.markdownToSpannable(text,
-                                            BypassImageGetterFactory.create(textOverview,
-                                                    App.get().picasso,
-                                                    App.get().getAccount().serverUrl.toString(),
-                                                    project!!))
+                                    textOverview.setMarkdownText(text, project)
                                 }
                                 README_TYPE_HTML -> textOverview.text = text.formatAsHtml()
                                 README_TYPE_TEXT -> textOverview.text = text
@@ -283,7 +272,7 @@ class ProjectFragment : ButterKnifeFragment() {
     }
 
     class ReadmeResult {
-        internal var bytes: ByteArray? = null
-        internal var repositoryFile: RepositoryFile? = null
+        var bytes: ByteArray? = null
+        var repositoryFile: RepositoryFile? = null
     }
 }

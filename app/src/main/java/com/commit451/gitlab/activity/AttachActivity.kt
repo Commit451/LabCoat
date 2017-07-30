@@ -1,27 +1,28 @@
 package com.commit451.gitlab.activity
 
 
-import android.animation.TimeInterpolator
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.view.ViewAnimationUtils
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
+import com.commit451.addendum.parceler.getParcelerParcelableExtra
+import com.commit451.addendum.parceler.putParcelerParcelableExtra
+import com.commit451.alakazam.kotlin.fadeIn
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
-import com.commit451.gitlab.extension.getParcelerParcelable
-import com.commit451.gitlab.extension.putParcelParcelableExtra
 import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.extension.toPart
 import com.commit451.gitlab.model.api.FileUploadResponse
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.rx.CustomSingleObserver
-import io.codetail.animation.ViewAnimationUtils
 import pl.aprilapps.easyphotopicker.DefaultCallback
 import pl.aprilapps.easyphotopicker.EasyImage
 import timber.log.Timber
@@ -40,7 +41,7 @@ class AttachActivity : BaseActivity() {
 
         fun newIntent(context: Context, project: Project): Intent {
             val intent = Intent(context, AttachActivity::class.java)
-            intent.putParcelParcelableExtra(KEY_PROJECT, project)
+            intent.putParcelerParcelableExtra(KEY_PROJECT, project)
             return intent
         }
     }
@@ -58,7 +59,7 @@ class AttachActivity : BaseActivity() {
 
     @OnClick(R.id.button_choose_photo)
     fun onChoosePhotoClicked() {
-        EasyImage.openGallery(this, 0, false)
+        EasyImage.openGallery(this, 0)
     }
 
     @OnClick(R.id.button_take_photo)
@@ -76,20 +77,9 @@ class AttachActivity : BaseActivity() {
         setContentView(R.layout.activity_attach)
         ButterKnife.bind(this)
 
-        //Run the runnable after the view has been measured
-        card.post {
-            //we need the radius of the animation circle, which is the diagonal of the view
-            val finalRadius = Math.hypot(card.width.toDouble(), card.height.toDouble()).toFloat()
+        reveal()
 
-            //it's using a 3rd-party ViewAnimationUtils class for compat reasons (up to API 14)
-            val animator = ViewAnimationUtils
-                    .createCircularReveal(card, 0, card.height, 0f, finalRadius)
-            animator.duration = 500
-            animator.interpolator = AccelerateDecelerateInterpolator() as TimeInterpolator?
-            animator.start()
-        }
-
-        project = intent.getParcelerParcelable<Project>(KEY_PROJECT)
+        project = intent.getParcelerParcelableExtra<Project>(KEY_PROJECT)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -118,6 +108,25 @@ class AttachActivity : BaseActivity() {
         overridePendingTransition(R.anim.do_nothing, R.anim.fade_out)
     }
 
+    fun reveal() {
+        if (Build.VERSION.SDK_INT >= 21) {
+            //Run the runnable after the view has been measured
+            card.post {
+                //we need the radius of the animation circle, which is the diagonal of the view
+                val finalRadius = Math.hypot(card.width.toDouble(), card.height.toDouble()).toFloat()
+
+                //it's using a 3rd-party ViewAnimationUtils class for compat reasons (up to API 14)
+                val animator = ViewAnimationUtils
+                        .createCircularReveal(card, 0, card.height, 0f, finalRadius)
+                animator.duration = 500
+                animator.interpolator = AccelerateDecelerateInterpolator()
+                animator.start()
+            }
+        } else {
+            card.fadeIn()
+        }
+    }
+
     fun onPhotoReturned(photo: File) {
         progress.visibility = View.VISIBLE
         rootButtons.visibility = View.INVISIBLE
@@ -128,7 +137,7 @@ class AttachActivity : BaseActivity() {
 
                     override fun success(fileUploadResponse: FileUploadResponse) {
                         val data = Intent()
-                        data.putParcelParcelableExtra(KEY_FILE_UPLOAD_RESPONSE, fileUploadResponse)
+                        data.putParcelerParcelableExtra(KEY_FILE_UPLOAD_RESPONSE, fileUploadResponse)
                         setResult(Activity.RESULT_OK, data)
                         finish()
                     }

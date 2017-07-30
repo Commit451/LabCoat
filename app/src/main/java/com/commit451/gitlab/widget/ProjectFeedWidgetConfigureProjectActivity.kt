@@ -8,14 +8,14 @@ import android.support.design.widget.TabLayout
 import android.support.v4.view.ViewPager
 import butterknife.BindView
 import butterknife.ButterKnife
+import com.commit451.addendum.parceler.getParcelerParcelableExtra
+import com.commit451.addendum.parceler.putParcelerParcelableExtra
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.BaseActivity
 import com.commit451.gitlab.adapter.ProjectPagerAdapter
 import com.commit451.gitlab.api.GitLabFactory
 import com.commit451.gitlab.api.GitLabService
 import com.commit451.gitlab.api.OkHttpClientFactory
-import com.commit451.gitlab.extension.getParcelerParcelable
-import com.commit451.gitlab.extension.putParcelParcelableExtra
 import com.commit451.gitlab.fragment.ProjectsFragment
 import com.commit451.gitlab.model.Account
 import com.commit451.gitlab.model.api.Project
@@ -32,7 +32,7 @@ class ProjectFeedWidgetConfigureProjectActivity : BaseActivity(), ProjectsFragme
 
         fun newIntent(context: Context, account: Account): Intent {
             val intent = Intent(context, ProjectFeedWidgetConfigureProjectActivity::class.java)
-            intent.putParcelParcelableExtra(EXTRA_ACCOUNT, account)
+            intent.putParcelerParcelableExtra(EXTRA_ACCOUNT, account)
             return intent
         }
     }
@@ -49,7 +49,7 @@ class ProjectFeedWidgetConfigureProjectActivity : BaseActivity(), ProjectsFragme
         setContentView(R.layout.activity_project_feed_widget_configure)
         ButterKnife.bind(this)
 
-        val account = intent.getParcelerParcelable<Account>(EXTRA_ACCOUNT)!!
+        val account = intent.getParcelerParcelableExtra<Account>(EXTRA_ACCOUNT)!!
         gitLabInstance = GitLabFactory.create(account, OkHttpClientFactory.create(account, false).build())
 
         viewPager.adapter = ProjectPagerAdapter(this, supportFragmentManager)
@@ -58,7 +58,7 @@ class ProjectFeedWidgetConfigureProjectActivity : BaseActivity(), ProjectsFragme
 
     override fun onProjectClicked(project: Project) {
         val data = Intent()
-        data.putParcelParcelableExtra(EXTRA_PROJECT, project)
+        data.putParcelerParcelableExtra(EXTRA_PROJECT, project)
         setResult(Activity.RESULT_OK, data)
         finish()
     }

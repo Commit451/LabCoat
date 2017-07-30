@@ -3,26 +3,24 @@ package com.commit451.gitlab.model.api;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 
-import com.bluelinelabs.logansquare.annotation.JsonField;
-import com.bluelinelabs.logansquare.annotation.JsonObject;
+import com.squareup.moshi.Json;
 
 import org.parceler.Parcel;
 
 @Parcel
-@JsonObject
 public class Group {
-    @JsonField(name = "id")
+    @Json(name = "id")
     long id;
-    @JsonField(name = "name")
+    @Json(name = "name")
     String name;
-    @JsonField(name = "path")
+    @Json(name = "path")
     String path;
-    @JsonField(name = "description")
+    @Json(name = "description")
     String description;
-    @JsonField(name = "avatar_url")
-    Uri avatarUrl;
-    @JsonField(name = "web_url")
-    Uri webUrl;
+    @Json(name = "avatar_url")
+    String avatarUrl;
+    @Json(name = "web_url")
+    String webUrl;
 
     public Group() {}
 
@@ -42,11 +40,11 @@ public class Group {
         return description;
     }
 
-    public Uri getAvatarUrl() {
+    public String getAvatarUrl() {
         return avatarUrl;
     }
 
-    public Uri getWebUrl() {
+    public String getWebUrl() {
         return webUrl;
     }
 
@@ -56,7 +54,7 @@ public class Group {
             return null;
         }
 
-        return Uri.parse(webUrl.toString() + ".atom");
+        return Uri.parse(webUrl + ".atom");
     }
 
     @Override

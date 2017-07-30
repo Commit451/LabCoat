@@ -10,6 +10,7 @@ import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.commit451.gitlab.R
+import com.commit451.gitlab.extension.getDrawableForType
 import com.commit451.gitlab.model.api.RepositoryTreeObject
 
 /**
@@ -43,6 +44,6 @@ class FileViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     fun bind(treeItem: RepositoryTreeObject) {
         textTitle.text = treeItem.name
-        image.setImageResource(treeItem.drawableForType)
+        image.setImageResource(treeItem.getDrawableForType())
     }
 }

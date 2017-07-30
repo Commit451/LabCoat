@@ -1,6 +1,5 @@
 package com.commit451.gitlab.viewHolder
 
-import `in`.uncod.android.bypass.Bypass
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -11,14 +10,13 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
+import com.commit451.gitlab.extension.setMarkdownText
 import com.commit451.gitlab.model.api.Note
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.transformation.CircleTransformation
-import com.commit451.gitlab.util.BypassImageGetterFactory
 import com.commit451.gitlab.util.DateUtil
 import com.commit451.gitlab.util.ImageUtil
 import com.commit451.gitlab.util.InternalLinkMovementMethod
-import com.vdurmont.emoji.EmojiParser
 
 /**
  * Notes, aka comments
@@ -43,7 +41,7 @@ class NoteViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         ButterKnife.bind(this, view)
     }
 
-    fun bind(note: Note, bypass: Bypass, project: Project) {
+    fun bind(note: Note, project: Project) {
         if (note.createdAt != null) {
             textCreationDate.text = DateUtil.getRelativeTimeSpanString(itemView.context, note.createdAt)
         }
@@ -55,14 +53,9 @@ class NoteViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         var summary = ""
         if (note.body != null) {
             summary = note.body
-            summary = EmojiParser.parseToUnicode(summary)
         }
 
-        val getter = BypassImageGetterFactory.create(textSummary,
-                App.get().picasso,
-                App.get().getAccount().serverUrl.toString(),
-                project)
-        textSummary.text = bypass.markdownToSpannable(summary, getter)
+        textSummary.setMarkdownText(summary, project)
         textSummary.movementMethod = InternalLinkMovementMethod(App.get().getAccount().serverUrl)
 
         App.get().picasso

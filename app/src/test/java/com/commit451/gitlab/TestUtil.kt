@@ -1,6 +1,5 @@
 package com.commit451.gitlab
 
-import android.net.Uri
 import com.commit451.gitlab.api.GitLabFactory
 import com.commit451.gitlab.api.GitLabService
 import com.commit451.gitlab.api.OkHttpClientFactory
@@ -21,16 +20,16 @@ object TestUtil {
     fun login(): GitLabService {
         //log in
         val account = Account()
-        account.serverUrl = Uri.parse("https://gitlab.com/")
+        account.serverUrl = "https://gitlab.com/"
 
         val gitlabClientBuilder = OkHttpClientFactory.create(account)
         if (BuildConfig.DEBUG) {
             gitlabClientBuilder.addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
         }
-        val gitLab = GitLabFactory.create(account, gitlabClientBuilder.build(), true)
+        val gitLab = GitLabFactory.create(account, gitlabClientBuilder.build())
         val request = SessionRequest()
-                .setLogin("TestAllTheThings")
-                .setPassword("testing123")
+        request.login = "TestAllTheThings"
+        request.password = "testing123"
         val loginResponse = gitLab
                 .login(request)
                 .blockingGet()
