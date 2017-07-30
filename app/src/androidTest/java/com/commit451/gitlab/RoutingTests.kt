@@ -1,32 +1,17 @@
 package com.commit451.gitlab
 
 import android.net.Uri
+import android.support.test.runner.AndroidJUnit4
 import com.commit451.gitlab.navigation.RoutingRouter
 import org.junit.Assert
-
-import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
-import org.robolectric.annotation.Config
-import org.robolectric.shadows.ShadowLog
 
 /**
  * Tests account login and basic retrieval stuff
  */
-@RunWith(RobolectricTestRunner::class)
-@Config(constants = BuildConfig::class, sdk = intArrayOf(21))
+@RunWith(AndroidJUnit4::class)
 class RoutingTests {
-
-    companion object {
-
-        @BeforeClass
-        @Throws(Exception::class)
-        fun setUp() {
-            //for logging
-            ShadowLog.stream = System.out
-        }
-    }
 
     @Test
     fun routeIssues() {

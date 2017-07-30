@@ -221,8 +221,11 @@ dependencies {
     testImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
 
     testImplementation 'junit:junit:4.12'
-    testImplementation 'org.robolectric:robolectric:3.4'
     testImplementation('org.threeten:threetenbp:1.3.6') {
         exclude group: 'com.jakewharton.threetenabp', module: 'threetenabp'
+    }
+
+    androidTestImplementation ('com.android.support.test:runner:1.0.0') {
+        exclude group:'com.android.support', module:'support-annotations'
     }
 }

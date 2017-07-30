@@ -1,7 +1,6 @@
 package com.commit451.gitlab
 
 import android.net.Uri
-
 import com.commit451.gitlab.navigation.RoutingNavigator
 
 /**
