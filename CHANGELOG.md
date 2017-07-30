@@ -1,6 +1,17 @@
 Change Log
 ==========
 
+Version 2.4.7
+----------------------------
+
+- Upgrade to v4 of the API. This requires you to update your GitLab instances to 9.0 if you have not already
+- Use commonmark for Markdown rendering
+- Fix issue where certain project tabs were not showing up
+- Fix user images not loading properly
+- Fix about page contributors not loading for non GitLab.com users
+- Fix issue share button link
+
+
 Version 2.4.6
 ----------------------------
 

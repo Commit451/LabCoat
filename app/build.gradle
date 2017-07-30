@@ -18,7 +18,7 @@ apply plugin: 'io.fabric'
 
 def versionMajor = 2
 def versionMinor = 4
-def versionPatch = 6
+def versionPatch = 7
 def versionBuild = 0 // bump for dogfood builds, public betas, etc.
 
 android {
@@ -26,11 +26,11 @@ android {
     buildToolsVersion "26.0.1"
 
     project.ext {
-        LABCOAT_FABRIC_KEY = project.hasProperty("LABCOAT_FABRIC_KEY") ? project.LABCOAT_FABRIC_KEY : "";
-        KEYSTORE_PATH = project.hasProperty("KEYSTORE_PATH") ? project.KEYSTORE_PATH : " ";
-        KEYSTORE_PASSWORD = project.hasProperty("KEYSTORE_PASSWORD") ? project.KEYSTORE_PASSWORD : " ";
-        KEYSTORE_ALIAS = project.hasProperty("KEYSTORE_ALIAS") ? project.KEYSTORE_ALIAS : " ";
-        KEY_PASSWORD = project.hasProperty("KEY_PASSWORD") ? project.KEY_PASSWORD : " ";
+        LABCOAT_FABRIC_KEY = project.hasProperty("LABCOAT_FABRIC_KEY") ? project.LABCOAT_FABRIC_KEY : ""
+        KEYSTORE_PATH = project.hasProperty("KEYSTORE_PATH") ? project.KEYSTORE_PATH : " "
+        KEYSTORE_PASSWORD = project.hasProperty("KEYSTORE_PASSWORD") ? project.KEYSTORE_PASSWORD : " "
+        KEYSTORE_ALIAS = project.hasProperty("KEYSTORE_ALIAS") ? project.KEYSTORE_ALIAS : " "
+        KEY_PASSWORD = project.hasProperty("KEY_PASSWORD") ? project.KEY_PASSWORD : " "
     }
 
     defaultConfig {
