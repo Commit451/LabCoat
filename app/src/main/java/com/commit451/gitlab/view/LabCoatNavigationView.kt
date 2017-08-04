@@ -1,5 +1,6 @@
 package com.commit451.gitlab.view
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.support.design.widget.NavigationView
@@ -115,7 +116,7 @@ class LabCoatNavigationView : NavigationView {
 
         override fun onAccountLogoutClicked(account: Account) {
             Prefs.removeAccount(account)
-            val accounts = Account.getAccounts()
+            val accounts = Prefs.getAccounts()
 
             if (accounts.isEmpty()) {
                 Navigator.navigateToLogin(context as Activity)
@@ -130,7 +131,7 @@ class LabCoatNavigationView : NavigationView {
 
     @OnClick(R.id.profile_image)
     fun onUserImageClick(imageView: ImageView) {
-        Navigator.navigateToUser(context as Activity, imageView, App.get().getAccount().user)
+        Navigator.navigateToUser(context as Activity, imageView, App.get().getAccount().user!!)
     }
 
     @OnClick(R.id.button_debug)
@@ -182,6 +183,7 @@ class LabCoatNavigationView : NavigationView {
         loadCurrentUser()
     }
 
+    @SuppressLint("RestrictedApi")
     override fun onDetachedFromWindow() {
         App.bus().unregister(this)
         super.onDetachedFromWindow()
@@ -267,7 +269,7 @@ class LabCoatNavigationView : NavigationView {
         account.lastUsed = Date()
         App.get().setAccount(account)
         Prefs.updateAccount(account)
-        bindUser(account.user)
+        bindUser(account.user!!)
         toggleAccounts()
         App.bus().post(ReloadDataEvent())
         App.bus().post(CloseDrawerEvent())

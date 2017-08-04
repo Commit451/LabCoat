@@ -1,6 +1,5 @@
 package com.commit451.gitlab.adapter
 
-import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.view.ViewGroup
 import com.commit451.gitlab.model.api.Issue
@@ -15,7 +14,7 @@ import java.util.*
 /**
  * Nice notes
  */
-class IssueDetailsAdapter(context: Context, private var issue: Issue?, private val project: Project) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class IssueDetailsAdapter(private var issue: Issue?, private val project: Project) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
 
@@ -48,7 +47,7 @@ class IssueDetailsAdapter(context: Context, private var issue: Issue?, private v
         if (holder is IssueHeaderViewHolder) {
             holder.bind(issue!!, project)
         } else if (holder is IssueLabelsViewHolder) {
-            holder.bind(issue!!.labels)
+            holder.bind(issue!!.labels!!)
         } else if (holder is NoteViewHolder) {
             val note = getNoteAt(position)
             holder.bind(note, project)
@@ -98,7 +97,7 @@ class IssueDetailsAdapter(context: Context, private var issue: Issue?, private v
         val oldLabels = this.issue!!.labels
         this.issue = issue
         notifyItemChanged(0)
-        if (oldLabels.size != this.issue!!.labels.size) {
+        if (oldLabels!!.size != this.issue!!.labels!!.size) {
             notifyItemChanged(1)
         }
     }

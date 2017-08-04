@@ -116,7 +116,7 @@ class AboutActivity : BaseActivity() {
 
                     override fun success(contributors: List<Contributor>) {
                         progress.visibility = View.GONE
-                        addContributors(Contributor.groupContributors(contributors))
+                        addContributors(contributors)
                     }
                 })
         progress.visibility = View.VISIBLE

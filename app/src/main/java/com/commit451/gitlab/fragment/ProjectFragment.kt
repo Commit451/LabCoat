@@ -14,10 +14,7 @@ import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.ProjectActivity
 import com.commit451.gitlab.event.ProjectReloadEvent
-import com.commit451.gitlab.extension.base64Decode
-import com.commit451.gitlab.extension.formatAsHtml
-import com.commit451.gitlab.extension.setMarkdownText
-import com.commit451.gitlab.extension.setup
+import com.commit451.gitlab.extension.*
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.model.api.RepositoryFile
 import com.commit451.gitlab.model.api.RepositoryTreeObject
@@ -62,11 +59,13 @@ class ProjectFragment : ButterKnifeFragment() {
 
     @OnClick(R.id.creator)
     fun onCreatorClick() {
+        val project = project
         if (project != null) {
-            if (project!!.belongsToGroup()) {
-                Navigator.navigateToGroup(activity, project!!.namespace.id)
+            val owner = project.owner
+            if (owner != null) {
+                Navigator.navigateToUser(activity, owner)
             } else {
-                Navigator.navigateToUser(activity, project!!.owner)
+                Navigator.navigateToGroup(activity, project.namespace.id)
             }
         }
     }
@@ -137,7 +136,7 @@ class ProjectFragment : ButterKnifeFragment() {
 
         App.bus().register(this)
 
-        textOverview.movementMethod = InternalLinkMovementMethod(App.get().getAccount().serverUrl)
+        textOverview.movementMethod = InternalLinkMovementMethod(App.get().getAccount().serverUrl!!)
 
         swipeRefreshLayout.setOnRefreshListener { loadData() }
 
@@ -172,7 +171,7 @@ class ProjectFragment : ButterKnifeFragment() {
         App.get().gitLab.getTree(project!!.id, branchName!!, null)
                 .flatMap(Function<List<RepositoryTreeObject>, SingleSource<Optional<RepositoryTreeObject>>> { repositoryTreeObjects ->
                     for (treeItem in repositoryTreeObjects) {
-                        if (getReadmeType(treeItem.name) != README_TYPE_UNKNOWN) {
+                        if (getReadmeType(treeItem.name!!) != README_TYPE_UNKNOWN) {
                             return@Function Single.just(Optional(treeItem))
                         }
                     }
@@ -180,7 +179,7 @@ class ProjectFragment : ButterKnifeFragment() {
                 })
                 .flatMap(Function<Optional<RepositoryTreeObject>, SingleSource<Optional<RepositoryFile>>> { repositoryTreeObjectResult ->
                     if (repositoryTreeObjectResult.isPresent) {
-                        val repositoryFile = App.get().gitLab.getFile(project!!.id, repositoryTreeObjectResult.get().name, branchName!!)
+                        val repositoryFile = App.get().gitLab.getFile(project!!.id, repositoryTreeObjectResult.get().name!!, branchName!!)
                                 .blockingGet()
                         result.repositoryFile = repositoryFile
                         return@Function Single.just(Optional(repositoryFile))
@@ -208,7 +207,7 @@ class ProjectFragment : ButterKnifeFragment() {
                         swipeRefreshLayout.isRefreshing = false
                         if (result.repositoryFile != null && result.bytes != null) {
                             val text = String(result.bytes!!)
-                            when (getReadmeType(result.repositoryFile!!.fileName)) {
+                            when (getReadmeType(result.repositoryFile!!.fileName!!)) {
                                 README_TYPE_MARKDOWN -> {
                                     textOverview.setMarkdownText(text, project)
                                 }
@@ -231,7 +230,7 @@ class ProjectFragment : ButterKnifeFragment() {
         if (project.belongsToGroup()) {
             textCreator.text = String.format(getString(R.string.created_by), project.namespace.name)
         } else {
-            textCreator.text = String.format(getString(R.string.created_by), project.owner.username)
+            textCreator.text = String.format(getString(R.string.created_by), project.owner!!.username)
         }
         textStarCount.text = project.starCount.toString()
         textForksCount.text = project.forksCount.toString()

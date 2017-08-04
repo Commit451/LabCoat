@@ -39,7 +39,7 @@ class TodoViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     }
 
     fun bind(todo: Todo) {
-        textProject.text = todo.project.nameWithNamespace
+        textProject.text = todo.project!!.nameWithNamespace
         if (todo.author != null) {
             App.get().picasso
                     .load(ImageUtil.getAvatarUrl(todo.author, itemView.resources.getDimensionPixelSize(R.dimen.image_size)))

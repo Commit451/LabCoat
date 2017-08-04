@@ -45,8 +45,8 @@ class MergeRequestHeaderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             textDescription.visibility = View.GONE
         } else {
             textDescription.visibility = View.VISIBLE
-            textDescription.setMarkdownText(mergeRequest.description, project)
-            textDescription.movementMethod = InternalLinkMovementMethod(App.get().getAccount().serverUrl)
+            textDescription.setMarkdownText(mergeRequest.description!!, project)
+            textDescription.movementMethod = InternalLinkMovementMethod(App.get().getAccount().serverUrl!!)
         }
 
         App.get().picasso
@@ -56,7 +56,7 @@ class MergeRequestHeaderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
         var author = ""
         if (mergeRequest.author != null) {
-            author += mergeRequest.author.name + " "
+            author += mergeRequest.author!!.name + " "
         }
         author += itemView.resources.getString(R.string.created_merge_request)
         if (mergeRequest.createdAt != null) {

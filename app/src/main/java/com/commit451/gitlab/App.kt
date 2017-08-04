@@ -74,7 +74,7 @@ open class App : Application() {
 
         SimpleChromeCustomTabs.initialize(this)
 
-        val accounts = Account.getAccounts()
+        val accounts = Prefs.getAccounts()
         if (!accounts.isEmpty()) {
             setAccount(accounts[0])
         }

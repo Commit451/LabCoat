@@ -145,7 +145,7 @@ class PipelineDescriptionFragment : ButterKnifeFragment() {
             textFinished.visibility = View.GONE
         }
         if (pipeline.user != null) {
-            bindUser(pipeline.user)
+            bindUser(pipeline.user!!)
         }
     }
 

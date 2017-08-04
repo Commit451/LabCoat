@@ -1,6 +1,7 @@
 package com.commit451.gitlab.api
 
 import com.commit451.gitlab.api.request.SessionRequest
+import com.commit451.gitlab.api.response.FileUploadResponse
 import com.commit451.gitlab.model.api.*
 import io.reactivex.Single
 import okhttp3.MultipartBody

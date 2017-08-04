@@ -53,7 +53,7 @@ class DiffHeaderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
 
         textTitle.text = commit.title
-        val message = extractMessage(commit.title, commit.message)
+        val message = extractMessage(commit.title!!, commit.message)
         textMessage.text = message
         textMessage.visibility = if (message.isEmpty()) View.GONE else View.VISIBLE
     }

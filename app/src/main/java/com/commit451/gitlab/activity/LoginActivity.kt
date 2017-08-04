@@ -486,8 +486,8 @@ class LoginActivity : BaseActivity() {
     fun isAlreadySignedIn(url: String, usernameOrEmailOrPrivateToken: String): Boolean {
         val accounts = Prefs.getAccounts()
         return accounts.any {
-            it.serverUrl == url && (usernameOrEmailOrPrivateToken == it.user.username
-                    || usernameOrEmailOrPrivateToken.equals(it.user.email, ignoreCase = true)
+            it.serverUrl == url && (usernameOrEmailOrPrivateToken == it.user?.username
+                    || usernameOrEmailOrPrivateToken.equals(it.user?.email, ignoreCase = true)
                     || usernameOrEmailOrPrivateToken.equals(it.privateToken, ignoreCase = true))
         }
     }

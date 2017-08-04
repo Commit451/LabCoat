@@ -52,7 +52,7 @@ class ProjectViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             image.visibility = View.GONE
 
             iconLetter.visibility = View.VISIBLE
-            iconLetter.letter = project.name.substring(0, 1)
+            iconLetter.letter = project.name!!.substring(0, 1)
             iconLetter.letterColor = Color.WHITE
             iconLetter.shapeColor = color
         }

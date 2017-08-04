@@ -38,7 +38,7 @@ class AccountViewHolder(view: View) : TypedViewHolder<Account>(view) {
 
     override fun bind(position: Int, item: Account) {
         textServer.text = item.serverUrl.toString()
-        textUsername.text = item.user.username
+        textUsername.text = item.user!!.username
 
         Picasso.with(context)
                 .load(ImageUtil.getAvatarUrl(item.user, itemView.resources.getDimensionPixelSize(R.dimen.user_list_image_size)))

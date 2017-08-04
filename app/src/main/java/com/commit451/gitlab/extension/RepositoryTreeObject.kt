@@ -5,7 +5,6 @@ import android.support.annotation.DrawableRes
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.model.api.RepositoryTreeObject
-import com.commit451.gitlab.model.api.RepositoryTreeObject.*
 
 @DrawableRes
 fun RepositoryTreeObject.getDrawableForType(): Int {
@@ -13,9 +12,9 @@ fun RepositoryTreeObject.getDrawableForType(): Int {
         return R.drawable.ic_unknown_24dp
     }
     when (type) {
-        TYPE_FILE -> return R.drawable.ic_file_24dp
-        TYPE_FOLDER -> return R.drawable.ic_folder_24dp
-        TYPE_REPO -> return R.drawable.ic_repo_24dp
+        RepositoryTreeObject.TYPE_FILE -> return R.drawable.ic_file_24dp
+        RepositoryTreeObject.TYPE_FOLDER -> return R.drawable.ic_folder_24dp
+        RepositoryTreeObject.TYPE_REPO -> return R.drawable.ic_repo_24dp
     }
 
     return R.drawable.ic_unknown_24dp

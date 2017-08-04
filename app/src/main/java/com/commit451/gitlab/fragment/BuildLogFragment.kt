@@ -78,7 +78,7 @@ class BuildLogFragment : ButterKnifeFragment() {
 
         swipeRefreshLayout.isRefreshing = true
 
-        val url = build.getRawBuildUrl(App.get().getAccount().serverUrl, project)
+        val url = build.getRawBuildUrl(App.get().getAccount().serverUrl!!, project)
 
         App.get().gitLab.getRaw(url)
                 .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))

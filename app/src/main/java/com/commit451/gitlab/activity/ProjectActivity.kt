@@ -77,9 +77,7 @@ class ProjectActivity : BaseActivity() {
     @BindView(R.id.pager) lateinit var viewPager: ViewPager
 
     var project: Project? = null
-        internal set
     var ref: Ref? = null
-        internal set
 
     val onMenuItemClickListener = Toolbar.OnMenuItemClickListener { item ->
         when (item.itemId) {
@@ -96,20 +94,22 @@ class ProjectActivity : BaseActivity() {
                 return@OnMenuItemClickListener true
             }
             R.id.action_copy_git_https -> {
-                if (project == null || project!!.httpUrlToRepo == null) {
+                val url = project?.httpUrlToRepo
+                if (url == null) {
                     Toast.makeText(this@ProjectActivity, R.string.failed_to_copy_to_clipboard, Toast.LENGTH_SHORT)
                             .show()
                 } else {
-                    copyToClipboard(project!!.httpUrlToRepo)
+                    copyToClipboard(url)
                 }
                 return@OnMenuItemClickListener true
             }
             R.id.action_copy_git_ssh -> {
-                if (project == null || project!!.httpUrlToRepo == null) {
+                val url = project?.sshUrlToRepo
+                if (url == null) {
                     Toast.makeText(this@ProjectActivity, R.string.failed_to_copy_to_clipboard, Toast.LENGTH_SHORT)
                             .show()
                 } else {
-                    copyToClipboard(project!!.sshUrlToRepo)
+                    copyToClipboard(url)
                 }
                 return@OnMenuItemClickListener true
             }
@@ -232,7 +232,7 @@ class ProjectActivity : BaseActivity() {
     fun bindProject(project: Project) {
         this.project = project
         if (ref == null) {
-            ref = Ref(Ref.TYPE_BRANCH, this.project!!.defaultBranch)
+            ref = Ref(Ref.TYPE_BRANCH, project.defaultBranch)
         }
         toolbar.title = this.project!!.name
         toolbar.subtitle = this.project!!.namespace.name

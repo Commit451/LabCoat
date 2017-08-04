@@ -20,6 +20,7 @@ import com.commit451.gitlab.adapter.ProjectMembersAdapter
 import com.commit451.gitlab.dialog.AccessDialog
 import com.commit451.gitlab.event.MemberAddedEvent
 import com.commit451.gitlab.event.ProjectReloadEvent
+import com.commit451.gitlab.extension.belongsToGroup
 import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.Member
 import com.commit451.gitlab.model.api.Project

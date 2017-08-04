@@ -1,7 +1,6 @@
 package com.commit451.gitlab.model
 
 import android.support.annotation.IntDef
-
 import org.parceler.Parcel
 
 /**
@@ -22,11 +21,9 @@ class Ref {
     var type: Int = 0
     var ref: String? = null
 
-    constructor() {
+    constructor()
 
-    }
-
-    constructor(@Type type: Int, ref: String) {
+    constructor(@Type type: Int, ref: String?) {
         this.type = type
         this.ref = ref
     }

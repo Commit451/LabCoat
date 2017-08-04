@@ -24,6 +24,7 @@ import android.content.Intent
 import android.net.Uri
 import android.widget.RemoteViews
 import com.commit451.gitlab.R
+import com.commit451.gitlab.extension.feedUrl
 import com.commit451.gitlab.navigation.DeepLinker
 import timber.log.Timber
 
@@ -52,35 +53,35 @@ class UserFeedWidgetProvider : AppWidgetProvider() {
             // Here we setup the intent which points to the StackViewService which will
             // provide the views for this collection.
             val account = UserFeedWidgetPrefs.getAccount(context, widgetId)
-            if (account == null || account.user.feedUrl == null) {
+            val feedUrl = account?.user?.feedUrl
+            if (account == null || feedUrl == null) {
                 //TODO alert the user to this misfortune?
                 Timber.e("Error getting account or feed url")
-                return
+            } else {
+                Timber.d("Updating widget with url $feedUrl")
+                val intent = ProjectFeedWidgetService.newIntent(context, widgetId, account, feedUrl)
+                // When intents are compared, the extras are ignored, so we need to embed the extras
+                // into the data so that the extras will not be ignored.
+                intent.data = Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME))
+                val rv = RemoteViews(context.packageName, R.layout.widget_layout_entry)
+                rv.setRemoteAdapter(R.id.list_view, intent)
+
+                rv.setEmptyView(R.id.list_view, R.id.empty_view)
+
+                // Here we setup the a pending intent template. Individuals items of a collection
+                // cannot setup their own pending intents, instead, the collection as a whole can
+                // setup a pending intent template, and the individual items can set a fillInIntent
+                // to create unique before on an item to item basis.
+                val actionIntent = Intent(context, UserFeedWidgetProvider::class.java)
+                actionIntent.action = UserFeedWidgetProvider.ACTION_FOLLOW_LINK
+                actionIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
+                intent.data = Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME))
+                val actionPendingIntent = PendingIntent.getBroadcast(context, 0, actionIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT)
+                rv.setPendingIntentTemplate(R.id.list_view, actionPendingIntent)
+
+                appWidgetManager.updateAppWidget(widgetId, rv)
             }
-            val feedUrl = account.user.feedUrl!!.toString()
-            Timber.d("Updating widget with url $feedUrl")
-            val intent = ProjectFeedWidgetService.newIntent(context, widgetId, account, feedUrl)
-            // When intents are compared, the extras are ignored, so we need to embed the extras
-            // into the data so that the extras will not be ignored.
-            intent.data = Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME))
-            val rv = RemoteViews(context.packageName, R.layout.widget_layout_entry)
-            rv.setRemoteAdapter(R.id.list_view, intent)
-
-            rv.setEmptyView(R.id.list_view, R.id.empty_view)
-
-            // Here we setup the a pending intent template. Individuals items of a collection
-            // cannot setup their own pending intents, instead, the collection as a whole can
-            // setup a pending intent template, and the individual items can set a fillInIntent
-            // to create unique before on an item to item basis.
-            val actionIntent = Intent(context, UserFeedWidgetProvider::class.java)
-            actionIntent.action = UserFeedWidgetProvider.ACTION_FOLLOW_LINK
-            actionIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
-            intent.data = Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME))
-            val actionPendingIntent = PendingIntent.getBroadcast(context, 0, actionIntent,
-                    PendingIntent.FLAG_UPDATE_CURRENT)
-            rv.setPendingIntentTemplate(R.id.list_view, actionPendingIntent)
-
-            appWidgetManager.updateAppWidget(widgetId, rv)
         }
         super.onUpdate(context, appWidgetManager, appWidgetIds)
     }

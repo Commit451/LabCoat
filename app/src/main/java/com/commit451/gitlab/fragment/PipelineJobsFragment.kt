@@ -13,7 +13,9 @@ import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.event.PipelineChangedEvent
 import com.commit451.gitlab.extension.setup
-import com.commit451.gitlab.model.api.*
+import com.commit451.gitlab.model.api.CommitUser
+import com.commit451.gitlab.model.api.Pipeline
+import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.util.DateUtil
 import com.trello.rxlifecycle2.android.FragmentEvent
@@ -139,8 +141,9 @@ class PipelineJobsFragment : ButterKnifeFragment() {
         } else {
             textFinished.visibility = View.GONE
         }
-        if (pipeline.user != null) {
-            bindUser(pipeline.user)
+        val user = pipeline.user
+        if (user != null) {
+            bindUser(user)
         }
     }
 
@@ -149,6 +152,7 @@ class PipelineJobsFragment : ButterKnifeFragment() {
         textAuthor.text = authorText
     }
 
+    @Suppress("unused")
     @Subscribe
     fun onPipelineChangedEvent(event: PipelineChangedEvent) {
         if (pipeline.id == event.pipeline.id) {

@@ -20,7 +20,7 @@ import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.extension.toPart
-import com.commit451.gitlab.model.api.FileUploadResponse
+import com.commit451.gitlab.api.response.FileUploadResponse
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.rx.CustomSingleObserver
 import pl.aprilapps.easyphotopicker.DefaultCallback

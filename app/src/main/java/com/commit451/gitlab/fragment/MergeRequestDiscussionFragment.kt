@@ -21,7 +21,7 @@ import com.commit451.gitlab.activity.AttachActivity
 import com.commit451.gitlab.adapter.MergeRequestDetailAdapter
 import com.commit451.gitlab.event.MergeRequestChangedEvent
 import com.commit451.gitlab.extension.setup
-import com.commit451.gitlab.model.api.FileUploadResponse
+import com.commit451.gitlab.api.response.FileUploadResponse
 import com.commit451.gitlab.model.api.MergeRequest
 import com.commit451.gitlab.model.api.Note
 import com.commit451.gitlab.model.api.Project

@@ -50,7 +50,7 @@ class LaunchActivity : BaseActivity() {
     }
 
     private fun figureOutWhatToDo() {
-        val accounts = Account.getAccounts()
+        val accounts = Prefs.getAccounts()
         if (accounts.isEmpty()) {
             Navigator.navigateToLogin(this)
             finish()

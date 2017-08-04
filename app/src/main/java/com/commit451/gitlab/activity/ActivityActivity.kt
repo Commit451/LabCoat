@@ -55,9 +55,10 @@ class ActivityActivity : BaseActivity() {
                     .appendPath("dashboard")
                     .appendPath("projects.atom")
                     .build()
-            Timber.d("Showing activity feed for: %s", feedUri.toString())
+            val feedUrl = feedUri.toString()
+            Timber.d("Showing activity feed for: %s", feedUrl)
 
-            feedFragment = FeedFragment.newInstance(feedUri)
+            feedFragment = FeedFragment.newInstance(feedUrl)
             supportFragmentManager.beginTransaction()
                     .replace(R.id.root_fragment, feedFragment, TAG_FEED_FRAGMENT)
                     .commit()

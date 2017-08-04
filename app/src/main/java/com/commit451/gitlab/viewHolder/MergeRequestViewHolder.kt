@@ -43,7 +43,7 @@ class MergeRequestViewHolder(view: View) : RecyclerView.ViewHolder(view) {
                 .into(image)
 
         if (item.author != null) {
-            textAuthor.text = item.author.username
+            textAuthor.text = item.author!!.username
         } else {
             textAuthor.text = ""
         }

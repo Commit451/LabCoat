@@ -90,6 +90,10 @@ android {
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
+
+    packagingOptions {
+        exclude 'META-INF/MANIFEST.MF'
+    }
 }
 
 ext {

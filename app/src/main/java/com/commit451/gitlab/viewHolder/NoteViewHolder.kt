@@ -46,17 +46,15 @@ class NoteViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             textCreationDate.text = DateUtil.getRelativeTimeSpanString(itemView.context, note.createdAt)
         }
 
-        if (note.author != null) {
-            textTitle.text = note.author.username
+        val author = note.author
+        if (author != null) {
+            textTitle.text = author.username
         }
 
-        var summary = ""
-        if (note.body != null) {
-            summary = note.body
-        }
+        val summary = note.body ?: ""
 
         textSummary.setMarkdownText(summary, project)
-        textSummary.movementMethod = InternalLinkMovementMethod(App.get().getAccount().serverUrl)
+        textSummary.movementMethod = InternalLinkMovementMethod(App.get().getAccount().serverUrl!!)
 
         App.get().picasso
                 .load(ImageUtil.getAvatarUrl(note.author, itemView.resources.getDimensionPixelSize(R.dimen.image_size)))

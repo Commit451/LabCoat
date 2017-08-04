@@ -12,8 +12,11 @@ import java.util.concurrent.TimeUnit
  */
 object DateUtil {
 
-    fun getRelativeTimeSpanString(context: Context, startTime: Date): CharSequence {
+    fun getRelativeTimeSpanString(context: Context, startTime: Date?): CharSequence {
         val now = Date()
+        if (startTime == null) {
+            return context.getString(R.string.unknown)
+        }
         if (Math.abs(now.time - startTime.time) < android.text.format.DateUtils.SECOND_IN_MILLIS) {
             return context.getString(R.string.just_now)
         }

@@ -32,9 +32,9 @@ class FeedFragment : ButterKnifeFragment() {
 
         private val EXTRA_FEED_URL = "extra_feed_url"
 
-        fun newInstance(feedUrl: Uri?): FeedFragment {
+        fun newInstance(feedUrl: String): FeedFragment {
             val args = Bundle()
-            args.putParcelable(EXTRA_FEED_URL, feedUrl)
+            args.putString(EXTRA_FEED_URL, feedUrl)
 
             val fragment = FeedFragment()
             fragment.arguments = args
@@ -52,7 +52,7 @@ class FeedFragment : ButterKnifeFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        feedUrl = arguments.getParcelable<Uri>(EXTRA_FEED_URL)
+        feedUrl = Uri.parse(arguments.getString(EXTRA_FEED_URL))
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {

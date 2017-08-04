@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import com.commit451.gitlab.R
+import com.commit451.gitlab.extension.feedUrl
 import com.commit451.gitlab.fragment.FeedFragment
 import com.commit451.gitlab.fragment.GroupMembersFragment
 import com.commit451.gitlab.fragment.ProjectsFragment

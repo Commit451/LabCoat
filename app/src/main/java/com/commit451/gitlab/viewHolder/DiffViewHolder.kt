@@ -9,6 +9,7 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.alorma.diff.lib.DiffTextView
 import com.commit451.gitlab.R
+import com.commit451.gitlab.extension.fileName
 import com.commit451.gitlab.model.api.Diff
 
 /**

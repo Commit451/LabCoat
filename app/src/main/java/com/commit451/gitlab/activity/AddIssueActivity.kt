@@ -27,6 +27,7 @@ import com.commit451.gitlab.adapter.AssigneeSpinnerAdapter
 import com.commit451.gitlab.adapter.MilestoneSpinnerAdapter
 import com.commit451.gitlab.event.IssueChangedEvent
 import com.commit451.gitlab.event.IssueCreatedEvent
+import com.commit451.gitlab.extension.belongsToGroup
 import com.commit451.gitlab.extension.checkValid
 import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.*
@@ -240,7 +241,7 @@ class AddIssueActivity : MorphActivity() {
         if (projectLabels != null && !projectLabels.isEmpty() && issue != null && issue!!.labels != null) {
             val currentLabels = ArrayList<Label>()
             for (label in projectLabels) {
-                for (labelName in issue!!.labels) {
+                for (labelName in issue!!.labels!!) {
                     if (labelName == label.name) {
                         currentLabels.add(label)
                     }

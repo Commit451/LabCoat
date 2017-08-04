@@ -50,6 +50,7 @@
 -keepclasseswithmembers class * {
     @com.squareup.moshi.* <methods>;
 }
+-keep @com.squareup.moshi.JsonQualifier interface *
 
 # Custom rules
 -keep class com.commit451.gitlab.ssl.CustomSSLSocketFactory
