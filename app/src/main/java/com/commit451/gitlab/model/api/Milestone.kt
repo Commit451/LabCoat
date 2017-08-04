@@ -25,24 +25,24 @@ class Milestone {
     @Retention(AnnotationRetention.SOURCE)
     annotation class StateEvent
 
-    @Json(name = "id")
+    @field:Json(name = "id")
     var id: Long = 0
-    @Json(name = "iid")
+    @field:Json(name = "iid")
     var iid: Long = 0
-    @Json(name = "project_id")
+    @field:Json(name = "project_id")
     var projectId: Long = 0
-    @Json(name = "title")
+    @field:Json(name = "title")
     var title: String? = null
-    @Json(name = "description")
+    @field:Json(name = "description")
     var description: String? = null
-    @Json(name = "state")
+    @field:Json(name = "state")
     @get:State
     var state: String? = null
-    @Json(name = "created_at")
+    @field:Json(name = "created_at")
     var createdAt: Date? = null
-    @Json(name = "updated_at")
+    @field:Json(name = "updated_at")
     var updatedAt: Date? = null
-    @DashDateAdapter.DueDate
-    @Json(name = "due_date")
+    @field:DashDateAdapter.DueDate
+    @field:Json(name = "due_date")
     var dueDate: Date? = null
 }

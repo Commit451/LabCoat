@@ -7,8 +7,8 @@ import org.parceler.Parcel
 @Parcel
 class ArtifactsFile {
 
-    @Json(name = "filename")
+    @field:Json(name = "filename")
     lateinit var fileName: String
-    @Json(name = "size")
+    @field:Json(name = "size")
     var size: Long = 0
 }

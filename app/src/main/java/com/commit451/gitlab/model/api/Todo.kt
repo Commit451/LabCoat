@@ -29,26 +29,26 @@ class Todo {
     @Retention(AnnotationRetention.SOURCE)
     annotation class State
 
-    @Json(name = "id")
+    @field:Json(name = "id")
     var id: String? = null
-    @Json(name = "project")
+    @field:Json(name = "project")
     var project: Project? = null
-    @Json(name = "author")
+    @field:Json(name = "author")
     var author: UserBasic? = null
-    @Json(name = "action_name")
+    @field:Json(name = "action_name")
     var actionName: String? = null
-    @Json(name = "target_type")
+    @field:Json(name = "target_type")
     @TargetType
     @get:TargetType
     var targetType: String? = null
-    @Json(name = "target_url")
+    @field:Json(name = "target_url")
     var targetUrl: String? = null
-    @Json(name = "body")
+    @field:Json(name = "body")
     var body: String? = null
-    @Json(name = "state")
+    @field:Json(name = "state")
     @State
     @get:State
     var state: String? = null
-    @Json(name = "created_at")
+    @field:Json(name = "created_at")
     var createdAt: Date? = null
 }

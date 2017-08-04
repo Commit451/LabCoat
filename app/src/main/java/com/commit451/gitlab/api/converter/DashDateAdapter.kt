@@ -1,10 +1,8 @@
 package com.commit451.gitlab.api.converter
 
-import com.commit451.gitlab.model.api.Milestone
 import com.squareup.moshi.FromJson
 import com.squareup.moshi.JsonQualifier
 import com.squareup.moshi.ToJson
-import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 

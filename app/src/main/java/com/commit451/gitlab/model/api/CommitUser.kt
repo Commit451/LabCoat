@@ -7,17 +7,17 @@ import org.parceler.Parcel
 
 @Parcel
 class CommitUser {
-    @Json(name = "id")
+    @field:Json(name = "id")
     var id: String? = null
-    @Json(name = "name")
+    @field:Json(name = "name")
     var name: String? = null
-    @Json(name = "username")
+    @field:Json(name = "username")
     var username: String? = null
-    @Json(name = "state")
+    @field:Json(name = "state")
     var state: String? = null
-    @Json(name = "avatar_url")
+    @field:Json(name = "avatar_url")
     var avatarUrl: String? = null
-    @Json(name = "web_url")
+    @field:Json(name = "web_url")
     var webUrl: String? = null
 
     override fun equals(o: Any?): Boolean {

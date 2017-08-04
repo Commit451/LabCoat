@@ -6,6 +6,6 @@ import org.parceler.Parcel
 
 @Parcel
 class UserLogin : UserFull() {
-    @Json(name = "private_token")
+    @field:Json(name = "private_token")
     var privateToken: String? = null
 }

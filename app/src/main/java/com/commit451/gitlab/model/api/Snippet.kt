@@ -9,34 +9,34 @@ import java.util.*
  */
 @Parcel
 class Snippet {
-    @Json(name = "id")
+    @field:Json(name = "id")
     var id: Long = 0
-    @Json(name = "title")
+    @field:Json(name = "title")
     var title: String? = null
-    @Json(name = "file_name")
+    @field:Json(name = "file_name")
     var fileName: String? = null
-    @Json(name = "author")
+    @field:Json(name = "author")
     var author: Author? = null
-    @Json(name = "expires_at")
+    @field:Json(name = "expires_at")
     var expiresAt: Date? = null
-    @Json(name = "updated_at")
+    @field:Json(name = "updated_at")
     var updatedAt: Date? = null
-    @Json(name = "created_at")
+    @field:Json(name = "created_at")
     var createdAt: Date? = null
 
     @Parcel
     class Author {
-        @Json(name = "id")
+        @field:Json(name = "id")
         var id: Long = 0
-        @Json(name = "username")
+        @field:Json(name = "username")
         var username: String? = null
-        @Json(name = "email")
+        @field:Json(name = "email")
         var email: String? = null
-        @Json(name = "name")
+        @field:Json(name = "name")
         var name: String? = null
-        @Json(name = "state")
+        @field:Json(name = "state")
         var state: String? = null
-        @Json(name = "created_at")
+        @field:Json(name = "created_at")
         var createdAt: Date? = null
     }
 }

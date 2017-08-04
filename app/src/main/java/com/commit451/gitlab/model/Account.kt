@@ -11,21 +11,21 @@ import java.util.*
 @Parcel
 class Account : Comparable<Account> {
 
-    @Json(name = "server_url")
+    @field:Json(name = "server_url")
     var serverUrl: String? = null
-    @Json(name = "authorization_header")
+    @field:Json(name = "authorization_header")
     var authorizationHeader: String? = null
-    @Json(name = "private_token")
+    @field:Json(name = "private_token")
     var privateToken: String? = null
-    @Json(name = "trusted_certificate")
+    @field:Json(name = "trusted_certificate")
     var trustedCertificate: String? = null
-    @Json(name = "trusted_hostname")
+    @field:Json(name = "trusted_hostname")
     var trustedHostname: String? = null
-    @Json(name = "private_key_alias")
+    @field:Json(name = "private_key_alias")
     var privateKeyAlias: String? = null
-    @Json(name = "user")
+    @field:Json(name = "user")
     var user: UserFull? = null
-    @Json(name = "last_used")
+    @field:Json(name = "last_used")
     var lastUsed: Date? = null
 
     override fun compareTo(another: Account): Int {

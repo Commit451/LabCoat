@@ -7,27 +7,27 @@ import com.squareup.moshi.Json
  */
 class Tag {
 
-    @Json(name = "name")
+    @field:Json(name = "name")
     var name: String? = null
-    @Json(name = "message")
+    @field:Json(name = "message")
     var message: String? = null
-    @Json(name = "commit")
+    @field:Json(name = "commit")
     var commit: Commit? = null
-    @Json(name = "release")
+    @field:Json(name = "release")
     var release: Release? = null
 
     class Commit {
 
-        @Json(name = "id")
+        @field:Json(name = "id")
         var id: String? = null
-        @Json(name = "message")
+        @field:Json(name = "message")
         var message: String? = null
     }
 
     class Release {
-        @Json(name = "tag_name")
+        @field:Json(name = "tag_name")
         var tagName: String? = null
-        @Json(name = "description")
+        @field:Json(name = "description")
         var description: String? = null
     }
 }

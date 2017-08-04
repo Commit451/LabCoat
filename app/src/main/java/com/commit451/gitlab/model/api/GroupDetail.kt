@@ -6,6 +6,6 @@ import org.parceler.Parcel
 
 @Parcel
 class GroupDetail : Group() {
-    @Json(name = "projects")
+    @field:Json(name = "projects")
     var projects: List<Project>? = null
 }

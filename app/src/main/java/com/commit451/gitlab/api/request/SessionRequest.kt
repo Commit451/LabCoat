@@ -7,10 +7,10 @@ import com.squareup.moshi.Json
  */
 class SessionRequest {
 
-    @Json(name = "email")
+    @field:Json(name = "email")
     var email: String? = null
-    @Json(name = "login")
+    @field:Json(name = "login")
     var login: String? = null
-    @Json(name = "password")
+    @field:Json(name = "password")
     var password: String? = null
 }

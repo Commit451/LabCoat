@@ -6,8 +6,8 @@ import org.parceler.Parcel
 
 @Parcel
 class Identity {
-    @Json(name = "provider")
+    @field:Json(name = "provider")
     var provider: String? = null
-    @Json(name = "extern_uid")
+    @field:Json(name = "extern_uid")
     var externUid: String? = null
 }

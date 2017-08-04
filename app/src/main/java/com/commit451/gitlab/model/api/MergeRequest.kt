@@ -19,53 +19,53 @@ class MergeRequest {
     @Retention(AnnotationRetention.SOURCE)
     annotation class State
 
-    @Json(name = "id")
+    @field:Json(name = "id")
     var id: Long = 0
-    @Json(name = "iid")
+    @field:Json(name = "iid")
     var iid: Long = 0
-    @Json(name = "project_id")
+    @field:Json(name = "project_id")
     var projectId: Long = 0
-    @Json(name = "title")
+    @field:Json(name = "title")
     var title: String? = null
-    @Json(name = "description")
+    @field:Json(name = "description")
     var description: String? = null
-    @Json(name = "state")
+    @field:Json(name = "state")
     @State
     @get:State var state: String? = null
-    @Json(name = "updated_at")
+    @field:Json(name = "updated_at")
     var updatedAt: Date? = null
-    @Json(name = "created_at")
+    @field:Json(name = "created_at")
     var createdAt: Date? = null
-    @Json(name = "target_branch")
+    @field:Json(name = "target_branch")
     var targetBranch: String? = null
-    @Json(name = "source_branch")
+    @field:Json(name = "source_branch")
     var sourceBranch: String? = null
-    @Json(name = "upvotes")
+    @field:Json(name = "upvotes")
     var upvotes: Long = 0
-    @Json(name = "downvotes")
+    @field:Json(name = "downvotes")
     var downvotes: Long = 0
-    @Json(name = "author")
+    @field:Json(name = "author")
     var author: UserBasic? = null
-    @Json(name = "assignee")
+    @field:Json(name = "assignee")
     var assignee: UserBasic? = null
-    @Json(name = "source_project_id")
+    @field:Json(name = "source_project_id")
     var sourceProjectId: Long = 0
-    @Json(name = "target_project_id")
+    @field:Json(name = "target_project_id")
     var targetProjectId: Long = 0
-    @Json(name = "labels")
+    @field:Json(name = "labels")
     var labels: List<String>? = null
-    @Json(name = "work_in_progress")
+    @field:Json(name = "work_in_progress")
     var isWorkInProgress: Boolean = false
-    @Json(name = "milestone")
+    @field:Json(name = "milestone")
     var milestone: Milestone? = null
-    @Json(name = "merge_when_build_succeeds")
+    @field:Json(name = "merge_when_build_succeeds")
     var isMergeWhenBuildSucceedsEnabled: Boolean = false
-    @Json(name = "merge_status")
+    @field:Json(name = "merge_status")
     var mergeStatus: String? = null
     /**
      * Get the changes. Only not null if this merge request was retrieved via [com.commit451.gitlab.api.GitLabService.getMergeRequestChanges]
      * @return the changes
      */
-    @Json(name = "changes")
+    @field:Json(name = "changes")
     var changes: List<Diff>? = null
 }

@@ -6,8 +6,8 @@ import org.parceler.Parcel
 
 @Parcel
 open class UserSafe {
-    @Json(name = "name")
+    @field:Json(name = "name")
     var name: String? = null
-    @Json(name = "username")
+    @field:Json(name = "username")
     var username: String? = null
 }

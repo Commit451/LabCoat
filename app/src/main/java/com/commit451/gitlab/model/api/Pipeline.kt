@@ -10,20 +10,20 @@ import java.util.*
 @Parcel
 class Pipeline {
 
-    @Json(name = "user")
+    @field:Json(name = "user")
     var user: CommitUser? = null
-    @Json(name = "id")
+    @field:Json(name = "id")
     var id: Long = 0
-    @Json(name = "sha")
+    @field:Json(name = "sha")
     var sha: String? = null
-    @Json(name = "ref")
+    @field:Json(name = "ref")
     var ref: String? = null
-    @Json(name = "status")
+    @field:Json(name = "status")
     var status: String? = null
-    @Json(name = "created_at")
+    @field:Json(name = "created_at")
     var createdAt: Date? = null
-    @Json(name = "started_at")
+    @field:Json(name = "started_at")
     var startedAt: Date? = null
-    @Json(name = "finished_at")
+    @field:Json(name = "finished_at")
     var finishedAt: Date? = null
 }

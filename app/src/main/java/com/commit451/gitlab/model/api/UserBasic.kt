@@ -18,14 +18,14 @@ open class UserBasic : UserSafe() {
     @Retention(AnnotationRetention.SOURCE)
     annotation class State
 
-    @Json(name = "id")
+    @field:Json(name = "id")
     var id: Long = 0
-    @Json(name = "state")
+    @field:Json(name = "state")
     @State
     @get:State
     var state: String? = null
-    @Json(name = "avatar_url")
+    @field:Json(name = "avatar_url")
     var avatarUrl: String? = null
-    @Json(name = "web_url")
+    @field:Json(name = "web_url")
     lateinit var webUrl: String
 }

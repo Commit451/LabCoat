@@ -8,9 +8,9 @@ import org.parceler.Parcel
 @Parcel
 class Branch {
 
-    @Json(name = "name")
+    @field:Json(name = "name")
     var name: String? = null
-    @Json(name = "protected")
+    @field:Json(name = "protected")
     var isProtected: Boolean = false
 
     override fun equals(o: Any?): Boolean {

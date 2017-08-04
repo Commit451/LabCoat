@@ -10,12 +10,12 @@ import org.parceler.Parcel
 @Parcel
 class FileUploadResponse {
 
-    @Json(name = "alt")
+    @field:Json(name = "alt")
     var alt: String? = null
-    @Json(name = "url")
+    @field:Json(name = "url")
     var url: String? = null
-    @Json(name = "is_image")
+    @field:Json(name = "is_image")
     var isImage: Boolean = false
-    @Json(name = "markdown")
+    @field:Json(name = "markdown")
     lateinit var markdown: String
 }

@@ -10,18 +10,18 @@ import java.util.*
 @Parcel
 class AwardEmoji {
 
-    @Json(name = "id")
+    @field:Json(name = "id")
     var id: String? = null
-    @Json(name = "name")
+    @field:Json(name = "name")
     var name: String? = null
-    @Json(name = "user")
+    @field:Json(name = "user")
     var user: UserBasic? = null
-    @Json(name = "created_at")
+    @field:Json(name = "created_at")
     var createdAt: Date? = null
-    @Json(name = "updated_at")
+    @field:Json(name = "updated_at")
     var updatedAt: Date? = null
-    @Json(name = "awardable_id")
+    @field:Json(name = "awardable_id")
     var awardableId: Int = 0
-    @Json(name = "awardable_type")
+    @field:Json(name = "awardable_type")
     var awardableType: String? = null
 }

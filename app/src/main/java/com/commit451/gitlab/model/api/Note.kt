@@ -18,23 +18,23 @@ class Note {
     @Retention(AnnotationRetention.SOURCE)
     annotation class Type
 
-    @Json(name = "id")
+    @field:Json(name = "id")
     var id: Long = 0
-    @Json(name = "body")
+    @field:Json(name = "body")
     var body: String? = null
-    @Json(name = "author")
+    @field:Json(name = "author")
     var author: UserBasic? = null
-    @Json(name = "created_at")
+    @field:Json(name = "created_at")
     var createdAt: Date? = null
-    @Json(name = "system")
+    @field:Json(name = "system")
     var isSystem: Boolean = false
-    @Json(name = "noteable_id")
+    @field:Json(name = "noteable_id")
     var noteableId: Long = 0
-    @Json(name = "noteable_type")
+    @field:Json(name = "noteable_type")
     @Type
     @get:Type var noteableType: String? = null
-    @Json(name = "upvote?")
+    @field:Json(name = "upvote?")
     var isUpvote: Boolean = false
-    @Json(name = "downvote?")
+    @field:Json(name = "downvote?")
     var isDownvote: Boolean = false
 }

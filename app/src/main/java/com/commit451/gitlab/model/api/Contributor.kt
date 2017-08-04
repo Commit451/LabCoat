@@ -7,14 +7,14 @@ import org.parceler.Parcel
 @Parcel
 class Contributor {
 
-    @Json(name = "name")
+    @field:Json(name = "name")
     var name: String? = null
-    @Json(name = "email")
+    @field:Json(name = "email")
     var email: String? = null
-    @Json(name = "commits")
+    @field:Json(name = "commits")
     var commits: Int = 0
-    @Json(name = "additions")
+    @field:Json(name = "additions")
     var additions: Int = 0
-    @Json(name = "deletions")
+    @field:Json(name = "deletions")
     var deletions: Int = 0
 }

@@ -6,8 +6,8 @@ import org.parceler.Parcel
 
 @Parcel
 class Email {
-    @Json(name = "id")
+    @field:Json(name = "id")
     var id: Long = 0
-    @Json(name = "email")
+    @field:Json(name = "email")
     var email: String? = null
 }

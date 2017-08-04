@@ -6,28 +6,28 @@ import java.util.*
 
 @Parcel
 class ProjectNamespace {
-    @Json(name = "id")
+    @field:Json(name = "id")
     var id: Long = 0
-    @Json(name = "name")
+    @field:Json(name = "name")
     var name: String? = null
-    @Json(name = "path")
+    @field:Json(name = "path")
     var path: String? = null
-    @Json(name = "owner_id")
+    @field:Json(name = "owner_id")
     var ownerId: Long = 0
-    @Json(name = "created_at")
+    @field:Json(name = "created_at")
     var createdAt: Date? = null
-    @Json(name = "updated_at")
+    @field:Json(name = "updated_at")
     var updatedAt: Date? = null
-    @Json(name = "description")
+    @field:Json(name = "description")
     var description: String? = null
-    @Json(name = "avatar")
+    @field:Json(name = "avatar")
     var avatar: Avatar? = null
-    @Json(name = "public")
+    @field:Json(name = "public")
     var isPublic: Boolean = false
 
     @Parcel
     class Avatar {
-        @Json(name = "url")
+        @field:Json(name = "url")
         var url: String? = null
     }
 }

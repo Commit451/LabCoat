@@ -10,18 +10,18 @@ import org.parceler.Parcel
 @Parcel
 class Label {
 
-    @Json(name = "color")
+    @field:Json(name = "color")
     var color: String? = null
-    @Json(name = "name")
+    @field:Json(name = "name")
     var name: String? = null
-    @Json(name = "description")
+    @field:Json(name = "description")
     var description: String? = null
-    @Json(name = "open_issues_count")
+    @field:Json(name = "open_issues_count")
     var openIssuesCount: Int = 0
-    @Json(name = "closed_issues_count")
+    @field:Json(name = "closed_issues_count")
     var closedIssuesCount: Int = 0
-    @Json(name = "open_merge_requests_count")
+    @field:Json(name = "open_merge_requests_count")
     var openMergeRequestsCount: Int = 0
-    @Json(name = "subscribed")
+    @field:Json(name = "subscribed")
     var isSubscribed: Boolean = false
 }

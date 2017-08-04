@@ -34,6 +34,6 @@ class Member : UserBasic() {
         }
     }
 
-    @Json(name = "access_level")
+    @field:Json(name = "access_level")
     var accessLevel: Int = 0
 }

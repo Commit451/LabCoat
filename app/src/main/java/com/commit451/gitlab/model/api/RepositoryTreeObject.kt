@@ -18,13 +18,13 @@ class RepositoryTreeObject {
     @Retention(AnnotationRetention.SOURCE)
     annotation class Type
 
-    @Json(name = "id")
+    @field:Json(name = "id")
     var id: String? = null
-    @Json(name = "name")
+    @field:Json(name = "name")
     var name: String? = null
-    @Json(name = "type")
+    @field:Json(name = "type")
     @Type
     @get:Type var type: String? = null
-    @Json(name = "mode")
+    @field:Json(name = "mode")
     var mode: String? = null
 }

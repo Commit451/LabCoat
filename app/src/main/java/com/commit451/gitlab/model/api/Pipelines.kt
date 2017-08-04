@@ -10,12 +10,12 @@ import org.parceler.Parcel
 @Parcel
 class Pipelines {
 
-    @Json(name = "sha")
+    @field:Json(name = "sha")
     var sha: String? = null
-    @Json(name = "id")
+    @field:Json(name = "id")
     var id: Long = 0
-    @Json(name = "ref")
+    @field:Json(name = "ref")
     var ref: String? = null
-    @Json(name = "status")
+    @field:Json(name = "status")
     var status: String? = null
 }

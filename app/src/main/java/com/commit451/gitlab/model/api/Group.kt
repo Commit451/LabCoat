@@ -5,16 +5,16 @@ import org.parceler.Parcel
 
 @Parcel
 open class Group {
-    @Json(name = "id")
+    @field:Json(name = "id")
     var id: Long = 0
-    @Json(name = "name")
+    @field:Json(name = "name")
     var name: String? = null
-    @Json(name = "path")
+    @field:Json(name = "path")
     var path: String? = null
-    @Json(name = "description")
+    @field:Json(name = "description")
     var description: String? = null
-    @Json(name = "avatar_url")
+    @field:Json(name = "avatar_url")
     var avatarUrl: String? = null
-    @Json(name = "web_url")
+    @field:Json(name = "web_url")
     lateinit var webUrl: String
 }
