@@ -48,8 +48,8 @@ class IssueHeaderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             textDescription.visibility = View.GONE
         } else {
             textDescription.visibility = View.VISIBLE
-            textDescription.setMarkdownText(issue.description, project)
-            textDescription.movementMethod = InternalLinkMovementMethod(App.get().getAccount().serverUrl)
+            textDescription.setMarkdownText(issue.description!!, project)
+            textDescription.movementMethod = InternalLinkMovementMethod(App.get().getAccount().serverUrl!!)
         }
 
         App.get().picasso
@@ -59,7 +59,7 @@ class IssueHeaderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
         var author = ""
         if (issue.author != null) {
-            author = issue.author.name + " "
+            author = issue.author!!.name + " "
         }
         author += itemView.resources.getString(R.string.created_issue)
         if (issue.createdAt != null) {
@@ -68,7 +68,7 @@ class IssueHeaderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         textAuthor.text = author
         if (issue.milestone != null) {
             rootMilestone.visibility = View.VISIBLE
-            textMilestone.text = issue.milestone.title
+            textMilestone.text = issue.milestone!!.title
         } else {
             rootMilestone.visibility = View.GONE
         }

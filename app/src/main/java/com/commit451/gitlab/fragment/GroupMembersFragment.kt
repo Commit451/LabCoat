@@ -22,7 +22,7 @@ import com.commit451.gitlab.dialog.AccessDialog
 import com.commit451.gitlab.event.MemberAddedEvent
 import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.Group
-import com.commit451.gitlab.model.api.Member
+import com.commit451.gitlab.model.api.User
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.rx.CustomSingleObserver
@@ -59,7 +59,7 @@ class GroupMembersFragment : ButterKnifeFragment() {
     lateinit var adapterGroupMembers: GroupMembersAdapter
     lateinit var layoutManagerGroupMembers: DynamicGridLayoutManager
 
-    var member: Member? = null
+    var member: User? = null
     lateinit var group: Group
     var nextPageUrl: Uri? = null
 
@@ -76,11 +76,11 @@ class GroupMembersFragment : ButterKnifeFragment() {
     }
 
     private val listener = object : GroupMembersAdapter.Listener {
-        override fun onUserClicked(member: Member, holder: ProjectMemberViewHolder) {
+        override fun onUserClicked(member: User, holder: ProjectMemberViewHolder) {
             Navigator.navigateToUser(activity, holder.image, member)
         }
 
-        override fun onUserRemoveClicked(member: Member) {
+        override fun onUserRemoveClicked(member: User) {
             this@GroupMembersFragment.member = member
             App.get().gitLab.removeGroupMember(group.id, member.id)
                     .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
@@ -98,10 +98,10 @@ class GroupMembersFragment : ButterKnifeFragment() {
                     })
         }
 
-        override fun onUserChangeAccessClicked(member: Member) {
+        override fun onUserChangeAccessClicked(member: User) {
             val accessDialog = AccessDialog(activity, member, group)
             accessDialog.setOnAccessChangedListener(object : AccessDialog.OnAccessChangedListener {
-                override fun onAccessChanged(member: Member, accessLevel: String) {
+                override fun onAccessChanged(member: User, accessLevel: String) {
                     loadData()
                 }
             })
@@ -178,10 +178,10 @@ class GroupMembersFragment : ButterKnifeFragment() {
         loadGroupMembers(App.get().gitLab.getProjectMembers(nextPageUrl!!.toString()))
     }
 
-    private fun loadGroupMembers(observable: Single<Response<List<Member>>>) {
+    private fun loadGroupMembers(observable: Single<Response<List<User>>>) {
         observable
                 .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
-                .subscribe(object : CustomResponseSingleObserver<List<Member>>() {
+                .subscribe(object : CustomResponseSingleObserver<List<User>>() {
 
                     override fun error(e: Throwable) {
                         Timber.e(e)
@@ -192,7 +192,7 @@ class GroupMembersFragment : ButterKnifeFragment() {
                         adapterGroupMembers.setData(null)
                     }
 
-                    override fun responseNonNullSuccess(members: List<Member>) {
+                    override fun responseNonNullSuccess(members: List<User>) {
                         swipeRefreshLayout.isRefreshing = false
                         if (members.isEmpty()) {
                             textMessage.visibility = View.VISIBLE

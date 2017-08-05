@@ -47,7 +47,7 @@ class AccountViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     fun bind(account: Account, isActive: Boolean, colorSelected: Int) {
         textServer.text = account.serverUrl.toString()
-        textUsername.text = account.user.username
+        textUsername.text = account.user!!.username
 
         if (isActive) {
             itemView.setBackgroundColor(colorSelected)

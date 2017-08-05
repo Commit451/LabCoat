@@ -9,8 +9,6 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.api.Pipeline
-import com.commit451.gitlab.util.DateUtil
-import java.util.*
 
 /**
  * Pipelines, woot
@@ -36,7 +34,7 @@ class PipelineViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     }
 
     fun bind(pipeline: Pipeline) {
-        val pipeSha = pipeline.sha.substring(0, 8)
+        val pipeSha = pipeline.sha!!.substring(0, 8)
         val pipelineShaText = String.format(itemView.resources.getString(R.string.pipeline_sha), pipeSha)
         textSha.text = pipelineShaText
 

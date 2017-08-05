@@ -1,14 +1,13 @@
 package com.commit451.gitlab.model
 
 import android.support.annotation.IntDef
-
 import org.parceler.Parcel
 
 /**
  * Local only model that references either a branch or a tag, and holds its type
  */
-@Parcel
-class Ref {
+@Parcel(Parcel.Serialization.BEAN)
+open class Ref {
 
     companion object {
         const val TYPE_BRANCH = 0
@@ -22,11 +21,9 @@ class Ref {
     var type: Int = 0
     var ref: String? = null
 
-    constructor() {
+    constructor()
 
-    }
-
-    constructor(@Type type: Int, ref: String) {
+    constructor(@Type type: Int, ref: String?) {
         this.type = type
         this.ref = ref
     }

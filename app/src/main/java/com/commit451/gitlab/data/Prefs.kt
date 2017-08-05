@@ -48,7 +48,10 @@ object Prefs {
         if (!accountsJson.isNullOrEmpty()) {
             val type = Types.newParameterizedType(List::class.java, Account::class.java)
             val adapter = MoshiProvider.moshi.adapter<List<Account>>(type)
-            return adapter.fromJson(accountsJson)!!.toMutableList()
+            val accounts = adapter.fromJson(accountsJson)!!.toMutableList()
+            Collections.sort(accounts)
+            Collections.reverse(accounts)
+            return accounts
         } else {
             return ArrayList()
         }

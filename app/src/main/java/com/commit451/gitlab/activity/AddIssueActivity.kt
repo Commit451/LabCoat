@@ -27,6 +27,7 @@ import com.commit451.gitlab.adapter.AssigneeSpinnerAdapter
 import com.commit451.gitlab.adapter.MilestoneSpinnerAdapter
 import com.commit451.gitlab.event.IssueChangedEvent
 import com.commit451.gitlab.event.IssueCreatedEvent
+import com.commit451.gitlab.extension.belongsToGroup
 import com.commit451.gitlab.extension.checkValid
 import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.*
@@ -82,7 +83,7 @@ class AddIssueActivity : MorphActivity() {
 
     lateinit var project: Project
     var issue: Issue? = null
-    lateinit var members: HashSet<Member>
+    lateinit var members: HashSet<User>
 
     @OnClick(R.id.text_add_labels)
     fun onAddLabelClicked() {
@@ -98,7 +99,7 @@ class AddIssueActivity : MorphActivity() {
 
         project = intent.getParcelerParcelableExtra<Project>(KEY_PROJECT)!!
         issue = intent.getParcelerParcelableExtra<Issue>(KEY_ISSUE)
-        members = HashSet<Member>()
+        members = HashSet<User>()
         adapterLabels = AddIssueLabelAdapter(object : AddIssueLabelAdapter.Listener {
             override fun onLabelClicked(label: Label) {
                 AlertDialog.Builder(this@AddIssueActivity)
@@ -156,10 +157,10 @@ class AddIssueActivity : MorphActivity() {
                     }
                 })
         App.get().gitLab.getProjectMembers(project.id)
-                .compose(this.bindToLifecycle<Response<List<Member>>>())
+                .compose(this.bindToLifecycle<Response<List<User>>>())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : CustomResponseSingleObserver<List<Member>>() {
+                .subscribe(object : CustomResponseSingleObserver<List<User>>() {
 
                     override fun error(t: Throwable) {
                         Timber.e(t)
@@ -167,13 +168,13 @@ class AddIssueActivity : MorphActivity() {
                         progressAssignee.visibility = View.GONE
                     }
 
-                    override fun responseNonNullSuccess(members: List<Member>) {
+                    override fun responseNonNullSuccess(members: List<User>) {
                         this@AddIssueActivity.members.addAll(members)
                         if (project.belongsToGroup()) {
                             Timber.d("Project belongs to a group, loading those users too")
                             App.get().gitLab.getGroupMembers(project.namespace.id)
                                     .setup(bindToLifecycle())
-                                    .subscribe(object : CustomResponseSingleObserver<List<Member>>() {
+                                    .subscribe(object : CustomResponseSingleObserver<List<User>>() {
 
                                         override fun error(t: Throwable) {
                                             Timber.e(t)
@@ -181,7 +182,7 @@ class AddIssueActivity : MorphActivity() {
                                             progressAssignee.visibility = View.GONE
                                         }
 
-                                        override fun responseNonNullSuccess(members: List<Member>) {
+                                        override fun responseNonNullSuccess(members: List<User>) {
                                             this@AddIssueActivity.members.addAll(members)
                                             setAssignees()
                                         }
@@ -240,7 +241,7 @@ class AddIssueActivity : MorphActivity() {
         if (projectLabels != null && !projectLabels.isEmpty() && issue != null && issue!!.labels != null) {
             val currentLabels = ArrayList<Label>()
             for (label in projectLabels) {
-                for (labelName in issue!!.labels) {
+                for (labelName in issue!!.labels!!) {
                     if (labelName == label.name) {
                         currentLabels.add(label)
                     }
@@ -284,7 +285,7 @@ class AddIssueActivity : MorphActivity() {
             var assigneeId: Long? = null
             if (spinnerAssignee.adapter != null) {
                 //the user did make a selection of some sort. So update it
-                val member = spinnerAssignee.selectedItem as? Member?
+                val member = spinnerAssignee.selectedItem as? User?
                 if (member == null) {
                     //Removes the assignment
                     assigneeId = 0L

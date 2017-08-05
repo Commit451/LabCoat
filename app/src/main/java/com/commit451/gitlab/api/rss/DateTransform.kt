@@ -10,12 +10,10 @@ import java.util.*
  */
 class DateTransform : Transform<Date> {
 
-    @Throws(Exception::class)
     override fun read(value: String): Date? {
         return Date(Instant.from(DateTimeFormatter.ISO_OFFSET_DATE_TIME.parse(value)).toEpochMilli())
     }
 
-    @Throws(Exception::class)
     override fun write(value: Date): String {
         return DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(Instant.ofEpochMilli(value.time))
     }

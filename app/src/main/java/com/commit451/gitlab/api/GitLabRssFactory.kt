@@ -13,7 +13,7 @@ import retrofit2.converter.simplexml.SimpleXmlConverterFactory
 object GitLabRssFactory {
 
     fun create(account: Account, client: OkHttpClient): GitLabRss {
-        val persister = SimpleXmlPersisterFactory.createPersister(account)
+        val persister = SimpleXmlPersisterFactory.createPersister()
         val restAdapter = Retrofit.Builder()
                 .baseUrl(account.serverUrl.toString())
                 .client(client)

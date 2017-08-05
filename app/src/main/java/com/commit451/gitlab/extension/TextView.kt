@@ -20,6 +20,6 @@ fun TextView.setMarkdownText(text:String, project: Project? = null) {
     //I don't like this too much for its global-ness
     val picasso = App.get().picasso
     val baseUrl = App.get().currentAccount.serverUrl
-    val getter = ImageGetterFactory.create(this, picasso, baseUrl, project)
+    val getter = ImageGetterFactory.create(this, picasso, baseUrl!!, project)
     this.text = emojiParsedHtml.formatAsHtml(getter)
 }

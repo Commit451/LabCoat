@@ -23,11 +23,11 @@ import com.commit451.addendum.parceler.putParcelerParcelableExtra
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.IssueDetailsAdapter
+import com.commit451.gitlab.api.response.FileUploadResponse
 import com.commit451.gitlab.event.IssueChangedEvent
 import com.commit451.gitlab.event.IssueReloadEvent
 import com.commit451.gitlab.extension.getUrl
 import com.commit451.gitlab.extension.setup
-import com.commit451.gitlab.model.api.FileUploadResponse
 import com.commit451.gitlab.model.api.Issue
 import com.commit451.gitlab.model.api.Note
 import com.commit451.gitlab.model.api.Project
@@ -182,7 +182,7 @@ class IssueActivity : BaseActivity() {
         if (intent.hasExtra(EXTRA_SELECTED_ISSUE)) {
             project = intent.getParcelerParcelableExtra<Project>(EXTRA_PROJECT)
             issue = intent.getParcelerParcelableExtra<Issue>(EXTRA_SELECTED_ISSUE)
-            adapterIssueDetails = IssueDetailsAdapter(this@IssueActivity, issue, project!!)
+            adapterIssueDetails = IssueDetailsAdapter(issue, project!!)
             listNotes.adapter = adapterIssueDetails
             bindIssue()
             bindProject()
@@ -216,7 +216,7 @@ class IssueActivity : BaseActivity() {
                                         .show()
                             } else {
                                 issue = issues[0]
-                                adapterIssueDetails = IssueDetailsAdapter(this@IssueActivity, issue, project!!)
+                                adapterIssueDetails = IssueDetailsAdapter(issue, project!!)
                                 listNotes.adapter = adapterIssueDetails
                                 bindIssue()
                                 bindProject()

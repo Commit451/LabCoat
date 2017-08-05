@@ -8,7 +8,7 @@ import com.afollestad.materialdialogs.Theme
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.api.Group
-import com.commit451.gitlab.model.api.Member
+import com.commit451.gitlab.model.api.User
 import com.commit451.gitlab.rx.CustomSingleObserver
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -19,7 +19,7 @@ import java.util.*
 /**
  * Change a users access level, either for a group or for a project
  */
-class AccessDialog private constructor(context: Context, internal var member: Member?, internal var group: Group?, projectId: Long) : MaterialDialog(MaterialDialog.Builder(context)
+class AccessDialog private constructor(context: Context, internal var member: User?, internal var group: Group?, projectId: Long) : MaterialDialog(MaterialDialog.Builder(context)
         .items(if (group == null) R.array.project_role_names else R.array.group_role_names)
         .itemsCallbackSingleChoice(-1) { _, _, _, _ -> true }
         .theme(Theme.DARK)
@@ -40,9 +40,9 @@ class AccessDialog private constructor(context: Context, internal var member: Me
         listener = accessAppliedListener
     }
 
-    constructor(context: Context, member: Member, group: Group) : this(context, member, group, -1)
+    constructor(context: Context, member: User, group: Group) : this(context, member, group, -1)
 
-    constructor(context: Context, member: Member, projectId: Long) : this(context, member, null, projectId)
+    constructor(context: Context, member: User, projectId: Long) : this(context, member, null, projectId)
 
     init {
         getActionButton(DialogAction.POSITIVE).setOnClickListener { onApply() }
@@ -50,7 +50,7 @@ class AccessDialog private constructor(context: Context, internal var member: Me
         this.projectId = projectId
         if (this.member != null) {
             selectedIndex = Arrays.asList(*roleNames).indexOf(
-                    Member.getAccessLevel(this.member!!.accessLevel))
+                    User.getAccessLevel(this.member!!.accessLevel))
         }
     }
 
@@ -69,18 +69,18 @@ class AccessDialog private constructor(context: Context, internal var member: Me
         }
     }
 
-    fun editGroupOrProjectMember(observable: Single<Member>) {
+    fun editGroupOrProjectMember(observable: Single<User>) {
         observable
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : CustomSingleObserver<Member>() {
+                .subscribe(object : CustomSingleObserver<User>() {
 
                     override fun error(t: Throwable) {
                         Timber.e(t)
                         this@AccessDialog.onError()
                     }
 
-                    override fun success(member: Member) {
+                    override fun success(member: User) {
                         if (onAccessChangedListener != null) {
                             onAccessChangedListener!!.onAccessChanged(this@AccessDialog.member!!, roleNames[selectedIndex])
                         }
@@ -109,7 +109,7 @@ class AccessDialog private constructor(context: Context, internal var member: Me
             return
         }
         val accessLevel = roleNames[selectedIndex]
-        changeAccess(Member.getAccessLevel(accessLevel))
+        changeAccess(User.getAccessLevel(accessLevel))
     }
 
     fun onCancel() {
@@ -117,7 +117,7 @@ class AccessDialog private constructor(context: Context, internal var member: Me
     }
 
     interface OnAccessChangedListener {
-        fun onAccessChanged(member: Member, accessLevel: String)
+        fun onAccessChanged(member: User, accessLevel: String)
     }
 
     interface Listener {

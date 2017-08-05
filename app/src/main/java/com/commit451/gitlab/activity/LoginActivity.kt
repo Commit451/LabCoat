@@ -36,8 +36,7 @@ import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.extension.text
 import com.commit451.gitlab.model.Account
 import com.commit451.gitlab.model.api.Message
-import com.commit451.gitlab.model.api.UserFull
-import com.commit451.gitlab.model.api.UserLogin
+import com.commit451.gitlab.model.api.User
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.ssl.CustomHostnameVerifier
@@ -245,7 +244,7 @@ class LoginActivity : BaseActivity() {
 
         gitLab!!.login(request)
                 .setup(bindToLifecycle())
-                .subscribe(object : CustomResponseSingleObserver<UserLogin>() {
+                .subscribe(object : CustomResponseSingleObserver<User>() {
 
                     override fun error(e: Throwable) {
                         Timber.e(e)
@@ -256,7 +255,7 @@ class LoginActivity : BaseActivity() {
                         }
                     }
 
-                    override fun responseNonNullSuccess(userLogin: UserLogin) {
+                    override fun responseNonNullSuccess(userLogin: User) {
                         account.privateToken = userLogin.privateToken
                         loadUser()
                     }
@@ -345,7 +344,7 @@ class LoginActivity : BaseActivity() {
         val gitLab = GitLabFactory.create(account, gitlabClientBuilder.build())
         gitLab.getThisUser()
                 .setup(bindToLifecycle())
-                .subscribe(object : CustomResponseSingleObserver<UserFull>() {
+                .subscribe(object : CustomResponseSingleObserver<User>() {
 
                     override fun error(e: Throwable) {
                         Timber.e(e)
@@ -356,7 +355,7 @@ class LoginActivity : BaseActivity() {
                         }
                     }
 
-                    override fun responseNonNullSuccess(userFull: UserFull) {
+                    override fun responseNonNullSuccess(userFull: User) {
                         progress.visibility = View.GONE
                         account.user = userFull
                         account.lastUsed = Date()
@@ -486,8 +485,8 @@ class LoginActivity : BaseActivity() {
     fun isAlreadySignedIn(url: String, usernameOrEmailOrPrivateToken: String): Boolean {
         val accounts = Prefs.getAccounts()
         return accounts.any {
-            it.serverUrl == url && (usernameOrEmailOrPrivateToken == it.user.username
-                    || usernameOrEmailOrPrivateToken.equals(it.user.email, ignoreCase = true)
+            it.serverUrl == url && (usernameOrEmailOrPrivateToken == it.user?.username
+                    || usernameOrEmailOrPrivateToken.equals(it.user?.email, ignoreCase = true)
                     || usernameOrEmailOrPrivateToken.equals(it.privateToken, ignoreCase = true))
         }
     }

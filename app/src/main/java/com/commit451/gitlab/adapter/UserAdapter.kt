@@ -4,7 +4,7 @@ import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.ViewGroup
 import com.commit451.gitlab.R
-import com.commit451.gitlab.model.api.UserBasic
+import com.commit451.gitlab.model.api.User
 import com.commit451.gitlab.viewHolder.LoadingFooterViewHolder
 import com.commit451.gitlab.viewHolder.UserViewHolder
 import java.util.*
@@ -22,7 +22,7 @@ class UserAdapter(private val listener: UserAdapter.Listener) : RecyclerView.Ada
         private val TYPE_FOOTER = 1
     }
 
-    private val values: ArrayList<UserBasic> = ArrayList()
+    private val values: ArrayList<User> = ArrayList()
     private var loading: Boolean = false
 
     val spanSizeLookup: GridLayoutManager.SpanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
@@ -74,12 +74,12 @@ class UserAdapter(private val listener: UserAdapter.Listener) : RecyclerView.Ada
         return values.size + FOOTER_COUNT
     }
 
-    fun setData(users: Collection<UserBasic>?) {
+    fun setData(users: Collection<User>?) {
         values.clear()
         addData(users)
     }
 
-    fun addData(users: Collection<UserBasic>?) {
+    fun addData(users: Collection<User>?) {
         if (users != null) {
             values.addAll(users)
         }
@@ -96,11 +96,11 @@ class UserAdapter(private val listener: UserAdapter.Listener) : RecyclerView.Ada
         notifyItemChanged(values.size)
     }
 
-    private fun getUser(position: Int): UserBasic {
+    private fun getUser(position: Int): User {
         return values[position]
     }
 
     interface Listener {
-        fun onUserClicked(user: UserBasic, userViewHolder: UserViewHolder)
+        fun onUserClicked(user: User, userViewHolder: UserViewHolder)
     }
 }

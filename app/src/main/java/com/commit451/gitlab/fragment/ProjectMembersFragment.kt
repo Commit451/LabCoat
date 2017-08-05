@@ -20,9 +20,10 @@ import com.commit451.gitlab.adapter.ProjectMembersAdapter
 import com.commit451.gitlab.dialog.AccessDialog
 import com.commit451.gitlab.event.MemberAddedEvent
 import com.commit451.gitlab.event.ProjectReloadEvent
+import com.commit451.gitlab.extension.belongsToGroup
 import com.commit451.gitlab.extension.setup
-import com.commit451.gitlab.model.api.Member
 import com.commit451.gitlab.model.api.Project
+import com.commit451.gitlab.model.api.User
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.rx.CustomSingleObserver
@@ -53,7 +54,7 @@ class ProjectMembersFragment : ButterKnifeFragment() {
     lateinit var layoutManagerMembers: GridLayoutManager
 
     var project: Project? = null
-    var member: Member? = null
+    var member: User? = null
     var nextPageUrl: Uri? = null
     var loading = false
 
@@ -84,11 +85,11 @@ class ProjectMembersFragment : ButterKnifeFragment() {
         App.bus().register(this)
 
         adapterProjectMembers = ProjectMembersAdapter(object : ProjectMembersAdapter.Listener {
-            override fun onProjectMemberClicked(member: Member, memberGroupViewHolder: ProjectMemberViewHolder) {
+            override fun onProjectMemberClicked(member: User, memberGroupViewHolder: ProjectMemberViewHolder) {
                 Navigator.navigateToUser(activity, memberGroupViewHolder.image, member)
             }
 
-            override fun onRemoveMember(member: Member) {
+            override fun onRemoveMember(member: User) {
                 this@ProjectMembersFragment.member = member
                 App.get().gitLab.removeProjectMember(project!!.id, member.id)
                         .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
@@ -106,10 +107,10 @@ class ProjectMembersFragment : ButterKnifeFragment() {
                         })
             }
 
-            override fun onChangeAccess(member: Member) {
+            override fun onChangeAccess(member: User) {
                 val accessDialog = AccessDialog(activity, member, project!!.id)
                 accessDialog.setOnAccessChangedListener(object : AccessDialog.OnAccessChangedListener {
-                    override fun onAccessChanged(member: Member, accessLevel: String) {
+                    override fun onAccessChanged(member: User, accessLevel: String) {
                         loadData()
                     }
                 })
@@ -177,10 +178,10 @@ class ProjectMembersFragment : ButterKnifeFragment() {
         load(App.get().gitLab.getProjectMembers(nextPageUrl!!.toString()))
     }
 
-    fun load(observable: Single<Response<List<Member>>>) {
+    fun load(observable: Single<Response<List<User>>>) {
         observable
                 .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
-                .subscribe(object : CustomResponseSingleObserver<List<Member>>() {
+                .subscribe(object : CustomResponseSingleObserver<List<User>>() {
 
                     override fun error(t: Throwable) {
                         loading = false
@@ -193,7 +194,7 @@ class ProjectMembersFragment : ButterKnifeFragment() {
                         nextPageUrl = null
                     }
 
-                    override fun responseNonNullSuccess(members: List<Member>) {
+                    override fun responseNonNullSuccess(members: List<User>) {
                         loading = false
                         swipeRefreshLayout.isRefreshing = false
                         if (!members.isEmpty()) {

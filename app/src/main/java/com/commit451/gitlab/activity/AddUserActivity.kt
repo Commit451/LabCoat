@@ -23,8 +23,7 @@ import com.commit451.gitlab.dialog.AccessDialog
 import com.commit451.gitlab.event.MemberAddedEvent
 import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.Group
-import com.commit451.gitlab.model.api.Member
-import com.commit451.gitlab.model.api.UserBasic
+import com.commit451.gitlab.model.api.User
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
 import com.commit451.gitlab.viewHolder.UserViewHolder
@@ -74,7 +73,7 @@ class AddUserActivity : MorphActivity() {
     var query: String? = null
     var nextPageUrl: Uri? = null
     var loading = false
-    var selectedUser: UserBasic? = null
+    var selectedUser: User? = null
 
     @OnClick(R.id.clear)
     fun onClearClick() {
@@ -127,7 +126,7 @@ class AddUserActivity : MorphActivity() {
         toolbar.setNavigationOnClickListener { onBackPressed() }
 
         adapter = UserAdapter(object : UserAdapter.Listener {
-            override fun onUserClicked(user: UserBasic, userViewHolder: UserViewHolder) {
+            override fun onUserClicked(user: User, userViewHolder: UserViewHolder) {
                 selectedUser = user
                 dialogAccess.show()
             }
@@ -158,7 +157,7 @@ class AddUserActivity : MorphActivity() {
         loading = true
         App.get().gitLab.searchUsers(query!!)
                 .setup(bindToLifecycle())
-                .subscribe(object : CustomResponseSingleObserver<List<UserBasic>>() {
+                .subscribe(object : CustomResponseSingleObserver<List<User>>() {
 
                     override fun error(t: Throwable) {
                         Timber.e(t)
@@ -168,7 +167,7 @@ class AddUserActivity : MorphActivity() {
                                 .show()
                     }
 
-                    override fun responseNonNullSuccess(users: List<UserBasic>) {
+                    override fun responseNonNullSuccess(users: List<User>) {
                         swipeRefreshLayout.isRefreshing = false
                         loading = false
                         adapter.setData(users)
@@ -184,14 +183,14 @@ class AddUserActivity : MorphActivity() {
         Timber.d("loadMore " + nextPageUrl!!.toString() + " " + query)
         App.get().gitLab.searchUsers(nextPageUrl!!.toString(), query!!)
                 .setup(bindToLifecycle())
-                .subscribe(object : CustomResponseSingleObserver<List<UserBasic>>() {
+                .subscribe(object : CustomResponseSingleObserver<List<User>>() {
 
                     override fun error(t: Throwable) {
                         Timber.e(t)
                         adapter.setLoading(false)
                     }
 
-                    override fun responseNonNullSuccess(users: List<UserBasic>) {
+                    override fun responseNonNullSuccess(users: List<User>) {
                         loading = false
                         adapter.setLoading(false)
                         adapter.addData(users)
@@ -200,9 +199,9 @@ class AddUserActivity : MorphActivity() {
                 })
     }
 
-    private fun add(observable: Single<Response<Member>>) {
+    private fun add(observable: Single<Response<User>>) {
         observable.setup(bindToLifecycle())
-                .subscribe(object : CustomResponseSingleObserver<Member>() {
+                .subscribe(object : CustomResponseSingleObserver<User>() {
 
                     override fun error(t: Throwable) {
                         Timber.e(t)
@@ -216,7 +215,7 @@ class AddUserActivity : MorphActivity() {
                                 .show()
                     }
 
-                    override fun responseNonNullSuccess(member: Member) {
+                    override fun responseNonNullSuccess(member: User) {
                         Snackbar.make(root, R.string.user_added_successfully, Snackbar.LENGTH_SHORT)
                                 .show()
                         dialogAccess.dismiss()

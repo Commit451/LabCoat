@@ -19,8 +19,9 @@ import com.commit451.alakazam.Alakazam
 import com.commit451.easel.Easel
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
+import com.commit451.gitlab.extension.feedUrl
 import com.commit451.gitlab.fragment.FeedFragment
-import com.commit451.gitlab.model.api.UserBasic
+import com.commit451.gitlab.model.api.User
 import com.commit451.gitlab.transformation.PaletteTransformation
 import com.commit451.gitlab.util.ImageUtil
 
@@ -33,7 +34,7 @@ class UserActivity : BaseActivity() {
 
         private val KEY_USER = "user"
 
-        fun newIntent(context: Context, user: UserBasic): Intent {
+        fun newIntent(context: Context, user: User): Intent {
             val intent = Intent(context, UserActivity::class.java)
             intent.putParcelerParcelableExtra(KEY_USER, user)
             return intent
@@ -44,13 +45,13 @@ class UserActivity : BaseActivity() {
     @BindView(R.id.collapsing_toolbar) lateinit var collapsingToolbarLayout: CollapsingToolbarLayout
     @BindView(R.id.backdrop) lateinit var backdrop: ImageView
 
-    lateinit var user: UserBasic
+    lateinit var user: User
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user)
         ButterKnife.bind(this)
-        user = intent.getParcelerParcelableExtra<UserBasic>(KEY_USER)!!
+        user = intent.getParcelerParcelableExtra<User>(KEY_USER)!!
 
         // Default content and scrim colors
         collapsingToolbarLayout.setCollapsedTitleTextColor(Color.WHITE)

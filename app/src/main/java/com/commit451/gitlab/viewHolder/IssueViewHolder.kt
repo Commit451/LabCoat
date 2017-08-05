@@ -67,7 +67,7 @@ class IssueViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
         var author = ""
         if (issue.author != null) {
-            author += issue.author.username
+            author += issue.author!!.username
         }
         val id: String
         var issueId = issue.iid

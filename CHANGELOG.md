@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+Version 2.4.8
+----------------------------
+
+- Crash fixes related to viewing a project
+
 Version 2.4.7
 ----------------------------
 

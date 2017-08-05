@@ -6,8 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import com.commit451.gitlab.R
-import com.commit451.gitlab.model.api.Member
 import com.commit451.gitlab.model.api.ProjectNamespace
+import com.commit451.gitlab.model.api.User
 import com.commit451.gitlab.viewHolder.ProjectMemberFooterViewHolder
 import com.commit451.gitlab.viewHolder.ProjectMemberViewHolder
 import java.util.*
@@ -25,7 +25,7 @@ class ProjectMembersAdapter(private val listener: ProjectMembersAdapter.Listener
         val FOOTER_COUNT = 1
     }
 
-    private val members: ArrayList<Member> = ArrayList()
+    private val members: ArrayList<User> = ArrayList()
     private var namespace: ProjectNamespace? = null
 
     val spanSizeLookup: GridLayoutManager.SpanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
@@ -100,12 +100,12 @@ class ProjectMembersAdapter(private val listener: ProjectMembersAdapter.Listener
         }
     }
 
-    fun setProjectMembers(data: Collection<Member>?) {
+    fun setProjectMembers(data: Collection<User>?) {
         members.clear()
         addProjectMembers(data)
     }
 
-    fun addProjectMembers(data: Collection<Member>?) {
+    fun addProjectMembers(data: Collection<User>?) {
         if (data != null) {
             members.addAll(data)
         }
@@ -117,25 +117,25 @@ class ProjectMembersAdapter(private val listener: ProjectMembersAdapter.Listener
         notifyDataSetChanged()
     }
 
-    fun getProjectMember(position: Int): Member {
+    fun getProjectMember(position: Int): User {
         return members[position]
     }
 
-    fun addMember(member: Member) {
+    fun addMember(member: User) {
         members.add(0, member)
         notifyItemInserted(0)
     }
 
-    fun removeMember(member: Member) {
+    fun removeMember(member: User) {
         val position = members.indexOf(member)
         members.remove(member)
         notifyItemRemoved(position)
     }
 
     interface Listener {
-        fun onProjectMemberClicked(member: Member, memberGroupViewHolder: ProjectMemberViewHolder)
-        fun onRemoveMember(member: Member)
-        fun onChangeAccess(member: Member)
+        fun onProjectMemberClicked(member: User, memberGroupViewHolder: ProjectMemberViewHolder)
+        fun onRemoveMember(member: User)
+        fun onChangeAccess(member: User)
         fun onSeeGroupClicked()
     }
 }

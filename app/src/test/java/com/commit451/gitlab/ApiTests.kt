@@ -21,7 +21,6 @@ class ApiTests {
 
         @JvmStatic
         @BeforeClass
-        @Throws(Exception::class)
         fun setUp() {
             //for logging
 
@@ -37,7 +36,6 @@ class ApiTests {
     }
 
     @Test
-    @Throws(Exception::class)
     fun getProjects() {
         val projectsResponse = gitLab!!
                 .getAllProjects()
@@ -47,7 +45,6 @@ class ApiTests {
     }
 
     @Test
-    @Throws(Exception::class)
     fun getGroups() {
         val groupResponse = gitLab!!
                 .getGroups()
@@ -57,7 +54,6 @@ class ApiTests {
     }
 
     @Test
-    @Throws(Exception::class)
     fun getGroupMembers() {
         //GitLabService group id
         val gitLabGroupId: Long = 9970
@@ -69,7 +65,6 @@ class ApiTests {
     }
 
     @Test
-    @Throws(Exception::class)
     fun getIssues() {
         val defaultState = "opened"
         val issuesResponse = gitLab!!
@@ -80,7 +75,6 @@ class ApiTests {
     }
 
     @Test
-    @Throws(Exception::class)
     fun getFiles() {
         val defaultBranch = "master"
         val currentPath = ""
@@ -91,7 +85,6 @@ class ApiTests {
     }
 
     @Test
-    @Throws(Exception::class)
     fun getCommits() {
         val defaultBranch = "master"
         val commitsResponse = gitLab!!
@@ -101,7 +94,6 @@ class ApiTests {
     }
 
     @Test
-    @Throws(Exception::class)
     fun getMergeRequests() {
         val defaultState = "opened"
         val mergeRequestResponse = gitLab!!
@@ -112,7 +104,6 @@ class ApiTests {
     }
 
     @Test
-    @Throws(Exception::class)
     fun getCurrentUser() {
         val userFullResponse = gitLab!!
                 .getThisUser()

@@ -15,7 +15,7 @@ import com.commit451.addendum.parceler.getParcelerParcelableExtra
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.BaseActivity
 import com.commit451.gitlab.data.Prefs
-import com.commit451.gitlab.extension.getFeedUrl
+import com.commit451.gitlab.extension.feedUrl
 import com.commit451.gitlab.model.Account
 import com.commit451.gitlab.model.api.Project
 import timber.log.Timber
@@ -106,7 +106,7 @@ class ProjectFeedWidgetConfigureActivity : BaseActivity() {
 
     fun saveWidgetConfig(account: Account, project: Project) {
         ProjectFeedWidgetPrefs.setAccount(this, appWidgetId, account)
-        ProjectFeedWidgetPrefs.setFeedUrl(this, appWidgetId, project.getFeedUrl()!!.toString())
+        ProjectFeedWidgetPrefs.setFeedUrl(this, appWidgetId, project.feedUrl)
 
         val resultValue = Intent()
         resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)

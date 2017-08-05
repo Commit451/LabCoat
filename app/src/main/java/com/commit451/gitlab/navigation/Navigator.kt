@@ -95,11 +95,11 @@ object Navigator {
         activity.startActivity(SearchActivity.newIntent(activity))
     }
 
-    fun navigateToUser(activity: Activity, user: UserBasic) {
+    fun navigateToUser(activity: Activity, user: User) {
         navigateToUser(activity, null, user)
     }
 
-    fun navigateToUser(activity: Activity, profileImage: ImageView?, user: UserBasic) {
+    fun navigateToUser(activity: Activity, profileImage: ImageView?, user: User) {
         val intent = UserActivity.newIntent(activity, user)
         if (Build.VERSION.SDK_INT >= 21 && profileImage != null) {
             val options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, profileImage, activity.getString(R.string.transition_user))
@@ -219,8 +219,9 @@ object Navigator {
         }
     }
 
-    fun navigateToUrl(activity: Activity, uri: Uri, account: Account) {
-        Timber.d("navigateToUrl: %s", uri)
+    fun navigateToUrl(activity: Activity, url: String, account: Account) {
+        Timber.d("navigateToUrl: $url")
+        val uri = Uri.parse(url)
         val serverUri = Uri.parse(account.serverUrl)
         if (serverUri.host == uri.host) {
             activity.startActivity(DeepLinker.generateDeeplinkIntentFromUri(activity, uri))

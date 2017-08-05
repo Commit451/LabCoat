@@ -26,7 +26,6 @@ import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.GroupPagerAdapter
 import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.Group
-import com.commit451.gitlab.model.api.GroupDetail
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.transformation.PaletteTransformation
 import timber.log.Timber
@@ -80,7 +79,7 @@ class GroupActivity : BaseActivity() {
             val groupId = intent.getLongExtra(KEY_GROUP_ID, -1)
             App.get().gitLab.getGroup(groupId)
                     .setup(bindToLifecycle())
-                    .subscribe(object : CustomSingleObserver<GroupDetail>() {
+                    .subscribe(object : CustomSingleObserver<Group>() {
 
                         override fun error(t: Throwable) {
                             Timber.e(t)
@@ -88,7 +87,7 @@ class GroupActivity : BaseActivity() {
                             showError()
                         }
 
-                        override fun success(groupDetail: GroupDetail) {
+                        override fun success(groupDetail: Group) {
                             progress.visibility = View.GONE
                             bind(groupDetail)
                         }

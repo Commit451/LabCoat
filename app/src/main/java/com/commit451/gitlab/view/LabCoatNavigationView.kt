@@ -1,5 +1,6 @@
 package com.commit451.gitlab.view
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.support.design.widget.NavigationView
@@ -25,7 +26,7 @@ import com.commit451.gitlab.event.CloseDrawerEvent
 import com.commit451.gitlab.event.LoginEvent
 import com.commit451.gitlab.event.ReloadDataEvent
 import com.commit451.gitlab.model.Account
-import com.commit451.gitlab.model.api.UserFull
+import com.commit451.gitlab.model.api.User
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.transformation.CircleTransformation
@@ -102,7 +103,7 @@ class LabCoatNavigationView : NavigationView {
         false
     }
 
-    private val mAccountsAdapterListener = object : AccountAdapter.Listener {
+    private val accountsAdapterListener = object : AccountAdapter.Listener {
         override fun onAccountClicked(account: Account) {
             switchToAccount(account)
         }
@@ -115,7 +116,7 @@ class LabCoatNavigationView : NavigationView {
 
         override fun onAccountLogoutClicked(account: Account) {
             Prefs.removeAccount(account)
-            val accounts = Account.getAccounts()
+            val accounts = Prefs.getAccounts()
 
             if (accounts.isEmpty()) {
                 Navigator.navigateToLogin(context as Activity)
@@ -130,7 +131,7 @@ class LabCoatNavigationView : NavigationView {
 
     @OnClick(R.id.profile_image)
     fun onUserImageClick(imageView: ImageView) {
-        Navigator.navigateToUser(context as Activity, imageView, App.get().getAccount().user)
+        Navigator.navigateToUser(context as Activity, imageView, App.get().getAccount().user!!)
     }
 
     @OnClick(R.id.button_debug)
@@ -175,13 +176,14 @@ class LabCoatNavigationView : NavigationView {
         params.setMargins(0, resources.getDimensionPixelSize(R.dimen.account_header_height), 0, 0)
         listAccounts.setBackgroundColor(colorPrimary)
         listAccounts.visibility = View.GONE
-        adapterAccounts = AccountAdapter(context, mAccountsAdapterListener)
+        adapterAccounts = AccountAdapter(context, accountsAdapterListener)
         listAccounts.adapter = adapterAccounts
         setSelectedNavigationItem()
         setAccounts()
         loadCurrentUser()
     }
 
+    @SuppressLint("RestrictedApi")
     override fun onDetachedFromWindow() {
         App.bus().unregister(this)
         super.onDetachedFromWindow()
@@ -204,8 +206,6 @@ class LabCoatNavigationView : NavigationView {
     fun setAccounts() {
         val accounts = Prefs.getAccounts()
         Timber.d("Got %s accounts", accounts.size)
-        Collections.sort(accounts)
-        Collections.reverse(accounts)
         adapterAccounts.setAccounts(accounts)
     }
 
@@ -213,13 +213,13 @@ class LabCoatNavigationView : NavigationView {
         App.get().gitLab.getThisUser()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : CustomResponseSingleObserver<UserFull>() {
+                .subscribe(object : CustomResponseSingleObserver<User>() {
 
                     override fun error(e: Throwable) {
                         Timber.e(e)
                     }
 
-                    override fun responseNonNullSuccess(userFull: UserFull) {
+                    override fun responseNonNullSuccess(userFull: User) {
                         //Store the newly retrieved user to the account so that it stays up to date
                         // in local storage
                         val account = App.get().getAccount()
@@ -230,7 +230,7 @@ class LabCoatNavigationView : NavigationView {
                 })
     }
 
-    fun bindUser(user: UserFull) {
+    fun bindUser(user: User) {
         if (context == null) {
             return
         }
@@ -267,7 +267,7 @@ class LabCoatNavigationView : NavigationView {
         account.lastUsed = Date()
         App.get().setAccount(account)
         Prefs.updateAccount(account)
-        bindUser(account.user)
+        bindUser(account.user!!)
         toggleAccounts()
         App.bus().post(ReloadDataEvent())
         App.bus().post(CloseDrawerEvent())

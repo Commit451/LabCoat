@@ -10,7 +10,7 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
-import com.commit451.gitlab.model.api.Member
+import com.commit451.gitlab.model.api.User
 import com.commit451.gitlab.transformation.CircleTransformation
 import com.commit451.gitlab.util.ImageUtil
 
@@ -35,7 +35,7 @@ class AssigneeSpinnerViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         ButterKnife.bind(this, view)
     }
 
-    fun bind(user: Member?) {
+    fun bind(user: User?) {
         if (user == null) {
             textUsername.setText(R.string.no_assignee)
             image.setImageResource(R.drawable.ic_assign_24dp)

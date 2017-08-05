@@ -11,7 +11,7 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
-import com.commit451.gitlab.model.api.Member
+import com.commit451.gitlab.model.api.User
 import com.commit451.gitlab.util.ImageUtil
 
 /**
@@ -44,9 +44,9 @@ class ProjectMemberViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         buttonOverflow.setOnClickListener { popupMenu.show() }
     }
 
-    fun bind(member: Member) {
+    fun bind(member: User) {
         textUsername.text = member.username
-        textAccess.text = Member.getAccessLevel(member.accessLevel)
+        textAccess.text = User.getAccessLevel(member.accessLevel)
 
         App.get().picasso
                 .load(ImageUtil.getAvatarUrl(member, itemView.resources.getDimensionPixelSize(R.dimen.user_header_image_size)))

@@ -113,8 +113,8 @@ class BuildDescriptionFragment : ButterKnifeFragment() {
         }
         val name = String.format(getString(R.string.build_name), build.name)
         textName.text = name
-        val pipeline = String.format(getString(R.string.build_pipeline), build.pipeline)
-        textPipeline.text = pipeline
+        val pipelineText = String.format(getString(R.string.build_pipeline), build.pipeline)
+        textPipeline.text = pipelineText
         val stage = String.format(getString(R.string.build_stage), build.stage)
         textStage.text = stage
         val status = String.format(getString(R.string.build_status), build.status)
@@ -126,21 +126,25 @@ class BuildDescriptionFragment : ButterKnifeFragment() {
         textCreated.text = created
         val ref = String.format(getString(R.string.build_ref), build.ref)
         textRef.text = ref
-        if (build.finishedAt != null) {
-            val finished = String.format(getString(R.string.build_finished), DateUtil.getRelativeTimeSpanString(activity, build.finishedAt))
+        val finishedAt = build.finishedAt
+        if (finishedAt != null) {
+            val finished = String.format(getString(R.string.build_finished), DateUtil.getRelativeTimeSpanString(activity, finishedAt))
             textFinished.text = finished
             textFinished.visibility = View.VISIBLE
         } else {
             textFinished.visibility = View.GONE
         }
-        if (build.runner != null) {
-            bindRunner(build.runner)
+        val runner = build.runner
+        if (runner != null) {
+            bindRunner(runner)
         }
-        if (build.pipeline != null) {
-            bindPipeline(build.pipeline)
+        val pipeline = build.pipeline
+        if (pipeline != null) {
+            bindPipeline(pipeline)
         }
-        if (build.commit != null) {
-            bindCommit(build.commit)
+        val commit = build.commit
+        if (commit != null) {
+            bindCommit(commit)
         }
     }
 

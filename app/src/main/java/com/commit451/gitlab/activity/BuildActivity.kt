@@ -196,10 +196,13 @@ class BuildActivity : BaseActivity() {
         }
     }
 
-    private fun downloadBuild() {
+    fun downloadBuild() {
         val account = App.get().getAccount()
-        val downloadUrl = build.getDownloadBuildUrl(App.get().getAccount().serverUrl, project)
+        val downloadUrl = build.getDownloadBuildUrl(App.get().getAccount().serverUrl!!, project)
         Timber.d("Downloading build: " + downloadUrl)
-        DownloadUtil.download(this@BuildActivity, account, downloadUrl, build.artifactsFile.fileName)
+        val artifactsFileName = build.artifactsFile?.fileName
+        if (artifactsFileName != null) {
+            DownloadUtil.download(this, account, downloadUrl, artifactsFileName)
+        }
     }
 }
