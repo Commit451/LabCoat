@@ -10,7 +10,6 @@ import com.commit451.gitlab.R
 import com.commit451.gitlab.model.Account
 import com.commit451.gitlab.viewHolder.AccountFooterViewHolder
 import com.commit451.gitlab.viewHolder.AccountViewHolder
-import java.util.*
 
 /**
  * Adapter to show all the accounts
@@ -24,7 +23,7 @@ class AccountAdapter(context: Context, private val listener: AccountAdapter.List
         private val FOOTER_COUNT = 1
     }
 
-    private val accounts: ArrayList<Account> = ArrayList()
+    private val accounts = mutableListOf<Account>()
     private val colorControlHighlight: Int = Easel.getThemeAttrColor(context, R.attr.colorControlHighlight)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {

@@ -103,7 +103,7 @@ class LabCoatNavigationView : NavigationView {
         false
     }
 
-    private val mAccountsAdapterListener = object : AccountAdapter.Listener {
+    private val accountsAdapterListener = object : AccountAdapter.Listener {
         override fun onAccountClicked(account: Account) {
             switchToAccount(account)
         }
@@ -176,7 +176,7 @@ class LabCoatNavigationView : NavigationView {
         params.setMargins(0, resources.getDimensionPixelSize(R.dimen.account_header_height), 0, 0)
         listAccounts.setBackgroundColor(colorPrimary)
         listAccounts.visibility = View.GONE
-        adapterAccounts = AccountAdapter(context, mAccountsAdapterListener)
+        adapterAccounts = AccountAdapter(context, accountsAdapterListener)
         listAccounts.adapter = adapterAccounts
         setSelectedNavigationItem()
         setAccounts()
@@ -206,8 +206,6 @@ class LabCoatNavigationView : NavigationView {
     fun setAccounts() {
         val accounts = Prefs.getAccounts()
         Timber.d("Got %s accounts", accounts.size)
-        Collections.sort(accounts)
-        Collections.reverse(accounts)
         adapterAccounts.setAccounts(accounts)
     }
 

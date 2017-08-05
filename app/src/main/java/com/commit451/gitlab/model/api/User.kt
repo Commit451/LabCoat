@@ -91,4 +91,19 @@ open class User {
     var privateToken: String? = null
     @field:Json(name = "access_level")
     var accessLevel: Int = 0
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other?.javaClass != javaClass) return false
+
+        other as User
+
+        if (id != other.id) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return id.hashCode()
+    }
 }

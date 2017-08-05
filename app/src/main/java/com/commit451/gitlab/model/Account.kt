@@ -31,4 +31,24 @@ open class Account : Comparable<Account> {
     override fun compareTo(another: Account): Int {
         return lastUsed!!.compareTo(another.lastUsed)
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other?.javaClass != javaClass) return false
+
+        other as Account
+
+        if (serverUrl != other.serverUrl) return false
+        if (user != other.user) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = serverUrl?.hashCode() ?: 0
+        result = 31 * result + (user?.hashCode() ?: 0)
+        return result
+    }
+
+
 }

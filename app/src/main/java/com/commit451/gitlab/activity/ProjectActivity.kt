@@ -234,8 +234,8 @@ class ProjectActivity : BaseActivity() {
         if (ref == null) {
             ref = Ref(Ref.TYPE_BRANCH, project.defaultBranch)
         }
-        toolbar.title = this.project!!.name
-        toolbar.subtitle = this.project!!.namespace.name
+        toolbar.title = project.name
+        toolbar.subtitle = project.namespace.name
         setupTabs()
     }
 
