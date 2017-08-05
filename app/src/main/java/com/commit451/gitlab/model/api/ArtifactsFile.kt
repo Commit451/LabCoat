@@ -4,8 +4,8 @@ import com.squareup.moshi.Json
 
 import org.parceler.Parcel
 
-@Parcel
-class ArtifactsFile {
+@Parcel(Parcel.Serialization.BEAN)
+open class ArtifactsFile {
 
     @field:Json(name = "filename")
     lateinit var fileName: String

@@ -5,8 +5,8 @@ import com.squareup.moshi.Json
 import org.parceler.Parcel
 import java.util.*
 
-@Parcel
-class MergeRequest {
+@Parcel(Parcel.Serialization.BEAN)
+open class MergeRequest {
 
     companion object {
 
@@ -45,9 +45,9 @@ class MergeRequest {
     @field:Json(name = "downvotes")
     var downvotes: Long = 0
     @field:Json(name = "author")
-    var author: UserBasic? = null
+    var author: User? = null
     @field:Json(name = "assignee")
-    var assignee: UserBasic? = null
+    var assignee: User? = null
     @field:Json(name = "source_project_id")
     var sourceProjectId: Long = 0
     @field:Json(name = "target_project_id")
@@ -62,10 +62,11 @@ class MergeRequest {
     var isMergeWhenBuildSucceedsEnabled: Boolean = false
     @field:Json(name = "merge_status")
     var mergeStatus: String? = null
+
     /**
      * Get the changes. Only not null if this merge request was retrieved via [com.commit451.gitlab.api.GitLabService.getMergeRequestChanges]
      * @return the changes
      */
     @field:Json(name = "changes")
-    var changes: List<Diff>? = null
+    var changes: MutableList<Diff>? = null
 }

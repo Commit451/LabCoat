@@ -4,7 +4,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import com.commit451.gitlab.R
-import com.commit451.gitlab.model.api.Member
+import com.commit451.gitlab.model.api.User
 import com.commit451.gitlab.viewHolder.LoadingFooterViewHolder
 import com.commit451.gitlab.viewHolder.ProjectMemberViewHolder
 import java.util.*
@@ -22,7 +22,7 @@ class GroupMembersAdapter(private val listener: GroupMembersAdapter.Listener) : 
         private val FOOTER_COUNT = 1
     }
 
-    val values: ArrayList<Member> = ArrayList()
+    val values: ArrayList<User> = ArrayList()
 
     var isLoading = false
         set(loading) {
@@ -82,24 +82,24 @@ class GroupMembersAdapter(private val listener: GroupMembersAdapter.Listener) : 
         return values.size + FOOTER_COUNT
     }
 
-    fun setData(members: Collection<Member>?) {
+    fun setData(members: Collection<User>?) {
         values.clear()
         addData(members)
     }
 
-    fun addData(members: Collection<Member>?) {
+    fun addData(members: Collection<User>?) {
         if (members != null) {
             values.addAll(members)
         }
         notifyDataSetChanged()
     }
 
-    fun addMember(member: Member) {
+    fun addMember(member: User) {
         values.add(0, member)
         notifyItemInserted(0)
     }
 
-    fun removeMember(member: Member) {
+    fun removeMember(member: User) {
         val index = values.indexOf(member)
         values.removeAt(index)
         notifyItemRemoved(index)
@@ -113,13 +113,13 @@ class GroupMembersAdapter(private val listener: GroupMembersAdapter.Listener) : 
         return false
     }
 
-    private fun getMember(position: Int): Member {
+    private fun getMember(position: Int): User {
         return values[position]
     }
 
     interface Listener {
-        fun onUserClicked(member: Member, userViewHolder: ProjectMemberViewHolder)
-        fun onUserRemoveClicked(member: Member)
-        fun onUserChangeAccessClicked(member: Member)
+        fun onUserClicked(member: User, userViewHolder: ProjectMemberViewHolder)
+        fun onUserRemoveClicked(member: User)
+        fun onUserChangeAccessClicked(member: User)
     }
 }

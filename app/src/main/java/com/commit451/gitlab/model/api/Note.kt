@@ -5,8 +5,8 @@ import com.squareup.moshi.Json
 import org.parceler.Parcel
 import java.util.*
 
-@Parcel
-class Note {
+@Parcel(Parcel.Serialization.BEAN)
+open class Note {
 
     companion object {
 
@@ -23,7 +23,7 @@ class Note {
     @field:Json(name = "body")
     var body: String? = null
     @field:Json(name = "author")
-    var author: UserBasic? = null
+    var author: User? = null
     @field:Json(name = "created_at")
     var createdAt: Date? = null
     @field:Json(name = "system")

@@ -1,7 +1,7 @@
 package com.commit451.gitlab.extension
 
-import com.commit451.gitlab.model.api.UserBasic
+import com.commit451.gitlab.model.api.User
 
-val UserBasic.feedUrl: String get() {
+val User.feedUrl: String get() {
     return webUrl + ".atom"
 }

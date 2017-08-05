@@ -6,8 +6,8 @@ import org.parceler.Parcel
 /**
  * Local only model that references either a branch or a tag, and holds its type
  */
-@Parcel
-class Ref {
+@Parcel(Parcel.Serialization.BEAN)
+open class Ref {
 
     companion object {
         const val TYPE_BRANCH = 0

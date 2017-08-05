@@ -7,15 +7,15 @@ import java.util.*
 /**
  * http://docs.gitlab.com/ce/api/award_emoji.html
  */
-@Parcel
-class AwardEmoji {
+@Parcel(Parcel.Serialization.BEAN)
+open class AwardEmoji {
 
     @field:Json(name = "id")
     var id: String? = null
     @field:Json(name = "name")
     var name: String? = null
     @field:Json(name = "user")
-    var user: UserBasic? = null
+    var user: User? = null
     @field:Json(name = "created_at")
     var createdAt: Date? = null
     @field:Json(name = "updated_at")

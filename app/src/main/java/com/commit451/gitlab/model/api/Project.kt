@@ -4,8 +4,8 @@ import com.squareup.moshi.Json
 import org.parceler.Parcel
 import java.util.*
 
-@Parcel
-class Project {
+@Parcel(Parcel.Serialization.BEAN)
+open class Project {
     @field:Json(name = "id")
     var id: Long = 0
     @field:Json(name = "description")
@@ -27,7 +27,7 @@ class Project {
     @field:Json(name = "web_url")
     lateinit var webUrl: String
     @field:Json(name = "owner")
-    var owner: UserBasic? = null
+    var owner: User? = null
     @field:Json(name = "name")
     var name: String? = null
     @field:Json(name = "name_with_namespace")

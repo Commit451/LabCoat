@@ -5,8 +5,8 @@ import com.squareup.moshi.Json
 import org.parceler.Parcel
 import java.util.*
 
-@Parcel
-class Issue {
+@Parcel(Parcel.Serialization.BEAN)
+open class Issue {
 
     companion object {
         const val STATE_REOPEN = "reopen"
@@ -47,9 +47,9 @@ class Issue {
     @field:Json(name = "milestone")
     var milestone: Milestone? = null
     @field:Json(name = "assignee")
-    var assignee: UserBasic? = null
+    var assignee: User? = null
     @field:Json(name = "author")
-    var author: UserBasic? = null
+    var author: User? = null
     @field:Json(name = "confidential")
     var isConfidential: Boolean = false
 }

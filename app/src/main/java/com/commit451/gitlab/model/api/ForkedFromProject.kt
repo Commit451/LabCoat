@@ -4,8 +4,8 @@ import com.squareup.moshi.Json
 
 import org.parceler.Parcel
 
-@Parcel
-class ForkedFromProject {
+@Parcel(Parcel.Serialization.BEAN)
+open class ForkedFromProject {
     @field:Json(name = "id")
     var id: Long = 0
     @field:Json(name = "name")

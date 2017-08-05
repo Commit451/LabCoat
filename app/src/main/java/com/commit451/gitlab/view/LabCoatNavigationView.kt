@@ -26,7 +26,7 @@ import com.commit451.gitlab.event.CloseDrawerEvent
 import com.commit451.gitlab.event.LoginEvent
 import com.commit451.gitlab.event.ReloadDataEvent
 import com.commit451.gitlab.model.Account
-import com.commit451.gitlab.model.api.UserFull
+import com.commit451.gitlab.model.api.User
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.transformation.CircleTransformation
@@ -215,13 +215,13 @@ class LabCoatNavigationView : NavigationView {
         App.get().gitLab.getThisUser()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : CustomResponseSingleObserver<UserFull>() {
+                .subscribe(object : CustomResponseSingleObserver<User>() {
 
                     override fun error(e: Throwable) {
                         Timber.e(e)
                     }
 
-                    override fun responseNonNullSuccess(userFull: UserFull) {
+                    override fun responseNonNullSuccess(userFull: User) {
                         //Store the newly retrieved user to the account so that it stays up to date
                         // in local storage
                         val account = App.get().getAccount()
@@ -232,7 +232,7 @@ class LabCoatNavigationView : NavigationView {
                 })
     }
 
-    fun bindUser(user: UserFull) {
+    fun bindUser(user: User) {
         if (context == null) {
             return
         }

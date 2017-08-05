@@ -22,7 +22,7 @@ interface GitLabService {
     /* --- LOGIN --- */
 
     @POST(API_VERSION + "/session")
-    fun login(@Body request: SessionRequest): Single<Response<UserLogin>>
+    fun login(@Body request: SessionRequest): Single<Response<User>>
 
     /* --- USERS --- */
 
@@ -30,19 +30,19 @@ interface GitLabService {
      * Get currently authenticated user
      */
     @GET(API_VERSION + "/user")
-    fun getThisUser(): Single<Response<UserFull>>
+    fun getThisUser(): Single<Response<User>>
 
     @GET(API_VERSION + "/users")
-    fun getUsers(): Single<List<UserBasic>>
+    fun getUsers(): Single<List<User>>
 
     @GET
-    fun getUsers(@Url url: String): Single<List<UserBasic>>
+    fun getUsers(@Url url: String): Single<List<User>>
 
     @GET(API_VERSION + "/users")
-    fun searchUsers(@Query("search") query: String): Single<Response<List<UserBasic>>>
+    fun searchUsers(@Query("search") query: String): Single<Response<List<User>>>
 
     @GET
-    fun searchUsers(@Url url: String, @Query("search") query: String): Single<Response<List<UserBasic>>>
+    fun searchUsers(@Url url: String, @Query("search") query: String): Single<Response<List<User>>>
 
     @GET(API_VERSION + "/users/{id}")
     fun getUser(@Path("id") userId: Long): Single<User>
@@ -55,25 +55,25 @@ interface GitLabService {
     fun getGroups(@Url url: String): Single<Response<List<Group>>>
 
     @GET(API_VERSION + "/groups/{id}")
-    fun getGroup(@Path("id") id: Long): Single<GroupDetail>
+    fun getGroup(@Path("id") id: Long): Single<Group>
 
     @GET(API_VERSION + "/groups/{id}/projects?order_by=last_activity_at")
     fun getGroupProjects(@Path("id") id: Long): Single<Response<List<Project>>>
 
     @GET(API_VERSION + "/groups/{id}/members")
-    fun getGroupMembers(@Path("id") groupId: Long): Single<Response<List<Member>>>
+    fun getGroupMembers(@Path("id") groupId: Long): Single<Response<List<User>>>
 
     @FormUrlEncoded
     @POST(API_VERSION + "/groups/{id}/members")
     fun addGroupMember(@Path("id") groupId: Long,
                        @Field("user_id") userId: Long,
-                       @Field("access_level") accessLevel: Int): Single<Response<Member>>
+                       @Field("access_level") accessLevel: Int): Single<Response<User>>
 
     @FormUrlEncoded
     @PUT(API_VERSION + "/groups/{id}/members/{user_id}")
     fun editGroupMember(@Path("id") groupId: Long,
                         @Path("user_id") userId: Long,
-                        @Field("access_level") accessLevel: Int): Single<Member>
+                        @Field("access_level") accessLevel: Int): Single<User>
 
     @DELETE(API_VERSION + "/groups/{id}/members/{user_id}")
     fun removeGroupMember(@Path("id") groupId: Long,
@@ -105,22 +105,22 @@ interface GitLabService {
     fun searchAllProjects(@Query("search") query: String): Single<Response<List<Project>>>
 
     @GET(API_VERSION + "/projects/{id}/members")
-    fun getProjectMembers(@Path("id") projectId: Long): Single<Response<List<Member>>>
+    fun getProjectMembers(@Path("id") projectId: Long): Single<Response<List<User>>>
 
     @GET
-    fun getProjectMembers(@Url url: String): Single<Response<List<Member>>>
+    fun getProjectMembers(@Url url: String): Single<Response<List<User>>>
 
     @FormUrlEncoded
     @POST(API_VERSION + "/projects/{id}/members")
     fun addProjectMember(@Path("id") projectId: Long,
                          @Field("user_id") userId: Long,
-                         @Field("access_level") accessLevel: Int): Single<Response<Member>>
+                         @Field("access_level") accessLevel: Int): Single<Response<User>>
 
     @FormUrlEncoded
     @PUT(API_VERSION + "/projects/{id}/members/{user_id}")
     fun editProjectMember(@Path("id") projectId: Long,
                           @Path("user_id") userId: Long,
-                          @Field("access_level") accessLevel: Int): Single<Member>
+                          @Field("access_level") accessLevel: Int): Single<User>
 
     @DELETE(API_VERSION + "/projects/{id}/members/{user_id}")
     fun removeProjectMember(@Path("id") projectId: Long,

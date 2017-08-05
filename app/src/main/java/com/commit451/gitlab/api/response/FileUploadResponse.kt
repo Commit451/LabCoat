@@ -7,8 +7,8 @@ import org.parceler.Parcel
 /**
  * Response when a file is uploaded
  */
-@Parcel
-class FileUploadResponse {
+@Parcel(Parcel.Serialization.BEAN)
+open class FileUploadResponse {
 
     @field:Json(name = "alt")
     var alt: String? = null

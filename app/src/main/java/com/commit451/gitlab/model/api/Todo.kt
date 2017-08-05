@@ -9,8 +9,8 @@ import java.util.*
  * Todos. Not processing Target, since it is different depending on what the type is, which
  * makes it not play nice with any automated json parsing
  */
-@Parcel
-class Todo {
+@Parcel(Parcel.Serialization.BEAN)
+open class Todo {
 
     companion object {
 
@@ -34,7 +34,7 @@ class Todo {
     @field:Json(name = "project")
     var project: Project? = null
     @field:Json(name = "author")
-    var author: UserBasic? = null
+    var author: User? = null
     @field:Json(name = "action_name")
     var actionName: String? = null
     @field:Json(name = "target_type")

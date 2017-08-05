@@ -4,8 +4,8 @@ import com.squareup.moshi.Json
 
 import org.parceler.Parcel
 
-@Parcel
-class Identity {
+@Parcel(Parcel.Serialization.BEAN)
+open class Identity {
     @field:Json(name = "provider")
     var provider: String? = null
     @field:Json(name = "extern_uid")

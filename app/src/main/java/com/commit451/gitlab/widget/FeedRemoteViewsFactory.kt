@@ -75,7 +75,7 @@ class FeedRemoteViewsFactory(private val context: Context, intent: Intent, accou
         // Next, we set a fill-intent which will be used to fill-in the pending intent template
         // which is set on the collection view in UserFeedWidgetProvider.
         val fillInIntent = Intent()
-        fillInIntent.putExtra(UserFeedWidgetProvider.EXTRA_LINK, entry.link.href.toString())
+        fillInIntent.putExtra(UserFeedWidgetProvider.EXTRA_LINK, entry.link.href)
         rv.setOnClickFillInIntent(R.id.root, fillInIntent)
 
         try {

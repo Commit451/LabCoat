@@ -6,8 +6,8 @@ import com.squareup.moshi.Json
 import org.parceler.Parcel
 import java.util.*
 
-@Parcel
-class Milestone {
+@Parcel(Parcel.Serialization.BEAN)
+open class Milestone {
 
     companion object {
         const val STATE_ACTIVE = "active"

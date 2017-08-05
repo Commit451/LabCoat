@@ -7,8 +7,8 @@ import java.util.*
 /**
  * A pipeline.
  */
-@Parcel
-class Pipeline {
+@Parcel(Parcel.Serialization.BEAN)
+open class Pipeline {
 
     @field:Json(name = "user")
     var user: CommitUser? = null

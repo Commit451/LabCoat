@@ -10,7 +10,7 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
-import com.commit451.gitlab.model.api.UserBasic
+import com.commit451.gitlab.model.api.User
 import com.commit451.gitlab.util.ImageUtil
 
 /**
@@ -34,7 +34,7 @@ class UserViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         ButterKnife.bind(this, view)
     }
 
-    fun bind(user: UserBasic) {
+    fun bind(user: User) {
         textUsername.text = user.username
         App.get().picasso
                 .load(ImageUtil.getAvatarUrl(user, itemView.resources.getDimensionPixelSize(R.dimen.user_list_image_size)))

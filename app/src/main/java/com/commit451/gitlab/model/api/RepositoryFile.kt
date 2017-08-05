@@ -4,8 +4,8 @@ import com.squareup.moshi.Json
 
 import org.parceler.Parcel
 
-@Parcel
-class RepositoryFile {
+@Parcel(Parcel.Serialization.BEAN)
+open class RepositoryFile {
     @field:Json(name = "file_name")
     var fileName: String? = null
     @field:Json(name = "file_path")

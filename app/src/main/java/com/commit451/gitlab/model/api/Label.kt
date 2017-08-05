@@ -7,8 +7,8 @@ import org.parceler.Parcel
 /**
  * A label
  */
-@Parcel
-class Label {
+@Parcel(Parcel.Serialization.BEAN)
+open class Label {
 
     @field:Json(name = "color")
     var color: String? = null

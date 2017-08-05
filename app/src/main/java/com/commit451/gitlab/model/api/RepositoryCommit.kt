@@ -4,8 +4,8 @@ import com.squareup.moshi.Json
 import org.parceler.Parcel
 import java.util.*
 
-@Parcel
-class RepositoryCommit {
+@Parcel(Parcel.Serialization.BEAN)
+open class RepositoryCommit {
     @field:Json(name = "id")
     lateinit var id: String
     @field:Json(name = "short_id")

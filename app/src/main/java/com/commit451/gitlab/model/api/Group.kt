@@ -3,7 +3,7 @@ package com.commit451.gitlab.model.api
 import com.squareup.moshi.Json
 import org.parceler.Parcel
 
-@Parcel
+@Parcel(Parcel.Serialization.BEAN)
 open class Group {
     @field:Json(name = "id")
     var id: Long = 0
@@ -17,4 +17,6 @@ open class Group {
     var avatarUrl: String? = null
     @field:Json(name = "web_url")
     lateinit var webUrl: String
+    @field:Json(name = "projects")
+    var projects: MutableList<Project>? = null
 }

@@ -4,8 +4,8 @@ import com.squareup.moshi.Json
 import org.parceler.Parcel
 import java.util.*
 
-@Parcel
-class ProjectNamespace {
+@Parcel(Parcel.Serialization.BEAN)
+open class ProjectNamespace {
     @field:Json(name = "id")
     var id: Long = 0
     @field:Json(name = "name")
@@ -25,7 +25,7 @@ class ProjectNamespace {
     @field:Json(name = "public")
     var isPublic: Boolean = false
 
-    @Parcel
+    @Parcel(Parcel.Serialization.BEAN)
     class Avatar {
         @field:Json(name = "url")
         var url: String? = null

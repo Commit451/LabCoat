@@ -7,8 +7,8 @@ import java.util.*
 /**
  * Represents a build
  */
-@Parcel
-class Build {
+@Parcel(Parcel.Serialization.BEAN)
+open class Build {
 
     @field:Json(name = "commit")
     var commit: RepositoryCommit? = null

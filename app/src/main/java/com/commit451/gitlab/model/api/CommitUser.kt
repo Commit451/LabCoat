@@ -5,8 +5,8 @@ import com.squareup.moshi.Json
 
 import org.parceler.Parcel
 
-@Parcel
-class CommitUser {
+@Parcel(Parcel.Serialization.BEAN)
+open class CommitUser {
     @field:Json(name = "id")
     var id: String? = null
     @field:Json(name = "name")

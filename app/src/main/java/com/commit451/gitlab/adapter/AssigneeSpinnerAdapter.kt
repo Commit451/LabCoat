@@ -4,23 +4,21 @@ import android.content.Context
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-
 import com.commit451.gitlab.R
-import com.commit451.gitlab.model.api.Member
-import com.commit451.gitlab.model.api.UserBasic
+import com.commit451.gitlab.model.api.User
 import com.commit451.gitlab.viewHolder.AssigneeSpinnerViewHolder
 
 /**
  * Adapter to show assignees in a spinner
  */
-class AssigneeSpinnerAdapter(context: Context, members: MutableList<Member?>) : ArrayAdapter<Member?>(context, 0, members) {
+class AssigneeSpinnerAdapter(context: Context, members: MutableList<User?>) : ArrayAdapter<User?>(context, 0, members) {
 
     init {
         members.add(0, null)
         notifyDataSetChanged()
     }
 
-    fun getSelectedItemPosition(userBasic: UserBasic?): Int {
+    fun getSelectedItemPosition(userBasic: User?): Int {
         if (userBasic == null) {
             return 0
         }

@@ -2,6 +2,7 @@ package com.commit451.gitlab.fragment
 
 import android.net.Uri
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -79,7 +80,12 @@ class TodoFragment : ButterKnifeFragment() {
 
         adapterTodos = TodoAdapter(object : TodoAdapter.Listener {
             override fun onTodoClicked(todo: Todo) {
-                Navigator.navigateToUrl(activity, Uri.parse(todo.targetUrl), App.get().getAccount())
+                val targetUrl = todo.targetUrl
+                if (targetUrl != null) {
+                    Navigator.navigateToUrl(activity, targetUrl, App.get().getAccount())
+                } else {
+                    Snackbar.make(swipeRefreshLayout, R.string.not_a_valid_url, Snackbar.LENGTH_SHORT)
+                }
             }
         })
         layoutManagerTodos = LinearLayoutManager(activity)

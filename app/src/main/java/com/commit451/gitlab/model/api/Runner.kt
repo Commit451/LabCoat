@@ -7,8 +7,8 @@ import org.parceler.Parcel
 /**
  * A runner. It runs builds. yeah
  */
-@Parcel
-class Runner {
+@Parcel(Parcel.Serialization.BEAN)
+open class Runner {
 
     @field:Json(name = "id")
     var id: Long = 0

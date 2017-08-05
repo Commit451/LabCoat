@@ -4,8 +4,8 @@ import com.squareup.moshi.Json
 
 import org.parceler.Parcel
 
-@Parcel
-class Contributor {
+@Parcel(Parcel.Serialization.BEAN)
+open class Contributor {
 
     @field:Json(name = "name")
     var name: String? = null

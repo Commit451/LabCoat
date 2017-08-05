@@ -7,8 +7,8 @@ import java.util.*
 /**
  * A snippet!
  */
-@Parcel
-class Snippet {
+@Parcel(Parcel.Serialization.BEAN)
+open class Snippet {
     @field:Json(name = "id")
     var id: Long = 0
     @field:Json(name = "title")
@@ -24,7 +24,7 @@ class Snippet {
     @field:Json(name = "created_at")
     var createdAt: Date? = null
 
-    @Parcel
+    @Parcel(Parcel.Serialization.BEAN)
     class Author {
         @field:Json(name = "id")
         var id: Long = 0

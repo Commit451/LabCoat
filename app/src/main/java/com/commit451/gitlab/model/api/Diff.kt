@@ -4,8 +4,8 @@ import com.squareup.moshi.Json
 
 import org.parceler.Parcel
 
-@Parcel
-class Diff {
+@Parcel(Parcel.Serialization.BEAN)
+open class Diff {
     @field:Json(name = "old_path")
     var oldPath: String? = null
     @field:Json(name = "new_path")

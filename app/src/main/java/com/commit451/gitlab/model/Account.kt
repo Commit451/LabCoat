@@ -1,6 +1,6 @@
 package com.commit451.gitlab.model
 
-import com.commit451.gitlab.model.api.UserFull
+import com.commit451.gitlab.model.api.User
 import com.squareup.moshi.Json
 import org.parceler.Parcel
 import java.util.*
@@ -8,8 +8,8 @@ import java.util.*
 /**
  * An account, stored locally, which references the needed info to connect to a server
  */
-@Parcel
-class Account : Comparable<Account> {
+@Parcel(Parcel.Serialization.BEAN)
+open class Account : Comparable<Account> {
 
     @field:Json(name = "server_url")
     var serverUrl: String? = null
@@ -24,7 +24,7 @@ class Account : Comparable<Account> {
     @field:Json(name = "private_key_alias")
     var privateKeyAlias: String? = null
     @field:Json(name = "user")
-    var user: UserFull? = null
+    var user: User? = null
     @field:Json(name = "last_used")
     var lastUsed: Date? = null
 

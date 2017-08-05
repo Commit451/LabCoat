@@ -4,8 +4,8 @@ import android.support.annotation.StringDef
 import com.squareup.moshi.Json
 import org.parceler.Parcel
 
-@Parcel
-class RepositoryTreeObject {
+@Parcel(Parcel.Serialization.BEAN)
+open class RepositoryTreeObject {
 
     companion object {
 
