@@ -7,6 +7,6 @@ import org.simpleframework.xml.Root
 @Parcel(Parcel.Serialization.BEAN)
 @Root(strict = false)
 class Thumbnail {
-    @Attribute(name = "url", required = true)
+    @field:Attribute(name = "url", required = true)
     lateinit var url: String
 }

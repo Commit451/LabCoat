@@ -31,7 +31,7 @@ class FeedRemoteViewsFactory(private val context: Context, intent: Intent, accou
 
     val appWidgetId: Int = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
             AppWidgetManager.INVALID_APPWIDGET_ID)
-    var entries: ArrayList<Entry>? = null
+    var entries = mutableListOf<Entry>()
     val picasso: Picasso
     val rssClient: GitLabRss
 
@@ -120,8 +120,10 @@ class FeedRemoteViewsFactory(private val context: Context, intent: Intent, accou
         try {
             val feed = rssClient.getFeed(feedUrl)
                     .blockingGet()
-            if (feed.entries != null) {
-                entries!!.addAll(feed.entries)
+            entries.clear()
+            val nextEntries = feed.entries
+            if (nextEntries != null) {
+                entries.addAll(nextEntries)
             }
         } catch (e: Exception) {
             //maybe let the user know somehow?

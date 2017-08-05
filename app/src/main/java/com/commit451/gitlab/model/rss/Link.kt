@@ -7,6 +7,6 @@ import org.simpleframework.xml.Root
 @Parcel(Parcel.Serialization.BEAN)
 @Root(strict = false)
 class Link {
-    @Attribute(name = "href", required = true)
+    @field:Attribute(name = "href", required = true)
     lateinit var href: String
 }

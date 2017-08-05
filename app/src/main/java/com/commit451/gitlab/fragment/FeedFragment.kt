@@ -104,7 +104,8 @@ class FeedFragment : ButterKnifeFragment() {
                 .subscribe(object : CustomSingleObserver<Feed>() {
                     override fun success(feed: Feed) {
                         swipeRefreshLayout.isRefreshing = false
-                        if (feed.entries != null && !feed.entries.isEmpty()) {
+                        val entries = feed.entries
+                        if (entries != null && !entries.isEmpty()) {
                             textMessage.visibility = View.GONE
                         } else {
                             Timber.d("No activity in the feed")

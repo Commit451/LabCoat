@@ -8,8 +8,8 @@ import org.simpleframework.xml.Root
 @Parcel(Parcel.Serialization.BEAN)
 @Root(strict = false)
 class Feed {
-    @Element(name = "title", required = false)
+    @field:Element(name = "title", required = false)
     lateinit var title: String
-    @ElementList(name = "entry", required = false, inline = true)
-    lateinit var entries: List<Entry>
+    @field:ElementList(name = "entry", required = false, inline = true)
+    var entries: List<Entry>? = null
 }
