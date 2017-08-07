@@ -33,7 +33,32 @@
                     android:paddingRight="@dimen/activity_horizontal_margin"
                     android:textSize="14sp"
                     tools:text="Created by Commit451"/>
+                <LinearLayout
+                    android:id="@+id/build_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:orientation="horizontal">
 
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:contentDescription="@null"
+                        app:srcCompat="@drawable/ic_check_circle_black_24dp"/>
+
+                    <TextView
+                        android:id="@+id/build_status_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginRight="8dp"
+                        android:paddingRight="@dimen/activity_horizontal_margin"
+                        tools:text="success"/>
+
+                </LinearLayout>
                 <LinearLayout
                     android:id="@+id/root_star"
                     android:layout_width="wrap_content"

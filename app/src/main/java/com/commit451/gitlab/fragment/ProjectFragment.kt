@@ -20,6 +20,7 @@ import com.commit451.gitlab.extension.setMarkdownText
 import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.model.api.RepositoryFile
+import com.commit451.gitlab.model.api.Pipeline
 import com.commit451.gitlab.model.api.RepositoryTreeObject
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomSingleObserver
@@ -55,9 +56,11 @@ class ProjectFragment : ButterKnifeFragment() {
     @BindView(R.id.creator) lateinit var textCreator: TextView
     @BindView(R.id.star_count) lateinit var textStarCount: TextView
     @BindView(R.id.forks_count) lateinit var textForksCount: TextView
+    @BindView(R.id.build_status_text) lateinit var textBuildStatus: TextView
     @BindView(R.id.overview_text) lateinit var textOverview: TextView
 
     var project: Project? = null
+    var pipeline: Pipeline? = null
     var branchName: String? = null
 
     @OnClick(R.id.creator)
@@ -221,6 +224,9 @@ class ProjectFragment : ButterKnifeFragment() {
                         }
                     }
                 })
+        val latestPipeline = App.get().gitLab.getLatestPipeline(project!!.id)
+                .blockingGet()
+        result.latestPipeline = latestPipeline
     }
 
     fun bindProject(project: Project?) {
@@ -235,6 +241,7 @@ class ProjectFragment : ButterKnifeFragment() {
         }
         textStarCount.text = project.starCount.toString()
         textForksCount.text = project.forksCount.toString()
+        textForksCount.text = pipeline.latestPipeline.toString()
     }
 
     fun getReadmeType(filename: String): Int {
@@ -274,5 +281,6 @@ class ProjectFragment : ButterKnifeFragment() {
     class ReadmeResult {
         var bytes: ByteArray? = null
         var repositoryFile: RepositoryFile? = null
+        var latestPipeline: Pipeline? = null
     }
 }

@@ -384,6 +384,10 @@ interface GitLabService {
     fun getPipelines(@Url url: String,
                      @Query("scope") state: String?): Single<Response<List<Pipeline>>>
 
+    @GET(API_VERSION + "/projects/{id}/pipelines")
+    fun getLatestPipeline(@Path("id") projectId: Long,
+                     @Query("per_page") perPage: Int? = 1): Single<Pipeline>
+
     @GET(API_VERSION + "/projects/{id}/pipelines/{pipeline_id}/jobs")
     fun getPipelineJobs(@Path("id") projectId: Long, @Path("pipeline_id") pipelineId: Long,
                         @Query("scope") scope: String?): Single<Response<List<Pipeline>>>
