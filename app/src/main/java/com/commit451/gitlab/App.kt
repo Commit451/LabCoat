@@ -2,8 +2,6 @@ package com.commit451.gitlab
 
 import android.app.Application
 import android.content.Context
-import android.content.res.Resources
-import android.support.annotation.VisibleForTesting
 import android.support.multidex.MultiDex
 import com.commit451.gitlab.api.GitLab
 import com.commit451.gitlab.api.GitLabFactory
@@ -22,12 +20,11 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.greenrobot.eventbus.EventBus
 import timber.log.Timber
-import java.util.*
 
 /**
  * App for one time init things and to house singletons
  */
-open class App : Application() {
+class App : Application() {
 
     companion object {
 
@@ -64,8 +61,6 @@ open class App : Application() {
         setupThreeTen()
 
         Prefs.init(this)
-        //So that we don't get weird half translations
-        forceLocale(Locale.ENGLISH)
         setupCrashReporting()
 
         if (BuildConfig.DEBUG) {
@@ -109,47 +104,27 @@ open class App : Application() {
         return currentAccount
     }
 
-    @VisibleForTesting
-    protected open fun setupMultidex() {
+    fun setupMultidex() {
         MultiDex.install(this)
     }
 
-    @VisibleForTesting
-    protected open fun setupCrashReporting() {
+    fun setupCrashReporting() {
         FabricUtil.init(this)
     }
 
-    @VisibleForTesting
-    protected open fun setupLeakCanary() {
+    fun setupLeakCanary() {
         LeakCanary.install(this)
     }
 
-    @VisibleForTesting
-    protected open fun setupThreeTen() {
+    fun setupThreeTen() {
         AndroidThreeTen.init(this)
     }
 
-    private fun forceLocale(locale: Locale) {
-        try {
-            Locale.setDefault(locale)
-
-            val resources = arrayOf(Resources.getSystem(), baseContext.resources)
-            for (res in resources) {
-                val configuration = res.configuration
-                configuration.locale = locale
-                res.updateConfiguration(configuration, res.displayMetrics)
-            }
-        } catch (e: Exception) {
-            Timber.e(e)
-        }
-
-    }
-
-    private fun initGitLab(account: Account, clientBuilder: OkHttpClient.Builder) {
+    fun initGitLab(account: Account, clientBuilder: OkHttpClient.Builder) {
         gitLab = GitLabFactory.createGitLab(account, clientBuilder)
     }
 
-    private fun initPicasso(client: OkHttpClient) {
+    fun initPicasso(client: OkHttpClient) {
         picasso = PicassoFactory.createPicasso(client)
     }
 }

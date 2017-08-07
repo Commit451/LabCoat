@@ -105,8 +105,8 @@ class AddIssueActivity : MorphActivity() {
                 AlertDialog.Builder(this@AddIssueActivity)
                         .setTitle(R.string.remove)
                         .setMessage(R.string.are_you_sure_you_want_to_remove)
-                        .setPositiveButton(android.R.string.yes) { _, _ -> adapterLabels.removeLabel(label) }
-                        .setNegativeButton(android.R.string.no) { dialog, _ -> dialog.dismiss() }
+                        .setPositiveButton(R.string.yes) { _, _ -> adapterLabels.removeLabel(label) }
+                        .setNegativeButton(R.string.no) { dialog, _ -> dialog.dismiss() }
                         .show()
             }
         })
@@ -273,8 +273,8 @@ class AddIssueActivity : MorphActivity() {
         AlertDialog.Builder(this)
                 .setTitle(R.string.discard)
                 .setMessage(R.string.are_you_sure_you_want_to_discard)
-                .setPositiveButton(android.R.string.yes) { _, _ -> dismiss() }
-                .setNegativeButton(android.R.string.no) { dialog, _ -> dialog.dismiss() }
+                .setPositiveButton(R.string.yes) { _, _ -> dismiss() }
+                .setNegativeButton(R.string.no) { dialog, _ -> dialog.dismiss() }
                 .show()
     }
 

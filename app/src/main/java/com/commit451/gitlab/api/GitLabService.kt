@@ -291,7 +291,7 @@ interface GitLabService {
 
     @GET(API_VERSION + "/projects/{id}/repository/tree")
     fun getTree(@Path("id") projectId: Long,
-                @Query("ref_name") branchName: String,
+                @Query("ref_name") branchName: String?,
                 @Query("path") path: String?): Single<List<RepositoryTreeObject>>
 
     @GET(API_VERSION + "/projects/{id}/repository/files/{file_path}")

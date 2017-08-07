@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+Version 2.4.9
+----------------------------
+
+- Crash fixes related to fetching accounts
+
 Version 2.4.8
 ----------------------------
 

@@ -13,7 +13,7 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Types.newParameterizedType
 import com.squareup.moshi.Types
-
+import timber.log.Timber
 
 
 /**
@@ -46,15 +46,18 @@ object Prefs {
     fun getAccounts(): MutableList<Account> {
         val accountsJson = prefs.getString(KEY_ACCOUNTS, null)
         if (!accountsJson.isNullOrEmpty()) {
-            val type = Types.newParameterizedType(List::class.java, Account::class.java)
-            val adapter = MoshiProvider.moshi.adapter<List<Account>>(type)
-            val accounts = adapter.fromJson(accountsJson)!!.toMutableList()
-            Collections.sort(accounts)
-            Collections.reverse(accounts)
-            return accounts
-        } else {
-            return ArrayList()
+            try {
+                val type = Types.newParameterizedType(List::class.java, Account::class.java)
+                val adapter = MoshiProvider.moshi.adapter<List<Account>>(type)
+                val accounts = adapter.fromJson(accountsJson)!!.toMutableList()
+                Collections.sort(accounts)
+                Collections.reverse(accounts)
+                return accounts
+            } catch (e: Exception) {
+                Timber.e(e)
+            }
         }
+        return mutableListOf()
     }
 
     fun setAccounts(accounts: List<Account>) {
