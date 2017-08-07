@@ -17,15 +17,11 @@ import com.commit451.gitlab.event.ProjectReloadEvent
 import com.commit451.gitlab.extension.*
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.model.api.RepositoryFile
-import com.commit451.gitlab.model.api.RepositoryTreeObject
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.util.InternalLinkMovementMethod
-import com.commit451.reptar.Optional
 import com.trello.rxlifecycle2.android.FragmentEvent
 import io.reactivex.Single
-import io.reactivex.SingleSource
-import io.reactivex.functions.Function
 import org.greenrobot.eventbus.Subscribe
 import retrofit2.Response
 import timber.log.Timber
@@ -156,70 +152,59 @@ class ProjectFragment : ButterKnifeFragment() {
     }
 
     override fun loadData() {
-        if (view == null) {
-            return
-        }
+        val project = project
+        val branchName = branchName
+        if (view != null && project != null && branchName != null) {
+            swipeRefreshLayout.isRefreshing = true
+            Single.defer {
 
-        if (project == null || branchName.isNullOrEmpty()) {
-            swipeRefreshLayout.isRefreshing = false
-            return
-        }
+                val readmeResult = ReadmeResult()
+                val rootItems = App.get().gitLab.getTree(project.id, branchName, null)
+                        .blockingGet()
+                for (treeItem in rootItems) {
+                    val treeItemName = treeItem.name
+                    if (treeItemName != null && getReadmeType(treeItemName) != README_TYPE_UNKNOWN) {
+                        //found a README
+                        val repositoryFile = App.get().gitLab.getFile(project.id, treeItemName, branchName)
+                                .blockingGet()
+                        readmeResult.repositoryFile = repositoryFile
+                        readmeResult.bytes = repositoryFile.content.base64Decode()
+                                .blockingGet()
+                        break
+                    }
+                }
+                Single.just(readmeResult)
+            }
+                    .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
+                    .subscribe(object : CustomSingleObserver<ReadmeResult>() {
 
-        swipeRefreshLayout.isRefreshing = true
-
-        val result = ReadmeResult()
-        App.get().gitLab.getTree(project!!.id, branchName!!, null)
-                .flatMap(Function<List<RepositoryTreeObject>, SingleSource<Optional<RepositoryTreeObject>>> { repositoryTreeObjects ->
-                    for (treeItem in repositoryTreeObjects) {
-                        if (getReadmeType(treeItem.name!!) != README_TYPE_UNKNOWN) {
-                            return@Function Single.just(Optional(treeItem))
+                        override fun error(t: Throwable) {
+                            Timber.e(t)
+                            swipeRefreshLayout.isRefreshing = false
+                            textOverview.setText(R.string.connection_error_readme)
                         }
-                    }
-                    Single.just(Optional.empty())
-                })
-                .flatMap(Function<Optional<RepositoryTreeObject>, SingleSource<Optional<RepositoryFile>>> { repositoryTreeObjectResult ->
-                    if (repositoryTreeObjectResult.isPresent) {
-                        val repositoryFile = App.get().gitLab.getFile(project!!.id, repositoryTreeObjectResult.get().name!!, branchName!!)
-                                .blockingGet()
-                        result.repositoryFile = repositoryFile
-                        return@Function Single.just(Optional(repositoryFile))
-                    }
-                    Single.just(Optional.empty<RepositoryFile>())
-                })
-                .flatMap(Function<Optional<RepositoryFile>, SingleSource<ReadmeResult>> { repositoryFileResult ->
-                    if (repositoryFileResult.isPresent) {
-                        result.bytes = repositoryFileResult.get().content.base64Decode()
-                                .blockingGet()
-                        return@Function Single.just(result)
-                    }
-                    Single.just(result)
-                })
-                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
-                .subscribe(object : CustomSingleObserver<ReadmeResult>() {
 
-                    override fun error(t: Throwable) {
-                        Timber.e(t)
-                        swipeRefreshLayout.isRefreshing = false
-                        textOverview.setText(R.string.connection_error_readme)
-                    }
-
-                    override fun success(readmeResult: ReadmeResult) {
-                        swipeRefreshLayout.isRefreshing = false
-                        if (result.repositoryFile != null && result.bytes != null) {
-                            val text = String(result.bytes!!)
-                            when (getReadmeType(result.repositoryFile!!.fileName!!)) {
-                                README_TYPE_MARKDOWN -> {
-                                    textOverview.setMarkdownText(text, project)
+                        override fun success(result: ReadmeResult) {
+                            swipeRefreshLayout.isRefreshing = false
+                            val repositoryFile = result.repositoryFile
+                            val bytes = result.bytes
+                            if (repositoryFile != null && bytes != null) {
+                                val text = String(bytes)
+                                when (getReadmeType(repositoryFile.fileName!!)) {
+                                    README_TYPE_MARKDOWN -> textOverview.setMarkdownText(text, project)
+                                    README_TYPE_HTML -> textOverview.text = text.formatAsHtml()
+                                    README_TYPE_TEXT -> textOverview.text = text
+                                    README_TYPE_NO_EXTENSION -> textOverview.text = text
                                 }
-                                README_TYPE_HTML -> textOverview.text = text.formatAsHtml()
-                                README_TYPE_TEXT -> textOverview.text = text
-                                README_TYPE_NO_EXTENSION -> textOverview.text = text
+                            } else {
+                                textOverview.setText(R.string.no_readme_found)
                             }
-                        } else {
-                            textOverview.setText(R.string.no_readme_found)
                         }
-                    }
-                })
+                    })
+
+        } else {
+            swipeRefreshLayout.isRefreshing = false
+        }
     }
 
     fun bindProject(project: Project?) {
