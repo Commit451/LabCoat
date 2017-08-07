@@ -145,7 +145,11 @@ class IssueActivity : BaseActivity() {
 
     @OnClick(R.id.fab_edit_issue)
     fun onEditIssueClick(fab: View) {
-        Navigator.navigateToEditIssue(this@IssueActivity, fab, project!!, issue!!)
+        val project = project
+        val issue = issue
+        if (project != null && issue != null) {
+            Navigator.navigateToEditIssue(this@IssueActivity, fab, project, issue)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

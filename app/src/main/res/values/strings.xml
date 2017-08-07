@@ -5,6 +5,10 @@
     <string name="app_name">LabCoat</string>
     <string name="unknown">Unknown</string>
     <string name="or">or</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 
     <!-- Drawer -->
     <string name="nav_projects">Projects</string>

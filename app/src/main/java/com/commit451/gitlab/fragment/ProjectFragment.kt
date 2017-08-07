@@ -76,8 +76,8 @@ class ProjectFragment : ButterKnifeFragment() {
             AlertDialog.Builder(activity)
                     .setTitle(R.string.project_fork_title)
                     .setMessage(R.string.project_fork_message)
-                    .setNegativeButton(android.R.string.cancel, null)
-                    .setPositiveButton(android.R.string.ok) { _, _ ->
+                    .setNegativeButton(R.string.cancel, null)
+                    .setPositiveButton(R.string.ok) { _, _ ->
                         App.get().gitLab.forkProject(it.id)
                                 .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                                 .subscribe(object : CustomSingleObserver<String>() {
