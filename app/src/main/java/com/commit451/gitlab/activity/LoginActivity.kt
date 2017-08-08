@@ -75,8 +75,7 @@ class LoginActivity : BaseActivity() {
 
     @BindView(R.id.root) lateinit var root: View
     @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
-    @BindView(R.id.url_hint) lateinit var textInputLayoutUrl: TextInputLayout
-    @BindView(R.id.url_input) lateinit var textUrl: TextView
+    @BindView(R.id.text_input_layout_server) lateinit var textInputLayoutUrl: TextInputLayout
     @BindView(R.id.user_input_hint) lateinit var textInputLayoutUser: TextInputLayout
     @BindView(R.id.user_input) lateinit var textUser: EditText
     @BindView(R.id.password_hint) lateinit var textInputLayoutPassword: TextInputLayout
@@ -197,7 +196,7 @@ class LoginActivity : BaseActivity() {
             toolbar.setNavigationOnClickListener { onBackPressed() }
         }
 
-        textUrl.setText(R.string.url_gitlab)
+        textInputLayoutUrl.editText?.setText(R.string.url_gitlab)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -292,7 +291,7 @@ class LoginActivity : BaseActivity() {
     }
 
     fun verifyUrl(): Boolean {
-        val url = textUrl.text.toString()
+        val url = textInputLayoutUrl.text()
         var uri: Uri? = null
         try {
             if (HttpUrl.parse(url) != null) {
