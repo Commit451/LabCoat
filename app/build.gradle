@@ -93,6 +93,7 @@ android {
 
     packagingOptions {
         exclude 'META-INF/MANIFEST.MF'
+        exclude 'META-INF/app_fdroidDebug.kotlin_module'
     }
 }
 

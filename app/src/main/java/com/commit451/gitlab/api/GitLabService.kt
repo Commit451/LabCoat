@@ -289,7 +289,7 @@ interface GitLabService {
     @GET(API_VERSION + "/projects/{id}/repository/contributors")
     fun getContributors(@Path("id") projectId: String): Single<List<Contributor>>
 
-    @GET(API_VERSION + "/projects/{id}/repository/tree")
+    @GET(API_VERSION + "/projects/{id}/repository/tree?per_page=1000")
     fun getTree(@Path("id") projectId: Long,
                 @Query("ref_name") branchName: String?,
                 @Query("path") path: String?): Single<List<RepositoryTreeObject>>
