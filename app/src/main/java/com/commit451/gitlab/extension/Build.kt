@@ -9,5 +9,5 @@ fun Build.getRawBuildUrl(baseUrl: String, project: Project): String {
 }
 
 fun Build.getDownloadBuildUrl(baseUrl: String, project: Project): String {
-    return baseUrl + GitLabService.API_VERSION + "/projects/" + project.id + "/builds/" + id + "/artifacts"
+    return baseUrl + GitLabService.API_VERSION + "/projects/" + project.id + "/jobs/" + id + "/artifacts"
 }
