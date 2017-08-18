@@ -14,6 +14,7 @@ import com.commit451.easel.Easel
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.*
 import com.commit451.gitlab.data.Prefs
+import com.commit451.gitlab.extension.resolveUrl
 import com.commit451.gitlab.model.Account
 import com.commit451.gitlab.model.Ref
 import com.commit451.gitlab.model.api.*
@@ -221,7 +222,7 @@ object Navigator {
 
     fun navigateToUrl(activity: Activity, url: String, account: Account) {
         Timber.d("navigateToUrl: $url")
-        val uri = Uri.parse(url)
+        val uri = Uri.parse(url.resolveUrl(account))
         val serverUri = Uri.parse(account.serverUrl)
         if (serverUri.host == uri.host) {
             activity.startActivity(DeepLinker.generateDeeplinkIntentFromUri(activity, uri))

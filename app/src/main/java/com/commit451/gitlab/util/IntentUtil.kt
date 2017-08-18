@@ -7,6 +7,8 @@ import android.view.View
 import com.commit451.easel.Easel
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.BaseActivity
+import com.commit451.gitlab.extension.resolveUrl
+import com.commit451.gitlab.model.Account
 import com.commit451.gitlab.navigation.BrowserFallback
 import com.commit451.gitlab.navigation.LabCoatIntentCustomizer
 import com.novoda.simplechromecustomtabs.SimpleChromeCustomTabs
@@ -16,19 +18,17 @@ import com.novoda.simplechromecustomtabs.SimpleChromeCustomTabs
  */
 object IntentUtil {
 
-    fun openPage(activity: BaseActivity, url: String) {
+    fun openPage(activity: BaseActivity, url: String, account: Account? = null) {
         if (!activity.hasBrowsableLinks()) {
             throw IllegalStateException("You need to override hasBrowsableLinks and return true!")
         }
-        if (url.isNullOrEmpty()) {
-            return
-        }
+        val resolvedUrl = if (account == null) url else url.resolveUrl(account)
 
         val primaryColor = Easel.getThemeAttrColor(activity, R.attr.colorPrimary)
         SimpleChromeCustomTabs.getInstance()
                 .withFallback(BrowserFallback(activity))
                 .withIntentCustomizer(LabCoatIntentCustomizer(activity, primaryColor))
-                .navigateTo(Uri.parse(url), activity)
+                .navigateTo(Uri.parse(resolvedUrl), activity)
     }
 
     fun share(root: View, url: Uri) {

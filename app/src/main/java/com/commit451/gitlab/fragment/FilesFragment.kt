@@ -80,7 +80,7 @@ class FilesFragment : ButterKnifeFragment() {
         }
 
         override fun onOpenInBrowserClicked(treeItem: RepositoryTreeObject) {
-            IntentUtil.openPage(activity as BaseActivity, treeItem.getUrl(project!!, branchName!!, currentPath).toString())
+            IntentUtil.openPage(activity as BaseActivity, treeItem.getUrl(project!!, branchName!!, currentPath).toString(), App.get().currentAccount)
         }
     }
 
