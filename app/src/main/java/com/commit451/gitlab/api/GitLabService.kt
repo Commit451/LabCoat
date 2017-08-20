@@ -145,7 +145,7 @@ interface GitLabService {
 
     @GET(API_VERSION + "/projects/{id}/milestones")
     fun getMilestones(@Path("id") projectId: Long,
-                      @Query("state") state: String): Single<Response<List<Milestone>>>
+                      @Query("state") state: String?): Single<Response<List<Milestone>>>
 
     @GET
     fun getMilestones(@Url url: String): Single<Response<List<Milestone>>>
