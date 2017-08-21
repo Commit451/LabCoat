@@ -148,7 +148,7 @@ class IssueActivity : BaseActivity() {
         val project = project
         val issue = issue
         if (project != null && issue != null) {
-            Navigator.navigateToEditIssue(this@IssueActivity, fab, project, issue)
+            Navigator.navigateToEditIssue(this@IssueActivity, project, issue)
         }
     }
 

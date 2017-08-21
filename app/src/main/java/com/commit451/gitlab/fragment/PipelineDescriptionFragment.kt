@@ -74,6 +74,7 @@ class PipelineDescriptionFragment : ButterKnifeFragment() {
         swipeRefreshLayout.setOnRefreshListener { load() }
         bindPipeline(pipeline)
         App.bus().register(this)
+        load()
     }
 
     override fun onDestroyView() {
@@ -82,12 +83,14 @@ class PipelineDescriptionFragment : ButterKnifeFragment() {
     }
 
     fun load() {
+        swipeRefreshLayout.isRefreshing = true
         App.get().gitLab.getPipeline(project.id, pipeline.id)
                 .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .subscribe(object : CustomSingleObserver<Pipeline>() {
 
                     override fun error(t: Throwable) {
                         Timber.e(t)
+                        swipeRefreshLayout.isRefreshing = false
                         Snackbar.make(root, R.string.unable_to_load_pipeline, Snackbar.LENGTH_LONG)
                                 .show()
                     }

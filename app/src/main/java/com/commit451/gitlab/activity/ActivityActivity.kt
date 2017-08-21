@@ -82,6 +82,7 @@ class ActivityActivity : BaseActivity() {
         App.bus().unregister(this)
     }
 
+    @Suppress("UNUSED_PARAMETER")
     @Subscribe
     fun onEvent(event: CloseDrawerEvent) {
         drawerLayout.closeDrawers()

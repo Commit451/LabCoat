@@ -47,13 +47,13 @@ class FeedRemoteViewsFactory(private val context: Context, intent: Intent, accou
     }
 
     override fun onCreate() {
-        entries = ArrayList<Entry>()
+        entries = ArrayList()
     }
 
     override fun onDestroy() {
         // In onDestroy() you should tear down anything that was setup for your data source,
         // eg. cursors, connections, etc.
-        entries!!.clear()
+        entries.clear()
     }
 
     override fun getCount(): Int {
@@ -63,10 +63,10 @@ class FeedRemoteViewsFactory(private val context: Context, intent: Intent, accou
     override fun getViewAt(position: Int): RemoteViews? {
         // position will always range from 0 to getCount() - 1.
 
-        if (position >= entries!!.size) {
+        if (position >= entries.size) {
             return null
         }
-        val entry = entries!![position]
+        val entry = entries[position]
 
         val rv = RemoteViews(context.packageName, R.layout.widget_item_entry)
         rv.setTextViewText(R.id.title, entry.title)

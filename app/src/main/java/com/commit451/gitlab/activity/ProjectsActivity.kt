@@ -74,6 +74,7 @@ class ProjectsActivity : BaseActivity() {
         }
     }
 
+    @Suppress("UNUSED_PARAMETER")
     @Subscribe
     fun onEvent(event: CloseDrawerEvent) {
         drawerLayout.closeDrawers()

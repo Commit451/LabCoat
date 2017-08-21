@@ -66,6 +66,7 @@ class TodosActivity : BaseActivity() {
         return true
     }
 
+    @Suppress("UNUSED_PARAMETER")
     @Subscribe
     fun onEvent(event: CloseDrawerEvent) {
         drawerLayout.closeDrawers()

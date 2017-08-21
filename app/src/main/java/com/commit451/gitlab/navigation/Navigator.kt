@@ -159,7 +159,7 @@ object Navigator {
         startMorphActivity(activity, fab, R.drawable.ic_add_24dp, intent)
     }
 
-    fun navigateToEditIssue(activity: Activity, fab: View, project: Project, issue: Issue) {
+    fun navigateToEditIssue(activity: Activity, project: Project, issue: Issue) {
         val intent = AddIssueActivity.newIntent(activity, project, issue)
         activity.startActivity(intent)
     }
@@ -188,7 +188,7 @@ object Navigator {
         startMorphActivity(activity, fab, R.drawable.ic_add_24dp, intent)
     }
 
-    fun navigateToEditMilestone(activity: Activity, fab: View, project: Project, milestone: Milestone) {
+    fun navigateToEditMilestone(activity: Activity, project: Project, milestone: Milestone) {
         val intent = AddMilestoneActivity.newIntent(activity, project.id, milestone)
         activity.startActivity(intent)
     }

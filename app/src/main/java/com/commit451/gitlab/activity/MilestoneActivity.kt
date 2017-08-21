@@ -85,7 +85,7 @@ class MilestoneActivity : BaseActivity() {
 
     @OnClick(R.id.edit)
     fun onEditClicked(fab: View) {
-        Navigator.navigateToEditMilestone(this@MilestoneActivity, fab, project, milestone)
+        Navigator.navigateToEditMilestone(this@MilestoneActivity, project, milestone)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

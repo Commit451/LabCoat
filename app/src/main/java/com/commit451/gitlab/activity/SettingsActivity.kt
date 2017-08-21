@@ -49,7 +49,7 @@ class SettingsActivity : BaseActivity() {
         }
 
         bindPrefs()
-        switchRequireAuth.setOnCheckedChangeListener { compoundButton, b ->
+        switchRequireAuth.setOnCheckedChangeListener { _, b ->
             Prefs.isRequiredDeviceAuth = b
         }
     }
