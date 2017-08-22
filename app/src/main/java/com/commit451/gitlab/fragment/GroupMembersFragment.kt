@@ -24,8 +24,8 @@ import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.model.api.Group
 import com.commit451.gitlab.model.api.User
 import com.commit451.gitlab.navigation.Navigator
+import com.commit451.gitlab.rx.CustomCompleteObserver
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
-import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
 import com.commit451.gitlab.viewHolder.ProjectMemberViewHolder
 import com.trello.rxlifecycle2.android.FragmentEvent
@@ -84,7 +84,7 @@ class GroupMembersFragment : ButterKnifeFragment() {
             this@GroupMembersFragment.member = member
             App.get().gitLab.removeGroupMember(group.id, member.id)
                     .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
-                    .subscribe(object : CustomSingleObserver<String>() {
+                    .subscribe(object : CustomCompleteObserver() {
 
                         override fun error(e: Throwable) {
                             Timber.e(e)
@@ -92,7 +92,7 @@ class GroupMembersFragment : ButterKnifeFragment() {
                                     .show()
                         }
 
-                        override fun success(value: String) {
+                        override fun complete() {
                             adapterGroupMembers.removeMember(this@GroupMembersFragment.member!!)
                         }
                     })

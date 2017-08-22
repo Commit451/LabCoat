@@ -79,7 +79,7 @@ interface GitLabService {
 
     @DELETE(API_VERSION + "/groups/{id}/members/{user_id}")
     fun removeGroupMember(@Path("id") groupId: Long,
-                          @Path("user_id") userId: Long): Single<String>
+                          @Path("user_id") userId: Long): Completable
 
     /* --- PROJECTS --- */
 
@@ -126,10 +126,10 @@ interface GitLabService {
 
     @DELETE(API_VERSION + "/projects/{id}/members/{user_id}")
     fun removeProjectMember(@Path("id") projectId: Long,
-                            @Path("user_id") userId: Long): Single<String>
+                            @Path("user_id") userId: Long): Completable
 
     @POST(API_VERSION + "/projects/{id}/fork")
-    fun forkProject(@Path("id") projectId: Long): Single<String>
+    fun forkProject(@Path("id") projectId: Long): Completable
 
     @POST(API_VERSION + "/projects/{id}/star")
     fun starProject(@Path("id") projectId: Long): Single<Response<Project>>
