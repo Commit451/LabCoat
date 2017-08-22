@@ -3,6 +3,7 @@ package com.commit451.gitlab.api
 import com.commit451.gitlab.api.request.SessionRequest
 import com.commit451.gitlab.api.response.FileUploadResponse
 import com.commit451.gitlab.model.api.*
+import io.reactivex.Completable
 import io.reactivex.Single
 import okhttp3.MultipartBody
 import retrofit2.Response
@@ -280,7 +281,7 @@ interface GitLabService {
 
     @DELETE(API_VERSION + "/projects/{id}/issues/{issue_iid}")
     fun deleteIssue(@Path("id") projectId: Long,
-                    @Path("issue_iid") issueIid: Long): Single<String>
+                    @Path("issue_iid") issueIid: Long): Completable
 
     /* --- REPOSITORY --- */
 
