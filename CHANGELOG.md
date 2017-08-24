@@ -1,6 +1,15 @@
 Change Log
 ==========
 
+Version 2.4.10
+----------------------------
+
+- Crash fixes related to fetching accounts
+- Fix issue with deleting issues
+- Load all the details of a pipeline without the user having to refresh
+- Better potential to find the README of a project by loading all the files instead of the first 20
+- Fix for files not loading properly when changing to a new branch or tag
+
 Version 2.4.9
 ----------------------------
 
