@@ -5,9 +5,9 @@ import com.commit451.gitlab.model.api.Build
 import com.commit451.gitlab.model.api.Project
 
 fun Build.getRawBuildUrl(baseUrl: String, project: Project): String {
-    return baseUrl + project.pathWithNamespace + "/builds/" + id + "/raw"
+    return baseUrl + project.pathWithNamespace + "/-/jobs/" + id + "/raw"
 }
 
 fun Build.getDownloadBuildUrl(baseUrl: String, project: Project): String {
-    return baseUrl + GitLabService.API_VERSION + "/projects/" + project.id + "/builds/" + id + "/artifacts"
+    return baseUrl + GitLabService.API_VERSION + "/projects/" + project.id + "/jobs/" + id + "/artifacts"
 }

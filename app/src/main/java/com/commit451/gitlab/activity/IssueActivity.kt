@@ -32,6 +32,7 @@ import com.commit451.gitlab.model.api.Issue
 import com.commit451.gitlab.model.api.Note
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.navigation.Navigator
+import com.commit451.gitlab.rx.CustomCompleteObserver
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.util.IntentUtil
@@ -122,7 +123,7 @@ class IssueActivity : BaseActivity() {
             R.id.action_delete -> {
                 App.get().gitLab.deleteIssue(project!!.id, issue!!.iid)
                         .setup(bindToLifecycle())
-                        .subscribe(object : CustomSingleObserver<String>() {
+                        .subscribe(object : CustomCompleteObserver() {
 
                             override fun error(t: Throwable) {
                                 Timber.e(t)
@@ -130,7 +131,7 @@ class IssueActivity : BaseActivity() {
                                         .show()
                             }
 
-                            override fun success(s: String) {
+                            override fun complete() {
                                 App.bus().post(IssueReloadEvent())
                                 Toast.makeText(this@IssueActivity, R.string.issue_deleted, Toast.LENGTH_SHORT)
                                         .show()
@@ -144,11 +145,11 @@ class IssueActivity : BaseActivity() {
     }
 
     @OnClick(R.id.fab_edit_issue)
-    fun onEditIssueClick(fab: View) {
+    fun onEditIssueClick() {
         val project = project
         val issue = issue
         if (project != null && issue != null) {
-            Navigator.navigateToEditIssue(this@IssueActivity, fab, project, issue)
+            Navigator.navigateToEditIssue(this@IssueActivity, project, issue)
         }
     }
 
@@ -260,7 +261,7 @@ class IssueActivity : BaseActivity() {
         textTitle.text = issue?.title
         toolbarTitle.text = getString(R.string.issue_number, issue?.iid)
         if (issue?.isConfidential!!) {
-            toolbarTitle.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_confidential_24dp, 0)
+            toolbarTitle.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_visibility_off_white_24dp, 0)
         }
         adapterIssueDetails.updateIssue(issue!!)
     }

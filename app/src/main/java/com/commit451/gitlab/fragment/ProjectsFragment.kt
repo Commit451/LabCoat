@@ -99,7 +99,7 @@ class ProjectsFragment : ButterKnifeFragment() {
     override fun onAttach(context: Context?) {
         super.onAttach(context)
         if (context is Listener) {
-            listener = context as Listener?
+            listener = context
         }
     }
 

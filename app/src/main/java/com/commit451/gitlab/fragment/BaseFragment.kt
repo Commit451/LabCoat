@@ -38,6 +38,8 @@ open class BaseFragment : RxFragment() {
     }
 
     inner class EventReceiver {
+
+        @Suppress("unused", "UNUSED_PARAMETER")
         @Subscribe
         fun onReloadData(event: ReloadDataEvent) {
             loadData()

@@ -18,6 +18,7 @@ import com.commit451.gitlab.extension.*
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.model.api.RepositoryFile
 import com.commit451.gitlab.navigation.Navigator
+import com.commit451.gitlab.rx.CustomCompleteObserver
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.util.InternalLinkMovementMethod
 import com.trello.rxlifecycle2.android.FragmentEvent
@@ -76,14 +77,14 @@ class ProjectFragment : ButterKnifeFragment() {
                     .setPositiveButton(R.string.ok) { _, _ ->
                         App.get().gitLab.forkProject(it.id)
                                 .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
-                                .subscribe(object : CustomSingleObserver<String>() {
+                                .subscribe(object : CustomCompleteObserver() {
 
                                     override fun error(t: Throwable) {
                                         Snackbar.make(swipeRefreshLayout, R.string.fork_failed, Snackbar.LENGTH_SHORT)
                                                 .show()
                                     }
 
-                                    override fun success(s: String) {
+                                    override fun complete() {
                                         Snackbar.make(swipeRefreshLayout, R.string.project_forked, Snackbar.LENGTH_SHORT)
                                                 .show()
                                     }

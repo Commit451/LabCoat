@@ -34,10 +34,7 @@ class ProjectFeedWidgetProvider : AppWidgetProvider() {
     }
 
     override fun onReceive(context: Context, intent: Intent) {
-        val mgr = AppWidgetManager.getInstance(context)
         if (intent.action == ACTION_FOLLOW_LINK) {
-            val appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
-                    AppWidgetManager.INVALID_APPWIDGET_ID)
             val uri = intent.getStringExtra(EXTRA_LINK)
             val launchIntent = DeepLinker.generateDeeplinkIntentFromUri(context, Uri.parse(uri))
             launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

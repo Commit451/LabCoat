@@ -63,7 +63,7 @@ class AddNewLabelActivity : BaseActivity(), ColorChooserDialog.ColorCallback {
         // Pass AppCompatActivity which implements ColorCallback, along with the textTitle of the dialog
         ColorChooserDialog.Builder(this, R.string.add_new_label_choose_color)
                 .preselect(chosenColor)
-                .show()
+                .show(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -25,7 +25,7 @@ object UserFeedWidgetPrefs {
             try {
                 val adapter = MoshiProvider.moshi.adapter<Account>(Account::class.java)
                 return adapter.fromJson(accountsJson)
-            } catch (e: IOException) {
+            } catch (e: Exception) {
                 //why would this ever happen?!?!?1
                 getSharedPrefs(context).edit().remove(widgetId.toString() + KEY_ACCOUNT).commit()
             }

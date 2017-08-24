@@ -3,6 +3,7 @@ package com.commit451.gitlab.api
 import com.commit451.gitlab.api.request.SessionRequest
 import com.commit451.gitlab.api.response.FileUploadResponse
 import com.commit451.gitlab.model.api.*
+import io.reactivex.Completable
 import io.reactivex.Single
 import okhttp3.MultipartBody
 import retrofit2.Response
@@ -17,6 +18,7 @@ interface GitLabService {
 
     companion object {
         const val API_VERSION = "api/v4"
+        const val MAX_TREE_PER_PAGE = "100"
     }
 
     /* --- LOGIN --- */
@@ -77,7 +79,7 @@ interface GitLabService {
 
     @DELETE(API_VERSION + "/groups/{id}/members/{user_id}")
     fun removeGroupMember(@Path("id") groupId: Long,
-                          @Path("user_id") userId: Long): Single<String>
+                          @Path("user_id") userId: Long): Completable
 
     /* --- PROJECTS --- */
 
@@ -124,10 +126,10 @@ interface GitLabService {
 
     @DELETE(API_VERSION + "/projects/{id}/members/{user_id}")
     fun removeProjectMember(@Path("id") projectId: Long,
-                            @Path("user_id") userId: Long): Single<String>
+                            @Path("user_id") userId: Long): Completable
 
     @POST(API_VERSION + "/projects/{id}/fork")
-    fun forkProject(@Path("id") projectId: Long): Single<String>
+    fun forkProject(@Path("id") projectId: Long): Completable
 
     @POST(API_VERSION + "/projects/{id}/star")
     fun starProject(@Path("id") projectId: Long): Single<Response<Project>>
@@ -144,7 +146,7 @@ interface GitLabService {
 
     @GET(API_VERSION + "/projects/{id}/milestones")
     fun getMilestones(@Path("id") projectId: Long,
-                      @Query("state") state: String): Single<Response<List<Milestone>>>
+                      @Query("state") state: String?): Single<Response<List<Milestone>>>
 
     @GET
     fun getMilestones(@Url url: String): Single<Response<List<Milestone>>>
@@ -279,7 +281,7 @@ interface GitLabService {
 
     @DELETE(API_VERSION + "/projects/{id}/issues/{issue_iid}")
     fun deleteIssue(@Path("id") projectId: Long,
-                    @Path("issue_iid") issueIid: Long): Single<String>
+                    @Path("issue_iid") issueIid: Long): Completable
 
     /* --- REPOSITORY --- */
 
@@ -289,9 +291,9 @@ interface GitLabService {
     @GET(API_VERSION + "/projects/{id}/repository/contributors")
     fun getContributors(@Path("id") projectId: String): Single<List<Contributor>>
 
-    @GET(API_VERSION + "/projects/{id}/repository/tree")
+    @GET(API_VERSION + "/projects/{id}/repository/tree?per_page=" + MAX_TREE_PER_PAGE)
     fun getTree(@Path("id") projectId: Long,
-                @Query("ref_name") branchName: String?,
+                @Query("ref") ref: String?,
                 @Query("path") path: String?): Single<List<RepositoryTreeObject>>
 
     @GET(API_VERSION + "/projects/{id}/repository/files/{file_path}")

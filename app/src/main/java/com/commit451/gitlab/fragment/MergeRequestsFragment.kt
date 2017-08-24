@@ -193,6 +193,7 @@ class MergeRequestsFragment : ButterKnifeFragment() {
         loadData()
     }
 
+    @Suppress("UNUSED_PARAMETER", "unused")
     @Subscribe
     fun onMergeRequestChanged(event: MergeRequestChangedEvent) {
         loadData()

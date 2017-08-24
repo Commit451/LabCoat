@@ -220,6 +220,7 @@ class IssuesFragment : ButterKnifeFragment() {
         adapterIssue.updateIssue(event.issue)
     }
 
+    @Suppress("UNUSED_PARAMETER")
     @Subscribe
     fun onEvent(event: IssueReloadEvent) {
         loadData()

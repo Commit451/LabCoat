@@ -51,7 +51,7 @@ class MilestonesFragment : ButterKnifeFragment() {
     lateinit var adapterMilestones: MilestoneAdapter
     lateinit var layoutManagerMilestones: LinearLayoutManager
 
-    lateinit var state: String
+    var state: String? = null
     lateinit var states: Array<String>
     var project: Project? = null
     var loading = false

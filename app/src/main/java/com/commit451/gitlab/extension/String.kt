@@ -4,6 +4,7 @@ import android.os.Build
 import android.text.Html
 import android.text.Spanned
 import android.util.Base64
+import com.commit451.gitlab.model.Account
 import io.reactivex.Single
 
 fun String.base64Decode(): Single<ByteArray> {
@@ -22,4 +23,11 @@ fun String.formatAsHtml(imageGetter: Html.ImageGetter? = null, tagHandler: Html.
     } else {
         return Html.fromHtml(this, imageGetter, tagHandler)
     }
+}
+
+fun String.resolveUrl(account: Account): String {
+    if (startsWith("/")){
+        return account.serverUrl + this.replaceFirst("/", "")
+    }
+    return this
 }

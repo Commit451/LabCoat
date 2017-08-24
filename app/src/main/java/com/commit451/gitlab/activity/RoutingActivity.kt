@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
+import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.data.Prefs
 import com.commit451.gitlab.navigation.DeepLinker
@@ -60,7 +61,7 @@ class RoutingActivity : BaseActivity() {
         override fun onRouteUnknown(uri: Uri?) {
             Timber.d("Route unknown. Opening original Uri if it exists")
             if (originalUri != null) {
-                IntentUtil.openPage(this@RoutingActivity, uri!!.toString())
+                IntentUtil.openPage(this@RoutingActivity, uri!!.toString(), App.get().currentAccount)
             } else {
                 Toast.makeText(this@RoutingActivity, R.string.deeplink_navigate_error, Toast.LENGTH_SHORT)
                         .show()

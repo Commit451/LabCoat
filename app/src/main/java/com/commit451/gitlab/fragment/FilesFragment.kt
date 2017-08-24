@@ -52,7 +52,7 @@ class FilesFragment : ButterKnifeFragment() {
     lateinit var adapterBreadcrumb: BreadcrumbAdapter
 
     var project: Project? = null
-    var branchName: String? = null
+    lateinit var ref: String
     var currentPath = ""
 
     val filesAdapterListener = object : FileAdapter.Listener {
@@ -62,25 +62,25 @@ class FilesFragment : ButterKnifeFragment() {
 
         override fun onFileClicked(treeItem: RepositoryTreeObject) {
             val path = currentPath + treeItem.name
-            Navigator.navigateToFile(activity, project!!.id, path, branchName!!)
+            Navigator.navigateToFile(activity, project!!.id, path, ref)
         }
 
         override fun onCopyClicked(treeItem: RepositoryTreeObject) {
             val clipboard = activity.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
             // Creates a new text clip to put on the clipboard
-            val clip = ClipData.newPlainText(treeItem.name, treeItem.getUrl(project!!, branchName!!, currentPath).toString())
+            val clip = ClipData.newPlainText(treeItem.name, treeItem.getUrl(project!!, ref, currentPath).toString())
             clipboard.primaryClip = clip
             Snackbar.make(root, R.string.copied_to_clipboard, Snackbar.LENGTH_SHORT)
                     .show()
         }
 
         override fun onShareClicked(treeItem: RepositoryTreeObject) {
-            IntentUtil.share(view!!, treeItem.getUrl(project!!, branchName!!, currentPath))
+            IntentUtil.share(view!!, treeItem.getUrl(project!!, ref, currentPath))
         }
 
         override fun onOpenInBrowserClicked(treeItem: RepositoryTreeObject) {
-            IntentUtil.openPage(activity as BaseActivity, treeItem.getUrl(project!!, branchName!!, currentPath).toString())
+            IntentUtil.openPage(activity as BaseActivity, treeItem.getUrl(project!!, ref, currentPath).toString(), App.get().currentAccount)
         }
     }
 
@@ -90,8 +90,6 @@ class FilesFragment : ButterKnifeFragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        App.bus().register(this)
 
         adapterFiles = FileAdapter(filesAdapterListener)
         list.layoutManager = LinearLayoutManager(activity)
@@ -106,11 +104,13 @@ class FilesFragment : ButterKnifeFragment() {
 
         if (activity is ProjectActivity) {
             project = (activity as ProjectActivity).project
-            branchName = (activity as ProjectActivity).getRefRef()
+            ref = (activity as ProjectActivity).getRefRef()!!
             loadData("")
         } else {
             throw IllegalStateException("Incorrect parent activity")
         }
+
+        App.bus().register(this)
     }
 
     override fun onBackPressed(): Boolean {
@@ -131,22 +131,20 @@ class FilesFragment : ButterKnifeFragment() {
     }
 
     override fun loadData() {
+
         loadData(currentPath)
     }
 
     fun loadData(newPath: String) {
-        if (view == null) {
-            return
-        }
 
-        if (project == null || branchName.isNullOrEmpty()) {
+        if (project == null || ref.isNullOrEmpty()) {
             swipeRefreshLayout.isRefreshing = false
             return
         }
 
         swipeRefreshLayout.isRefreshing = true
 
-        App.get().gitLab.getTree(project!!.id, branchName!!, newPath)
+        App.get().gitLab.getTree(project!!.id, ref, newPath)
                 .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .subscribe(object : CustomSingleObserver<List<RepositoryTreeObject>>() {
 
@@ -209,10 +207,11 @@ class FilesFragment : ButterKnifeFragment() {
     }
 
 
+    @Suppress("unused")
     @Subscribe
     fun onProjectReload(event: ProjectReloadEvent) {
         project = event.project
-        branchName = event.branchName
+        ref = event.branchName
 
         loadData("")
     }
