@@ -19,9 +19,9 @@ import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.AttachActivity
 import com.commit451.gitlab.adapter.MergeRequestDetailAdapter
+import com.commit451.gitlab.api.response.FileUploadResponse
 import com.commit451.gitlab.event.MergeRequestChangedEvent
 import com.commit451.gitlab.extension.setup
-import com.commit451.gitlab.api.response.FileUploadResponse
 import com.commit451.gitlab.model.api.MergeRequest
 import com.commit451.gitlab.model.api.Note
 import com.commit451.gitlab.model.api.Project
@@ -91,7 +91,7 @@ class MergeRequestDiscussionFragment : ButterKnifeFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.fragment_merge_request_discussion, container, false)
+        return inflater?.inflate(R.layout.fragment_merge_request_discussion, container, false)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
@@ -99,7 +99,7 @@ class MergeRequestDiscussionFragment : ButterKnifeFragment() {
         teleprinter = Teleprinter(activity)
 
         adapterMergeRequestDetail = MergeRequestDetailAdapter(activity, mergeRequest, project)
-        layoutManagerNotes = LinearLayoutManager(activity)
+        layoutManagerNotes = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, true)
         listNotes.layoutManager = layoutManagerNotes
         listNotes.adapter = adapterMergeRequestDetail
         listNotes.addOnScrollListener(onScrollListener)
