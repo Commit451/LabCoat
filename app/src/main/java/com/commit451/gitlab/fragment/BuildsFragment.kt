@@ -134,7 +134,7 @@ class BuildsFragment : ButterKnifeFragment() {
         nextPageUrl = null
         loading = true
         App.get().gitLab.getBuilds(project!!.id, scope)
-                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
+                .setup(bindUntilEvent(FragmentEvent.STOP))
                 .subscribe(object : CustomResponseSingleObserver<List<Build>>() {
 
                     override fun error(e: Throwable) {

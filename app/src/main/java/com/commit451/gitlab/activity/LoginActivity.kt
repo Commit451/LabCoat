@@ -307,7 +307,7 @@ class LoginActivity : BaseActivity() {
         } else {
             textInputLayoutUrl.error = null
         }
-        if (url[url.length - 1] != '/') {
+        if (!url.endsWith("/")) {
             textInputLayoutUrl.error = getString(R.string.please_end_your_url_with_a_slash)
             return false
         } else {
@@ -392,9 +392,9 @@ class LoginActivity : BaseActivity() {
             d.findViewById<TextView>(android.R.id.message).movementMethod = LinkMovementMethod.getInstance()
         } else if (t is SSLPeerUnverifiedException && t.message?.toLowerCase()!!.contains("hostname")) {
             account.trustedHostname = null
-            val hostNameVerifier = gitLab?.client?.hostnameVerifier() as CustomHostnameVerifier
-            val finalHostname = hostNameVerifier.lastFailedHostname
-            val d = AlertDialog.Builder(this)
+            val hostNameVerifier = gitLab?.client?.hostnameVerifier() as? CustomHostnameVerifier
+            val finalHostname = hostNameVerifier?.lastFailedHostname
+            val dialog = AlertDialog.Builder(this)
                     .setTitle(R.string.hostname_title)
                     .setMessage(R.string.hostname_message)
                     .setPositiveButton(R.string.ok_button) { dialog, _ ->
@@ -408,7 +408,7 @@ class LoginActivity : BaseActivity() {
                     .setNegativeButton(R.string.cancel_button) { dialog, _ -> dialog.dismiss() }
                     .show()
 
-            d.findViewById<TextView>(android.R.id.message).movementMethod = LinkMovementMethod.getInstance()
+            dialog.findViewById<TextView>(android.R.id.message).movementMethod = LinkMovementMethod.getInstance()
         } else if (t is ConnectException) {
             Snackbar.make(root, t.message!!, Snackbar.LENGTH_LONG)
                     .show()

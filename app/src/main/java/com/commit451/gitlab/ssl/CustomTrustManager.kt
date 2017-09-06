@@ -77,7 +77,7 @@ class CustomTrustManager : X509TrustManager {
 
         var keyManagers: Array<KeyManager>? = null
         if (privateKeyAlias != null) {
-            keyManagers = arrayOf<KeyManager>(CustomKeyManager(privateKeyAlias))
+            keyManagers = arrayOf(CustomKeyManager(privateKeyAlias))
         }
 
         try {

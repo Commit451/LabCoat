@@ -20,8 +20,7 @@ object OkHttpClientFactory {
      * @return a configured [okhttp3.OkHttpClient.Builder]
      */
     fun create(account: Account, includeSignInAuthenticator: Boolean = true): OkHttpClient.Builder {
-        // Do we even need a custom trust manager?
-        // Yep. Otherwise SSL won't work properly with some configurations :) -Michi
+        // A custom trust manager, otherwise SSL won't work properly with some configurations
         val customTrustManager = CustomTrustManager()
         customTrustManager.setTrustedCertificate(account.trustedCertificate)
         customTrustManager.setTrustedHostname(account.trustedHostname)
