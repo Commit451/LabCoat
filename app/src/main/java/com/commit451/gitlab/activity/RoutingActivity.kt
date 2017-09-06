@@ -26,7 +26,8 @@ class RoutingActivity : BaseActivity() {
     val navigator = object : RoutingNavigator {
         override fun onRouteToIssue(projectNamespace: String, projectName: String, issueIid: String) {
             Timber.d("Routing to issue")
-            Navigator.navigateToIssue(this@RoutingActivity, projectNamespace, projectName, issueIid)
+            startActivity(LoadSomeInfoActivity.newIssueIntent(this@RoutingActivity, projectNamespace, projectName, issueIid))
+            overridePendingTransition(R.anim.fade_in, R.anim.do_nothing)
         }
 
         override fun onRouteToCommit(projectNamespace: String, projectName: String, commitSha: String) {

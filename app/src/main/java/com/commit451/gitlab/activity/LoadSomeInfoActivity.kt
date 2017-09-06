@@ -31,11 +31,13 @@ class LoadSomeInfoActivity : BaseActivity() {
         private val EXTRA_MERGE_REQUEST = "merge_request"
         private val EXTRA_BUILD_ID = "build_id"
         private val EXTRA_MILESTONE_ID = "milestone_id"
+        private val EXTRA_ISSUE_ID = "issue_id"
 
         private val LOAD_TYPE_DIFF = 0
         private val LOAD_TYPE_MERGE_REQUEST = 1
         private val LOAD_TYPE_BUILD = 2
         private val LOAD_TYPE_MILESTONE = 3
+        private val LOAD_TYPE_ISSUE = 4
 
         fun newIntent(context: Context, namespace: String, projectName: String, commitSha: String): Intent {
             val intent = Intent(context, LoadSomeInfoActivity::class.java)
@@ -43,6 +45,15 @@ class LoadSomeInfoActivity : BaseActivity() {
             intent.putExtra(EXTRA_PROJECT_NAME, projectName)
             intent.putExtra(EXTRA_COMMIT_SHA, commitSha)
             intent.putExtra(EXTRA_LOAD_TYPE, LOAD_TYPE_DIFF)
+            return intent
+        }
+
+        fun newIssueIntent(context: Context, namespace: String, projectName: String, issueId: String): Intent {
+            val intent = Intent(context, LoadSomeInfoActivity::class.java)
+            intent.putExtra(EXTRA_PROJECT_NAMESPACE, namespace)
+            intent.putExtra(EXTRA_PROJECT_NAME, projectName)
+            intent.putExtra(EXTRA_ISSUE_ID, issueId)
+            intent.putExtra(EXTRA_LOAD_TYPE, LOAD_TYPE_ISSUE)
             return intent
         }
 
@@ -94,7 +105,7 @@ class LoadSomeInfoActivity : BaseActivity() {
         Timber.d("Loading some info type: %d", loadType)
 
         when (loadType) {
-            LOAD_TYPE_DIFF, LOAD_TYPE_MERGE_REQUEST, LOAD_TYPE_BUILD, LOAD_TYPE_MILESTONE -> {
+            LOAD_TYPE_DIFF, LOAD_TYPE_MERGE_REQUEST, LOAD_TYPE_BUILD, LOAD_TYPE_MILESTONE, LOAD_TYPE_ISSUE -> {
                 val namespace = intent.getStringExtra(EXTRA_PROJECT_NAMESPACE)
                 val project = intent.getStringExtra(EXTRA_PROJECT_NAME)
                 App.get().gitLab.getProject(namespace, project)
@@ -122,6 +133,24 @@ class LoadSomeInfoActivity : BaseActivity() {
     fun loadNextPart(response: Project) {
         project = response
         when (loadType) {
+            LOAD_TYPE_ISSUE -> {
+                val issueId = intent.getStringExtra(EXTRA_ISSUE_ID)
+                App.get().gitLab.getIssue(response.id, issueId)
+                        .setup(bindToLifecycle())
+                        .subscribe(object : CustomSingleObserver<Issue>() {
+
+                            override fun error(t: Throwable) {
+                                Timber.e(t)
+                                this@LoadSomeInfoActivity.onError()
+                            }
+
+                            override fun success(issue: Issue) {
+                                Navigator.navigateToIssue(this@LoadSomeInfoActivity, project!!, issue)
+                                finish()
+                            }
+                        })
+                return
+            }
             LOAD_TYPE_DIFF -> {
                 val sha = intent.getStringExtra(EXTRA_COMMIT_SHA)
                 App.get().gitLab.getCommit(response.id, sha)
