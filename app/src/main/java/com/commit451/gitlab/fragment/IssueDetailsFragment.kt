@@ -75,6 +75,7 @@ class IssueDetailsFragment : ButterKnifeFragment() {
 
             }
         })
+        listLabels.adapter = adapterLabels
 
         bind(issue, project)
 
