@@ -191,7 +191,7 @@ class MergeRequestDiscussionFragment : ButterKnifeFragment() {
 
     fun postNote(message: String) {
 
-        if (message.isNullOrBlank()) {
+        if (message.isBlank()) {
             return
         }
 
@@ -202,7 +202,7 @@ class MergeRequestDiscussionFragment : ButterKnifeFragment() {
         teleprinter.hideKeyboard()
         sendMessageView.clearText()
 
-        App.get().gitLab.addMergeRequestNote(project.id, mergeRequest.id, message)
+        App.get().gitLab.addMergeRequestNote(project.id, mergeRequest.iid, message)
                 .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .subscribe(object : CustomSingleObserver<Note>() {
 

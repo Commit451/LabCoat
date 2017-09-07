@@ -19,7 +19,6 @@ import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.AttachActivity
 import com.commit451.gitlab.adapter.IssueNotesAdapter
-import com.commit451.gitlab.adapter.MergeRequestDetailAdapter
 import com.commit451.gitlab.api.response.FileUploadResponse
 import com.commit451.gitlab.event.IssueChangedEvent
 import com.commit451.gitlab.extension.setup
@@ -169,7 +168,7 @@ class IssueDiscussionFragment : ButterKnifeFragment() {
 
     fun loadMoreNotes() {
         adapter.setLoading(true)
-        App.get().gitLab.getMergeRequestNotes(nextPageUrl!!.toString())
+        App.get().gitLab.getIssueNotes(nextPageUrl!!.toString())
                 .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .subscribe(object : CustomResponseSingleObserver<List<Note>>() {
 
@@ -192,7 +191,7 @@ class IssueDiscussionFragment : ButterKnifeFragment() {
 
     fun postNote(message: String) {
 
-        if (message.isNullOrBlank()) {
+        if (message.isBlank()) {
             return
         }
 
@@ -217,7 +216,7 @@ class IssueDiscussionFragment : ButterKnifeFragment() {
                     override fun success(note: Note) {
                         progress.visibility = View.GONE
                         adapter.addNote(note)
-                        listNotes.smoothScrollToPosition(MergeRequestDetailAdapter.headerCount)
+                        listNotes.smoothScrollToPosition(0)
                     }
                 })
     }

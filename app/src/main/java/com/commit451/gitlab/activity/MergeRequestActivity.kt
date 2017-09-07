@@ -87,7 +87,7 @@ class MergeRequestActivity : BaseActivity() {
 
     fun merge() {
         progress.visibility = View.VISIBLE
-        App.get().gitLab.acceptMergeRequest(project.id, mergeRequest.id)
+        App.get().gitLab.acceptMergeRequest(project.id, mergeRequest.iid)
                 .setup(bindToLifecycle())
                 .subscribe(object : CustomResponseSingleObserver<MergeRequest>() {
 

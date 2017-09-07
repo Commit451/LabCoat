@@ -309,7 +309,9 @@
     <!-- Merge Requests -->
     <string name="title_merge_discussion">discussion</string>
     <string name="title_merge_commits">Commits</string>
+    <string name="title_merge_details">Details</string>
     <string-array name="merge_request_tabs">
+        <item>@string/title_merge_details</item>
         <item>@string/title_merge_discussion</item>
         <item>@string/title_merge_commits</item>
     </string-array>

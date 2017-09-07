@@ -238,9 +238,6 @@ interface GitLabService {
     fun getIssue(@Path("id") projectId: Long,
                  @Path("issue_id") issueId: String): Single<Issue>
 
-    @GET(API_VERSION + "/projects/{id}/issues")
-    fun getIssuesByIid(@Path("id") projectId: Long): Single<List<Issue>>
-
     @FormUrlEncoded
     @POST(API_VERSION + "/projects/{id}/issues")
     fun createIssue(@Path("id") projectId: Long,

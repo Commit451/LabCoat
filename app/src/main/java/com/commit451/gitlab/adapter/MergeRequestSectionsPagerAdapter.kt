@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentPagerAdapter
 
 import com.commit451.gitlab.R
 import com.commit451.gitlab.fragment.MergeRequestCommitsFragment
+import com.commit451.gitlab.fragment.MergeRequestDetailsFragment
 import com.commit451.gitlab.fragment.MergeRequestDiscussionFragment
 import com.commit451.gitlab.model.api.MergeRequest
 import com.commit451.gitlab.model.api.Project
@@ -20,8 +21,9 @@ class MergeRequestSectionsPagerAdapter(context: Context, fm: FragmentManager, pr
     override fun getItem(position: Int): Fragment {
 
         when (position) {
-            0 -> return MergeRequestDiscussionFragment.newInstance(project, mergeRequest)
-            1 -> return MergeRequestCommitsFragment.newInstance(project, mergeRequest)
+            0 -> return MergeRequestDetailsFragment.newInstance(project, mergeRequest)
+            1 -> return MergeRequestDiscussionFragment.newInstance(project, mergeRequest)
+            2 -> return MergeRequestCommitsFragment.newInstance(project, mergeRequest)
         }
 
         throw IllegalStateException("Position exceeded on view pager")
