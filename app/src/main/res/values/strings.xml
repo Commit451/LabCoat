@@ -190,6 +190,12 @@
     <string name="root">ROOT</string>
 
     <!-- Issues -->
+    <string name="issue_tab_discussion">Discussion</string>
+    <string name="issue_tab_details">Details</string>
+    <string-array name="issue_tabs">
+        <item>@string/issue_tab_details</item>
+        <item>@string/issue_tab_discussion</item>
+    </string-array>
     <string name="new_note_hint">Add comment</string>
     <string name="add_issue">Add new issue</string>
     <string name="add_issue_dialog_title">New issue</string>
@@ -303,7 +309,9 @@
     <!-- Merge Requests -->
     <string name="title_merge_discussion">discussion</string>
     <string name="title_merge_commits">Commits</string>
+    <string name="title_merge_details">Details</string>
     <string-array name="merge_request_tabs">
+        <item>@string/title_merge_details</item>
         <item>@string/title_merge_discussion</item>
         <item>@string/title_merge_commits</item>
     </string-array>

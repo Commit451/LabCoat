@@ -10,7 +10,7 @@ object MoshiProvider {
     val moshi: Moshi by lazy {
         Moshi.Builder()
                 .add(DashDateAdapter())
-                .add(Date::class.java, Rfc3339DateJsonAdapter())
+                .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
                 .build()
     }
 }

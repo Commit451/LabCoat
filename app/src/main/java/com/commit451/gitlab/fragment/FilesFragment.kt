@@ -52,7 +52,7 @@ class FilesFragment : ButterKnifeFragment() {
     lateinit var adapterBreadcrumb: BreadcrumbAdapter
 
     var project: Project? = null
-    lateinit var ref: String
+    var ref: String? = null
     var currentPath = ""
 
     val filesAdapterListener = object : FileAdapter.Listener {
@@ -62,30 +62,30 @@ class FilesFragment : ButterKnifeFragment() {
 
         override fun onFileClicked(treeItem: RepositoryTreeObject) {
             val path = currentPath + treeItem.name
-            Navigator.navigateToFile(activity, project!!.id, path, ref)
+            Navigator.navigateToFile(activity, project!!.id, path, ref!!)
         }
 
         override fun onCopyClicked(treeItem: RepositoryTreeObject) {
             val clipboard = activity.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
             // Creates a new text clip to put on the clipboard
-            val clip = ClipData.newPlainText(treeItem.name, treeItem.getUrl(project!!, ref, currentPath).toString())
+            val clip = ClipData.newPlainText(treeItem.name, treeItem.getUrl(project!!, ref!!, currentPath).toString())
             clipboard.primaryClip = clip
             Snackbar.make(root, R.string.copied_to_clipboard, Snackbar.LENGTH_SHORT)
                     .show()
         }
 
         override fun onShareClicked(treeItem: RepositoryTreeObject) {
-            IntentUtil.share(view!!, treeItem.getUrl(project!!, ref, currentPath))
+            IntentUtil.share(view!!, treeItem.getUrl(project!!, ref!!, currentPath))
         }
 
         override fun onOpenInBrowserClicked(treeItem: RepositoryTreeObject) {
-            IntentUtil.openPage(activity as BaseActivity, treeItem.getUrl(project!!, ref, currentPath).toString(), App.get().currentAccount)
+            IntentUtil.openPage(activity as BaseActivity, treeItem.getUrl(project!!, ref!!, currentPath).toString(), App.get().currentAccount)
         }
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.fragment_files, container, false)
+        return inflater?.inflate(R.layout.fragment_files, container, false)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
@@ -104,7 +104,7 @@ class FilesFragment : ButterKnifeFragment() {
 
         if (activity is ProjectActivity) {
             project = (activity as ProjectActivity).project
-            ref = (activity as ProjectActivity).getRefRef()!!
+            ref = (activity as ProjectActivity).getRefRef()
             loadData("")
         } else {
             throw IllegalStateException("Incorrect parent activity")

@@ -32,7 +32,7 @@ class IssueLabelsAdapter(private val listener: IssueLabelsAdapter.Listener) : Re
         return values.size
     }
 
-    fun setLabels(labels: Collection<String>) {
+    fun setLabels(labels: Collection<String>?) {
         values.clear()
         addLabels(labels)
     }

@@ -1,6 +1,14 @@
 Change Log
 ==========
 
+Version 2.4.11
+----------------------------
+
+- Reverse the order of notes on merge requests and issues to make it more logical, like a chat app
+- Crash fixes related to viewing a project
+- Fix issue with Android Oreo auto-fill
+- Adding a comment to a merge request or accepting one was not working. Now it will!
+
 Version 2.4.10
 ----------------------------
 

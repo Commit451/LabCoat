@@ -18,11 +18,13 @@ import com.commit451.addendum.parceler.putParcelerParcelable
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.AttachActivity
-import com.commit451.gitlab.adapter.MergeRequestDetailAdapter
+import com.commit451.gitlab.adapter.NotesAdapter
 import com.commit451.gitlab.api.response.FileUploadResponse
-import com.commit451.gitlab.event.MergeRequestChangedEvent
+import com.commit451.gitlab.event.IssueChangedEvent
 import com.commit451.gitlab.extension.setup
-import com.commit451.gitlab.model.api.*
+import com.commit451.gitlab.model.api.Issue
+import com.commit451.gitlab.model.api.Note
+import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.navigation.TransitionFactory
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.rx.CustomSingleObserver
@@ -41,15 +43,15 @@ class IssueDiscussionFragment : ButterKnifeFragment() {
     companion object {
 
         private val KEY_PROJECT = "project"
-        private val KEY_MERGE_REQUEST = "merge_request"
+        private val KEY_ISSUE = "issue"
 
         private val REQUEST_ATTACH = 1
 
-        fun newInstance(project: Project, issue: Issue): IssueDiscussionFragment{
+        fun newInstance(project: Project, issue: Issue): IssueDiscussionFragment {
             val fragment = IssueDiscussionFragment()
             val args = Bundle()
             args.putParcelerParcelable(KEY_PROJECT, project)
-            args.putParcelerParcelable(KEY_MERGE_REQUEST, issue)
+            args.putParcelerParcelable(KEY_ISSUE, issue)
             fragment.arguments = args
             return fragment
         }
@@ -61,12 +63,12 @@ class IssueDiscussionFragment : ButterKnifeFragment() {
     @BindView(R.id.send_message_view) lateinit var sendMessageView: SendMessageView
     @BindView(R.id.progress) lateinit var progress: View
 
-    lateinit var adapterMergeRequestDetail: MergeRequestDetailAdapter
+    lateinit var adapter: NotesAdapter
     lateinit var layoutManagerNotes: LinearLayoutManager
     lateinit var teleprinter: Teleprinter
 
     lateinit var project: Project
-    lateinit var mergeRequest: MergeRequest
+    lateinit var issue: Issue
     var nextPageUrl: Uri? = null
     var loading: Boolean = false
 
@@ -85,21 +87,21 @@ class IssueDiscussionFragment : ButterKnifeFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         project = arguments.getParcelerParcelable<Project>(KEY_PROJECT)!!
-        mergeRequest = arguments.getParcelerParcelable<MergeRequest>(KEY_MERGE_REQUEST)!!
+        issue = arguments.getParcelerParcelable<Issue>(KEY_ISSUE)!!
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.fragment_merge_request_discussion, container, false)
+        return inflater?.inflate(R.layout.fragment_merge_request_discussion, container, false)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         teleprinter = Teleprinter(activity)
 
-        adapterMergeRequestDetail = MergeRequestDetailAdapter(activity, mergeRequest, project)
-        layoutManagerNotes = LinearLayoutManager(activity)
+        adapter = NotesAdapter(project)
+        layoutManagerNotes = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, true)
         listNotes.layoutManager = layoutManagerNotes
-        listNotes.adapter = adapterMergeRequestDetail
+        listNotes.adapter = adapter
         listNotes.addOnScrollListener(onScrollListener)
 
         sendMessageView.callback = object : SendMessageView.Callback {
@@ -123,7 +125,7 @@ class IssueDiscussionFragment : ButterKnifeFragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            REQUEST_ATTACH ->  {
+            REQUEST_ATTACH -> {
                 if (resultCode == RESULT_OK) {
                     val response = data!!.getParcelerParcelableExtra<FileUploadResponse>(AttachActivity.KEY_FILE_UPLOAD_RESPONSE)!!
                     progress.visibility = View.GONE
@@ -143,7 +145,7 @@ class IssueDiscussionFragment : ButterKnifeFragment() {
 
     fun loadNotes() {
         swipeRefreshLayout.isRefreshing = true
-        App.get().gitLab.getMergeRequestNotes(project.id, mergeRequest.iid)
+        App.get().gitLab.getIssueNotes(project.id, issue.iid)
                 .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .subscribe(object : CustomResponseSingleObserver<List<Note>>() {
 
@@ -159,37 +161,37 @@ class IssueDiscussionFragment : ButterKnifeFragment() {
                         swipeRefreshLayout.isRefreshing = false
                         loading = false
                         nextPageUrl = LinkHeaderParser.parse(response()).next
-                        adapterMergeRequestDetail.setNotes(notes)
+                        adapter.setNotes(notes)
                     }
                 })
     }
 
     fun loadMoreNotes() {
-        adapterMergeRequestDetail.setLoading(true)
-        App.get().gitLab.getMergeRequestNotes(nextPageUrl!!.toString())
+        adapter.setLoading(true)
+        App.get().gitLab.getIssueNotes(nextPageUrl!!.toString())
                 .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .subscribe(object : CustomResponseSingleObserver<List<Note>>() {
 
                     override fun error(e: Throwable) {
                         loading = false
                         Timber.e(e)
-                        adapterMergeRequestDetail.setLoading(false)
+                        adapter.setLoading(false)
                         Snackbar.make(root, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
                                 .show()
                     }
 
                     override fun responseNonNullSuccess(notes: List<Note>) {
-                        adapterMergeRequestDetail.setLoading(false)
+                        adapter.setLoading(false)
                         loading = false
                         nextPageUrl = LinkHeaderParser.parse(response()).next
-                        adapterMergeRequestDetail.addNotes(notes)
+                        adapter.addNotes(notes)
                     }
                 })
     }
 
     fun postNote(message: String) {
 
-        if (message.isNullOrBlank()) {
+        if (message.isBlank()) {
             return
         }
 
@@ -200,7 +202,7 @@ class IssueDiscussionFragment : ButterKnifeFragment() {
         teleprinter.hideKeyboard()
         sendMessageView.clearText()
 
-        App.get().gitLab.addMergeRequestNote(project.id, mergeRequest.id, message)
+        App.get().gitLab.addIssueNote(project.id, issue.iid, message)
                 .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .subscribe(object : CustomSingleObserver<Note>() {
 
@@ -213,16 +215,16 @@ class IssueDiscussionFragment : ButterKnifeFragment() {
 
                     override fun success(note: Note) {
                         progress.visibility = View.GONE
-                        adapterMergeRequestDetail.addNote(note)
-                        listNotes.smoothScrollToPosition(MergeRequestDetailAdapter.headerCount)
+                        adapter.addNote(note)
+                        listNotes.smoothScrollToPosition(0)
                     }
                 })
     }
 
     @Subscribe
-    fun onMergeRequestChangedEvent(event: MergeRequestChangedEvent) {
-        if (mergeRequest.id == event.mergeRequest.id) {
-            mergeRequest = event.mergeRequest
+    fun onEvent(event: IssueChangedEvent) {
+        if (issue.iid == event.issue.iid) {
+            issue = event.issue
             loadNotes()
         }
     }

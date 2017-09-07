@@ -18,7 +18,7 @@ apply plugin: 'io.fabric'
 
 def versionMajor = 2
 def versionMinor = 4
-def versionPatch = 10
+def versionPatch = 11
 def versionBuild = 0 // bump for dogfood builds, public betas, etc.
 
 android {
@@ -98,9 +98,9 @@ android {
 }
 
 ext {
-    supportLibVersion = '26.0.1'
+    supportLibVersion = '26.0.2'
     retrofitVersion = '2.3.0'
-    okHttpVersion = '3.8.1'
+    okHttpVersion = '3.9.0'
     butterknifeVersion = '8.8.1'
     parcelerVersion = '1.1.9'
     reptarVersion = '2.5.1'
@@ -190,7 +190,7 @@ dependencies {
 
     implementation 'com.github.chrisbanes:PhotoView:2.1.3'
 
-    implementation 'me.zhanghai.android.materialprogressbar:library:1.4.1'
+    implementation 'me.zhanghai.android.materialprogressbar:library:1.4.2'
 
     implementation 'com.github.Jawnnypoo:PhysicsLayout:2.1.0'
 
@@ -213,7 +213,7 @@ dependencies {
         exclude group: 'org.json', module: 'json'
     }
 
-    implementation 'com.github.jkwiecien:EasyImage:2.0.2'
+    implementation 'com.github.jkwiecien:EasyImage:2.0.3'
 
     implementation 'com.atlassian.commonmark:commonmark:0.9.0'
 
@@ -230,7 +230,7 @@ dependencies {
         exclude group: 'com.jakewharton.threetenabp', module: 'threetenabp'
     }
 
-    androidTestImplementation ('com.android.support.test:runner:1.0.0') {
+    androidTestImplementation ('com.android.support.test:runner:1.0.1') {
         exclude group:'com.android.support', module:'support-annotations'
     }
 }

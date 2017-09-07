@@ -19,9 +19,10 @@ import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.AttachActivity
 import com.commit451.gitlab.adapter.MergeRequestDetailAdapter
+import com.commit451.gitlab.adapter.NotesAdapter
+import com.commit451.gitlab.api.response.FileUploadResponse
 import com.commit451.gitlab.event.MergeRequestChangedEvent
 import com.commit451.gitlab.extension.setup
-import com.commit451.gitlab.api.response.FileUploadResponse
 import com.commit451.gitlab.model.api.MergeRequest
 import com.commit451.gitlab.model.api.Note
 import com.commit451.gitlab.model.api.Project
@@ -63,7 +64,7 @@ class MergeRequestDiscussionFragment : ButterKnifeFragment() {
     @BindView(R.id.send_message_view) lateinit var sendMessageView: SendMessageView
     @BindView(R.id.progress) lateinit var progress: View
 
-    lateinit var adapterMergeRequestDetail: MergeRequestDetailAdapter
+    lateinit var adapterNotes: NotesAdapter
     lateinit var layoutManagerNotes: LinearLayoutManager
     lateinit var teleprinter: Teleprinter
 
@@ -91,17 +92,17 @@ class MergeRequestDiscussionFragment : ButterKnifeFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.fragment_merge_request_discussion, container, false)
+        return inflater?.inflate(R.layout.fragment_merge_request_discussion, container, false)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         teleprinter = Teleprinter(activity)
 
-        adapterMergeRequestDetail = MergeRequestDetailAdapter(activity, mergeRequest, project)
-        layoutManagerNotes = LinearLayoutManager(activity)
+        adapterNotes = NotesAdapter(project)
+        layoutManagerNotes = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, true)
         listNotes.layoutManager = layoutManagerNotes
-        listNotes.adapter = adapterMergeRequestDetail
+        listNotes.adapter = adapterNotes
         listNotes.addOnScrollListener(onScrollListener)
 
         sendMessageView.callback = object : SendMessageView.Callback {
@@ -161,13 +162,13 @@ class MergeRequestDiscussionFragment : ButterKnifeFragment() {
                         swipeRefreshLayout.isRefreshing = false
                         loading = false
                         nextPageUrl = LinkHeaderParser.parse(response()).next
-                        adapterMergeRequestDetail.setNotes(notes)
+                        adapterNotes.setNotes(notes)
                     }
                 })
     }
 
     fun loadMoreNotes() {
-        adapterMergeRequestDetail.setLoading(true)
+        adapterNotes.setLoading(true)
         App.get().gitLab.getMergeRequestNotes(nextPageUrl!!.toString())
                 .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .subscribe(object : CustomResponseSingleObserver<List<Note>>() {
@@ -175,23 +176,23 @@ class MergeRequestDiscussionFragment : ButterKnifeFragment() {
                     override fun error(e: Throwable) {
                         loading = false
                         Timber.e(e)
-                        adapterMergeRequestDetail.setLoading(false)
+                        adapterNotes.setLoading(false)
                         Snackbar.make(root, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
                                 .show()
                     }
 
                     override fun responseNonNullSuccess(notes: List<Note>) {
-                        adapterMergeRequestDetail.setLoading(false)
+                        adapterNotes.setLoading(false)
                         loading = false
                         nextPageUrl = LinkHeaderParser.parse(response()).next
-                        adapterMergeRequestDetail.addNotes(notes)
+                        adapterNotes.addNotes(notes)
                     }
                 })
     }
 
     fun postNote(message: String) {
 
-        if (message.isNullOrBlank()) {
+        if (message.isBlank()) {
             return
         }
 
@@ -202,7 +203,7 @@ class MergeRequestDiscussionFragment : ButterKnifeFragment() {
         teleprinter.hideKeyboard()
         sendMessageView.clearText()
 
-        App.get().gitLab.addMergeRequestNote(project.id, mergeRequest.id, message)
+        App.get().gitLab.addMergeRequestNote(project.id, mergeRequest.iid, message)
                 .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
                 .subscribe(object : CustomSingleObserver<Note>() {
 
@@ -215,12 +216,13 @@ class MergeRequestDiscussionFragment : ButterKnifeFragment() {
 
                     override fun success(note: Note) {
                         progress.visibility = View.GONE
-                        adapterMergeRequestDetail.addNote(note)
+                        adapterNotes.addNote(note)
                         listNotes.smoothScrollToPosition(MergeRequestDetailAdapter.headerCount)
                     }
                 })
     }
 
+    @Suppress("unused")
     @Subscribe
     fun onMergeRequestChangedEvent(event: MergeRequestChangedEvent) {
         if (mergeRequest.id == event.mergeRequest.id) {

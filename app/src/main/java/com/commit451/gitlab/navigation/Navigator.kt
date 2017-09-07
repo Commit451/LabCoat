@@ -132,10 +132,6 @@ object Navigator {
         activity.startActivity(IssueActivity.newIntent(activity, project, issue))
     }
 
-    fun navigateToIssue(activity: Activity, namespace: String, projectName: String, issueIid: String) {
-        activity.startActivity(IssueActivity.newIntent(activity, namespace, projectName, issueIid))
-    }
-
     fun navigateToMergeRequest(activity: Activity, project: Project, mergeRequest: MergeRequest) {
         val intent = MergeRequestActivity.newIntent(activity, project, mergeRequest)
         activity.startActivity(intent)
