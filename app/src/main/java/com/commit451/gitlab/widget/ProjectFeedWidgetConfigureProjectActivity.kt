@@ -12,7 +12,7 @@ import com.commit451.addendum.parceler.getParcelerParcelableExtra
 import com.commit451.addendum.parceler.putParcelerParcelableExtra
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.BaseActivity
-import com.commit451.gitlab.adapter.ProjectPagerAdapter
+import com.commit451.gitlab.adapter.ProjectsPagerAdapter
 import com.commit451.gitlab.api.GitLabFactory
 import com.commit451.gitlab.api.GitLabService
 import com.commit451.gitlab.api.OkHttpClientFactory
@@ -52,7 +52,7 @@ class ProjectFeedWidgetConfigureProjectActivity : BaseActivity(), ProjectsFragme
         val account = intent.getParcelerParcelableExtra<Account>(EXTRA_ACCOUNT)!!
         gitLabInstance = GitLabFactory.create(account, OkHttpClientFactory.create(account, false).build())
 
-        viewPager.adapter = ProjectPagerAdapter(this, supportFragmentManager)
+        viewPager.adapter = ProjectsPagerAdapter(this, supportFragmentManager)
         tabLayout.setupWithViewPager(viewPager)
     }
 

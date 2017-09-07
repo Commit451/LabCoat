@@ -12,7 +12,7 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
-import com.commit451.gitlab.adapter.ProjectPagerAdapter
+import com.commit451.gitlab.adapter.ProjectsPagerAdapter
 import com.commit451.gitlab.event.CloseDrawerEvent
 import com.commit451.gitlab.navigation.Navigator
 import org.greenrobot.eventbus.Subscribe
@@ -57,7 +57,7 @@ class ProjectsActivity : BaseActivity() {
         toolbar.setNavigationOnClickListener { drawerLayout.openDrawer(GravityCompat.START) }
         toolbar.inflateMenu(R.menu.search)
         toolbar.setOnMenuItemClickListener(onMenuItemClickListener)
-        viewPager.adapter = ProjectPagerAdapter(this, supportFragmentManager)
+        viewPager.adapter = ProjectsPagerAdapter(this, supportFragmentManager)
         tabLayout.setupWithViewPager(viewPager)
     }
 
