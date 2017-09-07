@@ -11,7 +11,7 @@ import java.util.*
 /**
  * Nice notes
  */
-class IssueNotesAdapter(private val project: Project) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class NotesAdapter(private val project: Project) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
 

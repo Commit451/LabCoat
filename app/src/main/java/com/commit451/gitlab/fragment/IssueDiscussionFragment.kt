@@ -18,7 +18,7 @@ import com.commit451.addendum.parceler.putParcelerParcelable
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.AttachActivity
-import com.commit451.gitlab.adapter.IssueNotesAdapter
+import com.commit451.gitlab.adapter.NotesAdapter
 import com.commit451.gitlab.api.response.FileUploadResponse
 import com.commit451.gitlab.event.IssueChangedEvent
 import com.commit451.gitlab.extension.setup
@@ -63,7 +63,7 @@ class IssueDiscussionFragment : ButterKnifeFragment() {
     @BindView(R.id.send_message_view) lateinit var sendMessageView: SendMessageView
     @BindView(R.id.progress) lateinit var progress: View
 
-    lateinit var adapter: IssueNotesAdapter
+    lateinit var adapter: NotesAdapter
     lateinit var layoutManagerNotes: LinearLayoutManager
     lateinit var teleprinter: Teleprinter
 
@@ -98,7 +98,7 @@ class IssueDiscussionFragment : ButterKnifeFragment() {
         super.onViewCreated(view, savedInstanceState)
         teleprinter = Teleprinter(activity)
 
-        adapter = IssueNotesAdapter(project)
+        adapter = NotesAdapter(project)
         layoutManagerNotes = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, true)
         listNotes.layoutManager = layoutManagerNotes
         listNotes.adapter = adapter
