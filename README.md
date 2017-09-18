@@ -22,9 +22,9 @@ To build, run the following.
 ```
 
 ## Contributing
-Please fork this repository and contribute back! All Merge Requests should be made against the `develop` branch, as it is the active branch for development. Please make your best effort to break up commits as much as possible to improve the reviewing process.
+Please fork this repository and contribute back! Please make your best effort to break up commits as much as possible to improve the reviewing process.
 
-If you are making substantial changes, please refer to Commit 451's style [guidelines](https://github.com/Commit451/guidelines) for Android
+If you are making substantial changes, please refer to Commit 451's style [guidelines](https://github.com/Commit451/guidelines) for Android/Kotlin
 
 License
 --------

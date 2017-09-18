@@ -58,7 +58,7 @@ open class User {
     @field:Json(name = "email")
     var email: String? = null
     @field:Json(name = "theme_id")
-    var themeId: Int = 0
+    var themeId: Int? = 0
     @field:Json(name = "color_scheme_id")
     var colorSchemeId: Int = 0
     @field:Json(name = "projects_limit")

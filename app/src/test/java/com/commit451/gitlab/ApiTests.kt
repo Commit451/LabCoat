@@ -17,7 +17,7 @@ class ApiTests {
         private val FAKE_GROUP_PROJECT_ID: Long = 376651
 
         private var fakeProject: Project? = null
-        private var gitLab: GitLabService? = null
+        private lateinit var gitLab: GitLabService
 
         @JvmStatic
         @BeforeClass
@@ -26,7 +26,7 @@ class ApiTests {
 
             gitLab = TestUtil.login()
 
-            val projectResponse = gitLab!!
+            val projectResponse = gitLab
                     .getProject(FAKE_GROUP_PROJECT_ID.toString())
                     .blockingGet()
             assertNotNull(projectResponse)
@@ -37,7 +37,7 @@ class ApiTests {
 
     @Test
     fun getProjects() {
-        val projectsResponse = gitLab!!
+        val projectsResponse = gitLab
                 .getAllProjects()
                 .blockingGet()
         TestUtil.assertRetrofitResponseSuccess(projectsResponse)
@@ -46,7 +46,7 @@ class ApiTests {
 
     @Test
     fun getGroups() {
-        val groupResponse = gitLab!!
+        val groupResponse = gitLab
                 .getGroups()
                 .blockingGet()
         TestUtil.assertRetrofitResponseSuccess(groupResponse)
@@ -57,7 +57,7 @@ class ApiTests {
     fun getGroupMembers() {
         //GitLabService group id
         val gitLabGroupId: Long = 9970
-        val groupResponse = gitLab!!
+        val groupResponse = gitLab
                 .getGroupMembers(gitLabGroupId)
                 .blockingGet()
         TestUtil.assertRetrofitResponseSuccess(groupResponse)
@@ -67,7 +67,7 @@ class ApiTests {
     @Test
     fun getIssues() {
         val defaultState = "opened"
-        val issuesResponse = gitLab!!
+        val issuesResponse = gitLab
                 .getIssues(fakeProject!!.id, defaultState)
                 .blockingGet()
         TestUtil.assertRetrofitResponseSuccess(issuesResponse)
@@ -78,7 +78,7 @@ class ApiTests {
     fun getFiles() {
         val defaultBranch = "master"
         val currentPath = ""
-        val treeResponse = gitLab!!
+        val treeResponse = gitLab
                 .getTree(fakeProject!!.id, defaultBranch, currentPath)
                 .blockingGet()
         assertNotNull(treeResponse)
@@ -87,7 +87,7 @@ class ApiTests {
     @Test
     fun getCommits() {
         val defaultBranch = "master"
-        val commitsResponse = gitLab!!
+        val commitsResponse = gitLab
                 .getCommits(fakeProject!!.id, defaultBranch, 1)
                 .blockingGet()
         assertNotNull(commitsResponse)
@@ -96,7 +96,7 @@ class ApiTests {
     @Test
     fun getMergeRequests() {
         val defaultState = "opened"
-        val mergeRequestResponse = gitLab!!
+        val mergeRequestResponse = gitLab
                 .getMergeRequests(fakeProject!!.id, defaultState)
                 .blockingGet()
         TestUtil.assertRetrofitResponseSuccess(mergeRequestResponse)
@@ -105,7 +105,7 @@ class ApiTests {
 
     @Test
     fun getCurrentUser() {
-        val userFullResponse = gitLab!!
+        val userFullResponse = gitLab
                 .getThisUser()
                 .blockingGet()
         TestUtil.assertRetrofitResponseSuccess(userFullResponse)
