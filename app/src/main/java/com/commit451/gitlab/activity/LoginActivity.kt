@@ -46,6 +46,7 @@ import com.commit451.gitlab.ssl.X509Util
 import com.commit451.teleprinter.Teleprinter
 import okhttp3.Credentials
 import okhttp3.HttpUrl
+import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.HttpException
 import retrofit2.Response
@@ -256,14 +257,21 @@ class LoginActivity : BaseActivity() {
 
                     override fun responseNonNullSuccess(userLogin: User) {
                         account.privateToken = userLogin.privateToken
-                        loadUser()
+                        loadUser(clientBuilder)
                     }
                 })
     }
 
     fun connectByToken() {
         account.privateToken = textToken.text.toString()
-        loadUser()
+        val gitlabClientBuilder = OkHttpClientFactory.create(account, false)
+        if (BuildConfig.DEBUG) {
+            gitlabClientBuilder.addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
+        }
+
+        gitLab = GitLabFactory.createGitLab(account, gitlabClientBuilder)
+
+        loadUser(gitlabClientBuilder)
     }
 
     fun loginWithPrivateToken() {
@@ -335,13 +343,13 @@ class LoginActivity : BaseActivity() {
         }
     }
 
-    fun loadUser() {
-        val gitlabClientBuilder = OkHttpClientFactory.create(account, false)
+    fun loadUser(gitlabClientBuilder: OkHttpClient.Builder) {
         if (BuildConfig.DEBUG) {
             gitlabClientBuilder.addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
         }
-        val gitLab = GitLabFactory.create(account, gitlabClientBuilder.build())
-        gitLab.getThisUser()
+
+        val gitLabService = GitLabFactory.create(account, gitlabClientBuilder.build())
+        gitLabService.getThisUser()
                 .setup(bindToLifecycle())
                 .subscribe(object : CustomResponseSingleObserver<User>() {
 
