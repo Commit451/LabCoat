@@ -23,7 +23,7 @@ import com.commit451.addendum.parceler.putParcelerParcelableExtra
 import com.commit451.alakazam.HideRunnable
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
-import com.commit451.gitlab.adapter.ProjectSectionsPagerAdapter
+import com.commit451.gitlab.adapter.ProjectPagerAdapter
 import com.commit451.gitlab.data.Prefs
 import com.commit451.gitlab.event.ProjectReloadEvent
 import com.commit451.gitlab.extension.setup
@@ -240,7 +240,7 @@ class ProjectActivity : BaseActivity() {
     }
 
     fun setupTabs() {
-        val projectSectionsPagerAdapter = ProjectSectionsPagerAdapter(this, supportFragmentManager)
+        val projectSectionsPagerAdapter = ProjectPagerAdapter(this, supportFragmentManager)
         viewPager.adapter = projectSectionsPagerAdapter
         tabLayout.setupWithViewPager(viewPager)
     }

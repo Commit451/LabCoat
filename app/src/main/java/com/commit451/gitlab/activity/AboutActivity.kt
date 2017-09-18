@@ -12,7 +12,6 @@ import android.support.design.widget.Snackbar
 import android.support.v7.widget.Toolbar
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
@@ -52,7 +51,6 @@ class AboutActivity : BaseActivity() {
 
     @BindView(R.id.root) lateinit var root: ViewGroup
     @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
-    @BindView(R.id.contributors) lateinit var textContributors: TextView
     @BindView(R.id.physics_layout) lateinit var physicsLayout: PhysicsFlowLayout
     @BindView(R.id.progress) lateinit var progress: View
 

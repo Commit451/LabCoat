@@ -18,7 +18,6 @@ import com.commit451.addendum.parceler.putParcelerParcelable
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.AttachActivity
-import com.commit451.gitlab.adapter.MergeRequestDetailAdapter
 import com.commit451.gitlab.adapter.NotesAdapter
 import com.commit451.gitlab.api.response.FileUploadResponse
 import com.commit451.gitlab.event.MergeRequestChangedEvent
@@ -217,7 +216,7 @@ class MergeRequestDiscussionFragment : ButterKnifeFragment() {
                     override fun success(note: Note) {
                         progress.visibility = View.GONE
                         adapterNotes.addNote(note)
-                        listNotes.smoothScrollToPosition(MergeRequestDetailAdapter.headerCount)
+                        listNotes.smoothScrollToPosition(0)
                     }
                 })
     }

@@ -20,7 +20,7 @@ import com.commit451.addendum.parceler.getParcelerParcelableExtra
 import com.commit451.addendum.parceler.putParcelerParcelableExtra
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
-import com.commit451.gitlab.adapter.BuildSectionsPagerAdapter
+import com.commit451.gitlab.adapter.BuildPagerAdapter
 import com.commit451.gitlab.event.BuildChangedEvent
 import com.commit451.gitlab.extension.getDownloadBuildUrl
 import com.commit451.gitlab.model.api.Build
@@ -177,7 +177,7 @@ class BuildActivity : BaseActivity() {
     }
 
     private fun setupTabs() {
-        val sectionsPagerAdapter = BuildSectionsPagerAdapter(
+        val sectionsPagerAdapter = BuildPagerAdapter(
                 this,
                 supportFragmentManager,
                 project,

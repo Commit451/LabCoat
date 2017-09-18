@@ -13,7 +13,7 @@ import com.commit451.gitlab.model.api.MergeRequest
 import com.commit451.gitlab.model.api.Project
 
 /**
- * Projects Pager Adapter
+ * Merge request pager adapter
  */
 class MergeRequestSectionsPagerAdapter(context: Context, fm: FragmentManager, private val project: Project, private val mergeRequest: MergeRequest) : FragmentPagerAdapter(fm) {
     private val titles: Array<String> = context.resources.getStringArray(R.array.merge_request_tabs)

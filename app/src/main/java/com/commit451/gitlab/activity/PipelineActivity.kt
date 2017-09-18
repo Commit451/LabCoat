@@ -15,7 +15,7 @@ import com.commit451.addendum.parceler.getParcelerParcelableExtra
 import com.commit451.addendum.parceler.putParcelerParcelableExtra
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
-import com.commit451.gitlab.adapter.PipelineSectionsPagerAdapter
+import com.commit451.gitlab.adapter.PipelinePagerAdapter
 import com.commit451.gitlab.event.PipelineChangedEvent
 import com.commit451.gitlab.model.api.Pipeline
 import com.commit451.gitlab.model.api.Project
@@ -126,7 +126,7 @@ class PipelineActivity : BaseActivity() {
     }
 
     private fun setupTabs() {
-        val sectionsPagerAdapter = PipelineSectionsPagerAdapter(
+        val sectionsPagerAdapter = PipelinePagerAdapter(
                 this,
                 supportFragmentManager,
                 project,
