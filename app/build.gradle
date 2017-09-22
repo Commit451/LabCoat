@@ -19,7 +19,7 @@ apply plugin: 'io.fabric'
 
 def versionMajor = 2
 def versionMinor = 4
-def versionPatch = 11
+def versionPatch = 12
 def versionBuild = 0 // bump for dogfood builds, public betas, etc.
 
 android {
@@ -216,7 +216,7 @@ dependencies {
 
     implementation 'com.github.jkwiecien:EasyImage:2.0.3'
 
-    implementation 'com.atlassian.commonmark:commonmark:0.9.0'
+    implementation 'com.atlassian.commonmark:commonmark:0.10.0'
 
     normalImplementation('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
         transitive = true

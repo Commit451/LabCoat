@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+Version 2.4.12
+----------------------------
+
+- Fix issue with advanced login failing thanks to @bschuhm
+
 Version 2.4.11
 ----------------------------
 
