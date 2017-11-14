@@ -54,24 +54,24 @@ class PickTagFragment : ButterKnifeFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        projectId = arguments.getLong(EXTRA_PROJECT_ID)
+        projectId = arguments?.getLong(EXTRA_PROJECT_ID)!!
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.fragment_pick_tag, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_pick_tag, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val ref = arguments.getParcelerParcelable<Ref>(EXTRA_CURRENT_REF)
+        val ref = arguments?.getParcelerParcelable<Ref>(EXTRA_CURRENT_REF)!!
         adapterTags = TagAdapter(ref, object : TagAdapter.Listener {
             override fun onTagClicked(entry: Tag) {
                 val data = Intent()
                 val newRef = Ref(Ref.TYPE_TAG, entry.name)
                 data.putParcelerParcelableExtra(PickBranchOrTagActivity.EXTRA_REF, newRef)
-                activity.setResult(Activity.RESULT_OK, data)
-                activity.finish()
+                activity?.setResult(Activity.RESULT_OK, data)
+                activity?.finish()
             }
         })
         listProjects.layoutManager = LinearLayoutManager(activity)

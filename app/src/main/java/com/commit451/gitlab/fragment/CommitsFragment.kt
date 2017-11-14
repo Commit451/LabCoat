@@ -57,23 +57,23 @@ class CommitsFragment : ButterKnifeFragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.fragment_commits, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_commits, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         App.bus().register(this)
 
         adapterCommits = CommitAdapter(object : CommitAdapter.Listener {
             override fun onCommitClicked(commit: RepositoryCommit) {
-                Navigator.navigateToDiffActivity(activity, project!!, commit)
+                Navigator.navigateToDiffActivity(baseActivty, project!!, commit)
             }
         })
         layoutManagerCommits = LinearLayoutManager(activity)
         listCommits.layoutManager = layoutManagerCommits
-        listCommits.addItemDecoration(DividerItemDecoration(activity))
+        listCommits.addItemDecoration(DividerItemDecoration(baseActivty))
         listCommits.adapter = adapterCommits
         listCommits.addOnScrollListener(onScrollListener)
 

@@ -9,7 +9,7 @@ import timber.log.Timber
  */
 class CrashlyticsWtfTree : Timber.Tree() {
 
-    override fun log(priority: Int, tag: String?, message: String?, t: Throwable?) {
+    override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
         if (priority == Log.ASSERT) {
             Crashlytics.log(Log.ASSERT, tag, message)
         }

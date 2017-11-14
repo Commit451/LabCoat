@@ -59,15 +59,15 @@ class IssueDetailsFragment : ButterKnifeFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        project = arguments.getParcelerParcelable<Project>(KEY_PROJECT)!!
-        issue = arguments.getParcelerParcelable<Issue>(KEY_ISSUE)!!
+        project = arguments?.getParcelerParcelable<Project>(KEY_PROJECT)!!
+        issue = arguments?.getParcelerParcelable<Issue>(KEY_ISSUE)!!
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater?.inflate(R.layout.fragment_issue_details, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_issue_details, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         adapterLabels = IssueLabelsAdapter(object : IssueLabelsAdapter.Listener {
@@ -108,7 +108,7 @@ class IssueDetailsFragment : ButterKnifeFragment() {
         }
         author += resources.getString(R.string.created_issue)
         if (issue.createdAt != null) {
-            author = author + " " + DateUtil.getRelativeTimeSpanString(context, issue.createdAt)
+            author = author + " " + DateUtil.getRelativeTimeSpanString(baseActivty, issue.createdAt)
         }
         textAuthor.text = author
         if (issue.milestone != null) {

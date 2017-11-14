@@ -62,11 +62,11 @@ class FilesFragment : ButterKnifeFragment() {
 
         override fun onFileClicked(treeItem: RepositoryTreeObject) {
             val path = currentPath + treeItem.name
-            Navigator.navigateToFile(activity, project!!.id, path, ref!!)
+            Navigator.navigateToFile(baseActivty, project!!.id, path, ref!!)
         }
 
         override fun onCopyClicked(treeItem: RepositoryTreeObject) {
-            val clipboard = activity.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clipboard = baseActivty.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
             // Creates a new text clip to put on the clipboard
             val clip = ClipData.newPlainText(treeItem.name, treeItem.getUrl(project!!, ref!!, currentPath).toString())
@@ -84,16 +84,16 @@ class FilesFragment : ButterKnifeFragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater?.inflate(R.layout.fragment_files, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_files, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         adapterFiles = FileAdapter(filesAdapterListener)
         list.layoutManager = LinearLayoutManager(activity)
-        list.addItemDecoration(DividerItemDecoration(activity))
+        list.addItemDecoration(DividerItemDecoration(baseActivty))
         list.adapter = adapterFiles
 
         adapterBreadcrumb = BreadcrumbAdapter()

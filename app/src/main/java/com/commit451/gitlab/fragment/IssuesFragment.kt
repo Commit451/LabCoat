@@ -75,7 +75,7 @@ class IssuesFragment : ButterKnifeFragment() {
     @OnClick(R.id.add_issue_button)
     fun onAddIssueClick(fab: View) {
         if (project != null) {
-            Navigator.navigateToAddIssue(activity, fab, project!!)
+            Navigator.navigateToAddIssue(baseActivty, fab, project!!)
         } else {
             Snackbar.make(root, getString(R.string.wait_for_project_to_load), Snackbar.LENGTH_SHORT)
                     .show()
@@ -88,11 +88,11 @@ class IssuesFragment : ButterKnifeFragment() {
         states = resources.getStringArray(R.array.issue_state_values)
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.fragment_issues, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_issues, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         App.bus().register(this)
@@ -100,7 +100,7 @@ class IssuesFragment : ButterKnifeFragment() {
         adapterIssue = IssueAdapter(object : IssueAdapter.Listener {
             override fun onIssueClicked(issue: Issue) {
                 if (project != null) {
-                    Navigator.navigateToIssue(activity, project!!, issue)
+                    Navigator.navigateToIssue(baseActivty, project!!, issue)
                 } else {
                     Snackbar.make(root, getString(R.string.wait_for_project_to_load), Snackbar.LENGTH_SHORT)
                             .show()
@@ -109,7 +109,7 @@ class IssuesFragment : ButterKnifeFragment() {
         })
         layoutManagerIssues = LinearLayoutManager(activity)
         listIssues.layoutManager = layoutManagerIssues
-        listIssues.addItemDecoration(DividerItemDecoration(activity))
+        listIssues.addItemDecoration(DividerItemDecoration(baseActivty))
         listIssues.adapter = adapterIssue
         listIssues.addOnScrollListener(onScrollListener)
 

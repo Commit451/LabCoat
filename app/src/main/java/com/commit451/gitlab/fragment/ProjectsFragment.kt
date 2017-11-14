@@ -105,21 +105,21 @@ class ProjectsFragment : ButterKnifeFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mode = arguments.getInt(EXTRA_MODE)
-        query = arguments.getString(EXTRA_QUERY)
+        mode = arguments?.getInt(EXTRA_MODE)!!
+        query = arguments?.getString(EXTRA_QUERY)!!
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.fragment_projects, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_projects, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapterProjects = ProjectAdapter(activity, object : ProjectAdapter.Listener {
+        adapterProjects = ProjectAdapter(baseActivty, object : ProjectAdapter.Listener {
             override fun onProjectClicked(project: Project) {
                 if (listener == null) {
-                    Navigator.navigateToProject(activity, project)
+                    Navigator.navigateToProject(baseActivty, project)
                 } else {
                     listener!!.onProjectClicked(project)
                 }
@@ -127,7 +127,7 @@ class ProjectsFragment : ButterKnifeFragment() {
         })
         layoutManagerProjects = LinearLayoutManager(activity)
         listProjects.layoutManager = layoutManagerProjects
-        listProjects.addItemDecoration(DividerItemDecoration(activity))
+        listProjects.addItemDecoration(DividerItemDecoration(baseActivty))
         listProjects.adapter = adapterProjects
         listProjects.addOnScrollListener(onScrollListener)
 
@@ -160,7 +160,7 @@ class ProjectsFragment : ButterKnifeFragment() {
             }
             MODE_GROUP -> {
                 showLoading()
-                val group = arguments.getParcelerParcelable<Group>(EXTRA_GROUP) ?: throw IllegalStateException("You must also pass a group if you want to show a groups projects")
+                val group = arguments?.getParcelerParcelable<Group>(EXTRA_GROUP) ?: throw IllegalStateException("You must also pass a group if you want to show a groups projects")
                 actuallyLoadIt(getGitLab().getGroupProjects(group.id))
             }
             else -> throw IllegalStateException(mode.toString() + " is not defined")

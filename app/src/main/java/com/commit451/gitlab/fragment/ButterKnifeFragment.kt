@@ -11,11 +11,11 @@ import butterknife.Unbinder
  */
 open class ButterKnifeFragment : BaseFragment() {
 
-    var unbinder: Unbinder? = null
+    private var unbinder: Unbinder? = null
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        unbinder = ButterKnife.bind(this, view!!)
+        unbinder = ButterKnife.bind(this, view)
     }
 
     override fun onDestroyView() {

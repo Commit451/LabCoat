@@ -68,21 +68,21 @@ class TodoFragment : ButterKnifeFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mode = arguments.getInt(EXTRA_MODE)
+        mode = arguments?.getInt(EXTRA_MODE)!!
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.fragment_todo, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_todo, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         adapterTodos = TodoAdapter(object : TodoAdapter.Listener {
             override fun onTodoClicked(todo: Todo) {
                 val targetUrl = todo.targetUrl
                 if (targetUrl != null) {
-                    Navigator.navigateToUrl(activity, targetUrl, App.get().getAccount())
+                    Navigator.navigateToUrl(baseActivty, targetUrl, App.get().getAccount())
                 } else {
                     Snackbar.make(swipeRefreshLayout, R.string.not_a_valid_url, Snackbar.LENGTH_SHORT)
                 }

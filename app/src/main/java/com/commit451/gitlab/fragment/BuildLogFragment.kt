@@ -50,15 +50,15 @@ class BuildLogFragment : ButterKnifeFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        project = arguments.getParcelerParcelable<Project>(KEY_PROJECT)!!
-        build = arguments.getParcelerParcelable<Build>(KEY_BUILD)!!
+        project = arguments?.getParcelerParcelable<Project>(KEY_PROJECT)!!
+        build = arguments?.getParcelerParcelable<Build>(KEY_BUILD)!!
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.fragment_build_log, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_build_log, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         swipeRefreshLayout.setOnRefreshListener { loadData() }

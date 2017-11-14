@@ -54,24 +54,24 @@ class PickBranchFragment : ButterKnifeFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        projectId = arguments.getLong(EXTRA_PROJECT_ID)
+        projectId = arguments?.getLong(EXTRA_PROJECT_ID)!!
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.fragment_pick_branch, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_pick_branch, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val existingRef = arguments.getParcelerParcelable<Ref>(EXTRA_REF)
+        val existingRef = arguments?.getParcelerParcelable<Ref>(EXTRA_REF)!!
         adapterBranches = BranchAdapter(existingRef, object : BranchAdapter.Listener {
             override fun onBranchClicked(entry: Branch) {
                 val data = Intent()
                 val ref = Ref(Ref.TYPE_BRANCH, entry.name)
                 data.putParcelerParcelableExtra(PickBranchOrTagActivity.EXTRA_REF, ref)
-                activity.setResult(Activity.RESULT_OK, data)
-                activity.finish()
+                activity?.setResult(Activity.RESULT_OK, data)
+                activity?.finish()
             }
         })
         listProjects.layoutManager = LinearLayoutManager(activity)

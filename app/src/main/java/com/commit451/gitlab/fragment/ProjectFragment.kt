@@ -60,9 +60,9 @@ class ProjectFragment : ButterKnifeFragment() {
         if (project != null) {
             val owner = project.owner
             if (owner != null) {
-                Navigator.navigateToUser(activity, owner)
+                Navigator.navigateToUser(baseActivty, owner)
             } else {
-                Navigator.navigateToGroup(activity, project.namespace.id)
+                Navigator.navigateToGroup(baseActivty, project.namespace.id)
             }
         }
     }
@@ -70,7 +70,7 @@ class ProjectFragment : ButterKnifeFragment() {
     @OnClick(R.id.root_fork)
     fun onForkClicked() {
         project?.let {
-            AlertDialog.Builder(activity)
+            AlertDialog.Builder(baseActivty)
                     .setTitle(R.string.project_fork_title)
                     .setMessage(R.string.project_fork_message)
                     .setNegativeButton(R.string.cancel, null)
@@ -120,15 +120,11 @@ class ProjectFragment : ButterKnifeFragment() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_project, container, false)
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.fragment_project, container, false)
-    }
-
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         App.bus().register(this)

@@ -67,19 +67,19 @@ class UsersFragment : ButterKnifeFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        query = arguments.getString(EXTRA_QUERY)
+        query = arguments?.getString(EXTRA_QUERY)
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.fragment_projects, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_projects, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         adapterUser = UserAdapter(object : UserAdapter.Listener {
             override fun onUserClicked(user: User, userViewHolder: UserViewHolder) {
-                Navigator.navigateToUser(activity, userViewHolder.image, user)
+                Navigator.navigateToUser(baseActivty, userViewHolder.image, user)
             }
         })
         layoutManagerUser = GridLayoutManager(activity, 2)

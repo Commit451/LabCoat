@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 
 import com.commit451.gitlab.App
+import com.commit451.gitlab.activity.BaseActivity
 import com.commit451.gitlab.event.ReloadDataEvent
 import com.trello.rxlifecycle2.components.support.RxFragment
 
@@ -13,9 +14,12 @@ import org.greenrobot.eventbus.Subscribe
 
 open class BaseFragment : RxFragment() {
 
-    var baseEventReceiver: EventReceiver? = null
+    private var baseEventReceiver: EventReceiver? = null
+    val baseActivty by lazy {
+        activity as BaseActivity
+    }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         baseEventReceiver = EventReceiver()

@@ -53,14 +53,14 @@ class FeedFragment : ButterKnifeFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        feedUrl = Uri.parse(arguments.getString(EXTRA_FEED_URL))
+        feedUrl = Uri.parse(arguments?.getString(EXTRA_FEED_URL))
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.fragment_feed, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_feed, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         adapterFeed = FeedAdapter(object : FeedAdapter.Listener {
@@ -69,12 +69,12 @@ class FeedFragment : ButterKnifeFragment() {
                     Snackbar.make(swipeRefreshLayout, R.string.not_a_valid_url, Snackbar.LENGTH_SHORT)
                             .show()
                 } else {
-                    Navigator.navigateToUrl(activity, entry.link.href, App.get().getAccount())
+                    Navigator.navigateToUrl(baseActivty, entry.link.href, App.get().getAccount())
                 }
             }
         })
         listEntries.layoutManager = LinearLayoutManager(activity)
-        listEntries.addItemDecoration(DividerItemDecoration(activity))
+        listEntries.addItemDecoration(DividerItemDecoration(baseActivty))
         listEntries.adapter = adapterFeed
 
         swipeRefreshLayout.setOnRefreshListener { loadData() }
@@ -84,12 +84,12 @@ class FeedFragment : ButterKnifeFragment() {
 
     override fun onResume() {
         super.onResume()
-        SimpleChromeCustomTabs.getInstance().connectTo(activity)
+        SimpleChromeCustomTabs.getInstance().connectTo(baseActivty)
     }
 
     override fun onPause() {
         if (SimpleChromeCustomTabs.getInstance().isConnected) {
-            SimpleChromeCustomTabs.getInstance().disconnectFrom(activity)
+            SimpleChromeCustomTabs.getInstance().disconnectFrom(baseActivty)
         }
         super.onPause()
     }

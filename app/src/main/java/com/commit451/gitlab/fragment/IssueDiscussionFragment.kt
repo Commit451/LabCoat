@@ -86,15 +86,15 @@ class IssueDiscussionFragment : ButterKnifeFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        project = arguments.getParcelerParcelable<Project>(KEY_PROJECT)!!
-        issue = arguments.getParcelerParcelable<Issue>(KEY_ISSUE)!!
+        project = arguments?.getParcelerParcelable<Project>(KEY_PROJECT)!!
+        issue = arguments?.getParcelerParcelable<Issue>(KEY_ISSUE)!!
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater?.inflate(R.layout.fragment_merge_request_discussion, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_merge_request_discussion, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         teleprinter = Teleprinter(activity)
 
@@ -110,8 +110,8 @@ class IssueDiscussionFragment : ButterKnifeFragment() {
             }
 
             override fun onAttachmentClicked() {
-                val intent = AttachActivity.newIntent(activity, project)
-                val activityOptions = TransitionFactory.createFadeInOptions(activity)
+                val intent = AttachActivity.newIntent(baseActivty, project)
+                val activityOptions = TransitionFactory.createFadeInOptions(baseActivty)
                 startActivityForResult(intent, REQUEST_ATTACH, activityOptions.toBundle())
             }
         }

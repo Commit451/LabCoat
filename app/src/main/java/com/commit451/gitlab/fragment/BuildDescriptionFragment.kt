@@ -61,15 +61,15 @@ class BuildDescriptionFragment : ButterKnifeFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        project = arguments.getParcelerParcelable<Project>(KEY_PROJECT)!!
-        build = arguments.getParcelerParcelable<Build>(KEY_BUILD)!!
+        project = arguments?.getParcelerParcelable<Project>(KEY_PROJECT)!!
+        build = arguments?.getParcelerParcelable<Build>(KEY_BUILD)!!
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.fragment_build_description, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_build_description, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         swipeRefreshLayout.setOnRefreshListener { load() }
@@ -122,13 +122,13 @@ class BuildDescriptionFragment : ButterKnifeFragment() {
         val timeTaken = DateUtil.getTimeTaken(startedTime, finishedTime)
         val duration = String.format(getString(R.string.build_duration), timeTaken)
         textDuration.text = duration
-        val created = String.format(getString(R.string.build_created), DateUtil.getRelativeTimeSpanString(activity, build.createdAt))
+        val created = String.format(getString(R.string.build_created), DateUtil.getRelativeTimeSpanString(baseActivty, build.createdAt))
         textCreated.text = created
         val ref = String.format(getString(R.string.build_ref), build.ref)
         textRef.text = ref
         val finishedAt = build.finishedAt
         if (finishedAt != null) {
-            val finished = String.format(getString(R.string.build_finished), DateUtil.getRelativeTimeSpanString(activity, finishedAt))
+            val finished = String.format(getString(R.string.build_finished), DateUtil.getRelativeTimeSpanString(baseActivty, finishedAt))
             textFinished.text = finished
             textFinished.visibility = View.VISIBLE
         } else {

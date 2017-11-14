@@ -76,27 +76,27 @@ class MergeRequestsFragment : ButterKnifeFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        state = context.resources.getString(R.string.merge_request_state_value_default)
-        states = context.resources.getStringArray(R.array.merge_request_state_values)
+        state = baseActivty.resources.getString(R.string.merge_request_state_value_default)
+        states = baseActivty.resources.getStringArray(R.array.merge_request_state_values)
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.fragment_merge_request, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_merge_request, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         App.bus().register(this)
 
         adapterMergeRequests = MergeRequestAdapter(object : MergeRequestAdapter.Listener {
             override fun onMergeRequestClicked(mergeRequest: MergeRequest) {
-                Navigator.navigateToMergeRequest(activity, project!!, mergeRequest)
+                Navigator.navigateToMergeRequest(baseActivty, project!!, mergeRequest)
             }
         })
         layoutManagerMergeRequests = LinearLayoutManager(activity)
         listMergeRequests.layoutManager = layoutManagerMergeRequests
-        listMergeRequests.addItemDecoration(DividerItemDecoration(activity))
+        listMergeRequests.addItemDecoration(DividerItemDecoration(baseActivty))
         listMergeRequests.adapter = adapterMergeRequests
         listMergeRequests.addOnScrollListener(onScrollListener)
 

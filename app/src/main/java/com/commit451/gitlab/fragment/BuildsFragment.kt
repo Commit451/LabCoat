@@ -76,11 +76,11 @@ class BuildsFragment : ButterKnifeFragment() {
         scope = scopes[0]
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.fragment_builds, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_builds, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         App.bus().register(this)
@@ -88,7 +88,7 @@ class BuildsFragment : ButterKnifeFragment() {
         adapterBuilds = BuildAdapter(object : BuildAdapter.Listener {
             override fun onBuildClicked(build: Build) {
                 if (project != null) {
-                    Navigator.navigateToBuild(activity, project!!, build)
+                    Navigator.navigateToBuild(baseActivty, project!!, build)
                 } else {
                     Snackbar.make(root, getString(R.string.wait_for_project_to_load), Snackbar.LENGTH_SHORT)
                             .show()
@@ -97,7 +97,7 @@ class BuildsFragment : ButterKnifeFragment() {
         })
         layoutManagerBuilds = LinearLayoutManager(activity)
         listBuilds.layoutManager = layoutManagerBuilds
-        listBuilds.addItemDecoration(DividerItemDecoration(activity))
+        listBuilds.addItemDecoration(DividerItemDecoration(baseActivty))
         listBuilds.adapter = adapterBuilds
         listBuilds.addOnScrollListener(onScrollListener)
 

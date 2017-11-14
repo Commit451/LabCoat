@@ -17,8 +17,8 @@ import butterknife.BindView
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.ProjectActivity
-import com.commit451.gitlab.adapter.PipelineAdapter
 import com.commit451.gitlab.adapter.DividerItemDecoration
+import com.commit451.gitlab.adapter.PipelineAdapter
 import com.commit451.gitlab.event.PipelineChangedEvent
 import com.commit451.gitlab.event.ProjectReloadEvent
 import com.commit451.gitlab.extension.setup
@@ -76,11 +76,11 @@ class PipelinesFragment : ButterKnifeFragment() {
         scope = scopes[0]
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.fragment_pipelines, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_pipelines, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         App.bus().register(this)
@@ -88,7 +88,7 @@ class PipelinesFragment : ButterKnifeFragment() {
         adapterPipelines = PipelineAdapter(object : PipelineAdapter.Listener {
             override fun onPipelinesClicked(pipeline: Pipeline) {
                 if (project != null) {
-                    Navigator.navigateToPipeline(activity, project!!, pipeline)
+                    Navigator.navigateToPipeline(baseActivty, project!!, pipeline)
                 } else {
                     Snackbar.make(root, getString(R.string.wait_for_project_to_load), Snackbar.LENGTH_SHORT)
                             .show()
@@ -97,7 +97,7 @@ class PipelinesFragment : ButterKnifeFragment() {
         })
         layoutManagerPipelines = LinearLayoutManager(activity)
         listPipelines.layoutManager = layoutManagerPipelines
-        listPipelines.addItemDecoration(DividerItemDecoration(activity))
+        listPipelines.addItemDecoration(DividerItemDecoration(baseActivty))
         listPipelines.adapter = adapterPipelines
         listPipelines.addOnScrollListener(onScrollListener)
 

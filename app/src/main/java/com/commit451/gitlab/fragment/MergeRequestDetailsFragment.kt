@@ -59,15 +59,15 @@ class MergeRequestDetailsFragment : ButterKnifeFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        project = arguments.getParcelerParcelable<Project>(KEY_PROJECT)!!
-        mergeRequest = arguments.getParcelerParcelable<MergeRequest>(KEY_MERGE_REQUEST)!!
+        project = arguments?.getParcelerParcelable<Project>(KEY_PROJECT)!!
+        mergeRequest = arguments?.getParcelerParcelable<MergeRequest>(KEY_MERGE_REQUEST)!!
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater?.inflate(R.layout.fragment_issue_details, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_issue_details, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         adapterLabels = IssueLabelsAdapter(object : IssueLabelsAdapter.Listener {
@@ -108,7 +108,7 @@ class MergeRequestDetailsFragment : ButterKnifeFragment() {
         }
         author += resources.getString(R.string.created_issue)
         if (mergeRequest.createdAt != null) {
-            author = author + " " + DateUtil.getRelativeTimeSpanString(context, mergeRequest.createdAt)
+            author = author + " " + DateUtil.getRelativeTimeSpanString(baseActivty, mergeRequest.createdAt)
         }
         textAuthor.text = author
         if (mergeRequest.milestone != null) {

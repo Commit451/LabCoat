@@ -70,7 +70,7 @@ class SnippetsFragment : ButterKnifeFragment() {
     @OnClick(R.id.add)
     fun onAddClicked(fab: View) {
         if (project != null) {
-            Navigator.navigateToAddMilestone(activity, fab, project!!)
+            Navigator.navigateToAddMilestone(baseActivty, fab, project!!)
         } else {
             Snackbar.make(root, getString(R.string.wait_for_project_to_load), Snackbar.LENGTH_SHORT)
                     .show()
@@ -83,11 +83,11 @@ class SnippetsFragment : ButterKnifeFragment() {
         states = resources.getStringArray(R.array.milestone_state_values)
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.fragment_snippets, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_snippets, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         App.bus().register(this)
@@ -99,7 +99,7 @@ class SnippetsFragment : ButterKnifeFragment() {
         })
         layoutManagerSnippets = LinearLayoutManager(activity)
         listSnippets.layoutManager = layoutManagerSnippets
-        listSnippets.addItemDecoration(DividerItemDecoration(activity))
+        listSnippets.addItemDecoration(DividerItemDecoration(baseActivty))
         listSnippets.adapter = adapterSnippets
         listSnippets.addOnScrollListener(onScrollListener)
 

@@ -1,7 +1,6 @@
 package com.commit451.gitlab.fragment
 
 import android.os.Bundle
-import android.os.Parcelable
 import android.support.design.widget.Snackbar
 import android.support.v4.widget.SwipeRefreshLayout
 import android.view.LayoutInflater
@@ -9,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import butterknife.BindView
+import com.commit451.addendum.parceler.getParcelerParcelable
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.event.PipelineChangedEvent
@@ -61,15 +61,15 @@ class PipelineJobsFragment : ButterKnifeFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        project = Parcels.unwrap<Project>(arguments.getParcelable<Parcelable>(KEY_PROJECT))
-        pipeline = Parcels.unwrap<Pipeline>(arguments.getParcelable<Parcelable>(KEY_PIPELINE))
+        project = arguments?.getParcelerParcelable(KEY_PROJECT)!!
+        pipeline = arguments?.getParcelerParcelable(KEY_PIPELINE)!!
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.fragment_pipeline_description, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_pipeline_description, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         swipeRefreshLayout.setOnRefreshListener { load() }
@@ -117,7 +117,7 @@ class PipelineJobsFragment : ButterKnifeFragment() {
         val name = String.format(getString(R.string.pipeline_name), pipeline.id)
         textName.text = name
 
-        val created = String.format(getString(R.string.build_created), DateUtil.getRelativeTimeSpanString(activity, pipeline.createdAt))
+        val created = String.format(getString(R.string.build_created), DateUtil.getRelativeTimeSpanString(baseActivty, pipeline.createdAt))
         textCreated.text = created
 
         val finished = String.format(getString(R.string.pipeline_finished), pipeline.finishedAt)
@@ -135,7 +135,7 @@ class PipelineJobsFragment : ButterKnifeFragment() {
 
 
         if (pipeline.finishedAt != null) {
-            val finished = String.format(getString(R.string.pipeline_finished), DateUtil.getRelativeTimeSpanString(activity, pipeline.finishedAt))
+            val finished = String.format(getString(R.string.pipeline_finished), DateUtil.getRelativeTimeSpanString(baseActivty, pipeline.finishedAt))
             textFinished.text = finished
             textFinished.visibility = View.VISIBLE
         } else {

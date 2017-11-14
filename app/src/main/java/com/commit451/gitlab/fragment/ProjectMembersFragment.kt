@@ -72,21 +72,21 @@ class ProjectMembersFragment : ButterKnifeFragment() {
 
     @OnClick(R.id.add_user_button)
     fun onAddUserClick(fab: View) {
-        Navigator.navigateToAddProjectMember(activity, fab, project!!.id)
+        Navigator.navigateToAddProjectMember(baseActivty, fab, project!!.id)
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.fragment_members, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_members, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         App.bus().register(this)
 
         adapterProjectMembers = ProjectMembersAdapter(object : ProjectMembersAdapter.Listener {
             override fun onProjectMemberClicked(member: User, memberGroupViewHolder: ProjectMemberViewHolder) {
-                Navigator.navigateToUser(activity, memberGroupViewHolder.image, member)
+                Navigator.navigateToUser(baseActivty, memberGroupViewHolder.image, member)
             }
 
             override fun onRemoveMember(member: User) {
@@ -108,7 +108,7 @@ class ProjectMembersFragment : ButterKnifeFragment() {
             }
 
             override fun onChangeAccess(member: User) {
-                val accessDialog = AccessDialog(activity, member, project!!.id)
+                val accessDialog = AccessDialog(baseActivty, member, project!!.id)
                 accessDialog.setOnAccessChangedListener(object : AccessDialog.OnAccessChangedListener {
                     override fun onAccessChanged(member: User, accessLevel: String) {
                         loadData()
@@ -118,7 +118,7 @@ class ProjectMembersFragment : ButterKnifeFragment() {
             }
 
             override fun onSeeGroupClicked() {
-                Navigator.navigateToGroup(activity, project!!.namespace.id)
+                Navigator.navigateToGroup(baseActivty, project!!.namespace.id)
             }
         })
         layoutManagerMembers = GridLayoutManager(activity, 2)

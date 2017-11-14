@@ -77,7 +77,7 @@ class GroupMembersFragment : ButterKnifeFragment() {
 
     private val listener = object : GroupMembersAdapter.Listener {
         override fun onUserClicked(member: User, holder: ProjectMemberViewHolder) {
-            Navigator.navigateToUser(activity, holder.image, member)
+            Navigator.navigateToUser(baseActivty, holder.image, member)
         }
 
         override fun onUserRemoveClicked(member: User) {
@@ -99,7 +99,7 @@ class GroupMembersFragment : ButterKnifeFragment() {
         }
 
         override fun onUserChangeAccessClicked(member: User) {
-            val accessDialog = AccessDialog(activity, member, group)
+            val accessDialog = AccessDialog(baseActivty, member, group)
             accessDialog.setOnAccessChangedListener(object : AccessDialog.OnAccessChangedListener {
                 override fun onAccessChanged(member: User, accessLevel: String) {
                     loadData()
@@ -111,14 +111,14 @@ class GroupMembersFragment : ButterKnifeFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        group = arguments.getParcelerParcelable<Group>(KEY_GROUP)!!
+        group = arguments?.getParcelerParcelable<Group>(KEY_GROUP)!!
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.fragment_group_members, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_group_members, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         App.bus().register(this)
@@ -150,7 +150,7 @@ class GroupMembersFragment : ButterKnifeFragment() {
 
     @OnClick(R.id.add_user_button)
     fun onAddUserClick(fab: View) {
-        Navigator.navigateToAddGroupMember(activity, fab, group)
+        Navigator.navigateToAddGroupMember(baseActivty, fab, group)
     }
 
     override fun loadData() {

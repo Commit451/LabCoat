@@ -60,15 +60,15 @@ class PipelineDescriptionFragment : ButterKnifeFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        project = arguments.getParcelerParcelable<Project>(KEY_PROJECT)!!
-        pipeline = arguments.getParcelerParcelable<Pipeline>(KEY_PIPELINE)!!
+        project = arguments?.getParcelerParcelable<Project>(KEY_PROJECT)!!
+        pipeline = arguments?.getParcelerParcelable<Pipeline>(KEY_PIPELINE)!!
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.fragment_pipeline_description, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_pipeline_description, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         swipeRefreshLayout.setOnRefreshListener { load() }
@@ -123,7 +123,7 @@ class PipelineDescriptionFragment : ButterKnifeFragment() {
         val name = String.format(getString(R.string.pipeline_name), pipeline.id)
         textName.text = name
 
-        val created = String.format(getString(R.string.pipeline_created), DateUtil.getRelativeTimeSpanString(activity, createdTime))
+        val created = String.format(getString(R.string.pipeline_created), DateUtil.getRelativeTimeSpanString(baseActivty, createdTime))
         textCreated.text = created
 
         val finished = String.format(getString(R.string.pipeline_finished), pipeline.finishedAt)
@@ -141,7 +141,7 @@ class PipelineDescriptionFragment : ButterKnifeFragment() {
 
 
         if (pipeline.finishedAt != null) {
-            val finished = String.format(getString(R.string.pipeline_finished), DateUtil.getRelativeTimeSpanString(activity, pipeline.finishedAt))
+            val finished = String.format(getString(R.string.pipeline_finished), DateUtil.getRelativeTimeSpanString(baseActivty, pipeline.finishedAt))
             textFinished.text = finished
             textFinished.visibility = View.VISIBLE
         } else {

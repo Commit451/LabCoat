@@ -4,7 +4,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'io.fabric.tools:gradle:1.24.1'
+        classpath 'io.fabric.tools:gradle:1.24.4'
     }
 }
 
@@ -17,14 +17,9 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'io.fabric'
 
-def versionMajor = 2
-def versionMinor = 4
-def versionPatch = 12
-def versionBuild = 0 // bump for dogfood builds, public betas, etc.
-
 android {
-    compileSdkVersion 26
-    buildToolsVersion "26.0.1"
+    compileSdkVersion 27
+    buildToolsVersion "27.0.0"
 
     project.ext {
         LABCOAT_FABRIC_KEY = project.hasProperty("LABCOAT_FABRIC_KEY") ? project.LABCOAT_FABRIC_KEY : ""
@@ -37,10 +32,10 @@ android {
     defaultConfig {
         applicationId "com.commit451.gitlab"
         minSdkVersion 16
-        targetSdkVersion 26
+        targetSdkVersion 27
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        versionCode versionMajor * 1000000 + versionMinor * 10000 + versionPatch * 100 + versionBuild
-        versionName "${versionMajor}.${versionMinor}.${versionPatch}"
+        versionCode 2041200
+        versionName "2.4.12"
         manifestPlaceholders = [fabric_key: project.ext.LABCOAT_FABRIC_KEY]
         vectorDrawables.useSupportLibrary = true
 
@@ -99,16 +94,16 @@ android {
 }
 
 ext {
-    supportLibVersion = '26.1.0'
+    supportLibVersion = '27.0.1'
     retrofitVersion = '2.3.0'
     okHttpVersion = '3.9.0'
     butterknifeVersion = '8.8.1'
     parcelerVersion = '1.1.9'
     reptarVersion = '2.5.1'
-    adapterLayout = '1.1.1'
-    materialDialogsVersion = '0.9.4.7'
+    adapterLayout = '1.1.2'
+    materialDialogsVersion = '0.9.5.0'
     leakCanaryVersion = '1.5.3'
-    addendumVersion = '1.4.0'
+    addendumVersion = '1.6.0'
     alakazamVersion = '1.0.1'
     moshiVersion = '1.5.0'
 }
@@ -147,12 +142,12 @@ dependencies {
     implementation 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.1.0'
     implementation "com.jakewharton:butterknife:$butterknifeVersion"
     kapt "com.jakewharton:butterknife-compiler:$butterknifeVersion"
-    implementation 'com.jakewharton.timber:timber:4.5.1'
+    implementation 'com.jakewharton.timber:timber:4.6.0'
     implementation 'com.jakewharton.threetenabp:threetenabp:1.0.5'
 
-    implementation 'org.greenrobot:eventbus:3.0.0'
+    implementation 'org.greenrobot:eventbus:3.1.1'
 
-    implementation 'io.reactivex.rxjava2:rxjava:2.1.3'
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.6'
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
 
     implementation 'com.trello.rxlifecycle2:rxlifecycle-components:2.2.0'
@@ -181,7 +176,7 @@ dependencies {
     implementation "com.github.Commit451.Alakazam:alakazam:$alakazamVersion"
     implementation "com.github.Commit451.Alakazam:alakazam-kotlin:$alakazamVersion"
     implementation 'com.github.Commit451:Lift:1.2.0'
-    implementation 'com.github.Commit451:okyo:2.0.0'
+    implementation 'com.github.Commit451:okyo:3.0.1'
     implementation 'com.github.Commit451:OkioProGuardRules:1.11.0.0'
     implementation 'com.github.Commit451:RetrofitProguardRules:2.2.0.0'
     implementation 'com.github.Commit451:LoganSquareProGuardRules:1.3.7.0'
@@ -201,7 +196,7 @@ dependencies {
 
     implementation 'com.github.alorma:diff-textview:1.3.0'
 
-    implementation 'com.wdullaer:materialdatetimepicker:3.3.0'
+    implementation 'com.wdullaer:materialdatetimepicker:3.4.0'
 
     implementation 'com.github.novoda:simple-chrome-custom-tabs:0.1.5'
 
