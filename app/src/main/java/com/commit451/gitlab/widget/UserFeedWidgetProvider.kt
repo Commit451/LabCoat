@@ -57,7 +57,8 @@ class UserFeedWidgetProvider : AppWidgetProvider() {
                 //TODO alert the user to this misfortune?
                 Timber.e("Error getting account or feed url")
             } else {
-                val feedUrl = account.serverUrl + "/${account.username}.atom"
+                val feedUrl = account.serverUrl + "${account.username}.atom"
+                Timber.d("Feed url: $feedUrl")
                 val intent = FeedWidgetService.newIntent(context, widgetId, account, feedUrl)
                 // When intents are compared, the extras are ignored, so we need to embed the extras
                 // into the data so that the extras will not be ignored.

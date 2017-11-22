@@ -20,7 +20,8 @@ import butterknife.ButterKnife
 import com.commit451.addendum.parceler.getParcelerParcelableExtra
 import com.commit451.addendum.parceler.putParcelerParcelableExtra
 import com.commit451.addendum.themeAttrColor
-import com.commit451.alakazam.Alakazam
+import com.commit451.alakazam.navigationBarColorAnimator
+
 import com.commit451.easel.Easel
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
@@ -126,7 +127,7 @@ class GroupActivity : BaseActivity() {
         val darkerColor = Easel.darkerColor(vibrantColor)
 
         if (Build.VERSION.SDK_INT >= 21) {
-            Alakazam.navigationBarColorAnimator(window, darkerColor)
+            window.navigationBarColorAnimator(darkerColor)
                     .setDuration(animationTime.toLong())
                     .start()
         }

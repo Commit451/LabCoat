@@ -95,7 +95,7 @@ android {
 ext {
     supportLibVersion = '27.0.1'
     retrofitVersion = '2.3.0'
-    okHttpVersion = '3.9.0'
+    okHttpVersion = '3.9.1'
     butterknifeVersion = '8.8.1'
     parcelerVersion = '1.1.9'
     reptarVersion = '2.5.1'
@@ -103,7 +103,6 @@ ext {
     materialDialogsVersion = '0.9.5.0'
     leakCanaryVersion = '1.5.3'
     addendumVersion = '1.6.0'
-    alakazamVersion = '1.0.1'
     moshiVersion = '1.5.0'
 }
 
@@ -172,8 +171,7 @@ dependencies {
     implementation 'com.github.Commit451:Jounce:1.0.2'
     implementation 'com.github.Commit451:ForegroundViews:2.4.0'
     implementation 'com.github.Commit451:MorphTransitions:2.0.0'
-    implementation "com.github.Commit451.Alakazam:alakazam:$alakazamVersion"
-    implementation "com.github.Commit451.Alakazam:alakazam-kotlin:$alakazamVersion"
+    implementation "com.github.Commit451:Alakazam:2.0.0"
     implementation 'com.github.Commit451:Lift:2.0.1'
     implementation 'com.github.Commit451:okyo:3.0.1'
     implementation 'com.github.Commit451:OkioProGuardRules:1.11.0.0'
@@ -206,7 +204,7 @@ dependencies {
 
     implementation 'de.hdodenhof:circleimageview:2.2.0'
 
-    implementation('com.vdurmont:emoji-java:3.3.0') {
+    implementation('com.vdurmont:emoji-java:4.0.0') {
         exclude group: 'org.json', module: 'json'
     }
 
@@ -214,7 +212,7 @@ dependencies {
 
     implementation 'com.atlassian.commonmark:commonmark:0.10.0'
 
-    normalImplementation('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
+    normalImplementation('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
         transitive = true
     }
 

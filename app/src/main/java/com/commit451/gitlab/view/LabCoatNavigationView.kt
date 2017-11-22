@@ -15,8 +15,7 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import com.commit451.addendum.themeAttrColor
-import com.commit451.alakazam.HideRunnable
-import com.commit451.easel.Easel
+import com.commit451.alakazam.fadeOut
 import com.commit451.gitlab.App
 import com.commit451.gitlab.BuildConfig
 import com.commit451.gitlab.R
@@ -256,7 +255,7 @@ class LabCoatNavigationView : NavigationView {
             listAccounts.animate().alpha(1.0f)
             iconArrow.animate().rotation(180.0f)
         } else {
-            listAccounts.animate().alpha(0.0f).withEndAction(HideRunnable(listAccounts))
+            listAccounts.fadeOut()
             iconArrow.animate().rotation(0.0f)
         }
     }
