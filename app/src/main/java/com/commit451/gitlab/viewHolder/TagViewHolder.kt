@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
+import com.commit451.addendum.recyclerview.context
+import com.commit451.addendum.themeAttrColor
 import com.commit451.easel.Easel
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.api.Tag
@@ -31,7 +33,7 @@ class TagViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     init {
         ButterKnife.bind(this, view)
-        colorHighlighted = Easel.getThemeAttrColor(itemView.context, R.attr.colorControlHighlight)
+        colorHighlighted = context.themeAttrColor(R.attr.colorControlHighlight)
     }
 
     fun bind(tag: Tag, selected: Boolean) {

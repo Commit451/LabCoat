@@ -21,9 +21,9 @@ import timber.log.Timber
  */
 object Prefs {
 
-    val KEY_ACCOUNTS = "accounts"
-    val KEY_STARTING_VIEW = "starting_view"
-    val KEY_REQUIRE_DEVICE_AUTH = "require_device_auth"
+    private const val KEY_ACCOUNTS = "accounts"
+    private const val KEY_STARTING_VIEW = "starting_view"
+    private const val KEY_REQUIRE_DEVICE_AUTH = "require_device_auth"
 
     const val STARTING_VIEW_PROJECTS = 0
     const val STARTING_VIEW_GROUPS = 1

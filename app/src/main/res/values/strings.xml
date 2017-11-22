@@ -93,7 +93,7 @@
     <string name="url_gitlab">https://gitlab.com/</string>
     <string name="user_hint">Username or Email</string>
     <string name="password_hint">Password</string>
-    <string name="token_hint">Private or personal access token</string>
+    <string name="token_hint">Personal Access token</string>
     <string name="login_activity">Login</string>
     <string name="login_progress_dialog">Logging in. Please wait</string>
     <string name="advanced_login">Advanced Login</string>
@@ -107,8 +107,9 @@
     <string name="not_a_valid_private_token">Not a valid private token</string>
     <string name="realm_message">A username and password are being requested by the server.\nThe server says: \"%1$s\"</string>
     <string name="already_logged_in">This account is already logged in</string>
-    <string name="open_login_page">Web Login To Fetch Private Token</string>
-    <string name="open_login_page_for_personal_access_token">Web Login To Fetch Personal Access Token</string>
+    <string name="access_token_info_title">Personal Access Token</string>
+    <string name="access_token_info_message">In order to log in to GitLab, you need to create a personal access token for the app to use. This is more secure than inputting your username and password, since those values could be tracked or used maliciously. You can create a personal access token under your profile preferences. Please select "api" as the scope of this token. You can leave "expires at" blank to never have the token expire.</string>
+    <string name="create_personal_access_token">Create Personal Access Token</string>
 
     <!-- Error messages -->
     <string name="connection_error">Connection failed</string>
@@ -525,5 +526,6 @@
     <string name="no_tags">No tags</string>
     <string name="fetching_some_details">Fetching some details</string>
 
-    <string name="title_activity_fullscreen_image">FullscreenImageActivity</string>
+    <string name="welcome">Welcome to LabCoat</string>
+    <string name="welcome_message">We support GitLab.com, as well as any GitLab server running GitLab version 9.0 or later</string>
 </resources>

@@ -12,9 +12,8 @@ import java.io.IOException
 class AuthenticationRequestInterceptor(private val account: Account) : Interceptor {
 
     companion object {
-        val AUTHORIZATION_HEADER_FIELD = "Authorization"
-        val PRIVATE_TOKEN_HEADER_FIELD = "PRIVATE-TOKEN"
-        val PRIVATE_TOKEN_GET_PARAMETER = "private_token"
+        const val PRIVATE_TOKEN_HEADER_FIELD = "Private-Token"
+        private const val PRIVATE_TOKEN_GET_PARAMETER = "private_token"
     }
 
     @Throws(IOException::class)
@@ -30,13 +29,6 @@ class AuthenticationRequestInterceptor(private val account: Account) : Intercept
         cleanServerUrl = cleanServerUrl.substring(cleanServerUrl.indexOf(':'))
 
         if (cleanUrl.startsWith(cleanServerUrl)) {
-            val authorizationHeader = account.authorizationHeader
-            if (authorizationHeader != null) {
-                request = request.newBuilder()
-                        .header(AUTHORIZATION_HEADER_FIELD, authorizationHeader)
-                        .build()
-            }
-
             val privateToken = account.privateToken
             if (privateToken == null) {
                 Timber.e("The private token was null")

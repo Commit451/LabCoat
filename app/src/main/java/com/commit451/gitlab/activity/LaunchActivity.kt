@@ -22,10 +22,6 @@ import com.commit451.gitlab.ssl.CustomKeyManager
 class LaunchActivity : BaseActivity() {
 
     companion object {
-
-        //Figure out how this works, then reenable
-        private val PRIVATE_KEY_ENABLED = false
-
         private val REQUEST_DEVICE_AUTH = 123
     }
 
@@ -57,11 +53,7 @@ class LaunchActivity : BaseActivity() {
         } else if (Prefs.isRequiredDeviceAuth) {
             showKeyguard()
         } else {
-            if (PRIVATE_KEY_ENABLED) {
-                loadPrivateKey(accounts, 0)
-            } else {
-                moveAlong()
-            }
+            moveAlong()
         }
     }
 
@@ -79,27 +71,5 @@ class LaunchActivity : BaseActivity() {
     private fun moveAlong() {
         Navigator.navigateToStartingActivity(this)
         finish()
-    }
-
-    private fun loadPrivateKey(accounts: List<Account>, i: Int) {
-        if (i >= accounts.size) {
-            runOnUiThread { }
-            return
-        }
-
-        val alias = accounts[i].privateKeyAlias
-        if (alias != null && !CustomKeyManager.isCached(alias)) {
-            CustomKeyManager.cache(this, alias, object : CustomKeyManager.KeyCallback {
-                override fun onSuccess(entry: CustomKeyManager.KeyEntry) {
-                    loadPrivateKey(accounts, i + 1)
-                }
-
-                override fun onError(e: Exception) {
-                    loadPrivateKey(accounts, i + 1)
-                }
-            })
-        } else {
-            loadPrivateKey(accounts, i + 1)
-        }
     }
 }

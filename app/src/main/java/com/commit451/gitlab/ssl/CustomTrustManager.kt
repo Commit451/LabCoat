@@ -17,31 +17,14 @@ class CustomTrustManager : X509TrustManager {
     private var sslSocketFactory: SSLSocketFactory? = null
     private var hostnameVerifier: HostnameVerifier? = null
 
-    fun setTrustedCertificate(trustedCertificate: String?) {
-        if (this.trustedCertificate == null && trustedCertificate == null || this.trustedCertificate != null && this.trustedCertificate == trustedCertificate) {
-            return
-        }
-
+    fun setTrustedCertificate(trustedCertificate: String) {
         this.trustedCertificate = trustedCertificate
         sslSocketFactory = null
     }
 
-    fun setTrustedHostname(trustedHostname: String?) {
-        if (this.trustedHostname == null && trustedHostname == null || this.trustedHostname != null && this.trustedHostname == trustedHostname) {
-            return
-        }
-
+    fun setTrustedHostname(trustedHostname: String) {
         this.trustedHostname = trustedHostname
         hostnameVerifier = null
-    }
-
-    fun setPrivateKeyAlias(privateKeyAlias: String?) {
-        if (this.privateKeyAlias == null && privateKeyAlias == null || this.privateKeyAlias != null && this.privateKeyAlias == privateKeyAlias) {
-            return
-        }
-
-        this.privateKeyAlias = privateKeyAlias
-        sslSocketFactory = null
     }
 
     @Throws(CertificateException::class)

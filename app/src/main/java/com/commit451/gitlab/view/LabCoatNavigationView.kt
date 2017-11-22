@@ -14,6 +14,7 @@ import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
+import com.commit451.addendum.themeAttrColor
 import com.commit451.alakazam.HideRunnable
 import com.commit451.easel.Easel
 import com.commit451.gitlab.App
@@ -50,6 +51,7 @@ class LabCoatNavigationView : NavigationView {
 
     lateinit var listAccounts: RecyclerView
     lateinit var adapterAccounts: AccountAdapter
+    var user: User? = null
 
     val mOnNavigationItemSelectedListener = OnNavigationItemSelectedListener { menuItem ->
         when (menuItem.itemId) {
@@ -131,7 +133,9 @@ class LabCoatNavigationView : NavigationView {
 
     @OnClick(R.id.profile_image)
     fun onUserImageClick(imageView: ImageView) {
-        Navigator.navigateToUser(context as Activity, imageView, App.get().getAccount().user!!)
+        user?.let {
+            Navigator.navigateToUser(context as Activity, imageView, it)
+        }
     }
 
     @OnClick(R.id.button_debug)
@@ -158,7 +162,7 @@ class LabCoatNavigationView : NavigationView {
 
     fun init() {
         App.bus().register(this)
-        val colorPrimary = Easel.getThemeAttrColor(context, R.attr.colorPrimary)
+        val colorPrimary = context.themeAttrColor(R.attr.colorPrimary)
 
         setNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
         inflateMenu(R.menu.navigation)
@@ -222,18 +226,13 @@ class LabCoatNavigationView : NavigationView {
                     override fun responseNonNullSuccess(userFull: User) {
                         //Store the newly retrieved user to the account so that it stays up to date
                         // in local storage
-                        val account = App.get().getAccount()
-                        account.user = userFull
-                        Prefs.updateAccount(account)
+                        this@LabCoatNavigationView.user = user
                         bindUser(userFull)
                     }
                 })
     }
 
     fun bindUser(user: User) {
-        if (context == null) {
-            return
-        }
         if (user.username != null) {
             textUserName.text = user.username
         }
@@ -267,7 +266,6 @@ class LabCoatNavigationView : NavigationView {
         account.lastUsed = Date()
         App.get().setAccount(account)
         Prefs.updateAccount(account)
-        bindUser(account.user!!)
         toggleAccounts()
         App.bus().post(ReloadDataEvent())
         App.bus().post(CloseDrawerEvent())

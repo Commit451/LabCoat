@@ -47,7 +47,7 @@ class AccountViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     fun bind(account: Account, isActive: Boolean, colorSelected: Int) {
         textServer.text = account.serverUrl.toString()
-        textUsername.text = account.user!!.username
+        textUsername.text = account.email
 
         if (isActive) {
             itemView.setBackgroundColor(colorSelected)
@@ -56,7 +56,7 @@ class AccountViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
 
         App.get().picasso
-                .load(ImageUtil.getAvatarUrl(account.user, itemView.resources.getDimensionPixelSize(R.dimen.user_list_image_size)))
+                .load(ImageUtil.getAvatarUrl(account.email, itemView.resources.getDimensionPixelSize(R.dimen.user_list_image_size)))
                 .transform(CircleTransformation())
                 .into(image)
     }

@@ -19,6 +19,7 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.commit451.addendum.parceler.getParcelerParcelableExtra
 import com.commit451.addendum.parceler.putParcelerParcelableExtra
+import com.commit451.addendum.themeAttrColor
 import com.commit451.alakazam.Alakazam
 import com.commit451.easel.Easel
 import com.commit451.gitlab.App
@@ -121,8 +122,8 @@ class GroupActivity : BaseActivity() {
 
     fun bindPalette(palette: Palette) {
         val animationTime = 1000
-        val vibrantColor = palette.getVibrantColor(Easel.getThemeAttrColor(this, R.attr.colorAccent))
-        val darkerColor = Easel.getDarkerColor(vibrantColor)
+        val vibrantColor = palette.getVibrantColor(this.themeAttrColor(R.attr.colorAccent))
+        val darkerColor = Easel.darkerColor(vibrantColor)
 
         if (Build.VERSION.SDK_INT >= 21) {
             Alakazam.navigationBarColorAnimator(window, darkerColor)
@@ -131,12 +132,12 @@ class GroupActivity : BaseActivity() {
         }
 
         ObjectAnimator.ofObject(collapsingToolbarLayout, "contentScrimColor", ArgbEvaluator(),
-                Easel.getThemeAttrColor(this, R.attr.colorPrimary), vibrantColor)
+                this.themeAttrColor(R.attr.colorPrimary), vibrantColor)
                 .setDuration(animationTime.toLong())
                 .start()
 
         ObjectAnimator.ofObject(collapsingToolbarLayout, "statusBarScrimColor", ArgbEvaluator(),
-                Easel.getThemeAttrColor(this, R.attr.colorPrimaryDark), darkerColor)
+                this.themeAttrColor(R.attr.colorPrimaryDark), darkerColor)
                 .setDuration(animationTime.toLong())
                 .start()
 

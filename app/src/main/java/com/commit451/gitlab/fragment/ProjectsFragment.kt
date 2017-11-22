@@ -106,7 +106,7 @@ class ProjectsFragment : ButterKnifeFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mode = arguments?.getInt(EXTRA_MODE)!!
-        query = arguments?.getString(EXTRA_QUERY)!!
+        query = arguments?.getString(EXTRA_QUERY)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

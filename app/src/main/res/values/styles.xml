@@ -14,7 +14,7 @@
         <item name="alertDialogTheme">@style/AppDialogTheme</item>
     </style>
 
-    <style name="Activity" parent="AppTheme"/>
+    <style name="Activity" parent="AppTheme" />
 
     <style name="Activity.Login">
         <item name="android:windowBackground">?attr/colorPrimary</item>
@@ -70,6 +70,12 @@
         <item name="cardElevation">2dp</item>
         <item name="cardCornerRadius">1dp</item>
         <item name="android:foreground">?attr/selectableItemBackground</item>
+    </style>
+
+    <style name="Text" />
+
+    <style name="Text.MonoRegular">
+        <item name="android:fontFamily">@font/roboto_mono_regular</item>
     </style>
 
 </resources>

@@ -22,9 +22,12 @@ object OkHttpClientFactory {
     fun create(account: Account, includeSignInAuthenticator: Boolean = true): OkHttpClient.Builder {
         // A custom trust manager, otherwise SSL won't work properly with some configurations
         val customTrustManager = CustomTrustManager()
-        customTrustManager.setTrustedCertificate(account.trustedCertificate)
-        customTrustManager.setTrustedHostname(account.trustedHostname)
-        customTrustManager.setPrivateKeyAlias(account.privateKeyAlias)
+        account.trustedCertificate?.let {
+            customTrustManager.setTrustedCertificate(it)
+        }
+        account.trustedHostname?.let {
+            customTrustManager.setTrustedHostname(it)
+        }
 
         val builder = OkHttpClient.Builder()
                 .connectTimeout(30, TimeUnit.SECONDS)

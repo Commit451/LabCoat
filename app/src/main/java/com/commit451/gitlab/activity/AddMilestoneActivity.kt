@@ -15,6 +15,7 @@ import butterknife.ButterKnife
 import butterknife.OnClick
 import com.commit451.addendum.parceler.getParcelerParcelableExtra
 import com.commit451.addendum.parceler.putParcelerParcelableExtra
+import com.commit451.addendum.themeAttrColor
 import com.commit451.easel.Easel
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
@@ -83,7 +84,7 @@ class AddMilestoneActivity : MorphActivity() {
                 now.get(Calendar.MONTH),
                 now.get(Calendar.DAY_OF_MONTH)
         )
-        dpd.accentColor = Easel.getThemeAttrColor(this, R.attr.colorAccent)
+        dpd.accentColor = this.themeAttrColor(R.attr.colorAccent)
         dpd.show(fragmentManager, "date_picker")
     }
 

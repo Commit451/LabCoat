@@ -15,7 +15,7 @@ import butterknife.ButterKnife
 import butterknife.OnClick
 import com.commit451.addendum.parceler.getParcelerParcelableExtra
 import com.commit451.addendum.parceler.putParcelerParcelableExtra
-import com.commit451.alakazam.kotlin.fadeIn
+import com.commit451.alakazam.fadeIn
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.extension.setup

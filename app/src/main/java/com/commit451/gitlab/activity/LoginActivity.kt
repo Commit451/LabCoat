@@ -1,24 +1,20 @@
 package com.commit451.gitlab.activity
 
-import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.security.KeyChain
 import android.support.design.widget.Snackbar
 import android.support.design.widget.TextInputLayout
 import android.support.v7.widget.Toolbar
 import android.text.method.LinkMovementMethod
-import android.util.Patterns
 import android.view.View
-import android.widget.EditText
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
-import butterknife.OnEditorAction
+import com.afollestad.materialdialogs.MaterialDialog
 import com.commit451.gitlab.App
 import com.commit451.gitlab.BuildConfig
 import com.commit451.gitlab.R
@@ -26,7 +22,6 @@ import com.commit451.gitlab.api.GitLab
 import com.commit451.gitlab.api.GitLabFactory
 import com.commit451.gitlab.api.MoshiProvider
 import com.commit451.gitlab.api.OkHttpClientFactory
-import com.commit451.gitlab.api.request.SessionRequest
 import com.commit451.gitlab.data.Prefs
 import com.commit451.gitlab.dialog.HttpLoginDialog
 import com.commit451.gitlab.event.LoginEvent
@@ -40,9 +35,9 @@ import com.commit451.gitlab.model.api.User
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.ssl.CustomHostnameVerifier
-import com.commit451.gitlab.ssl.CustomKeyManager
 import com.commit451.gitlab.ssl.X509CertificateException
 import com.commit451.gitlab.ssl.X509Util
+import com.commit451.gitlab.util.IntentUtil
 import com.commit451.teleprinter.Teleprinter
 import okhttp3.Credentials
 import okhttp3.HttpUrl
@@ -65,8 +60,6 @@ class LoginActivity : BaseActivity() {
 
         private val EXTRA_SHOW_CLOSE = "show_close"
 
-        private val REQUEST_PRIVATE_TOKEN = 123
-
         fun newIntent(context: Context, showClose: Boolean = false): Intent {
             val intent = Intent(context, LoginActivity::class.java)
             intent.putExtra(EXTRA_SHOW_CLOSE, showClose)
@@ -77,32 +70,38 @@ class LoginActivity : BaseActivity() {
     @BindView(R.id.root) lateinit var root: View
     @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
     @BindView(R.id.text_input_layout_server) lateinit var textInputLayoutUrl: TextInputLayout
-    @BindView(R.id.user_input_hint) lateinit var textInputLayoutUser: TextInputLayout
-    @BindView(R.id.user_input) lateinit var textUser: EditText
-    @BindView(R.id.password_hint) lateinit var textInputLayoutPassword: TextInputLayout
-    @BindView(R.id.password_input) lateinit var textPassword: TextView
     @BindView(R.id.token_hint) lateinit var textInputLayoutToken: TextInputLayout
     @BindView(R.id.token_input) lateinit var textToken: TextView
-    @BindView(R.id.normal_login) lateinit var rootNormalLogin: View
-    @BindView(R.id.token_login) lateinit var rootTokenLogin: View
     @BindView(R.id.progress) lateinit var progress: View
 
     lateinit var teleprinter: Teleprinter
 
-    var isNormalLogin = true
-    val emailPattern: Pattern by lazy {
-        Patterns.EMAIL_ADDRESS
-    }
     val tokenPattern: Pattern by lazy {
         Pattern.compile("^[A-Za-z0-9-_]*$")
     }
+
     var account: Account = Account()
     var gitLab: GitLab? = null
 
-    @OnEditorAction(R.id.password_input, R.id.token_input)
-    fun onPasswordEditorAction(): Boolean {
-        onLoginClick()
-        return true
+    @OnClick(R.id.button_info)
+    fun onInfoClicked() {
+        MaterialDialog.Builder(this)
+                .title(R.string.access_token_info_title)
+                .content(R.string.access_token_info_message)
+                .positiveText(R.string.create_personal_access_token)
+                .onPositive { _, _ ->
+                    val validUrl = verifyUrl()
+                    if (validUrl) {
+                        val url = textInputLayoutUrl.text()
+                        val accessTokenUrl = "$url/profile/personal_access_tokens"
+                        IntentUtil.openPage(this, accessTokenUrl)
+                    } else {
+                        Snackbar.make(root, R.string.not_a_valid_url, Snackbar.LENGTH_SHORT)
+                                .show()
+                    }
+                }
+                .negativeText(R.string.cancel)
+                .show()
     }
 
     @OnClick(R.id.login_button)
@@ -118,24 +117,18 @@ class LoginActivity : BaseActivity() {
         }
         val uri = textInputLayoutUrl.text()
 
-        if (isNormalLogin) {
-            val valid = textInputLayoutUser.checkValid() and textInputLayoutPassword.checkValid()
-            if (!valid) {
-                return
-            }
+        if (!textInputLayoutToken.checkValid()) {
+            return
+        }
+        if (!tokenPattern.matcher(textToken.text).matches()) {
+            textInputLayoutToken.error = getString(R.string.not_a_valid_private_token)
+            return
         } else {
-            if (!textInputLayoutToken.checkValid()) {
-                return
-            }
-            if (!tokenPattern.matcher(textToken.text).matches()) {
-                textInputLayoutToken.error = getString(R.string.not_a_valid_private_token)
-                return
-            } else {
-                textInputLayoutToken.error = null
-            }
+            textInputLayoutToken.error = null
         }
 
-        if (isAlreadySignedIn(uri.toString(), if (isNormalLogin) textUser.text.toString() else textToken.text.toString())) {
+
+        if (isAlreadySignedIn(uri, textToken.text.toString())) {
             Snackbar.make(root, getString(R.string.already_logged_in), Snackbar.LENGTH_LONG)
                     .show()
             return
@@ -147,22 +140,6 @@ class LoginActivity : BaseActivity() {
         login()
     }
 
-    @OnClick(R.id.button_open_login_page)
-    fun onOpenLoginPageClicked() {
-        if (verifyUrl()) {
-            val url = textInputLayoutUrl.editText!!.text.toString()
-            Navigator.navigateToWebSignin(this, url, true, REQUEST_PRIVATE_TOKEN)
-        }
-    }
-
-    @OnClick(R.id.button_open_login_page_for_personal_access)
-    fun onOpenLoginPageForPersonalAccessTokenClicked() {
-        if (verifyUrl()) {
-            val url = textInputLayoutUrl.editText!!.text.toString()
-            Navigator.navigateToWebSignin(this, url, false, REQUEST_PRIVATE_TOKEN)
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -171,27 +148,6 @@ class LoginActivity : BaseActivity() {
         teleprinter = Teleprinter(this)
         val showClose = intent.getBooleanExtra(EXTRA_SHOW_CLOSE, false)
 
-        toolbar.inflateMenu(R.menu.advanced_login)
-        toolbar.setOnMenuItemClickListener(Toolbar.OnMenuItemClickListener { item ->
-            when (item.itemId) {
-                R.id.action_advanced_login -> {
-                    val isNormalLogin = rootNormalLogin.visibility == View.VISIBLE
-                    if (isNormalLogin) {
-                        rootNormalLogin.visibility = View.GONE
-                        rootTokenLogin.visibility = View.VISIBLE
-                        item.setTitle(R.string.normal_link)
-                        this@LoginActivity.isNormalLogin = false
-                    } else {
-                        rootNormalLogin.visibility = View.VISIBLE
-                        rootTokenLogin.visibility = View.GONE
-                        item.setTitle(R.string.advanced_login)
-                        this@LoginActivity.isNormalLogin = true
-                    }
-                    return@OnMenuItemClickListener true
-                }
-            }
-            false
-        })
         if (showClose) {
             toolbar.setNavigationIcon(R.drawable.ic_close_24dp)
             toolbar.setNavigationOnClickListener { onBackPressed() }
@@ -200,69 +156,15 @@ class LoginActivity : BaseActivity() {
         textInputLayoutUrl.editText?.setText(R.string.url_gitlab)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            REQUEST_PRIVATE_TOKEN -> if (resultCode == Activity.RESULT_OK) {
-                val token = data?.getStringExtra(WebLoginActivity.EXTRA_TOKEN)
-                textInputLayoutToken.editText!!.setText(token)
-            }
-        }
+    override fun hasBrowsableLinks(): Boolean {
+        return true
     }
 
-    fun connect(byAuth: Boolean) {
+    fun connect() {
         progress.visibility = View.VISIBLE
         progress.alpha = 0.0f
         progress.animate().alpha(1.0f)
 
-        if (byAuth) {
-            connectByAuth()
-        } else {
-            connectByToken()
-        }
-    }
-
-    fun connectByAuth() {
-        val request = SessionRequest()
-        request.password = textInputLayoutPassword.text()
-        val usernameOrEmail = textInputLayoutUser.text()
-        if (emailPattern.matcher(usernameOrEmail).matches()) {
-            request.email = usernameOrEmail
-        } else {
-            request.login = usernameOrEmail
-        }
-        attemptLogin(request)
-    }
-
-    fun attemptLogin(request: SessionRequest) {
-        val clientBuilder = OkHttpClientFactory.create(account)
-        if (BuildConfig.DEBUG) {
-            clientBuilder.addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
-        }
-
-        gitLab = GitLabFactory.createGitLab(account, clientBuilder)
-
-        gitLab!!.login(request)
-                .setup(bindToLifecycle())
-                .subscribe(object : CustomResponseSingleObserver<User>() {
-
-                    override fun error(e: Throwable) {
-                        Timber.e(e)
-                        if (e is HttpException) {
-                            handleConnectionResponse(response())
-                        } else {
-                            handleConnectionError(e)
-                        }
-                    }
-
-                    override fun responseNonNullSuccess(userLogin: User) {
-                        account.privateToken = userLogin.privateToken
-                        loadUser(clientBuilder)
-                    }
-                })
-    }
-
-    fun connectByToken() {
         account.privateToken = textToken.text.toString()
         val gitlabClientBuilder = OkHttpClientFactory.create(account, false)
         if (BuildConfig.DEBUG) {
@@ -272,30 +174,6 @@ class LoginActivity : BaseActivity() {
         gitLab = GitLabFactory.createGitLab(account, gitlabClientBuilder)
 
         loadUser(gitlabClientBuilder)
-    }
-
-    fun loginWithPrivateToken() {
-        val serverUri = Uri.parse(account.serverUrl)
-        KeyChain.choosePrivateKeyAlias(this, { alias ->
-            account.privateKeyAlias = alias
-
-            if (alias != null) {
-                if (!CustomKeyManager.isCached(alias)) {
-                    CustomKeyManager.cache(this@LoginActivity, alias, object : CustomKeyManager.KeyCallback {
-                        override fun onSuccess(entry: CustomKeyManager.KeyEntry) {
-                            runOnUiThread { login() }
-                        }
-
-                        override fun onError(e: Exception) {
-                            account.privateKeyAlias = null
-                            Timber.e(e, "Failed to load private key")
-                        }
-                    })
-                } else {
-                    runOnUiThread { login() }
-                }
-            }
-        }, null, null, serverUri.host, serverUri.port, null)
     }
 
     fun verifyUrl(): Boolean {
@@ -316,8 +194,7 @@ class LoginActivity : BaseActivity() {
             textInputLayoutUrl.error = null
         }
         if (!url.endsWith("/")) {
-            textInputLayoutUrl.error = getString(R.string.please_end_your_url_with_a_slash)
-            return false
+            textInputLayoutUrl.editText?.setText(url + "/")
         } else {
             textInputLayoutUrl.error = null
         }
@@ -327,20 +204,14 @@ class LoginActivity : BaseActivity() {
     fun login() {
         // This seems useless - But believe me, it makes everything work! Don't remove it.
         // (OkHttpClientFactory caches the clients and needs a new account to recreate them)
-
         val newAccount = Account()
         newAccount.serverUrl = account.serverUrl
         newAccount.trustedCertificate = account.trustedCertificate
         newAccount.trustedHostname = account.trustedHostname
-        newAccount.privateKeyAlias = account.privateKeyAlias
         newAccount.authorizationHeader = account.authorizationHeader
         account = newAccount
 
-        if (isNormalLogin) {
-            connect(true)
-        } else {
-            connect(false)
-        }
+        connect()
     }
 
     fun loadUser(gitlabClientBuilder: OkHttpClient.Builder) {
@@ -364,8 +235,9 @@ class LoginActivity : BaseActivity() {
 
                     override fun responseNonNullSuccess(userFull: User) {
                         progress.visibility = View.GONE
-                        account.user = userFull
                         account.lastUsed = Date()
+                        account.email = userFull.email
+                        account.username = userFull.username
                         Prefs.addAccount(account)
                         App.get().setAccount(account)
                         App.bus().post(LoginEvent(account))
@@ -492,9 +364,7 @@ class LoginActivity : BaseActivity() {
     fun isAlreadySignedIn(url: String, usernameOrEmailOrPrivateToken: String): Boolean {
         val accounts = Prefs.getAccounts()
         return accounts.any {
-            it.serverUrl == url && (usernameOrEmailOrPrivateToken == it.user?.username
-                    || usernameOrEmailOrPrivateToken.equals(it.user?.email, ignoreCase = true)
-                    || usernameOrEmailOrPrivateToken.equals(it.privateToken, ignoreCase = true))
+            it.serverUrl == url && usernameOrEmailOrPrivateToken == it.privateToken
         }
     }
 }

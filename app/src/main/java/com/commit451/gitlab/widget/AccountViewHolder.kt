@@ -38,10 +38,10 @@ class AccountViewHolder(view: View) : TypedViewHolder<Account>(view) {
 
     override fun bind(position: Int, item: Account) {
         textServer.text = item.serverUrl.toString()
-        textUsername.text = item.user!!.username
+        textUsername.text = item.email
 
         Picasso.with(context)
-                .load(ImageUtil.getAvatarUrl(item.user, itemView.resources.getDimensionPixelSize(R.dimen.user_list_image_size)))
+                .load(ImageUtil.getAvatarUrl(item.email, itemView.resources.getDimensionPixelSize(R.dimen.user_list_image_size)))
                 .transform(CircleTransformation())
                 .into(image)
     }

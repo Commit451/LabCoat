@@ -27,7 +27,7 @@ import timber.log.Timber
 /**
  * Service that basically just defers everything to a Factory. Yay!
  */
-class ProjectFeedWidgetService : RemoteViewsService() {
+class FeedWidgetService : RemoteViewsService() {
 
     companion object {
 
@@ -42,7 +42,7 @@ class ProjectFeedWidgetService : RemoteViewsService() {
         fun newIntent(context: Context, widgetId: Int, account: Account, feedUrl: String): Intent {
             val adapter = MoshiProvider.moshi.adapter<Account>(Account::class.java)
             val accountJson = adapter.toJson(account)
-            val intent = Intent(context, ProjectFeedWidgetService::class.java)
+            val intent = Intent(context, FeedWidgetService::class.java)
             intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
             intent.putExtra(EXTRA_ACCOUNT_JSON, accountJson)
             intent.putExtra(EXTRA_FEED_URL, feedUrl)

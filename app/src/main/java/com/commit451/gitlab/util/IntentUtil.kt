@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.support.design.widget.Snackbar
 import android.view.View
+import com.commit451.addendum.themeAttrColor
 import com.commit451.easel.Easel
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.BaseActivity
@@ -24,7 +25,7 @@ object IntentUtil {
         }
         val resolvedUrl = if (account == null) url else url.resolveUrl(account)
 
-        val primaryColor = Easel.getThemeAttrColor(activity, R.attr.colorPrimary)
+        val primaryColor = activity.themeAttrColor(R.attr.colorPrimary)
         SimpleChromeCustomTabs.getInstance()
                 .withFallback(BrowserFallback(activity))
                 .withIntentCustomizer(LabCoatIntentCustomizer(activity, primaryColor))

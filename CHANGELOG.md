@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+Version 2.5.0
+----------------------------
+
+- Change login to reflect API changes in GitLab
+
 Version 2.4.12
 ----------------------------
 

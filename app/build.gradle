@@ -4,7 +4,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'io.fabric.tools:gradle:1.24.4'
+        classpath 'io.fabric.tools:gradle:1.24.5'
     }
 }
 
@@ -25,7 +25,6 @@ android {
         LABCOAT_FABRIC_KEY = project.hasProperty("LABCOAT_FABRIC_KEY") ? project.LABCOAT_FABRIC_KEY : ""
         KEYSTORE_PATH = project.hasProperty("KEYSTORE_PATH") ? project.KEYSTORE_PATH : " "
         KEYSTORE_PASSWORD = project.hasProperty("KEYSTORE_PASSWORD") ? project.KEYSTORE_PASSWORD : " "
-        KEYSTORE_ALIAS = project.hasProperty("KEYSTORE_ALIAS") ? project.KEYSTORE_ALIAS : " "
         KEY_PASSWORD = project.hasProperty("KEY_PASSWORD") ? project.KEY_PASSWORD : " "
     }
 
@@ -34,8 +33,8 @@ android {
         minSdkVersion 16
         targetSdkVersion 27
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        versionCode 2041200
-        versionName "2.4.12"
+        versionCode 2050000
+        versionName "2.5.0"
         manifestPlaceholders = [fabric_key: project.ext.LABCOAT_FABRIC_KEY]
         vectorDrawables.useSupportLibrary = true
 
@@ -59,7 +58,7 @@ android {
         release {
             storeFile file(project.ext.KEYSTORE_PATH)
             storePassword project.ext.KEYSTORE_PASSWORD
-            keyAlias project.ext.KEYSTORE_ALIAS
+            keyAlias "commit451"
             keyPassword project.ext.KEY_PASSWORD
         }
     }
@@ -150,7 +149,7 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxjava:2.1.6'
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
 
-    implementation 'com.trello.rxlifecycle2:rxlifecycle-components:2.2.0'
+    implementation 'com.trello.rxlifecycle2:rxlifecycle-components:2.2.1'
 
     implementation "org.parceler:parceler-api:$parcelerVersion"
     kapt "org.parceler:parceler:$parcelerVersion"
@@ -167,7 +166,7 @@ dependencies {
     implementation("com.wefika:flowlayout:0.4.1") {
         exclude group: 'com.intellij', module: 'annotations'
     }
-    implementation 'com.github.Commit451.Easel:easel:2.1.1'
+    implementation 'com.github.Commit451:Easel:3.0.0'
     implementation 'com.github.Commit451:Gimbal:2.0.2'
     implementation 'com.github.Commit451:Teleprinter:1.0.2'
     implementation 'com.github.Commit451:Jounce:1.0.2'
@@ -175,13 +174,15 @@ dependencies {
     implementation 'com.github.Commit451:MorphTransitions:2.0.0'
     implementation "com.github.Commit451.Alakazam:alakazam:$alakazamVersion"
     implementation "com.github.Commit451.Alakazam:alakazam-kotlin:$alakazamVersion"
-    implementation 'com.github.Commit451:Lift:1.2.0'
+    implementation 'com.github.Commit451:Lift:2.0.1'
     implementation 'com.github.Commit451:okyo:3.0.1'
     implementation 'com.github.Commit451:OkioProGuardRules:1.11.0.0'
     implementation 'com.github.Commit451:RetrofitProguardRules:2.2.0.0'
     implementation 'com.github.Commit451:LoganSquareProGuardRules:1.3.7.0'
     implementation 'com.github.Commit451:EventBusProGuardRules:3.0.0.0'
     implementation "com.github.Commit451.Addendum:addendum:$addendumVersion"
+    implementation "com.github.Commit451.Addendum:addendum-recyclerview:$addendumVersion"
+    implementation "com.github.Commit451.Addendum:addendum-design:$addendumVersion"
     implementation "com.github.Commit451.Addendum:addendum-parceler:$addendumVersion"
 
     implementation 'com.github.chrisbanes:PhotoView:2.1.3'
@@ -192,7 +193,7 @@ dependencies {
 
     implementation 'com.alexgwyn.recyclerviewsquire:recyclerviewsquire:0.0.6'
 
-    implementation 'com.github.ivbaranov:materiallettericon:0.2.2'
+    implementation 'com.github.ivbaranov:materiallettericon:0.2.3'
 
     implementation 'com.github.alorma:diff-textview:1.3.0'
 
@@ -203,13 +204,13 @@ dependencies {
     implementation "com.afollestad.material-dialogs:core:$materialDialogsVersion"
     implementation "com.afollestad.material-dialogs:commons:$materialDialogsVersion"
 
-    implementation 'de.hdodenhof:circleimageview:2.1.0'
+    implementation 'de.hdodenhof:circleimageview:2.2.0'
 
     implementation('com.vdurmont:emoji-java:3.3.0') {
         exclude group: 'org.json', module: 'json'
     }
 
-    implementation 'com.github.jkwiecien:EasyImage:2.0.3'
+    implementation 'com.github.jkwiecien:EasyImage:2.0.4'
 
     implementation 'com.atlassian.commonmark:commonmark:0.10.0'
 

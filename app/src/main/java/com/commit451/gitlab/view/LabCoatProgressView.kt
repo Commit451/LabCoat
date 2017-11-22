@@ -3,6 +3,7 @@ package com.commit451.gitlab.view
 import android.content.Context
 import android.content.res.ColorStateList
 import android.util.AttributeSet
+import com.commit451.addendum.themeAttrColor
 
 import com.commit451.easel.Easel
 import com.commit451.gitlab.R
@@ -24,7 +25,7 @@ class LabCoatProgressView : MaterialProgressBar {
     }
 
     private fun init() {
-        val color = Easel.getThemeAttrColor(context, R.attr.colorAccent)
+        val color = context.themeAttrColor(R.attr.colorAccent)
         progressTintList = ColorStateList.valueOf(color)
     }
 }

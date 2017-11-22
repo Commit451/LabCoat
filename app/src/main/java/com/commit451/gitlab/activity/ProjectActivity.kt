@@ -20,7 +20,7 @@ import com.commit451.addendum.parceler.getParcelerParcelable
 import com.commit451.addendum.parceler.getParcelerParcelableExtra
 import com.commit451.addendum.parceler.putParcelerParcelable
 import com.commit451.addendum.parceler.putParcelerParcelableExtra
-import com.commit451.alakazam.HideRunnable
+import com.commit451.alakazam.fadeOut
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.ProjectPagerAdapter
@@ -196,17 +196,13 @@ class ProjectActivity : BaseActivity() {
 
                     override fun error(t: Throwable) {
                         Timber.e(t)
-                        progress.animate()
-                                .alpha(0.0f)
-                                .withEndAction(HideRunnable(progress))
+                        progress.fadeOut()
                         Snackbar.make(root, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
                                 .show()
                     }
 
                     override fun success(project: Project) {
-                        progress.animate()
-                                .alpha(0.0f)
-                                .withEndAction(HideRunnable(progress))
+                        progress.fadeOut()
                         bindProject(project)
                     }
                 })

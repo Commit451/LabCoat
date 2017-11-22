@@ -4,6 +4,7 @@ import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import com.commit451.addendum.themeAttrColor
 import com.commit451.easel.Easel
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
@@ -24,7 +25,7 @@ class AccountAdapter(context: Context, private val listener: AccountAdapter.List
     }
 
     private val accounts = mutableListOf<Account>()
-    private val colorControlHighlight: Int = Easel.getThemeAttrColor(context, R.attr.colorControlHighlight)
+    private val colorControlHighlight: Int = context.themeAttrColor(R.attr.colorControlHighlight)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         when (viewType) {

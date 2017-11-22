@@ -24,7 +24,6 @@ import android.content.Intent
 import android.net.Uri
 import android.widget.RemoteViews
 import com.commit451.gitlab.R
-import com.commit451.gitlab.extension.feedUrl
 import com.commit451.gitlab.navigation.DeepLinker
 import timber.log.Timber
 
@@ -53,13 +52,13 @@ class UserFeedWidgetProvider : AppWidgetProvider() {
             // Here we setup the intent which points to the StackViewService which will
             // provide the views for this collection.
             val account = UserFeedWidgetPrefs.getAccount(context, widgetId)
-            val feedUrl = account?.user?.feedUrl
-            if (account == null || feedUrl == null) {
+
+            if (account == null) {
                 //TODO alert the user to this misfortune?
                 Timber.e("Error getting account or feed url")
             } else {
-                Timber.d("Updating widget with url $feedUrl")
-                val intent = ProjectFeedWidgetService.newIntent(context, widgetId, account, feedUrl)
+                val feedUrl = account.serverUrl + "/${account.username}.atom"
+                val intent = FeedWidgetService.newIntent(context, widgetId, account, feedUrl)
                 // When intents are compared, the extras are ignored, so we need to embed the extras
                 // into the data so that the extras will not be ignored.
                 intent.data = Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME))

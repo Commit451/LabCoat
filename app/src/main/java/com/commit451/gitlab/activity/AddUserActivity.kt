@@ -15,7 +15,7 @@ import android.widget.EditText
 import butterknife.*
 import com.commit451.addendum.parceler.getParcelerParcelableExtra
 import com.commit451.addendum.parceler.putParcelerParcelableExtra
-import com.commit451.alakazam.HideRunnable
+import com.commit451.alakazam.fadeOut
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.UserAdapter
@@ -96,9 +96,7 @@ class AddUserActivity : MorphActivity() {
     @OnTextChanged(R.id.search)
     fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
         if (s.isNullOrEmpty()) {
-            buttonClear.animate()
-                    .alpha(0.0f)
-                    .withEndAction(HideRunnable(buttonClear))
+            buttonClear.fadeOut()
         } else {
             buttonClear.visibility = View.VISIBLE
             buttonClear.animate().alpha(1.0f)

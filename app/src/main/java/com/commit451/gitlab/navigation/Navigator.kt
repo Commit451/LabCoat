@@ -10,6 +10,7 @@ import android.support.annotation.DrawableRes
 import android.support.v4.app.ActivityOptionsCompat
 import android.view.View
 import android.widget.ImageView
+import com.commit451.addendum.themeAttrColor
 import com.commit451.easel.Easel
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.*
@@ -85,11 +86,6 @@ object Navigator {
 
     fun navigateToLogin(activity: Activity, showClose: Boolean) {
         activity.startActivity(LoginActivity.newIntent(activity, showClose))
-    }
-
-    fun navigateToWebSignin(activity: Activity, url: String, extractingPrivateToken: Boolean, requestCode: Int) {
-        val intent = WebLoginActivity.newIntent(activity, url, extractingPrivateToken)
-        activity.startActivityForResult(intent, requestCode)
     }
 
     fun navigateToSearch(activity: Activity) {
@@ -206,7 +202,7 @@ object Navigator {
 
     private fun startMorphActivity(activity: Activity, fab: View?, @DrawableRes drawableRes: Int, intent: Intent) {
         if (Build.VERSION.SDK_INT >= 21 && fab != null) {
-            FabTransform.addExtras(intent, Easel.getThemeAttrColor(activity, R.attr.colorAccent),
+            FabTransform.addExtras(intent, activity.themeAttrColor(R.attr.colorAccent),
                     drawableRes)
             val options = ActivityOptions.makeSceneTransitionAnimation(activity, fab, activity.getString(R.string.transition_morph))
             activity.startActivity(intent, options.toBundle())

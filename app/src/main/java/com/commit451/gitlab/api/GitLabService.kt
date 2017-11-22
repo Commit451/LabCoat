@@ -1,6 +1,5 @@
 package com.commit451.gitlab.api
 
-import com.commit451.gitlab.api.request.SessionRequest
 import com.commit451.gitlab.api.response.FileUploadResponse
 import com.commit451.gitlab.model.api.*
 import io.reactivex.Completable
@@ -20,11 +19,6 @@ interface GitLabService {
         const val API_VERSION = "api/v4"
         const val MAX_TREE_PER_PAGE = "100"
     }
-
-    /* --- LOGIN --- */
-
-    @POST(API_VERSION + "/session")
-    fun login(@Body request: SessionRequest): Single<Response<User>>
 
     /* --- USERS --- */
 
