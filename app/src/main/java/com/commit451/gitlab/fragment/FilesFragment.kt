@@ -37,6 +37,8 @@ class FilesFragment : ButterKnifeFragment() {
 
     companion object {
 
+        private const val CURRENT_PATH = "current_path"
+
         fun newInstance(): FilesFragment {
             return FilesFragment()
         }
@@ -102,15 +104,25 @@ class FilesFragment : ButterKnifeFragment() {
 
         swipeRefreshLayout.setOnRefreshListener { loadData() }
 
+        var path = ""
+        if (savedInstanceState != null) {
+            path = savedInstanceState.getString(CURRENT_PATH)
+        }
+
         if (activity is ProjectActivity) {
             project = (activity as ProjectActivity).project
             ref = (activity as ProjectActivity).getRefRef()
-            loadData("")
+            loadData(path)
         } else {
             throw IllegalStateException("Incorrect parent activity")
         }
 
         App.bus().register(this)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putString(CURRENT_PATH, currentPath)
+        super.onSaveInstanceState(outState)
     }
 
     override fun onBackPressed(): Boolean {
