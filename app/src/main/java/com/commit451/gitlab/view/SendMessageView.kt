@@ -11,7 +11,6 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import com.commit451.addendum.themeAttrColor
-import com.commit451.easel.Easel
 import com.commit451.gitlab.R
 
 /**
@@ -62,11 +61,6 @@ class SendMessageView : LinearLayout {
         setBackgroundColor(context.themeAttrColor(R.attr.colorPrimary))
         if (Build.VERSION.SDK_INT >= 21) {
             elevation = resources.getDimensionPixelSize(R.dimen.toolbar_elevation).toFloat()
-        }
-
-        textNote.setOnEditorActionListener { _, _, _ ->
-            onSend()
-            true
         }
     }
 
