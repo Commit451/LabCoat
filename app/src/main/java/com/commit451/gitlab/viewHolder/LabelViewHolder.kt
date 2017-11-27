@@ -9,6 +9,7 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.commit451.gitlab.R
 import com.commit451.gitlab.extension.getColor
+import com.commit451.gitlab.extension.getTitleColor
 import com.commit451.gitlab.model.api.Label
 
 /**
@@ -34,6 +35,7 @@ class LabelViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     fun bind(label: Label) {
         textTitle.text = label.name
+        textTitle.setTextColor(label.getTitleColor())
         viewColor.setBackgroundColor(label.getColor())
     }
 }
