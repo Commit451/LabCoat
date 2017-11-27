@@ -2,6 +2,7 @@ package com.commit451.gitlab.extension
 
 import android.graphics.Color
 import android.support.annotation.ColorInt
+import com.commit451.easel.Easel
 import com.commit451.gitlab.model.api.Label
 import com.commit451.gitlab.util.ColorUtil
 
@@ -16,5 +17,8 @@ fun Label.getColor(): Int {
 
 @ColorInt
 fun Label.getTitleColor(): Int {
-    return ColorUtil.getTitleColor(getColor())
+    if (Easel.isColorDark(getColor())) {
+        return Color.WHITE
+    }
+    return Easel.darkerColor(getColor(), 0.25f)
 }
