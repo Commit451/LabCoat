@@ -4,7 +4,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'io.fabric.tools:gradle:1.24.5'
+        classpath 'io.fabric.tools:gradle:1.25.0'
     }
 }
 
@@ -19,7 +19,7 @@ apply plugin: 'io.fabric'
 
 android {
     compileSdkVersion 27
-    buildToolsVersion "27.0.0"
+    buildToolsVersion "27.0.1"
 
     project.ext {
         LABCOAT_FABRIC_KEY = project.hasProperty("LABCOAT_FABRIC_KEY") ? project.LABCOAT_FABRIC_KEY : ""
@@ -93,22 +93,20 @@ android {
 }
 
 ext {
-    supportLibVersion = '27.0.1'
+    supportLibVersion = '27.0.2'
     retrofitVersion = '2.3.0'
     okHttpVersion = '3.9.1'
     butterknifeVersion = '8.8.1'
     parcelerVersion = '1.1.9'
     reptarVersion = '2.5.1'
     adapterLayout = '1.1.2'
-    materialDialogsVersion = '0.9.5.0'
+    materialDialogsVersion = '0.9.6.0'
     leakCanaryVersion = '1.5.3'
     addendumVersion = '1.6.0'
     moshiVersion = '1.5.0'
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlinVersion"
 
     implementation "com.android.support:appcompat-v7:$supportLibVersion"
@@ -145,7 +143,7 @@ dependencies {
 
     implementation 'org.greenrobot:eventbus:3.1.1'
 
-    implementation 'io.reactivex.rxjava2:rxjava:2.1.6'
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.7'
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
 
     implementation 'com.trello.rxlifecycle2:rxlifecycle-components:2.2.1'
@@ -167,7 +165,7 @@ dependencies {
     }
     implementation 'com.github.Commit451:Easel:3.0.0'
     implementation 'com.github.Commit451:Gimbal:2.0.2'
-    implementation 'com.github.Commit451:Teleprinter:1.0.2'
+    implementation 'com.github.Commit451:Teleprinter:2.0.0'
     implementation 'com.github.Commit451:Jounce:1.0.2'
     implementation 'com.github.Commit451:ForegroundViews:2.4.0'
     implementation 'com.github.Commit451:MorphTransitions:2.0.0'

@@ -96,7 +96,7 @@ class IssueDiscussionFragment : ButterKnifeFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        teleprinter = Teleprinter(activity)
+        teleprinter = Teleprinter(baseActivty)
 
         adapter = NotesAdapter(project)
         layoutManagerNotes = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, true)

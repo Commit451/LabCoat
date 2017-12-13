@@ -96,7 +96,7 @@ class MergeRequestDiscussionFragment : ButterKnifeFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        teleprinter = Teleprinter(activity)
+        teleprinter = Teleprinter(baseActivty)
 
         adapterNotes = NotesAdapter(project)
         layoutManagerNotes = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, true)

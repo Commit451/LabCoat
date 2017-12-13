@@ -47,7 +47,6 @@ import retrofit2.HttpException
 import retrofit2.Response
 import timber.log.Timber
 import java.io.IOException
-import java.net.ConnectException
 import java.util.*
 import java.util.regex.Pattern
 import javax.net.ssl.SSLHandshakeException
@@ -58,11 +57,15 @@ class LoginActivity : BaseActivity() {
 
     companion object {
 
-        private val EXTRA_SHOW_CLOSE = "show_close"
+        private val tokenPattern: Pattern by lazy {
+            Pattern.compile("^[A-Za-z0-9-_]*$")
+        }
+
+        private const val KEY_SHOW_CLOSE = "show_close"
 
         fun newIntent(context: Context, showClose: Boolean = false): Intent {
             val intent = Intent(context, LoginActivity::class.java)
-            intent.putExtra(EXTRA_SHOW_CLOSE, showClose)
+            intent.putExtra(KEY_SHOW_CLOSE, showClose)
             return intent
         }
     }
@@ -75,10 +78,6 @@ class LoginActivity : BaseActivity() {
     @BindView(R.id.progress) lateinit var progress: View
 
     lateinit var teleprinter: Teleprinter
-
-    val tokenPattern: Pattern by lazy {
-        Pattern.compile("^[A-Za-z0-9-_]*$")
-    }
 
     var account: Account = Account()
     var gitLab: GitLab? = null
@@ -146,7 +145,7 @@ class LoginActivity : BaseActivity() {
         ButterKnife.bind(this)
 
         teleprinter = Teleprinter(this)
-        val showClose = intent.getBooleanExtra(EXTRA_SHOW_CLOSE, false)
+        val showClose = intent.getBooleanExtra(KEY_SHOW_CLOSE, false)
 
         if (showClose) {
             toolbar.setNavigationIcon(R.drawable.ic_close_24dp)
@@ -158,22 +157,6 @@ class LoginActivity : BaseActivity() {
 
     override fun hasBrowsableLinks(): Boolean {
         return true
-    }
-
-    fun connect() {
-        progress.visibility = View.VISIBLE
-        progress.alpha = 0.0f
-        progress.animate().alpha(1.0f)
-
-        account.privateToken = textToken.text.toString()
-        val gitlabClientBuilder = OkHttpClientFactory.create(account, false)
-        if (BuildConfig.DEBUG) {
-            gitlabClientBuilder.addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
-        }
-
-        gitLab = GitLabFactory.createGitLab(account, gitlabClientBuilder)
-
-        loadUser(gitlabClientBuilder)
     }
 
     fun verifyUrl(): Boolean {
@@ -211,13 +194,22 @@ class LoginActivity : BaseActivity() {
         newAccount.authorizationHeader = account.authorizationHeader
         account = newAccount
 
-        connect()
-    }
+        progress.visibility = View.VISIBLE
+        progress.alpha = 0.0f
+        progress.animate().alpha(1.0f)
 
-    fun loadUser(gitlabClientBuilder: OkHttpClient.Builder) {
+        account.privateToken = textToken.text.toString()
+        val gitlabClientBuilder = OkHttpClientFactory.create(account, false)
         if (BuildConfig.DEBUG) {
             gitlabClientBuilder.addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
         }
+
+        gitLab = GitLabFactory.createGitLab(account, gitlabClientBuilder)
+
+        loadUser(gitlabClientBuilder)
+    }
+
+    fun loadUser(gitlabClientBuilder: OkHttpClient.Builder) {
 
         val gitLabService = GitLabFactory.create(account, gitlabClientBuilder.build())
         gitLabService.getThisUser()
@@ -227,7 +219,7 @@ class LoginActivity : BaseActivity() {
                     override fun error(e: Throwable) {
                         Timber.e(e)
                         if (e is HttpException) {
-                            handleConnectionResponse(response())
+                            handleConnectionResponse(response(), e)
                         } else {
                             handleConnectionError(e)
                         }
@@ -256,20 +248,18 @@ class LoginActivity : BaseActivity() {
             account.trustedCertificate = null
             val fingerprint = X509Util.getFingerPrint((t.cause as X509CertificateException).chain[0])
 
-            val finalFingerprint = fingerprint
-
-            val d = AlertDialog.Builder(this)
+            val dialog = AlertDialog.Builder(this)
                     .setTitle(R.string.certificate_title)
-                    .setMessage(String.format(resources.getString(R.string.certificate_message), finalFingerprint))
+                    .setMessage(String.format(resources.getString(R.string.certificate_message), fingerprint))
                     .setPositiveButton(R.string.ok_button) { dialog, _ ->
-                        account.trustedCertificate = finalFingerprint
+                        account.trustedCertificate = fingerprint
                         login()
                         dialog.dismiss()
                     }
                     .setNegativeButton(R.string.cancel_button) { dialog, _ -> dialog.dismiss() }
                     .show()
 
-            d.findViewById<TextView>(android.R.id.message).movementMethod = LinkMovementMethod.getInstance()
+            dialog.findViewById<TextView>(android.R.id.message).movementMethod = LinkMovementMethod.getInstance()
         } else if (t is SSLPeerUnverifiedException && t.message?.toLowerCase()!!.contains("hostname")) {
             account.trustedHostname = null
             val hostNameVerifier = gitLab?.client?.hostnameVerifier() as? CustomHostnameVerifier
@@ -289,16 +279,12 @@ class LoginActivity : BaseActivity() {
                     .show()
 
             dialog.findViewById<TextView>(android.R.id.message).movementMethod = LinkMovementMethod.getInstance()
-        } else if (t is ConnectException) {
-            Snackbar.make(root, t.message!!, Snackbar.LENGTH_LONG)
-                    .show()
-        } else {
-            Snackbar.make(root, getString(R.string.login_error), Snackbar.LENGTH_LONG)
-                    .show()
+        }  else {
+            snackbarWithDetails(t)
         }
     }
 
-    fun handleConnectionResponse(response: Response<*>) {
+    fun handleConnectionResponse(response: Response<*>, throwable: Throwable) {
         progress.visibility = View.GONE
         when (response.code()) {
             401 -> {
@@ -311,10 +297,9 @@ class LoginActivity : BaseActivity() {
                 }
                 var errorMessage = getString(R.string.login_unauthorized)
                 try {
-
                     val adapter = MoshiProvider.moshi.adapter<Message>(Message::class.java)
                     val message = adapter.fromJson(response.errorBody()!!.string())
-                    if (message != null && message.message != null) {
+                    if (message?.message != null) {
                         errorMessage = message.message
                     }
                 } catch (e: IOException) {
@@ -328,10 +313,8 @@ class LoginActivity : BaseActivity() {
             404 -> {
                 Snackbar.make(root, getString(R.string.login_404_error), Snackbar.LENGTH_LONG)
                         .show()
-                Snackbar.make(root, getString(R.string.login_error), Snackbar.LENGTH_LONG)
-                        .show()
             }
-            else -> Snackbar.make(root, getString(R.string.login_error), Snackbar.LENGTH_LONG).show()
+            else -> snackbarWithDetails(throwable)
         }
     }
 
@@ -366,5 +349,18 @@ class LoginActivity : BaseActivity() {
         return accounts.any {
             it.serverUrl == url && usernameOrEmailOrPrivateToken == it.privateToken
         }
+    }
+
+    fun snackbarWithDetails(throwable: Throwable) {
+        Snackbar.make(root, getString(R.string.login_error), Snackbar.LENGTH_LONG)
+                .setAction(R.string.details, {
+                    val details = throwable.message ?: getString(R.string.no_error_details)
+                    MaterialDialog.Builder(this)
+                            .title(R.string.error)
+                            .content(details)
+                            .positiveText(R.string.ok)
+                            .show()
+                })
+                .show()
     }
 }

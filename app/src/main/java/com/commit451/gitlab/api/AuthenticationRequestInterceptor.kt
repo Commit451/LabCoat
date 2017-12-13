@@ -3,7 +3,6 @@ package com.commit451.gitlab.api
 import com.commit451.gitlab.model.Account
 import okhttp3.Interceptor
 import okhttp3.Response
-import timber.log.Timber
 import java.io.IOException
 
 /**
@@ -21,29 +20,32 @@ class AuthenticationRequestInterceptor(private val account: Account) : Intercept
         var request = chain.request()
 
         var url = request.url()
+        val serverUrl = account.serverUrl ?: "https://example.com"
 
-        var cleanUrl = url.toString().toLowerCase()
-        cleanUrl = cleanUrl.substring(cleanUrl.indexOf(':'))
-
-        var cleanServerUrl = account.serverUrl.toString().toLowerCase()
-        cleanServerUrl = cleanServerUrl.substring(cleanServerUrl.indexOf(':'))
-
-        if (cleanUrl.startsWith(cleanServerUrl)) {
+        if (isSameServer(url.toString(), serverUrl)) {
             val privateToken = account.privateToken
-            if (privateToken == null) {
-                Timber.e("The private token was null")
-            } else {
+            privateToken?.let {
                 url = url.newBuilder()
-                        .addQueryParameter(PRIVATE_TOKEN_GET_PARAMETER, privateToken)
+                        .addQueryParameter(PRIVATE_TOKEN_GET_PARAMETER, it)
                         .build()
 
                 request = request.newBuilder()
-                        .header(PRIVATE_TOKEN_HEADER_FIELD, privateToken)
+                        .header(PRIVATE_TOKEN_HEADER_FIELD, it)
                         .url(url)
                         .build()
             }
         }
 
         return chain.proceed(request)
+    }
+
+    private fun isSameServer(requestUrl: String, serverUrl: String): Boolean {
+        var cleanUrl = requestUrl.toLowerCase()
+        cleanUrl = cleanUrl.substring(cleanUrl.indexOf(':'))
+
+        var cleanServerUrl = serverUrl.toLowerCase()
+        cleanServerUrl = cleanServerUrl.substring(cleanServerUrl.indexOf(':'))
+
+        return cleanUrl.startsWith(cleanServerUrl)
     }
 }
