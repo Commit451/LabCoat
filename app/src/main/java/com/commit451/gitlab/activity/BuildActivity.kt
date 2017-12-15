@@ -23,12 +23,11 @@ import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.BuildPagerAdapter
 import com.commit451.gitlab.event.BuildChangedEvent
 import com.commit451.gitlab.extension.getDownloadBuildUrl
+import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Build
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.util.DownloadUtil
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 
 /**
@@ -67,9 +66,7 @@ class BuildActivity : BaseActivity() {
             R.id.action_retry -> {
                 progress.visibility = View.VISIBLE
                 App.get().gitLab.retryBuild(project.id, build.id)
-                        .compose(this@BuildActivity.bindToLifecycle<Build>())
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
+                        .with(this)
                         .subscribe(object : CustomSingleObserver<Build>() {
 
                             override fun error(t: Throwable) {
@@ -91,9 +88,7 @@ class BuildActivity : BaseActivity() {
             R.id.action_erase -> {
                 progress.visibility = View.VISIBLE
                 App.get().gitLab.eraseBuild(project.id, build.id)
-                        .compose(this@BuildActivity.bindToLifecycle<Build>())
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
+                        .with(this)
                         .subscribe(object : CustomSingleObserver<Build>() {
 
                             override fun error(t: Throwable) {
@@ -115,9 +110,7 @@ class BuildActivity : BaseActivity() {
             R.id.action_cancel -> {
                 progress.visibility = View.VISIBLE
                 App.get().gitLab.cancelBuild(project.id, build.id)
-                        .compose(this@BuildActivity.bindToLifecycle<Build>())
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
+                        .with(this)
                         .subscribe(object : CustomSingleObserver<Build>() {
 
                             override fun error(t: Throwable) {

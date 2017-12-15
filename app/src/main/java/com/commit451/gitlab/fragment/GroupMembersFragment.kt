@@ -20,7 +20,7 @@ import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.GroupMembersAdapter
 import com.commit451.gitlab.dialog.AccessDialog
 import com.commit451.gitlab.event.MemberAddedEvent
-import com.commit451.gitlab.extension.setup
+import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Group
 import com.commit451.gitlab.model.api.User
 import com.commit451.gitlab.navigation.Navigator
@@ -28,7 +28,6 @@ import com.commit451.gitlab.rx.CustomCompleteObserver
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
 import com.commit451.gitlab.viewHolder.ProjectMemberViewHolder
-import com.trello.rxlifecycle2.android.FragmentEvent
 import io.reactivex.Single
 import org.greenrobot.eventbus.Subscribe
 import retrofit2.Response
@@ -83,7 +82,7 @@ class GroupMembersFragment : ButterKnifeFragment() {
         override fun onUserRemoveClicked(member: User) {
             this@GroupMembersFragment.member = member
             App.get().gitLab.removeGroupMember(group.id, member.id)
-                    .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
+                    .with(this@GroupMembersFragment)
                     .subscribe(object : CustomCompleteObserver() {
 
                         override fun error(e: Throwable) {
@@ -180,7 +179,7 @@ class GroupMembersFragment : ButterKnifeFragment() {
 
     private fun loadGroupMembers(observable: Single<Response<List<User>>>) {
         observable
-                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
+                .with(this)
                 .subscribe(object : CustomResponseSingleObserver<List<User>>() {
 
                     override fun error(e: Throwable) {

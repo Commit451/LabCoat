@@ -14,12 +14,11 @@ import butterknife.BindView
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.TodoAdapter
-import com.commit451.gitlab.extension.setup
+import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Todo
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
-import com.trello.rxlifecycle2.android.FragmentEvent
 import io.reactivex.Single
 import retrofit2.Response
 import timber.log.Timber
@@ -121,7 +120,7 @@ class TodoFragment : ButterKnifeFragment() {
 
     fun getTodos(observable: Single<Response<List<Todo>>>) {
         observable
-                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
+                .with(this)
                 .subscribe(object : CustomResponseSingleObserver<List<Todo>>() {
 
                     override fun error(e: Throwable) {
@@ -161,7 +160,7 @@ class TodoFragment : ButterKnifeFragment() {
         adapterTodos.setLoading(true)
         Timber.d("loadMore called for " + nextPageUrl!!)
         App.get().gitLab.getTodosByUrl(nextPageUrl!!.toString())
-                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
+                .with(this)
                 .subscribe(object : CustomResponseSingleObserver<List<Todo>>() {
 
                     override fun error(e: Throwable) {

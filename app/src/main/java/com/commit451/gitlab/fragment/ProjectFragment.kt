@@ -21,7 +21,6 @@ import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomCompleteObserver
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.util.InternalLinkMovementMethod
-import com.trello.rxlifecycle2.android.FragmentEvent
 import io.reactivex.Single
 import org.greenrobot.eventbus.Subscribe
 import retrofit2.Response
@@ -76,7 +75,7 @@ class ProjectFragment : ButterKnifeFragment() {
                     .setNegativeButton(R.string.cancel, null)
                     .setPositiveButton(R.string.ok) { _, _ ->
                         App.get().gitLab.forkProject(it.id)
-                                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
+                                .with(this)
                                 .subscribe(object : CustomCompleteObserver() {
 
                                     override fun error(t: Throwable) {
@@ -98,7 +97,7 @@ class ProjectFragment : ButterKnifeFragment() {
     fun onStarClicked() {
         if (project != null) {
             App.get().gitLab.starProject(project!!.id)
-                    .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
+                    .with(this)
                     .subscribe(object : CustomSingleObserver<Response<Project>>() {
 
                         override fun error(t: Throwable) {
@@ -172,7 +171,7 @@ class ProjectFragment : ButterKnifeFragment() {
                 }
                 Single.just(readmeResult)
             }
-                    .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
+                    .with(this)
                     .subscribe(object : CustomSingleObserver<ReadmeResult>() {
 
                         override fun error(t: Throwable) {
@@ -230,7 +229,7 @@ class ProjectFragment : ButterKnifeFragment() {
 
     fun unstarProject() {
         App.get().gitLab.unstarProject(project!!.id)
-                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
+                .with(this)
                 .subscribe(object : CustomSingleObserver<Project>() {
 
                     override fun error(t: Throwable) {

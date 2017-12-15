@@ -13,13 +13,12 @@ import butterknife.BindView
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.UserAdapter
-import com.commit451.gitlab.extension.setup
+import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.User
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
 import com.commit451.gitlab.viewHolder.UserViewHolder
-import com.trello.rxlifecycle2.android.FragmentEvent
 import timber.log.Timber
 
 class UsersFragment : ButterKnifeFragment() {
@@ -108,7 +107,7 @@ class UsersFragment : ButterKnifeFragment() {
         swipeRefreshLayout.isRefreshing = true
 
         App.get().gitLab.searchUsers(query!!)
-                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
+                .with(this)
                 .subscribe(object : CustomResponseSingleObserver<List<User>>() {
 
                     override fun error(e: Throwable) {
@@ -138,7 +137,7 @@ class UsersFragment : ButterKnifeFragment() {
         adapterUser.setLoading(true)
         Timber.d("loadMore called for %s %s", nextPageUrl!!.toString(), query)
         App.get().gitLab.searchUsers(nextPageUrl!!.toString(), query!!)
-                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
+                .with(this)
                 .subscribe(object : CustomResponseSingleObserver<List<User>>() {
 
                     override fun error(e: Throwable) {

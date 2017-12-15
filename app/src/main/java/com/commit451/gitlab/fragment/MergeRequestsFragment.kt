@@ -20,13 +20,12 @@ import com.commit451.gitlab.adapter.DividerItemDecoration
 import com.commit451.gitlab.adapter.MergeRequestAdapter
 import com.commit451.gitlab.event.MergeRequestChangedEvent
 import com.commit451.gitlab.event.ProjectReloadEvent
-import com.commit451.gitlab.extension.setup
+import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.MergeRequest
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
-import com.trello.rxlifecycle2.android.FragmentEvent
 import org.greenrobot.eventbus.Subscribe
 import timber.log.Timber
 
@@ -131,7 +130,7 @@ class MergeRequestsFragment : ButterKnifeFragment() {
         nextPageUrl = null
         loading = true
         App.get().gitLab.getMergeRequests(project!!.id, state)
-                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
+                .with(this)
                 .subscribe(object : CustomResponseSingleObserver<List<MergeRequest>>() {
 
                     override fun error(e: Throwable) {
@@ -169,7 +168,7 @@ class MergeRequestsFragment : ButterKnifeFragment() {
         loading = true
         Timber.d("loadMore called for " + nextPageUrl!!)
         App.get().gitLab.getMergeRequests(nextPageUrl!!.toString(), state)
-                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
+                .with(this)
                 .subscribe(object : CustomResponseSingleObserver<List<MergeRequest>>() {
 
                     override fun error(e: Throwable) {

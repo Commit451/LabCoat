@@ -16,14 +16,13 @@ import butterknife.OnClick
 import com.commit451.addendum.parceler.getParcelerParcelableExtra
 import com.commit451.addendum.parceler.putParcelerParcelableExtra
 import com.commit451.addendum.themeAttrColor
-import com.commit451.easel.Easel
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.api.converter.DashDateAdapter
 import com.commit451.gitlab.event.MilestoneChangedEvent
 import com.commit451.gitlab.event.MilestoneCreatedEvent
 import com.commit451.gitlab.extension.checkValid
-import com.commit451.gitlab.extension.setup
+import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Milestone
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.teleprinter.Teleprinter
@@ -143,7 +142,7 @@ class AddMilestoneActivity : MorphActivity() {
     }
 
     fun createOrEditMilestone(observable: Single<Milestone>) {
-        observable.setup(bindToLifecycle())
+        observable.with(this)
                 .subscribe(object : CustomSingleObserver<Milestone>() {
 
                     override fun error(t: Throwable) {

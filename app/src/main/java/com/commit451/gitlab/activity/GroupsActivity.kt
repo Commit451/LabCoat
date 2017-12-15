@@ -20,7 +20,7 @@ import com.commit451.gitlab.adapter.GroupAdapter
 import com.commit451.gitlab.data.Prefs
 import com.commit451.gitlab.event.CloseDrawerEvent
 import com.commit451.gitlab.event.ReloadDataEvent
-import com.commit451.gitlab.extension.setup
+import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Group
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
@@ -112,7 +112,7 @@ class GroupsActivity : BaseActivity() {
         loading = true
 
         App.get().gitLab.getGroups()
-                .setup(bindToLifecycle())
+                .with(this)
                 .subscribe(object : CustomResponseSingleObserver<List<Group>>() {
 
                     override fun error(e: Throwable) {
@@ -151,7 +151,7 @@ class GroupsActivity : BaseActivity() {
 
         Timber.d("loadMore called for %s", nextPageUrl)
         App.get().gitLab.getGroups(nextPageUrl!!.toString())
-                .setup(bindToLifecycle())
+                .with(this)
                 .subscribe(object : CustomResponseSingleObserver<List<Group>>() {
 
                     override fun error(e: Throwable) {

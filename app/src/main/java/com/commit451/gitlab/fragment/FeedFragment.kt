@@ -15,13 +15,12 @@ import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.DividerItemDecoration
 import com.commit451.gitlab.adapter.FeedAdapter
-import com.commit451.gitlab.extension.setup
+import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.rss.Entry
 import com.commit451.gitlab.model.rss.Feed
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.novoda.simplechromecustomtabs.SimpleChromeCustomTabs
-import com.trello.rxlifecycle2.android.FragmentEvent
 import timber.log.Timber
 
 /**
@@ -106,7 +105,7 @@ class FeedFragment : ButterKnifeFragment() {
         textMessage.visibility = View.GONE
         swipeRefreshLayout.isRefreshing = true
         App.get().gitLab.getFeed(feedUrl!!.toString())
-                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
+                .with(this)
                 .subscribe(object : CustomSingleObserver<Feed>() {
                     override fun success(feed: Feed) {
                         swipeRefreshLayout.isRefreshing = false

@@ -21,7 +21,7 @@ import com.commit451.gitlab.activity.AttachActivity
 import com.commit451.gitlab.adapter.NotesAdapter
 import com.commit451.gitlab.api.response.FileUploadResponse
 import com.commit451.gitlab.event.MergeRequestChangedEvent
-import com.commit451.gitlab.extension.setup
+import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.MergeRequest
 import com.commit451.gitlab.model.api.Note
 import com.commit451.gitlab.model.api.Project
@@ -31,7 +31,6 @@ import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
 import com.commit451.gitlab.view.SendMessageView
 import com.commit451.teleprinter.Teleprinter
-import com.trello.rxlifecycle2.android.FragmentEvent
 import org.greenrobot.eventbus.Subscribe
 import timber.log.Timber
 
@@ -146,7 +145,7 @@ class MergeRequestDiscussionFragment : ButterKnifeFragment() {
     fun loadNotes() {
         swipeRefreshLayout.isRefreshing = true
         App.get().gitLab.getMergeRequestNotes(project.id, mergeRequest.iid)
-                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
+                .with(this)
                 .subscribe(object : CustomResponseSingleObserver<List<Note>>() {
 
                     override fun error(e: Throwable) {
@@ -169,7 +168,7 @@ class MergeRequestDiscussionFragment : ButterKnifeFragment() {
     fun loadMoreNotes() {
         adapterNotes.setLoading(true)
         App.get().gitLab.getMergeRequestNotes(nextPageUrl!!.toString())
-                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
+                .with(this)
                 .subscribe(object : CustomResponseSingleObserver<List<Note>>() {
 
                     override fun error(e: Throwable) {
@@ -203,7 +202,7 @@ class MergeRequestDiscussionFragment : ButterKnifeFragment() {
         sendMessageView.clearText()
 
         App.get().gitLab.addMergeRequestNote(project.id, mergeRequest.iid, message)
-                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
+                .with(this)
                 .subscribe(object : CustomSingleObserver<Note>() {
 
                     override fun error(e: Throwable) {

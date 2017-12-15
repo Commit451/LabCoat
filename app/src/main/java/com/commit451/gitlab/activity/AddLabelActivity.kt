@@ -19,7 +19,7 @@ import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.R.string.labels
 import com.commit451.gitlab.adapter.LabelAdapter
-import com.commit451.gitlab.extension.setup
+import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Label
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomSingleObserver
@@ -104,7 +104,7 @@ class AddLabelActivity : BaseActivity() {
         textMessage.visibility = View.GONE
         swipeRefreshLayout.isRefreshing = true
         App.get().gitLab.getLabels(projectId)
-                .setup(bindToLifecycle())
+                .with(this)
                 .subscribe(object : CustomSingleObserver<List<Label>>() {
 
                     override fun error(t: Throwable) {

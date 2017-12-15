@@ -27,8 +27,8 @@ import com.commit451.gitlab.dialog.HttpLoginDialog
 import com.commit451.gitlab.event.LoginEvent
 import com.commit451.gitlab.event.ReloadDataEvent
 import com.commit451.gitlab.extension.checkValid
-import com.commit451.gitlab.extension.setup
 import com.commit451.gitlab.extension.text
+import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.Account
 import com.commit451.gitlab.model.api.Message
 import com.commit451.gitlab.model.api.User
@@ -213,7 +213,7 @@ class LoginActivity : BaseActivity() {
 
         val gitLabService = GitLabFactory.create(account, gitlabClientBuilder.build())
         gitLabService.getThisUser()
-                .setup(bindToLifecycle())
+                .with(this)
                 .subscribe(object : CustomResponseSingleObserver<User>() {
 
                     override fun error(e: Throwable) {

@@ -29,16 +29,13 @@ import com.commit451.gitlab.event.IssueChangedEvent
 import com.commit451.gitlab.event.IssueCreatedEvent
 import com.commit451.gitlab.extension.belongsToGroup
 import com.commit451.gitlab.extension.checkValid
-import com.commit451.gitlab.extension.setup
+import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.*
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.teleprinter.Teleprinter
 import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-import retrofit2.Response
 import timber.log.Timber
 import java.util.*
 
@@ -135,7 +132,7 @@ class AddIssueActivity : MorphActivity() {
 
     private fun load() {
         App.get().gitLab.getMilestones(project.id, getString(R.string.milestone_state_value_default))
-                .setup(bindToLifecycle())
+                .with(this)
                 .subscribe(object : CustomResponseSingleObserver<List<Milestone>>() {
 
                     override fun error(t: Throwable) {
@@ -157,9 +154,7 @@ class AddIssueActivity : MorphActivity() {
                     }
                 })
         App.get().gitLab.getProjectMembers(project.id)
-                .compose(this.bindToLifecycle<Response<List<User>>>())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .with(this)
                 .subscribe(object : CustomResponseSingleObserver<List<User>>() {
 
                     override fun error(t: Throwable) {
@@ -173,7 +168,7 @@ class AddIssueActivity : MorphActivity() {
                         if (project.belongsToGroup()) {
                             Timber.d("Project belongs to a group, loading those users too")
                             App.get().gitLab.getGroupMembers(project.namespace.id)
-                                    .setup(bindToLifecycle())
+                                    .with(this@AddIssueActivity)
                                     .subscribe(object : CustomResponseSingleObserver<List<User>>() {
 
                                         override fun error(t: Throwable) {
@@ -193,7 +188,7 @@ class AddIssueActivity : MorphActivity() {
                     }
                 })
         App.get().gitLab.getLabels(project.id)
-                .setup(bindToLifecycle())
+                .with(this)
                 .subscribe(object : CustomSingleObserver<List<Label>>() {
 
                     override fun error(t: Throwable) {
@@ -339,7 +334,7 @@ class AddIssueActivity : MorphActivity() {
     }
 
     private fun observeUpdate(observable: Single<Issue>) {
-        observable.setup(bindToLifecycle())
+        observable.with(this)
                 .subscribe(object : CustomSingleObserver<Issue>() {
 
                     override fun error(t: Throwable) {

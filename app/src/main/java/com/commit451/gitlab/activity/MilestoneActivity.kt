@@ -23,7 +23,7 @@ import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.DividerItemDecoration
 import com.commit451.gitlab.adapter.MilestoneIssueAdapter
 import com.commit451.gitlab.event.MilestoneChangedEvent
-import com.commit451.gitlab.extension.setup
+import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Issue
 import com.commit451.gitlab.model.api.Milestone
 import com.commit451.gitlab.model.api.Project
@@ -143,7 +143,7 @@ class MilestoneActivity : BaseActivity() {
         loading = true
         swipeRefreshLayout.isRefreshing = true
         App.get().gitLab.getMilestoneIssues(project.id, milestone.id)
-                .setup(bindToLifecycle())
+                .with(this)
                 .subscribe(object : CustomResponseSingleObserver<List<Issue>>() {
 
                     override fun error(t: Throwable) {
@@ -183,7 +183,7 @@ class MilestoneActivity : BaseActivity() {
 
         Timber.d("loadMore called for %s", nextPageUrl)
         App.get().gitLab.getMilestoneIssues(nextPageUrl!!.toString())
-                .setup(bindToLifecycle())
+                .with(this)
                 .subscribe(object : CustomResponseSingleObserver<List<Issue>>() {
 
                     override fun error(e: Throwable) {
@@ -209,7 +209,7 @@ class MilestoneActivity : BaseActivity() {
     }
 
     fun updateMilestoneStatus(observable: Single<Milestone>) {
-        observable.setup(bindToLifecycle())
+        observable.with(this)
                 .subscribe(object : CustomSingleObserver<Milestone>() {
 
                     override fun error(e: Throwable) {

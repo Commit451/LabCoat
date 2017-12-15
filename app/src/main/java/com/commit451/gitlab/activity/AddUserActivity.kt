@@ -21,7 +21,7 @@ import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.UserAdapter
 import com.commit451.gitlab.dialog.AccessDialog
 import com.commit451.gitlab.event.MemberAddedEvent
-import com.commit451.gitlab.extension.setup
+import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Group
 import com.commit451.gitlab.model.api.User
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
@@ -154,7 +154,7 @@ class AddUserActivity : MorphActivity() {
         swipeRefreshLayout.isRefreshing = true
         loading = true
         App.get().gitLab.searchUsers(query!!)
-                .setup(bindToLifecycle())
+                .with(this)
                 .subscribe(object : CustomResponseSingleObserver<List<User>>() {
 
                     override fun error(t: Throwable) {
@@ -180,7 +180,7 @@ class AddUserActivity : MorphActivity() {
         adapter.setLoading(true)
         Timber.d("loadMore " + nextPageUrl!!.toString() + " " + query)
         App.get().gitLab.searchUsers(nextPageUrl!!.toString(), query!!)
-                .setup(bindToLifecycle())
+                .with(this)
                 .subscribe(object : CustomResponseSingleObserver<List<User>>() {
 
                     override fun error(t: Throwable) {
@@ -198,7 +198,7 @@ class AddUserActivity : MorphActivity() {
     }
 
     private fun add(observable: Single<Response<User>>) {
-        observable.setup(bindToLifecycle())
+        observable.with(this)
                 .subscribe(object : CustomResponseSingleObserver<User>() {
 
                     override fun error(t: Throwable) {

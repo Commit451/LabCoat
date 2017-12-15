@@ -13,13 +13,12 @@ import com.commit451.addendum.parceler.putParcelerParcelable
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.event.PipelineChangedEvent
-import com.commit451.gitlab.extension.setup
+import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.CommitUser
 import com.commit451.gitlab.model.api.Pipeline
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.util.DateUtil
-import com.trello.rxlifecycle2.android.FragmentEvent
 import org.greenrobot.eventbus.Subscribe
 import timber.log.Timber
 import java.util.*
@@ -85,7 +84,7 @@ class PipelineDescriptionFragment : ButterKnifeFragment() {
     fun load() {
         swipeRefreshLayout.isRefreshing = true
         App.get().gitLab.getPipeline(project.id, pipeline.id)
-                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
+                .with(this)
                 .subscribe(object : CustomSingleObserver<Pipeline>() {
 
                     override fun error(t: Throwable) {

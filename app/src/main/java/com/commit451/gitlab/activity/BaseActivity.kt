@@ -1,12 +1,15 @@
 package com.commit451.gitlab.activity
 
+import android.support.v7.app.AppCompatActivity
 import com.novoda.simplechromecustomtabs.SimpleChromeCustomTabs
-import com.trello.rxlifecycle2.components.support.RxAppCompatActivity
+import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
 
 /**
  * Base activity for others to derive from
  */
-open class BaseActivity : RxAppCompatActivity() {
+abstract class BaseActivity : AppCompatActivity() {
+
+    val scopeProvider by lazy { AndroidLifecycleScopeProvider.from(this) }
 
     open fun hasBrowsableLinks(): Boolean {
         return false

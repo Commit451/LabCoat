@@ -2,19 +2,21 @@ package com.commit451.gitlab.fragment
 
 
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.view.View
-
 import com.commit451.gitlab.App
 import com.commit451.gitlab.activity.BaseActivity
 import com.commit451.gitlab.event.ReloadDataEvent
-import com.trello.rxlifecycle2.components.support.RxFragment
-
+import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
 import org.greenrobot.eventbus.Subscribe
 
 
-open class BaseFragment : RxFragment() {
+abstract class BaseFragment : Fragment() {
 
     private var baseEventReceiver: EventReceiver? = null
+
+    val scopeProvider by lazy { AndroidLifecycleScopeProvider.from(this) }
+
     val baseActivty by lazy {
         activity as BaseActivity
     }

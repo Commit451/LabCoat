@@ -20,7 +20,7 @@ import com.commit451.gitlab.App
 import com.commit451.gitlab.BuildConfig
 import com.commit451.gitlab.R
 import com.commit451.gitlab.api.GitLab
-import com.commit451.gitlab.extension.setup
+import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.Account
 import com.commit451.gitlab.model.api.Contributor
 import com.commit451.gitlab.navigation.Navigator
@@ -102,7 +102,7 @@ class AboutActivity : BaseActivity() {
                     .build()
         }
         gitLab.getContributors(REPO_ID)
-                .setup(bindToLifecycle())
+                .with(this)
                 .subscribe(object : CustomSingleObserver<List<Contributor>>() {
 
                     override fun error(t: Throwable) {

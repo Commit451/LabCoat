@@ -10,7 +10,7 @@ import butterknife.ButterKnife
 import butterknife.OnClick
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
-import com.commit451.gitlab.extension.setup
+import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.*
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomSingleObserver
@@ -109,7 +109,7 @@ class LoadSomeInfoActivity : BaseActivity() {
                 val namespace = intent.getStringExtra(EXTRA_PROJECT_NAMESPACE)
                 val project = intent.getStringExtra(EXTRA_PROJECT_NAME)
                 App.get().gitLab.getProject(namespace, project)
-                        .setup(bindToLifecycle())
+                        .with(this)
                         .subscribe(object : CustomSingleObserver<Project>() {
 
                             override fun error(t: Throwable) {
@@ -136,7 +136,7 @@ class LoadSomeInfoActivity : BaseActivity() {
             LOAD_TYPE_ISSUE -> {
                 val issueId = intent.getStringExtra(EXTRA_ISSUE_ID)
                 App.get().gitLab.getIssue(response.id, issueId)
-                        .setup(bindToLifecycle())
+                        .with(this)
                         .subscribe(object : CustomSingleObserver<Issue>() {
 
                             override fun error(t: Throwable) {
@@ -154,7 +154,7 @@ class LoadSomeInfoActivity : BaseActivity() {
             LOAD_TYPE_DIFF -> {
                 val sha = intent.getStringExtra(EXTRA_COMMIT_SHA)
                 App.get().gitLab.getCommit(response.id, sha)
-                        .setup(bindToLifecycle())
+                        .with(this)
                         .subscribe(object : CustomSingleObserver<RepositoryCommit>() {
 
                             override fun error(t: Throwable) {
@@ -172,7 +172,7 @@ class LoadSomeInfoActivity : BaseActivity() {
             LOAD_TYPE_MERGE_REQUEST -> {
                 val mergeRequestId = intent.getStringExtra(EXTRA_MERGE_REQUEST)
                 App.get().gitLab.getMergeRequestsByIid(response.id, mergeRequestId)
-                        .setup(bindToLifecycle())
+                        .with(this)
                         .subscribe(object : CustomSingleObserver<List<MergeRequest>>() {
 
                             override fun error(t: Throwable) {
@@ -194,7 +194,7 @@ class LoadSomeInfoActivity : BaseActivity() {
             LOAD_TYPE_BUILD -> {
                 val buildId = intent.getLongExtra(EXTRA_BUILD_ID, -1)
                 App.get().gitLab.getBuild(response.id, buildId)
-                        .setup(bindToLifecycle())
+                        .with(this)
                         .subscribe(object : CustomSingleObserver<Build>() {
 
                             override fun error(t: Throwable) {
@@ -212,7 +212,7 @@ class LoadSomeInfoActivity : BaseActivity() {
             LOAD_TYPE_MILESTONE -> {
                 val milestoneId = intent.getStringExtra(EXTRA_MILESTONE_ID)
                 App.get().gitLab.getMilestonesByIid(response.id, milestoneId)
-                        .setup(bindToLifecycle())
+                        .with(this)
                         .subscribe(object : CustomSingleObserver<List<Milestone>>() {
 
                             override fun error(t: Throwable) {

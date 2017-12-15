@@ -21,7 +21,7 @@ import com.commit451.gitlab.activity.AttachActivity
 import com.commit451.gitlab.adapter.NotesAdapter
 import com.commit451.gitlab.api.response.FileUploadResponse
 import com.commit451.gitlab.event.IssueChangedEvent
-import com.commit451.gitlab.extension.setup
+import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Issue
 import com.commit451.gitlab.model.api.Note
 import com.commit451.gitlab.model.api.Project
@@ -31,7 +31,6 @@ import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
 import com.commit451.gitlab.view.SendMessageView
 import com.commit451.teleprinter.Teleprinter
-import com.trello.rxlifecycle2.android.FragmentEvent
 import org.greenrobot.eventbus.Subscribe
 import timber.log.Timber
 
@@ -146,7 +145,7 @@ class IssueDiscussionFragment : ButterKnifeFragment() {
     fun loadNotes() {
         swipeRefreshLayout.isRefreshing = true
         App.get().gitLab.getIssueNotes(project.id, issue.iid)
-                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
+                .with(this)
                 .subscribe(object : CustomResponseSingleObserver<List<Note>>() {
 
                     override fun error(e: Throwable) {
@@ -169,7 +168,7 @@ class IssueDiscussionFragment : ButterKnifeFragment() {
     fun loadMoreNotes() {
         adapter.setLoading(true)
         App.get().gitLab.getIssueNotes(nextPageUrl!!.toString())
-                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
+                .with(this)
                 .subscribe(object : CustomResponseSingleObserver<List<Note>>() {
 
                     override fun error(e: Throwable) {
@@ -203,7 +202,7 @@ class IssueDiscussionFragment : ButterKnifeFragment() {
         sendMessageView.clearText()
 
         App.get().gitLab.addIssueNote(project.id, issue.iid, message)
-                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
+                .with(this)
                 .subscribe(object : CustomSingleObserver<Note>() {
 
                     override fun error(e: Throwable) {

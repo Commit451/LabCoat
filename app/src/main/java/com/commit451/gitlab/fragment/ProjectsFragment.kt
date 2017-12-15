@@ -18,13 +18,12 @@ import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.DividerItemDecoration
 import com.commit451.gitlab.adapter.ProjectAdapter
 import com.commit451.gitlab.api.GitLabService
-import com.commit451.gitlab.extension.setup
+import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Group
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
-import com.trello.rxlifecycle2.android.FragmentEvent
 import io.reactivex.Single
 import retrofit2.Response
 import timber.log.Timber
@@ -169,7 +168,7 @@ class ProjectsFragment : ButterKnifeFragment() {
 
     private fun actuallyLoadIt(observable: Single<Response<List<Project>>>) {
         observable
-                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
+                .with(this)
                 .subscribe(object : CustomResponseSingleObserver<List<Project>>() {
 
                     override fun error(e: Throwable) {
@@ -204,7 +203,7 @@ class ProjectsFragment : ButterKnifeFragment() {
         adapterProjects.setLoading(true)
         Timber.d("loadMore called for %s", nextPageUrl)
         getGitLab().getProjects(nextPageUrl!!.toString())
-                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
+                .with(this)
                 .subscribe(object : CustomResponseSingleObserver<List<Project>>() {
 
                     override fun error(e: Throwable) {

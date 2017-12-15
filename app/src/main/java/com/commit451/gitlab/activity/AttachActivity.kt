@@ -18,9 +18,9 @@ import com.commit451.addendum.parceler.putParcelerParcelableExtra
 import com.commit451.alakazam.fadeIn
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
-import com.commit451.gitlab.extension.setup
-import com.commit451.gitlab.extension.toPart
 import com.commit451.gitlab.api.response.FileUploadResponse
+import com.commit451.gitlab.extension.toPart
+import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.rx.CustomSingleObserver
 import pl.aprilapps.easyphotopicker.DefaultCallback
@@ -132,7 +132,7 @@ class AttachActivity : BaseActivity() {
         rootButtons.visibility = View.INVISIBLE
         photo.toPart()
                 .flatMap { part -> App.get().gitLab.uploadFile(project!!.id, part) }
-                .setup(bindToLifecycle())
+                .with(this)
                 .subscribe(object : CustomSingleObserver<FileUploadResponse>() {
 
                     override fun success(fileUploadResponse: FileUploadResponse) {

@@ -1,9 +1,16 @@
 package com.commit451.gitlab.extension
 
+import com.commit451.gitlab.activity.BaseActivity
+import com.commit451.gitlab.fragment.BaseFragment
 import com.commit451.reptar.kotlin.fromIoToMainThread
-import com.trello.rxlifecycle2.LifecycleTransformer
+import com.uber.autodispose.CompletableSubscribeProxy
+import com.uber.autodispose.kotlin.autoDisposable
 import io.reactivex.Completable
 
-fun Completable.setup(transformer: LifecycleTransformer<Any>): Completable {
-    return this.compose(transformer).fromIoToMainThread()
+fun Completable.with(baseActivity: BaseActivity): CompletableSubscribeProxy {
+    return this.fromIoToMainThread().autoDisposable(baseActivity.scopeProvider)
+}
+
+fun Completable.with(baseFragment: BaseFragment): CompletableSubscribeProxy {
+    return this.fromIoToMainThread().autoDisposable(baseFragment.scopeProvider)
 }

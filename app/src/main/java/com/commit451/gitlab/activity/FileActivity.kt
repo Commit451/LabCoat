@@ -20,7 +20,7 @@ import butterknife.ButterKnife
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.extension.base64Decode
-import com.commit451.gitlab.extension.setup
+import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.RepositoryFile
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.util.FileUtil
@@ -102,7 +102,7 @@ class FileActivity : BaseActivity() {
     private fun loadData() {
         progress.visibility = View.VISIBLE
         App.get().gitLab.getFile(projectId, path!!, ref!!)
-                .setup(bindToLifecycle())
+                .with(this)
                 .subscribe(object : CustomSingleObserver<RepositoryFile>() {
 
                     override fun error(t: Throwable) {
@@ -133,7 +133,7 @@ class FileActivity : BaseActivity() {
 
     private fun loadBlob(repositoryFile: RepositoryFile) {
         repositoryFile.content.base64Decode()
-                .setup(bindToLifecycle())
+                .with(this)
                 .subscribe(object : CustomSingleObserver<ByteArray>() {
 
                     override fun error(t: Throwable) {

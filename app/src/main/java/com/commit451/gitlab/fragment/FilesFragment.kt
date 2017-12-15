@@ -22,13 +22,12 @@ import com.commit451.gitlab.adapter.DividerItemDecoration
 import com.commit451.gitlab.adapter.FileAdapter
 import com.commit451.gitlab.event.ProjectReloadEvent
 import com.commit451.gitlab.extension.getUrl
-import com.commit451.gitlab.extension.setup
+import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.model.api.RepositoryTreeObject
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.util.IntentUtil
-import com.trello.rxlifecycle2.android.FragmentEvent
 import org.greenrobot.eventbus.Subscribe
 import timber.log.Timber
 import java.util.*
@@ -157,7 +156,7 @@ class FilesFragment : ButterKnifeFragment() {
         swipeRefreshLayout.isRefreshing = true
 
         App.get().gitLab.getTree(project!!.id, ref, newPath)
-                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
+                .with(this)
                 .subscribe(object : CustomSingleObserver<List<RepositoryTreeObject>>() {
 
                     override fun error(e: Throwable) {

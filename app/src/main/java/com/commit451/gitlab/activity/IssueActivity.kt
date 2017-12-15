@@ -22,7 +22,7 @@ import com.commit451.gitlab.adapter.IssuePagerAdapter
 import com.commit451.gitlab.event.IssueChangedEvent
 import com.commit451.gitlab.event.IssueReloadEvent
 import com.commit451.gitlab.extension.getUrl
-import com.commit451.gitlab.extension.setup
+import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Issue
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.navigation.Navigator
@@ -76,7 +76,7 @@ class IssueActivity : BaseActivity() {
             }
             R.id.action_delete -> {
                 App.get().gitLab.deleteIssue(project.id, issue.iid)
-                        .setup(bindToLifecycle())
+                        .with(this)
                         .subscribe(object : CustomCompleteObserver() {
 
                             override fun error(t: Throwable) {
@@ -156,7 +156,7 @@ class IssueActivity : BaseActivity() {
 
     fun updateIssueStatus(observable: Single<Issue>) {
         observable
-                .setup(bindToLifecycle())
+                .with(this)
                 .subscribe(object : CustomSingleObserver<Issue>() {
 
                     override fun error(t: Throwable) {

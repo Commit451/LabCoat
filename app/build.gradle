@@ -4,7 +4,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'io.fabric.tools:gradle:1.25.0'
+        classpath 'io.fabric.tools:gradle:1.25.1'
     }
 }
 
@@ -19,7 +19,6 @@ apply plugin: 'io.fabric'
 
 android {
     compileSdkVersion 27
-    buildToolsVersion "27.0.1"
 
     project.ext {
         LABCOAT_FABRIC_KEY = project.hasProperty("LABCOAT_FABRIC_KEY") ? project.LABCOAT_FABRIC_KEY : ""
@@ -101,13 +100,14 @@ ext {
     reptarVersion = '2.5.1'
     adapterLayout = '1.1.2'
     materialDialogsVersion = '0.9.6.0'
-    leakCanaryVersion = '1.5.3'
-    addendumVersion = '1.6.0'
+    leakCanaryVersion = '1.5.4'
+    addendumVersion = '1.7.1'
     moshiVersion = '1.5.0'
+    autodisposeVersion = '0.5.1'
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlinVersion"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
 
     implementation "com.android.support:appcompat-v7:$supportLibVersion"
     implementation "com.android.support:support-v13:$supportLibVersion"
@@ -146,7 +146,9 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxjava:2.1.7'
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
 
-    implementation 'com.trello.rxlifecycle2:rxlifecycle-components:2.2.1'
+    implementation "com.uber.autodispose:autodispose-kotlin:$autodisposeVersion"
+    implementation "com.uber.autodispose:autodispose-android-kotlin:$autodisposeVersion"
+    implementation "com.uber.autodispose:autodispose-android-archcomponents-kotlin:$autodisposeVersion"
 
     implementation "org.parceler:parceler-api:$parcelerVersion"
     kapt "org.parceler:parceler:$parcelerVersion"
@@ -210,7 +212,7 @@ dependencies {
 
     implementation 'com.atlassian.commonmark:commonmark:0.10.0'
 
-    normalImplementation('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
+    normalImplementation('com.crashlytics.sdk.android:crashlytics:2.8.0@aar') {
         transitive = true
     }
 

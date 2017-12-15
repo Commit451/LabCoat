@@ -17,11 +17,10 @@ import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.PipelinePagerAdapter
 import com.commit451.gitlab.event.PipelineChangedEvent
+import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Pipeline
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.rx.CustomSingleObserver
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 
 /**
@@ -58,9 +57,7 @@ class PipelineActivity : BaseActivity() {
             R.id.action_retry -> {
                 progress.visibility = View.VISIBLE
                 App.get().gitLab.retryPipeline(project.id, pipeline.id)
-                        .compose(this@PipelineActivity.bindToLifecycle<Pipeline>())
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
+                        .with(this)
                         .subscribe(object : CustomSingleObserver<Pipeline>() {
 
                             override fun error(t: Throwable) {
@@ -82,9 +79,7 @@ class PipelineActivity : BaseActivity() {
             R.id.action_cancel -> {
                 progress.visibility = View.VISIBLE
                 App.get().gitLab.cancelPipeline(project.id, pipeline.id)
-                        .compose(this@PipelineActivity.bindToLifecycle<Pipeline>())
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
+                        .with(this)
                         .subscribe(object : CustomSingleObserver<Pipeline>() {
 
                             override fun error(t: Throwable) {

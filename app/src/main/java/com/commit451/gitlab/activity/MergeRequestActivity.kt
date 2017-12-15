@@ -17,7 +17,7 @@ import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.MergeRequestSectionsPagerAdapter
 import com.commit451.gitlab.event.MergeRequestChangedEvent
-import com.commit451.gitlab.extension.setup
+import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.MergeRequest
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
@@ -88,7 +88,7 @@ class MergeRequestActivity : BaseActivity() {
     fun merge() {
         progress.visibility = View.VISIBLE
         App.get().gitLab.acceptMergeRequest(project.id, mergeRequest.iid)
-                .setup(bindToLifecycle())
+                .with(this)
                 .subscribe(object : CustomResponseSingleObserver<MergeRequest>() {
 
                     override fun error(e: Throwable) {

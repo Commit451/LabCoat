@@ -26,7 +26,7 @@ import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.ProjectPagerAdapter
 import com.commit451.gitlab.data.Prefs
 import com.commit451.gitlab.event.ProjectReloadEvent
-import com.commit451.gitlab.extension.setup
+import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.fragment.BaseFragment
 import com.commit451.gitlab.model.Ref
 import com.commit451.gitlab.model.api.Project
@@ -191,7 +191,7 @@ class ProjectActivity : BaseActivity() {
     }
 
     fun loadProject(observable: Single<Project>) {
-        observable.setup(bindToLifecycle())
+        observable.with(this)
                 .subscribe(object : CustomSingleObserver<Project>() {
 
                     override fun error(t: Throwable) {

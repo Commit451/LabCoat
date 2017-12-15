@@ -22,13 +22,11 @@ import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.extension.checkValid
 import com.commit451.gitlab.extension.text
+import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Label
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.util.ColorUtil
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import retrofit2.HttpException
-import retrofit2.Response
 import timber.log.Timber
 
 /**
@@ -119,9 +117,7 @@ class AddNewLabelActivity : BaseActivity(), ColorChooserDialog.ColorCallback {
             progress.alpha = 0.0f
             progress.animate().alpha(1.0f)
             App.get().gitLab.createLabel(projectId, title, color, description)
-                    .compose(this.bindToLifecycle<Response<Label>>())
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
+                    .with(this)
                     .subscribe(object : CustomResponseSingleObserver<Label>() {
 
                         override fun error(e: Throwable) {

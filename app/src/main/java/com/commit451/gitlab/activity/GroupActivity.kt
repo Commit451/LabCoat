@@ -21,12 +21,11 @@ import com.commit451.addendum.parceler.getParcelerParcelableExtra
 import com.commit451.addendum.parceler.putParcelerParcelableExtra
 import com.commit451.addendum.themeAttrColor
 import com.commit451.alakazam.navigationBarColorAnimator
-
 import com.commit451.easel.Easel
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.GroupPagerAdapter
-import com.commit451.gitlab.extension.setup
+import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Group
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.transformation.PaletteTransformation
@@ -80,7 +79,7 @@ class GroupActivity : BaseActivity() {
             progress.visibility = View.VISIBLE
             val groupId = intent.getLongExtra(KEY_GROUP_ID, -1)
             App.get().gitLab.getGroup(groupId)
-                    .setup(bindToLifecycle())
+                    .with(this)
                     .subscribe(object : CustomSingleObserver<Group>() {
 
                         override fun error(t: Throwable) {

@@ -21,13 +21,12 @@ import com.commit451.gitlab.activity.ProjectActivity
 import com.commit451.gitlab.adapter.DividerItemDecoration
 import com.commit451.gitlab.adapter.SnippetAdapter
 import com.commit451.gitlab.event.ProjectReloadEvent
-import com.commit451.gitlab.extension.setup
+import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.model.api.Snippet
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
-import com.trello.rxlifecycle2.android.FragmentEvent
 import org.greenrobot.eventbus.Subscribe
 import timber.log.Timber
 
@@ -141,7 +140,7 @@ class SnippetsFragment : ButterKnifeFragment() {
         nextPageUrl = null
         loading = true
         App.get().gitLab.getSnippets(project!!.id)
-                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
+                .with(this)
                 .subscribe(object : CustomResponseSingleObserver<List<Snippet>>() {
 
                     override fun error(e: Throwable) {
@@ -182,7 +181,7 @@ class SnippetsFragment : ButterKnifeFragment() {
 
         Timber.d("loadMore called for %s", nextPageUrl)
         App.get().gitLab.getSnippets(nextPageUrl!!.toString())
-                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
+                .with(this)
                 .subscribe(object : CustomResponseSingleObserver<List<Snippet>>() {
 
                     override fun error(e: Throwable) {

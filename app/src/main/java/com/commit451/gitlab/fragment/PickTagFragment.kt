@@ -17,11 +17,10 @@ import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.PickBranchOrTagActivity
 import com.commit451.gitlab.adapter.TagAdapter
-import com.commit451.gitlab.extension.setup
+import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.Ref
 import com.commit451.gitlab.model.api.Tag
 import com.commit451.gitlab.rx.CustomSingleObserver
-import com.trello.rxlifecycle2.android.FragmentEvent
 import timber.log.Timber
 
 /**
@@ -88,7 +87,7 @@ class PickTagFragment : ButterKnifeFragment() {
         textMessage.visibility = View.GONE
 
         App.get().gitLab.getTags(projectId)
-                .setup(bindUntilEvent(FragmentEvent.DESTROY_VIEW))
+                .with(this)
                 .subscribe(object : CustomSingleObserver<List<Tag>>() {
 
                     override fun error(e: Throwable) {
