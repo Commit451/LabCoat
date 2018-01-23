@@ -108,7 +108,7 @@
     <string name="realm_message">A username and password are being requested by the server.\nThe server says: \"%1$s\"</string>
     <string name="already_logged_in">This account is already logged in</string>
     <string name="access_token_info_title">Personal Access Token</string>
-    <string name="access_token_info_message">In order to log in to GitLab, you need to create a personal access token for the app to use. This is more secure than inputting your username and password, since those values could be tracked or used maliciously. You can create a personal access token under your profile preferences. Please select "api" as the scope of this token. You can leave "expires at" blank to never have the token expire.</string>
+    <string name="access_token_info_message">In order to log in to GitLab, you need to create a personal access token for the app to use. This is more secure than inputting your username and password, since those values could be tracked or used maliciously. You can create a personal access token under your settings > Access Tokens. Please select "api" as the scope of this token. You can leave "expires at" blank to never have the token expire.</string>
     <string name="create_personal_access_token">Create Personal Access Token</string>
     <string name="details">Details</string>
 
