@@ -277,7 +277,10 @@ interface GitLabService {
     /* --- REPOSITORY --- */
 
     @GET(API_VERSION + "/projects/{id}/repository/branches?order_by=last_activity_at")
-    fun getBranches(@Path("id") projectId: Long): Single<List<Branch>>
+    fun getBranches(@Path("id") projectId: Long): Single<Response<List<Branch>>>
+
+    @GET
+    fun getBranches(@Url url: String): Single<Response<List<Branch>>>
 
     @GET(API_VERSION + "/projects/{id}/repository/contributors")
     fun getContributors(@Path("id") projectId: String): Single<List<Contributor>>

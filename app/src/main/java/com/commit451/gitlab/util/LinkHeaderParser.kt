@@ -11,10 +11,10 @@ import timber.log.Timber
  */
 object LinkHeaderParser {
 
-    private val PREV_PAGE_SUFFIX = "rel=\"prev\""
-    private val NEXT_PAGE_SUFFIX = "rel=\"next\""
-    private val FIRST_PAGE_SUFFIX = "rel=\"first\""
-    private val LAST_PAGE_SUFFIX = "rel=\"last\""
+    private const val PREV_PAGE_SUFFIX = "rel=\"prev\""
+    private const val NEXT_PAGE_SUFFIX = "rel=\"next\""
+    private const val FIRST_PAGE_SUFFIX = "rel=\"first\""
+    private const val LAST_PAGE_SUFFIX = "rel=\"last\""
 
     fun parse(response: Response<*>): PaginationData {
         var prev: Uri? = null

@@ -48,6 +48,14 @@ class BranchAdapter(private val ref: Ref?, private val listener: BranchAdapter.L
         notifyDataSetChanged()
     }
 
+    fun addEntries(entries: Collection<Branch>) {
+        if (!entries.isEmpty()) {
+            val start = values.size
+            this.values.addAll(entries)
+            notifyItemRangeChanged(start, this.values.size)
+        }
+    }
+
     private fun getEntry(position: Int): Branch {
         return values[position]
     }

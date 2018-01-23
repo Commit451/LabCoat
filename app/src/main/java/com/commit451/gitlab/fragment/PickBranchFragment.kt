@@ -2,6 +2,7 @@ package com.commit451.gitlab.fragment
 
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -20,7 +21,9 @@ import com.commit451.gitlab.adapter.BranchAdapter
 import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.Ref
 import com.commit451.gitlab.model.api.Branch
-import com.commit451.gitlab.rx.CustomSingleObserver
+import com.commit451.gitlab.rx.CustomResponseSingleObserver
+import com.commit451.gitlab.util.LinkHeaderParser
+import com.commit451.gitlab.util.OnScrollLoadMoreListener
 import timber.log.Timber
 
 /**
@@ -30,8 +33,8 @@ class PickBranchFragment : ButterKnifeFragment() {
 
     companion object {
 
-        private val EXTRA_PROJECT_ID = "project_id"
-        private val EXTRA_REF = "ref"
+        private const val EXTRA_PROJECT_ID = "project_id"
+        private const val EXTRA_REF = "ref"
 
         fun newInstance(projectId: Long, ref: Ref?): PickBranchFragment {
             val fragment = PickBranchFragment()
@@ -43,13 +46,19 @@ class PickBranchFragment : ButterKnifeFragment() {
         }
     }
 
-    @BindView(R.id.list) lateinit var listProjects: RecyclerView
-    @BindView(R.id.message_text) lateinit var textMessage: TextView
-    @BindView(R.id.progress) lateinit var progress: View
+    @BindView(R.id.list)
+    lateinit var listProjects: RecyclerView
+    @BindView(R.id.message_text)
+    lateinit var textMessage: TextView
+    @BindView(R.id.progress)
+    lateinit var progress: View
 
     lateinit var adapterBranches: BranchAdapter
 
     var projectId: Long = 0
+
+    var nextPageUrl: Uri? = null
+    var loading: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,22 +82,26 @@ class PickBranchFragment : ButterKnifeFragment() {
                 activity?.finish()
             }
         })
-        listProjects.layoutManager = LinearLayoutManager(activity)
+        val layoutManager = LinearLayoutManager(activity)
+        listProjects.layoutManager = layoutManager
         listProjects.adapter = adapterBranches
+        listProjects.addOnScrollListener(OnScrollLoadMoreListener(layoutManager, {
+            !loading && nextPageUrl != null
+        }, {
+            loadMore()
+        }))
 
         loadData()
     }
 
     override fun loadData() {
-        if (view == null) {
-            return
-        }
+        loading = true
         progress.visibility = View.VISIBLE
         textMessage.visibility = View.GONE
 
         App.get().gitLab.getBranches(projectId)
                 .with(this)
-                .subscribe(object : CustomSingleObserver<List<Branch>>() {
+                .subscribe(object : CustomResponseSingleObserver<List<Branch>>() {
 
                     override fun error(e: Throwable) {
                         Timber.e(e)
@@ -96,9 +109,30 @@ class PickBranchFragment : ButterKnifeFragment() {
                         textMessage.visibility = View.VISIBLE
                     }
 
-                    override fun success(branches: List<Branch>) {
+                    override fun responseNonNullSuccess(branches: List<Branch>) {
+                        loading = false
+                        nextPageUrl = LinkHeaderParser.parse(response()).next
                         progress.visibility = View.GONE
                         adapterBranches.setEntries(branches)
+                    }
+                })
+    }
+
+    fun loadMore() {
+        loading = true
+        App.get().gitLab.getBranches(nextPageUrl.toString())
+                .with(this)
+                .subscribe(object : CustomResponseSingleObserver<List<Branch>>() {
+
+                    override fun error(e: Throwable) {
+                        Timber.e(e)
+                        loading = false
+                    }
+
+                    override fun responseNonNullSuccess(branches: List<Branch>) {
+                        loading = false
+                        nextPageUrl = LinkHeaderParser.parse(response()).next
+                        adapterBranches.addEntries(branches)
                     }
                 })
     }

@@ -1,7 +1,7 @@
 apply plugin: 'com.github.ben-manes.versions'
 apply plugin: 'com.commit451.updatewrapper'
 buildscript {
-    ext.kotlinVersion = '1.2.10'
+    ext.kotlinVersion = '1.2.20'
     repositories {
         jcenter()
         maven { url "https://jitpack.io" }
