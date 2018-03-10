@@ -40,8 +40,8 @@ class AddUserActivity : MorphActivity() {
 
     companion object {
 
-        private val KEY_PROJECT_ID = "project_id"
-        private val KEY_GROUP = "group"
+        private const val KEY_PROJECT_ID = "project_id"
+        private const val KEY_GROUP = "group"
 
         fun newIntent(context: Context, projectId: Long): Intent {
             val intent = Intent(context, AddUserActivity::class.java)

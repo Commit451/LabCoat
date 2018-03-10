@@ -29,11 +29,16 @@ class ProjectViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
     }
 
-    @BindView(R.id.project_image) lateinit var image: ImageView
-    @BindView(R.id.project_letter) lateinit var iconLetter: MaterialLetterIcon
-    @BindView(R.id.project_title) lateinit var textTitle: TextView
-    @BindView(R.id.project_description) lateinit var textDescription: TextView
-    @BindView(R.id.project_visibility) lateinit var iconVisibility: ImageView
+    @BindView(R.id.project_image)
+    lateinit var image: ImageView
+    @BindView(R.id.project_letter)
+    lateinit var iconLetter: MaterialLetterIcon
+    @BindView(R.id.project_title)
+    lateinit var textTitle: TextView
+    @BindView(R.id.project_description)
+    lateinit var textDescription: TextView
+    @BindView(R.id.project_visibility)
+    lateinit var iconVisibility: ImageView
 
     init {
         ButterKnife.bind(this, view)
@@ -66,7 +71,7 @@ class ProjectViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             textDescription.text = ""
         }
 
-        if (project.isPublic) {
+        if (project.visibility == Project.VISIBILITY_PUBLIC) {
             iconVisibility.setImageResource(R.drawable.ic_public_24dp)
         } else {
             iconVisibility.setImageResource(R.drawable.ic_private_24dp)

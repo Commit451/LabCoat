@@ -6,6 +6,13 @@ import java.util.*
 
 @Parcel(Parcel.Serialization.BEAN)
 open class Project {
+
+    companion object {
+        const val VISIBILITY_PRIVATE = "private"
+        const val VISIBILITY_INTERNAL = "internal"
+        const val VISIBILITY_PUBLIC = "public"
+    }
+
     @field:Json(name = "id")
     var id: Long = 0
     @field:Json(name = "description")
@@ -14,12 +21,10 @@ open class Project {
     var defaultBranch: String? = null
     @field:Json(name = "tag_list")
     var tagList: List<String>? = null
-    @field:Json(name = "public")
-    var isPublic: Boolean = false
     @field:Json(name = "archived")
     var isArchived: Boolean = false
-    @field:Json(name = "visibility_level")
-    var visibilityLevel: Int = 0
+    @field:Json(name = "visibility")
+    var visibility: String? = null
     @field:Json(name = "ssh_url_to_repo")
     var sshUrlToRepo: String? = null
     @field:Json(name = "http_url_to_repo")
