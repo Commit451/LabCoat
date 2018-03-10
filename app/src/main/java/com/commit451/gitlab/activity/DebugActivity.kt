@@ -23,9 +23,12 @@ class DebugActivity : BaseActivity() {
         }
     }
 
-    @BindView(R.id.root) lateinit var root: ViewGroup
-    @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
-    @BindView(R.id.text) lateinit var text: TextView
+    @BindView(R.id.root)
+    lateinit var root: ViewGroup
+    @BindView(R.id.toolbar)
+    lateinit var toolbar: Toolbar
+    @BindView(R.id.text)
+    lateinit var text: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

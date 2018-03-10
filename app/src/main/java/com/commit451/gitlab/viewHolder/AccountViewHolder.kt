@@ -29,10 +29,14 @@ class AccountViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
     }
 
-    @BindView(R.id.account_image) lateinit var image: ImageView
-    @BindView(R.id.account_username) lateinit var textUsername: TextView
-    @BindView(R.id.account_server) lateinit var textServer: TextView
-    @BindView(R.id.account_more) lateinit var buttonMore: View
+    @BindView(R.id.account_image)
+    lateinit var image: ImageView
+    @BindView(R.id.account_username)
+    lateinit var textUsername: TextView
+    @BindView(R.id.account_server)
+    lateinit var textServer: TextView
+    @BindView(R.id.account_more)
+    lateinit var buttonMore: View
 
     val popupMenu: PopupMenu
 

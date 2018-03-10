@@ -27,9 +27,12 @@ class SettingsActivity : BaseActivity() {
         }
     }
 
-    @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
-    @BindView(R.id.root_require_device_auth) lateinit var rootRequireDeviceAuth: ViewGroup
-    @BindView(R.id.switch_require_auth) lateinit var switchRequireAuth: SwitchCompat
+    @BindView(R.id.toolbar)
+    lateinit var toolbar: Toolbar
+    @BindView(R.id.root_require_device_auth)
+    lateinit var rootRequireDeviceAuth: ViewGroup
+    @BindView(R.id.switch_require_auth)
+    lateinit var switchRequireAuth: SwitchCompat
 
     @OnClick(R.id.root_require_device_auth)
     fun onRequireDeviceAuthClicked() {

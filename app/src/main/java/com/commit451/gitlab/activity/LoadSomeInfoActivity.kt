@@ -85,7 +85,8 @@ class LoadSomeInfoActivity : BaseActivity() {
         }
     }
 
-    @BindView(R.id.progress) lateinit var progress: View
+    @BindView(R.id.progress)
+    lateinit var progress: View
 
     private var loadType: Int = 0
 

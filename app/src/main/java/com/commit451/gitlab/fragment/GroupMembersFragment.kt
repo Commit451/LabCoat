@@ -49,11 +49,16 @@ class GroupMembersFragment : ButterKnifeFragment() {
         }
     }
 
-    @BindView(R.id.root) lateinit var root: View
-    @BindView(R.id.swipe_layout) lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.list) lateinit var list: RecyclerView
-    @BindView(R.id.message_text) lateinit var textMessage: TextView
-    @BindView(R.id.add_user_button) lateinit var buttonAddUser: View
+    @BindView(R.id.root)
+    lateinit var root: View
+    @BindView(R.id.swipe_layout)
+    lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    @BindView(R.id.list)
+    lateinit var list: RecyclerView
+    @BindView(R.id.message_text)
+    lateinit var textMessage: TextView
+    @BindView(R.id.add_user_button)
+    lateinit var buttonAddUser: View
 
     lateinit var adapterGroupMembers: GroupMembersAdapter
     lateinit var layoutManagerGroupMembers: DynamicGridLayoutManager

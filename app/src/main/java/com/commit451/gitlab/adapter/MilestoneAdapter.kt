@@ -17,6 +17,7 @@ class MilestoneAdapter(private val listener: MilestoneAdapter.Listener) : Recycl
         val TYPE_ITEM = 0
         val TYPE_FOOTER = 1
     }
+
     val values: MutableList<Milestone> = ArrayList()
     private var loading: Boolean = false
 

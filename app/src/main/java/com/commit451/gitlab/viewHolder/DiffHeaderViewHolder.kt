@@ -29,11 +29,16 @@ class DiffHeaderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
     }
 
-    @BindView(R.id.commit_author_image) lateinit var image: ImageView
-    @BindView(R.id.commit_author) lateinit var textAuthor: TextView
-    @BindView(R.id.commit_time) lateinit var textTime: TextView
-    @BindView(R.id.commit_title) lateinit var textTitle: TextView
-    @BindView(R.id.commit_message) lateinit var textMessage: TextView
+    @BindView(R.id.commit_author_image)
+    lateinit var image: ImageView
+    @BindView(R.id.commit_author)
+    lateinit var textAuthor: TextView
+    @BindView(R.id.commit_time)
+    lateinit var textTime: TextView
+    @BindView(R.id.commit_title)
+    lateinit var textTitle: TextView
+    @BindView(R.id.commit_message)
+    lateinit var textMessage: TextView
 
     init {
         ButterKnife.bind(this, view)

@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-   
+
     <item
         android:id="@+id/action_open"
         app:showAsAction="ifRoom"
         android:title="@string/action_open"
         android:icon="@drawable/ic_edit_24dp" />
-    
-    <item 
+
+    <item
         android:id="@+id/action_save"
         app:showAsAction="ifRoom"
         android:title="@string/action_save"
-        android:icon="@drawable/ic_save_24dp"/>
+        android:icon="@drawable/ic_save_24dp" />
 
 </menu>

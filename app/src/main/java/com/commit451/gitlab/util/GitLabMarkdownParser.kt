@@ -8,22 +8,22 @@ import java.util.regex.Pattern
  */
 object GitLabMarkdownParser {
 
-    private val patternIssue  by lazy {
+    private val patternIssue by lazy {
         //starts with #, followed by any number of digits
         Pattern.compile("#\\d+")
     }
 
-    private val patternMergeRequest  by lazy {
+    private val patternMergeRequest by lazy {
         //starts with !, followed by any number of digits
         Pattern.compile("!\\d+")
     }
 
-    private val patternLabel  by lazy {
+    private val patternLabel by lazy {
         //starts with ~, followed by any number of digits
         Pattern.compile("~\\d+")
     }
 
-    private val patternMilestone  by lazy {
+    private val patternMilestone by lazy {
         //starts with %, followed by any number of digits
         Pattern.compile("%\\d+")
     }
@@ -33,22 +33,22 @@ object GitLabMarkdownParser {
     }
 
     fun parseIssues(text: String): String {
-        val matcher  = patternIssue.matcher(text)
+        val matcher = patternIssue.matcher(text)
         return matcher.replaceAll("hi")
     }
 
     fun parseMergeRequests(text: String): String {
-        val matcher  = patternMergeRequest.matcher(text)
+        val matcher = patternMergeRequest.matcher(text)
         return matcher.replaceAll("hi")
     }
 
     fun parseLabels(text: String): String {
-        val matcher  = patternLabel.matcher(text)
+        val matcher = patternLabel.matcher(text)
         return matcher.replaceAll("hi")
     }
 
     fun parseMilestones(text: String): String {
-        val matcher  = patternMilestone.matcher(text)
+        val matcher = patternMilestone.matcher(text)
         return matcher.replaceAll("hi")
     }
 }

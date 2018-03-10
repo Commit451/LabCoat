@@ -32,7 +32,8 @@ open class Note {
     var noteableId: Long = 0
     @field:Json(name = "noteable_type")
     @Type
-    @get:Type var noteableType: String? = null
+    @get:Type
+    var noteableType: String? = null
     @field:Json(name = "upvote?")
     var isUpvote: Boolean = false
     @field:Json(name = "downvote?")

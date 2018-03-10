@@ -42,17 +42,28 @@ class PipelineDescriptionFragment : ButterKnifeFragment() {
         }
     }
 
-    @BindView(R.id.root) lateinit var root: ViewGroup
-    @BindView(R.id.swipe_layout) lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.text_number) lateinit var textName: TextView
-    @BindView(R.id.text_status) lateinit var textStatus: TextView
-    @BindView(R.id.text_duration) lateinit var textDuration: TextView
-    @BindView(R.id.text_created) lateinit var textCreated: TextView
-    @BindView(R.id.text_finished) lateinit var textFinished: TextView
-    @BindView(R.id.text_ref) lateinit var textRef: TextView
-    @BindView(R.id.text_sha) lateinit var textSha: TextView
-    @BindView(R.id.text_author) lateinit var textAuthor: TextView
-    @BindView(R.id.text_message) lateinit var textMessage: TextView
+    @BindView(R.id.root)
+    lateinit var root: ViewGroup
+    @BindView(R.id.swipe_layout)
+    lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    @BindView(R.id.text_number)
+    lateinit var textName: TextView
+    @BindView(R.id.text_status)
+    lateinit var textStatus: TextView
+    @BindView(R.id.text_duration)
+    lateinit var textDuration: TextView
+    @BindView(R.id.text_created)
+    lateinit var textCreated: TextView
+    @BindView(R.id.text_finished)
+    lateinit var textFinished: TextView
+    @BindView(R.id.text_ref)
+    lateinit var textRef: TextView
+    @BindView(R.id.text_sha)
+    lateinit var textSha: TextView
+    @BindView(R.id.text_author)
+    lateinit var textAuthor: TextView
+    @BindView(R.id.text_message)
+    lateinit var textMessage: TextView
 
     lateinit var project: Project
     lateinit var pipeline: Pipeline
@@ -133,7 +144,7 @@ class PipelineDescriptionFragment : ButterKnifeFragment() {
         textDuration.text = duration
 
         val ref = String.format(getString(R.string.pipeline_ref), pipeline.ref)
-        textRef.text =  ref
+        textRef.text = ref
 
         val sha = String.format(getString(R.string.pipeline_sha), pipeline.sha)
         textSha.text = sha

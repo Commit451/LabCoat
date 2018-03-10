@@ -18,6 +18,6 @@
         android:text="@string/no_tags"
         android:visibility="gone" />
 
-    <include layout="@layout/progress"/>
+    <include layout="@layout/progress" />
 
 </FrameLayout>

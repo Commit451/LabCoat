@@ -29,7 +29,7 @@ class App : Application() {
     companion object {
 
         var bus: EventBus = EventBus.getDefault()
-        lateinit private var instance: App
+        private lateinit var instance: App
 
         fun bus(): EventBus {
             return bus

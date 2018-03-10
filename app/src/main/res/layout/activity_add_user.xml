@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root"
     android:orientation="vertical"
@@ -33,7 +32,7 @@
                     android:layout_marginRight="32dp"
                     android:inputType="text"
                     android:imeOptions="actionSearch"
-                    android:background="@null"/>
+                    android:background="@null" />
 
                 <ImageView
                     android:id="@+id/clear"
@@ -41,7 +40,7 @@
                     android:layout_height="wrap_content"
                     app:srcCompat="@drawable/ic_close_24dp"
                     android:contentDescription="@null"
-                    android:visibility="gone"/>
+                    android:visibility="gone" />
             </LinearLayout>
 
         </android.support.v7.widget.Toolbar>
@@ -56,7 +55,7 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
 
     </com.commit451.gitlab.view.LabCoatSwipeRefreshLayout>
 

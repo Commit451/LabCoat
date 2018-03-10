@@ -43,11 +43,16 @@ class FilesFragment : ButterKnifeFragment() {
         }
     }
 
-    @BindView(R.id.root) lateinit var root: View
-    @BindView(R.id.swipe_layout) lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.list) lateinit var list: RecyclerView
-    @BindView(R.id.breadcrumb) lateinit var listBreadcrumbs: RecyclerView
-    @BindView(R.id.message_text) lateinit var textMessage: TextView
+    @BindView(R.id.root)
+    lateinit var root: View
+    @BindView(R.id.swipe_layout)
+    lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    @BindView(R.id.list)
+    lateinit var list: RecyclerView
+    @BindView(R.id.breadcrumb)
+    lateinit var listBreadcrumbs: RecyclerView
+    @BindView(R.id.message_text)
+    lateinit var textMessage: TextView
 
     lateinit var adapterFiles: FileAdapter
     lateinit var adapterBreadcrumb: BreadcrumbAdapter

@@ -27,7 +27,8 @@ class TagViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
     }
 
-    @BindView(R.id.title) lateinit var title: TextView
+    @BindView(R.id.title)
+    lateinit var title: TextView
 
     var colorHighlighted: Int = 0
 

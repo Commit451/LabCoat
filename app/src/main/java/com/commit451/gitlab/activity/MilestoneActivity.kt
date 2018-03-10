@@ -50,12 +50,18 @@ class MilestoneActivity : BaseActivity() {
         }
     }
 
-    @BindView(R.id.root) lateinit var root: View
-    @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
-    @BindView(R.id.swipe_layout) lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.list) lateinit var listIssues: RecyclerView
-    @BindView(R.id.message_text) lateinit var textMessage: TextView
-    @BindView(R.id.progress) lateinit var progress: View
+    @BindView(R.id.root)
+    lateinit var root: View
+    @BindView(R.id.toolbar)
+    lateinit var toolbar: Toolbar
+    @BindView(R.id.swipe_layout)
+    lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    @BindView(R.id.list)
+    lateinit var listIssues: RecyclerView
+    @BindView(R.id.message_text)
+    lateinit var textMessage: TextView
+    @BindView(R.id.progress)
+    lateinit var progress: View
 
     lateinit var adapterMilestoneIssues: MilestoneIssueAdapter
     lateinit var layoutManagerIssues: LinearLayoutManager

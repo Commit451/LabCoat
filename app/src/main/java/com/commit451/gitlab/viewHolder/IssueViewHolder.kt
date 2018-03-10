@@ -29,10 +29,14 @@ class IssueViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
     }
 
-    @BindView(R.id.issue_state) lateinit var textState: TextView
-    @BindView(R.id.issue_image) lateinit var image: ImageView
-    @BindView(R.id.issue_message) lateinit var textMessage: TextView
-    @BindView(R.id.issue_creator) lateinit var textCreator: TextView
+    @BindView(R.id.issue_state)
+    lateinit var textState: TextView
+    @BindView(R.id.issue_image)
+    lateinit var image: ImageView
+    @BindView(R.id.issue_message)
+    lateinit var textMessage: TextView
+    @BindView(R.id.issue_creator)
+    lateinit var textCreator: TextView
 
     init {
         ButterKnife.bind(this, view)

@@ -56,11 +56,16 @@ class IssueDiscussionFragment : ButterKnifeFragment() {
         }
     }
 
-    @BindView(R.id.root) lateinit var root: ViewGroup
-    @BindView(R.id.swipe_layout) lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.list) lateinit var listNotes: RecyclerView
-    @BindView(R.id.send_message_view) lateinit var sendMessageView: SendMessageView
-    @BindView(R.id.progress) lateinit var progress: View
+    @BindView(R.id.root)
+    lateinit var root: ViewGroup
+    @BindView(R.id.swipe_layout)
+    lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    @BindView(R.id.list)
+    lateinit var listNotes: RecyclerView
+    @BindView(R.id.send_message_view)
+    lateinit var sendMessageView: SendMessageView
+    @BindView(R.id.progress)
+    lateinit var progress: View
 
     lateinit var adapter: NotesAdapter
     lateinit var layoutManagerNotes: LinearLayoutManager

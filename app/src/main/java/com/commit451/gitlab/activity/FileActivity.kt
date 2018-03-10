@@ -59,10 +59,14 @@ class FileActivity : BaseActivity() {
         }
     }
 
-    @BindView(R.id.root) lateinit var root: ViewGroup
-    @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
-    @BindView(R.id.file_blob) lateinit var webViewFileBlob: WebView
-    @BindView(R.id.progress) lateinit var progress: View
+    @BindView(R.id.root)
+    lateinit var root: ViewGroup
+    @BindView(R.id.toolbar)
+    lateinit var toolbar: Toolbar
+    @BindView(R.id.file_blob)
+    lateinit var webViewFileBlob: WebView
+    @BindView(R.id.progress)
+    lateinit var progress: View
 
     var projectId: Long = 0
     var path: String? = null

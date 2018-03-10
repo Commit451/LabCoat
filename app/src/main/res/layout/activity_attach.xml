@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root"
     android:layout_width="match_parent"
@@ -30,7 +29,7 @@
                 android:contentDescription="@null"
                 app:srcCompat="@drawable/ic_camera_24dp"
                 android:padding="16dp"
-                android:background="?attr/selectableItemBackgroundBorderless"/>
+                android:background="?attr/selectableItemBackgroundBorderless" />
 
             <ImageView
                 android:id="@+id/button_choose_photo"
@@ -39,7 +38,7 @@
                 android:contentDescription="@null"
                 app:srcCompat="@drawable/ic_gallery_24dp"
                 android:padding="16dp"
-                android:background="?attr/selectableItemBackgroundBorderless"/>
+                android:background="?attr/selectableItemBackgroundBorderless" />
 
             <ImageView
                 android:id="@+id/button_choose_file"
@@ -48,11 +47,11 @@
                 android:contentDescription="@null"
                 app:srcCompat="@drawable/ic_file_24dp"
                 android:padding="16dp"
-                android:background="?attr/selectableItemBackgroundBorderless"/>
+                android:background="?attr/selectableItemBackgroundBorderless" />
 
         </LinearLayout>
 
-        <include layout="@layout/progress"/>
+        <include layout="@layout/progress" />
 
     </android.support.v7.widget.CardView>
 

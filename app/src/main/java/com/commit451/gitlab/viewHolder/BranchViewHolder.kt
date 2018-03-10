@@ -27,7 +27,8 @@ class BranchViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
     }
 
-    @BindView(R.id.title) lateinit var textTitle: TextView
+    @BindView(R.id.title)
+    lateinit var textTitle: TextView
 
     var colorHighlighted: Int = 0
 

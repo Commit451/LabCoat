@@ -29,10 +29,14 @@ class CommitViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
     }
 
-    @BindView(R.id.commit_image) lateinit var image: ImageView
-    @BindView(R.id.commit_message) lateinit var textMessage: TextView
-    @BindView(R.id.commit_author) lateinit var textAuthor: TextView
-    @BindView(R.id.commit_time) lateinit var textTime: TextView
+    @BindView(R.id.commit_image)
+    lateinit var image: ImageView
+    @BindView(R.id.commit_message)
+    lateinit var textMessage: TextView
+    @BindView(R.id.commit_author)
+    lateinit var textAuthor: TextView
+    @BindView(R.id.commit_time)
+    lateinit var textTime: TextView
 
     init {
         ButterKnife.bind(this, view)

@@ -42,11 +42,16 @@ class GroupsActivity : BaseActivity() {
         }
     }
 
-    @BindView(R.id.drawer_layout) lateinit var drawerLayout: DrawerLayout
-    @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
-    @BindView(R.id.swipe_layout) lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.list) lateinit var listGroups: RecyclerView
-    @BindView(R.id.message_text) lateinit var textMessage: TextView
+    @BindView(R.id.drawer_layout)
+    lateinit var drawerLayout: DrawerLayout
+    @BindView(R.id.toolbar)
+    lateinit var toolbar: Toolbar
+    @BindView(R.id.swipe_layout)
+    lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    @BindView(R.id.list)
+    lateinit var listGroups: RecyclerView
+    @BindView(R.id.message_text)
+    lateinit var textMessage: TextView
 
     lateinit var adapterGroup: GroupAdapter
     lateinit var layoutManager: DynamicGridLayoutManager

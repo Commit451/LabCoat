@@ -27,7 +27,8 @@ class UsersFragment : ButterKnifeFragment() {
 
         private val EXTRA_QUERY = "extra_query"
 
-        @JvmOverloads fun newInstance(query: String? = null): UsersFragment {
+        @JvmOverloads
+        fun newInstance(query: String? = null): UsersFragment {
             val args = Bundle()
             if (query != null) {
                 args.putString(EXTRA_QUERY, query)
@@ -41,9 +42,12 @@ class UsersFragment : ButterKnifeFragment() {
         }
     }
 
-    @BindView(R.id.swipe_layout) lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.list) lateinit var listUsers: RecyclerView
-    @BindView(R.id.message_text) lateinit var textMessage: TextView
+    @BindView(R.id.swipe_layout)
+    lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    @BindView(R.id.list)
+    lateinit var listUsers: RecyclerView
+    @BindView(R.id.message_text)
+    lateinit var textMessage: TextView
 
     lateinit var adapterUser: UserAdapter
     lateinit var layoutManagerUser: GridLayoutManager

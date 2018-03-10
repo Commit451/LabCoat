@@ -5,10 +5,10 @@
     <item
         android:id="@+id/action_change_access"
         app:showAsAction="never"
-        android:title="@string/change_access"/>
+        android:title="@string/change_access" />
 
     <item
         android:id="@+id/action_remove"
         app:showAsAction="never"
-        android:title="@string/remove"/>
+        android:title="@string/remove" />
 </menu>

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root"
     android:layout_width="match_parent"
@@ -11,33 +10,33 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/appbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/appbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize" />
+            android:layout_height="wrap_content">
 
-        <!--Hack for the fact that if there is not a view here, then the fab will disappear-->
-        <View
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize" />
+
+            <!--Hack for the fact that if there is not a view here, then the fab will disappear-->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp" />
+        </android.support.design.widget.AppBarLayout>
+
+        <com.commit451.gitlab.view.LabCoatSwipeRefreshLayout
+            android:id="@+id/swipe_layout"
             android:layout_width="match_parent"
-            android:layout_height="0dp"/>
-    </android.support.design.widget.AppBarLayout>
+            android:layout_height="match_parent">
 
-    <com.commit451.gitlab.view.LabCoatSwipeRefreshLayout
-        android:id="@+id/swipe_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
-    </com.commit451.gitlab.view.LabCoatSwipeRefreshLayout>
+        </com.commit451.gitlab.view.LabCoatSwipeRefreshLayout>
     </LinearLayout>
 
     <TextView
@@ -48,7 +47,7 @@
         android:text="@string/no_users_found"
         android:gravity="center"
         android:layout_gravity="center"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/edit"
@@ -58,7 +57,7 @@
         app:srcCompat="@drawable/ic_edit_24dp"
         app:fabSize="mini"
         app:layout_anchor="@id/appbar"
-        app:layout_anchorGravity="bottom|right|end"/>
+        app:layout_anchorGravity="bottom|right|end" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/add"
@@ -68,6 +67,6 @@
         android:layout_margin="@dimen/padding_normal"
         app:srcCompat="@drawable/ic_add_24dp" />
 
-    <include layout="@layout/progress_fullscreen"/>
+    <include layout="@layout/progress_fullscreen" />
 
 </android.support.design.widget.CoordinatorLayout>

@@ -11,11 +11,16 @@ import com.commit451.gitlab.R
 
 class HttpLoginDialog(context: Context, realm: String, loginListener: HttpLoginDialog.LoginListener) : AppCompatDialog(context) {
 
-    @BindView(R.id.message_text) lateinit var textMessage: TextView
-    @BindView(R.id.login_username) lateinit var textUsername: EditText
-    @BindView(R.id.login_password) lateinit var textPassword: EditText
-    @BindView(R.id.ok_button) lateinit var buttonOk: Button
-    @BindView(R.id.cancel_button) lateinit var buttonCancel: Button
+    @BindView(R.id.message_text)
+    lateinit var textMessage: TextView
+    @BindView(R.id.login_username)
+    lateinit var textUsername: EditText
+    @BindView(R.id.login_password)
+    lateinit var textPassword: EditText
+    @BindView(R.id.ok_button)
+    lateinit var buttonOk: Button
+    @BindView(R.id.cancel_button)
+    lateinit var buttonCancel: Button
 
     init {
         setContentView(R.layout.dialog_http_login)

@@ -24,7 +24,8 @@ open class RepositoryTreeObject {
     var name: String? = null
     @field:Json(name = "type")
     @Type
-    @get:Type var type: String? = null
+    @get:Type
+    var type: String? = null
     @field:Json(name = "mode")
     var mode: String? = null
 }

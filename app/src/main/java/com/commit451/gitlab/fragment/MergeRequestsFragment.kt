@@ -38,10 +38,14 @@ class MergeRequestsFragment : ButterKnifeFragment() {
         }
     }
 
-    @BindView(R.id.swipe_layout) lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.list) lateinit var listMergeRequests: RecyclerView
-    @BindView(R.id.message_text) lateinit var textMessage: TextView
-    @BindView(R.id.state_spinner) lateinit var spinnerState: Spinner
+    @BindView(R.id.swipe_layout)
+    lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    @BindView(R.id.list)
+    lateinit var listMergeRequests: RecyclerView
+    @BindView(R.id.message_text)
+    lateinit var textMessage: TextView
+    @BindView(R.id.state_spinner)
+    lateinit var spinnerState: Spinner
 
     lateinit var adapterMergeRequests: MergeRequestAdapter
     lateinit var layoutManagerMergeRequests: LinearLayoutManager

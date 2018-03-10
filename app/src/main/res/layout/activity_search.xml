@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root"
     android:layout_width="match_parent"
@@ -23,24 +22,24 @@
                 android:orientation="horizontal"
                 android:layout_marginRight="16dp">
 
-            <EditText
-                android:id="@+id/search"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:hint="@string/action_search"
-                android:layout_marginRight="32dp"
-                android:inputType="text"
-                android:imeOptions="actionSearch"
-                android:background="@null"/>
+                <EditText
+                    android:id="@+id/search"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/action_search"
+                    android:layout_marginRight="32dp"
+                    android:inputType="text"
+                    android:imeOptions="actionSearch"
+                    android:background="@null" />
 
-            <ImageView
-                android:id="@+id/clear"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_close_24dp"
-                android:contentDescription="@null"
-                android:visibility="gone"/>
+                <ImageView
+                    android:id="@+id/clear"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_close_24dp"
+                    android:contentDescription="@null"
+                    android:visibility="gone" />
             </LinearLayout>
 
         </android.support.v7.widget.Toolbar>
@@ -48,7 +47,7 @@
         <android.support.design.widget.TabLayout
             android:id="@+id/tabs"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
 
     </android.support.design.widget.AppBarLayout>
 
@@ -60,9 +59,9 @@
         <android.support.v4.view.ViewPager
             android:id="@+id/pager"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
 
-        <include layout="@layout/progress_fullscreen"/>
+        <include layout="@layout/progress_fullscreen" />
     </FrameLayout>
 
 </android.support.design.widget.CoordinatorLayout>

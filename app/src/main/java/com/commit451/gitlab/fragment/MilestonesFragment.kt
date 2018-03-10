@@ -41,11 +41,16 @@ class MilestonesFragment : ButterKnifeFragment() {
         }
     }
 
-    @BindView(R.id.root) lateinit var root: ViewGroup
-    @BindView(R.id.swipe_layout) lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.list) lateinit var listMilestones: RecyclerView
-    @BindView(R.id.message_text) lateinit var textMessage: TextView
-    @BindView(R.id.state_spinner) lateinit var spinnerStates: Spinner
+    @BindView(R.id.root)
+    lateinit var root: ViewGroup
+    @BindView(R.id.swipe_layout)
+    lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    @BindView(R.id.list)
+    lateinit var listMilestones: RecyclerView
+    @BindView(R.id.message_text)
+    lateinit var textMessage: TextView
+    @BindView(R.id.state_spinner)
+    lateinit var spinnerStates: Spinner
 
     lateinit var adapterMilestones: MilestoneAdapter
     lateinit var layoutManagerMilestones: LinearLayoutManager

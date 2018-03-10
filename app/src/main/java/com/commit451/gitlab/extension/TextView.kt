@@ -8,7 +8,7 @@ import com.vdurmont.emoji.EmojiParser
 import org.commonmark.parser.Parser
 import org.commonmark.renderer.html.HtmlRenderer
 
-fun TextView.setMarkdownText(text:String, project: Project? = null) {
+fun TextView.setMarkdownText(text: String, project: Project? = null) {
 
     val parser = Parser.builder().build()
     val document = parser.parse(text)

@@ -60,20 +60,34 @@ class AddIssueActivity : MorphActivity() {
         }
     }
 
-    @BindView(R.id.root) lateinit var root: ViewGroup
-    @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
-    @BindView(R.id.title_text_input_layout) lateinit var textInputLayoutTitle: TextInputLayout
-    @BindView(R.id.description) lateinit var textDescription: EditText
-    @BindView(R.id.progress) lateinit var progress: View
-    @BindView(R.id.assignee_progress) lateinit var progressAssignee: View
-    @BindView(R.id.assignee_spinner) lateinit var spinnerAssignee: Spinner
-    @BindView(R.id.milestone_progress) lateinit var progressMilestone: View
-    @BindView(R.id.milestone_spinner) lateinit var spinnerMilestone: Spinner
-    @BindView(R.id.label_label) lateinit var textLabel: TextView
-    @BindView(R.id.labels_progress) lateinit var progressLabels: View
-    @BindView(R.id.root_add_labels) lateinit var rootAddLabels: ViewGroup
-    @BindView(R.id.list_labels) lateinit var listLabels: AdapterFlowLayout
-    @BindView(R.id.check_confidential) lateinit var checkConfidential: CheckBox
+    @BindView(R.id.root)
+    lateinit var root: ViewGroup
+    @BindView(R.id.toolbar)
+    lateinit var toolbar: Toolbar
+    @BindView(R.id.title_text_input_layout)
+    lateinit var textInputLayoutTitle: TextInputLayout
+    @BindView(R.id.description)
+    lateinit var textDescription: EditText
+    @BindView(R.id.progress)
+    lateinit var progress: View
+    @BindView(R.id.assignee_progress)
+    lateinit var progressAssignee: View
+    @BindView(R.id.assignee_spinner)
+    lateinit var spinnerAssignee: Spinner
+    @BindView(R.id.milestone_progress)
+    lateinit var progressMilestone: View
+    @BindView(R.id.milestone_spinner)
+    lateinit var spinnerMilestone: Spinner
+    @BindView(R.id.label_label)
+    lateinit var textLabel: TextView
+    @BindView(R.id.labels_progress)
+    lateinit var progressLabels: View
+    @BindView(R.id.root_add_labels)
+    lateinit var rootAddLabels: ViewGroup
+    @BindView(R.id.list_labels)
+    lateinit var listLabels: AdapterFlowLayout
+    @BindView(R.id.check_confidential)
+    lateinit var checkConfidential: CheckBox
 
     lateinit var adapterLabels: AddIssueLabelAdapter
     lateinit var teleprinter: Teleprinter

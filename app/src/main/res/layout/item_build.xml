@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -17,7 +16,8 @@
         android:layout_gravity="center_vertical"
         android:layout_margin="8dp"
         android:textSize="@dimen/text_size_small"
-        tools:text="Name: build"/>
+        tools:text="Name: build" />
+
     <TextView
         android:id="@+id/number"
         android:layout_width="0dp"
@@ -26,7 +26,7 @@
         android:layout_gravity="center_vertical"
         android:layout_margin="8dp"
         android:textSize="@dimen/text_size_small"
-        tools:text="Build: #123"/>
+        tools:text="Build: #123" />
 
     <TextView
         android:id="@+id/status"
@@ -36,7 +36,7 @@
         android:layout_gravity="center_vertical"
         android:layout_margin="8dp"
         android:textSize="@dimen/text_size_small"
-        tools:text="Status: running"/>
+        tools:text="Status: running" />
 
     <TextView
         android:id="@+id/duration"
@@ -46,6 +46,6 @@
         android:layout_gravity="center_vertical"
         android:layout_margin="8dp"
         android:textSize="@dimen/text_size_small"
-        tools:text="Duration: 12 seconds"/>
+        tools:text="Duration: 12 seconds" />
 
 </LinearLayout>

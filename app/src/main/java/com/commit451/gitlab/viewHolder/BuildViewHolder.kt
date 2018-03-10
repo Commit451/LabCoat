@@ -26,10 +26,14 @@ class BuildViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
     }
 
-    @BindView(R.id.name) lateinit var textBuildName: TextView
-    @BindView(R.id.number) lateinit var textBuildNumber: TextView
-    @BindView(R.id.status) lateinit var textStatus: TextView
-    @BindView(R.id.duration) lateinit var textDuration: TextView
+    @BindView(R.id.name)
+    lateinit var textBuildName: TextView
+    @BindView(R.id.number)
+    lateinit var textBuildNumber: TextView
+    @BindView(R.id.status)
+    lateinit var textStatus: TextView
+    @BindView(R.id.duration)
+    lateinit var textDuration: TextView
 
     init {
         ButterKnife.bind(this, view)

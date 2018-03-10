@@ -28,10 +28,14 @@ class ProjectMemberViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
     }
 
-    @BindView(R.id.overflow) lateinit var buttonOverflow: View
-    @BindView(R.id.name) lateinit var textUsername: TextView
-    @BindView(R.id.access) lateinit var textAccess: TextView
-    @BindView(R.id.image) lateinit var image: ImageView
+    @BindView(R.id.overflow)
+    lateinit var buttonOverflow: View
+    @BindView(R.id.name)
+    lateinit var textUsername: TextView
+    @BindView(R.id.access)
+    lateinit var textAccess: TextView
+    @BindView(R.id.image)
+    lateinit var image: ImageView
 
     val popupMenu: PopupMenu
 

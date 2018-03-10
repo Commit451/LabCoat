@@ -26,8 +26,10 @@ class DiffViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
     }
 
-    @BindView(R.id.file_title) lateinit var textFileTitle: TextView
-    @BindView(R.id.diff) lateinit var textDiff: DiffTextView
+    @BindView(R.id.file_title)
+    lateinit var textFileTitle: TextView
+    @BindView(R.id.diff)
+    lateinit var textDiff: DiffTextView
 
     init {
         ButterKnife.bind(this, view)

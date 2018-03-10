@@ -19,7 +19,7 @@ class PipelinePagerAdapter(context: Context, fm: FragmentManager, private val pr
 
         when (position) {
             0 -> return PipelineDescriptionFragment.newInstance(project, pipeline)
-            //1 -> return PipelineDescriptionFragment.newInstance(project, pipeline)
+        //1 -> return PipelineDescriptionFragment.newInstance(project, pipeline)
         }
 
         throw IllegalStateException("Position exceeded on view pager")

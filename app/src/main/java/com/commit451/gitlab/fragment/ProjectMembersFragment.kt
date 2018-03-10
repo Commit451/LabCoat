@@ -43,11 +43,16 @@ class ProjectMembersFragment : ButterKnifeFragment() {
         }
     }
 
-    @BindView(R.id.root) lateinit var root: View
-    @BindView(R.id.swipe_layout) lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.list) lateinit var listMembers: RecyclerView
-    @BindView(R.id.message_text) lateinit var textMessage: TextView
-    @BindView(R.id.add_user_button) lateinit var buttonAddUser: FloatingActionButton
+    @BindView(R.id.root)
+    lateinit var root: View
+    @BindView(R.id.swipe_layout)
+    lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    @BindView(R.id.list)
+    lateinit var listMembers: RecyclerView
+    @BindView(R.id.message_text)
+    lateinit var textMessage: TextView
+    @BindView(R.id.add_user_button)
+    lateinit var buttonAddUser: FloatingActionButton
 
     lateinit var adapterProjectMembers: ProjectMembersAdapter
     lateinit var layoutManagerMembers: GridLayoutManager

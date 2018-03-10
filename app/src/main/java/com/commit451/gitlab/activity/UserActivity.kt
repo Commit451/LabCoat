@@ -42,9 +42,12 @@ class UserActivity : BaseActivity() {
         }
     }
 
-    @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
-    @BindView(R.id.collapsing_toolbar) lateinit var collapsingToolbarLayout: CollapsingToolbarLayout
-    @BindView(R.id.backdrop) lateinit var backdrop: ImageView
+    @BindView(R.id.toolbar)
+    lateinit var toolbar: Toolbar
+    @BindView(R.id.collapsing_toolbar)
+    lateinit var collapsingToolbarLayout: CollapsingToolbarLayout
+    @BindView(R.id.backdrop)
+    lateinit var backdrop: ImageView
 
     lateinit var user: User
 

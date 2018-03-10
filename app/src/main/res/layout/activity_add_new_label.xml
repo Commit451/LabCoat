@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root"
     android:layout_width="match_parent"
@@ -15,7 +14,7 @@
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"/>
+            android:layout_height="?attr/actionBarSize" />
 
     </android.support.design.widget.AppBarLayout>
 
@@ -40,7 +39,7 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/add_new_label_title"
                 android:imeOptions="actionNone"
-                android:inputType="textCapSentences|textAutoCorrect|textMultiLine"/>
+                android:inputType="textCapSentences|textAutoCorrect|textMultiLine" />
 
         </android.support.design.widget.TextInputLayout>
 
@@ -54,7 +53,7 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/add_new_label_description"
                 android:imeOptions="actionNone"
-                android:inputType="textCapSentences|textAutoCorrect|textMultiLine"/>
+                android:inputType="textCapSentences|textAutoCorrect|textMultiLine" />
 
         </android.support.design.widget.TextInputLayout>
 
@@ -70,18 +69,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="@string/add_new_label_color"/>
+                android:text="@string/add_new_label_color" />
 
             <ImageView
                 android:id="@+id/image_color"
                 android:layout_width="96dp"
                 android:layout_height="96dp"
                 android:contentDescription="@null"
-                app:srcCompat="@drawable/ic_add_96dp"/>
+                app:srcCompat="@drawable/ic_add_96dp" />
         </LinearLayout>
 
     </LinearLayout>
 
-    <include layout="@layout/progress_fullscreen"/>
+    <include layout="@layout/progress_fullscreen" />
 
 </FrameLayout>

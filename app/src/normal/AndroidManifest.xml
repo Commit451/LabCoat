@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.commit451.gitlab">
+    package="com.commit451.gitlab">
 
     <application>
 
         <meta-data
             android:name="io.fabric.ApiKey"
-            android:value="${fabric_key}"/>
+            android:value="${fabric_key}" />
 
     </application>
 

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    android:id="@+id/root"
+<FrameLayout android:id="@+id/root"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -15,7 +14,7 @@
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"/>
+            android:layout_height="?attr/actionBarSize" />
 
     </android.support.design.widget.AppBarLayout>
 
@@ -41,7 +40,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/milestone_hint_title"
                     android:imeOptions="actionNone"
-                    android:inputType="textCapSentences|textAutoCorrect|textMultiLine"/>
+                    android:inputType="textCapSentences|textAutoCorrect|textMultiLine" />
 
             </android.support.design.widget.TextInputLayout>
 
@@ -56,7 +55,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/milestone_hint_description"
                     android:imeOptions="actionNone"
-                    android:inputType="textCapSentences|textAutoCorrect|textMultiLine"/>
+                    android:inputType="textCapSentences|textAutoCorrect|textMultiLine" />
 
             </android.support.design.widget.TextInputLayout>
 
@@ -65,10 +64,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:text="@string/due_date"/>
+                android:text="@string/due_date" />
 
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 
-    <include layout="@layout/progress_fullscreen"/>
+    <include layout="@layout/progress_fullscreen" />
 </FrameLayout>

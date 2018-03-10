@@ -31,10 +31,14 @@ class ProjectsActivity : BaseActivity() {
         }
     }
 
-    @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
-    @BindView(R.id.tabs) lateinit var tabLayout: TabLayout
-    @BindView(R.id.pager) lateinit var viewPager: ViewPager
-    @BindView(R.id.drawer_layout) lateinit var drawerLayout: DrawerLayout
+    @BindView(R.id.toolbar)
+    lateinit var toolbar: Toolbar
+    @BindView(R.id.tabs)
+    lateinit var tabLayout: TabLayout
+    @BindView(R.id.pager)
+    lateinit var viewPager: ViewPager
+    @BindView(R.id.drawer_layout)
+    lateinit var drawerLayout: DrawerLayout
 
     val onMenuItemClickListener = Toolbar.OnMenuItemClickListener { item ->
         when (item.itemId) {

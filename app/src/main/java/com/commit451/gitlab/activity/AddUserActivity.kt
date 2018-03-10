@@ -56,12 +56,18 @@ class AddUserActivity : MorphActivity() {
         }
     }
 
-    @BindView(R.id.root) lateinit var root: ViewGroup
-    @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
-    @BindView(R.id.search) lateinit var textSearch: EditText
-    @BindView(R.id.swipe_layout) lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.list) lateinit var list: RecyclerView
-    @BindView(R.id.clear) lateinit var buttonClear: View
+    @BindView(R.id.root)
+    lateinit var root: ViewGroup
+    @BindView(R.id.toolbar)
+    lateinit var toolbar: Toolbar
+    @BindView(R.id.search)
+    lateinit var textSearch: EditText
+    @BindView(R.id.swipe_layout)
+    lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    @BindView(R.id.list)
+    lateinit var list: RecyclerView
+    @BindView(R.id.clear)
+    lateinit var buttonClear: View
 
     lateinit var layoutManager: GridLayoutManager
     lateinit var adapter: UserAdapter
@@ -113,10 +119,11 @@ class AddUserActivity : MorphActivity() {
         dialogAccess = AccessDialog(this, object : AccessDialog.Listener {
             override fun onAccessApplied(accessLevel: Int) {
                 dialogAccess.showLoading()
+                val group = group
                 if (group == null) {
                     add(App.get().gitLab.addProjectMember(projectId, selectedUser!!.id, accessLevel))
                 } else {
-                    add(App.get().gitLab.addGroupMember(projectId, selectedUser!!.id, accessLevel))
+                    add(App.get().gitLab.addGroupMember(group.id, selectedUser!!.id, accessLevel))
                 }
             }
         })

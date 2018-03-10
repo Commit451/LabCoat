@@ -56,11 +56,16 @@ class MergeRequestDiscussionFragment : ButterKnifeFragment() {
         }
     }
 
-    @BindView(R.id.root) lateinit var root: ViewGroup
-    @BindView(R.id.swipe_layout) lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.list) lateinit var listNotes: RecyclerView
-    @BindView(R.id.send_message_view) lateinit var sendMessageView: SendMessageView
-    @BindView(R.id.progress) lateinit var progress: View
+    @BindView(R.id.root)
+    lateinit var root: ViewGroup
+    @BindView(R.id.swipe_layout)
+    lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    @BindView(R.id.list)
+    lateinit var listNotes: RecyclerView
+    @BindView(R.id.send_message_view)
+    lateinit var sendMessageView: SendMessageView
+    @BindView(R.id.progress)
+    lateinit var progress: View
 
     lateinit var adapterNotes: NotesAdapter
     lateinit var layoutManagerNotes: LinearLayoutManager
@@ -124,7 +129,7 @@ class MergeRequestDiscussionFragment : ButterKnifeFragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            REQUEST_ATTACH ->  {
+            REQUEST_ATTACH -> {
                 if (resultCode == RESULT_OK) {
                     val response = data!!.getParcelerParcelableExtra<FileUploadResponse>(AttachActivity.KEY_FILE_UPLOAD_RESPONSE)!!
                     progress.visibility = View.GONE

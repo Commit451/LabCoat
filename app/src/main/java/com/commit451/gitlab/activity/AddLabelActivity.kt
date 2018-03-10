@@ -45,11 +45,16 @@ class AddLabelActivity : BaseActivity() {
         }
     }
 
-    @BindView(R.id.root) lateinit var root: ViewGroup
-    @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
-    @BindView(R.id.swipe_layout) lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.list) lateinit var list: RecyclerView
-    @BindView(R.id.message_text) lateinit var textMessage: TextView
+    @BindView(R.id.root)
+    lateinit var root: ViewGroup
+    @BindView(R.id.toolbar)
+    lateinit var toolbar: Toolbar
+    @BindView(R.id.swipe_layout)
+    lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    @BindView(R.id.list)
+    lateinit var list: RecyclerView
+    @BindView(R.id.message_text)
+    lateinit var textMessage: TextView
 
     lateinit var adapterLabel: LabelAdapter
 

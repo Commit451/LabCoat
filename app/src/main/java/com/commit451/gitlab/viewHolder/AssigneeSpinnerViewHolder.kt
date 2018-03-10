@@ -28,8 +28,10 @@ class AssigneeSpinnerViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
     }
 
-    @BindView(R.id.user_image) lateinit var image: ImageView
-    @BindView(R.id.user_username) lateinit var textUsername: TextView
+    @BindView(R.id.user_image)
+    lateinit var image: ImageView
+    @BindView(R.id.user_username)
+    lateinit var textUsername: TextView
 
     init {
         ButterKnife.bind(this, view)

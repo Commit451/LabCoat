@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     android:layout_width="match_parent"
@@ -16,12 +15,12 @@
         android:layout_marginRight="16dp"
         app:srcCompat="@drawable/ic_add_24dp"
         android:layout_gravity="center_vertical"
-        android:contentDescription="@null"/>
+        android:contentDescription="@null" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/add_account"
-        android:layout_gravity="center_vertical"/>
+        android:layout_gravity="center_vertical" />
 
 </LinearLayout>

@@ -89,7 +89,7 @@ class ProjectPagerAdapter(context: ProjectActivity, fm: FragmentManager) : Fragm
         throw IllegalStateException("Position exceeded on view pager")
     }
 
-    private fun isDisabled(enabledState: Boolean?) : Boolean{
+    private fun isDisabled(enabledState: Boolean?): Boolean {
         if (enabledState != null && !enabledState) {
             return true
         }

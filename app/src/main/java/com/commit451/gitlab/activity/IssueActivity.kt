@@ -52,11 +52,16 @@ class IssueActivity : BaseActivity() {
         }
     }
 
-    @BindView(R.id.root) lateinit var root: ViewGroup
-    @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
-    @BindView(R.id.tabs) lateinit var tabLayout: TabLayout
-    @BindView(R.id.pager) lateinit var viewPager: ViewPager
-    @BindView(R.id.progress) lateinit var progress: View
+    @BindView(R.id.root)
+    lateinit var root: ViewGroup
+    @BindView(R.id.toolbar)
+    lateinit var toolbar: Toolbar
+    @BindView(R.id.tabs)
+    lateinit var tabLayout: TabLayout
+    @BindView(R.id.pager)
+    lateinit var viewPager: ViewPager
+    @BindView(R.id.progress)
+    lateinit var progress: View
 
     lateinit var menuItemOpenClose: MenuItem
     lateinit var teleprinter: Teleprinter
@@ -141,7 +146,7 @@ class IssueActivity : BaseActivity() {
 
     fun bindIssue() {
         setOpenCloseMenuStatus()
-        toolbar.title = getString(R.string.issue_number, issue?.iid)
+        toolbar.title = getString(R.string.issue_number, issue.iid)
         toolbar.subtitle = project.nameWithNamespace
     }
 
@@ -169,7 +174,7 @@ class IssueActivity : BaseActivity() {
                     override fun success(issue: Issue) {
                         progress.visibility = View.GONE
                         this@IssueActivity.issue = issue
-                        App.bus().post(IssueChangedEvent(this@IssueActivity.issue!!))
+                        App.bus().post(IssueChangedEvent(this@IssueActivity.issue))
                         App.bus().post(IssueReloadEvent())
                         setOpenCloseMenuStatus()
                     }

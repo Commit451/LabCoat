@@ -24,10 +24,14 @@ class PipelineViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
     }
 
-    @BindView(R.id.sha) lateinit var textSha: TextView
-    @BindView(R.id.number) lateinit var textPipelineNumber: TextView
-    @BindView(R.id.status) lateinit var textStatus: TextView
-    @BindView(R.id.ref) lateinit var textRef: TextView
+    @BindView(R.id.sha)
+    lateinit var textSha: TextView
+    @BindView(R.id.number)
+    lateinit var textPipelineNumber: TextView
+    @BindView(R.id.status)
+    lateinit var textStatus: TextView
+    @BindView(R.id.ref)
+    lateinit var textRef: TextView
 
     init {
         ButterKnife.bind(this, view)

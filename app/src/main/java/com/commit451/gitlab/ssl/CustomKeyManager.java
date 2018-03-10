@@ -77,7 +77,7 @@ public class CustomKeyManager extends X509ExtendedKeyManager {
 
     @Override
     public String[] getClientAliases(String keyType, Principal[] issuers) {
-        return new String[] { entry.alias };
+        return new String[]{entry.alias};
     }
 
     @Override
@@ -108,6 +108,7 @@ public class CustomKeyManager extends X509ExtendedKeyManager {
 
     public interface KeyCallback {
         void onSuccess(KeyEntry entry);
+
         void onError(Exception e);
     }
 }

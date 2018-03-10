@@ -54,13 +54,20 @@ class GroupActivity : BaseActivity() {
         }
     }
 
-    @BindView(R.id.root) lateinit var root: View
-    @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
-    @BindView(R.id.collapsing_toolbar) lateinit var collapsingToolbarLayout: CollapsingToolbarLayout
-    @BindView(R.id.viewpager) lateinit var viewPager: ViewPager
-    @BindView(R.id.tabs) lateinit var tabLayout: TabLayout
-    @BindView(R.id.backdrop) lateinit var backdrop: ImageView
-    @BindView(R.id.progress) lateinit var progress: View
+    @BindView(R.id.root)
+    lateinit var root: View
+    @BindView(R.id.toolbar)
+    lateinit var toolbar: Toolbar
+    @BindView(R.id.collapsing_toolbar)
+    lateinit var collapsingToolbarLayout: CollapsingToolbarLayout
+    @BindView(R.id.viewpager)
+    lateinit var viewPager: ViewPager
+    @BindView(R.id.tabs)
+    lateinit var tabLayout: TabLayout
+    @BindView(R.id.backdrop)
+    lateinit var backdrop: ImageView
+    @BindView(R.id.progress)
+    lateinit var progress: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

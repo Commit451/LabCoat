@@ -83,6 +83,7 @@ public class PicassoImageGetter implements Html.ImageGetter {
 
     /**
      * Set the {@link SourceModifier}
+     *
      * @param sourceModifier the new source modifier
      */
     public void setSourceModifier(SourceModifier sourceModifier) {
@@ -95,6 +96,7 @@ public class PicassoImageGetter implements Html.ImageGetter {
     public interface SourceModifier {
         /**
          * Modify the source url, adding to it in any way you need to
+         *
          * @param source the source url from the markdown
          * @return the modified url which will be loaded by Picasso
          */

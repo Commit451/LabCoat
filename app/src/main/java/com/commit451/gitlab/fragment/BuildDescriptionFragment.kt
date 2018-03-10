@@ -41,19 +41,32 @@ class BuildDescriptionFragment : ButterKnifeFragment() {
         }
     }
 
-    @BindView(R.id.root) lateinit var root: ViewGroup
-    @BindView(R.id.swipe_layout) lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.text_name) lateinit var textName: TextView
-    @BindView(R.id.text_pipeline) lateinit var textPipeline: TextView
-    @BindView(R.id.text_stage) lateinit var textStage: TextView
-    @BindView(R.id.text_status) lateinit var textStatus: TextView
-    @BindView(R.id.text_duration) lateinit var textDuration: TextView
-    @BindView(R.id.text_created) lateinit var textCreated: TextView
-    @BindView(R.id.text_finished) lateinit var textFinished: TextView
-    @BindView(R.id.text_runner) lateinit var textRunner: TextView
-    @BindView(R.id.text_ref) lateinit var textRef: TextView
-    @BindView(R.id.text_author) lateinit var textAuthor: TextView
-    @BindView(R.id.text_message) lateinit var textMessage: TextView
+    @BindView(R.id.root)
+    lateinit var root: ViewGroup
+    @BindView(R.id.swipe_layout)
+    lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    @BindView(R.id.text_name)
+    lateinit var textName: TextView
+    @BindView(R.id.text_pipeline)
+    lateinit var textPipeline: TextView
+    @BindView(R.id.text_stage)
+    lateinit var textStage: TextView
+    @BindView(R.id.text_status)
+    lateinit var textStatus: TextView
+    @BindView(R.id.text_duration)
+    lateinit var textDuration: TextView
+    @BindView(R.id.text_created)
+    lateinit var textCreated: TextView
+    @BindView(R.id.text_finished)
+    lateinit var textFinished: TextView
+    @BindView(R.id.text_runner)
+    lateinit var textRunner: TextView
+    @BindView(R.id.text_ref)
+    lateinit var textRef: TextView
+    @BindView(R.id.text_author)
+    lateinit var textAuthor: TextView
+    @BindView(R.id.text_message)
+    lateinit var textMessage: TextView
 
     lateinit var project: Project
     lateinit var build: Build
@@ -151,6 +164,7 @@ class BuildDescriptionFragment : ButterKnifeFragment() {
         val runnerNum = String.format(getString(R.string.runner_number), runner.id.toString())
         textRunner.text = runnerNum
     }
+
     fun bindPipeline(pipeline: Pipeline) {
         val pipelineNum = String.format(getString(R.string.build_pipeline), pipeline.id.toString())
         textPipeline.text = pipelineNum

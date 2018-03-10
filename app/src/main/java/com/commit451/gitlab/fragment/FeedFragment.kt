@@ -42,9 +42,12 @@ class FeedFragment : ButterKnifeFragment() {
         }
     }
 
-    @BindView(R.id.swipe_layout) lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.list) lateinit var listEntries: RecyclerView
-    @BindView(R.id.message_text) lateinit var textMessage: TextView
+    @BindView(R.id.swipe_layout)
+    lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    @BindView(R.id.list)
+    lateinit var listEntries: RecyclerView
+    @BindView(R.id.message_text)
+    lateinit var textMessage: TextView
 
     lateinit var adapterFeed: FeedAdapter
 

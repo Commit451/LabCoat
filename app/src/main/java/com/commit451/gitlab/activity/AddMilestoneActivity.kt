@@ -38,7 +38,8 @@ class AddMilestoneActivity : MorphActivity() {
         private val KEY_PROJECT_ID = "project_id"
         private val KEY_MILESTONE = "milestone"
 
-        @JvmOverloads fun newIntent(context: Context, projectId: Long, milestone: Milestone? = null): Intent {
+        @JvmOverloads
+        fun newIntent(context: Context, projectId: Long, milestone: Milestone? = null): Intent {
             val intent = Intent(context, AddMilestoneActivity::class.java)
             intent.putExtra(KEY_PROJECT_ID, projectId)
             if (milestone != null) {
@@ -48,13 +49,20 @@ class AddMilestoneActivity : MorphActivity() {
         }
     }
 
-    @BindView(R.id.root) lateinit var root: FrameLayout
-    @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
-    @BindView(R.id.title_text_input_layout) lateinit var textInputLayoutTitle: TextInputLayout
-    @BindView(R.id.title) lateinit var textTitle: EditText
-    @BindView(R.id.description) lateinit var textDescription: EditText
-    @BindView(R.id.due_date) lateinit var buttonDueDate: Button
-    @BindView(R.id.progress) lateinit var progress: View
+    @BindView(R.id.root)
+    lateinit var root: FrameLayout
+    @BindView(R.id.toolbar)
+    lateinit var toolbar: Toolbar
+    @BindView(R.id.title_text_input_layout)
+    lateinit var textInputLayoutTitle: TextInputLayout
+    @BindView(R.id.title)
+    lateinit var textTitle: EditText
+    @BindView(R.id.description)
+    lateinit var textDescription: EditText
+    @BindView(R.id.due_date)
+    lateinit var buttonDueDate: Button
+    @BindView(R.id.progress)
+    lateinit var progress: View
 
     lateinit var teleprinter: Teleprinter
 

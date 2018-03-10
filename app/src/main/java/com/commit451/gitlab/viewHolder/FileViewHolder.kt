@@ -27,9 +27,12 @@ class FileViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
     }
 
-    @BindView(R.id.file_title) lateinit var textTitle: TextView
-    @BindView(R.id.file_image) lateinit var image: ImageView
-    @BindView(R.id.file_more) lateinit var buttonMore: ImageView
+    @BindView(R.id.file_title)
+    lateinit var textTitle: TextView
+    @BindView(R.id.file_image)
+    lateinit var image: ImageView
+    @BindView(R.id.file_more)
+    lateinit var buttonMore: ImageView
 
     val popupMenu: PopupMenu
 

@@ -25,8 +25,10 @@ class MilestoneHeaderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
     }
 
-    @BindView(R.id.description) lateinit var textDescription: TextView
-    @BindView(R.id.due_date) lateinit var textDueDate: TextView
+    @BindView(R.id.description)
+    lateinit var textDescription: TextView
+    @BindView(R.id.due_date)
+    lateinit var textDueDate: TextView
 
     init {
         ButterKnife.bind(this, view)

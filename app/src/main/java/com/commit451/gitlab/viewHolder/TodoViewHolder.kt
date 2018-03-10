@@ -29,10 +29,14 @@ class TodoViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
     }
 
-    @BindView(R.id.text_project) lateinit var textProject: TextView
-    @BindView(R.id.issue_image) lateinit internal var image: ImageView
-    @BindView(R.id.issue_message) lateinit internal var textMessage: TextView
-    @BindView(R.id.issue_creator) lateinit internal var textCreator: TextView
+    @BindView(R.id.text_project)
+    lateinit var textProject: TextView
+    @BindView(R.id.issue_image)
+    internal lateinit var image: ImageView
+    @BindView(R.id.issue_message)
+    internal lateinit var textMessage: TextView
+    @BindView(R.id.issue_creator)
+    internal lateinit var textCreator: TextView
 
     init {
         ButterKnife.bind(this, view)

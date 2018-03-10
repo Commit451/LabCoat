@@ -28,9 +28,12 @@ class MergeRequestViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
     }
 
-    @BindView(R.id.request_image) lateinit var image: ImageView
-    @BindView(R.id.request_title) lateinit var textTitle: TextView
-    @BindView(R.id.request_author) lateinit var textAuthor: TextView
+    @BindView(R.id.request_image)
+    lateinit var image: ImageView
+    @BindView(R.id.request_title)
+    lateinit var textTitle: TextView
+    @BindView(R.id.request_author)
+    lateinit var textAuthor: TextView
 
     init {
         ButterKnife.bind(this, view)

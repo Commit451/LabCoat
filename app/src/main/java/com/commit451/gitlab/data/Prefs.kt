@@ -34,7 +34,7 @@ object Prefs {
     @IntDef(STARTING_VIEW_PROJECTS.toLong(), STARTING_VIEW_GROUPS.toLong(), STARTING_VIEW_ACTIVITY.toLong(), STARTING_VIEW_TODOS.toLong())
     annotation class StartingView
 
-    lateinit private var prefs: SharedPreferences
+    private lateinit var prefs: SharedPreferences
 
     fun init(context: Context) {
         if (context !is Application) {

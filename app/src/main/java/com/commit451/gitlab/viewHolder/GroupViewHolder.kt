@@ -26,8 +26,10 @@ class GroupViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
     }
 
-    @BindView(R.id.image) lateinit var image: ImageView
-    @BindView(R.id.name) lateinit var textName: TextView
+    @BindView(R.id.image)
+    lateinit var image: ImageView
+    @BindView(R.id.name)
+    lateinit var textName: TextView
 
     init {
         ButterKnife.bind(this, view)

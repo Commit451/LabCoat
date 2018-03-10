@@ -27,7 +27,8 @@ class AddLabelViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
     }
 
-    @BindView(R.id.title) lateinit var textTitle: TextView
+    @BindView(R.id.title)
+    lateinit var textTitle: TextView
 
     init {
         ButterKnife.bind(this, view)

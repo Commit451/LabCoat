@@ -44,11 +44,16 @@ class ProjectFragment : ButterKnifeFragment() {
         }
     }
 
-    @BindView(R.id.swipe_layout) lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.creator) lateinit var textCreator: TextView
-    @BindView(R.id.star_count) lateinit var textStarCount: TextView
-    @BindView(R.id.forks_count) lateinit var textForksCount: TextView
-    @BindView(R.id.overview_text) lateinit var textOverview: TextView
+    @BindView(R.id.swipe_layout)
+    lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    @BindView(R.id.creator)
+    lateinit var textCreator: TextView
+    @BindView(R.id.star_count)
+    lateinit var textStarCount: TextView
+    @BindView(R.id.forks_count)
+    lateinit var textForksCount: TextView
+    @BindView(R.id.overview_text)
+    lateinit var textOverview: TextView
 
     var project: Project? = null
     var branchName: String? = null

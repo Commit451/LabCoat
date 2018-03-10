@@ -46,11 +46,14 @@ class AttachActivity : BaseActivity() {
         }
     }
 
-    @BindView(R.id.root_buttons) lateinit var rootButtons: ViewGroup
-    @BindView(R.id.progress) lateinit var progress: View
-    @BindView(R.id.attachCard) lateinit var card: View
+    @BindView(R.id.root_buttons)
+    lateinit var rootButtons: ViewGroup
+    @BindView(R.id.progress)
+    lateinit var progress: View
+    @BindView(R.id.attachCard)
+    lateinit var card: View
 
-    var project: Project?= null
+    var project: Project? = null
 
     @OnClick(R.id.root)
     fun onRootClicked() {

@@ -48,7 +48,7 @@ class ProjectFeedWidgetProvider : AppWidgetProvider() {
 
             val account = ProjectFeedWidgetPrefs.getAccount(context, widgetId)
             val feedUrl = ProjectFeedWidgetPrefs.getFeedUrl(context, widgetId)
-            if (account != null && feedUrl!= null) {
+            if (account != null && feedUrl != null) {
                 val intent = FeedWidgetService.newIntent(context, widgetId, account, feedUrl)
 
 

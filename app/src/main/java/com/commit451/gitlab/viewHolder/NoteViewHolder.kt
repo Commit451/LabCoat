@@ -32,10 +32,14 @@ class NoteViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
     }
 
-    @BindView(R.id.title) lateinit var textTitle: TextView
-    @BindView(R.id.summary) lateinit var textSummary: TextView
-    @BindView(R.id.creation_date) lateinit var textCreationDate: TextView
-    @BindView(R.id.icon) lateinit var imageAvatar: ImageView
+    @BindView(R.id.title)
+    lateinit var textTitle: TextView
+    @BindView(R.id.summary)
+    lateinit var textSummary: TextView
+    @BindView(R.id.creation_date)
+    lateinit var textCreationDate: TextView
+    @BindView(R.id.icon)
+    lateinit var imageAvatar: ImageView
 
     init {
         ButterKnife.bind(this, view)

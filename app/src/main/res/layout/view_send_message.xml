@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -15,7 +14,7 @@
         android:padding="8dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:visibility="visible"
-        android:contentDescription="@null"/>
+        android:contentDescription="@null" />
 
     <EditText
         android:id="@+id/text_note"
@@ -30,7 +29,7 @@
         android:imeOptions="actionNone"
         android:inputType="textCapSentences|textAutoCorrect|textMultiLine"
         android:background="@null"
-        android:maxLines="4"/>
+        android:maxLines="4" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/button_send"
@@ -40,6 +39,6 @@
         android:layout_marginRight="16dp"
         android:layout_gravity="center_vertical"
         app:srcCompat="@drawable/ic_send_24dp"
-        app:fabSize="mini"/>
+        app:fabSize="mini" />
 
 </merge>

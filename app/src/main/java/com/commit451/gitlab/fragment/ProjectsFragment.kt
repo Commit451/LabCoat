@@ -70,9 +70,12 @@ class ProjectsFragment : ButterKnifeFragment() {
         }
     }
 
-    @BindView(R.id.swipe_layout) lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.list) lateinit var listProjects: RecyclerView
-    @BindView(R.id.message_text) lateinit var textMessage: TextView
+    @BindView(R.id.swipe_layout)
+    lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    @BindView(R.id.list)
+    lateinit var listProjects: RecyclerView
+    @BindView(R.id.message_text)
+    lateinit var textMessage: TextView
 
     lateinit var layoutManagerProjects: LinearLayoutManager
     lateinit var adapterProjects: ProjectAdapter
@@ -159,7 +162,8 @@ class ProjectsFragment : ButterKnifeFragment() {
             }
             MODE_GROUP -> {
                 showLoading()
-                val group = arguments?.getParcelerParcelable<Group>(EXTRA_GROUP) ?: throw IllegalStateException("You must also pass a group if you want to show a groups projects")
+                val group = arguments?.getParcelerParcelable<Group>(EXTRA_GROUP)
+                        ?: throw IllegalStateException("You must also pass a group if you want to show a groups projects")
                 actuallyLoadIt(getGitLab().getGroupProjects(group.id))
             }
             else -> throw IllegalStateException(mode.toString() + " is not defined")

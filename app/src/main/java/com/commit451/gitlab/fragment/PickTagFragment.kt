@@ -43,9 +43,12 @@ class PickTagFragment : ButterKnifeFragment() {
         }
     }
 
-    @BindView(R.id.list) lateinit var listProjects: RecyclerView
-    @BindView(R.id.message_text) lateinit var textMessage: TextView
-    @BindView(R.id.progress) lateinit var progress: View
+    @BindView(R.id.list)
+    lateinit var listProjects: RecyclerView
+    @BindView(R.id.message_text)
+    lateinit var textMessage: TextView
+    @BindView(R.id.progress)
+    lateinit var progress: View
 
     lateinit var adapterTags: TagAdapter
 

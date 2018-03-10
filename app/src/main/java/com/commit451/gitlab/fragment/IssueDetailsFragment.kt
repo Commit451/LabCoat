@@ -44,13 +44,20 @@ class IssueDetailsFragment : ButterKnifeFragment() {
         }
     }
 
-    @BindView(R.id.root) lateinit var root: ViewGroup
-    @BindView(R.id.text_description) lateinit var textDescription: TextView
-    @BindView(R.id.author_image) lateinit var imageAuthor: ImageView
-    @BindView(R.id.author) lateinit var textAuthor: TextView
-    @BindView(R.id.milestone_root) lateinit var rootMilestone: ViewGroup
-    @BindView(R.id.milestone_text) lateinit var textMilestone: TextView
-    @BindView(R.id.list_labels) lateinit var listLabels: AdapterFlowLayout
+    @BindView(R.id.root)
+    lateinit var root: ViewGroup
+    @BindView(R.id.text_description)
+    lateinit var textDescription: TextView
+    @BindView(R.id.author_image)
+    lateinit var imageAuthor: ImageView
+    @BindView(R.id.author)
+    lateinit var textAuthor: TextView
+    @BindView(R.id.milestone_root)
+    lateinit var rootMilestone: ViewGroup
+    @BindView(R.id.milestone_text)
+    lateinit var textMilestone: TextView
+    @BindView(R.id.list_labels)
+    lateinit var listLabels: AdapterFlowLayout
 
     lateinit var adapterLabels: IssueLabelsAdapter
 

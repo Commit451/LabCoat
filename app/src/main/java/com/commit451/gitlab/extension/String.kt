@@ -26,7 +26,7 @@ fun String.formatAsHtml(imageGetter: Html.ImageGetter? = null, tagHandler: Html.
 }
 
 fun String.resolveUrl(account: Account): String {
-    if (startsWith("/")){
+    if (startsWith("/")) {
         return account.serverUrl + this.replaceFirst("/", "")
     }
     return this

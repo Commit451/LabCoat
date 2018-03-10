@@ -32,8 +32,10 @@ class FullscreenImageActivity : BaseActivity() {
         }
     }
 
-    @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
-    @BindView(R.id.photo_view) lateinit var photoView: PhotoView
+    @BindView(R.id.toolbar)
+    lateinit var toolbar: Toolbar
+    @BindView(R.id.photo_view)
+    lateinit var photoView: PhotoView
 
     lateinit var project: Project
 

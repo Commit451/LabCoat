@@ -8,7 +8,7 @@ import okhttp3.OkHttpClient
  * Provides access to all the GitLab things. Wraps RSS and the Retrofit service, in
  * case we need to do overrides or global
  */
-class GitLab private constructor(builder: Builder, gitLabService: GitLabService, gitLabRss: GitLabRss): GitLabService by gitLabService,
+class GitLab private constructor(builder: Builder, gitLabService: GitLabService, gitLabRss: GitLabRss) : GitLabService by gitLabService,
         GitLabRss by gitLabRss {
 
     val client: OkHttpClient

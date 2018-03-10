@@ -32,8 +32,10 @@ class ActivityActivity : BaseActivity() {
         }
     }
 
-    @BindView(R.id.drawer_layout) lateinit var drawerLayout: DrawerLayout
-    @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
+    @BindView(R.id.drawer_layout)
+    lateinit var drawerLayout: DrawerLayout
+    @BindView(R.id.toolbar)
+    lateinit var toolbar: Toolbar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

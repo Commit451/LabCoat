@@ -28,9 +28,12 @@ class AccountViewHolder(view: View) : TypedViewHolder<Account>(view) {
         }
     }
 
-    @BindView(R.id.account_image) lateinit var image: ImageView
-    @BindView(R.id.account_username) lateinit var textUsername: TextView
-    @BindView(R.id.account_server) lateinit var textServer: TextView
+    @BindView(R.id.account_image)
+    lateinit var image: ImageView
+    @BindView(R.id.account_username)
+    lateinit var textUsername: TextView
+    @BindView(R.id.account_server)
+    lateinit var textServer: TextView
 
     init {
         ButterKnife.bind(this, view)

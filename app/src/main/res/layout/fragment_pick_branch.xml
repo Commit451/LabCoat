@@ -19,6 +19,6 @@
         android:text="@string/no_branches"
         android:visibility="gone" />
 
-    <include layout="@layout/progress"/>
+    <include layout="@layout/progress" />
 
 </FrameLayout>

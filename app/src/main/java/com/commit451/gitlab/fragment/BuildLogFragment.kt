@@ -40,9 +40,12 @@ class BuildLogFragment : ButterKnifeFragment() {
         }
     }
 
-    @BindView(R.id.swipe_layout) lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.log) lateinit var textLog: TextView
-    @BindView(R.id.message_text) lateinit var textMessage: TextView
+    @BindView(R.id.swipe_layout)
+    lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    @BindView(R.id.log)
+    lateinit var textLog: TextView
+    @BindView(R.id.message_text)
+    lateinit var textMessage: TextView
 
     lateinit var project: Project
     lateinit var build: Build

@@ -61,7 +61,7 @@
             android:text="@string/issue_open"
             android:textAllCaps="true"
             android:id="@+id/issue_state"
-            android:layout_gravity="right"/>
+            android:layout_gravity="right" />
 
     </LinearLayout>
 

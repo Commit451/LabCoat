@@ -24,8 +24,10 @@ class BreadcrumbViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
     }
 
-    @BindView(R.id.breadcrumb_text) lateinit var textBreadcrumb: TextView
-    @BindView(R.id.breadcrumb_arrow) lateinit var buttonArrow: ImageView
+    @BindView(R.id.breadcrumb_text)
+    lateinit var textBreadcrumb: TextView
+    @BindView(R.id.breadcrumb_arrow)
+    lateinit var buttonArrow: ImageView
 
     init {
         ButterKnife.bind(this, view)

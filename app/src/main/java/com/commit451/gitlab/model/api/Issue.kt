@@ -37,7 +37,8 @@ open class Issue {
     var description: String? = null
     @field:Json(name = "state")
     @State
-    @get:State var state: String? = null
+    @get:State
+    var state: String? = null
     @field:Json(name = "created_at")
     var createdAt: Date? = null
     @field:Json(name = "updated_at")

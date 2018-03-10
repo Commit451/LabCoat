@@ -70,12 +70,18 @@ class LoginActivity : BaseActivity() {
         }
     }
 
-    @BindView(R.id.root) lateinit var root: View
-    @BindView(R.id.toolbar) lateinit var toolbar: Toolbar
-    @BindView(R.id.text_input_layout_server) lateinit var textInputLayoutUrl: TextInputLayout
-    @BindView(R.id.token_hint) lateinit var textInputLayoutToken: TextInputLayout
-    @BindView(R.id.token_input) lateinit var textToken: TextView
-    @BindView(R.id.progress) lateinit var progress: View
+    @BindView(R.id.root)
+    lateinit var root: View
+    @BindView(R.id.toolbar)
+    lateinit var toolbar: Toolbar
+    @BindView(R.id.text_input_layout_server)
+    lateinit var textInputLayoutUrl: TextInputLayout
+    @BindView(R.id.token_hint)
+    lateinit var textInputLayoutToken: TextInputLayout
+    @BindView(R.id.token_input)
+    lateinit var textToken: TextView
+    @BindView(R.id.progress)
+    lateinit var progress: View
 
     lateinit var teleprinter: Teleprinter
 
@@ -279,7 +285,7 @@ class LoginActivity : BaseActivity() {
                     .show()
 
             dialog.findViewById<TextView>(android.R.id.message).movementMethod = LinkMovementMethod.getInstance()
-        }  else {
+        } else {
             snackbarWithDetails(t)
         }
     }

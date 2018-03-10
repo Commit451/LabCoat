@@ -189,6 +189,7 @@ object Navigator {
         val intent = BuildActivity.newIntent(activity, project, build)
         activity.startActivity(intent)
     }
+
     fun navigateToPipeline(activity: Activity, project: Project, pipeline: com.commit451.gitlab.model.api.Pipeline) {
         val intent = PipelineActivity.newIntent(activity, project, pipeline)
         activity.startActivity(intent)

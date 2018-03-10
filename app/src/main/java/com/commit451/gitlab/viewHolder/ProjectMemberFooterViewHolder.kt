@@ -24,7 +24,8 @@ class ProjectMemberFooterViewHolder(view: View) : RecyclerView.ViewHolder(view) 
         }
     }
 
-    @BindView(R.id.button) lateinit var button: Button
+    @BindView(R.id.button)
+    lateinit var button: Button
 
     init {
         ButterKnife.bind(this, view)

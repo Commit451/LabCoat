@@ -225,7 +225,7 @@ dependencies {
         exclude group: 'com.jakewharton.threetenabp', module: 'threetenabp'
     }
 
-    androidTestImplementation ('com.android.support.test:runner:1.0.1') {
-        exclude group:'com.android.support', module:'support-annotations'
+    androidTestImplementation('com.android.support.test:runner:1.0.1') {
+        exclude group: 'com.android.support', module: 'support-annotations'
     }
 }

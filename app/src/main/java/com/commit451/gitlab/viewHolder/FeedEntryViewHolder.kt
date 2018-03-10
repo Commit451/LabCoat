@@ -30,10 +30,14 @@ class FeedEntryViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
     }
 
-    @BindView(R.id.image) lateinit var image: ImageView
-    @BindView(R.id.title) lateinit var textTitle: TextView
-    @BindView(R.id.description) lateinit var textSummary: TextView
-    @BindView(R.id.updated) lateinit var textUpdated: TextView
+    @BindView(R.id.image)
+    lateinit var image: ImageView
+    @BindView(R.id.title)
+    lateinit var textTitle: TextView
+    @BindView(R.id.description)
+    lateinit var textSummary: TextView
+    @BindView(R.id.updated)
+    lateinit var textUpdated: TextView
 
     init {
         ButterKnife.bind(this, view)

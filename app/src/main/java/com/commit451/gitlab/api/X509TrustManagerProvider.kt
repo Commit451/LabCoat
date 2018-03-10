@@ -12,7 +12,7 @@ object X509TrustManagerProvider {
 
     val x509TrustManager: X509TrustManager by lazy {
         val trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm())
-        val nullKeystore : KeyStore? = null
+        val nullKeystore: KeyStore? = null
         trustManagerFactory.init(nullKeystore)
         val trustManagers = trustManagerFactory.trustManagers
         if (trustManagers.size != 1 || trustManagers[0] !is X509TrustManager) {

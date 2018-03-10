@@ -4,5 +4,5 @@
     <item
         android:id="@+id/action_close"
         app:showAsAction="never"
-        android:title="@string/action_close"/>
+        android:title="@string/action_close" />
 </menu>

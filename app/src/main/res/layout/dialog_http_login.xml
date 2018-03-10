@@ -1,46 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="256dp"
-              android:layout_height="wrap_content"
-              android:padding="8dp">
+    android:orientation="vertical"
+    android:layout_width="256dp"
+    android:layout_height="wrap_content"
+    android:padding="8dp">
 
     <TextView
-            android:id="@+id/message_text"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"/>
-    
-    <EditText android:id="@+id/login_username"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:inputType="text"
-              android:hint="@string/user_hint">
+        android:id="@+id/message_text"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical" />
 
-        <requestFocus/>
+    <EditText
+        android:id="@+id/login_username"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="text"
+        android:hint="@string/user_hint">
+
+        <requestFocus />
     </EditText>
 
-    <EditText android:id="@+id/login_password"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:inputType="textPassword"
-              android:hint="@string/password_hint"/>
+    <EditText
+        android:id="@+id/login_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:hint="@string/password_hint" />
 
-    <LinearLayout style="?android:attr/buttonBarStyle"
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content">
+    <LinearLayout
+        style="?android:attr/buttonBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-        <Button style="?android:attr/buttonBarButtonStyle"
-                android:id="@+id/ok_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:text="@string/ok_button"/>
-        <Button style="?android:attr/buttonBarButtonStyle"
-                android:id="@+id/cancel_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:text="@string/cancel_button"/>
+        <Button
+            style="?android:attr/buttonBarButtonStyle"
+            android:id="@+id/ok_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:text="@string/ok_button" />
+
+        <Button
+            style="?android:attr/buttonBarButtonStyle"
+            android:id="@+id/cancel_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:text="@string/cancel_button" />
     </LinearLayout>
 </LinearLayout>
