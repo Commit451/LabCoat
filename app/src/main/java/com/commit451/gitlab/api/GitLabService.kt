@@ -17,7 +17,7 @@ interface GitLabService {
 
     companion object {
         const val API_VERSION = "api/v4"
-        const val MAX_TREE_PER_PAGE = "100"
+        const val MAX_PER_PAGE = "100"
     }
 
     /* --- USERS --- */
@@ -285,7 +285,7 @@ interface GitLabService {
     @GET("$API_VERSION/projects/{id}/repository/contributors")
     fun getContributors(@Path("id") projectId: String): Single<List<Contributor>>
 
-    @GET("$API_VERSION/projects/{id}/repository/tree?per_page=$MAX_TREE_PER_PAGE")
+    @GET("$API_VERSION/projects/{id}/repository/tree?per_page=$MAX_PER_PAGE")
     fun getTree(@Path("id") projectId: Long,
                 @Query("ref") ref: String?,
                 @Query("path") path: String?): Single<List<RepositoryTreeObject>>
@@ -315,7 +315,7 @@ interface GitLabService {
      * *
      * @return all the labels within a project
      */
-    @GET("$API_VERSION/projects/{id}/labels?per_page=$MAX_TREE_PER_PAGE")
+    @GET("$API_VERSION/projects/{id}/labels?per_page=$MAX_PER_PAGE")
     fun getLabels(@Path("id") projectId: Long): Single<List<Label>>
 
     /**
