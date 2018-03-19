@@ -315,7 +315,7 @@ interface GitLabService {
      * *
      * @return all the labels within a project
      */
-    @GET("$API_VERSION/projects/{id}/labels")
+    @GET("$API_VERSION/projects/{id}/labels?per_page=$MAX_TREE_PER_PAGE")
     fun getLabels(@Path("id") projectId: Long): Single<List<Label>>
 
     /**
