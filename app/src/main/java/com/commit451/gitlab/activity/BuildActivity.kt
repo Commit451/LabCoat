@@ -31,16 +31,16 @@ import com.commit451.gitlab.util.DownloadUtil
 import timber.log.Timber
 
 /**
- * Shows the details of a merge request
+ * Shows the details of a build
  */
 class BuildActivity : BaseActivity() {
 
     companion object {
 
-        private val REQUEST_PERMISSION_WRITE_STORAGE = 1337
+        private const val REQUEST_PERMISSION_WRITE_STORAGE = 1337
 
-        private val KEY_PROJECT = "key_project"
-        private val KEY_BUILD = "key_merge_request"
+        private const val KEY_PROJECT = "key_project"
+        private const val KEY_BUILD = "key_merge_request"
 
         fun newIntent(context: Context, project: Project, build: Build): Intent {
             val intent = Intent(context, BuildActivity::class.java)

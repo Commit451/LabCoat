@@ -32,15 +32,15 @@ class ProjectsFragment : ButterKnifeFragment() {
 
     companion object {
 
-        private val EXTRA_MODE = "extra_mode"
-        private val EXTRA_QUERY = "extra_query"
-        private val EXTRA_GROUP = "extra_group"
+        private const val EXTRA_MODE = "extra_mode"
+        private const val EXTRA_QUERY = "extra_query"
+        private const val EXTRA_GROUP = "extra_group"
 
-        val MODE_ALL = 0
-        val MODE_MINE = 1
-        val MODE_STARRED = 2
-        val MODE_SEARCH = 3
-        val MODE_GROUP = 4
+        const val MODE_ALL = 0
+        const val MODE_MINE = 1
+        const val MODE_STARRED = 2
+        const val MODE_SEARCH = 3
+        const val MODE_GROUP = 4
 
         fun newInstance(mode: Int): ProjectsFragment {
             val args = Bundle()

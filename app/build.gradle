@@ -4,7 +4,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'io.fabric.tools:gradle:1.25.1'
+        classpath 'io.fabric.tools:gradle:1.25.2'
     }
 }
 
@@ -92,9 +92,9 @@ android {
 }
 
 ext {
-    supportLibVersion = '27.0.2'
-    retrofitVersion = '2.3.0'
-    okHttpVersion = '3.9.1'
+    supportLibVersion = '27.1.1'
+    retrofitVersion = '2.4.0'
+    okHttpVersion = '3.10.0'
     butterknifeVersion = '8.8.1'
     parcelerVersion = '1.1.10'
     reptarVersion = '2.5.1'
@@ -103,7 +103,7 @@ ext {
     leakCanaryVersion = '1.5.4'
     addendumVersion = '1.7.1'
     moshiVersion = '1.5.0'
-    autodisposeVersion = '0.5.1'
+    autodisposeVersion = '0.7.0'
 }
 
 dependencies {
@@ -138,13 +138,13 @@ dependencies {
     implementation 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.1.0'
     implementation "com.jakewharton:butterknife:$butterknifeVersion"
     kapt "com.jakewharton:butterknife-compiler:$butterknifeVersion"
-    implementation 'com.jakewharton.timber:timber:4.6.0'
+    implementation 'com.jakewharton.timber:timber:4.7.0'
     implementation 'com.jakewharton.threetenabp:threetenabp:1.0.5'
 
     implementation 'org.greenrobot:eventbus:3.1.1'
 
-    implementation 'io.reactivex.rxjava2:rxjava:2.1.8'
-    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.12'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
 
     implementation "com.uber.autodispose:autodispose-kotlin:$autodisposeVersion"
     implementation "com.uber.autodispose:autodispose-android-kotlin:$autodisposeVersion"
@@ -167,13 +167,13 @@ dependencies {
     }
     implementation 'com.github.Commit451:Easel:3.0.0'
     implementation 'com.github.Commit451:Gimbal:2.0.2'
-    implementation 'com.github.Commit451:Teleprinter:2.0.0'
+    implementation 'com.github.Commit451:Teleprinter:2.0.2'
     implementation 'com.github.Commit451:Jounce:1.0.2'
     implementation 'com.github.Commit451:ForegroundViews:2.4.4'
     implementation 'com.github.Commit451:MorphTransitions:2.0.0'
     implementation "com.github.Commit451:Alakazam:2.0.0"
     implementation 'com.github.Commit451:Lift:2.0.1'
-    implementation 'com.github.Commit451:okyo:3.0.1'
+    implementation 'com.github.Commit451:okyo:3.0.2'
     implementation 'com.github.Commit451:OkioProGuardRules:1.11.0.0'
     implementation 'com.github.Commit451:RetrofitProguardRules:2.2.0.0'
     implementation 'com.github.Commit451:LoganSquareProGuardRules:1.3.7.0'
@@ -195,7 +195,7 @@ dependencies {
 
     implementation 'com.github.alorma:diff-textview:1.3.0'
 
-    implementation 'com.wdullaer:materialdatetimepicker:3.5.0'
+    implementation 'com.wdullaer:materialdatetimepicker:3.5.2'
 
     implementation 'com.github.novoda:simple-chrome-custom-tabs:0.1.5'
 
@@ -210,7 +210,7 @@ dependencies {
 
     implementation 'com.github.jkwiecien:EasyImage:2.0.4'
 
-    implementation 'com.atlassian.commonmark:commonmark:0.10.0'
+    implementation 'com.atlassian.commonmark:commonmark:0.11.0'
 
     normalImplementation('com.crashlytics.sdk.android:crashlytics:2.8.0@aar') {
         transitive = true

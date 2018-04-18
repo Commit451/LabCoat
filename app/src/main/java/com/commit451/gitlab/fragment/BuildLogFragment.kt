@@ -1,12 +1,14 @@
 package com.commit451.gitlab.fragment
 
 import android.os.Bundle
+import android.support.v4.widget.NestedScrollView
 import android.support.v4.widget.SwipeRefreshLayout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import butterknife.BindView
+import butterknife.OnClick
 import com.commit451.addendum.parceler.getParcelerParcelable
 import com.commit451.addendum.parceler.putParcelerParcelable
 import com.commit451.gitlab.App
@@ -21,14 +23,14 @@ import org.greenrobot.eventbus.Subscribe
 import timber.log.Timber
 
 /**
- * Shows the build artifacts
+ * Shows the build log
  */
 class BuildLogFragment : ButterKnifeFragment() {
 
     companion object {
 
-        private val KEY_PROJECT = "project"
-        private val KEY_BUILD = "build"
+        private const val KEY_PROJECT = "project"
+        private const val KEY_BUILD = "build"
 
         fun newInstance(project: Project, build: Build): BuildLogFragment {
             val fragment = BuildLogFragment()
@@ -42,6 +44,8 @@ class BuildLogFragment : ButterKnifeFragment() {
 
     @BindView(R.id.swipe_layout)
     lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    @BindView(R.id.scrollView)
+    lateinit var scrollView: NestedScrollView
     @BindView(R.id.log)
     lateinit var textLog: TextView
     @BindView(R.id.message_text)
@@ -49,6 +53,16 @@ class BuildLogFragment : ButterKnifeFragment() {
 
     lateinit var project: Project
     lateinit var build: Build
+
+    @OnClick(R.id.buttonBottom)
+    fun onBottomClicked() {
+        scrollView.smoothScrollTo(0, Int.MAX_VALUE)
+    }
+
+    @OnClick(R.id.buttonTop)
+    fun onTopClicked() {
+        scrollView.smoothScrollTo(0, 0)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -505,10 +505,6 @@
     <string name="deeplink_scheme">labcoat</string>
     <!-- Deep link host -->
     <string name="deeplink_host">app</string>
-    <!-- Deep link titles -->
-    <string name="deeplink_text">Open with LabCoat</string>
-    <!-- Deep link paths -->
-    <string name="deeplink_path_issue">issue</string>
 
     <string name="deeplink_navigate_error">No idea where to navigate to</string>
 

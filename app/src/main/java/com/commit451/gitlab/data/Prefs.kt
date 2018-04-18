@@ -31,7 +31,7 @@ object Prefs {
     const val STARTING_VIEW_TODOS = 3
 
     @Retention(AnnotationRetention.SOURCE)
-    @IntDef(STARTING_VIEW_PROJECTS.toLong(), STARTING_VIEW_GROUPS.toLong(), STARTING_VIEW_ACTIVITY.toLong(), STARTING_VIEW_TODOS.toLong())
+    @IntDef(STARTING_VIEW_PROJECTS, STARTING_VIEW_GROUPS, STARTING_VIEW_ACTIVITY, STARTING_VIEW_TODOS)
     annotation class StartingView
 
     private lateinit var prefs: SharedPreferences

@@ -106,14 +106,27 @@
             android:noHistory="true"
             android:theme="@android:style/Theme.NoDisplay">
 
-            <!-- Standard Url -->
-            <intent-filter android:label="@string/deeplink_text">
+            <!-- For internal deep links -->
+            <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data android:scheme="@string/deeplink_scheme" />
+            </intent-filter>
+
+            <!-- GitLab.com -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data
+                    android:host="gitlab.com"
+                    android:pathPrefix="/"
+                    android:scheme="https" />
             </intent-filter>
         </activity>
 

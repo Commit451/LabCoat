@@ -15,7 +15,7 @@ open class Ref {
     }
 
     @Retention(AnnotationRetention.SOURCE)
-    @IntDef(TYPE_BRANCH.toLong(), TYPE_TAG.toLong())
+    @IntDef(TYPE_BRANCH, TYPE_TAG)
     annotation class Type
 
     var type: Int = 0
