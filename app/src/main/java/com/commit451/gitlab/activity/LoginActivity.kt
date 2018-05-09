@@ -85,8 +85,8 @@ class LoginActivity : BaseActivity() {
 
     lateinit var teleprinter: Teleprinter
 
-    var account: Account = Account()
-    var gitLab: GitLab? = null
+    var currentAccount: Account = Account()
+    var currentGitLab: GitLab? = null
 
     @OnClick(R.id.button_info)
     fun onInfoClicked() {
@@ -139,8 +139,8 @@ class LoginActivity : BaseActivity() {
             return
         }
 
-        account = Account()
-        account.serverUrl = uri
+        currentAccount = Account()
+        currentAccount.serverUrl = uri
 
         login()
     }
@@ -194,30 +194,30 @@ class LoginActivity : BaseActivity() {
         // This seems useless - But believe me, it makes everything work! Don't remove it.
         // (OkHttpClientFactory caches the clients and needs a new account to recreate them)
         val newAccount = Account()
-        newAccount.serverUrl = account.serverUrl
-        newAccount.trustedCertificate = account.trustedCertificate
-        newAccount.trustedHostname = account.trustedHostname
-        newAccount.authorizationHeader = account.authorizationHeader
-        account = newAccount
+        newAccount.serverUrl = currentAccount.serverUrl
+        newAccount.trustedCertificate = currentAccount.trustedCertificate
+        newAccount.trustedHostname = currentAccount.trustedHostname
+        newAccount.authorizationHeader = currentAccount.authorizationHeader
+        currentAccount = newAccount
 
         progress.visibility = View.VISIBLE
         progress.alpha = 0.0f
         progress.animate().alpha(1.0f)
 
-        account.privateToken = textToken.text.toString()
-        val gitlabClientBuilder = OkHttpClientFactory.create(account, false)
+        currentAccount.privateToken = textToken.text.toString()
+        val gitlabClientBuilder = OkHttpClientFactory.create(currentAccount, false)
         if (BuildConfig.DEBUG) {
             gitlabClientBuilder.addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
         }
 
-        gitLab = GitLabFactory.createGitLab(account, gitlabClientBuilder)
+        currentGitLab = GitLabFactory.createGitLab(currentAccount, gitlabClientBuilder)
 
         loadUser(gitlabClientBuilder)
     }
 
     fun loadUser(gitlabClientBuilder: OkHttpClient.Builder) {
 
-        val gitLabService = GitLabFactory.create(account, gitlabClientBuilder.build())
+        val gitLabService = GitLabFactory.create(currentAccount, gitlabClientBuilder.build())
         gitLabService.getThisUser()
                 .with(this)
                 .subscribe(object : CustomResponseSingleObserver<User>() {
@@ -233,12 +233,12 @@ class LoginActivity : BaseActivity() {
 
                     override fun responseNonNullSuccess(userFull: User) {
                         progress.visibility = View.GONE
-                        account.lastUsed = Date()
-                        account.email = userFull.email
-                        account.username = userFull.username
-                        Prefs.addAccount(account)
-                        App.get().setAccount(account)
-                        App.bus().post(LoginEvent(account))
+                        currentAccount.lastUsed = Date()
+                        currentAccount.email = userFull.email
+                        currentAccount.username = userFull.username
+                        Prefs.addAccount(currentAccount)
+                        App.get().setAccount(currentAccount)
+                        App.bus().post(LoginEvent(currentAccount))
                         //This is mostly for if projects already exists, then we will reload the data
                         App.bus().post(ReloadDataEvent())
                         Navigator.navigateToStartingActivity(this@LoginActivity)
@@ -251,14 +251,14 @@ class LoginActivity : BaseActivity() {
         progress.visibility = View.GONE
 
         if (t is SSLHandshakeException && t.cause is X509CertificateException) {
-            account.trustedCertificate = null
+            currentAccount.trustedCertificate = null
             val fingerprint = X509Util.getFingerPrint((t.cause as X509CertificateException).chain[0])
 
             val dialog = AlertDialog.Builder(this)
                     .setTitle(R.string.certificate_title)
                     .setMessage(String.format(resources.getString(R.string.certificate_message), fingerprint))
                     .setPositiveButton(R.string.ok_button) { dialog, _ ->
-                        account.trustedCertificate = fingerprint
+                        currentAccount.trustedCertificate = fingerprint
                         login()
                         dialog.dismiss()
                     }
@@ -267,15 +267,15 @@ class LoginActivity : BaseActivity() {
 
             dialog.findViewById<TextView>(android.R.id.message).movementMethod = LinkMovementMethod.getInstance()
         } else if (t is SSLPeerUnverifiedException && t.message?.toLowerCase()!!.contains("hostname")) {
-            account.trustedHostname = null
-            val hostNameVerifier = gitLab?.client?.hostnameVerifier() as? CustomHostnameVerifier
+            currentAccount.trustedHostname = null
+            val hostNameVerifier = currentGitLab?.client?.hostnameVerifier() as? CustomHostnameVerifier
             val finalHostname = hostNameVerifier?.lastFailedHostname
             val dialog = AlertDialog.Builder(this)
                     .setTitle(R.string.hostname_title)
                     .setMessage(R.string.hostname_message)
                     .setPositiveButton(R.string.ok_button) { dialog, _ ->
                         if (finalHostname != null) {
-                            account.trustedHostname = finalHostname
+                            currentAccount.trustedHostname = finalHostname
                             login()
                         }
 
@@ -294,7 +294,7 @@ class LoginActivity : BaseActivity() {
         progress.visibility = View.GONE
         when (response.code()) {
             401 -> {
-                account.authorizationHeader = null
+                currentAccount.authorizationHeader = null
 
                 val header = response.headers().get("WWW-Authenticate")
                 if (header != null) {
@@ -341,7 +341,7 @@ class LoginActivity : BaseActivity() {
 
         val dialog = HttpLoginDialog(this, realm, object : HttpLoginDialog.LoginListener {
             override fun onLogin(username: String, password: String) {
-                account.authorizationHeader = Credentials.basic(username, password)
+                currentAccount.authorizationHeader = Credentials.basic(username, password)
                 login()
             }
 

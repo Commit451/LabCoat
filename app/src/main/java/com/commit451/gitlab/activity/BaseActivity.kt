@@ -1,6 +1,9 @@
 package com.commit451.gitlab.activity
 
 import android.support.v7.app.AppCompatActivity
+import com.commit451.gitlab.App
+import com.commit451.gitlab.api.GitLab
+import com.commit451.gitlab.model.Account
 import com.novoda.simplechromecustomtabs.SimpleChromeCustomTabs
 import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
 
@@ -10,6 +13,12 @@ import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
 abstract class BaseActivity : AppCompatActivity() {
 
     val scopeProvider by lazy { AndroidLifecycleScopeProvider.from(this) }
+
+    val account: Account
+        get() = App.get().gitLab.account
+
+    val gitLab: GitLab
+        get() = App.get().gitLab
 
     open fun hasBrowsableLinks(): Boolean {
         return false

@@ -27,7 +27,7 @@ import java.util.*
 class ProjectFeedWidgetConfigureActivity : BaseActivity() {
 
     companion object {
-        val REQUEST_PROJECT = 1
+        private const val REQUEST_PROJECT = 1
     }
 
     @BindView(R.id.toolbar)
@@ -39,7 +39,7 @@ class ProjectFeedWidgetConfigureActivity : BaseActivity() {
 
     lateinit var adapterAccounts: AccountsAdapter
 
-    var account: Account? = null
+    var widgetAccount: Account? = null
     var appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
 
     public override fun onCreate(icicle: Bundle?) {
@@ -65,8 +65,8 @@ class ProjectFeedWidgetConfigureActivity : BaseActivity() {
 
         adapterAccounts = AccountsAdapter()
         adapterAccounts.setOnItemClickListener { adapter, _, position ->
-            account = adapter.get(position)
-            moveAlongToChooseProject(account!!)
+            widgetAccount = adapter.get(position)
+            moveAlongToChooseProject(widgetAccount!!)
         }
         list.layoutManager = LinearLayoutManager(this)
         list.adapter = adapterAccounts
@@ -80,7 +80,7 @@ class ProjectFeedWidgetConfigureActivity : BaseActivity() {
             REQUEST_PROJECT -> {
                 if (resultCode == Activity.RESULT_OK) {
                     val project = data?.getParcelerParcelableExtra<Project>(ProjectFeedWidgetConfigureProjectActivity.EXTRA_PROJECT)!!
-                    saveWidgetConfig(account!!, project)
+                    saveWidgetConfig(widgetAccount!!, project)
                 }
             }
         }
@@ -89,8 +89,8 @@ class ProjectFeedWidgetConfigureActivity : BaseActivity() {
     fun loadAccounts() {
         val accounts = Prefs.getAccounts()
         Timber.d("Got %s accounts", accounts.size)
-        Collections.sort(accounts)
-        Collections.reverse(accounts)
+        accounts.sort()
+        accounts.reverse()
         if (accounts.isEmpty()) {
             textMessage.visibility = View.VISIBLE
         } else {

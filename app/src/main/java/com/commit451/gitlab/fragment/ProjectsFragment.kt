@@ -150,7 +150,7 @@ class ProjectsFragment : ButterKnifeFragment() {
             }
             MODE_MINE -> {
                 showLoading()
-                actuallyLoadIt(getGitLab().getMyProjects())
+                actuallyLoadIt(getGitLab().getMyProjects(baseActivty.account.username!!))
             }
             MODE_STARRED -> {
                 showLoading()

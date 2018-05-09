@@ -80,8 +80,8 @@ interface GitLabService {
     @GET("$API_VERSION/projects?membership=true&order_by=last_activity_at&archived=false")
     fun getAllProjects(): Single<Response<List<Project>>>
 
-    @GET("$API_VERSION/projects?owned=true&order_by=last_activity_at&archived=false")
-    fun getMyProjects(): Single<Response<List<Project>>>
+    @GET("$API_VERSION/users/{userId}/projects?order_by=last_activity_at&archived=false")
+    fun getMyProjects(@Path("userId") userId: String): Single<Response<List<Project>>>
 
     @GET("$API_VERSION/projects?starred=true")
     fun getStarredProjects(): Single<Response<List<Project>>>
