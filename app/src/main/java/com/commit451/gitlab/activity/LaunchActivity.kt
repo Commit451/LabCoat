@@ -22,7 +22,7 @@ import com.commit451.gitlab.ssl.CustomKeyManager
 class LaunchActivity : BaseActivity() {
 
     companion object {
-        private val REQUEST_DEVICE_AUTH = 123
+        private const val REQUEST_DEVICE_AUTH = 123
     }
 
     @BindView(R.id.root)

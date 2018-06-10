@@ -50,8 +50,8 @@ object Prefs {
                 val type = Types.newParameterizedType(List::class.java, Account::class.java)
                 val adapter = MoshiProvider.moshi.adapter<List<Account>>(type)
                 val accounts = adapter.fromJson(accountsJson)!!.toMutableList()
-                Collections.sort(accounts)
-                Collections.reverse(accounts)
+                accounts.sort()
+                accounts.reverse()
                 return accounts
             } catch (e: Exception) {
                 Timber.e(e)
@@ -60,7 +60,7 @@ object Prefs {
         return mutableListOf()
     }
 
-    fun setAccounts(accounts: List<Account>) {
+    private fun setAccounts(accounts: List<Account>) {
         try {
             val type = Types.newParameterizedType(List::class.java, Account::class.java)
             val adapter = MoshiProvider.moshi.adapter<List<Account>>(type)

@@ -9,8 +9,6 @@ import com.commit451.gitlab.R
 import com.commit451.gitlab.data.Prefs
 import com.commit451.gitlab.navigation.DeepLinker
 import com.commit451.gitlab.navigation.Navigator
-import com.commit451.gitlab.navigation.RoutingNavigator
-import com.commit451.gitlab.navigation.RoutingRouter
 import com.commit451.gitlab.util.IntentUtil
 import timber.log.Timber
 
@@ -20,10 +18,9 @@ import timber.log.Timber
  */
 class RoutingActivity : BaseActivity() {
 
-    lateinit var router: RoutingRouter
     var originalUri: Uri? = null
 
-    val navigator = object : RoutingNavigator {
+    val navigator = object : DeepLinker.Callbacks {
         override fun onRouteToIssue(projectNamespace: String, projectName: String, issueIid: String) {
             Timber.d("Routing to issue")
             startActivity(LoadSomeInfoActivity.newIssueIntent(this@RoutingActivity, projectNamespace, projectName, issueIid))
@@ -36,15 +33,15 @@ class RoutingActivity : BaseActivity() {
             overridePendingTransition(R.anim.fade_in, R.anim.do_nothing)
         }
 
-        override fun onRouteToMergeRequest(projectNamespace: String, projectName: String, mergeRequestId: String) {
+        override fun onRouteToMergeRequest(projectNamespace: String, projectName: String, mergeRequestIid: String) {
             Timber.d("Routing to merge request")
-            startActivity(LoadSomeInfoActivity.newMergeRequestIntent(this@RoutingActivity, projectNamespace, projectName, mergeRequestId))
+            startActivity(LoadSomeInfoActivity.newMergeRequestIntent(this@RoutingActivity, projectNamespace, projectName, mergeRequestIid))
             overridePendingTransition(R.anim.fade_in, R.anim.do_nothing)
         }
 
-        override fun onRouteToProject(namespace: String, projectId: String) {
+        override fun onRouteToProject(projectNamespace: String, projectName: String) {
             Timber.d("Routing to project")
-            Navigator.navigateToProject(this@RoutingActivity, namespace, projectId)
+            Navigator.navigateToProject(this@RoutingActivity, projectNamespace, projectName)
         }
 
         override fun onRouteToBuild(projectNamespace: String, projectName: String, buildNumber: String) {
@@ -84,7 +81,7 @@ class RoutingActivity : BaseActivity() {
         return true
     }
 
-    fun handleIntent(intent: Intent?) {
+    private fun handleIntent(intent: Intent?) {
         if (intent == null || intent.data == null) {
             Timber.e("No url was passed. How did that happen?")
             finish()
@@ -92,7 +89,7 @@ class RoutingActivity : BaseActivity() {
         }
         //If it has an original uri, this means that it is an internal deep link and we
         //can still fall back to what the original uri was and just show it
-        originalUri = intent.getParcelableExtra<Uri>(DeepLinker.EXTRA_ORIGINAL_URI)
+        originalUri = intent.getParcelableExtra(DeepLinker.EXTRA_ORIGINAL_URI)
         val link = intent.data
         Timber.d("Received deep link %s", link)
         Timber.d("Original link was %s", originalUri)
@@ -104,8 +101,7 @@ class RoutingActivity : BaseActivity() {
             finish()
             return
         }
-        router = RoutingRouter(navigator)
-        router.route(link)
+        DeepLinker.route(link, navigator)
         finish()
     }
 }

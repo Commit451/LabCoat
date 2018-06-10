@@ -41,7 +41,7 @@ import timber.log.Timber
 class AboutActivity : BaseActivity() {
 
     companion object {
-        private val REPO_ID = "473568"
+        private const val REPO_ID = "473568"
 
         fun newIntent(context: Context): Intent {
             val intent = Intent(context, AboutActivity::class.java)
