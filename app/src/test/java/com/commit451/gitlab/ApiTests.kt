@@ -14,7 +14,7 @@ class ApiTests {
 
     companion object {
 
-        private val FAKE_GROUP_PROJECT_ID: Long = 376651
+        private const val PROJECT_ID: Long = 376651
 
         private var fakeProject: Project? = null
         private lateinit var gitLab: GitLabService
@@ -27,7 +27,7 @@ class ApiTests {
             gitLab = TestUtil.login()
 
             val projectResponse = gitLab
-                    .getProject(FAKE_GROUP_PROJECT_ID.toString())
+                    .getProject(PROJECT_ID.toString())
                     .blockingGet()
             assertNotNull(projectResponse)
 

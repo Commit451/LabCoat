@@ -32,8 +32,8 @@ android {
         minSdkVersion 16
         targetSdkVersion 27
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        versionCode 2050000
-        versionName "2.5.0"
+        versionCode 2060000
+        versionName "2.6.0"
         manifestPlaceholders = [fabric_key: project.ext.LABCOAT_FABRIC_KEY]
         vectorDrawables.useSupportLibrary = true
 
@@ -217,9 +217,5 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     testImplementation('org.threeten:threetenbp:1.3.6') {
         exclude group: 'com.jakewharton.threetenabp', module: 'threetenabp'
-    }
-
-    androidTestImplementation('com.android.support.test:runner:1.0.2') {
-        exclude group: 'com.android.support', module: 'support-annotations'
     }
 }
