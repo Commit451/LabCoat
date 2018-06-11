@@ -1,6 +1,12 @@
 Change Log
 ==========
 
+Version 2.6.0
+----------------------------
+
+- Open GitLab.com URLs within the app
+- Load all branches for a project
+
 Version 2.5.0
 ----------------------------
 
