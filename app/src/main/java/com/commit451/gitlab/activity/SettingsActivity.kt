@@ -4,15 +4,12 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.support.v7.widget.SwitchCompat
-import android.support.v7.widget.Toolbar
 import android.view.View
-import android.view.ViewGroup
-import butterknife.BindView
 import butterknife.ButterKnife
-import butterknife.OnClick
 import com.commit451.gitlab.R
 import com.commit451.gitlab.data.Prefs
+import com.readystatesoftware.chuck.Chuck
+import kotlinx.android.synthetic.main.activity_settings.*
 
 /**
  * Settings
@@ -25,18 +22,6 @@ class SettingsActivity : BaseActivity() {
             val intent = Intent(context, SettingsActivity::class.java)
             return intent
         }
-    }
-
-    @BindView(R.id.toolbar)
-    lateinit var toolbar: Toolbar
-    @BindView(R.id.root_require_device_auth)
-    lateinit var rootRequireDeviceAuth: ViewGroup
-    @BindView(R.id.switch_require_auth)
-    lateinit var switchRequireAuth: SwitchCompat
-
-    @OnClick(R.id.root_require_device_auth)
-    fun onRequireDeviceAuthClicked() {
-        switchRequireAuth.toggle()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,6 +39,11 @@ class SettingsActivity : BaseActivity() {
         bindPrefs()
         switchRequireAuth.setOnCheckedChangeListener { _, b ->
             Prefs.isRequiredDeviceAuth = b
+        }
+        rootRequireDeviceAuth.setOnClickListener { switchRequireAuth.toggle() }
+        rootNetwork.setOnClickListener {
+            val intent = Chuck.getLaunchIntent(this)
+            startActivity(intent)
         }
     }
 

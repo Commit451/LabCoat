@@ -39,6 +39,7 @@ import com.commit451.gitlab.ssl.X509CertificateException
 import com.commit451.gitlab.ssl.X509Util
 import com.commit451.gitlab.util.IntentUtil
 import com.commit451.teleprinter.Teleprinter
+import com.readystatesoftware.chuck.ChuckInterceptor
 import okhttp3.Credentials
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
@@ -209,6 +210,7 @@ class LoginActivity : BaseActivity() {
         if (BuildConfig.DEBUG) {
             gitlabClientBuilder.addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
         }
+        gitlabClientBuilder.addInterceptor(ChuckInterceptor(this.applicationContext).showNotification(false))
 
         currentGitLab = GitLabFactory.createGitLab(currentAccount, gitlabClientBuilder)
 
