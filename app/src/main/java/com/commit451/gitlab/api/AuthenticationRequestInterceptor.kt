@@ -25,10 +25,6 @@ class AuthenticationRequestInterceptor(private val account: Account) : Intercept
         if (isSameServer(url.toString(), serverUrl)) {
             val privateToken = account.privateToken
             privateToken?.let {
-                url = url.newBuilder()
-                        .addQueryParameter(PRIVATE_TOKEN_GET_PARAMETER, it)
-                        .build()
-
                 request = request.newBuilder()
                         .header(PRIVATE_TOKEN_HEADER_FIELD, it)
                         .url(url)
