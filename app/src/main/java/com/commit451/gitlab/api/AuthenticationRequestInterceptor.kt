@@ -12,7 +12,6 @@ class AuthenticationRequestInterceptor(private val account: Account) : Intercept
 
     companion object {
         const val PRIVATE_TOKEN_HEADER_FIELD = "Private-Token"
-        private const val PRIVATE_TOKEN_GET_PARAMETER = "private_token"
     }
 
     @Throws(IOException::class)
