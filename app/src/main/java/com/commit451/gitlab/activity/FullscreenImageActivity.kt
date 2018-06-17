@@ -21,8 +21,8 @@ class FullscreenImageActivity : BaseActivity() {
 
     companion object {
 
-        private val KEY_URL = "url"
-        private val KEY_PROJECT = "project"
+        private const val KEY_URL = "url"
+        private const val KEY_PROJECT = "project"
 
         fun newIntent(context: Context, project: Project, url: String): Intent {
             val intent = Intent(context, FullscreenImageActivity::class.java)

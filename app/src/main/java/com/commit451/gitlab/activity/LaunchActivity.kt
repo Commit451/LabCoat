@@ -14,9 +14,7 @@ import com.commit451.gitlab.R
 import com.commit451.gitlab.data.Prefs
 import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.migration.Migration261
-import com.commit451.gitlab.model.Account
 import com.commit451.gitlab.navigation.Navigator
-import com.commit451.gitlab.ssl.CustomKeyManager
 import timber.log.Timber
 
 /**

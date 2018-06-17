@@ -13,7 +13,6 @@ class CustomTrustManager : X509TrustManager {
 
     private var trustedCertificate: String? = null
     private var trustedHostname: String? = null
-    private var privateKeyAlias: String? = null
     private var sslSocketFactory: SSLSocketFactory? = null
     private var hostnameVerifier: HostnameVerifier? = null
 
@@ -58,10 +57,7 @@ class CustomTrustManager : X509TrustManager {
             return sslSocketFactory!!
         }
 
-        var keyManagers: Array<KeyManager>? = null
-        if (privateKeyAlias != null) {
-            keyManagers = arrayOf(CustomKeyManager(privateKeyAlias))
-        }
+        val keyManagers: Array<KeyManager>? = null
 
         try {
             val sslContext = SSLContext.getInstance("TLS")

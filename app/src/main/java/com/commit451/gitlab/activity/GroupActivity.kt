@@ -38,8 +38,8 @@ class GroupActivity : BaseActivity() {
 
     companion object {
 
-        private val KEY_GROUP = "key_group"
-        private val KEY_GROUP_ID = "key_group_id"
+        private const val KEY_GROUP = "key_group"
+        private const val KEY_GROUP_ID = "key_group_id"
 
         fun newIntent(context: Context, group: Group): Intent {
             val intent = Intent(context, GroupActivity::class.java)

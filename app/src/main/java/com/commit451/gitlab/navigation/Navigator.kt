@@ -11,7 +11,6 @@ import android.support.v4.app.ActivityOptionsCompat
 import android.view.View
 import android.widget.ImageView
 import com.commit451.addendum.themeAttrColor
-import com.commit451.easel.Easel
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.*
 import com.commit451.gitlab.data.Prefs
@@ -60,7 +59,7 @@ object Navigator {
             Prefs.STARTING_VIEW_GROUPS -> navigateToGroups(activity)
             Prefs.STARTING_VIEW_ACTIVITY -> navigateToActivity(activity)
             Prefs.STARTING_VIEW_TODOS -> navigateToTodos(activity)
-            else -> throw IllegalArgumentException("You need to define start activity " + startingActivity)
+            else -> throw IllegalArgumentException("You need to define start activity $startingActivity")
         }
     }
 

@@ -6,7 +6,7 @@ import okhttp3.Response
 import java.io.IOException
 
 /**
- * Adds the private token to all requests
+ * Adds the private token to all requests of the same server as the account
  */
 class AuthenticationRequestInterceptor(private val account: Account) : Interceptor {
 
@@ -18,7 +18,7 @@ class AuthenticationRequestInterceptor(private val account: Account) : Intercept
     override fun intercept(chain: Interceptor.Chain): Response {
         var request = chain.request()
 
-        var url = request.url()
+        val url = request.url()
         val serverUrl = account.serverUrl ?: "https://example.com"
 
         if (isSameServer(url.toString(), serverUrl)) {
