@@ -12,7 +12,6 @@ class AuthenticationRequestInterceptor(private val account: Account) : Intercept
 
     companion object {
         const val PRIVATE_TOKEN_HEADER_FIELD = "Private-Token"
-        private const val PRIVATE_TOKEN_GET_PARAMETER = "private_token"
     }
 
     @Throws(IOException::class)
@@ -25,10 +24,6 @@ class AuthenticationRequestInterceptor(private val account: Account) : Intercept
         if (isSameServer(url.toString(), serverUrl)) {
             val privateToken = account.privateToken
             privateToken?.let {
-                url = url.newBuilder()
-                        .addQueryParameter(PRIVATE_TOKEN_GET_PARAMETER, it)
-                        .build()
-
                 request = request.newBuilder()
                         .header(PRIVATE_TOKEN_HEADER_FIELD, it)
                         .url(url)
