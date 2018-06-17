@@ -26,7 +26,7 @@ object GitLabFactory {
      */
     fun create(account: Account, client: OkHttpClient): GitLabService {
         val retrofitBuilder = Retrofit.Builder()
-                .baseUrl(account.serverUrl.toString())
+                .baseUrl("${account.serverUrl.toString()}${GitLabService.API_VERSION}/")
                 .client(client)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(ScalarsConverterFactory.create())

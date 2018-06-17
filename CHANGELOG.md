@@ -1,6 +1,12 @@
 Change Log
 ==========
 
+Version 2.6.1
+----------------------------
+
+- Fix crash with accounts not having username/email saved
+- Parse links that are leading to a project
+
 Version 2.6.0
 ----------------------------
 

@@ -25,131 +25,131 @@ interface GitLabService {
     /**
      * Get currently authenticated user
      */
-    @GET("$API_VERSION/user")
+    @GET("user")
     fun getThisUser(): Single<Response<User>>
 
-    @GET("$API_VERSION/users")
+    @GET("users")
     fun getUsers(): Single<List<User>>
 
     @GET
     fun getUsers(@Url url: String): Single<List<User>>
 
-    @GET("$API_VERSION/users")
+    @GET("users")
     fun searchUsers(@Query("search") query: String): Single<Response<List<User>>>
 
     @GET
     fun searchUsers(@Url url: String, @Query("search") query: String): Single<Response<List<User>>>
 
-    @GET("$API_VERSION/users/{id}")
+    @GET("users/{id}")
     fun getUser(@Path("id") userId: Long): Single<User>
 
     /* --- GROUPS --- */
-    @GET("$API_VERSION/groups")
+    @GET("groups")
     fun getGroups(): Single<Response<List<Group>>>
 
     @GET
     fun getGroups(@Url url: String): Single<Response<List<Group>>>
 
-    @GET("$API_VERSION/groups/{id}")
+    @GET("groups/{id}")
     fun getGroup(@Path("id") id: Long): Single<Group>
 
-    @GET("$API_VERSION/groups/{id}/projects?order_by=last_activity_at")
+    @GET("groups/{id}/projects?order_by=last_activity_at")
     fun getGroupProjects(@Path("id") id: Long): Single<Response<List<Project>>>
 
-    @GET("$API_VERSION/groups/{id}/members")
+    @GET("groups/{id}/members")
     fun getGroupMembers(@Path("id") groupId: Long): Single<Response<List<User>>>
 
     @FormUrlEncoded
-    @POST("$API_VERSION/groups/{id}/members")
+    @POST("groups/{id}/members")
     fun addGroupMember(@Path("id") groupId: Long,
                        @Field("user_id") userId: Long,
                        @Field("access_level") accessLevel: Int): Single<Response<User>>
 
     @FormUrlEncoded
-    @PUT("$API_VERSION/groups/{id}/members/{user_id}")
+    @PUT("groups/{id}/members/{user_id}")
     fun editGroupMember(@Path("id") groupId: Long,
                         @Path("user_id") userId: Long,
                         @Field("access_level") accessLevel: Int): Single<User>
 
-    @DELETE("$API_VERSION/groups/{id}/members/{user_id}")
+    @DELETE("groups/{id}/members/{user_id}")
     fun removeGroupMember(@Path("id") groupId: Long,
                           @Path("user_id") userId: Long): Completable
 
     /* --- PROJECTS --- */
 
-    @GET("$API_VERSION/projects?membership=true&order_by=last_activity_at&archived=false")
+    @GET("projects?membership=true&order_by=last_activity_at")
     fun getAllProjects(): Single<Response<List<Project>>>
 
-    @GET("$API_VERSION/users/{userId}/projects?order_by=last_activity_at&archived=false")
+    @GET("users/{userId}/projects?order_by=last_activity_at")
     fun getMyProjects(@Path("userId") userId: String): Single<Response<List<Project>>>
 
-    @GET("$API_VERSION/projects?starred=true")
+    @GET("projects?starred=true")
     fun getStarredProjects(): Single<Response<List<Project>>>
 
-    @GET("$API_VERSION/projects/{id}")
+    @GET("projects/{id}")
     fun getProject(@Path("id") projectId: String): Single<Project>
 
     // see https://docs.gitlab.com/ce/api/projects.html#get-single-project
-    @GET("$API_VERSION/projects/{namespace}%2F{project_name}")
+    @GET("projects/{namespace}%2F{project_name}")
     fun getProject(@Path("namespace") namespace: String,
                    @Path("project_name") projectName: String): Single<Project>
 
     @GET
     fun getProjects(@Url url: String): Single<Response<List<Project>>>
 
-    @GET("$API_VERSION/projects")
+    @GET("projects")
     fun searchAllProjects(@Query("search") query: String): Single<Response<List<Project>>>
 
-    @GET("$API_VERSION/projects/{id}/members")
+    @GET("projects/{id}/members")
     fun getProjectMembers(@Path("id") projectId: Long): Single<Response<List<User>>>
 
     @GET
     fun getProjectMembers(@Url url: String): Single<Response<List<User>>>
 
     @FormUrlEncoded
-    @POST("$API_VERSION/projects/{id}/members")
+    @POST("projects/{id}/members")
     fun addProjectMember(@Path("id") projectId: Long,
                          @Field("user_id") userId: Long,
                          @Field("access_level") accessLevel: Int): Single<Response<User>>
 
     @FormUrlEncoded
-    @PUT("$API_VERSION/projects/{id}/members/{user_id}")
+    @PUT("projects/{id}/members/{user_id}")
     fun editProjectMember(@Path("id") projectId: Long,
                           @Path("user_id") userId: Long,
                           @Field("access_level") accessLevel: Int): Single<User>
 
-    @DELETE("$API_VERSION/projects/{id}/members/{user_id}")
+    @DELETE("projects/{id}/members/{user_id}")
     fun removeProjectMember(@Path("id") projectId: Long,
                             @Path("user_id") userId: Long): Completable
 
-    @POST("$API_VERSION/projects/{id}/fork")
+    @POST("projects/{id}/fork")
     fun forkProject(@Path("id") projectId: Long): Completable
 
-    @POST("$API_VERSION/projects/{id}/star")
+    @POST("projects/{id}/star")
     fun starProject(@Path("id") projectId: Long): Single<Response<Project>>
 
-    @POST("$API_VERSION/projects/{id}/unstar")
+    @POST("projects/{id}/unstar")
     fun unstarProject(@Path("id") projectId: Long): Single<Project>
 
     @Multipart
-    @POST("$API_VERSION/projects/{id}/uploads")
+    @POST("projects/{id}/uploads")
     fun uploadFile(@Path("id") projectId: Long,
                    @Part file: MultipartBody.Part): Single<FileUploadResponse>
 
     /* --- MILESTONES --- */
 
-    @GET("$API_VERSION/projects/{id}/milestones")
+    @GET("projects/{id}/milestones")
     fun getMilestones(@Path("id") projectId: Long,
                       @Query("state") state: String?): Single<Response<List<Milestone>>>
 
     @GET
     fun getMilestones(@Url url: String): Single<Response<List<Milestone>>>
 
-    @GET("$API_VERSION/projects/{id}/issues")
+    @GET("projects/{id}/issues")
     fun getMilestonesByIid(@Path("id") projectId: Long,
                            @Query("iids") internalMilestoneId: String): Single<List<Milestone>>
 
-    @GET("$API_VERSION/projects/{id}/milestones/{milestone_id}/issues")
+    @GET("projects/{id}/milestones/{milestone_id}/issues")
     fun getMilestoneIssues(@Path("id") projectId: Long,
                            @Path("milestone_id") milestoneId: Long): Single<Response<List<Issue>>>
 
@@ -157,28 +157,28 @@ interface GitLabService {
     fun getMilestoneIssues(@Url url: String): Single<Response<List<Issue>>>
 
     @FormUrlEncoded
-    @POST("$API_VERSION/projects/{id}/milestones")
+    @POST("projects/{id}/milestones")
     fun createMilestone(@Path("id") projectId: Long,
                         @Field("title") title: String,
                         @Field("description") description: String,
                         @Field("due_date") dueDate: String?): Single<Milestone>
 
     @FormUrlEncoded
-    @PUT("$API_VERSION/projects/{id}/milestones/{milestone_id}")
+    @PUT("projects/{id}/milestones/{milestone_id}")
     fun editMilestone(@Path("id") projectId: Long,
                       @Path("milestone_id") milestoneId: Long,
                       @Field("title") title: String,
                       @Field("description") description: String,
                       @Field("due_date") dueDate: String?): Single<Milestone>
 
-    @PUT("$API_VERSION/projects/{id}/milestones/{milestone_id}")
+    @PUT("projects/{id}/milestones/{milestone_id}")
     fun updateMilestoneStatus(@Path("id") projectId: Long,
                               @Path("milestone_id") milestoneId: Long,
                               @Query("state_event") @Milestone.StateEvent status: String): Single<Milestone>
 
     /* --- MERGE REQUESTS --- */
 
-    @GET("$API_VERSION/projects/{id}/merge_requests")
+    @GET("projects/{id}/merge_requests")
     fun getMergeRequests(@Path("id") projectId: Long,
                          @Query("state") state: String): Single<Response<List<MergeRequest>>>
 
@@ -186,23 +186,23 @@ interface GitLabService {
     fun getMergeRequests(@Url url: String,
                          @Query("state") state: String): Single<Response<List<MergeRequest>>>
 
-    @GET("$API_VERSION/projects/{id}/merge_requests")
+    @GET("projects/{id}/merge_requests")
     fun getMergeRequestsByIid(@Path("id") projectId: Long,
                               @Query("iids") internalMergeRequestId: String): Single<List<MergeRequest>>
 
-    @GET("$API_VERSION/projects/{id}/merge_requests/{merge_request_id}")
+    @GET("projects/{id}/merge_requests/{merge_request_id}")
     fun getMergeRequest(@Path("id") projectId: Long,
                         @Path("merge_request_id") mergeRequestId: Long): Single<MergeRequest>
 
-    @GET("$API_VERSION/projects/{id}/merge_requests/{merge_request_id}/commits")
+    @GET("projects/{id}/merge_requests/{merge_request_id}/commits")
     fun getMergeRequestCommits(@Path("id") projectId: Long,
                                @Path("merge_request_id") mergeRequestId: Long): Single<List<RepositoryCommit>>
 
-    @GET("$API_VERSION/projects/{id}/merge_requests/{merge_request_id}/changes")
+    @GET("projects/{id}/merge_requests/{merge_request_id}/changes")
     fun getMergeRequestChanges(@Path("id") projectId: Long,
                                @Path("merge_request_id") mergeRequestId: Long): Single<MergeRequest>
 
-    @GET("$API_VERSION/projects/{id}/merge_requests/{merge_request_id}/notes")
+    @GET("projects/{id}/merge_requests/{merge_request_id}/notes")
     fun getMergeRequestNotes(@Path("id") projectId: Long,
                              @Path("merge_request_id") mergeRequestId: Long): Single<Response<List<Note>>>
 
@@ -210,30 +210,30 @@ interface GitLabService {
     fun getMergeRequestNotes(@Url url: String): Single<Response<List<Note>>>
 
     @FormUrlEncoded
-    @POST("$API_VERSION/projects/{id}/merge_requests/{merge_request_id}/notes")
+    @POST("projects/{id}/merge_requests/{merge_request_id}/notes")
     fun addMergeRequestNote(@Path("id") projectId: Long,
                             @Path("merge_request_id") mergeRequestId: Long,
                             @Field("body") body: String): Single<Note>
 
-    @PUT("$API_VERSION/projects/{id}/merge_requests/{merge_request_id}/merge")
+    @PUT("projects/{id}/merge_requests/{merge_request_id}/merge")
     fun acceptMergeRequest(@Path("id") projectId: Long,
                            @Path("merge_request_id") mergeRequestId: Long): Single<Response<MergeRequest>>
 
     /* --- ISSUES --- */
 
-    @GET("$API_VERSION/projects/{id}/issues")
+    @GET("projects/{id}/issues")
     fun getIssues(@Path("id") projectId: Long,
                   @Query("state") state: String): Single<Response<List<Issue>>>
 
     @GET
     fun getIssues(@Url url: String): Single<Response<List<Issue>>>
 
-    @GET("$API_VERSION/projects/{id}/issues/{issue_id}")
+    @GET("projects/{id}/issues/{issue_id}")
     fun getIssue(@Path("id") projectId: Long,
                  @Path("issue_id") issueId: String): Single<Issue>
 
     @FormUrlEncoded
-    @POST("$API_VERSION/projects/{id}/issues")
+    @POST("projects/{id}/issues")
     fun createIssue(@Path("id") projectId: Long,
                     @Field("title") title: String,
                     @Field("description") description: String,
@@ -242,7 +242,7 @@ interface GitLabService {
                     @Field("labels") commaSeparatedLabelNames: String?,
                     @Field("confidential") isConfidential: Boolean): Single<Issue>
 
-    @PUT("$API_VERSION/projects/{id}/issues/{issue_iid}")
+    @PUT("projects/{id}/issues/{issue_iid}")
     fun updateIssue(@Path("id") projectId: Long,
                     @Path("issue_iid") issueIid: Long,
                     @Query("title") title: String,
@@ -252,12 +252,12 @@ interface GitLabService {
                     @Query("labels") commaSeparatedLabelNames: String?,
                     @Query("confidential") isConfidential: Boolean): Single<Issue>
 
-    @PUT("$API_VERSION/projects/{id}/issues/{issue_iid}")
+    @PUT("projects/{id}/issues/{issue_iid}")
     fun updateIssueStatus(@Path("id") projectId: Long,
                           @Path("issue_iid") issueIid: Long,
                           @Query("state_event") @Issue.EditState status: String): Single<Issue>
 
-    @GET("$API_VERSION/projects/{id}/issues/{issue_iid}/notes")
+    @GET("projects/{id}/issues/{issue_iid}/notes")
     fun getIssueNotes(@Path("id") projectId: Long,
                       @Path("issue_iid") issueIid: Long): Single<Response<List<Note>>>
 
@@ -265,46 +265,46 @@ interface GitLabService {
     fun getIssueNotes(@Url url: String): Single<Response<List<Note>>>
 
     @FormUrlEncoded
-    @POST("$API_VERSION/projects/{id}/issues/{issue_iid}/notes")
+    @POST("projects/{id}/issues/{issue_iid}/notes")
     fun addIssueNote(@Path("id") projectId: Long,
                      @Path("issue_iid") issueIid: Long,
                      @Field("body") body: String): Single<Note>
 
-    @DELETE("$API_VERSION/projects/{id}/issues/{issue_iid}")
+    @DELETE("projects/{id}/issues/{issue_iid}")
     fun deleteIssue(@Path("id") projectId: Long,
                     @Path("issue_iid") issueIid: Long): Completable
 
     /* --- REPOSITORY --- */
 
-    @GET("$API_VERSION/projects/{id}/repository/branches?order_by=last_activity_at")
+    @GET("projects/{id}/repository/branches?order_by=last_activity_at")
     fun getBranches(@Path("id") projectId: Long): Single<Response<List<Branch>>>
 
     @GET
     fun getBranches(@Url url: String): Single<Response<List<Branch>>>
 
-    @GET("$API_VERSION/projects/{id}/repository/contributors")
+    @GET("projects/{id}/repository/contributors")
     fun getContributors(@Path("id") projectId: String): Single<List<Contributor>>
 
-    @GET("$API_VERSION/projects/{id}/repository/tree?per_page=$MAX_PER_PAGE")
+    @GET("projects/{id}/repository/tree?per_page=$MAX_PER_PAGE")
     fun getTree(@Path("id") projectId: Long,
                 @Query("ref") ref: String?,
                 @Query("path") path: String?): Single<List<RepositoryTreeObject>>
 
-    @GET("$API_VERSION/projects/{id}/repository/files/{file_path}")
+    @GET("projects/{id}/repository/files/{file_path}")
     fun getFile(@Path("id") projectId: Long,
                 @Path("file_path") path: String,
                 @Query("ref") ref: String): Single<RepositoryFile>
 
-    @GET("$API_VERSION/projects/{id}/repository/commits")
+    @GET("projects/{id}/repository/commits")
     fun getCommits(@Path("id") projectId: Long,
                    @Query("ref_name") branchName: String,
                    @Query("page") page: Int): Single<List<RepositoryCommit>>
 
-    @GET("$API_VERSION/projects/{id}/repository/commits/{sha}")
+    @GET("projects/{id}/repository/commits/{sha}")
     fun getCommit(@Path("id") projectId: Long,
                   @Path("sha") commitSHA: String): Single<RepositoryCommit>
 
-    @GET("$API_VERSION/projects/{id}/repository/commits/{sha}/diff")
+    @GET("projects/{id}/repository/commits/{sha}/diff")
     fun getCommitDiff(@Path("id") projectId: Long,
                       @Path("sha") commitSHA: String): Single<List<Diff>>
 
@@ -315,7 +315,7 @@ interface GitLabService {
      * *
      * @return all the labels within a project
      */
-    @GET("$API_VERSION/projects/{id}/labels?per_page=$MAX_PER_PAGE")
+    @GET("projects/{id}/labels?per_page=$MAX_PER_PAGE")
     fun getLabels(@Path("id") projectId: Long): Single<List<Label>>
 
     /**
@@ -329,7 +329,7 @@ interface GitLabService {
      * *
      * @return Single
      */
-    @POST("$API_VERSION/projects/{id}/labels")
+    @POST("projects/{id}/labels")
     fun createLabel(@Path("id") projectId: Long,
                     @Query("name") name: String,
                     @Query("color") color: String?,
@@ -342,13 +342,13 @@ interface GitLabService {
      * *
      * @return all the labels within a project
      */
-    @DELETE("$API_VERSION/projects/{id}/labels")
+    @DELETE("projects/{id}/labels")
     fun deleteLabel(@Path("id") projectId: Long,
                     @Query("name") name: String): Single<Label>
 
 
     /* --- BUILDS --- */
-    @GET("$API_VERSION/projects/{id}/jobs")
+    @GET("projects/{id}/jobs")
     fun getBuilds(@Path("id") projectId: Long,
                   @Query("scope") scope: String?): Single<Response<List<Build>>>
 
@@ -356,24 +356,24 @@ interface GitLabService {
     fun getBuilds(@Url url: String,
                   @Query("scope") state: String?): Single<Response<List<Build>>>
 
-    @GET("$API_VERSION/projects/{id}/jobs/{build_id}")
+    @GET("projects/{id}/jobs/{build_id}")
     fun getBuild(@Path("id") projectId: Long,
                  @Path("build_id") buildId: Long): Single<Build>
 
-    @POST("$API_VERSION/projects/{id}/jobs/{build_id}/retry")
+    @POST("projects/{id}/jobs/{build_id}/retry")
     fun retryBuild(@Path("id") projectId: Long,
                    @Path("build_id") buildId: Long): Single<Build>
 
-    @POST("$API_VERSION/projects/{id}/jobs/{build_id}/erase")
+    @POST("projects/{id}/jobs/{build_id}/erase")
     fun eraseBuild(@Path("id") projectId: Long,
                    @Path("build_id") buildId: Long): Single<Build>
 
-    @POST("$API_VERSION/projects/{id}/jobs/{build_id}/cancel")
+    @POST("projects/{id}/jobs/{build_id}/cancel")
     fun cancelBuild(@Path("id") projectId: Long,
                     @Path("build_id") buildId: Long): Single<Build>
 
     /* --- Pipelines --- */
-    @GET("$API_VERSION/projects/{id}/pipelines")
+    @GET("projects/{id}/pipelines")
     fun getPipelines(@Path("id") projectId: Long,
                      @Query("scope") scope: String?): Single<Response<List<Pipeline>>>
 
@@ -381,7 +381,7 @@ interface GitLabService {
     fun getPipelines(@Url url: String,
                      @Query("scope") state: String?): Single<Response<List<Pipeline>>>
 
-    @GET("$API_VERSION/projects/{id}/pipelines/{pipeline_id}/jobs")
+    @GET("projects/{id}/pipelines/{pipeline_id}/jobs")
     fun getPipelineJobs(@Path("id") projectId: Long, @Path("pipeline_id") pipelineId: Long,
                         @Query("scope") scope: String?): Single<Response<List<Pipeline>>>
 
@@ -389,90 +389,90 @@ interface GitLabService {
     fun getPipelineJobs(@Url url: String,
                         @Query("scope") state: String?): Single<Response<List<Pipeline>>>
 
-    @GET("$API_VERSION/projects/{id}/pipelines/{pipeline_id}")
+    @GET("projects/{id}/pipelines/{pipeline_id}")
     fun getPipeline(@Path("id") projectId: Long,
                     @Path("pipeline_id") pipelineId: Long): Single<Pipeline>
 
-    @POST("$API_VERSION/projects/{id}/pipelines/{pipeline_id}/retry")
+    @POST("projects/{id}/pipelines/{pipeline_id}/retry")
     fun retryPipeline(@Path("id") projectId: Long,
                       @Path("pipeline_id") pipelineId: Long): Single<Pipeline>
 
-    @POST("$API_VERSION/projects/{id}/pipelines/{pipeline_id}/cancel")
+    @POST("projects/{id}/pipelines/{pipeline_id}/cancel")
     fun cancelPipeline(@Path("id") projectId: Long,
                        @Path("pipeline_id") pipelineId: Long): Single<Pipeline>
 
     /* --- SNIPPETS --- */
-    @GET("$API_VERSION/projects/{id}/snippets")
+    @GET("projects/{id}/snippets")
     fun getSnippets(@Path("id") projectId: Long): Single<Response<List<Snippet>>>
 
     @GET
     fun getSnippets(@Url url: String): Single<Response<List<Snippet>>>
 
     /* --- TODOS --- */
-    @GET("$API_VERSION/todos")
+    @GET("todos")
     fun getTodos(@Query("state") @Todo.State state: String): Single<Response<List<Todo>>>
 
     @GET
     fun getTodosByUrl(@Url url: String): Single<Response<List<Todo>>>
 
     /* --- TAGS --- */
-    @GET("$API_VERSION/projects/{id}/repository/tags")
+    @GET("projects/{id}/repository/tags")
     fun getTags(@Path("id") projectId: Long): Single<List<Tag>>
 
     /* --- AWARD EMOJI --- */
-    @GET("$API_VERSION/projects/{id}/issues/{issue_id}/award_emoji")
+    @GET("projects/{id}/issues/{issue_id}/award_emoji")
     fun getAwardEmojiForIssue(@Path("id") projectId: Long,
                               @Path("issue_id") issueId: String): Single<List<AwardEmoji>>
 
-    @GET("$API_VERSION/projects/{id}/merge_requests/{merge_request_id}/award_emoji")
+    @GET("projects/{id}/merge_requests/{merge_request_id}/award_emoji")
     fun getAwardEmojiForMergeRequest(@Path("id") projectId: Long,
                                      @Path("merge_request_id") mergeRequestId: String): Single<List<AwardEmoji>>
 
-    @GET("$API_VERSION/projects/{id}/issues/{issue_id}/notes/{note_id}/award_emoji")
+    @GET("projects/{id}/issues/{issue_id}/notes/{note_id}/award_emoji")
     fun getAwardEmojiForIssueNote(@Path("id") projectId: Long,
                                   @Path("issue_id") issueId: String,
                                   @Path("note_id") noteId: String): Single<List<AwardEmoji>>
 
-    @GET("$API_VERSION/projects/{id}/merge_requests/{merge_request_id}/notes/{note_id}/award_emoji")
+    @GET("projects/{id}/merge_requests/{merge_request_id}/notes/{note_id}/award_emoji")
     fun getAwardEmojiForMergeRequestNote(@Path("id") projectId: Long,
                                          @Path("merge_request_id") mergeRequestId: String,
                                          @Path("note_id") noteId: String): Single<List<AwardEmoji>>
 
-    @POST("$API_VERSION/projects/{id}/issues/{issue_id}/award_emoji")
+    @POST("projects/{id}/issues/{issue_id}/award_emoji")
     fun postAwardEmojiForIssue(@Path("id") projectId: Long,
                                @Path("issue_id") issueId: String): Single<AwardEmoji>
 
-    @GET("$API_VERSION/projects/{id}/merge_requests/{merge_request_id}/award_emoji")
+    @GET("projects/{id}/merge_requests/{merge_request_id}/award_emoji")
     fun postAwardEmojiForMergeRequest(@Path("id") projectId: Long,
                                       @Path("merge_request_id") mergeRequestId: String): Single<AwardEmoji>
 
-    @GET("$API_VERSION/projects/{id}/merge_requests/{merge_request_id}/notes/{note_id}/award_emoji")
+    @GET("projects/{id}/merge_requests/{merge_request_id}/notes/{note_id}/award_emoji")
     fun postAwardEmojiForMergeRequestNote(@Path("id") projectId: Long,
                                           @Path("merge_request_id") mergeRequestId: String,
                                           @Path("note_id") noteId: String): Single<AwardEmoji>
 
-    @POST("$API_VERSION/projects/{id}/issues/{issue_id}/notes/{note_id}/award_emoji")
+    @POST("projects/{id}/issues/{issue_id}/notes/{note_id}/award_emoji")
     fun postAwardEmojiForIssueNote(@Path("id") projectId: Long,
                                    @Path("issue_id") issueId: String,
                                    @Path("note_id") noteId: String): Single<AwardEmoji>
 
-    @DELETE("$API_VERSION/projects/{id}/issues/{issue_id}/award_emoji/{award_id}")
+    @DELETE("projects/{id}/issues/{issue_id}/award_emoji/{award_id}")
     fun deleteAwardEmojiForIssue(@Path("id") projectId: Long,
                                  @Path("issue_id") issueId: String,
                                  @Path("award_id") awardId: String): Single<AwardEmoji>
 
-    @DELETE("$API_VERSION/projects/{id}/merge_requests/{merge_request_id}/award_emoji/{award_id}")
+    @DELETE("projects/{id}/merge_requests/{merge_request_id}/award_emoji/{award_id}")
     fun deleteAwardEmojiForMergeRequest(@Path("id") projectId: Long,
                                         @Path("merge_request_id") mergeRequestId: String,
                                         @Path("award_id") awardId: String): Single<AwardEmoji>
 
-    @DELETE("$API_VERSION/projects/{id}/issues/{issue_id}/notes/{note_id}/award_emoji/{award_id}")
+    @DELETE("projects/{id}/issues/{issue_id}/notes/{note_id}/award_emoji/{award_id}")
     fun deleteAwardEmojiForIssueNote(@Path("id") projectId: Long,
                                      @Path("issue_id") issueId: String,
                                      @Path("note_id") noteId: String,
                                      @Path("award_id") awardId: String): Single<AwardEmoji>
 
-    @DELETE("$API_VERSION/projects/{id}/merge_requests/{merge_request_id}/notes/{note_id}/award_emoji/{award_id}")
+    @DELETE("projects/{id}/merge_requests/{merge_request_id}/notes/{note_id}/award_emoji/{award_id}")
     fun deleteAwardEmojiForMergeRequestNote(@Path("id") projectId: Long,
                                             @Path("merge_request_id") mergeRequestId: String,
                                             @Path("note_id") noteId: String,

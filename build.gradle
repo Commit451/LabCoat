@@ -1,6 +1,6 @@
 apply plugin: 'com.github.ben-manes.versions'
 buildscript {
-    ext.kotlinVersion = '1.2.41'
+    ext.kotlinVersion = '1.2.50'
     repositories {
         google()
         jcenter()

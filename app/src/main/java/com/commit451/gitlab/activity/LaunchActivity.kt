@@ -7,13 +7,17 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.ViewGroup
+import androidx.core.widget.toast
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.commit451.gitlab.R
 import com.commit451.gitlab.data.Prefs
+import com.commit451.gitlab.extension.with
+import com.commit451.gitlab.migration.Migration261
 import com.commit451.gitlab.model.Account
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.ssl.CustomKeyManager
+import timber.log.Timber
 
 /**
  * This activity acts as switching platform for the application directing the user to the appropriate
@@ -59,7 +63,7 @@ class LaunchActivity : BaseActivity() {
     }
 
     @TargetApi(21)
-    fun showKeyguard() {
+    private fun showKeyguard() {
         val keyguardManager = getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
         val intent = keyguardManager.createConfirmDeviceCredentialIntent(getString(R.string.device_auth_title), getString(R.string.device_auth_message))
         if (intent == null) {
@@ -70,7 +74,20 @@ class LaunchActivity : BaseActivity() {
     }
 
     private fun moveAlong() {
-        Navigator.navigateToStartingActivity(this)
-        finish()
+        if (account.username == null || account.email == null) {
+            Migration261.run()
+                    .with(this)
+                    .subscribe({
+                        Navigator.navigateToStartingActivity(this)
+                        finish()
+                    }, {
+                        Timber.e(it)
+                        toast("Unable to migrate. Unfortunately, you probably need to re-install the app")
+                        finish()
+                    })
+        } else {
+            Navigator.navigateToStartingActivity(this)
+            finish()
+        }
     }
 }
