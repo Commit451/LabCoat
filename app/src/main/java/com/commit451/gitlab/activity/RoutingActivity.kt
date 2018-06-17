@@ -56,10 +56,10 @@ class RoutingActivity : BaseActivity() {
             overridePendingTransition(R.anim.fade_in, R.anim.do_nothing)
         }
 
-        override fun onRouteUnknown(uri: Uri?) {
+        override fun onRouteUnknown(url: String?) {
             Timber.d("Route unknown. Opening original Uri if it exists")
             if (originalUri != null) {
-                IntentUtil.openPage(this@RoutingActivity, uri!!.toString(), App.get().currentAccount)
+                IntentUtil.openPage(this@RoutingActivity, url.toString(), App.get().currentAccount)
             } else {
                 Toast.makeText(this@RoutingActivity, R.string.deeplink_navigate_error, Toast.LENGTH_SHORT)
                         .show()
@@ -89,8 +89,8 @@ class RoutingActivity : BaseActivity() {
         }
         //If it has an original uri, this means that it is an internal deep link and we
         //can still fall back to what the original uri was and just show it
-        originalUri = intent.getParcelableExtra(DeepLinker.EXTRA_ORIGINAL_URI)
-        val link = intent.data
+        originalUri = intent.getParcelableExtra(DeepLinker.KEY_ORIGINAL_URL)
+        val link = intent.data.toString()
         Timber.d("Received deep link %s", link)
         Timber.d("Original link was %s", originalUri)
 
