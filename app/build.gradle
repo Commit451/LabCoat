@@ -210,9 +210,7 @@ dependencies {
 
     implementation 'com.atlassian.commonmark:commonmark:0.11.0'
 
-    implementation 'com.readystatesoftware.chuck:library:1.1.0'
-
-    normalImplementation 'com.crashlytics.sdk.android:crashlytics:2.9.3'
+    normalImplementation 'com.crashlytics.sdk.android:crashlytics:2.9.4'
 
     debugImplementation "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
     releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"

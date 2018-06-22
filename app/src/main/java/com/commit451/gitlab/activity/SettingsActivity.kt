@@ -8,7 +8,6 @@ import android.view.View
 import butterknife.ButterKnife
 import com.commit451.gitlab.R
 import com.commit451.gitlab.data.Prefs
-import com.readystatesoftware.chuck.Chuck
 import kotlinx.android.synthetic.main.activity_settings.*
 
 /**
@@ -41,10 +40,6 @@ class SettingsActivity : BaseActivity() {
             Prefs.isRequiredDeviceAuth = b
         }
         rootRequireDeviceAuth.setOnClickListener { switchRequireAuth.toggle() }
-        rootNetwork.setOnClickListener {
-            val intent = Chuck.getLaunchIntent(this)
-            startActivity(intent)
-        }
     }
 
     fun bindPrefs() {

@@ -13,7 +13,6 @@ import com.commit451.gitlab.util.FabricUtil
 import com.commit451.lift.Lift
 import com.jakewharton.threetenabp.AndroidThreeTen
 import com.novoda.simplechromecustomtabs.SimpleChromeCustomTabs
-import com.readystatesoftware.chuck.ChuckInterceptor
 import com.squareup.leakcanary.LeakCanary
 import com.squareup.picasso.Picasso
 import io.reactivex.plugins.RxJavaPlugins
@@ -92,7 +91,6 @@ class App : Application() {
         if (BuildConfig.DEBUG) {
             clientBuilder.addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
         }
-        clientBuilder.addInterceptor(ChuckInterceptor(this).showNotification(false))
         val client = clientBuilder.build()
         initGitLab(account, clientBuilder)
         if (BuildConfig.DEBUG) {
