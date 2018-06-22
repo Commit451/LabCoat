@@ -212,6 +212,7 @@
     <string name="created_issue">created issue</string>
     <string name="error_changing_issue">There was an error changing the issue</string>
     <string name="no_issues">No issues</string>
+    <string name="no_wiki">No wiki</string>
     <string name="issue_opened">Opened</string>
     <string name="issue_open">Open</string>
     <string name="issue_closed">Closed</string>

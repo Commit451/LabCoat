@@ -478,6 +478,9 @@ interface GitLabService {
                                             @Path("note_id") noteId: String,
                                             @Path("award_id") awardId: String): Single<AwardEmoji>
 
+    @GET("projects/{id}/wikis")
+    fun getWikiPages(@Path("id") projectId: Long): Single<List<Wiki>>
+
     /* --- MISC --- */
     @GET
     fun getRaw(@Url url: String): Single<String>
