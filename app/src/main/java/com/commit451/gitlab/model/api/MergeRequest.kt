@@ -50,7 +50,7 @@ open class MergeRequest {
     @field:Json(name = "assignee")
     var assignee: User? = null
     @field:Json(name = "source_project_id")
-    var sourceProjectId: Long = 0
+    var sourceProjectId: Long? = 0
     @field:Json(name = "target_project_id")
     var targetProjectId: Long = 0
     @field:Json(name = "labels")
