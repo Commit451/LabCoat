@@ -166,6 +166,7 @@ class FileActivity : BaseActivity() {
 
             content = "<!DOCTYPE html>" +
                     "<html>" +
+                    "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">" +
                     "<body>" +
                     "<img style=\"width: 100%;\" src=\"" + imageURL + "\">" +
                     "</body>" +
