@@ -26,7 +26,11 @@ object DeepLinker {
             navigator.onRouteUnknown(null)
             return
         }
-        val link = HttpUrl.parse(url)!!
+        val link = HttpUrl.parse(url)
+        if (link == null) {
+            navigator.onRouteUnknown(url)
+            return
+        }
         val path = link.pathSegments().joinToString { "/" }
         if (path.contains("issues")) {
             if (link.pathSegments().last() == "issues") {
