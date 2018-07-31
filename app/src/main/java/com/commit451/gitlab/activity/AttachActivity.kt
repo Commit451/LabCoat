@@ -67,7 +67,7 @@ class AttachActivity : BaseActivity() {
 
     @OnClick(R.id.button_take_photo)
     fun onTakePhotoClicked() {
-        EasyImage.openCamera(this, 0)
+        EasyImage.openCameraForImage(this, 0)
     }
 
     @OnClick(R.id.button_choose_file)
@@ -98,7 +98,7 @@ class AttachActivity : BaseActivity() {
 
             override fun onCanceled(source: EasyImage.ImageSource?, type: Int) {
                 //Cancel handling, you might wanna remove taken photo if it was canceled
-                if (source == EasyImage.ImageSource.CAMERA) {
+                if (source == EasyImage.ImageSource.CAMERA_IMAGE) {
                     val photoFile = EasyImage.lastlyTakenButCanceledPhoto(this@AttachActivity)
                     photoFile?.delete()
                 }
