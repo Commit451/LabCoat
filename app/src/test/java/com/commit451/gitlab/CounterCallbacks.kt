@@ -24,7 +24,7 @@ class CounterCallbacks: DeepLinker.Callbacks {
         mergeRequest++
     }
 
-    override fun onRouteToProject(projectNamespace: String, projectName: String) {
+    override fun onRouteToProject(projectNamespace: String, projectName: String, selection: DeepLinker.ProjectSelection) {
         project++
     }
 
