@@ -31,7 +31,7 @@ object DeepLinker {
             navigator.onRouteUnknown(url)
             return
         }
-        val path = link.pathSegments().joinToString { "/" }
+        val path = link.pathSegments().joinToString("/", "/")
         if (path.contains("issues")) {
             if (link.pathSegments().last() == "issues") {
                 //this means it was just a link to something like
@@ -41,7 +41,7 @@ object DeepLinker {
                     val namespace = link.pathSegments()[index - 2]
                     val name = link.pathSegments()[index - 1]
                     //TODO make this tell what tab to open up when we get to projects
-                    navigator.onRouteToProject(namespace, name)
+                    navigator.onRouteToProject(namespace, name, ProjectSelection.ISSUES)
                     return
                 }
             } else {
@@ -65,7 +65,7 @@ object DeepLinker {
             if (index > 1) {
                 val projectNamespace = link.pathSegments()[index - 2]
                 val projectName = link.pathSegments()[index - 1]
-                navigator.onRouteToProject(projectNamespace, projectName)
+                navigator.onRouteToProject(projectNamespace, projectName, ProjectSelection.COMMITS)
                 return
             }
         } else if (path.contains("commit")) {
@@ -121,7 +121,7 @@ object DeepLinker {
             //exactly two path segments, it is probably a link to a project
             val projectNamespace = link.pathSegments()[0]
             val projectName = link.pathSegments()[1]
-            navigator.onRouteToProject(projectNamespace, projectName)
+            navigator.onRouteToProject(projectNamespace, projectName, ProjectSelection.PROJECT)
             return
         }
         navigator.onRouteUnknown(url)
@@ -141,9 +141,18 @@ object DeepLinker {
         fun onRouteToIssue(projectNamespace: String, projectName: String, issueIid: String)
         fun onRouteToCommit(projectNamespace: String, projectName: String, commitSha: String)
         fun onRouteToMergeRequest(projectNamespace: String, projectName: String, mergeRequestIid: String)
-        fun onRouteToProject(projectNamespace: String, projectName: String)
+        fun onRouteToProject(projectNamespace: String, projectName: String, selection: ProjectSelection)
         fun onRouteToBuild(projectNamespace: String, projectName: String, buildNumber: String)
         fun onRouteToMilestone(projectNamespace: String, projectName: String, milestoneNumber: String)
         fun onRouteUnknown(url: String?)
+    }
+
+    enum class ProjectSelection {
+        PROJECT,
+        ISSUES,
+        COMMITS,
+        MILESTONES,
+        JOBS,
+        MERGE_REQUESTS
     }
 }

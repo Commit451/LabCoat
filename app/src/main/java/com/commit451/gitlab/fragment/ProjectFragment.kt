@@ -33,11 +33,11 @@ class ProjectFragment : ButterKnifeFragment() {
 
     companion object {
 
-        private val README_TYPE_UNKNOWN = -1
-        private val README_TYPE_MARKDOWN = 0
-        private val README_TYPE_TEXT = 1
-        private val README_TYPE_HTML = 2
-        private val README_TYPE_NO_EXTENSION = 3
+        private const val README_TYPE_UNKNOWN = -1
+        private const val README_TYPE_MARKDOWN = 0
+        private const val README_TYPE_TEXT = 1
+        private const val README_TYPE_HTML = 2
+        private const val README_TYPE_NO_EXTENSION = 3
 
         fun newInstance(): ProjectFragment {
             return ProjectFragment()
@@ -249,6 +249,7 @@ class ProjectFragment : ButterKnifeFragment() {
                 })
     }
 
+    @Suppress("unused")
     @Subscribe
     fun onProjectReload(event: ProjectReloadEvent) {
         project = event.project

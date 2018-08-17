@@ -43,8 +43,8 @@ object Navigator {
         activity.startActivity(ProjectActivity.newIntent(activity, projectId))
     }
 
-    fun navigateToProject(activity: Activity, projectNamespace: String, projectName: String) {
-        activity.startActivity(ProjectActivity.newIntent(activity, projectNamespace, projectName))
+    fun navigateToProject(activity: Activity, projectNamespace: String, projectName: String, selection: DeepLinker.ProjectSelection) {
+        activity.startActivity(ProjectActivity.newIntent(activity, projectNamespace, projectName, selection))
     }
 
     fun navigateToPickBranchOrTag(activity: Activity, projectId: Long, currentRef: Ref?, requestCode: Int) {

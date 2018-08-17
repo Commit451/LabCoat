@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+Version 2.6.2
+----------------------------
+
+- Fix routing of some URLs
+
 Version 2.6.1
 ----------------------------
 

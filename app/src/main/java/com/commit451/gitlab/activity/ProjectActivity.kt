@@ -16,6 +16,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import butterknife.BindView
 import butterknife.ButterKnife
+import com.commit451.addendum.extraOrNull
 import com.commit451.addendum.parceler.getParcelerParcelable
 import com.commit451.addendum.parceler.getParcelerParcelableExtra
 import com.commit451.addendum.parceler.putParcelerParcelable
@@ -30,8 +31,8 @@ import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.fragment.BaseFragment
 import com.commit451.gitlab.model.Ref
 import com.commit451.gitlab.model.api.Project
+import com.commit451.gitlab.navigation.DeepLinker
 import com.commit451.gitlab.navigation.Navigator
-import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.util.IntentUtil
 import io.reactivex.Single
 import timber.log.Timber
@@ -40,15 +41,16 @@ class ProjectActivity : BaseActivity() {
 
     companion object {
 
-        private val EXTRA_PROJECT = "extra_project"
-        private val EXTRA_PROJECT_ID = "extra_project_id"
-        private val EXTRA_PROJECT_NAMESPACE = "extra_project_namespace"
-        private val EXTRA_PROJECT_NAME = "extra_project_name"
+        private const val EXTRA_PROJECT = "extra_project"
+        private const val EXTRA_PROJECT_ID = "extra_project_id"
+        private const val EXTRA_PROJECT_NAMESPACE = "extra_project_namespace"
+        private const val EXTRA_PROJECT_NAME = "extra_project_name"
+        private const val EXTRA_PROJECT_SELECTION = "extra_project_selection"
 
-        private val STATE_REF = "ref"
-        private val STATE_PROJECT = "project"
+        private const val STATE_REF = "ref"
+        private const val STATE_PROJECT = "project"
 
-        private val REQUEST_BRANCH_OR_TAG = 1
+        private const val REQUEST_BRANCH_OR_TAG = 1
 
         fun newIntent(context: Context, project: Project): Intent {
             val intent = Intent(context, ProjectActivity::class.java)
@@ -62,10 +64,11 @@ class ProjectActivity : BaseActivity() {
             return intent
         }
 
-        fun newIntent(context: Context, projectNamespace: String, projectName: String): Intent {
+        fun newIntent(context: Context, projectNamespace: String, projectName: String, projectSelection: DeepLinker.ProjectSelection): Intent {
             val intent = Intent(context, ProjectActivity::class.java)
             intent.putExtra(EXTRA_PROJECT_NAMESPACE, projectNamespace)
             intent.putExtra(EXTRA_PROJECT_NAME, projectName)
+            intent.putExtra(EXTRA_PROJECT_SELECTION, projectSelection)
             return intent
         }
     }
@@ -84,7 +87,9 @@ class ProjectActivity : BaseActivity() {
     var project: Project? = null
     var ref: Ref? = null
 
-    val onMenuItemClickListener = Toolbar.OnMenuItemClickListener { item ->
+    private val projectSelection by extraOrNull<DeepLinker.ProjectSelection>(EXTRA_PROJECT_SELECTION)
+
+    private val onMenuItemClickListener = Toolbar.OnMenuItemClickListener { item ->
         when (item.itemId) {
             R.id.action_branch -> {
                 if (project != null) {
@@ -185,41 +190,36 @@ class ProjectActivity : BaseActivity() {
         return true
     }
 
-    fun loadProject(projectId: String) {
+    private fun loadProject(projectId: String) {
         showProgress()
         loadProject(App.get().gitLab.getProject(projectId))
     }
 
-    fun loadProject(projectNamespace: String, projectName: String) {
+    private fun loadProject(projectNamespace: String, projectName: String) {
         showProgress()
         loadProject(App.get().gitLab.getProject(projectNamespace, projectName))
     }
 
-    fun loadProject(observable: Single<Project>) {
+    private fun loadProject(observable: Single<Project>) {
         observable.with(this)
-                .subscribe(object : CustomSingleObserver<Project>() {
-
-                    override fun error(t: Throwable) {
-                        Timber.e(t)
-                        progress.fadeOut()
-                        Snackbar.make(root, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
-                                .show()
-                    }
-
-                    override fun success(project: Project) {
-                        progress.fadeOut()
-                        bindProject(project)
-                    }
+                .subscribe({
+                    progress.fadeOut()
+                    bindProject(it)
+                }, {
+                    Timber.e(it)
+                    progress.fadeOut()
+                    Snackbar.make(root, getString(R.string.connection_error), Snackbar.LENGTH_INDEFINITE)
+                            .show()
                 })
     }
 
-    fun showProgress() {
+    private fun showProgress() {
         progress.alpha = 0.0f
         progress.visibility = View.VISIBLE
         progress.animate().alpha(1.0f)
     }
 
-    fun broadcastLoad() {
+    private fun broadcastLoad() {
         App.bus().post(ProjectReloadEvent(project!!, ref!!.ref!!))
     }
 
@@ -230,7 +230,7 @@ class ProjectActivity : BaseActivity() {
         return ref!!.ref
     }
 
-    fun bindProject(project: Project) {
+    private fun bindProject(project: Project) {
         this.project = project
         if (ref == null) {
             ref = Ref(Ref.TYPE_BRANCH, project.defaultBranch)
@@ -240,13 +240,17 @@ class ProjectActivity : BaseActivity() {
         setupTabs()
     }
 
-    fun setupTabs() {
-        val projectSectionsPagerAdapter = ProjectPagerAdapter(this, supportFragmentManager)
-        viewPager.adapter = projectSectionsPagerAdapter
+    private fun setupTabs() {
+        val adapter = ProjectPagerAdapter(this, supportFragmentManager)
+        viewPager.adapter = adapter
         tabLayout.setupWithViewPager(viewPager)
+        projectSelection?.let {
+            val index = adapter.indexForSelection(it)
+            viewPager.setCurrentItem(index, false)
+        }
     }
 
-    fun copyToClipboard(url: String) {
+    private fun copyToClipboard(url: String) {
         val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
         // Creates a new text clip to put on the clipboard

@@ -39,9 +39,9 @@ class RoutingActivity : BaseActivity() {
             overridePendingTransition(R.anim.fade_in, R.anim.do_nothing)
         }
 
-        override fun onRouteToProject(projectNamespace: String, projectName: String) {
+        override fun onRouteToProject(projectNamespace: String, projectName: String, selection: DeepLinker.ProjectSelection) {
             Timber.d("Routing to project")
-            Navigator.navigateToProject(this@RoutingActivity, projectNamespace, projectName)
+            Navigator.navigateToProject(this@RoutingActivity, projectNamespace, projectName, selection)
         }
 
         override fun onRouteToBuild(projectNamespace: String, projectName: String, buildNumber: String) {

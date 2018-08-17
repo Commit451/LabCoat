@@ -31,14 +31,14 @@ import org.greenrobot.eventbus.Subscribe
 import timber.log.Timber
 
 /**
- * Shows the builds of a project
+ * Shows the jobs of a project
  */
-class BuildsFragment : ButterKnifeFragment() {
+class JobsFragment : ButterKnifeFragment() {
 
     companion object {
 
-        fun newInstance(): BuildsFragment {
-            return BuildsFragment()
+        fun newInstance(): JobsFragment {
+            return JobsFragment()
         }
     }
 
@@ -81,7 +81,7 @@ class BuildsFragment : ButterKnifeFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_builds, container, false)
+        return inflater.inflate(R.layout.fragment_jobs, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
