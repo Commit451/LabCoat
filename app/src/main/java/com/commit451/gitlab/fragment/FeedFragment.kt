@@ -20,7 +20,6 @@ import com.commit451.gitlab.model.rss.Entry
 import com.commit451.gitlab.model.rss.Feed
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomSingleObserver
-import com.commit451.gitlab.util.IntentUtil
 import com.novoda.simplechromecustomtabs.SimpleChromeCustomTabs
 import timber.log.Timber
 
@@ -72,7 +71,7 @@ class FeedFragment : ButterKnifeFragment() {
                     Snackbar.make(swipeRefreshLayout, R.string.not_a_valid_url, Snackbar.LENGTH_SHORT)
                             .show()
                 } else {
-                    IntentUtil.openBrowser(baseActivty, entry.link.href, App.get().getAccount())
+                    Navigator.navigateToUrl(baseActivty, entry.link.href, App.get().getAccount())
                 }
             }
         })

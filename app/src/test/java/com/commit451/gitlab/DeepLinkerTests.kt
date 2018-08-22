@@ -40,4 +40,12 @@ class DeepLinkerTests {
         DeepLinker.route(link, callbacks)
         Assert.assertEquals(1, callbacks.build)
     }
+
+    @Test
+    fun issuesInternalTest() {
+        val link = "labcoat://gitlab.com/Commit451/LabCoat/issues/392"
+        val callbacks = CounterCallbacks()
+        DeepLinker.route(link, callbacks)
+        Assert.assertEquals(1, callbacks.issue)
+    }
 }

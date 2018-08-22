@@ -59,7 +59,7 @@ class RoutingActivity : BaseActivity() {
         override fun onRouteUnknown(url: String?) {
             Timber.d("Route unknown. Opening original Uri if it exists")
             if (url != null) {
-                IntentUtil.openPage(this@RoutingActivity, url.toString(), App.get().currentAccount)
+                IntentUtil.openBrowser(this@RoutingActivity, url.toString().replaceFirst("labcoat://", "https://"))
             } else {
                 Toast.makeText(this@RoutingActivity, R.string.deeplink_navigate_error, Toast.LENGTH_SHORT)
                         .show()

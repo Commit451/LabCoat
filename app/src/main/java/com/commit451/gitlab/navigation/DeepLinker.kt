@@ -26,7 +26,8 @@ object DeepLinker {
             navigator.onRouteUnknown(null)
             return
         }
-        val link = HttpUrl.parse(url)
+        // It doesn't like it if we have a host like this, so replace it
+        val link = HttpUrl.parse(url.replaceFirst("labcoat://", "https://"))
         if (link == null) {
             navigator.onRouteUnknown(url)
             return

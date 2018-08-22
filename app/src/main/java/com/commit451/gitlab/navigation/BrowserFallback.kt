@@ -1,13 +1,9 @@
 package com.commit451.gitlab.navigation
 
 import android.content.Context
-import android.content.Intent
 import android.net.Uri
-import android.widget.Toast
-
-import com.commit451.gitlab.R
+import com.commit451.gitlab.util.IntentUtil
 import com.novoda.simplechromecustomtabs.navigation.NavigationFallback
-
 import java.lang.ref.WeakReference
 
 /**
@@ -18,15 +14,7 @@ class BrowserFallback(context: Context) : NavigationFallback {
     private val context: WeakReference<Context> = WeakReference(context)
 
     override fun onFallbackNavigateTo(url: Uri) {
-        val intent = Intent(Intent.ACTION_VIEW)
-        intent.data = url
         val context = this.context.get() ?: return
-        try {
-            context.startActivity(intent)
-        } catch (e: Exception) {
-            Toast.makeText(context, R.string.error_no_browser, Toast.LENGTH_SHORT)
-                    .show()
-        }
-
+        IntentUtil.openBrowser(context, url.toString())
     }
 }

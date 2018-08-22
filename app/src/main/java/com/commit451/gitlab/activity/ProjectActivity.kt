@@ -87,6 +87,8 @@ class ProjectActivity : BaseActivity() {
     var project: Project? = null
     var ref: Ref? = null
 
+    private var adapter: ProjectPagerAdapter? = null
+
     private val projectSelection by extraOrNull<DeepLinker.ProjectSelection>(EXTRA_PROJECT_SELECTION)
 
     private val onMenuItemClickListener = Toolbar.OnMenuItemClickListener { item ->
@@ -190,6 +192,17 @@ class ProjectActivity : BaseActivity() {
         return true
     }
 
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        val selection = intent?.getSerializableExtra(EXTRA_PROJECT_SELECTION) as? DeepLinker.ProjectSelection
+        selection?.let {
+            val index = adapter?.indexForSelection(it)
+            if (index != null) {
+                viewPager.setCurrentItem(index, false)
+            }
+        }
+    }
+
     private fun loadProject(projectId: String) {
         showProgress()
         loadProject(App.get().gitLab.getProject(projectId))
@@ -242,6 +255,7 @@ class ProjectActivity : BaseActivity() {
 
     private fun setupTabs() {
         val adapter = ProjectPagerAdapter(this, supportFragmentManager)
+        this.adapter = adapter
         viewPager.adapter = adapter
         tabLayout.setupWithViewPager(viewPager)
         projectSelection?.let {
