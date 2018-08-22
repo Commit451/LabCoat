@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+Version 2.6.3
+----------------------------
+
+- Fix routing of URLs when coming from feed activity
+
 Version 2.6.2
 ----------------------------
 
