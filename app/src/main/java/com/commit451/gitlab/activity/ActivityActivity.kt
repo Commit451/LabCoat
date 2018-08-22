@@ -24,11 +24,10 @@ class ActivityActivity : BaseActivity() {
 
     companion object {
 
-        private val TAG_FEED_FRAGMENT = "feed_fragment"
+        private const val TAG_FEED_FRAGMENT = "feed_fragment"
 
         fun newIntent(context: Context): Intent {
-            val intent = Intent(context, ActivityActivity::class.java)
-            return intent
+            return Intent(context, ActivityActivity::class.java)
         }
     }
 

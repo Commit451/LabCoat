@@ -1,9 +1,11 @@
 package com.commit451.gitlab.util
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.support.design.widget.Snackbar
 import android.view.View
+import android.widget.Toast
 import com.commit451.addendum.themeAttrColor
 import com.commit451.easel.Easel
 import com.commit451.gitlab.R
@@ -30,6 +32,18 @@ object IntentUtil {
                 .withFallback(BrowserFallback(activity))
                 .withIntentCustomizer(LabCoatIntentCustomizer(activity, primaryColor))
                 .navigateTo(Uri.parse(resolvedUrl), activity)
+    }
+
+    fun openBrowser(context: Context, url: String, account: Account? = null) {
+        val intent = Intent(Intent.ACTION_VIEW)
+        val resolvedUrl = if (account == null) url else url.resolveUrl(account)
+        intent.data = Uri.parse(resolvedUrl)
+        try {
+            context.startActivity(intent)
+        } catch (e: Exception) {
+            Toast.makeText(context, R.string.error_no_browser, Toast.LENGTH_SHORT)
+                    .show()
+        }
     }
 
     fun share(root: View, url: Uri) {

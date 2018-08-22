@@ -44,7 +44,9 @@
             android:launchMode="singleTask"
             android:theme="@style/Activity.Todos" />
 
-        <activity android:name=".activity.ProjectActivity" />
+        <activity
+            android:name=".activity.ProjectActivity"
+            android:launchMode="singleTask" />
 
         <activity
             android:name=".activity.LoginActivity"

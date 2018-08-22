@@ -20,6 +20,7 @@ import com.commit451.gitlab.model.rss.Entry
 import com.commit451.gitlab.model.rss.Feed
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomSingleObserver
+import com.commit451.gitlab.util.IntentUtil
 import com.novoda.simplechromecustomtabs.SimpleChromeCustomTabs
 import timber.log.Timber
 
@@ -30,7 +31,7 @@ class FeedFragment : ButterKnifeFragment() {
 
     companion object {
 
-        private val EXTRA_FEED_URL = "extra_feed_url"
+        private const val EXTRA_FEED_URL = "extra_feed_url"
 
         fun newInstance(feedUrl: String): FeedFragment {
             val args = Bundle()
@@ -71,7 +72,7 @@ class FeedFragment : ButterKnifeFragment() {
                     Snackbar.make(swipeRefreshLayout, R.string.not_a_valid_url, Snackbar.LENGTH_SHORT)
                             .show()
                 } else {
-                    Navigator.navigateToUrl(baseActivty, entry.link.href, App.get().getAccount())
+                    IntentUtil.openBrowser(baseActivty, entry.link.href, App.get().getAccount())
                 }
             }
         })
