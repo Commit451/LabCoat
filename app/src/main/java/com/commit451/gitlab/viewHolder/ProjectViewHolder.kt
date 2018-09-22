@@ -73,6 +73,8 @@ class ProjectViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
         if (project.visibility == Project.VISIBILITY_PUBLIC) {
             iconVisibility.setImageResource(R.drawable.ic_public_24dp)
+        } else if (project.visibility == Project.VISIBILITY_INTERNAL) {
+            iconVisibility.setImageResource(R.drawable.ic_lock_open_24dp)
         } else {
             iconVisibility.setImageResource(R.drawable.ic_private_24dp)
         }
