@@ -2,7 +2,7 @@ package com.commit451.gitlab.transformation
 
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
-import android.support.v7.graphics.Palette
+import androidx.palette.graphics.Palette
 import android.widget.ImageView
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
@@ -18,9 +18,9 @@ class PaletteTransformation private constructor() : Transformation {
 
     companion object {
         private val INSTANCE = PaletteTransformation()
-        private val CACHE = WeakHashMap<Bitmap, Palette>()
+        private val CACHE = WeakHashMap<Bitmap, androidx.palette.graphics.Palette>()
 
-        fun getPalette(bitmap: Bitmap): Palette? {
+        fun getPalette(bitmap: Bitmap): androidx.palette.graphics.Palette? {
             return CACHE[bitmap]
         }
 
@@ -43,7 +43,7 @@ class PaletteTransformation private constructor() : Transformation {
          * Note: You must not recycle the bitmap.
          * @param palette The extracted [Palette]
          */
-        protected abstract fun onBitmapLoaded(bitmap: Bitmap, from: Picasso.LoadedFrom, palette: Palette?)
+        protected abstract fun onBitmapLoaded(bitmap: Bitmap, from: Picasso.LoadedFrom, palette: androidx.palette.graphics.Palette?)
 
         override fun onBitmapLoaded(bitmap: Bitmap, from: Picasso.LoadedFrom) {
             val palette = getPalette(bitmap)
@@ -62,7 +62,7 @@ class PaletteTransformation private constructor() : Transformation {
             this.imageView = WeakReference(imageView)
         }
 
-        protected abstract fun onSuccess(palette: Palette?)
+        protected abstract fun onSuccess(palette: androidx.palette.graphics.Palette?)
 
         override fun onSuccess() {
             if (getImageView() == null) {
@@ -81,7 +81,7 @@ class PaletteTransformation private constructor() : Transformation {
     //# Transformation Contract
     override fun transform(source: Bitmap): Bitmap {
 
-        val palette = Palette.from(source).generate()
+        val palette = androidx.palette.graphics.Palette.from(source).generate()
         CACHE.put(source, palette)
         return source
     }

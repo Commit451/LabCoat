@@ -1,8 +1,8 @@
 package com.commit451.gitlab.adapter
 
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentPagerAdapter
 import com.commit451.gitlab.BuildConfig
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.ProjectActivity
@@ -15,7 +15,7 @@ import timber.log.Timber
 /**
  * Controls the sections that should be shown in a [com.commit451.gitlab.activity.ProjectActivity]
  */
-class ProjectPagerAdapter(context: ProjectActivity, fm: FragmentManager) : FragmentPagerAdapter(fm) {
+class ProjectPagerAdapter(context: ProjectActivity, fm: androidx.fragment.app.FragmentManager) : androidx.fragment.app.FragmentPagerAdapter(fm) {
 
     companion object {
         const val SECTION_PROJECT = "project"
@@ -69,7 +69,7 @@ class ProjectPagerAdapter(context: ProjectActivity, fm: FragmentManager) : Fragm
         return sections[position].name
     }
 
-    override fun getItem(position: Int): Fragment {
+    override fun getItem(position: Int): androidx.fragment.app.Fragment {
         val sectionId = sections[position].id
 
         when (sectionId) {

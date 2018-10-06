@@ -1,6 +1,6 @@
 package com.commit451.gitlab.adapter
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.ViewGroup
 import com.commit451.gitlab.R
 import com.commit451.gitlab.viewHolder.IssueLabelViewHolder
@@ -9,7 +9,7 @@ import java.util.*
 /**
  * So many labels
  */
-class IssueLabelsAdapter(private val listener: IssueLabelsAdapter.Listener) : RecyclerView.Adapter<IssueLabelViewHolder>() {
+class IssueLabelsAdapter(private val listener: IssueLabelsAdapter.Listener) : androidx.recyclerview.widget.RecyclerView.Adapter<IssueLabelViewHolder>() {
 
     private val values: ArrayList<String> = ArrayList()
 

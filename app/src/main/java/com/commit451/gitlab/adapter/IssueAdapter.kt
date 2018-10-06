@@ -1,6 +1,6 @@
 package com.commit451.gitlab.adapter
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.ViewGroup
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.api.Issue
@@ -11,7 +11,7 @@ import java.util.*
 /**
  * Issues adapter
  */
-class IssueAdapter(private val listener: IssueAdapter.Listener) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class IssueAdapter(private val listener: IssueAdapter.Listener) : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
 
     companion object {
 
@@ -24,7 +24,7 @@ class IssueAdapter(private val listener: IssueAdapter.Listener) : RecyclerView.A
     val values: ArrayList<Issue> = ArrayList()
     private var loading = false
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
         when (viewType) {
             TYPE_ITEM -> {
                 val holder = IssueViewHolder.inflate(parent)
@@ -39,7 +39,7 @@ class IssueAdapter(private val listener: IssueAdapter.Listener) : RecyclerView.A
         throw IllegalStateException("No holder for view type " + viewType)
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
         if (holder is IssueViewHolder) {
             val issue = getValueAt(position)
             holder.bind(issue)

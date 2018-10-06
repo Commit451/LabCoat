@@ -1,6 +1,6 @@
 package com.commit451.gitlab.adapter
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.ViewGroup
 import com.commit451.gitlab.model.api.Pipeline
 import com.commit451.gitlab.viewHolder.PipelineViewHolder
@@ -10,7 +10,7 @@ import java.util.*
 /**
  * Pipelines adapter
  */
-class PipelineAdapter(private val listener: PipelineAdapter.Listener) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class PipelineAdapter(private val listener: PipelineAdapter.Listener) : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
 
     companion object {
 
@@ -23,7 +23,7 @@ class PipelineAdapter(private val listener: PipelineAdapter.Listener) : Recycler
     private val values: ArrayList<Pipeline> = ArrayList()
     private var loading = false
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
         when (viewType) {
             TYPE_ITEM -> {
                 val holder = PipelineViewHolder.inflate(parent)
@@ -38,7 +38,7 @@ class PipelineAdapter(private val listener: PipelineAdapter.Listener) : Recycler
         throw IllegalStateException("No holder for view type " + viewType)
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
         if (holder is PipelineViewHolder) {
             val pipeline = getValueAt(position)
             holder.bind(pipeline)

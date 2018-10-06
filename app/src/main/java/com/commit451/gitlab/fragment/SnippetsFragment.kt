@@ -2,10 +2,10 @@ package com.commit451.gitlab.fragment
 
 import android.net.Uri
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -60,7 +60,7 @@ class SnippetsFragment : ButterKnifeFragment() {
     var nextPageUrl: Uri? = null
 
     val onScrollListener = object : RecyclerView.OnScrollListener() {
-        override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
             val visibleItemCount = layoutManagerSnippets.childCount
             val totalItemCount = layoutManagerSnippets.itemCount
@@ -101,7 +101,7 @@ class SnippetsFragment : ButterKnifeFragment() {
 
             }
         })
-        layoutManagerSnippets = LinearLayoutManager(activity)
+        layoutManagerSnippets = androidx.recyclerview.widget.LinearLayoutManager(activity)
         listSnippets.layoutManager = layoutManagerSnippets
         listSnippets.addItemDecoration(DividerItemDecoration(baseActivty))
         listSnippets.adapter = adapterSnippets
@@ -204,6 +204,7 @@ class SnippetsFragment : ButterKnifeFragment() {
                 })
     }
 
+    @Suppress("unused")
     @Subscribe
     fun onProjectReload(event: ProjectReloadEvent) {
         project = event.project

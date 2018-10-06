@@ -1,8 +1,8 @@
 package com.commit451.gitlab.fragment
 
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v4.widget.SwipeRefreshLayout
+import com.google.android.material.snackbar.Snackbar
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -46,7 +46,7 @@ class PipelineJobsFragment : ButterKnifeFragment() {
     @BindView(R.id.root)
     lateinit var root: ViewGroup
     @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    lateinit var swipeRefreshLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout
     @BindView(R.id.text_number)
     lateinit var textName: TextView
     @BindView(R.id.text_status)

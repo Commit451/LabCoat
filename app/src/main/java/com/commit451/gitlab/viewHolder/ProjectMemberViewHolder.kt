@@ -1,6 +1,6 @@
 package com.commit451.gitlab.viewHolder
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +17,7 @@ import com.commit451.gitlab.util.ImageUtil
 /**
  * Shows a project member
  */
-class ProjectMemberViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+class ProjectMemberViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
 
     companion object {
 

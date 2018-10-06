@@ -1,6 +1,6 @@
 package com.commit451.gitlab.adapter
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.ViewGroup
 import com.commit451.gitlab.model.api.Note
 import com.commit451.gitlab.model.api.Project
@@ -11,7 +11,7 @@ import java.util.*
 /**
  * Nice notes
  */
-class NotesAdapter(private val project: Project) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class NotesAdapter(private val project: Project) : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
 
     companion object {
 
@@ -24,7 +24,7 @@ class NotesAdapter(private val project: Project) : RecyclerView.Adapter<Recycler
     private val notes: LinkedList<Note> = LinkedList()
     private var loading = false
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
         if (viewType == TYPE_COMMENT) {
             return NoteViewHolder.inflate(parent)
         } else if (viewType == TYPE_FOOTER) {
@@ -33,7 +33,7 @@ class NotesAdapter(private val project: Project) : RecyclerView.Adapter<Recycler
         throw IllegalArgumentException("No view type matches")
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
         if (holder is NoteViewHolder) {
             val note = getNoteAt(position)
             holder.bind(note, project)

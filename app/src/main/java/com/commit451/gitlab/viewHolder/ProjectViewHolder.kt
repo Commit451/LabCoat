@@ -1,7 +1,7 @@
 package com.commit451.gitlab.viewHolder
 
 import android.graphics.Color
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,7 +18,7 @@ import com.github.ivbaranov.mli.MaterialLetterIcon
 /**
  * Projects, yay!
  */
-class ProjectViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+class ProjectViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
 
     companion object {
 

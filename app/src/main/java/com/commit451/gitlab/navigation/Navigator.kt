@@ -6,8 +6,8 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
-import android.support.annotation.DrawableRes
-import android.support.v4.app.ActivityOptionsCompat
+import androidx.annotation.DrawableRes
+import androidx.core.app.ActivityOptionsCompat
 import android.view.View
 import android.widget.ImageView
 import com.commit451.addendum.themeAttrColor

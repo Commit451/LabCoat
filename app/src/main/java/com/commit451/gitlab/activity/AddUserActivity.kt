@@ -4,11 +4,11 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.Toolbar
+import com.google.android.material.snackbar.Snackbar
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.appcompat.widget.Toolbar
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
@@ -63,13 +63,13 @@ class AddUserActivity : MorphActivity() {
     @BindView(R.id.search)
     lateinit var textSearch: EditText
     @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    lateinit var swipeRefreshLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout
     @BindView(R.id.list)
-    lateinit var list: RecyclerView
+    lateinit var list: androidx.recyclerview.widget.RecyclerView
     @BindView(R.id.clear)
     lateinit var buttonClear: View
 
-    lateinit var layoutManager: GridLayoutManager
+    lateinit var layoutManager: androidx.recyclerview.widget.GridLayoutManager
     lateinit var adapter: UserAdapter
     lateinit var dialogAccess: AccessDialog
     lateinit var teleprinter: Teleprinter
@@ -138,11 +138,11 @@ class AddUserActivity : MorphActivity() {
         })
         swipeRefreshLayout.setOnRefreshListener { loadData() }
         list.adapter = adapter
-        layoutManager = GridLayoutManager(this, 2)
+        layoutManager = androidx.recyclerview.widget.GridLayoutManager(this, 2)
         layoutManager.spanSizeLookup = adapter.spanSizeLookup
         list.layoutManager = layoutManager
         list.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 val visibleItemCount = layoutManager.childCount
                 val totalItemCount = layoutManager.itemCount

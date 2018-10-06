@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/root"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                     xmlns:tools="http://schemas.android.com/tools"
+                                                     android:id="@+id/root"
+                                                     android:layout_width="match_parent"
+                                                     android:layout_height="match_parent">
 
     <com.commit451.gitlab.view.LabCoatSwipeRefreshLayout
         android:id="@+id/swipe_layout"
@@ -19,7 +19,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <android.support.v7.widget.CardView
+                <androidx.cardview.widget.CardView
                     style="@style/Card"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -84,9 +84,9 @@
 
                     </LinearLayout>
 
-                </android.support.v7.widget.CardView>
+                </androidx.cardview.widget.CardView>
 
-                <android.support.v7.widget.CardView
+                <androidx.cardview.widget.CardView
                     style="@style/Card"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -149,9 +149,9 @@
 
                     </LinearLayout>
 
-                </android.support.v7.widget.CardView>
+                </androidx.cardview.widget.CardView>
 
             </LinearLayout>
         </ScrollView>
     </com.commit451.gitlab.view.LabCoatSwipeRefreshLayout>
-</android.support.design.widget.CoordinatorLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

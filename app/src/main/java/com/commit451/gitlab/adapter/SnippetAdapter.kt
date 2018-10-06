@@ -1,6 +1,6 @@
 package com.commit451.gitlab.adapter
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.ViewGroup
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.api.Snippet
@@ -9,7 +9,7 @@ import com.commit451.gitlab.viewHolder.SnippetViewHolder
 import java.util.*
 
 
-class SnippetAdapter(private val listener: SnippetAdapter.Listener) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class SnippetAdapter(private val listener: SnippetAdapter.Listener) : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
 
     companion object {
 
@@ -22,7 +22,7 @@ class SnippetAdapter(private val listener: SnippetAdapter.Listener) : RecyclerVi
     private val values: MutableList<Snippet> = ArrayList()
     private var loading: Boolean = false
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
         when (viewType) {
             TYPE_ITEM -> {
                 val holder = SnippetViewHolder.inflate(parent)
@@ -37,7 +37,7 @@ class SnippetAdapter(private val listener: SnippetAdapter.Listener) : RecyclerVi
         throw IllegalStateException("No holder for viewType " + viewType)
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
         if (holder is SnippetViewHolder) {
             val snippet = getValueAt(position)
             holder.bind(snippet)

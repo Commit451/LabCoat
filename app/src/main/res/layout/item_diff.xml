@@ -17,7 +17,7 @@
         app:fontFamily="@font/roboto_medium"
         tools:text="NewFile.java" />
 
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
@@ -41,6 +41,6 @@
             app:diff_show_diff_info="true"
             tools:text="+blah blah blah" />
 
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
 
 </LinearLayout>

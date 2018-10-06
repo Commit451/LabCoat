@@ -7,9 +7,9 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.support.design.widget.CollapsingToolbarLayout
-import android.support.v7.graphics.Palette
-import android.support.v7.widget.Toolbar
+import com.google.android.material.appbar.CollapsingToolbarLayout
+import androidx.palette.graphics.Palette
+import androidx.appcompat.widget.Toolbar
 import android.widget.ImageView
 import butterknife.BindView
 import butterknife.ButterKnife
@@ -33,7 +33,7 @@ class UserActivity : BaseActivity() {
 
     companion object {
 
-        private val KEY_USER = "user"
+        private const val KEY_USER = "user"
 
         fun newIntent(context: Context, user: User): Intent {
             val intent = Intent(context, UserActivity::class.java)
@@ -70,7 +70,7 @@ class UserActivity : BaseActivity() {
                 .load(url)
                 .transform(PaletteTransformation.instance())
                 .into(backdrop, object : PaletteTransformation.PaletteCallback(backdrop) {
-                    override fun onSuccess(palette: Palette?) {
+                    override fun onSuccess(palette: androidx.palette.graphics.Palette?) {
                         bindPalette(palette!!)
                     }
 
@@ -93,7 +93,7 @@ class UserActivity : BaseActivity() {
         return true
     }
 
-    fun bindPalette(palette: Palette) {
+    fun bindPalette(palette: androidx.palette.graphics.Palette) {
         val animationTime = 1000
         val vibrantColor = palette.getVibrantColor(this.themeAttrColor(R.attr.colorPrimary))
         val darkerColor = this.themeAttrColor(vibrantColor)

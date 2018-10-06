@@ -6,19 +6,19 @@
     android:layout_height="match_parent"
     android:transitionName="@string/transition_morph">
 
-    <android.support.design.widget.AppBarLayout
+    <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <android.support.v7.widget.Toolbar
+        <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize" />
 
-    </android.support.design.widget.AppBarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
 
-    <android.support.v4.widget.NestedScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="?attr/actionBarSize">
@@ -29,7 +29,7 @@
             android:layout_margin="16dp"
             android:orientation="vertical">
 
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/title_text_input_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -42,9 +42,9 @@
                     android:imeOptions="actionNone"
                     android:inputType="textCapSentences|textAutoCorrect|textMultiLine" />
 
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1">
@@ -57,7 +57,7 @@
                     android:imeOptions="actionNone"
                     android:inputType="textCapSentences|textAutoCorrect|textMultiLine" />
 
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <Button
                 android:id="@+id/due_date"
@@ -67,7 +67,7 @@
                 android:text="@string/due_date" />
 
         </LinearLayout>
-    </android.support.v4.widget.NestedScrollView>
+    </androidx.core.widget.NestedScrollView>
 
     <include layout="@layout/progress_fullscreen" />
 </FrameLayout>

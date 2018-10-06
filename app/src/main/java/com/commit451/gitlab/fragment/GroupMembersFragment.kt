@@ -2,19 +2,17 @@ package com.commit451.gitlab.fragment
 
 import android.net.Uri
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import butterknife.BindView
 import butterknife.OnClick
-import com.alexgwyn.recyclerviewsquire.DynamicGridLayoutManager
 import com.commit451.addendum.parceler.getParcelerParcelable
 import com.commit451.addendum.parceler.putParcelerParcelable
+import com.commit451.aloy.DynamicGridLayoutManager
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.GroupMembersAdapter
@@ -28,6 +26,7 @@ import com.commit451.gitlab.rx.CustomCompleteObserver
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
 import com.commit451.gitlab.viewHolder.ProjectMemberViewHolder
+import com.google.android.material.snackbar.Snackbar
 import io.reactivex.Single
 import org.greenrobot.eventbus.Subscribe
 import retrofit2.Response
@@ -68,7 +67,7 @@ class GroupMembersFragment : ButterKnifeFragment() {
     var nextPageUrl: Uri? = null
 
     private val mOnScrollListener = object : RecyclerView.OnScrollListener() {
-        override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
             val visibleItemCount = layoutManagerGroupMembers.childCount
             val totalItemCount = layoutManagerGroupMembers.itemCount
@@ -128,12 +127,12 @@ class GroupMembersFragment : ButterKnifeFragment() {
         App.bus().register(this)
 
         adapterGroupMembers = GroupMembersAdapter(listener)
-        layoutManagerGroupMembers = DynamicGridLayoutManager(activity)
-        layoutManagerGroupMembers.setMinimumWidthDimension(R.dimen.user_list_image_size)
-        layoutManagerGroupMembers.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+        layoutManagerGroupMembers = DynamicGridLayoutManager(baseActivty)
+        layoutManagerGroupMembers.setMinimumSpanSize(baseActivty.resources.getDimensionPixelSize(R.dimen.user_list_image_size))
+        layoutManagerGroupMembers.spanSizeLookup = object : androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
                 if (adapterGroupMembers.isFooter(position)) {
-                    return layoutManagerGroupMembers.numColumns
+                    return layoutManagerGroupMembers.spanCount
                 }
                 return 1
             }
@@ -216,6 +215,7 @@ class GroupMembersFragment : ButterKnifeFragment() {
                 })
     }
 
+    @Suppress("unused")
     @Subscribe
     fun onMemberAdded(event: MemberAddedEvent) {
         if (view != null) {

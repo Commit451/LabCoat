@@ -2,7 +2,7 @@ package com.commit451.gitlab
 
 import android.app.Application
 import android.content.Context
-import android.support.multidex.MultiDex
+import androidx.multidex.MultiDex
 import com.commit451.gitlab.api.GitLab
 import com.commit451.gitlab.api.GitLabFactory
 import com.commit451.gitlab.api.OkHttpClientFactory

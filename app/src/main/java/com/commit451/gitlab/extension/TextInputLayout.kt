@@ -1,6 +1,6 @@
 package com.commit451.gitlab.extension
 
-import android.support.design.widget.TextInputLayout
+import com.google.android.material.textfield.TextInputLayout
 import com.commit451.gitlab.R
 
 fun TextInputLayout.checkValid(): Boolean {

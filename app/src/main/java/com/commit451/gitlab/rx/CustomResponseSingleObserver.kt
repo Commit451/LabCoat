@@ -1,6 +1,6 @@
 package com.commit451.gitlab.rx
 
-import android.support.annotation.CallSuper
+import androidx.annotation.CallSuper
 import com.commit451.gitlab.api.NullBodyException
 import com.commit451.reptar.CancellationFailureChecker
 import com.commit451.reptar.retrofit.ResponseSingleObserver

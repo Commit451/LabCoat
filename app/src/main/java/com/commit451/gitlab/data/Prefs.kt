@@ -4,14 +4,10 @@ import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
-import android.support.annotation.IntDef
+import androidx.annotation.IntDef
 import com.commit451.gitlab.api.MoshiProvider
 import com.commit451.gitlab.model.Account
 import java.io.IOException
-import java.util.*
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.Types.newParameterizedType
 import com.squareup.moshi.Types
 import timber.log.Timber
 

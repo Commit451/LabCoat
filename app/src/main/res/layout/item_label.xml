@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:foreground="?attr/selectableItemBackground"
-    android:minHeight="?android:attr/listPreferredItemHeight"
-    android:minWidth="256dp"
-    android:orientation="vertical"
-    android:padding="16dp"
-    android:layout_margin="16dp">
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+                                   xmlns:tools="http://schemas.android.com/tools"
+                                   android:layout_width="match_parent"
+                                   android:layout_height="wrap_content"
+                                   android:foreground="?attr/selectableItemBackground"
+                                   android:minHeight="?android:attr/listPreferredItemHeight"
+                                   android:minWidth="256dp"
+                                   android:orientation="vertical"
+                                   android:padding="16dp"
+                                   android:layout_margin="16dp">
 
     <View
         android:id="@+id/color"
@@ -23,4 +23,4 @@
         android:gravity="center"
         tools:text="what a cool file" />
 
-</android.support.v7.widget.CardView>
+</androidx.cardview.widget.CardView>

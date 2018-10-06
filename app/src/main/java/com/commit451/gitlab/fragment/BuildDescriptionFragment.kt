@@ -1,8 +1,6 @@
 package com.commit451.gitlab.fragment
 
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v4.widget.SwipeRefreshLayout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +15,7 @@ import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.*
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.util.DateUtil
+import com.google.android.material.snackbar.Snackbar
 import org.greenrobot.eventbus.Subscribe
 import timber.log.Timber
 import java.util.*
@@ -28,8 +27,8 @@ class BuildDescriptionFragment : ButterKnifeFragment() {
 
     companion object {
 
-        private val KEY_PROJECT = "project"
-        private val KEY_BUILD = "build"
+        private const val KEY_PROJECT = "project"
+        private const val KEY_BUILD = "build"
 
         fun newInstance(project: Project, build: Build): BuildDescriptionFragment {
             val fragment = BuildDescriptionFragment()
@@ -44,7 +43,7 @@ class BuildDescriptionFragment : ButterKnifeFragment() {
     @BindView(R.id.root)
     lateinit var root: ViewGroup
     @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    lateinit var swipeRefreshLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout
     @BindView(R.id.text_name)
     lateinit var textName: TextView
     @BindView(R.id.text_pipeline)
@@ -160,23 +159,24 @@ class BuildDescriptionFragment : ButterKnifeFragment() {
         }
     }
 
-    fun bindRunner(runner: Runner) {
+    private fun bindRunner(runner: Runner) {
         val runnerNum = String.format(getString(R.string.runner_number), runner.id.toString())
         textRunner.text = runnerNum
     }
 
-    fun bindPipeline(pipeline: Pipeline) {
+    private fun bindPipeline(pipeline: Pipeline) {
         val pipelineNum = String.format(getString(R.string.build_pipeline), pipeline.id.toString())
         textPipeline.text = pipelineNum
     }
 
-    fun bindCommit(commit: RepositoryCommit) {
+    private fun bindCommit(commit: RepositoryCommit) {
         val authorText = String.format(getString(R.string.build_commit_author), commit.authorName)
         textAuthor.text = authorText
         val messageText = String.format(getString(R.string.build_commit_message), commit.message)
         textMessage.text = messageText
     }
 
+    @Suppress("unused")
     @Subscribe
     fun onBuildChangedEvent(event: BuildChangedEvent) {
         if (build.id == event.build.id) {

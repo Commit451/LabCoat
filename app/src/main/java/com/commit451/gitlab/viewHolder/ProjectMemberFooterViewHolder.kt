@@ -1,6 +1,6 @@
 package com.commit451.gitlab.viewHolder
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +13,7 @@ import com.commit451.gitlab.model.api.ProjectNamespace
 /**
  * Shows a button to take you to a group
  */
-class ProjectMemberFooterViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+class ProjectMemberFooterViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
 
     companion object {
 

@@ -2,10 +2,10 @@ package com.commit451.gitlab.fragment
 
 import android.net.Uri
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -54,7 +54,7 @@ class JobsFragment : ButterKnifeFragment() {
     lateinit var spinnerIssue: Spinner
 
     lateinit var adapterBuilds: BuildAdapter
-    lateinit var layoutManagerBuilds: LinearLayoutManager
+    lateinit var layoutManagerBuilds: androidx.recyclerview.widget.LinearLayoutManager
 
     lateinit var scopes: Array<String>
     var scope: String? = null
@@ -63,7 +63,7 @@ class JobsFragment : ButterKnifeFragment() {
     var loading: Boolean = false
 
     val onScrollListener = object : RecyclerView.OnScrollListener() {
-        override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
             val visibleItemCount = layoutManagerBuilds.childCount
             val totalItemCount = layoutManagerBuilds.itemCount
@@ -99,7 +99,7 @@ class JobsFragment : ButterKnifeFragment() {
                 }
             }
         })
-        layoutManagerBuilds = LinearLayoutManager(activity)
+        layoutManagerBuilds = androidx.recyclerview.widget.LinearLayoutManager(activity)
         listBuilds.layoutManager = layoutManagerBuilds
         listBuilds.addItemDecoration(DividerItemDecoration(baseActivty))
         listBuilds.adapter = adapterBuilds

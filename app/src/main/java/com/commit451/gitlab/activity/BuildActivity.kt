@@ -6,11 +6,11 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.design.widget.TabLayout
-import android.support.v4.content.ContextCompat
-import android.support.v4.view.ViewPager
-import android.support.v7.widget.Toolbar
+import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.tabs.TabLayout
+import androidx.core.content.ContextCompat
+import androidx.viewpager.widget.ViewPager
+import androidx.appcompat.widget.Toolbar
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
@@ -57,7 +57,7 @@ class BuildActivity : BaseActivity() {
     @BindView(R.id.tabs)
     lateinit var tabLayout: TabLayout
     @BindView(R.id.pager)
-    lateinit var viewPager: ViewPager
+    lateinit var viewPager: androidx.viewpager.widget.ViewPager
     @BindView(R.id.progress)
     lateinit var progress: View
 
@@ -197,7 +197,7 @@ class BuildActivity : BaseActivity() {
     fun downloadBuild() {
         val account = App.get().getAccount()
         val downloadUrl = build.getDownloadBuildUrl(App.get().getAccount().serverUrl!!, project)
-        Timber.d("Downloading build: " + downloadUrl)
+        Timber.d("Downloading build: $downloadUrl")
         val artifactsFileName = build.artifactsFile?.fileName
         if (artifactsFileName != null) {
             DownloadUtil.download(this, account, downloadUrl, artifactsFileName)

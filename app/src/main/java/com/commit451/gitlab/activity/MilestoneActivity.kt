@@ -5,11 +5,11 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.Toolbar
+import com.google.android.material.snackbar.Snackbar
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.appcompat.widget.Toolbar
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
@@ -39,8 +39,8 @@ class MilestoneActivity : BaseActivity() {
 
     companion object {
 
-        private val EXTRA_PROJECT = "extra_project"
-        private val EXTRA_MILESTONE = "extra_milestone"
+        private const val EXTRA_PROJECT = "extra_project"
+        private const val EXTRA_MILESTONE = "extra_milestone"
 
         fun newIntent(context: Context, project: Project, milestone: Milestone): Intent {
             val intent = Intent(context, MilestoneActivity::class.java)
@@ -55,16 +55,16 @@ class MilestoneActivity : BaseActivity() {
     @BindView(R.id.toolbar)
     lateinit var toolbar: Toolbar
     @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    lateinit var swipeRefreshLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout
     @BindView(R.id.list)
-    lateinit var listIssues: RecyclerView
+    lateinit var listIssues: androidx.recyclerview.widget.RecyclerView
     @BindView(R.id.message_text)
     lateinit var textMessage: TextView
     @BindView(R.id.progress)
     lateinit var progress: View
 
     lateinit var adapterMilestoneIssues: MilestoneIssueAdapter
-    lateinit var layoutManagerIssues: LinearLayoutManager
+    lateinit var layoutManagerIssues: androidx.recyclerview.widget.LinearLayoutManager
     lateinit var menuItemOpenClose: MenuItem
 
     lateinit var project: Project
@@ -73,7 +73,7 @@ class MilestoneActivity : BaseActivity() {
     var loading = false
 
     val onScrollListener = object : RecyclerView.OnScrollListener() {
-        override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
             val visibleItemCount = layoutManagerIssues.childCount
             val totalItemCount = layoutManagerIssues.itemCount
@@ -124,7 +124,7 @@ class MilestoneActivity : BaseActivity() {
         })
         bind(milestone)
         listIssues.adapter = adapterMilestoneIssues
-        layoutManagerIssues = LinearLayoutManager(this)
+        layoutManagerIssues = androidx.recyclerview.widget.LinearLayoutManager(this)
         listIssues.layoutManager = layoutManagerIssues
         listIssues.addItemDecoration(DividerItemDecoration(this))
         listIssues.addOnScrollListener(onScrollListener)

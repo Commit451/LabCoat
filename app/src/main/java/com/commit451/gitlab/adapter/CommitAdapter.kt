@@ -1,6 +1,6 @@
 package com.commit451.gitlab.adapter
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.ViewGroup
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.api.RepositoryCommit
@@ -11,7 +11,7 @@ import java.util.*
 /**
  * Shows a list of commits to a project, seen in a project overview
  */
-class CommitAdapter(private val listener: CommitAdapter.Listener) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class CommitAdapter(private val listener: CommitAdapter.Listener) : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
 
     companion object {
 
@@ -24,7 +24,7 @@ class CommitAdapter(private val listener: CommitAdapter.Listener) : RecyclerView
     private val values: ArrayList<RepositoryCommit> = ArrayList()
     private var loading = false
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
         when (viewType) {
             TYPE_ITEM -> {
                 val holder = CommitViewHolder.inflate(parent)
@@ -39,7 +39,7 @@ class CommitAdapter(private val listener: CommitAdapter.Listener) : RecyclerView
         throw IllegalStateException("No known ViewHolder for type " + viewType)
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
         if (holder is CommitViewHolder) {
             val commit = getValueAt(position)
             holder.bind(commit)

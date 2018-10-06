@@ -1,7 +1,7 @@
 package com.commit451.gitlab.extension
 
 import android.net.Uri
-import android.support.annotation.DrawableRes
+import androidx.annotation.DrawableRes
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.model.api.RepositoryTreeObject

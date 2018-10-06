@@ -1,7 +1,7 @@
 package com.commit451.gitlab.dialog
 
 import android.content.Context
-import android.support.v7.app.AppCompatDialog
+import androidx.appcompat.app.AppCompatDialog
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView

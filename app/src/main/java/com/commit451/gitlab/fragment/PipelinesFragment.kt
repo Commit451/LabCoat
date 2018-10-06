@@ -2,10 +2,10 @@ package com.commit451.gitlab.fragment
 
 import android.net.Uri
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -45,16 +45,16 @@ class PipelinesFragment : ButterKnifeFragment() {
     @BindView(R.id.root)
     lateinit var root: ViewGroup
     @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    lateinit var swipeRefreshLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout
     @BindView(R.id.list)
-    lateinit var listPipelines: RecyclerView
+    lateinit var listPipelines: androidx.recyclerview.widget.RecyclerView
     @BindView(R.id.message_text)
     lateinit var textMessage: TextView
     @BindView(R.id.issue_spinner)
     lateinit var spinnerIssue: Spinner
 
     lateinit var adapterPipelines: PipelineAdapter
-    lateinit var layoutManagerPipelines: LinearLayoutManager
+    lateinit var layoutManagerPipelines: androidx.recyclerview.widget.LinearLayoutManager
 
     lateinit var scopes: Array<String>
     var scope: String? = null
@@ -63,7 +63,7 @@ class PipelinesFragment : ButterKnifeFragment() {
     var loading: Boolean = false
 
     val onScrollListener = object : RecyclerView.OnScrollListener() {
-        override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
             val visibleItemCount = layoutManagerPipelines.childCount
             val totalItemCount = layoutManagerPipelines.itemCount
@@ -99,7 +99,7 @@ class PipelinesFragment : ButterKnifeFragment() {
                 }
             }
         })
-        layoutManagerPipelines = LinearLayoutManager(activity)
+        layoutManagerPipelines = androidx.recyclerview.widget.LinearLayoutManager(activity)
         listPipelines.layoutManager = layoutManagerPipelines
         listPipelines.addItemDecoration(DividerItemDecoration(baseActivty))
         listPipelines.adapter = adapterPipelines

@@ -1,8 +1,8 @@
 package com.commit451.gitlab.fragment
 
 import android.os.Bundle
-import android.support.v4.widget.NestedScrollView
-import android.support.v4.widget.SwipeRefreshLayout
+import androidx.core.widget.NestedScrollView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -43,7 +43,7 @@ class BuildLogFragment : ButterKnifeFragment() {
     }
 
     @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    lateinit var swipeRefreshLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout
     @BindView(R.id.scrollView)
     lateinit var scrollView: NestedScrollView
     @BindView(R.id.log)
@@ -113,6 +113,7 @@ class BuildLogFragment : ButterKnifeFragment() {
                 })
     }
 
+    @Suppress("unused")
     @Subscribe
     fun onBuildChanged(event: BuildChangedEvent) {
         if (build.id == event.build.id) {

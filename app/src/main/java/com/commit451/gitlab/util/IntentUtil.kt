@@ -3,7 +3,7 @@ package com.commit451.gitlab.util
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.support.design.widget.Snackbar
+import com.google.android.material.snackbar.Snackbar
 import android.view.View
 import android.widget.Toast
 import com.commit451.addendum.themeAttrColor

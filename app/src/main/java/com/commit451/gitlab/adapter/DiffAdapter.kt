@@ -1,6 +1,6 @@
 package com.commit451.gitlab.adapter
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.ViewGroup
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.api.Diff
@@ -12,7 +12,7 @@ import java.util.*
 /**
  * Shows a bunch of diffs
  */
-class DiffAdapter(private val repositoryCommit: RepositoryCommit, private val listener: DiffAdapter.Listener) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class DiffAdapter(private val repositoryCommit: RepositoryCommit, private val listener: DiffAdapter.Listener) : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
 
     companion object {
 
@@ -24,7 +24,7 @@ class DiffAdapter(private val repositoryCommit: RepositoryCommit, private val li
 
     private val values: ArrayList<Diff> = ArrayList()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
         when (viewType) {
             TYPE_HEADER -> return DiffHeaderViewHolder.inflate(parent)
             TYPE_ITEM -> {
@@ -39,7 +39,7 @@ class DiffAdapter(private val repositoryCommit: RepositoryCommit, private val li
         throw IllegalStateException("No known view holder for " + viewType)
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
         if (holder is DiffHeaderViewHolder) {
             holder.bind(repositoryCommit)
         } else if (holder is DiffViewHolder) {

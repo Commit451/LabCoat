@@ -1,6 +1,6 @@
 package com.commit451.gitlab.adapter
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.ViewGroup
 import com.commit451.gitlab.model.api.Build
 import com.commit451.gitlab.viewHolder.BuildViewHolder
@@ -10,7 +10,7 @@ import java.util.*
 /**
  * Builds adapter
  */
-class BuildAdapter(private val listener: BuildAdapter.Listener) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class BuildAdapter(private val listener: BuildAdapter.Listener) : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
 
     companion object {
 
@@ -23,7 +23,7 @@ class BuildAdapter(private val listener: BuildAdapter.Listener) : RecyclerView.A
     private val values: ArrayList<Build> = ArrayList()
     private var loading = false
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
         when (viewType) {
             TYPE_ITEM -> {
                 val holder = BuildViewHolder.inflate(parent)
@@ -38,7 +38,7 @@ class BuildAdapter(private val listener: BuildAdapter.Listener) : RecyclerView.A
         throw IllegalStateException("No holder for view type " + viewType)
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
         if (holder is BuildViewHolder) {
             val build = getValueAt(position)
             holder.bind(build)

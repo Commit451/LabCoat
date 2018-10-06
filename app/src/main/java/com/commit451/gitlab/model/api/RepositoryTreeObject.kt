@@ -1,6 +1,6 @@
 package com.commit451.gitlab.model.api
 
-import android.support.annotation.StringDef
+import androidx.annotation.StringDef
 import com.squareup.moshi.Json
 import org.parceler.Parcel
 

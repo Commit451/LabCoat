@@ -4,8 +4,8 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -47,7 +47,7 @@ class PickBranchFragment : ButterKnifeFragment() {
     }
 
     @BindView(R.id.list)
-    lateinit var listProjects: RecyclerView
+    lateinit var listProjects: androidx.recyclerview.widget.RecyclerView
     @BindView(R.id.message_text)
     lateinit var textMessage: TextView
     @BindView(R.id.progress)
@@ -82,7 +82,7 @@ class PickBranchFragment : ButterKnifeFragment() {
                 activity?.finish()
             }
         })
-        val layoutManager = LinearLayoutManager(activity)
+        val layoutManager = androidx.recyclerview.widget.LinearLayoutManager(activity)
         listProjects.layoutManager = layoutManager
         listProjects.adapter = adapterBranches
         listProjects.addOnScrollListener(OnScrollLoadMoreListener(layoutManager, {

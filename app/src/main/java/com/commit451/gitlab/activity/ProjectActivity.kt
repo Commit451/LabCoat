@@ -7,10 +7,10 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.design.widget.TabLayout
-import android.support.v4.view.ViewPager
-import android.support.v7.widget.Toolbar
+import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.tabs.TabLayout
+import androidx.viewpager.widget.ViewPager
+import androidx.appcompat.widget.Toolbar
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
@@ -82,7 +82,7 @@ class ProjectActivity : BaseActivity() {
     @BindView(R.id.progress)
     lateinit var progress: View
     @BindView(R.id.pager)
-    lateinit var viewPager: ViewPager
+    lateinit var viewPager: androidx.viewpager.widget.ViewPager
 
     var project: Project? = null
     var ref: Ref? = null

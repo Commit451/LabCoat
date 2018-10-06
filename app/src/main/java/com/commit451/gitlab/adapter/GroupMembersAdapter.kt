@@ -1,6 +1,6 @@
 package com.commit451.gitlab.adapter
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import com.commit451.gitlab.R
@@ -12,7 +12,7 @@ import java.util.*
 /**
  * Adapter for a list of users
  */
-class GroupMembersAdapter(private val listener: GroupMembersAdapter.Listener) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class GroupMembersAdapter(private val listener: GroupMembersAdapter.Listener) : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
 
     companion object {
 
@@ -30,7 +30,7 @@ class GroupMembersAdapter(private val listener: GroupMembersAdapter.Listener) : 
             notifyItemChanged(values.size)
         }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
         when (viewType) {
             TYPE_MEMBER -> {
                 val holder = ProjectMemberViewHolder.inflate(parent)
@@ -46,7 +46,7 @@ class GroupMembersAdapter(private val listener: GroupMembersAdapter.Listener) : 
 
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
         if (holder is ProjectMemberViewHolder) {
             val member = values[position]
             holder.bind(member)

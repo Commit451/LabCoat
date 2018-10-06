@@ -1,6 +1,6 @@
 package com.commit451.gitlab.adapter
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.ViewGroup
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.api.Label
@@ -11,7 +11,7 @@ import java.util.*
 /**
  * Shows a bunch of labels
  */
-class LabelAdapter(private val listener: LabelAdapter.Listener) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class LabelAdapter(private val listener: LabelAdapter.Listener) : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
 
     companion object {
 
@@ -37,7 +37,7 @@ class LabelAdapter(private val listener: LabelAdapter.Listener) : RecyclerView.A
         notifyItemInserted(0)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
         when (viewType) {
             TYPE_ITEM -> {
                 val holder = LabelViewHolder.inflate(parent)
@@ -51,7 +51,7 @@ class LabelAdapter(private val listener: LabelAdapter.Listener) : RecyclerView.A
         throw IllegalStateException("No idea what to inflate with view type of " + viewType)
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
         if (holder is ProjectMemberFooterViewHolder) {
             //
         } else if (holder is LabelViewHolder) {

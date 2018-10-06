@@ -1,6 +1,6 @@
 package com.commit451.gitlab.model
 
-import android.support.annotation.IntDef
+import androidx.annotation.IntDef
 import org.parceler.Parcel
 
 /**

@@ -7,7 +7,7 @@ import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
 import android.provider.OpenableColumns
-import android.support.v4.content.FileProvider
+import androidx.core.content.FileProvider
 import com.commit451.okyo.Okyo
 import okhttp3.MediaType
 import okhttp3.MultipartBody
