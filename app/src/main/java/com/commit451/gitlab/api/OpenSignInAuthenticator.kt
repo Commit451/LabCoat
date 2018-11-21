@@ -22,7 +22,7 @@ import java.io.IOException
 class OpenSignInAuthenticator(private val account: Account) : Authenticator {
 
     @Throws(IOException::class)
-    override fun authenticate(route: Route, response: Response): Request? {
+    override fun authenticate(route: Route?, response: Response): Request? {
         val url = response.request().url()
 
         var cleanUrl = url.toString().toLowerCase()

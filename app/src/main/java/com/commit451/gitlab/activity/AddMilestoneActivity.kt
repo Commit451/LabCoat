@@ -92,7 +92,7 @@ class AddMilestoneActivity : MorphActivity() {
                 now.get(Calendar.DAY_OF_MONTH)
         )
         dpd.accentColor = this.themeAttrColor(R.attr.colorAccent)
-        dpd.show(fragmentManager, "date_picker")
+        dpd.show(supportFragmentManager, "date_picker")
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
