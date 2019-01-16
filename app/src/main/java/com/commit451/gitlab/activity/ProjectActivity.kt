@@ -40,15 +40,15 @@ class ProjectActivity : BaseActivity() {
 
     companion object {
 
-        private val EXTRA_PROJECT = "extra_project"
-        private val EXTRA_PROJECT_ID = "extra_project_id"
-        private val EXTRA_PROJECT_NAMESPACE = "extra_project_namespace"
-        private val EXTRA_PROJECT_NAME = "extra_project_name"
+        private const val EXTRA_PROJECT = "extra_project"
+        private const val EXTRA_PROJECT_ID = "extra_project_id"
+        private const val EXTRA_PROJECT_NAMESPACE = "extra_project_namespace"
+        private const val EXTRA_PROJECT_NAME = "extra_project_name"
 
-        private val STATE_REF = "ref"
-        private val STATE_PROJECT = "project"
+        private const val STATE_REF = "ref"
+        private const val STATE_PROJECT = "project"
 
-        private val REQUEST_BRANCH_OR_TAG = 1
+        private const val REQUEST_BRANCH_OR_TAG = 1
 
         fun newIntent(context: Context, project: Project): Intent {
             val intent = Intent(context, ProjectActivity::class.java)

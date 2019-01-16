@@ -26,7 +26,6 @@ import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Issue
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.navigation.Navigator
-import com.commit451.gitlab.rx.CustomCompleteObserver
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.util.IntentUtil
 import com.commit451.teleprinter.Teleprinter
@@ -82,20 +81,15 @@ class IssueActivity : BaseActivity() {
             R.id.action_delete -> {
                 App.get().gitLab.deleteIssue(project.id, issue.iid)
                         .with(this)
-                        .subscribe(object : CustomCompleteObserver() {
-
-                            override fun error(t: Throwable) {
-                                Timber.e(t)
-                                Snackbar.make(root, getString(R.string.failed_to_delete_issue), Snackbar.LENGTH_SHORT)
-                                        .show()
-                            }
-
-                            override fun complete() {
-                                App.bus().post(IssueReloadEvent())
-                                Toast.makeText(this@IssueActivity, R.string.issue_deleted, Toast.LENGTH_SHORT)
-                                        .show()
-                                finish()
-                            }
+                        .subscribe({
+                            App.bus().post(IssueReloadEvent())
+                            Toast.makeText(this@IssueActivity, R.string.issue_deleted, Toast.LENGTH_SHORT)
+                                    .show()
+                            finish()
+                        }, {
+                            Timber.e(it)
+                            Snackbar.make(root, getString(R.string.failed_to_delete_issue), Snackbar.LENGTH_SHORT)
+                                    .show()
                         })
                 return@OnMenuItemClickListener true
             }

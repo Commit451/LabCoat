@@ -24,7 +24,6 @@ import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Group
 import com.commit451.gitlab.model.api.User
 import com.commit451.gitlab.navigation.Navigator
-import com.commit451.gitlab.rx.CustomCompleteObserver
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
 import com.commit451.gitlab.viewHolder.ProjectMemberViewHolder
@@ -80,25 +79,20 @@ class GroupMembersFragment : ButterKnifeFragment() {
     }
 
     private val listener = object : GroupMembersAdapter.Listener {
-        override fun onUserClicked(member: User, holder: ProjectMemberViewHolder) {
-            Navigator.navigateToUser(baseActivty, holder.image, member)
+        override fun onUserClicked(member: User, userViewHolder: ProjectMemberViewHolder) {
+            Navigator.navigateToUser(baseActivty, userViewHolder.image, member)
         }
 
         override fun onUserRemoveClicked(member: User) {
             this@GroupMembersFragment.member = member
             App.get().gitLab.removeGroupMember(group.id, member.id)
                     .with(this@GroupMembersFragment)
-                    .subscribe(object : CustomCompleteObserver() {
-
-                        override fun error(e: Throwable) {
-                            Timber.e(e)
-                            Snackbar.make(root, R.string.failed_to_remove_member, Snackbar.LENGTH_SHORT)
-                                    .show()
-                        }
-
-                        override fun complete() {
-                            adapterGroupMembers.removeMember(this@GroupMembersFragment.member!!)
-                        }
+                    .subscribe({
+                        adapterGroupMembers.removeMember(this@GroupMembersFragment.member!!)
+                    }, {
+                        Timber.e(it)
+                        Snackbar.make(root, R.string.failed_to_remove_member, Snackbar.LENGTH_SHORT)
+                                .show()
                     })
         }
 

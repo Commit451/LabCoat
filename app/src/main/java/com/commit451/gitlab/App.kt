@@ -104,27 +104,27 @@ class App : Application() {
         return currentAccount
     }
 
-    fun setupMultidex() {
+    private fun setupMultidex() {
         MultiDex.install(this)
     }
 
-    fun setupCrashReporting() {
+    private fun setupCrashReporting() {
         FabricUtil.init(this)
     }
 
-    fun setupLeakCanary() {
+    private fun setupLeakCanary() {
         LeakCanary.install(this)
     }
 
-    fun setupThreeTen() {
+    private fun setupThreeTen() {
         AndroidThreeTen.init(this)
     }
 
-    fun initGitLab(account: Account, clientBuilder: OkHttpClient.Builder) {
+    private fun initGitLab(account: Account, clientBuilder: OkHttpClient.Builder) {
         gitLab = GitLabFactory.createGitLab(account, clientBuilder)
     }
 
-    fun initPicasso(client: OkHttpClient) {
+    private fun initPicasso(client: OkHttpClient) {
         picasso = PicassoFactory.createPicasso(client)
     }
 }

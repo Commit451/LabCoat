@@ -18,7 +18,6 @@ import com.commit451.gitlab.extension.*
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.model.api.RepositoryFile
 import com.commit451.gitlab.navigation.Navigator
-import com.commit451.gitlab.rx.CustomCompleteObserver
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.util.InternalLinkMovementMethod
 import io.reactivex.Single
@@ -73,25 +72,21 @@ class ProjectFragment : ButterKnifeFragment() {
 
     @OnClick(R.id.root_fork)
     fun onForkClicked() {
-        project?.let {
+        project?.let { project ->
             AlertDialog.Builder(baseActivty)
                     .setTitle(R.string.project_fork_title)
                     .setMessage(R.string.project_fork_message)
                     .setNegativeButton(R.string.cancel, null)
                     .setPositiveButton(R.string.ok) { _, _ ->
-                        App.get().gitLab.forkProject(it.id)
+                        App.get().gitLab.forkProject(project.id)
                                 .with(this)
-                                .subscribe(object : CustomCompleteObserver() {
-
-                                    override fun error(t: Throwable) {
-                                        Snackbar.make(swipeRefreshLayout, R.string.fork_failed, Snackbar.LENGTH_SHORT)
-                                                .show()
-                                    }
-
-                                    override fun complete() {
-                                        Snackbar.make(swipeRefreshLayout, R.string.project_forked, Snackbar.LENGTH_SHORT)
-                                                .show()
-                                    }
+                                .subscribe({
+                                    Snackbar.make(swipeRefreshLayout, R.string.project_forked, Snackbar.LENGTH_SHORT)
+                                            .show()
+                                }, {
+                                    Timber.e(it)
+                                    Snackbar.make(swipeRefreshLayout, R.string.fork_failed, Snackbar.LENGTH_SHORT)
+                                            .show()
                                 })
                     }
                     .show()

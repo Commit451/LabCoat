@@ -221,7 +221,7 @@ class ProjectsFragment : ButterKnifeFragment() {
                         adapterProjects.setLoading(false)
                         adapterProjects.addData(projects)
                         nextPageUrl = LinkHeaderParser.parse(response()).next
-                        Timber.d("Next page url " + nextPageUrl)
+                        Timber.d("Next page url $nextPageUrl")
                     }
                 })
     }
@@ -237,12 +237,8 @@ class ProjectsFragment : ButterKnifeFragment() {
         loadData()
     }
 
-    fun getGitLab(): GitLabService {
-        if (listener != null) {
-            return listener!!.getGitLab()
-        } else {
-            return App.get().gitLab
-        }
+    private fun getGitLab(): GitLabService {
+        return listener?.getGitLab() ?: App.get().gitLab
     }
 
     interface Listener {
