@@ -1,6 +1,6 @@
 package com.commit451.gitlab.adapter
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.ViewGroup
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.api.Todo
@@ -11,7 +11,7 @@ import java.util.*
 /**
  * Issues adapter
  */
-class TodoAdapter(private val listener: TodoAdapter.Listener) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class TodoAdapter(private val listener: TodoAdapter.Listener) : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
     companion object {
 
         val FOOTER_COUNT = 1
@@ -23,7 +23,7 @@ class TodoAdapter(private val listener: TodoAdapter.Listener) : RecyclerView.Ada
     private val values: ArrayList<Todo> = ArrayList()
     private var loading = false
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
         when (viewType) {
             TYPE_ITEM -> {
                 val holder = TodoViewHolder.inflate(parent)
@@ -38,7 +38,7 @@ class TodoAdapter(private val listener: TodoAdapter.Listener) : RecyclerView.Ada
         throw IllegalStateException("No holder for view type " + viewType)
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
         if (holder is TodoViewHolder) {
             val todo = getValueAt(position)
             holder.bind(todo)

@@ -1,11 +1,10 @@
 package com.commit451.gitlab.adapter
 
 import android.content.Context
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import com.commit451.addendum.themeAttrColor
-import com.commit451.easel.Easel
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.Account
@@ -15,7 +14,7 @@ import com.commit451.gitlab.viewHolder.AccountViewHolder
 /**
  * Adapter to show all the accounts
  */
-class AccountAdapter(context: Context, private val listener: AccountAdapter.Listener) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class AccountAdapter(context: Context, private val listener: AccountAdapter.Listener) : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
 
     companion object {
         private val TYPE_ACCOUNT = 0
@@ -27,7 +26,7 @@ class AccountAdapter(context: Context, private val listener: AccountAdapter.List
     private val accounts = mutableListOf<Account>()
     private val colorControlHighlight: Int = context.themeAttrColor(R.attr.colorControlHighlight)
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
         when (viewType) {
             TYPE_ACCOUNT -> {
                 val holder = AccountViewHolder.inflate(parent)
@@ -46,7 +45,7 @@ class AccountAdapter(context: Context, private val listener: AccountAdapter.List
         throw IllegalStateException("No known view holder for that type " + viewType)
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
         if (holder is AccountViewHolder) {
             val account = getItemAtPosition(position)
             holder.bind(account, account == App.get().getAccount(), colorControlHighlight)

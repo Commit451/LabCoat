@@ -1,6 +1,5 @@
 package com.commit451.gitlab.viewHolder
 
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,14 +8,13 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.commit451.addendum.recyclerview.context
 import com.commit451.addendum.themeAttrColor
-import com.commit451.easel.Easel
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.api.Tag
 
 /**
  * Label
  */
-class TagViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+class TagViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
 
     companion object {
 

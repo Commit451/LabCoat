@@ -3,9 +3,9 @@ package com.commit451.gitlab.activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.TabLayout
-import android.support.v4.view.ViewPager
-import android.support.v7.app.AppCompatActivity
+import com.google.android.material.tabs.TabLayout
+import androidx.viewpager.widget.ViewPager
+import androidx.appcompat.app.AppCompatActivity
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
@@ -23,10 +23,10 @@ class PickBranchOrTagActivity : AppCompatActivity() {
 
     companion object {
 
-        private val EXTRA_PROJECT_ID = "project_id"
-        private val EXTRA_CURRENT_REF = "current_ref"
+        private const val EXTRA_PROJECT_ID = "project_id"
+        private const val EXTRA_CURRENT_REF = "current_ref"
 
-        val EXTRA_REF = "ref"
+        const val EXTRA_REF = "ref"
 
         fun newIntent(context: Context, projectId: Long, currentRef: Ref?): Intent {
             val intent = Intent(context, PickBranchOrTagActivity::class.java)
@@ -39,7 +39,7 @@ class PickBranchOrTagActivity : AppCompatActivity() {
     @BindView(R.id.tabs)
     lateinit var tabLayout: TabLayout
     @BindView(R.id.pager)
-    lateinit var viewPager: ViewPager
+    lateinit var viewPager: androidx.viewpager.widget.ViewPager
 
     @OnClick(R.id.root)
     fun onRootClicked() {

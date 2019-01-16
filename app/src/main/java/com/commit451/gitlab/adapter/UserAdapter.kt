@@ -1,7 +1,7 @@
 package com.commit451.gitlab.adapter
 
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.view.ViewGroup
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.api.User
@@ -12,7 +12,7 @@ import java.util.*
 /**
  * Adapter for a list of users
  */
-class UserAdapter(private val listener: UserAdapter.Listener) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class UserAdapter(private val listener: UserAdapter.Listener) : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
 
     companion object {
 
@@ -25,7 +25,7 @@ class UserAdapter(private val listener: UserAdapter.Listener) : RecyclerView.Ada
     private val values: ArrayList<User> = ArrayList()
     private var loading: Boolean = false
 
-    val spanSizeLookup: GridLayoutManager.SpanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+    val spanSizeLookup: androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup = object : androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup() {
         override fun getSpanSize(position: Int): Int {
             val viewType = getItemViewType(position)
             if (viewType == TYPE_FOOTER) {
@@ -36,7 +36,7 @@ class UserAdapter(private val listener: UserAdapter.Listener) : RecyclerView.Ada
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
         when (viewType) {
             TYPE_ITEM -> {
                 val holder = UserViewHolder.inflate(parent)
@@ -52,7 +52,7 @@ class UserAdapter(private val listener: UserAdapter.Listener) : RecyclerView.Ada
         throw IllegalStateException("No known viewholder for type " + viewType)
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
         if (holder is UserViewHolder) {
             holder.bind(values[position])
             holder.itemView.setTag(R.id.list_position, position)

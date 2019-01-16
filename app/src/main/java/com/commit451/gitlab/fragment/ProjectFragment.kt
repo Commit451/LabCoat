@@ -1,9 +1,9 @@
 package com.commit451.gitlab.fragment
 
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.app.AlertDialog
+import com.google.android.material.snackbar.Snackbar
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import androidx.appcompat.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,11 +32,11 @@ class ProjectFragment : ButterKnifeFragment() {
 
     companion object {
 
-        private val README_TYPE_UNKNOWN = -1
-        private val README_TYPE_MARKDOWN = 0
-        private val README_TYPE_TEXT = 1
-        private val README_TYPE_HTML = 2
-        private val README_TYPE_NO_EXTENSION = 3
+        private const val README_TYPE_UNKNOWN = -1
+        private const val README_TYPE_MARKDOWN = 0
+        private const val README_TYPE_TEXT = 1
+        private const val README_TYPE_HTML = 2
+        private const val README_TYPE_NO_EXTENSION = 3
 
         fun newInstance(): ProjectFragment {
             return ProjectFragment()
@@ -44,7 +44,7 @@ class ProjectFragment : ButterKnifeFragment() {
     }
 
     @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    lateinit var swipeRefreshLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout
     @BindView(R.id.creator)
     lateinit var textCreator: TextView
     @BindView(R.id.star_count)
@@ -244,6 +244,7 @@ class ProjectFragment : ButterKnifeFragment() {
                 })
     }
 
+    @Suppress("unused")
     @Subscribe
     fun onProjectReload(event: ProjectReloadEvent) {
         project = event.project

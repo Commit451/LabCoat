@@ -7,7 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.ViewGroup
-import androidx.core.widget.toast
+import android.widget.Toast
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.commit451.gitlab.R
@@ -80,7 +80,8 @@ class LaunchActivity : BaseActivity() {
                         finish()
                     }, {
                         Timber.e(it)
-                        toast("Unable to migrate. Unfortunately, you probably need to re-install the app")
+                        Toast.makeText(this, "Unable to migrate. Unfortunately, you probably need to re-install the app", Toast.LENGTH_LONG)
+                            .show()
                         finish()
                     })
         } else {

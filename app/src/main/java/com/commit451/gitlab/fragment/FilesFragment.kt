@@ -4,10 +4,10 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -46,11 +46,11 @@ class FilesFragment : ButterKnifeFragment() {
     @BindView(R.id.root)
     lateinit var root: View
     @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    lateinit var swipeRefreshLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout
     @BindView(R.id.list)
-    lateinit var list: RecyclerView
+    lateinit var list: androidx.recyclerview.widget.RecyclerView
     @BindView(R.id.breadcrumb)
-    lateinit var listBreadcrumbs: RecyclerView
+    lateinit var listBreadcrumbs: androidx.recyclerview.widget.RecyclerView
     @BindView(R.id.message_text)
     lateinit var textMessage: TextView
 
@@ -98,12 +98,12 @@ class FilesFragment : ButterKnifeFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         adapterFiles = FileAdapter(filesAdapterListener)
-        list.layoutManager = LinearLayoutManager(activity)
+        list.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(activity)
         list.addItemDecoration(DividerItemDecoration(baseActivty))
         list.adapter = adapterFiles
 
         adapterBreadcrumb = BreadcrumbAdapter()
-        listBreadcrumbs.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
+        listBreadcrumbs.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(activity, androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL, false)
         listBreadcrumbs.adapter = adapterBreadcrumb
 
         swipeRefreshLayout.setOnRefreshListener { loadData() }

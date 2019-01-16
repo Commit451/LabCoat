@@ -2,7 +2,7 @@ package com.commit451.gitlab.fragment
 
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import android.view.View
 import com.commit451.gitlab.App
 import com.commit451.gitlab.activity.BaseActivity
@@ -11,7 +11,7 @@ import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
 import org.greenrobot.eventbus.Subscribe
 
 
-abstract class BaseFragment : Fragment() {
+abstract class BaseFragment : androidx.fragment.app.Fragment() {
 
     private var baseEventReceiver: EventReceiver? = null
 

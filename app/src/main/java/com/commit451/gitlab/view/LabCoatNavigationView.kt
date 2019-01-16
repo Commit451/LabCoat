@@ -3,9 +3,9 @@ package com.commit451.gitlab.view
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
-import android.support.design.widget.NavigationView
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import com.google.android.material.navigation.NavigationView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.util.AttributeSet
 import android.view.View
 import android.widget.FrameLayout
@@ -53,7 +53,7 @@ class LabCoatNavigationView : NavigationView {
     @BindView(R.id.button_debug)
     lateinit var buttonDebug: View
 
-    lateinit var listAccounts: RecyclerView
+    lateinit var listAccounts: androidx.recyclerview.widget.RecyclerView
     lateinit var adapterAccounts: AccountAdapter
     var user: User? = null
 
@@ -177,8 +177,8 @@ class LabCoatNavigationView : NavigationView {
         if (BuildConfig.DEBUG) {
             buttonDebug.visibility = View.VISIBLE
         }
-        listAccounts = RecyclerView(context)
-        listAccounts.layoutManager = LinearLayoutManager(context)
+        listAccounts = androidx.recyclerview.widget.RecyclerView(context)
+        listAccounts.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
         addView(listAccounts)
         val params = listAccounts.layoutParams as FrameLayout.LayoutParams
         params.setMargins(0, resources.getDimensionPixelSize(R.dimen.account_header_height), 0, 0)

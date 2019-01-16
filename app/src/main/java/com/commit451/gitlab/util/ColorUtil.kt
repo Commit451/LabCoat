@@ -1,6 +1,6 @@
 package com.commit451.gitlab.util
 
-import android.support.annotation.ColorInt
+import androidx.annotation.ColorInt
 
 /**
  * Does cool things with colors

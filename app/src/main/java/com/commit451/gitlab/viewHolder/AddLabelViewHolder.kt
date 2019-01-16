@@ -1,7 +1,6 @@
 package com.commit451.gitlab.viewHolder
 
-import android.graphics.Color
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +15,7 @@ import com.commit451.gitlab.model.api.Label
 /**
  * Shows the label on a screen where you can add labels
  */
-class AddLabelViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+class AddLabelViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
 
     companion object {
 

@@ -1,6 +1,6 @@
 package com.commit451.gitlab.adapter
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.ViewGroup
 import com.commit451.gitlab.R
 import com.commit451.gitlab.viewHolder.BreadcrumbViewHolder
@@ -9,7 +9,7 @@ import java.util.*
 /**
  * Shows the current file path
  */
-class BreadcrumbAdapter : RecyclerView.Adapter<BreadcrumbViewHolder>() {
+class BreadcrumbAdapter : androidx.recyclerview.widget.RecyclerView.Adapter<BreadcrumbViewHolder>() {
     private val values: MutableList<Breadcrumb>
 
     init {

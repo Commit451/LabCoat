@@ -2,9 +2,9 @@ package com.commit451.gitlab.fragment
 
 import android.net.Uri
 import android.os.Bundle
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -43,21 +43,21 @@ class UsersFragment : ButterKnifeFragment() {
     }
 
     @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    lateinit var swipeRefreshLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout
     @BindView(R.id.list)
-    lateinit var listUsers: RecyclerView
+    lateinit var listUsers: androidx.recyclerview.widget.RecyclerView
     @BindView(R.id.message_text)
     lateinit var textMessage: TextView
 
     lateinit var adapterUser: UserAdapter
-    lateinit var layoutManagerUser: GridLayoutManager
+    lateinit var layoutManagerUser: androidx.recyclerview.widget.GridLayoutManager
 
     var query: String? = null
     var loading: Boolean = false
     var nextPageUrl: Uri? = null
 
     val onScrollListener = object : RecyclerView.OnScrollListener() {
-        override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
             val visibleItemCount = layoutManagerUser.childCount
             val totalItemCount = layoutManagerUser.itemCount
@@ -85,7 +85,7 @@ class UsersFragment : ButterKnifeFragment() {
                 Navigator.navigateToUser(baseActivty, userViewHolder.image, user)
             }
         })
-        layoutManagerUser = GridLayoutManager(activity, 2)
+        layoutManagerUser = androidx.recyclerview.widget.GridLayoutManager(activity, 2)
         layoutManagerUser.spanSizeLookup = adapterUser.spanSizeLookup
         listUsers.layoutManager = layoutManagerUser
         listUsers.adapter = adapterUser

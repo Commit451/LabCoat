@@ -1,7 +1,7 @@
 package com.commit451.gitlab.adapter
 
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
@@ -15,7 +15,7 @@ import java.util.*
 /**
  * Shows a projects members and a groups members
  */
-class ProjectMembersAdapter(private val listener: ProjectMembersAdapter.Listener) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ProjectMembersAdapter(private val listener: ProjectMembersAdapter.Listener) : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
 
     companion object {
 
@@ -28,7 +28,7 @@ class ProjectMembersAdapter(private val listener: ProjectMembersAdapter.Listener
     private val members: ArrayList<User> = ArrayList()
     private var namespace: ProjectNamespace? = null
 
-    val spanSizeLookup: GridLayoutManager.SpanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+    val spanSizeLookup: androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup = object : androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup() {
         override fun getSpanSize(position: Int): Int {
             val viewType = getItemViewType(position)
             if (viewType == TYPE_FOOTER) {
@@ -39,7 +39,7 @@ class ProjectMembersAdapter(private val listener: ProjectMembersAdapter.Listener
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
         when (viewType) {
             TYPE_MEMBER -> {
                 val projectViewHolder = ProjectMemberViewHolder.inflate(parent)
@@ -59,7 +59,7 @@ class ProjectMembersAdapter(private val listener: ProjectMembersAdapter.Listener
         throw IllegalStateException("No idea what to inflate with view type of " + viewType)
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
         if (holder is ProjectMemberFooterViewHolder) {
             if (namespace == null) {
                 holder.itemView.visibility = View.GONE

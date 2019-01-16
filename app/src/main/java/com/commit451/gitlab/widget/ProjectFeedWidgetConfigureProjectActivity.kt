@@ -4,8 +4,8 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.TabLayout
-import android.support.v4.view.ViewPager
+import com.google.android.material.tabs.TabLayout
+import androidx.viewpager.widget.ViewPager
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.commit451.addendum.parceler.getParcelerParcelableExtra
@@ -27,8 +27,8 @@ class ProjectFeedWidgetConfigureProjectActivity : BaseActivity(), ProjectsFragme
 
     companion object {
 
-        val EXTRA_PROJECT = "project"
-        val EXTRA_ACCOUNT = "account"
+        const val EXTRA_PROJECT = "project"
+        const val EXTRA_ACCOUNT = "account"
 
         fun newIntent(context: Context, account: Account): Intent {
             val intent = Intent(context, ProjectFeedWidgetConfigureProjectActivity::class.java)
@@ -40,9 +40,9 @@ class ProjectFeedWidgetConfigureProjectActivity : BaseActivity(), ProjectsFragme
     @BindView(R.id.tabs)
     lateinit var tabLayout: TabLayout
     @BindView(R.id.pager)
-    lateinit var viewPager: ViewPager
+    lateinit var viewPager: androidx.viewpager.widget.ViewPager
 
-    lateinit var gitLabInstance: GitLabService
+    private lateinit var gitLabInstance: GitLabService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

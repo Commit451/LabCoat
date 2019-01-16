@@ -1,92 +1,92 @@
 package com.commit451.gitlab.adapter
 
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentPagerAdapter
+import com.commit451.gitlab.BuildConfig
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.ProjectActivity
 import com.commit451.gitlab.extension.feedUrl
 import com.commit451.gitlab.fragment.*
 import com.commit451.gitlab.model.api.Project
+import com.commit451.gitlab.navigation.DeepLinker
 import timber.log.Timber
-import java.util.*
 
 /**
  * Controls the sections that should be shown in a [com.commit451.gitlab.activity.ProjectActivity]
  */
-class ProjectPagerAdapter(context: ProjectActivity, fm: FragmentManager) : FragmentPagerAdapter(fm) {
+class ProjectPagerAdapter(context: ProjectActivity, fm: androidx.fragment.app.FragmentManager) : androidx.fragment.app.FragmentPagerAdapter(fm) {
 
     companion object {
-        val PROJECT_POS = 0
-        val ACTIVITY_POS = 1
-        val FILES_POS = 2
-        val COMMITS_POS = 3
-        val PIPELINES_POS = 4
-        val BUILDS_POS = 5
-        val MILESTONES_POS = 6
-        val ISSUES_POS = 7
-        val MERGE_REQUESTS_POS = 8
-        val PROJECT_MEMBERS_POS = 9
-        val SNIPPETS_POS = 10
+        const val SECTION_PROJECT = "project"
+        const val SECTION_ACTIVITY = "activity"
+        const val SECTION_FILES = "files"
+        const val SECTION_COMMITS = "commits"
+        const val SECTION_PIPELINE = "pipeline"
+        const val SECTION_JOBS = "jobs"
+        const val SECTION_MILESTONES = "milestones"
+        const val SECTION_ISSUES = "issues"
+        const val SECTION_MERGE_REQUESTS = "merge_requests"
+        const val SECTION_MEMBERS = "members"
+        const val SECTION_SNIPPETS = "snippets"
     }
 
     private val project: Project = context.project!!
-    private val titles: Array<String> = context.resources.getStringArray(R.array.main_tabs)
-    private val disabledSections = HashSet<Int>()
+    private val sections = mutableListOf<Section>()
 
     init {
-
         val project = context.project!!
-        if (isDisabled(project.isBuildEnabled)) {
-            Timber.d("Builds are disabled")
-            disabledSections.add(BUILDS_POS)
-            disabledSections.add(PIPELINES_POS)
+        sections.add(Section(SECTION_PROJECT, context.getString(R.string.title_project)))
+        sections.add(Section(SECTION_ACTIVITY, context.getString(R.string.title_activity)))
+        if (!isDisabled(project.isIssuesEnabled)) {
+            sections.add(Section(SECTION_ISSUES, context.getString(R.string.title_issues)))
         }
-        if (isDisabled(project.isIssuesEnabled)) {
-            Timber.d("Issues are disabled")
-            disabledSections.add(ISSUES_POS)
+        sections.add(Section(SECTION_FILES, context.getString(R.string.title_files)))
+        sections.add(Section(SECTION_COMMITS, context.getString(R.string.title_commits)))
+        if (!isDisabled(project.isBuildEnabled)) {
+            sections.add(Section(SECTION_PIPELINE, context.getString(R.string.title_pipelines)))
+            sections.add(Section(SECTION_JOBS, context.getString(R.string.title_jobs)))
         }
-        if (isDisabled(project.isMergeRequestsEnabled)) {
-            Timber.d("Merge requests are disabled")
-            disabledSections.add(MERGE_REQUESTS_POS)
+        if (!isDisabled(project.isMergeRequestsEnabled)) {
+            sections.add(Section(SECTION_MERGE_REQUESTS, context.getString(R.string.title_merge_requests)))
         }
-        if (isDisabled(project.isIssuesEnabled) && isDisabled(project.isMergeRequestsEnabled)) {
-            Timber.d("Milestones are disabled")
-            disabledSections.add(MILESTONES_POS)
+        if (!isDisabled(project.isIssuesEnabled) && !isDisabled(project.isMergeRequestsEnabled)) {
+            sections.add(Section(SECTION_MILESTONES, context.getString(R.string.title_milestones)))
         }
         //TODO enable snippets when they are done
-        if (true) {//!project.isSnippetsEnabled()) {
+        if (BuildConfig.DEBUG && project.isSnippetsEnabled == true) {
             Timber.d("Snippets are disabled")
-            disabledSections.add(SNIPPETS_POS)
+            sections.add(Section(SECTION_SNIPPETS, context.getString(R.string.title_snippets)))
         }
+        sections.add(Section(SECTION_MEMBERS, context.getString(R.string.title_members)))
     }
 
     override fun getCount(): Int {
-        return titles.size - disabledSections.size
+        return sections.size
     }
 
     override fun getPageTitle(position: Int): CharSequence {
-        return titles[getCorrectPosition(position)]
+        return sections[position].name
     }
 
-    override fun getItem(position: Int): Fragment {
-        val correctPosition = getCorrectPosition(position)
+    override fun getItem(position: Int): androidx.fragment.app.Fragment {
+        val sectionId = sections[position].id
 
-        when (correctPosition) {
-            PROJECT_POS -> return ProjectFragment.newInstance()
-            ACTIVITY_POS -> return FeedFragment.newInstance(project.feedUrl)
-            FILES_POS -> return FilesFragment.newInstance()
-            COMMITS_POS -> return CommitsFragment.newInstance()
-            PIPELINES_POS -> return PipelinesFragment.newInstance()
-            BUILDS_POS -> return BuildsFragment.newInstance()
-            MILESTONES_POS -> return MilestonesFragment.newInstance()
-            ISSUES_POS -> return IssuesFragment.newInstance()
-            MERGE_REQUESTS_POS -> return MergeRequestsFragment.newInstance()
-            PROJECT_MEMBERS_POS -> return ProjectMembersFragment.newInstance()
-            SNIPPETS_POS -> return SnippetsFragment.newInstance()
+        when (sectionId) {
+            SECTION_PROJECT -> return ProjectFragment.newInstance()
+            SECTION_ACTIVITY -> return FeedFragment.newInstance(project.feedUrl)
+            SECTION_FILES -> return FilesFragment.newInstance()
+            SECTION_COMMITS -> return CommitsFragment.newInstance()
+            SECTION_PIPELINE -> return PipelinesFragment.newInstance()
+            SECTION_JOBS -> return JobsFragment.newInstance()
+            SECTION_MILESTONES -> return MilestonesFragment.newInstance()
+            SECTION_ISSUES -> return IssuesFragment.newInstance()
+            SECTION_MERGE_REQUESTS -> return MergeRequestsFragment.newInstance()
+            SECTION_MEMBERS -> return ProjectMembersFragment.newInstance()
+            SECTION_SNIPPETS -> return SnippetsFragment.newInstance()
         }
 
-        throw IllegalStateException("Position exceeded on view pager")
+        throw IllegalStateException("Nothing to do with sectionId $sectionId")
     }
 
     private fun isDisabled(enabledState: Boolean?): Boolean {
@@ -96,14 +96,20 @@ class ProjectPagerAdapter(context: ProjectActivity, fm: FragmentManager) : Fragm
         return false
     }
 
-    private fun getCorrectPosition(position: Int): Int {
-        var correctPosition = position
-        for (i in 0..position) {
-            if (disabledSections.contains(i)) {
-                correctPosition++
-            }
+    fun indexForSelection(projectSelection: DeepLinker.ProjectSelection): Int {
+        var index = when (projectSelection) {
+            DeepLinker.ProjectSelection.PROJECT -> sections.indexOfFirst { it.id == SECTION_PROJECT }
+            DeepLinker.ProjectSelection.ISSUES -> sections.indexOfFirst { it.id == SECTION_ISSUES }
+            DeepLinker.ProjectSelection.COMMITS -> sections.indexOfFirst { it.id == SECTION_COMMITS }
+            DeepLinker.ProjectSelection.MILESTONES -> sections.indexOfFirst { it.id == SECTION_MILESTONES }
+            DeepLinker.ProjectSelection.JOBS -> sections.indexOfFirst { it.id == SECTION_JOBS }
+            else -> 0
         }
-
-        return correctPosition
+        if (index == -1) {
+            index = 0
+        }
+        return index
     }
+
+    class Section(val id: String, val name: String)
 }

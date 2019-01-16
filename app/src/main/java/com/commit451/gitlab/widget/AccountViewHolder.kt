@@ -5,9 +5,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
 import butterknife.ButterKnife
-import com.alexgwyn.recyclerviewsquire.TypedViewHolder
+import com.commit451.addendum.recyclerview.context
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.Account
 import com.commit451.gitlab.transformation.CircleTransformation
@@ -17,7 +18,7 @@ import com.squareup.picasso.Picasso
 /**
  * A signed in account
  */
-class AccountViewHolder(view: View) : TypedViewHolder<Account>(view) {
+class AccountViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     companion object {
 
@@ -39,7 +40,7 @@ class AccountViewHolder(view: View) : TypedViewHolder<Account>(view) {
         ButterKnife.bind(this, view)
     }
 
-    override fun bind(position: Int, item: Account) {
+    fun bind(item: Account) {
         textServer.text = item.serverUrl.toString()
         textUsername.text = item.email
 

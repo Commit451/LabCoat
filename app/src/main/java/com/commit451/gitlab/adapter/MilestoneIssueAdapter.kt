@@ -1,6 +1,6 @@
 package com.commit451.gitlab.adapter
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.ViewGroup
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.api.Issue
@@ -12,7 +12,7 @@ import java.util.*
 /**
  * Shows the issues associated with a [com.commit451.gitlab.model.api.Milestone]
  */
-class MilestoneIssueAdapter(private val listener: MilestoneIssueAdapter.Listener) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class MilestoneIssueAdapter(private val listener: MilestoneIssueAdapter.Listener) : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
 
     companion object {
 
@@ -25,7 +25,7 @@ class MilestoneIssueAdapter(private val listener: MilestoneIssueAdapter.Listener
     private val values: ArrayList<Issue> = ArrayList()
     private var milestone: Milestone? = null
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
         when (viewType) {
             TYPE_HEADER -> return MilestoneHeaderViewHolder.inflate(parent)
             TYPE_MILESTONE -> {
@@ -40,7 +40,7 @@ class MilestoneIssueAdapter(private val listener: MilestoneIssueAdapter.Listener
         throw IllegalStateException("No holder for viewType " + viewType)
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
         if (holder is MilestoneHeaderViewHolder) {
             holder.bind(milestone!!)
         }

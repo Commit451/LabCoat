@@ -39,9 +39,9 @@ class RoutingActivity : BaseActivity() {
             overridePendingTransition(R.anim.fade_in, R.anim.do_nothing)
         }
 
-        override fun onRouteToProject(projectNamespace: String, projectName: String) {
+        override fun onRouteToProject(projectNamespace: String, projectName: String, selection: DeepLinker.ProjectSelection) {
             Timber.d("Routing to project")
-            Navigator.navigateToProject(this@RoutingActivity, projectNamespace, projectName)
+            Navigator.navigateToProject(this@RoutingActivity, projectNamespace, projectName, selection)
         }
 
         override fun onRouteToBuild(projectNamespace: String, projectName: String, buildNumber: String) {
@@ -59,7 +59,7 @@ class RoutingActivity : BaseActivity() {
         override fun onRouteUnknown(url: String?) {
             Timber.d("Route unknown. Opening original Uri if it exists")
             if (url != null) {
-                IntentUtil.openPage(this@RoutingActivity, url.toString(), App.get().currentAccount)
+                IntentUtil.openBrowser(this@RoutingActivity, url.toString().replaceFirst("labcoat://", "https://"))
             } else {
                 Toast.makeText(this@RoutingActivity, R.string.deeplink_navigate_error, Toast.LENGTH_SHORT)
                         .show()

@@ -2,10 +2,10 @@ package com.commit451.gitlab.fragment
 
 import android.net.Uri
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,10 +27,10 @@ class TodoFragment : ButterKnifeFragment() {
 
     companion object {
 
-        private val EXTRA_MODE = "extra_mode"
+        private const val EXTRA_MODE = "extra_mode"
 
-        val MODE_TODO = 0
-        val MODE_DONE = 1
+        const val MODE_TODO = 0
+        const val MODE_DONE = 1
 
         fun newInstance(mode: Int): TodoFragment {
             val args = Bundle()
@@ -43,13 +43,13 @@ class TodoFragment : ButterKnifeFragment() {
     }
 
     @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    lateinit var swipeRefreshLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout
     @BindView(R.id.list)
-    lateinit var listTodos: RecyclerView
+    lateinit var listTodos: androidx.recyclerview.widget.RecyclerView
     @BindView(R.id.message_text)
     lateinit var textMessage: TextView
 
-    lateinit var layoutManagerTodos: LinearLayoutManager
+    lateinit var layoutManagerTodos: androidx.recyclerview.widget.LinearLayoutManager
     lateinit var adapterTodos: TodoAdapter
 
     var mode: Int = 0
@@ -57,7 +57,7 @@ class TodoFragment : ButterKnifeFragment() {
     var loading = false
 
     val onScrollListener = object : RecyclerView.OnScrollListener() {
-        override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
             val visibleItemCount = layoutManagerTodos.childCount
             val totalItemCount = layoutManagerTodos.itemCount
@@ -90,7 +90,7 @@ class TodoFragment : ButterKnifeFragment() {
                 }
             }
         })
-        layoutManagerTodos = LinearLayoutManager(activity)
+        layoutManagerTodos = androidx.recyclerview.widget.LinearLayoutManager(activity)
         listTodos.layoutManager = layoutManagerTodos
         listTodos.adapter = adapterTodos
         listTodos.addOnScrollListener(onScrollListener)

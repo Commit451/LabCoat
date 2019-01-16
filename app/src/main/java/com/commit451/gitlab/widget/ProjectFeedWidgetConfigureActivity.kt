@@ -4,9 +4,9 @@ import android.app.Activity
 import android.appwidget.AppWidgetManager
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.Toolbar
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.appcompat.widget.Toolbar
 import android.view.View
 import android.widget.TextView
 import butterknife.BindView
@@ -19,7 +19,6 @@ import com.commit451.gitlab.extension.feedUrl
 import com.commit451.gitlab.model.Account
 import com.commit451.gitlab.model.api.Project
 import timber.log.Timber
-import java.util.*
 
 /**
  * The configuration screen for the ExampleAppWidgetProvider widget sample.
@@ -35,7 +34,7 @@ class ProjectFeedWidgetConfigureActivity : BaseActivity() {
     @BindView(R.id.message_text)
     lateinit var textMessage: TextView
     @BindView(R.id.list)
-    lateinit var list: RecyclerView
+    lateinit var list: androidx.recyclerview.widget.RecyclerView
 
     lateinit var adapterAccounts: AccountsAdapter
 
@@ -63,11 +62,12 @@ class ProjectFeedWidgetConfigureActivity : BaseActivity() {
 
         toolbar.setTitle(R.string.widget_choose_account)
 
-        adapterAccounts = AccountsAdapter()
-        adapterAccounts.setOnItemClickListener { adapter, _, position ->
-            widgetAccount = adapter.get(position)
-            moveAlongToChooseProject(widgetAccount!!)
-        }
+        adapterAccounts = AccountsAdapter(object : AccountsAdapter.Listener {
+            override fun onAccountClicked(account: Account) {
+                widgetAccount = account
+                moveAlongToChooseProject(account)
+            }
+        })
         list.layoutManager = LinearLayoutManager(this)
         list.adapter = adapterAccounts
 

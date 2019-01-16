@@ -1,6 +1,6 @@
 package com.commit451.gitlab.viewHolder
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,12 +14,11 @@ import com.commit451.gitlab.extension.formatAsHtml
 import com.commit451.gitlab.model.rss.Entry
 import com.commit451.gitlab.transformation.CircleTransformation
 import com.commit451.gitlab.util.DateUtil
-import java.util.*
 
 /**
  * Represents the view of an item in the RSS feed
  */
-class FeedEntryViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+class FeedEntryViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
 
     companion object {
 

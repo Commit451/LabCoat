@@ -4,11 +4,9 @@ import android.app.Activity
 import android.appwidget.AppWidgetManager
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.Toolbar
 import android.view.View
 import android.widget.TextView
+import androidx.appcompat.widget.Toolbar
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.commit451.gitlab.R
@@ -16,7 +14,6 @@ import com.commit451.gitlab.activity.BaseActivity
 import com.commit451.gitlab.data.Prefs
 import com.commit451.gitlab.model.Account
 import timber.log.Timber
-import java.util.*
 
 /**
  * The configuration screen for the ExampleAppWidgetProvider widget sample.
@@ -28,11 +25,11 @@ class UserFeedWidgetConfigureActivity : BaseActivity() {
     @BindView(R.id.message_text)
     lateinit var textMessage: TextView
     @BindView(R.id.list)
-    lateinit var list: RecyclerView
+    lateinit var list: androidx.recyclerview.widget.RecyclerView
 
-    lateinit var adapterAccounts: AccountsAdapter
+    private lateinit var adapterAccounts: AccountsAdapter
 
-    var appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
+    private var appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
 
     public override fun onCreate(icicle: Bundle?) {
         super.onCreate(icicle)
@@ -54,21 +51,23 @@ class UserFeedWidgetConfigureActivity : BaseActivity() {
 
         toolbar.setTitle(R.string.widget_choose_account)
 
-        adapterAccounts = AccountsAdapter()
-        adapterAccounts.setOnItemClickListener { adapter, _, position ->
-            saveWidgetConfig(adapter.get(position))
-        }
-        list.layoutManager = LinearLayoutManager(this)
+        adapterAccounts = AccountsAdapter(object : AccountsAdapter.Listener {
+            override fun onAccountClicked(account: Account) {
+                saveWidgetConfig(account)
+            }
+
+        })
+        list.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
         list.adapter = adapterAccounts
 
         loadAccounts()
     }
 
-    fun loadAccounts() {
+    private fun loadAccounts() {
         val accounts = Prefs.getAccounts()
         Timber.d("Got %s accounts", accounts.size)
-        Collections.sort(accounts)
-        Collections.reverse(accounts)
+        accounts.sort()
+        accounts.reverse()
         if (accounts.isEmpty()) {
             textMessage.visibility = View.VISIBLE
         } else {
@@ -77,7 +76,7 @@ class UserFeedWidgetConfigureActivity : BaseActivity() {
         }
     }
 
-    fun saveWidgetConfig(account: Account) {
+    private fun saveWidgetConfig(account: Account) {
         UserFeedWidgetPrefs.setAccount(this@UserFeedWidgetConfigureActivity, appWidgetId, account)
         val appWidgetManager = AppWidgetManager.getInstance(this@UserFeedWidgetConfigureActivity)
 

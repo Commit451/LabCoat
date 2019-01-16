@@ -3,8 +3,8 @@ package com.commit451.gitlab.fragment
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,8 +30,8 @@ class PickTagFragment : ButterKnifeFragment() {
 
     companion object {
 
-        private val EXTRA_PROJECT_ID = "project_id"
-        private val EXTRA_CURRENT_REF = "current_ref"
+        private const val EXTRA_PROJECT_ID = "project_id"
+        private const val EXTRA_CURRENT_REF = "current_ref"
 
         fun newInstance(projectId: Long, ref: Ref?): PickTagFragment {
             val fragment = PickTagFragment()
@@ -44,7 +44,7 @@ class PickTagFragment : ButterKnifeFragment() {
     }
 
     @BindView(R.id.list)
-    lateinit var listProjects: RecyclerView
+    lateinit var listProjects: androidx.recyclerview.widget.RecyclerView
     @BindView(R.id.message_text)
     lateinit var textMessage: TextView
     @BindView(R.id.progress)
@@ -76,7 +76,7 @@ class PickTagFragment : ButterKnifeFragment() {
                 activity?.finish()
             }
         })
-        listProjects.layoutManager = LinearLayoutManager(activity)
+        listProjects.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(activity)
         listProjects.adapter = adapterTags
 
         loadData()

@@ -7,12 +7,12 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.support.design.widget.CollapsingToolbarLayout
-import android.support.design.widget.Snackbar
-import android.support.design.widget.TabLayout
-import android.support.v4.view.ViewPager
-import android.support.v7.graphics.Palette
-import android.support.v7.widget.Toolbar
+import com.google.android.material.appbar.CollapsingToolbarLayout
+import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.tabs.TabLayout
+import androidx.viewpager.widget.ViewPager
+import androidx.palette.graphics.Palette
+import androidx.appcompat.widget.Toolbar
 import android.view.View
 import android.widget.ImageView
 import butterknife.BindView
@@ -61,7 +61,7 @@ class GroupActivity : BaseActivity() {
     @BindView(R.id.collapsing_toolbar)
     lateinit var collapsingToolbarLayout: CollapsingToolbarLayout
     @BindView(R.id.viewpager)
-    lateinit var viewPager: ViewPager
+    lateinit var viewPager: androidx.viewpager.widget.ViewPager
     @BindView(R.id.tabs)
     lateinit var tabLayout: TabLayout
     @BindView(R.id.backdrop)
@@ -116,7 +116,7 @@ class GroupActivity : BaseActivity() {
                 .load(group.avatarUrl)
                 .transform(PaletteTransformation.instance())
                 .into(backdrop, object : PaletteTransformation.PaletteCallback(backdrop) {
-                    override fun onSuccess(palette: Palette?) {
+                    override fun onSuccess(palette: androidx.palette.graphics.Palette?) {
                         bindPalette(palette!!)
                     }
 
@@ -127,7 +127,7 @@ class GroupActivity : BaseActivity() {
         tabLayout.setupWithViewPager(viewPager)
     }
 
-    fun bindPalette(palette: Palette) {
+    fun bindPalette(palette: androidx.palette.graphics.Palette) {
         val animationTime = 1000
         val vibrantColor = palette.getVibrantColor(this.themeAttrColor(R.attr.colorAccent))
         val darkerColor = Easel.darkerColor(vibrantColor)

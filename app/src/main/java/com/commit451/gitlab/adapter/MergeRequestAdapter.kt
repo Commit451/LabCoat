@@ -1,6 +1,6 @@
 package com.commit451.gitlab.adapter
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.ViewGroup
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.api.MergeRequest
@@ -11,7 +11,7 @@ import java.util.*
 /**
  * Merge request adapter!
  */
-class MergeRequestAdapter(private val listener: MergeRequestAdapter.Listener) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class MergeRequestAdapter(private val listener: MergeRequestAdapter.Listener) : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
 
     companion object {
 
@@ -25,7 +25,7 @@ class MergeRequestAdapter(private val listener: MergeRequestAdapter.Listener) : 
 
     private var loading: Boolean = false
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
         when (viewType) {
             TYPE_ITEM -> {
                 val holder = MergeRequestViewHolder.inflate(parent)
@@ -40,7 +40,7 @@ class MergeRequestAdapter(private val listener: MergeRequestAdapter.Listener) : 
         throw IllegalStateException("No holder for type " + viewType)
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
         if (holder is MergeRequestViewHolder) {
             val mergeRequest = getValueAt(position)
             holder.bind(mergeRequest)

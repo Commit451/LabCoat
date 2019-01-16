@@ -1,9 +1,9 @@
 package com.commit451.gitlab.fragment
 
 import android.os.Bundle
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,8 +32,8 @@ class MergeRequestCommitsFragment : ButterKnifeFragment() {
 
     companion object {
 
-        private val KEY_PROJECT = "project"
-        private val KEY_MERGE_REQUEST = "merge_request"
+        private const val KEY_PROJECT = "project"
+        private const val KEY_MERGE_REQUEST = "merge_request"
 
         fun newInstance(project: Project, mergeRequest: MergeRequest): MergeRequestCommitsFragment {
             val fragment = MergeRequestCommitsFragment()
@@ -46,13 +46,13 @@ class MergeRequestCommitsFragment : ButterKnifeFragment() {
     }
 
     @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    lateinit var swipeRefreshLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout
     @BindView(R.id.list)
-    lateinit var listCommits: RecyclerView
+    lateinit var listCommits: androidx.recyclerview.widget.RecyclerView
     @BindView(R.id.message_text)
     lateinit var textMessage: TextView
 
-    lateinit var layoutManagerCommits: LinearLayoutManager
+    lateinit var layoutManagerCommits: androidx.recyclerview.widget.LinearLayoutManager
     lateinit var adapterCommits: CommitAdapter
 
     var project: Project? = null
@@ -61,7 +61,7 @@ class MergeRequestCommitsFragment : ButterKnifeFragment() {
     var loading = false
 
     val onScrollListener = object : RecyclerView.OnScrollListener() {
-        override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
             val visibleItemCount = layoutManagerCommits.childCount
             val totalItemCount = layoutManagerCommits.itemCount
@@ -90,7 +90,7 @@ class MergeRequestCommitsFragment : ButterKnifeFragment() {
                 Navigator.navigateToDiffActivity(baseActivty, project!!, commit)
             }
         })
-        layoutManagerCommits = LinearLayoutManager(activity)
+        layoutManagerCommits = androidx.recyclerview.widget.LinearLayoutManager(activity)
         listCommits.layoutManager = layoutManagerCommits
         listCommits.addItemDecoration(DividerItemDecoration(baseActivty))
         listCommits.adapter = adapterCommits
@@ -156,6 +156,7 @@ class MergeRequestCommitsFragment : ButterKnifeFragment() {
         //TODO is this even a thing?
     }
 
+    @Suppress("unused")
     @Subscribe
     fun onMergeRequestChangedEvent(event: MergeRequestChangedEvent) {
         if (mergeRequest!!.iid == event.mergeRequest.id) {

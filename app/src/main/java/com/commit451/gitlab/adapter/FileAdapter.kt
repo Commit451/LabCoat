@@ -1,6 +1,6 @@
 package com.commit451.gitlab.adapter
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import com.commit451.gitlab.R
@@ -11,7 +11,7 @@ import java.util.*
 /**
  * Shows the files
  */
-class FileAdapter(private val listener: FileAdapter.Listener) : RecyclerView.Adapter<FileViewHolder>() {
+class FileAdapter(private val listener: FileAdapter.Listener) : androidx.recyclerview.widget.RecyclerView.Adapter<FileViewHolder>() {
 
     val values: ArrayList<RepositoryTreeObject> = ArrayList()
 

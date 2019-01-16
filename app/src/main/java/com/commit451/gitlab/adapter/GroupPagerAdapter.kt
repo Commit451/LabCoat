@@ -1,9 +1,9 @@
 package com.commit451.gitlab.adapter
 
 import android.content.Context
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentPagerAdapter
 import com.commit451.gitlab.R
 import com.commit451.gitlab.extension.feedUrl
 import com.commit451.gitlab.fragment.FeedFragment
@@ -15,7 +15,7 @@ import java.util.*
 /**
  * Group pager adapter
  */
-class GroupPagerAdapter(context: Context, fm: FragmentManager, private val group: Group) : FragmentPagerAdapter(fm) {
+class GroupPagerAdapter(context: Context, fm: androidx.fragment.app.FragmentManager, private val group: Group) : androidx.fragment.app.FragmentPagerAdapter(fm) {
 
     companion object {
 
@@ -28,7 +28,7 @@ class GroupPagerAdapter(context: Context, fm: FragmentManager, private val group
     val titles: Array<String> = context.resources.getStringArray(R.array.group_tabs)
     val disabledSections = HashSet<Int>()
 
-    override fun getItem(position: Int): Fragment {
+    override fun getItem(position: Int): androidx.fragment.app.Fragment {
         var position = position
         position = getCorrectPosition(position)
 

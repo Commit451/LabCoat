@@ -4,9 +4,9 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.support.v4.view.GravityCompat
-import android.support.v4.widget.DrawerLayout
-import android.support.v7.widget.Toolbar
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.appcompat.widget.Toolbar
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.commit451.gitlab.App
@@ -24,16 +24,15 @@ class ActivityActivity : BaseActivity() {
 
     companion object {
 
-        private val TAG_FEED_FRAGMENT = "feed_fragment"
+        private const val TAG_FEED_FRAGMENT = "feed_fragment"
 
         fun newIntent(context: Context): Intent {
-            val intent = Intent(context, ActivityActivity::class.java)
-            return intent
+            return Intent(context, ActivityActivity::class.java)
         }
     }
 
     @BindView(R.id.drawer_layout)
-    lateinit var drawerLayout: DrawerLayout
+    lateinit var drawerLayout: androidx.drawerlayout.widget.DrawerLayout
     @BindView(R.id.toolbar)
     lateinit var toolbar: Toolbar
 

@@ -4,16 +4,16 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.support.v4.view.GravityCompat
-import android.support.v4.widget.DrawerLayout
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.Toolbar
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import androidx.recyclerview.widget.RecyclerView
+import androidx.appcompat.widget.Toolbar
 import android.view.View
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
-import com.alexgwyn.recyclerviewsquire.DynamicGridLayoutManager
+import com.commit451.aloy.DynamicGridLayoutManager
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.GroupAdapter
@@ -60,7 +60,7 @@ class GroupsActivity : BaseActivity() {
     var loading = false
 
     val onScrollListener = object : RecyclerView.OnScrollListener() {
-        override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
             val visibleItemCount = layoutManager.childCount
             val totalItemCount = layoutManager.itemCount
@@ -84,7 +84,7 @@ class GroupsActivity : BaseActivity() {
         swipeRefreshLayout.setOnRefreshListener { load() }
         textMessage.setOnClickListener { load() }
         layoutManager = DynamicGridLayoutManager(this)
-        layoutManager.setMinimumWidthDimension(R.dimen.user_list_image_size)
+        layoutManager.setMinimumSpanSize(resources.getDimensionPixelSize(R.dimen.user_list_image_size))
         listGroups.layoutManager = layoutManager
         adapterGroup = GroupAdapter(object : GroupAdapter.Listener {
             override fun onGroupClicked(group: Group, groupViewHolder: GroupViewHolder) {

@@ -4,10 +4,10 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.Toolbar
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.appcompat.widget.Toolbar
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -50,9 +50,9 @@ class AddLabelActivity : BaseActivity() {
     @BindView(R.id.toolbar)
     lateinit var toolbar: Toolbar
     @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    lateinit var swipeRefreshLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout
     @BindView(R.id.list)
-    lateinit var list: RecyclerView
+    lateinit var list: androidx.recyclerview.widget.RecyclerView
     @BindView(R.id.message_text)
     lateinit var textMessage: TextView
 
@@ -87,7 +87,7 @@ class AddLabelActivity : BaseActivity() {
             }
         })
         list.adapter = adapterLabel
-        list.layoutManager = LinearLayoutManager(this)
+        list.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
 
         toolbar.setNavigationIcon(R.drawable.ic_back_24dp)
         toolbar.setNavigationOnClickListener { onBackPressed() }

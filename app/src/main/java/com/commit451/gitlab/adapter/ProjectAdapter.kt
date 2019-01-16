@@ -1,7 +1,7 @@
 package com.commit451.gitlab.adapter
 
 import android.content.Context
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.ViewGroup
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.api.Project
@@ -12,7 +12,7 @@ import java.util.*
 /**
  * Shows a list of projects
  */
-class ProjectAdapter(context: Context, private val listener: ProjectAdapter.Listener) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ProjectAdapter(context: Context, private val listener: ProjectAdapter.Listener) : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
 
     companion object {
 
@@ -26,7 +26,7 @@ class ProjectAdapter(context: Context, private val listener: ProjectAdapter.List
     private val colors: IntArray = context.resources.getIntArray(R.array.cool_colors)
     private var loading: Boolean = false
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
         when (viewType) {
             TYPE_ITEM -> {
                 val holder = ProjectViewHolder.inflate(parent)
@@ -41,7 +41,7 @@ class ProjectAdapter(context: Context, private val listener: ProjectAdapter.List
         throw IllegalStateException("No idea what to create for view type " + viewType)
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
         if (holder is ProjectViewHolder) {
             val project = getValueAt(position)
             holder.bind(project, colors[position % colors.size])

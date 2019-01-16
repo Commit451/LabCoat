@@ -26,7 +26,7 @@
                 We set the padding bottom so that the FAB is not covered
                 It is the size of the FAB 56dp + 8dp padding
             -->
-            <android.support.v7.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -37,7 +37,7 @@
 
     </LinearLayout>
 
-    <android.support.design.widget.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/add_issue_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

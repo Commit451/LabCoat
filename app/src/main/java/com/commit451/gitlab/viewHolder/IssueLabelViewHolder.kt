@@ -1,6 +1,6 @@
 package com.commit451.gitlab.viewHolder
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +12,7 @@ import com.commit451.gitlab.R
 /**
  * Shows the labels for an issue
  */
-class IssueLabelViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+class IssueLabelViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
 
     companion object {
 
