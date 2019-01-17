@@ -47,8 +47,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility 1.8
-        targetCompatibility 1.8
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     flavorDimensions "type"
@@ -98,13 +98,14 @@ android {
 
 ext {
     retrofitVersion = '2.5.0'
-    okHttpVersion = '3.12.0'
-    butterknifeVersion = '9.0.0-rc2'
-    parcelerVersion = '1.1.11'
+    okHttpVersion = '3.12.1'
+    butterknifeVersion = '10.0.0'
+    parcelerVersion = '1.1.12'
     reptarVersion = '2.5.1'
-    adapterLayout = '1.1.2'
+
+    adapterLayout = '1.2.0'
     materialDialogsVersion = '0.9.6.0'
-    leakCanaryVersion = '1.6.2'
+    leakCanaryVersion = '1.6.3'
     addendumVersion = '2.1.0'
     moshiVersion = '1.8.0'
     autodisposeVersion = '0.8.0'
@@ -120,7 +121,7 @@ dependencies {
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.palette:palette:1.0.0'
     implementation 'androidx.browser:browser:1.0.0'
-    implementation 'androidx.multidex:multidex:2.0.0'
+    implementation 'androidx.multidex:multidex:2.0.1'
 
     implementation 'com.google.android.material:material:1.0.0'
 
@@ -147,7 +148,7 @@ dependencies {
 
     implementation 'org.greenrobot:eventbus:3.1.1'
 
-    implementation 'io.reactivex.rxjava2:rxjava:2.2.3'
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.5'
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
 
     implementation "com.uber.autodispose:autodispose-kotlin:$autodisposeVersion"
@@ -169,7 +170,7 @@ dependencies {
     implementation("com.wefika:flowlayout:0.4.1") {
         exclude group: 'com.intellij', module: 'annotations'
     }
-    implementation 'com.github.Commit451:Easel:3.0.0'
+    implementation 'com.github.Commit451:Easel:3.1.0'
     implementation 'com.github.Commit451:Gimbal:2.0.2'
     implementation 'com.github.Commit451:Teleprinter:2.2.0'
     implementation 'com.github.Commit451:Jounce:1.0.2'
@@ -184,9 +185,9 @@ dependencies {
     implementation "com.github.Commit451.Addendum:addendum-design:$addendumVersion"
     implementation "com.github.Commit451.Addendum:addendum-parceler:$addendumVersion"
 
-    implementation 'com.github.chrisbanes:PhotoView:2.2.0'
+    implementation 'com.github.chrisbanes:PhotoView:2.3.0'
 
-    implementation 'me.zhanghai.android.materialprogressbar:library:1.6.0'
+    implementation 'me.zhanghai.android.materialprogressbar:library:1.6.1'
 
     implementation 'com.github.Jawnnypoo:PhysicsLayout:2.2.0'
 
@@ -194,24 +195,24 @@ dependencies {
 
     implementation 'com.github.alorma:diff-textview:1.3.0'
 
-    implementation 'com.wdullaer:materialdatetimepicker:4.0.1'
+    implementation 'com.wdullaer:materialdatetimepicker:4.1.0'
 
     implementation 'com.github.novoda:simple-chrome-custom-tabs:0.1.6'
 
     implementation "com.afollestad.material-dialogs:core:$materialDialogsVersion"
     implementation "com.afollestad.material-dialogs:commons:$materialDialogsVersion"
 
-    implementation 'de.hdodenhof:circleimageview:2.2.0'
+    implementation 'de.hdodenhof:circleimageview:3.0.0'
 
     implementation('com.vdurmont:emoji-java:4.0.0') {
         exclude group: 'org.json', module: 'json'
     }
 
-    implementation 'com.github.jkwiecien:EasyImage:2.1.0'
+    implementation 'com.github.jkwiecien:EasyImage:2.1.1'
 
     implementation 'com.atlassian.commonmark:commonmark:0.11.0'
 
-    normalImplementation 'com.crashlytics.sdk.android:crashlytics:2.9.6'
+    normalImplementation 'com.crashlytics.sdk.android:crashlytics:2.9.8'
 
     debugImplementation "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
     releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"

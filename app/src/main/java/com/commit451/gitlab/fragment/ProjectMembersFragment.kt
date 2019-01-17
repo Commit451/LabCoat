@@ -96,17 +96,12 @@ class ProjectMembersFragment : ButterKnifeFragment() {
                 this@ProjectMembersFragment.member = member
                 App.get().gitLab.removeProjectMember(project!!.id, member.id)
                         .with(this@ProjectMembersFragment)
-                        .subscribe(object : CustomCompleteObserver() {
-
-                            override fun error(t: Throwable) {
-                                Timber.e(t)
-                                Snackbar.make(root, R.string.failed_to_remove_member, Snackbar.LENGTH_SHORT)
-                                        .show()
-                            }
-
-                            override fun complete() {
-                                adapterProjectMembers.removeMember(this@ProjectMembersFragment.member!!)
-                            }
+                        .subscribe({
+                            adapterProjectMembers.removeMember(this@ProjectMembersFragment.member!!)
+                        }, {
+                            Timber.e(it)
+                            Snackbar.make(root, R.string.failed_to_remove_member, Snackbar.LENGTH_SHORT)
+                                    .show()
                         })
             }
 
