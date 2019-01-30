@@ -24,12 +24,12 @@ To build, run the following.
 ## Contributing
 Please fork this repository and contribute back! Please make your best effort to break up commits as much as possible to improve the reviewing process.
 
-If you are making substantial changes, please refer to Commit 451's style [guidelines](https://github.com/Commit451/guidelines) for Android/Kotlin
+If you are making substantial changes, please refer to Commit 451's style [guidelines](https://github.com/Commit451/guidelines) for Android/Kotlin. Add major changes/features to the changelog file as well.
 
 License
 --------
 
-    Copyright 2017 Commit 451
+    Copyright 2019 Commit 451
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
