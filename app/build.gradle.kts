@@ -17,7 +17,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         versionCode = 2060400
         versionName = "2.6.4"
-        manifestPlaceholders = mapOf("fabric_key" to project.property("LABCOAT_FABRIC_KEY") as String)
+        manifestPlaceholders = mapOf("fabric_key" to ProjectStuff.fabricKey(project))
         vectorDrawables.useSupportLibrary = true
 
         multiDexEnabled = true
@@ -41,10 +41,10 @@ android {
 
     signingConfigs {
         create("release") {
-            storeFile = File(project.property("KEYSTORE_PATH") as String)
-            storePassword = project.property("KEYSTORE_PASSWORD") as String
+            storeFile = File(project.propertyOrEmpty("KEYSTORE_PATH"))
+            storePassword = project.propertyOrEmpty("KEYSTORE_PASSWORD")
             keyAlias = "commit451"
-            keyPassword = project.property("KEY_PASSWORD") as String
+            keyPassword = project.propertyOrEmpty("KEY_PASSWORD")
         }
     }
 
@@ -59,7 +59,6 @@ android {
             isMinifyEnabled = false
             isShrinkResources = false
             proguardFiles("proguard-rules.pro", getDefaultProguardFile("proguard-android.txt"))
-            //ext.enableCrashlytics = false
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-debug"
         }
@@ -185,7 +184,9 @@ dependencies {
 
     implementation("com.atlassian.commonmark:commonmark:0.11.0")
 
-    implementation("com.crashlytics.sdk.android:crashlytics:2.9.8")
+    if (ProjectStuff.fabricKey(project).isNotEmpty()) {
+        implementation("com.crashlytics.sdk.android:crashlytics:2.9.8")
+    }
     //normalImplementation("com.crashlytics.sdk.android:crashlytics:2.9.8")
 
     debugImplementation("com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion")
