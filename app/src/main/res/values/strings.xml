@@ -516,4 +516,6 @@
 
     <string name="welcome">Welcome to LabCoat</string>
     <string name="welcome_message">We support GitLab.com, as well as any GitLab server running GitLab version 9.0 or later</string>
+    <string name="action_open_extern">Open</string>
+    <string name="error_opening_file">Could not open file</string>
 </resources>
