@@ -30,12 +30,6 @@ import okhttp3.logging.HttpLoggingInterceptor
 import timber.log.Timber
 import java.net.URLEncoder
 
-private const val PATH_LEVEL_UNSPECIFIED = 0
-private const val PATH_LEVEL_ACCOUNT = 1
-private const val PATH_LEVEL_PROJECT = 2
-private const val PATH_LEVEL_REVISION = 3
-private const val PATH_LEVEL_PATH = 4
-
 private const val ROOT = "root"
 
 private val gitlabCache = mutableMapOf<String, GitLab>()
@@ -49,8 +43,41 @@ private val fileChildrenCache = mutableMapOf<FileProvider.FileCacheKey, List<Rep
 @RequiresApi(Build.VERSION_CODES.KITKAT)
 class FileProvider : DocumentsProvider() {
 
-    private val DEFAULT_ROOT_PROJECTION = arrayOf<String>(DocumentsContract.Root.COLUMN_ROOT_ID, DocumentsContract.Root.COLUMN_MIME_TYPES, DocumentsContract.Root.COLUMN_FLAGS, DocumentsContract.Root.COLUMN_ICON, DocumentsContract.Root.COLUMN_TITLE, DocumentsContract.Root.COLUMN_SUMMARY, DocumentsContract.Root.COLUMN_DOCUMENT_ID, DocumentsContract.Root.COLUMN_AVAILABLE_BYTES)
-    private val DEFAULT_DOCUMENT_PROJECTION = arrayOf<String>(DocumentsContract.Document.COLUMN_DOCUMENT_ID, DocumentsContract.Document.COLUMN_MIME_TYPE, DocumentsContract.Document.COLUMN_DISPLAY_NAME, DocumentsContract.Document.COLUMN_LAST_MODIFIED, DocumentsContract.Document.COLUMN_FLAGS, DocumentsContract.Document.COLUMN_SIZE)
+    private val DEFAULT_ROOT_PROJECTION = arrayOf(DocumentsContract.Root.COLUMN_ROOT_ID, DocumentsContract.Root.COLUMN_MIME_TYPES, DocumentsContract.Root.COLUMN_FLAGS, DocumentsContract.Root.COLUMN_ICON, DocumentsContract.Root.COLUMN_TITLE, DocumentsContract.Root.COLUMN_SUMMARY, DocumentsContract.Root.COLUMN_DOCUMENT_ID, DocumentsContract.Root.COLUMN_AVAILABLE_BYTES)
+    private val DEFAULT_DOCUMENT_PROJECTION = arrayOf(DocumentsContract.Document.COLUMN_DOCUMENT_ID, DocumentsContract.Document.COLUMN_MIME_TYPE, DocumentsContract.Document.COLUMN_DISPLAY_NAME, DocumentsContract.Document.COLUMN_LAST_MODIFIED, DocumentsContract.Document.COLUMN_FLAGS, DocumentsContract.Document.COLUMN_SIZE)
+
+    override fun onCreate(): Boolean {
+        Prefs.init(context!!)
+        return true
+    }
+
+    override fun queryRoots(projection: Array<String>?): Cursor {
+
+        val result = MatrixCursor(resolveRootProjection(projection))
+        val accounts = Prefs.getAccounts()
+
+        if(accounts.isEmpty()){
+            return result
+        }
+
+        accounts.forEach {
+
+            val path = GitLabPath(getAccountId(it))
+            result.newRow().apply {
+
+                add(DocumentsContract.Root.COLUMN_ROOT_ID, getRootId(path))
+                add(DocumentsContract.Root.COLUMN_SUMMARY, context!!.getString(R.string.fileprovider_account_summary, it.username, it.serverUrl))
+                add(DocumentsContract.Root.COLUMN_TITLE, context!!.getString(R.string.app_name))
+                add(DocumentsContract.Root.COLUMN_DOCUMENT_ID, toDocumentId(path))
+                add(DocumentsContract.Root.COLUMN_ICON, R.mipmap.ic_launcher)
+
+            }
+
+        }
+
+        return result
+
+    }
 
     override fun openDocument(documentId: String?, mode: String?, signal: CancellationSignal?): ParcelFileDescriptor? {
         Timber.d( "openDocument: %s", documentId)
@@ -99,9 +126,39 @@ class FileProvider : DocumentsProvider() {
             val path = resolvePath(parent)
             when(path.level){
 
-                PATH_LEVEL_ACCOUNT -> loadProjects(path, result)
-                PATH_LEVEL_PROJECT -> loadRevisions(path, result)
-                PATH_LEVEL_REVISION, PATH_LEVEL_PATH -> loadFiles(path, result)
+                GitlabPathLevel.PATH_LEVEL_ACCOUNT -> loadProjects(path, result)
+                GitlabPathLevel.PATH_LEVEL_PROJECT -> loadRevisions(path, result)
+                GitlabPathLevel.PATH_LEVEL_REVISION, GitlabPathLevel.PATH_LEVEL_PATH -> loadFiles(path, result)
+                GitlabPathLevel.PATH_LEVEL_UNSPECIFIED -> {}
+
+            }
+
+        }
+
+        return result
+
+    }
+
+    override fun queryDocument(documentId: String?, projection: Array<String>?): Cursor {
+        Timber.d("queryDocument: %s", documentId)
+        val result = MatrixCursor(resolveDocumentProjection(projection))
+
+        documentId?.let {
+
+            val path = resolvePath(documentId)
+            when(path.level){
+
+                GitlabPathLevel.PATH_LEVEL_ACCOUNT -> { addAccountToResult(result, path) }
+                GitlabPathLevel.PATH_LEVEL_PROJECT -> { loadProjects(path, result, path.project)}
+                GitlabPathLevel.PATH_LEVEL_REVISION -> { loadRevisions(path, result, path.revision) }
+                GitlabPathLevel.PATH_LEVEL_PATH -> {
+
+                    path.getParent()?.let { p ->
+                        loadFiles(p, result, path.getName())
+                    }
+
+
+                }
                 else -> {}
 
             }
@@ -114,29 +171,26 @@ class FileProvider : DocumentsProvider() {
     }
 
     private fun loadFiles(parentPath: GitLabPath, result: MatrixCursor, filter: String? = null){
-
         Timber.d("loadFiles: %s, %s", parentPath, filter)
 
         if(parentPath.account != null && parentPath.project != null && parentPath.revision != null) {
 
-            loadChildren(parentPath.account, parentPath.project, parentPath.revision, parentPath.strPath())?.forEach { f ->
+            loadChildren(parentPath.account, parentPath.project, parentPath.revision, parentPath.strPath())
+                    ?.filter { filter == null || filter == it.name }
+                    ?.forEach { f ->
 
-                if(filter == null || filter == f.name) {
+                val subPath = if (parentPath.path == null) mutableListOf(f.name ?: "") else mutableListOf<String>().apply { addAll(parentPath.path); add(f.name ?: "") }
+                val path = GitLabPath(parentPath.account, parentPath.project, parentPath.revision, subPath)
 
-                    val subPath = if (parentPath.path == null) mutableListOf<String>(f.name ?: "") else mutableListOf<String>().apply { addAll(parentPath.path); add(f.name ?: "") }
-                    val path = GitLabPath(parentPath.account, parentPath.project, parentPath.revision, subPath)
+                if (f.type == RepositoryTreeObject.TYPE_FILE) {
 
-                    if (f.type == RepositoryTreeObject.TYPE_FILE) {
+                    val file = loadMetaFile(parentPath.account, parentPath.project, parentPath.revision, path.strPath()!!)
+                    val commit = loadCommit(parentPath.account, parentPath.project, file?.lastCommitId ?: "")
 
-                        val file = loadMetaFile(parentPath.account, parentPath.project, parentPath.revision, path.strPath()!!)
-                        val commit = loadCommit(parentPath.account, parentPath.project, file?.lastCommitId ?: "")
+                    file?.let { r -> addFileToResult(result, path, r.fileName ?: "", r.size, commit?.createdAt?.time) }
 
-                        file?.let { r -> addFile(result, path, r.fileName ?: "", r.size, commit?.createdAt?.time) }
-
-                    } else if (f.type == RepositoryTreeObject.TYPE_FOLDER) {
-                        addFolder(result, path, f.name ?: "")
-                    }
-
+                } else if (f.type == RepositoryTreeObject.TYPE_FOLDER) {
+                    addFolderToResult(result, path, f.name ?: "")
                 }
 
             }
@@ -154,7 +208,7 @@ class FileProvider : DocumentsProvider() {
                     ?.forEach { b ->
 
                 val path = GitLabPath(parentPath.account, parentPath.project, b.name)
-                addFolder(result, path, b.name ?: "", prefix = "Branch: ")
+                addFolderToResult(result, path, b.name ?: "", prefix = "${context!!.getString(R.string.fileprovider_branch_prefix)} ")
 
             }
 
@@ -163,35 +217,11 @@ class FileProvider : DocumentsProvider() {
                     ?.forEach { t ->
 
                 val path = GitLabPath(parentPath.account, parentPath.project, t.name)
-                addFolder(result, path, t.name ?: "", prefix = "Tag: ")
+                addFolderToResult(result, path, t.name ?: "", prefix = "${context!!.getString(R.string.fileprovider_tag_prefix)} ")
 
             }
 
         }
-
-    }
-
-    private fun addFile(result: MatrixCursor, path: GitLabPath, name: String, size: Long? = 0, lastModified: Long? = 0){
-
-        val row = result.newRow()
-        row.add(DocumentsContract.Document.COLUMN_DOCUMENT_ID, toPath(path))
-        row.add(DocumentsContract.Document.COLUMN_DISPLAY_NAME, name)
-        row.add(DocumentsContract.Document.COLUMN_SIZE, size)
-        row.add(DocumentsContract.Document.COLUMN_FLAGS, 0)
-        row.add(DocumentsContract.Document.COLUMN_LAST_MODIFIED, lastModified)
-        row.add(DocumentsContract.Document.COLUMN_MIME_TYPE, MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileActivity.fileExtension(name ?: "")) ?: "application/octet-stream")
-
-    }
-
-    private fun addFolder(result: MatrixCursor, path: GitLabPath, name: String, size: Long? = 0, lastModified: Long? = 0, prefix: String? = null){
-
-        val row = result.newRow()
-        row.add(DocumentsContract.Document.COLUMN_DOCUMENT_ID, toPath(path))
-        row.add(DocumentsContract.Document.COLUMN_DISPLAY_NAME, if(prefix == null) name else prefix + name)
-        row.add(DocumentsContract.Document.COLUMN_SIZE, size ?: 0)
-        row.add(DocumentsContract.Document.COLUMN_MIME_TYPE, DocumentsContract.Document.MIME_TYPE_DIR)
-        row.add(DocumentsContract.Document.COLUMN_LAST_MODIFIED, lastModified ?: 0)
-        row.add(DocumentsContract.Document.COLUMN_FLAGS, 0)
 
     }
 
@@ -233,7 +263,7 @@ class FileProvider : DocumentsProvider() {
                     ?.forEach { p ->
 
                 val path = GitLabPath(parentPath.account, p.id)
-                addFolder(result, path, p.name ?: "", prefix = "Project: ")
+                addFolderToResult(result, path, p.name ?: "", prefix = "${context!!.getString(R.string.fileprovider_project_prefix)} ")
 
             }
 
@@ -241,98 +271,64 @@ class FileProvider : DocumentsProvider() {
 
     }
 
-    override fun queryDocument(documentId: String?, projection: Array<String>?): Cursor {
-        Timber.d("queryDocument: %s", documentId)
-        val result = MatrixCursor(resolveDocumentProjection(projection))
-
-        documentId?.let {
-
-            val path = resolvePath(documentId)
-            when(path.level){
-
-                PATH_LEVEL_ACCOUNT -> { addAccount(result, path) }
-                PATH_LEVEL_PROJECT -> { loadProjects(path, result, path.project)}
-                PATH_LEVEL_REVISION -> { loadRevisions(path, result, path.revision) }
-                PATH_LEVEL_PATH -> {
-
-                    path.getParent()?.let { p ->
-                        loadFiles(p, result, path.getName())
-                    }
-
-
-                }
-                else -> {}
-
-            }
-
-        }
-
-
-        return result
-
-    }
-
-    private fun addAccount(result: MatrixCursor, path: GitLabPath){
+    private fun addAccountToResult(result: MatrixCursor, path: GitLabPath){
 
         path.account?.let { pa ->
 
             findAccount(pa)?.let {
 
-                val row = result.newRow()
-                row.add(DocumentsContract.Document.COLUMN_DOCUMENT_ID, toPath(path))
-                row.add(DocumentsContract.Document.COLUMN_DISPLAY_NAME, it.username +"@"+it.serverUrl)
-                row.add(DocumentsContract.Document.COLUMN_SIZE, 0)
-                row.add(DocumentsContract.Document.COLUMN_MIME_TYPE, DocumentsContract.Document.MIME_TYPE_DIR)
-                row.add(DocumentsContract.Document.COLUMN_LAST_MODIFIED, 0)
-                row.add(DocumentsContract.Document.COLUMN_FLAGS, 0)
-                row.add(DocumentsContract.Document.COLUMN_ICON, R.mipmap.ic_launcher)
+                result.newRow().apply {
+
+                    add(DocumentsContract.Document.COLUMN_DOCUMENT_ID, toDocumentId(path))
+                    add(DocumentsContract.Document.COLUMN_DISPLAY_NAME, it.username +"@"+it.serverUrl)
+                    add(DocumentsContract.Document.COLUMN_SIZE, 0)
+                    add(DocumentsContract.Document.COLUMN_MIME_TYPE, DocumentsContract.Document.MIME_TYPE_DIR)
+                    add(DocumentsContract.Document.COLUMN_LAST_MODIFIED, 0)
+                    add(DocumentsContract.Document.COLUMN_FLAGS, 0)
+                    add(DocumentsContract.Document.COLUMN_ICON, R.mipmap.ic_launcher)
+
+                }
 
             }
+
+        }
+
+    }
+
+    private fun addFileToResult(result: MatrixCursor, path: GitLabPath, name: String, size: Long? = 0, lastModified: Long? = 0){
+
+        result.newRow().apply {
+
+            add(DocumentsContract.Document.COLUMN_DOCUMENT_ID, toDocumentId(path))
+            add(DocumentsContract.Document.COLUMN_DISPLAY_NAME, name)
+            add(DocumentsContract.Document.COLUMN_SIZE, size)
+            add(DocumentsContract.Document.COLUMN_FLAGS, 0)
+            add(DocumentsContract.Document.COLUMN_LAST_MODIFIED, lastModified)
+            add(DocumentsContract.Document.COLUMN_MIME_TYPE, MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileActivity.fileExtension(name)) ?: "application/octet-stream")
+
+        }
+
+    }
+
+    private fun addFolderToResult(result: MatrixCursor, path: GitLabPath, name: String, size: Long? = 0, lastModified: Long? = 0, prefix: String? = null){
+
+        result.newRow().apply {
+
+            add(DocumentsContract.Document.COLUMN_DOCUMENT_ID, toDocumentId(path))
+            add(DocumentsContract.Document.COLUMN_DISPLAY_NAME, if(prefix == null) name else prefix + name)
+            add(DocumentsContract.Document.COLUMN_SIZE, size ?: 0)
+            add(DocumentsContract.Document.COLUMN_MIME_TYPE, DocumentsContract.Document.MIME_TYPE_DIR)
+            add(DocumentsContract.Document.COLUMN_LAST_MODIFIED, lastModified ?: 0)
+            add(DocumentsContract.Document.COLUMN_FLAGS, 0)
 
         }
 
     }
 
     private fun findAccount(input: String) : Account? {
-        return Prefs.getAccounts().firstOrNull { input == it.username + "@" + it.serverUrl }
+        return Prefs.getAccounts().firstOrNull { input == getAccountId(it) }
     }
 
-    override fun onCreate(): Boolean {
-        Prefs.init(context)
-        return true
-    }
-
-    override fun queryRoots(projection: Array<String>?): Cursor {
-
-        val result = MatrixCursor(resolveRootProjection(projection))
-        val accounts = Prefs.getAccounts()
-        if(accounts.isEmpty()){
-            return result
-        }
-
-        accounts.forEach {
-
-            val path = GitLabPath(it.username + "@" + it.serverUrl)
-            val id = ROOT + ":" + toPath(path)
-            val row = result.newRow()
-
-            row.add(DocumentsContract.Root.COLUMN_ROOT_ID, id)
-            row.add(DocumentsContract.Root.COLUMN_SUMMARY, it.username + "@" + it.serverUrl)
-            row.add(DocumentsContract.Root.COLUMN_TITLE, context.getString(R.string.app_name))
-            row.add(DocumentsContract.Root.COLUMN_DOCUMENT_ID, toPath(path))
-            row.add(DocumentsContract.Root.COLUMN_ICON, R.mipmap.ic_launcher)
-
-        }
-
-        return result
-
-    }
-
-    /**
-     * @param projection the requested root column projection
-     * @return either the requested root column projection, or the default projection if the
-     * requested projection is null.
-     */
     private fun resolveRootProjection(projection: Array<String>?): Array<String> {
         return projection ?: DEFAULT_ROOT_PROJECTION
     }
@@ -343,12 +339,17 @@ class FileProvider : DocumentsProvider() {
 
     private fun resolvePath(path: String) : GitLabPath {
 
-        var _input = path.replace("//", "/")
-        if(_input.endsWith("/")) {
-            _input = _input.substring(0, _input.length-1)
+        var input = path
+
+        while(input.indexOf("//") > -1) {
+            path.replace("//", "/")
         }
 
-        val parts =  _input.split("/")
+        if(input.endsWith("/")) {
+            input = input.substring(0, input.length-1)
+        }
+
+        val parts =  input.split("/")
         return GitLabPath(
                 if (parts.size > 0) java.net.URLDecoder.decode(parts[0], StandardCharsets.UTF_8.name()); else null,
                 if (parts.size > 1) parts[1].toLong() else null,
@@ -358,14 +359,10 @@ class FileProvider : DocumentsProvider() {
     }
 
     private fun decodeArray(input: List<String>) : List<String> {
-
-        val output = mutableListOf<String>()
-        input.forEach { output.add(java.net.URLDecoder.decode(it, StandardCharsets.UTF_8.name())) }
-        return input
-
+        return input.map { java.net.URLDecoder.decode(it, StandardCharsets.UTF_8.name()) }
     }
 
-    private fun toPath(path: GitLabPath) : String {
+    private fun toDocumentId(path: GitLabPath) : String {
 
         val builder = StringBuilder()
 
@@ -385,11 +382,13 @@ class FileProvider : DocumentsProvider() {
             builder.append(path.path.joinToString("/") { URLEncoder.encode(it, StandardCharsets.UTF_8.name()) }).append("/")
         }
 
+        if(builder.endsWith("/")) {
+            builder.removeRange(builder.length-2, builder.length-1)
+        }
+
         return builder.toString()
 
     }
-
-
 
     private fun repositoryFileFromHeader(headers : Headers?) : RepositoryFile? {
 
@@ -406,6 +405,14 @@ class FileProvider : DocumentsProvider() {
         file.size = headers.get("X-Gitlab-Size")?.toLong() ?: 0
         return file
 
+    }
+
+    private fun getRootId(path : GitLabPath) : String {
+        return "$ROOT:${toDocumentId(path)}"
+    }
+
+    private fun getAccountId(account : Account) : String {
+        return "${account.username}@${account.serverUrl}"
     }
 
     private fun getGitLab(accountId : String) : GitLab? {
@@ -457,17 +464,19 @@ class FileProvider : DocumentsProvider() {
 
 }
 
+enum class GitlabPathLevel { PATH_LEVEL_UNSPECIFIED, PATH_LEVEL_ACCOUNT, PATH_LEVEL_PROJECT, PATH_LEVEL_REVISION, PATH_LEVEL_PATH }
+
 data class GitLabPath(val account: String? = null, val project: Long? = null, val revision: String? = null, val path : List<String>? = null) {
 
     val level = calcLevel()
 
-    private fun calcLevel() : Int {
+    private fun calcLevel() : GitlabPathLevel {
 
-        if(path != null) return PATH_LEVEL_PATH
-        if(revision != null) return PATH_LEVEL_REVISION
-        if(project != null) return PATH_LEVEL_PROJECT
-        if(account != null) return PATH_LEVEL_ACCOUNT
-        return PATH_LEVEL_UNSPECIFIED
+        if(path != null) return GitlabPathLevel.PATH_LEVEL_PATH
+        if(revision != null) return GitlabPathLevel.PATH_LEVEL_REVISION
+        if(project != null) return GitlabPathLevel.PATH_LEVEL_PROJECT
+        if(account != null) return GitlabPathLevel.PATH_LEVEL_ACCOUNT
+        return GitlabPathLevel.PATH_LEVEL_UNSPECIFIED
 
     }
 
@@ -479,10 +488,10 @@ data class GitLabPath(val account: String? = null, val project: Long? = null, va
 
         return when(level){
 
-            PATH_LEVEL_ACCOUNT -> account
-            PATH_LEVEL_PROJECT -> project?.toString()
-            PATH_LEVEL_REVISION -> revision
-            PATH_LEVEL_PATH -> path?.get(path.size-1)
+            GitlabPathLevel.PATH_LEVEL_ACCOUNT -> account
+            GitlabPathLevel.PATH_LEVEL_PROJECT -> project?.toString()
+            GitlabPathLevel.PATH_LEVEL_REVISION -> revision
+            GitlabPathLevel.PATH_LEVEL_PATH -> path?.get(path.size-1)
             else -> null
 
         }
@@ -493,9 +502,9 @@ data class GitLabPath(val account: String? = null, val project: Long? = null, va
 
         return when(level){
 
-            PATH_LEVEL_PATH -> if(path == null || path.size <= 1) GitLabPath(account, project, revision) else GitLabPath(account, project, revision, path.slice(0 until path.size-1))
-            PATH_LEVEL_REVISION -> GitLabPath(account, project)
-            PATH_LEVEL_PROJECT -> GitLabPath(account)
+            GitlabPathLevel.PATH_LEVEL_PATH -> if(path == null || path.size <= 1) GitLabPath(account, project, revision) else GitLabPath(account, project, revision, path.slice(0 until path.size-1))
+            GitlabPathLevel.PATH_LEVEL_REVISION -> GitLabPath(account, project)
+            GitlabPathLevel.PATH_LEVEL_PROJECT -> GitLabPath(account)
             else -> null
 
         }
