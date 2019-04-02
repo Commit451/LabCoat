@@ -295,6 +295,11 @@ interface GitLabService {
                 @Path("file_path") path: String,
                 @Query("ref") ref: String): Single<RepositoryFile>
 
+    @HEAD("projects/{id}/repository/files/{file_path}")
+    fun getFileHead(@Path("id") projectId: Long,
+                @Path("file_path") path: String,
+                @Query("ref") ref: String): Single<Response<Void>>
+
     @GET("projects/{id}/repository/commits")
     fun getCommits(@Path("id") projectId: Long,
                    @Query("ref_name") branchName: String,

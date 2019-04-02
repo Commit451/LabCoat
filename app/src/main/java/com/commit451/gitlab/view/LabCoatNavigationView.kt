@@ -3,6 +3,8 @@ package com.commit451.gitlab.view
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
+import android.os.Build
+import android.provider.DocumentsContract
 import com.google.android.material.navigation.NavigationView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -28,6 +30,7 @@ import com.commit451.gitlab.event.ReloadDataEvent
 import com.commit451.gitlab.model.Account
 import com.commit451.gitlab.model.api.User
 import com.commit451.gitlab.navigation.Navigator
+import com.commit451.gitlab.provider.FileProvider
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.transformation.CircleTransformation
 import com.commit451.gitlab.util.ImageUtil
@@ -122,6 +125,11 @@ class LabCoatNavigationView : NavigationView {
 
         override fun onAccountLogoutClicked(account: Account) {
             Prefs.removeAccount(account)
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                context.contentResolver.notifyChange(DocumentsContract.buildRootsUri(FileProvider.getAuthority()), null)
+            }
+
             val accounts = Prefs.getAccounts()
 
             if (accounts.isEmpty()) {

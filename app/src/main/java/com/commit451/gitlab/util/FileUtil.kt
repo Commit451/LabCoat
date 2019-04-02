@@ -84,11 +84,22 @@ object FileUtil {
     }
 
     @Throws(IOException::class)
-    fun saveBlobToProviderDirectory(context: Context, bytes: ByteArray, fileName: String): File {
-        val targetFile = File(getProviderDirectory(context), fileName)
+    fun saveBlobToProviderDirectory(outDir: File, bytes: ByteArray, fileName: String): File {
+        val targetFile = File(outDir, fileName)
+
+        if(!targetFile.parentFile.exists()){
+            targetFile.parentFile.mkdirs()
+        }
+
         targetFile.createNewFile()
         Okyo.writeByteArrayToFile(bytes, targetFile)
         return targetFile
+
+    }
+
+    @Throws(IOException::class)
+    fun saveBlobToProviderDirectory(context: Context, bytes: ByteArray, fileName: String): File {
+       return saveBlobToProviderDirectory(getProviderDirectory(context), bytes, fileName)
     }
 
     /**
