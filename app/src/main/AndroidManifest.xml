@@ -180,7 +180,7 @@
             android:permission="android.permission.BIND_REMOTEVIEWS" />
 
         <provider
-            android:name=".provider.FileProvider"
+            android:name=".providers.FileProvider"
             android:authorities="@string/file_provider_authority"
             android:grantUriPermissions="true"
             android:exported="true"

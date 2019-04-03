@@ -9,7 +9,7 @@ import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.LoginActivity
 import com.commit451.gitlab.data.Prefs
 import com.commit451.gitlab.model.Account
-import com.commit451.gitlab.provider.FileProvider
+import com.commit451.gitlab.providers.FileProvider
 import com.commit451.gitlab.util.ThreadUtil
 import okhttp3.Authenticator
 import okhttp3.Request

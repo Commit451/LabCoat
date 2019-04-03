@@ -1,5 +1,6 @@
-package com.commit451.gitlab.provider
+package com.commit451.gitlab.providers
 
+import android.annotation.TargetApi
 import android.database.Cursor
 import android.database.MatrixCursor
 import android.os.Build
@@ -7,10 +8,7 @@ import android.os.CancellationSignal
 import android.os.ParcelFileDescriptor
 import android.provider.DocumentsContract
 import android.provider.DocumentsProvider
-import android.webkit.MimeTypeMap
-import androidx.annotation.RequiresApi
 import com.commit451.gitlab.R
-import com.commit451.gitlab.activity.FileActivity
 import com.commit451.gitlab.data.Prefs
 import com.commit451.gitlab.extension.base64Decode
 import com.commit451.gitlab.util.FileUtil
@@ -25,6 +23,8 @@ import com.commit451.gitlab.api.GitLabFactory
 import com.commit451.gitlab.api.OkHttpClientFactory
 import com.commit451.gitlab.model.Account
 import com.commit451.gitlab.model.api.*
+import com.commit451.gitlab.providers.cursors.FilesCursor
+import com.commit451.gitlab.providers.cursors.RootsCursor
 import okhttp3.Headers
 import okhttp3.logging.HttpLoggingInterceptor
 import timber.log.Timber
@@ -33,18 +33,15 @@ import java.net.URLEncoder
 private const val ROOT = "root"
 
 private val gitlabCache = mutableMapOf<String, GitLab>()
-private val commitCache = mutableMapOf<FileProvider.CommitCacheKey, RepositoryCommit>()
-private val fileMetaCache = mutableMapOf<FileProvider.FileCacheKey, RepositoryFile>()
-private val projectsCache = mutableMapOf<FileProvider.ProjectsCacheKey, List<Project>>()
-private val branchCache = mutableMapOf<FileProvider.RevisionCacheKey, List<Branch>>()
-private val tagCache = mutableMapOf<FileProvider.RevisionCacheKey, List<Tag>>()
-private val fileChildrenCache = mutableMapOf<FileProvider.FileCacheKey, List<RepositoryTreeObject>>()
 
-@RequiresApi(Build.VERSION_CODES.KITKAT)
+private val commitCache = mutableMapOf<FileProvider.CommitCacheKey, CacheEntry<RepositoryCommit>>()
+private val fileMetaCache = mutableMapOf<FileProvider.FileCacheKey, CacheEntry<RepositoryFile>>()
+private val projectsCache = mutableMapOf<FileProvider.ProjectsCacheKey, CacheEntry<List<Project>>>()
+private val revisionCache = mutableMapOf<FileProvider.RevisionCacheKey, CacheEntry<List<Revision>>>()
+private val fileChildrenCache = mutableMapOf<FileProvider.FileCacheKey, CacheEntry<List<FileEntry>>>()
+
+@TargetApi(Build.VERSION_CODES.KITKAT)
 class FileProvider : DocumentsProvider() {
-
-    private val DEFAULT_ROOT_PROJECTION = arrayOf(DocumentsContract.Root.COLUMN_ROOT_ID, DocumentsContract.Root.COLUMN_MIME_TYPES, DocumentsContract.Root.COLUMN_FLAGS, DocumentsContract.Root.COLUMN_ICON, DocumentsContract.Root.COLUMN_TITLE, DocumentsContract.Root.COLUMN_SUMMARY, DocumentsContract.Root.COLUMN_DOCUMENT_ID, DocumentsContract.Root.COLUMN_AVAILABLE_BYTES)
-    private val DEFAULT_DOCUMENT_PROJECTION = arrayOf(DocumentsContract.Document.COLUMN_DOCUMENT_ID, DocumentsContract.Document.COLUMN_MIME_TYPE, DocumentsContract.Document.COLUMN_DISPLAY_NAME, DocumentsContract.Document.COLUMN_LAST_MODIFIED, DocumentsContract.Document.COLUMN_FLAGS, DocumentsContract.Document.COLUMN_SIZE)
 
     override fun onCreate(): Boolean {
         Prefs.init(context!!)
@@ -53,7 +50,7 @@ class FileProvider : DocumentsProvider() {
 
     override fun queryRoots(projection: Array<String>?): Cursor {
 
-        val result = MatrixCursor(resolveRootProjection(projection))
+        val result = RootsCursor()
         val accounts = Prefs.getAccounts()
 
         if(accounts.isEmpty()){
@@ -63,15 +60,7 @@ class FileProvider : DocumentsProvider() {
         accounts.forEach {
 
             val path = GitLabPath(getAccountId(it))
-            result.newRow().apply {
-
-                add(DocumentsContract.Root.COLUMN_ROOT_ID, getRootId(path))
-                add(DocumentsContract.Root.COLUMN_SUMMARY, context!!.getString(R.string.fileprovider_account_summary, it.username, it.serverUrl))
-                add(DocumentsContract.Root.COLUMN_TITLE, context!!.getString(R.string.app_name))
-                add(DocumentsContract.Root.COLUMN_DOCUMENT_ID, toDocumentId(path))
-                add(DocumentsContract.Root.COLUMN_ICON, R.mipmap.ic_launcher)
-
-            }
+            result.addRoot(context!!, getRootId(path), toDocumentId(path), it)
 
         }
 
@@ -119,14 +108,14 @@ class FileProvider : DocumentsProvider() {
     override fun queryChildDocuments(parentDocumentId: String?, projection: Array<String>?, sortOrder: String?): Cursor {
         Timber.d("queryChildDocuments: %s", parentDocumentId)
 
-        val result = MatrixCursor(resolveDocumentProjection(projection))
+        val result = FilesCursor()
 
         parentDocumentId?.let { parent ->
 
             val path = resolvePath(parent)
             when(path.level){
 
-                GitlabPathLevel.PATH_LEVEL_ACCOUNT -> loadProjects(path, result)
+                GitlabPathLevel.PATH_LEVEL_ACCOUNT -> loadProjects(path, result, async = true)
                 GitlabPathLevel.PATH_LEVEL_PROJECT -> loadRevisions(path, result)
                 GitlabPathLevel.PATH_LEVEL_REVISION, GitlabPathLevel.PATH_LEVEL_PATH -> loadFiles(path, result)
                 GitlabPathLevel.PATH_LEVEL_UNSPECIFIED -> {}
@@ -141,7 +130,7 @@ class FileProvider : DocumentsProvider() {
 
     override fun queryDocument(documentId: String?, projection: Array<String>?): Cursor {
         Timber.d("queryDocument: %s", documentId)
-        val result = MatrixCursor(resolveDocumentProjection(projection))
+        val result = FilesCursor()
 
         documentId?.let {
 
@@ -149,12 +138,12 @@ class FileProvider : DocumentsProvider() {
             when(path.level){
 
                 GitlabPathLevel.PATH_LEVEL_ACCOUNT -> { addAccountToResult(result, path) }
-                GitlabPathLevel.PATH_LEVEL_PROJECT -> { loadProjects(path, result, path.project)}
-                GitlabPathLevel.PATH_LEVEL_REVISION -> { loadRevisions(path, result, path.revision) }
+                GitlabPathLevel.PATH_LEVEL_PROJECT -> { loadProjects(path, result, path.project, false)}
+                GitlabPathLevel.PATH_LEVEL_REVISION -> { loadRevisions(path, result, path.revision, false) }
                 GitlabPathLevel.PATH_LEVEL_PATH -> {
 
                     path.getParent()?.let { p ->
-                        loadFiles(p, result, path.getName())
+                        loadFiles(p, result, path.getName(), false)
                     }
 
 
@@ -170,27 +159,22 @@ class FileProvider : DocumentsProvider() {
 
     }
 
-    private fun loadFiles(parentPath: GitLabPath, result: MatrixCursor, filter: String? = null){
+    private fun loadFiles(parentPath: GitLabPath, result: FilesCursor, filter: String? = null, async: Boolean = true){
         Timber.d("loadFiles: %s, %s", parentPath, filter)
 
         if(parentPath.account != null && parentPath.project != null && parentPath.revision != null) {
 
-            loadChildren(parentPath.account, parentPath.project, parentPath.revision, parentPath.strPath())
+            loadChildren(result, parentPath.account, toDocumentId(parentPath), parentPath.project, parentPath.revision, parentPath.strPath(), async)
                     ?.filter { filter == null || filter == it.name }
                     ?.forEach { f ->
 
-                val subPath = if (parentPath.path == null) mutableListOf(f.name ?: "") else mutableListOf<String>().apply { addAll(parentPath.path); add(f.name ?: "") }
+                val subPath = if (parentPath.path == null) mutableListOf(f.name) else mutableListOf<String>().apply { addAll(parentPath.path); add(f.name) }
                 val path = GitLabPath(parentPath.account, parentPath.project, parentPath.revision, subPath)
 
-                if (f.type == RepositoryTreeObject.TYPE_FILE) {
-
-                    val file = loadMetaFile(parentPath.account, parentPath.project, parentPath.revision, path.strPath()!!)
-                    val commit = loadCommit(parentPath.account, parentPath.project, file?.lastCommitId ?: "")
-
-                    file?.let { r -> addFileToResult(result, path, r.fileName ?: "", r.size, commit?.createdAt?.time) }
-
-                } else if (f.type == RepositoryTreeObject.TYPE_FOLDER) {
-                    addFolderToResult(result, path, f.name ?: "")
+                if (!f.isFolder) {
+                    result.addFile(toDocumentId(path), f.name, f.size, f.lastModified)
+                } else {
+                    result.addFolder(toDocumentId(path), f.name)
                 }
 
             }
@@ -199,27 +183,20 @@ class FileProvider : DocumentsProvider() {
 
     }
 
-    private fun loadRevisions(parentPath: GitLabPath, result: MatrixCursor, filter: String? = null){
+    private fun loadRevisions(parentPath: GitLabPath, result: FilesCursor, filter: String? = null, async: Boolean = true){
 
         if(parentPath.account != null && parentPath.project != null) {
 
-            loadAllBranches(parentPath.account, parentPath.project)
+            loadAllBranchesAndTags(result, parentPath.account, toDocumentId(parentPath), parentPath.project, async)
                     ?.filter { filter == null || filter == it.name }
-                    ?.forEach { b ->
+                    ?.forEach { r ->
 
-                val path = GitLabPath(parentPath.account, parentPath.project, b.name)
-                addFolderToResult(result, path, b.name ?: "", prefix = "${context!!.getString(R.string.fileprovider_branch_prefix)} ")
+                val prefix = if(r.type == REVISION_TYPE_BRANCH) "${context!!.getString(R.string.fileprovider_branch_prefix)} " else "${context!!.getString(R.string.fileprovider_tag_prefix)} "
+                val path = GitLabPath(parentPath.account, parentPath.project, r.name)
+                result.addFolder(toDocumentId(path), r.name, prefix = prefix)
 
             }
 
-            loadAllTags(parentPath.account, parentPath.project)
-                    ?.filter { filter == null || filter == it.name }
-                    ?.forEach { t ->
-
-                val path = GitLabPath(parentPath.account, parentPath.project, t.name)
-                addFolderToResult(result, path, t.name ?: "", prefix = "${context!!.getString(R.string.fileprovider_tag_prefix)} ")
-
-            }
 
         }
 
@@ -230,111 +207,106 @@ class FileProvider : DocumentsProvider() {
     data class CommitCacheKey(val account: String, val project: Long, val commitId: String?)
     data class FileCacheKey(val account: String, val project: Long, val revision: String, val path: String?)
 
-    private fun loadChildren(account: String, project: Long, revision: String, path: String?) : List<RepositoryTreeObject>? {
-        return cacheOrLoad(FileCacheKey(account, project, revision, path), fileChildrenCache) { getGitLab(account)?.getTree(project, revision, path)?.blockingGet() }
+    private fun loadChildren(cursor: FilesCursor, account: String, requestDocumentId: String, project: Long, revision: String, path: String?, async: Boolean) : List<FileEntry>? {
+        return fetch(cursor, account, requestDocumentId, FileCacheKey(account, project, revision, path), fileChildrenCache, async, load = { fetchAllChildren(account, it, resolvePath(requestDocumentId), project, revision, path) }, map = { it })
     }
 
-    private fun loadAllProjects(account: String) : List<Project>?{
-        return cacheOrLoad(ProjectsCacheKey(account), projectsCache) { getGitLab(account)?.getAllProjects()?.blockingGet()?.body() }
+    private fun loadAllProjects(cursor: FilesCursor, account: String, requestDocumentId: String,  async : Boolean): List<Project>? {
+        return fetch(cursor, account, requestDocumentId, ProjectsCacheKey(account), projectsCache, async, load = { it.getAllProjects().blockingGet() }, map = { it?.body() } )
     }
 
-    private fun loadAllBranches(account: String, project: Long) : List<Branch>? {
-        return cacheOrLoad(RevisionCacheKey(account, project), branchCache) { getGitLab(account)?.getBranches(project)?.blockingGet()?.body() }
+    private fun loadAllBranchesAndTags(cursor: FilesCursor, account: String, requestDocumentId: String, project: Long, async: Boolean) : List<Revision>? {
+        return fetch(cursor, account, requestDocumentId, RevisionCacheKey(account, project), revisionCache, async, load = { fetchAllBranchesAndTags(it, project) }, map = { it })
     }
 
-    private fun loadAllTags(account: String, project: Long) : List<Tag>? {
-        return cacheOrLoad(RevisionCacheKey(account, project), tagCache) { getGitLab(account)?.getTags(project)?.blockingGet() }
-    }
+    private fun fetchAllChildren(account: String, gitlab: GitLab, parentPath: GitLabPath, project: Long, revision: String, path: String?) : List<FileEntry> {
 
-    private fun loadCommit(account: String, project: Long, commitId: String) : RepositoryCommit? {
-        return cacheOrLoad(CommitCacheKey(account, project, commitId), commitCache) { getGitLab(account)?.getCommit(project, commitId)?.blockingGet() }
-    }
+        val output = mutableListOf<FileEntry>()
+        gitlab.getTree(project, revision, path).blockingGet()?.forEach { e ->
 
-    private fun loadMetaFile(account: String, project: Long, revision: String, path: String) : RepositoryFile? {
-        return cacheOrLoad(FileCacheKey(account, project, revision, path), fileMetaCache) { repositoryFileFromHeader(getGitLab(account)?.getFileHead(project, path, revision)?.blockingGet()?.headers()) }
-    }
+            try {
 
-    private fun loadProjects(parentPath: GitLabPath, result: MatrixCursor, filter: Long? = null){
+                if (e.type == RepositoryTreeObject.TYPE_FILE || e.type == RepositoryTreeObject.TYPE_FOLDER) {
 
-        if(parentPath.account != null) {
+                    var size = 0L
+                    var lastModified = 0L
 
-            loadAllProjects(parentPath.account)
-                    ?.filter { filter == null || it.id == filter }
-                    ?.forEach { p ->
+                    if (e.type == RepositoryTreeObject.TYPE_FILE) {
 
-                val path = GitLabPath(parentPath.account, p.id)
-                addFolderToResult(result, path, p.name ?: "", prefix = "${context!!.getString(R.string.fileprovider_project_prefix)} ")
+                        val subPath = if (parentPath.path == null) mutableListOf(e.name ?: "") else mutableListOf<String>().apply {
+                            addAll(parentPath.path)
+                            add(e.name ?: "")
+                        }
 
-            }
+                        val filePath = GitLabPath(parentPath.account, parentPath.project, parentPath.revision, subPath)
 
-        }
+                        val file = cacheOrLoad(FileCacheKey(account, project, revision, path), fileMetaCache, load = { gitlab.getFileHead(project, filePath.strPath()!!, revision).blockingGet() }, map = { repositoryFileFromHeader(it?.headers()) })
+                        val commit = if (file?.lastCommitId != null) cacheOrLoad(CommitCacheKey(account, project, file.commitId), commitCache, load = { gitlab.getCommit(project, file.lastCommitId!!).blockingGet() }, map = { it }) else null
 
-    }
+                        size = file?.size ?: 0L
+                        lastModified = commit?.createdAt?.time ?: 0L
 
-    private fun addAccountToResult(result: MatrixCursor, path: GitLabPath){
+                    }
 
-        path.account?.let { pa ->
-
-            findAccount(pa)?.let {
-
-                result.newRow().apply {
-
-                    add(DocumentsContract.Document.COLUMN_DOCUMENT_ID, toDocumentId(path))
-                    add(DocumentsContract.Document.COLUMN_DISPLAY_NAME, it.username +"@"+it.serverUrl)
-                    add(DocumentsContract.Document.COLUMN_SIZE, 0)
-                    add(DocumentsContract.Document.COLUMN_MIME_TYPE, DocumentsContract.Document.MIME_TYPE_DIR)
-                    add(DocumentsContract.Document.COLUMN_LAST_MODIFIED, 0)
-                    add(DocumentsContract.Document.COLUMN_FLAGS, 0)
-                    add(DocumentsContract.Document.COLUMN_ICON, R.mipmap.ic_launcher)
+                    output.add(FileEntry(e.type == RepositoryTreeObject.TYPE_FOLDER, e.name ?: "", size, lastModified))
 
                 }
 
+            } catch (e: java.lang.Exception){
+                Timber.e(e)
+            }
+
+        }
+
+        return output
+
+    }
+
+    private fun fetchAllBranchesAndTags(gitlab : GitLab, project : Long) : List<Revision> {
+
+        return mutableListOf<Revision>().apply {
+
+            try {
+
+                gitlab.getBranches(project).blockingGet().body()?.forEach { b ->
+                    this.add(Revision(REVISION_TYPE_BRANCH, b.name ?: ""))
+                }
+
+                gitlab.getTags(project).blockingGet()?.forEach { t ->
+                    this.add(Revision(REVISION_TYPE_TAG, t.name ?: ""))
+                }
+
+            } catch (e: java.lang.Exception){
+                Timber.e(e)
             }
 
         }
 
     }
 
-    private fun addFileToResult(result: MatrixCursor, path: GitLabPath, name: String, size: Long? = 0, lastModified: Long? = 0){
+    private fun loadProjects(parentPath: GitLabPath, result: FilesCursor, filter: Long? = null, async : Boolean = true){
 
-        result.newRow().apply {
-
-            add(DocumentsContract.Document.COLUMN_DOCUMENT_ID, toDocumentId(path))
-            add(DocumentsContract.Document.COLUMN_DISPLAY_NAME, name)
-            add(DocumentsContract.Document.COLUMN_SIZE, size)
-            add(DocumentsContract.Document.COLUMN_FLAGS, 0)
-            add(DocumentsContract.Document.COLUMN_LAST_MODIFIED, lastModified)
-            add(DocumentsContract.Document.COLUMN_MIME_TYPE, MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileActivity.fileExtension(name)) ?: "application/octet-stream")
-
+        if(parentPath.account != null) {
+            loadAllProjects(result, parentPath.account, toDocumentId(parentPath), async)?.filter { filter == null || it.id == filter }?.forEach { p ->
+                val path = GitLabPath(parentPath.account, p.id)
+                result.addFolder(toDocumentId(path), p.name ?: "", prefix = "${context!!.getString(R.string.fileprovider_project_prefix)} ")
+            }
         }
 
     }
 
-    private fun addFolderToResult(result: MatrixCursor, path: GitLabPath, name: String, size: Long? = 0, lastModified: Long? = 0, prefix: String? = null){
+    private fun addAccountToResult(result: FilesCursor, path: GitLabPath){
 
-        result.newRow().apply {
-
-            add(DocumentsContract.Document.COLUMN_DOCUMENT_ID, toDocumentId(path))
-            add(DocumentsContract.Document.COLUMN_DISPLAY_NAME, if(prefix == null) name else prefix + name)
-            add(DocumentsContract.Document.COLUMN_SIZE, size ?: 0)
-            add(DocumentsContract.Document.COLUMN_MIME_TYPE, DocumentsContract.Document.MIME_TYPE_DIR)
-            add(DocumentsContract.Document.COLUMN_LAST_MODIFIED, lastModified ?: 0)
-            add(DocumentsContract.Document.COLUMN_FLAGS, 0)
-
+        path.account?.let { pa ->
+            findAccount(pa)?.let {
+                result.addFolder(toDocumentId(path), it.username +"@"+it.serverUrl)
+            }
         }
 
     }
 
     private fun findAccount(input: String) : Account? {
         return Prefs.getAccounts().firstOrNull { input == getAccountId(it) }
-    }
-
-    private fun resolveRootProjection(projection: Array<String>?): Array<String> {
-        return projection ?: DEFAULT_ROOT_PROJECTION
-    }
-
-    private fun resolveDocumentProjection(projection: Array<String>?): Array<String> {
-        return projection ?: DEFAULT_DOCUMENT_PROJECTION
     }
 
     private fun resolvePath(path: String) : GitLabPath {
@@ -437,18 +409,83 @@ class FileProvider : DocumentsProvider() {
 
     }
 
-    private fun <T, U> cacheOrLoad(key : T, cache : MutableMap<T, U>, load : (() -> U?)) : U? {
+    private var currentSyncActivity : Any? = null
 
-        var value = cache[key]
-        if(value != null){
+    private fun <T, U, V> fetch(cursor: FilesCursor, account: String, requestDocumentId: String, key : U, cache : MutableMap<U, CacheEntry<T>>, async : Boolean, load: (GitLab) -> V?, map: (V?) -> T?): T? {
+
+        val service = getGitLab(account)
+        if(!async){
+
+            var value = cache[key]?.entry
+            if(value != null && cache[key]?.isValid() == true){
+                return value
+            }
+
+            service?.let { s ->
+
+                value = map(load(s))
+                value?.let { cache[key] = CacheEntry(System.currentTimeMillis(), it) }
+
+            }
+
+            return value
+
+        }
+
+        val browsedDirIdUri = DocumentsContract.buildChildDocumentsUri(getAuthority(), requestDocumentId)
+        cursor.setNotificationUri(context!!.contentResolver, browsedDirIdUri)
+
+        var hasMore = false
+
+        if(currentSyncActivity != key) {
+
+            service?.let { s ->
+
+                currentSyncActivity = key
+                hasMore = true
+
+                Thread {
+
+                    try {
+
+                        Thread.sleep(250)
+                        val values = map(load(s))
+
+                        if (values != null) {
+                            cache[key] = CacheEntry(System.currentTimeMillis(), values)
+                        }
+
+                        if (currentSyncActivity == key) {
+                            context?.contentResolver?.notifyChange(browsedDirIdUri, null)
+                        }
+
+                    } catch (e: Exception){
+                        Timber.e(e)
+                    }
+
+                }.start()
+
+            }
+
+
+        } else {
+            currentSyncActivity = null
+        }
+
+        cursor.setHasMore(hasMore)
+        return cache[key]?.entry
+
+    }
+
+    private fun <T, U, V> cacheOrLoad(key : V, cache : MutableMap<V, CacheEntry<T>>, load : () -> U?, map : (U?) -> T?) : T? {
+
+        var value = cache[key]?.entry
+        if(value != null && cache[key]?.isValid() == true){
             return value
         }
 
-        value = load()
-
-        if(value != null) {
-            cache[key] = value
-        }
+        value = map(load())
+        value?.let { cache[key] = CacheEntry(System.currentTimeMillis(), it) }
 
         return value
 
@@ -560,6 +597,21 @@ class DownloadFileTask(private val service: GitLab, private val outDir: File, pr
 
     interface Callback {
         fun onFinished(file : File?)
+    }
+
+}
+
+const val REVISION_TYPE_BRANCH = "branch"
+const val REVISION_TYPE_TAG = "tag"
+data class Revision(val type : String, val name : String)
+
+data class FileEntry(val isFolder : Boolean, val name : String, val size : Long, val lastModified : Long)
+
+const val MAX_CACHE_TIME = 1000 * 60 * 60 * 24
+data class CacheEntry<T>(val time : Long, val entry : T) {
+
+    fun isValid() : Boolean {
+        return System.currentTimeMillis() < (time + MAX_CACHE_TIME)
     }
 
 }

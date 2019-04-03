@@ -35,7 +35,7 @@ import com.commit451.gitlab.model.Account
 import com.commit451.gitlab.model.api.Message
 import com.commit451.gitlab.model.api.User
 import com.commit451.gitlab.navigation.Navigator
-import com.commit451.gitlab.provider.FileProvider
+import com.commit451.gitlab.providers.FileProvider
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.ssl.CustomHostnameVerifier
 import com.commit451.gitlab.ssl.X509CertificateException
