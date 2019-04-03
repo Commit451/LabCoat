@@ -5,16 +5,20 @@ import android.app.Activity
 import android.app.KeyguardManager
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.provider.DocumentsContract
 import android.view.ViewGroup
 import android.widget.Toast
 import butterknife.BindView
 import butterknife.ButterKnife
+import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.data.Prefs
 import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.migration.Migration261
 import com.commit451.gitlab.navigation.Navigator
+import com.commit451.gitlab.providers.FileProvider
 import timber.log.Timber
 
 /**
@@ -41,7 +45,10 @@ class LaunchActivity : BaseActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             REQUEST_DEVICE_AUTH -> if (resultCode == Activity.RESULT_OK) {
+
+                App.authenticated = true
                 moveAlong()
+
             } else {
                 finish()
             }

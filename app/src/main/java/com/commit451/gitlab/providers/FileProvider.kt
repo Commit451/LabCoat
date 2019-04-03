@@ -16,6 +16,7 @@ import java.io.File
 import java.lang.StringBuilder
 import java.nio.charset.StandardCharsets
 import android.os.AsyncTask
+import android.util.Log
 import com.commit451.gitlab.App
 import com.commit451.gitlab.BuildConfig
 import com.commit451.gitlab.api.GitLab
@@ -53,7 +54,7 @@ class FileProvider : DocumentsProvider() {
         val result = RootsCursor()
         val accounts = Prefs.getAccounts()
 
-        if(accounts.isEmpty()){
+        if(accounts.isEmpty() ){
             return result
         }
 
@@ -70,6 +71,11 @@ class FileProvider : DocumentsProvider() {
 
     override fun openDocument(documentId: String?, mode: String?, signal: CancellationSignal?): ParcelFileDescriptor? {
         Timber.d( "openDocument: %s", documentId)
+
+        if(!isAuthenticated()){
+            Timber.w("User is not authenticated!")
+            return null
+        }
 
         documentId?.let { d ->
 
@@ -110,14 +116,19 @@ class FileProvider : DocumentsProvider() {
 
         val result = FilesCursor()
 
+        if(!isAuthenticated()){
+            Timber.w("User is not authenticated!")
+            return result
+        }
+
         parentDocumentId?.let { parent ->
 
             val path = resolvePath(parent)
             when(path.level){
 
                 GitlabPathLevel.PATH_LEVEL_ACCOUNT -> loadProjects(path, result, async = true)
-                GitlabPathLevel.PATH_LEVEL_PROJECT -> loadRevisions(path, result)
-                GitlabPathLevel.PATH_LEVEL_REVISION, GitlabPathLevel.PATH_LEVEL_PATH -> loadFiles(path, result)
+                GitlabPathLevel.PATH_LEVEL_PROJECT -> loadRevisions(path, result, async = true)
+                GitlabPathLevel.PATH_LEVEL_REVISION, GitlabPathLevel.PATH_LEVEL_PATH -> loadFiles(path, result, async = true)
                 GitlabPathLevel.PATH_LEVEL_UNSPECIFIED -> {}
 
             }
@@ -131,6 +142,11 @@ class FileProvider : DocumentsProvider() {
     override fun queryDocument(documentId: String?, projection: Array<String>?): Cursor {
         Timber.d("queryDocument: %s", documentId)
         val result = FilesCursor()
+
+        if(!isAuthenticated()){
+            Timber.w("User is not authenticated!")
+            return result
+        }
 
         documentId?.let {
 
@@ -448,14 +464,11 @@ class FileProvider : DocumentsProvider() {
 
                     try {
 
-                        Thread.sleep(250)
+                        Thread.sleep(100)
                         val values = map(load(s))
 
                         if (values != null) {
                             cache[key] = CacheEntry(System.currentTimeMillis(), values)
-                        }
-
-                        if (currentSyncActivity == key) {
                             context?.contentResolver?.notifyChange(browsedDirIdUri, null)
                         }
 
@@ -489,6 +502,10 @@ class FileProvider : DocumentsProvider() {
 
         return value
 
+    }
+
+    fun isAuthenticated() : Boolean {
+        return !Prefs.isRequiredDeviceAuth || App.authenticated
     }
 
     companion object {
