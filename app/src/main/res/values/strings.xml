@@ -516,4 +516,13 @@
 
     <string name="welcome">Welcome to LabCoat</string>
     <string name="welcome_message">We support GitLab.com, as well as any GitLab server running GitLab version 9.0 or later</string>
+    <string name="action_open_extern">Open</string>
+    <string name="error_opening_file">Could not open file</string>
+
+    <string name="file_provider_authority">com.commit451.gitlab.files</string>
+    <string name="fileprovider_project_prefix">Project:</string>
+    <string name="fileprovider_branch_prefix">Branch:</string>
+    <string name="fileprovider_tag_prefix">Tag:</string>
+    <string name="fileprovider_account_summary">"%1$s@%2$s"</string>
+
 </resources>

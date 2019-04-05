@@ -29,6 +29,8 @@ class App : Application() {
     companion object {
 
         var bus: EventBus = EventBus.getDefault()
+        var authenticated : Boolean = false
+
         private lateinit var instance: App
 
         fun bus(): EventBus {
@@ -74,7 +76,9 @@ class App : Application() {
             setAccount(accounts[0])
         }
 
+        authenticated = false
         Lift.track(this)
+
     }
 
     override fun attachBaseContext(base: Context) {

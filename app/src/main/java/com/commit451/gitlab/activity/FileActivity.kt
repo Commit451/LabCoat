@@ -252,27 +252,15 @@ class FileActivity : BaseActivity() {
     fun openFile() {
 
         if (blob != null && fileName != null) {
-            val intent = Intent(Intent.ACTION_VIEW)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
 
-            val file = FileUtil.saveBlobToProviderDirectory(this, blob!!, fileName!!)
-            val extension = fileExtension(fileName!!)
-            if (extension.isNotEmpty()) {
-                intent.type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
+            if(!FileUtil.openFile(this, fileName!!, blob!!)){
+                Snackbar.make(root, getString(R.string.open_error), Snackbar.LENGTH_SHORT).show()
             }
-            intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-            intent.data = FileUtil.uriForFile(this, file)
 
-            try {
-                startActivity(intent)
-            } catch (e: Exception) {
-                Timber.e(e)
-                Snackbar.make(root, getString(R.string.open_error), Snackbar.LENGTH_SHORT)
-                        .show()
-            }
         } else {
-            Snackbar.make(root, getString(R.string.open_error), Snackbar.LENGTH_SHORT)
-                    .show()
+            Snackbar.make(root, getString(R.string.open_error), Snackbar.LENGTH_SHORT).show()
         }
+
     }
+
 }

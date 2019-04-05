@@ -2,4 +2,5 @@
 <resources>
     <string name="app_name">LabCoat Debug</string>
     <string name="leak_canary_display_activity_label">LabCoat Leaks</string>
+    <string name="file_provider_authority">com.commit451.gitlab.files.debug</string>
 </resources>

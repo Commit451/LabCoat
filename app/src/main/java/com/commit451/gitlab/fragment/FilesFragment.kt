@@ -1,5 +1,6 @@
 package com.commit451.gitlab.fragment
 
+import android.app.ProgressDialog
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -27,6 +28,7 @@ import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.model.api.RepositoryTreeObject
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomSingleObserver
+import com.commit451.gitlab.util.FileUtil
 import com.commit451.gitlab.util.IntentUtil
 import org.greenrobot.eventbus.Subscribe
 import timber.log.Timber
@@ -53,6 +55,8 @@ class FilesFragment : ButterKnifeFragment() {
     lateinit var listBreadcrumbs: androidx.recyclerview.widget.RecyclerView
     @BindView(R.id.message_text)
     lateinit var textMessage: TextView
+    @BindView(R.id.progress)
+    lateinit var progress: View
 
     lateinit var adapterFiles: FileAdapter
     lateinit var adapterBreadcrumb: BreadcrumbAdapter
@@ -62,6 +66,25 @@ class FilesFragment : ButterKnifeFragment() {
     var currentPath = ""
 
     val filesAdapterListener = object : FileAdapter.Listener {
+
+        override fun onOpenExternalClicked(treeItem: RepositoryTreeObject) {
+
+            progress.visibility = View.VISIBLE
+
+            val path = currentPath + treeItem.name
+            FileUtil.open(context!!, project!!.id, path, ref!!)
+                    .observe(this@FilesFragment, androidx.lifecycle.Observer { success ->
+
+                        progress.visibility = View.GONE
+
+                        if(!success){
+                            Snackbar.make(root, getString(R.string.error_opening_file), Snackbar.LENGTH_SHORT).show()
+                        }
+
+                    })
+
+        }
+
         override fun onFolderClicked(treeItem: RepositoryTreeObject) {
             loadData(currentPath + treeItem.name + "/")
         }

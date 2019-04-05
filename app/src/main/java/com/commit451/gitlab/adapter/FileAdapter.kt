@@ -34,6 +34,7 @@ class FileAdapter(private val listener: FileAdapter.Listener) : androidx.recycle
         val treeItem = getValueAt(position)
         holder.bind(treeItem)
         holder.itemView.setTag(R.id.list_position, position)
+        holder.popupMenu.menu.findItem(R.id.action_open_external).setVisible(treeItem.type == RepositoryTreeObject.TYPE_FILE)
         holder.popupMenu.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.action_copy -> {
@@ -46,6 +47,10 @@ class FileAdapter(private val listener: FileAdapter.Listener) : androidx.recycle
                 }
                 R.id.action_open -> {
                     listener.onOpenInBrowserClicked(treeItem)
+                    return@OnMenuItemClickListener true
+                }
+                R.id.action_open_external -> {
+                    listener.onOpenExternalClicked(treeItem)
                     return@OnMenuItemClickListener true
                 }
             }
@@ -80,5 +85,6 @@ class FileAdapter(private val listener: FileAdapter.Listener) : androidx.recycle
         fun onCopyClicked(treeItem: RepositoryTreeObject)
         fun onShareClicked(treeItem: RepositoryTreeObject)
         fun onOpenInBrowserClicked(treeItem: RepositoryTreeObject)
+        fun onOpenExternalClicked(treeItem: RepositoryTreeObject)
     }
 }

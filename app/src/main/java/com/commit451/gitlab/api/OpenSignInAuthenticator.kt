@@ -1,12 +1,15 @@
 package com.commit451.gitlab.api
 
 import android.content.Intent
+import android.os.Build
+import android.provider.DocumentsContract
 import android.widget.Toast
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.LoginActivity
 import com.commit451.gitlab.data.Prefs
 import com.commit451.gitlab.model.Account
+import com.commit451.gitlab.providers.FileProvider
 import com.commit451.gitlab.util.ThreadUtil
 import okhttp3.Authenticator
 import okhttp3.Request
@@ -40,6 +43,11 @@ class OpenSignInAuthenticator(private val account: Account) : Authenticator {
                 ThreadUtil.postOnMainThread(Runnable {
                     //Remove the account, so that the user can sign in again
                     Prefs.removeAccount(account)
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                        App.get().applicationContext.contentResolver.notifyChange(DocumentsContract.buildRootsUri(FileProvider.getAuthority()), null)
+                    }
+
                     Toast.makeText(App.get(), R.string.error_401, Toast.LENGTH_LONG)
                             .show()
                     val intent = LoginActivity.newIntent(App.get())

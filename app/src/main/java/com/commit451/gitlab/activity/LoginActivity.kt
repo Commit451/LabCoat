@@ -4,7 +4,9 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.DocumentsContract
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputLayout
 import androidx.appcompat.widget.Toolbar
@@ -33,6 +35,7 @@ import com.commit451.gitlab.model.Account
 import com.commit451.gitlab.model.api.Message
 import com.commit451.gitlab.model.api.User
 import com.commit451.gitlab.navigation.Navigator
+import com.commit451.gitlab.providers.FileProvider
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.ssl.CustomHostnameVerifier
 import com.commit451.gitlab.ssl.X509CertificateException
@@ -237,6 +240,11 @@ class LoginActivity : BaseActivity() {
                         currentAccount.email = userFull.email
                         currentAccount.username = userFull.username
                         Prefs.addAccount(currentAccount)
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                            contentResolver.notifyChange(DocumentsContract.buildRootsUri(FileProvider.getAuthority()), null)
+                        }
+
                         App.get().setAccount(currentAccount)
                         App.bus().post(LoginEvent(currentAccount))
                         //This is mostly for if projects already exists, then we will reload the data
