@@ -2,7 +2,6 @@ package com.commit451.gitlab
 
 import android.app.Application
 import android.content.Context
-import androidx.multidex.MultiDex
 import com.commit451.gitlab.api.GitLab
 import com.commit451.gitlab.api.GitLabFactory
 import com.commit451.gitlab.api.OkHttpClientFactory
@@ -77,11 +76,6 @@ class App : Application() {
         Lift.track(this)
     }
 
-    override fun attachBaseContext(base: Context) {
-        super.attachBaseContext(base)
-        setupMultidex()
-    }
-
     fun setAccount(account: Account) {
         currentAccount = account
         //This is kinda weird, but basically, I don't want to see all the annoying logs from bitmap
@@ -102,10 +96,6 @@ class App : Application() {
 
     fun getAccount(): Account {
         return currentAccount
-    }
-
-    private fun setupMultidex() {
-        MultiDex.install(this)
     }
 
     private fun setupCrashReporting() {

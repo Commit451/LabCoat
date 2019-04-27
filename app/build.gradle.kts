@@ -18,24 +18,11 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         versionCode = 2060400
         versionName = "2.6.4"
-
-        multiDexEnabled = true
     }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
-    }
-
-    flavorDimensions("type")
-
-    productFlavors {
-        create("normal") {
-            setDimension("type")
-        }
-        create("fdroid") {
-            setDimension("type")
-        }
     }
 
     signingConfigs {
@@ -70,7 +57,7 @@ android {
 }
 
 val retrofitVersion = "2.5.0"
-val okHttpVersion = "3.12.1"
+val okHttpVersion = "3.14.1"
 val butterknifeVersion = "10.0.0"
 val parcelerVersion = "1.1.12"
 val reptarVersion = "2.5.1"
@@ -92,7 +79,6 @@ dependencies {
     implementation("androidx.cardview:cardview:1.0.0")
     implementation("androidx.palette:palette:1.0.0")
     implementation("androidx.browser:browser:1.0.0")
-    implementation("androidx.multidex:multidex:2.0.1")
 
     implementation("com.google.android.material:material:1.0.0")
 
@@ -117,12 +103,12 @@ dependencies {
     implementation("com.jakewharton:butterknife:$butterknifeVersion")
     kapt("com.jakewharton:butterknife-compiler:$butterknifeVersion")
     implementation("com.jakewharton.timber:timber:4.7.1")
-    implementation("com.jakewharton.threetenabp:threetenabp:1.1.1")
+    implementation("com.jakewharton.threetenabp:threetenabp:1.2.0")
 
     implementation("org.greenrobot:eventbus:3.1.1")
 
-    implementation("io.reactivex.rxjava2:rxjava:2.2.6")
-    implementation("io.reactivex.rxjava2:rxandroid:2.1.0")
+    implementation("io.reactivex.rxjava2:rxjava:2.2.8")
+    implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
 
     implementation("com.uber.autodispose:autodispose-kotlin:$autodisposeVersion")
     implementation("com.uber.autodispose:autodispose-android-kotlin:$autodisposeVersion")
@@ -168,7 +154,7 @@ dependencies {
 
     implementation("com.github.alorma:diff-textview:1.3.0")
 
-    implementation("com.wdullaer:materialdatetimepicker:4.1.1")
+    implementation("com.wdullaer:materialdatetimepicker:4.1.2")
 
     implementation("com.github.novoda:simple-chrome-custom-tabs:0.1.6")
 
@@ -183,7 +169,7 @@ dependencies {
 
     implementation("com.github.jkwiecien:EasyImage:2.1.1")
 
-    implementation("com.atlassian.commonmark:commonmark:0.11.0")
+    implementation("com.atlassian.commonmark:commonmark:0.12.1")
 
     implementation("com.crashlytics.sdk.android:crashlytics:2.9.9")
 
@@ -192,7 +178,7 @@ dependencies {
     testImplementation("com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion")
 
     testImplementation("junit:junit:4.12")
-    testImplementation("org.threeten:threetenbp:1.3.6") {
+    testImplementation("org.threeten:threetenbp:1.3.8") {
         exclude(group = "com.jakewharton.threetenabp", module = "threetenabp")
     }
 }
