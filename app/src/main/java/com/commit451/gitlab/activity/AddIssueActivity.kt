@@ -4,20 +4,9 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.textfield.TextInputLayout
+import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
-import android.view.View
-import android.view.ViewGroup
-import android.widget.CheckBox
-import android.widget.EditText
-import android.widget.Spinner
-import android.widget.TextView
-import butterknife.BindView
-import butterknife.ButterKnife
-import butterknife.OnClick
-import com.commit451.adapterflowlayout.AdapterFlowLayout
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.AddIssueLabelAdapter
@@ -28,14 +17,22 @@ import com.commit451.gitlab.event.IssueCreatedEvent
 import com.commit451.gitlab.extension.belongsToGroup
 import com.commit451.gitlab.extension.checkValid
 import com.commit451.gitlab.extension.with
-import com.commit451.gitlab.model.api.*
+import com.commit451.gitlab.model.api.Issue
+import com.commit451.gitlab.model.api.Label
+import com.commit451.gitlab.model.api.Milestone
+import com.commit451.gitlab.model.api.Project
+import com.commit451.gitlab.model.api.User
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.teleprinter.Teleprinter
+import com.google.android.material.snackbar.Snackbar
 import io.reactivex.Single
+import kotlinx.android.synthetic.main.activity_add_issue.*
+import kotlinx.android.synthetic.main.progress.*
 import timber.log.Timber
-import java.util.*
+import java.util.ArrayList
+import java.util.HashSet
 
 /**
  * Activity to input new issues, but not really a dialog at all wink wink
@@ -58,51 +55,16 @@ class AddIssueActivity : MorphActivity() {
         }
     }
 
-    @BindView(R.id.root)
-    lateinit var root: ViewGroup
-    @BindView(R.id.toolbar)
-    lateinit var toolbar: Toolbar
-    @BindView(R.id.title_text_input_layout)
-    lateinit var textInputLayoutTitle: TextInputLayout
-    @BindView(R.id.description)
-    lateinit var textDescription: EditText
-    @BindView(R.id.progress)
-    lateinit var progress: View
-    @BindView(R.id.assignee_progress)
-    lateinit var progressAssignee: View
-    @BindView(R.id.assignee_spinner)
-    lateinit var spinnerAssignee: Spinner
-    @BindView(R.id.milestone_progress)
-    lateinit var progressMilestone: View
-    @BindView(R.id.milestone_spinner)
-    lateinit var spinnerMilestone: Spinner
-    @BindView(R.id.label_label)
-    lateinit var textLabel: TextView
-    @BindView(R.id.labels_progress)
-    lateinit var progressLabels: View
-    @BindView(R.id.root_add_labels)
-    lateinit var rootAddLabels: ViewGroup
-    @BindView(R.id.list_labels)
-    lateinit var listLabels: AdapterFlowLayout
-    @BindView(R.id.check_confidential)
-    lateinit var checkConfidential: CheckBox
+    private lateinit var adapterLabels: AddIssueLabelAdapter
+    private lateinit var teleprinter: Teleprinter
 
-    lateinit var adapterLabels: AddIssueLabelAdapter
-    lateinit var teleprinter: Teleprinter
-
-    lateinit var project: Project
-    var issue: Issue? = null
-    lateinit var members: HashSet<User>
-
-    @OnClick(R.id.text_add_labels)
-    fun onAddLabelClicked() {
-        Navigator.navigateToAddLabels(this, project, REQUEST_LABEL)
-    }
+    private lateinit var project: Project
+    private var issue: Issue? = null
+    private lateinit var members: HashSet<User>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_issue)
-        ButterKnife.bind(this)
         morph(root)
         teleprinter = Teleprinter(this)
 
@@ -138,6 +100,9 @@ class AddIssueActivity : MorphActivity() {
             toolbar.inflateMenu(R.menu.edit)
         } else {
             toolbar.inflateMenu(R.menu.create)
+        }
+        textAddLabels.setOnClickListener {
+            Navigator.navigateToAddLabels(this, project, REQUEST_LABEL)
         }
         load()
     }

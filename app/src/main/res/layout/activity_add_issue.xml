@@ -33,7 +33,7 @@
             android:orientation="vertical">
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/title_text_input_layout"
+                android:id="@+id/textInputLayoutTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -53,7 +53,7 @@
                 android:layout_weight="1">
 
                 <EditText
-                    android:id="@+id/description"
+                    android:id="@+id/textDescription"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/milestone_hint_description"
@@ -63,7 +63,7 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <CheckBox
-                android:id="@+id/check_confidential"
+                android:id="@+id/checkConfidential"
                 android:layout_width="match_parent"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
@@ -81,13 +81,13 @@
                 android:layout_height="wrap_content">
 
                 <com.commit451.gitlab.view.LabCoatProgressView
-                    android:id="@+id/assignee_progress"
+                    android:id="@+id/progressAssignee"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_gravity="center" />
 
                 <Spinner
-                    android:id="@+id/assignee_spinner"
+                    android:id="@+id/spinnerAssignee"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:visibility="gone" />
@@ -105,14 +105,14 @@
                 android:layout_marginBottom="8dp">
 
                 <com.commit451.gitlab.view.LabCoatProgressView
-                    android:id="@+id/milestone_progress"
+                    android:id="@+id/progressMilestone"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_gravity="center"
                     android:indeterminate="true" />
 
                 <Spinner
-                    android:id="@+id/milestone_spinner"
+                    android:id="@+id/spinnerMilestone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:visibility="gone" />
@@ -120,7 +120,7 @@
             </FrameLayout>
 
             <TextView
-                android:id="@+id/label_label"
+                android:id="@+id/textLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/labels" />
@@ -131,14 +131,14 @@
                 android:layout_marginBottom="8dp">
 
                 <com.commit451.gitlab.view.LabCoatProgressView
-                    android:id="@+id/labels_progress"
+                    android:id="@+id/progressLabels"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_gravity="center"
                     android:indeterminate="true" />
 
                 <LinearLayout
-                    android:id="@+id/root_add_labels"
+                    android:id="@+id/rootAddLabels"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:animateLayoutChanges="true"
@@ -149,13 +149,13 @@
                     android:visibility="gone">
 
                     <com.commit451.adapterflowlayout.AdapterFlowLayout
-                        android:id="@+id/list_labels"
+                        android:id="@+id/listLabels"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp" />
 
                     <TextView
-                        android:id="@+id/text_add_labels"
+                        android:id="@+id/textAddLabels"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="?attr/selectableItemBackground"

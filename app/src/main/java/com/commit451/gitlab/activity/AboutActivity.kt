@@ -8,13 +8,7 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
-import androidx.appcompat.widget.Toolbar
 import android.view.View
-import android.view.ViewGroup
-import butterknife.BindView
-import butterknife.ButterKnife
-import butterknife.OnClick
 import com.commit451.gimbal.Gimbal
 import com.commit451.gitlab.App
 import com.commit451.gitlab.BuildConfig
@@ -27,16 +21,18 @@ import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.util.ImageUtil
 import com.commit451.gitlab.util.IntentUtil
-import com.commit451.gitlab.view.PhysicsFlowLayout
+import com.google.android.material.snackbar.Snackbar
 import com.jawnnypoo.physicslayout.Physics
 import com.jawnnypoo.physicslayout.PhysicsConfig
 import com.wefika.flowlayout.FlowLayout
 import de.hdodenhof.circleimageview.CircleImageView
+import kotlinx.android.synthetic.main.activity_about.*
+import kotlinx.android.synthetic.main.progress.*
 import org.jbox2d.common.Vec2
 import timber.log.Timber
 
 /**
- * Thats what its all about
+ * That's what its all about
  */
 class AboutActivity : BaseActivity() {
 
@@ -44,25 +40,15 @@ class AboutActivity : BaseActivity() {
         private const val REPO_ID = "473568"
 
         fun newIntent(context: Context): Intent {
-            val intent = Intent(context, AboutActivity::class.java)
-            return intent
+            return Intent(context, AboutActivity::class.java)
         }
     }
 
-    @BindView(R.id.root)
-    lateinit var root: ViewGroup
-    @BindView(R.id.toolbar)
-    lateinit var toolbar: Toolbar
-    @BindView(R.id.physics_layout)
-    lateinit var physicsLayout: PhysicsFlowLayout
-    @BindView(R.id.progress)
-    lateinit var progress: View
+    private lateinit var sensorManager: SensorManager
+    private lateinit var gimbal: Gimbal
+    private var gravitySensor: Sensor? = null
 
-    lateinit var sensorManager: SensorManager
-    lateinit var gimbal: Gimbal
-    var gravitySensor: Sensor? = null
-
-    val sensorEventListener = object : SensorEventListener {
+    private val sensorEventListener = object : SensorEventListener {
         override fun onSensorChanged(event: SensorEvent) {
             if (event.sensor.type == Sensor.TYPE_GRAVITY) {
                 if (physicsLayout.physics.world != null) {
@@ -75,21 +61,11 @@ class AboutActivity : BaseActivity() {
         override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {}
     }
 
-    @OnClick(R.id.sauce)
-    fun onSauceClick() {
-        if (getString(R.string.url_gitlab) == App.get().getAccount().serverUrl.toString()) {
-            Navigator.navigateToProject(this@AboutActivity, REPO_ID)
-        } else {
-            IntentUtil.openPage(this@AboutActivity, getString(R.string.source_url))
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         gimbal = Gimbal(this)
         gimbal.lock()
         setContentView(R.layout.activity_about)
-        ButterKnife.bind(this)
         toolbar.setNavigationIcon(R.drawable.ic_back_24dp)
         toolbar.setNavigationOnClickListener { onBackPressed() }
         toolbar.setTitle(R.string.about)
@@ -122,6 +98,13 @@ class AboutActivity : BaseActivity() {
                     }
                 })
         progress.visibility = View.VISIBLE
+        sauce.setOnClickListener {
+            if (getString(R.string.url_gitlab) == App.get().getAccount().serverUrl.toString()) {
+                Navigator.navigateToProject(this@AboutActivity, REPO_ID)
+            } else {
+                IntentUtil.openPage(this@AboutActivity, getString(R.string.source_url))
+            }
+        }
     }
 
     override fun onResume() {

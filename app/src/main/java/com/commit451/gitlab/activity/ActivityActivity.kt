@@ -14,6 +14,7 @@ import com.commit451.gitlab.R
 import com.commit451.gitlab.data.Prefs
 import com.commit451.gitlab.event.CloseDrawerEvent
 import com.commit451.gitlab.fragment.FeedFragment
+import kotlinx.android.synthetic.main.activity_activity.*
 import org.greenrobot.eventbus.Subscribe
 import timber.log.Timber
 
@@ -31,16 +32,10 @@ class ActivityActivity : BaseActivity() {
         }
     }
 
-    @BindView(R.id.drawer_layout)
-    lateinit var drawerLayout: androidx.drawerlayout.widget.DrawerLayout
-    @BindView(R.id.toolbar)
-    lateinit var toolbar: Toolbar
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Prefs.startingView = Prefs.STARTING_VIEW_ACTIVITY
         setContentView(R.layout.activity_activity)
-        ButterKnife.bind(this)
 
         App.bus().register(this)
 
