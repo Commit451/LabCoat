@@ -1,6 +1,5 @@
 package com.commit451.gitlab.view
 
-import android.annotation.TargetApi
 import android.content.Context
 import android.util.AttributeSet
 import android.webkit.WebView
@@ -22,7 +21,6 @@ class BetterWebView : WebView {
         init()
     }
 
-    @TargetApi(21)
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int, defStyleRes: Int) : super(context, attrs, defStyleAttr, defStyleRes) {
         init()
     }

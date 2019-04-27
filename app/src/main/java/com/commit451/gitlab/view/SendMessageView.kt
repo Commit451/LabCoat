@@ -49,19 +49,16 @@ class SendMessageView : LinearLayout {
         init()
     }
 
-    @TargetApi(21)
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int, defStyleRes: Int) : super(context, attrs, defStyleAttr, defStyleRes) {
         init()
     }
 
     private fun init() {
         View.inflate(context, R.layout.view_send_message, this)
-        orientation = LinearLayout.HORIZONTAL
+        orientation = HORIZONTAL
         ButterKnife.bind(this)
         setBackgroundColor(context.themeAttrColor(R.attr.colorPrimary))
-        if (Build.VERSION.SDK_INT >= 21) {
-            elevation = resources.getDimensionPixelSize(R.dimen.toolbar_elevation).toFloat()
-        }
+        elevation = resources.getDimensionPixelSize(R.dimen.toolbar_elevation).toFloat()
     }
 
     fun clearText() {

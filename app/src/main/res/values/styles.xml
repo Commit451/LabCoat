@@ -20,28 +20,38 @@
         <item name="android:windowBackground">?attr/colorPrimary</item>
     </style>
 
+    <!-- Dark theme (default) -->
     <style name="Activity.Projects">
-        <!--Check v21 for the good bits-->
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 
     <style name="Activity.Groups">
-        <!--Check v21 for the good bits-->
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 
     <style name="Activity.Activity">
-        <!--Check v21 for the good bits-->
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 
     <style name="Activity.User">
-        <!--Check v21 for the good bits-->
+        <item name="colorPrimaryDark">@android:color/transparent</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowTranslucentStatus">true</item>
     </style>
 
     <style name="Activity.Group">
-        <!--Check v21 for the good bits-->
+        <item name="colorPrimaryDark">@android:color/transparent</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowTranslucentStatus">true</item>
     </style>
 
     <style name="Activity.Todos">
-        <!--Check v21 for the good bits-->
+        <item name="colorPrimaryDark">@android:color/transparent</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowTranslucentStatus">true</item>
     </style>
 
     <style name="Activity.Launch">

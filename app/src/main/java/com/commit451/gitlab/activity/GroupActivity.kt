@@ -132,11 +132,9 @@ class GroupActivity : BaseActivity() {
         val vibrantColor = palette.getVibrantColor(this.themeAttrColor(R.attr.colorAccent))
         val darkerColor = Easel.darkerColor(vibrantColor)
 
-        if (Build.VERSION.SDK_INT >= 21) {
-            window.navigationBarColorAnimator(darkerColor)
-                    .setDuration(animationTime.toLong())
-                    .start()
-        }
+        window.navigationBarColorAnimator(darkerColor)
+            .setDuration(animationTime.toLong())
+            .start()
 
         ObjectAnimator.ofObject(collapsingToolbarLayout, "contentScrimColor", ArgbEvaluator(),
                 this.themeAttrColor(R.attr.colorPrimary), vibrantColor)

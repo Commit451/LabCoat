@@ -112,21 +112,17 @@ class AttachActivity : BaseActivity() {
     }
 
     fun reveal() {
-        if (Build.VERSION.SDK_INT >= 21) {
-            //Run the runnable after the view has been measured
-            card.post {
-                //we need the radius of the animation circle, which is the diagonal of the view
-                val finalRadius = Math.hypot(card.width.toDouble(), card.height.toDouble()).toFloat()
+        //Run the runnable after the view has been measured
+        card.post {
+            //we need the radius of the animation circle, which is the diagonal of the view
+            val finalRadius = Math.hypot(card.width.toDouble(), card.height.toDouble()).toFloat()
 
-                //it's using a 3rd-party ViewAnimationUtils class for compat reasons (up to API 14)
-                val animator = ViewAnimationUtils
-                        .createCircularReveal(card, 0, card.height, 0f, finalRadius)
-                animator.duration = 500
-                animator.interpolator = AccelerateDecelerateInterpolator()
-                animator.start()
-            }
-        } else {
-            card.fadeIn()
+            //it's using a 3rd-party ViewAnimationUtils class for compat reasons (up to API 14)
+            val animator = ViewAnimationUtils
+                .createCircularReveal(card, 0, card.height, 0f, finalRadius)
+            animator.duration = 500
+            animator.interpolator = AccelerateDecelerateInterpolator()
+            animator.start()
         }
     }
 

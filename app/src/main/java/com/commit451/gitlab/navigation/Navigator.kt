@@ -97,7 +97,7 @@ object Navigator {
 
     fun navigateToUser(activity: Activity, profileImage: ImageView?, user: User) {
         val intent = UserActivity.newIntent(activity, user)
-        if (Build.VERSION.SDK_INT >= 21 && profileImage != null) {
+        if (profileImage != null) {
             val options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, profileImage, activity.getString(R.string.transition_user))
             activity.startActivity(intent, options.toBundle())
         } else {
@@ -107,12 +107,8 @@ object Navigator {
 
     fun navigateToGroup(activity: Activity, profileImage: ImageView, group: Group) {
         val intent = GroupActivity.newIntent(activity, group)
-        if (Build.VERSION.SDK_INT >= 21) {
-            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, profileImage, activity.getString(R.string.transition_user))
-            activity.startActivity(intent, options.toBundle())
-        } else {
-            activity.startActivity(intent)
-        }
+        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, profileImage, activity.getString(R.string.transition_user))
+        activity.startActivity(intent, options.toBundle())
     }
 
     fun navigateToGroup(activity: Activity, groupId: Long) {
@@ -201,7 +197,7 @@ object Navigator {
     }
 
     private fun startMorphActivity(activity: Activity, fab: View?, @DrawableRes drawableRes: Int, intent: Intent) {
-        if (Build.VERSION.SDK_INT >= 21 && fab != null) {
+        if (fab != null) {
             FabTransform.addExtras(intent, activity.themeAttrColor(R.attr.colorAccent),
                     drawableRes)
             val options = ActivityOptions.makeSceneTransitionAnimation(activity, fab, activity.getString(R.string.transition_morph))

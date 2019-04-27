@@ -60,7 +60,6 @@ class LaunchActivity : BaseActivity() {
         }
     }
 
-    @TargetApi(21)
     private fun showKeyguard() {
         val keyguardManager = getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
         val intent = keyguardManager.createConfirmDeviceCredentialIntent(getString(R.string.device_auth_title), getString(R.string.device_auth_message))

@@ -69,8 +69,8 @@ class DiffHeaderViewHolder(view: View) : androidx.recyclerview.widget.RecyclerVi
      */
     private fun extractMessage(title: String, message: String?): String {
         if (!message.isNullOrEmpty()) {
-            val ellipsis = title.endsWith("\u2026") && message!![title.length - 1] != '\u2026'
-            val trailing = message!!.substring(title.length - if (ellipsis) 1 else 0)
+            val ellipsis = title.endsWith("\u2026") && message[title.length - 1] != '\u2026'
+            val trailing = message.substring(title.length - if (ellipsis) 1 else 0)
             return if (trailing == "\u2026") "" else ((if (ellipsis) "\u2026" else "") + trailing).trim { it <= ' ' }
         }
         return title

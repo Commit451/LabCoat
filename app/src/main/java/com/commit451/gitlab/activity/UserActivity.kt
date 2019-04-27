@@ -93,17 +93,15 @@ class UserActivity : BaseActivity() {
         return true
     }
 
-    fun bindPalette(palette: androidx.palette.graphics.Palette) {
+    fun bindPalette(palette: Palette) {
         val animationTime = 1000
         val vibrantColor = palette.getVibrantColor(this.themeAttrColor(R.attr.colorPrimary))
         val darkerColor = this.themeAttrColor(vibrantColor)
 
-        if (Build.VERSION.SDK_INT >= 21) {
-            window.navigationBarColorAnimator(darkerColor)
-                    .setDuration(animationTime.toLong())
-                    .start()
-            window.statusBarColor = darkerColor
-        }
+        window.navigationBarColorAnimator(darkerColor)
+            .setDuration(animationTime.toLong())
+            .start()
+        window.statusBarColor = darkerColor
 
         ObjectAnimator.ofObject(collapsingToolbarLayout, "contentScrimColor", ArgbEvaluator(),
                 this.themeAttrColor(R.attr.colorPrimary), vibrantColor)
