@@ -14,4 +14,4 @@ before_install:
   - gem install android-sdk-installer
   - android-sdk-installer -i
 
-script: "./gradlew testFdroidDebug"
+script: "./gradlew testDebug"

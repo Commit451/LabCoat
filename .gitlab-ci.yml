@@ -11,16 +11,16 @@ stages:
 build:
   stage: build
   script:
-    - ./gradlew assembleFdroidDebug
+    - ./gradlew assembleDebug
 
 test:
   stage: test
   script:
-    - ./gradlew testFdroidDebug
+    - ./gradlew testDebug
   artifacts:
     when: always
     paths:
-      - app/build/reports/tests/testFdroidDebugUnitTest
+      - app/build/reports/tests/testDebugUnitTest
     expire_in: 15 days
 
 pages:
@@ -32,7 +32,7 @@ pages:
   - echo "Overide global before_script and don't do anything."
   script:
     - mkdir -p public/tests
-    - cp -r app/build/reports/tests/testFdroidDebugUnitTest/ public/tests
+    - cp -r app/build/reports/tests/testDebugUnitTest/ public/tests
   artifacts:
     paths:
       - public
