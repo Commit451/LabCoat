@@ -17,7 +17,6 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import com.afollestad.materialdialogs.color.ColorChooserDialog
-import com.commit451.addendum.parceler.putParcelerParcelableExtra
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.extension.checkValid
@@ -140,7 +139,7 @@ class AddNewLabelActivity : BaseActivity(), ColorChooserDialog.ColorCallback {
 
                         override fun responseNonNullSuccess(label: Label) {
                             val data = Intent()
-                            data.putParcelerParcelableExtra(KEY_NEW_LABEL, label)
+                            data.putExtra(KEY_NEW_LABEL, label)
                             setResult(Activity.RESULT_OK, data)
                             finish()
                         }

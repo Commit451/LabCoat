@@ -1,31 +1,32 @@
 package com.commit451.gitlab.model
 
+import android.os.Parcelable
 import com.squareup.moshi.Json
-import org.parceler.Parcel
+import kotlinx.android.parcel.Parcelize
 import java.util.*
 
 /**
  * An account, stored locally, which references the needed info to connect to a server
  */
-@Parcel(Parcel.Serialization.BEAN)
-open class Account : Comparable<Account> {
-
+@Parcelize
+data class Account(
     @field:Json(name = "server_url")
-    var serverUrl: String? = null
+    var serverUrl: String? = null,
     @field:Json(name = "authorization_header")
-    var authorizationHeader: String? = null
+    var authorizationHeader: String? = null,
     @field:Json(name = "private_token")
-    var privateToken: String? = null
+    var privateToken: String? = null,
     @field:Json(name = "trusted_certificate")
-    var trustedCertificate: String? = null
+    var trustedCertificate: String? = null,
     @field:Json(name = "trusted_hostname")
-    var trustedHostname: String? = null
+    var trustedHostname: String? = null,
     @field:Json(name = "email")
-    var email: String? = null
+    var email: String? = null,
     @field:Json(name = "username")
-    var username: String? = null
+    var username: String? = null,
     @field:Json(name = "last_used")
     var lastUsed: Date? = null
+) : Parcelable, Comparable<Account> {
 
     override fun compareTo(other: Account): Int {
         return lastUsed?.compareTo(other.lastUsed) ?: 0

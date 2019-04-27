@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import butterknife.BindView
-import com.commit451.addendum.parceler.getParcelerParcelable
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.event.PipelineChangedEvent
@@ -19,7 +18,6 @@ import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.util.DateUtil
 import org.greenrobot.eventbus.Subscribe
-import org.parceler.Parcels
 import timber.log.Timber
 import java.util.*
 
@@ -30,14 +28,14 @@ class PipelineJobsFragment : ButterKnifeFragment() {
 
     companion object {
 
-        private val KEY_PROJECT = "project"
-        private val KEY_PIPELINE = "pipeline"
+        private const val KEY_PROJECT = "project"
+        private const val KEY_PIPELINE = "pipeline"
 
         fun newInstance(project: Project, pipeline: Pipeline): PipelineJobsFragment {
             val fragment = PipelineJobsFragment()
             val args = Bundle()
-            args.putParcelable(KEY_PROJECT, Parcels.wrap(project))
-            args.putParcelable(KEY_PIPELINE, Parcels.wrap(pipeline))
+            args.putParcelable(KEY_PROJECT, project)
+            args.putParcelable(KEY_PIPELINE, pipeline)
             fragment.arguments = args
             return fragment
         }
@@ -46,7 +44,7 @@ class PipelineJobsFragment : ButterKnifeFragment() {
     @BindView(R.id.root)
     lateinit var root: ViewGroup
     @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    lateinit var swipeRefreshLayout: SwipeRefreshLayout
     @BindView(R.id.text_number)
     lateinit var textName: TextView
     @BindView(R.id.text_status)
@@ -71,8 +69,8 @@ class PipelineJobsFragment : ButterKnifeFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        project = arguments?.getParcelerParcelable(KEY_PROJECT)!!
-        pipeline = arguments?.getParcelerParcelable(KEY_PIPELINE)!!
+        project = arguments?.getParcelable(KEY_PROJECT)!!
+        pipeline = arguments?.getParcelable(KEY_PIPELINE)!!
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

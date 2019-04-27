@@ -1,13 +1,13 @@
 package com.commit451.gitlab.model.api
 
+import android.os.Parcelable
 import com.squareup.moshi.Json
-import org.parceler.Parcel
+import kotlinx.android.parcel.Parcelize
 
-@Parcel(Parcel.Serialization.BEAN)
-open class Branch {
-
+@Parcelize
+data class Branch(
     @field:Json(name = "name")
-    var name: String? = null
+    var name: String? = null,
     @field:Json(name = "protected")
     var isProtected: Boolean = false
-}
+) : Parcelable

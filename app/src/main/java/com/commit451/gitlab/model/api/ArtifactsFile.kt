@@ -1,14 +1,13 @@
 package com.commit451.gitlab.model.api
 
+import android.os.Parcelable
 import com.squareup.moshi.Json
+import kotlinx.android.parcel.Parcelize
 
-import org.parceler.Parcel
-
-@Parcel(Parcel.Serialization.BEAN)
-open class ArtifactsFile {
-
+@Parcelize
+data class ArtifactsFile(
     @field:Json(name = "filename")
-    lateinit var fileName: String
+    var fileName: String = "",
     @field:Json(name = "size")
     var size: Long = 0
-}
+) : Parcelable

@@ -8,8 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import butterknife.BindView
-import com.commit451.addendum.parceler.getParcelerParcelable
-import com.commit451.addendum.parceler.putParcelerParcelable
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.event.PipelineChangedEvent
@@ -35,8 +33,8 @@ class PipelineDescriptionFragment : ButterKnifeFragment() {
         fun newInstance(project: Project, pipeline: Pipeline): PipelineDescriptionFragment {
             val fragment = PipelineDescriptionFragment()
             val args = Bundle()
-            args.putParcelerParcelable(KEY_PROJECT, project)
-            args.putParcelerParcelable(KEY_PIPELINE, pipeline)
+            args.putParcelable(KEY_PROJECT, project)
+            args.putParcelable(KEY_PIPELINE, pipeline)
             fragment.arguments = args
             return fragment
         }
@@ -45,7 +43,7 @@ class PipelineDescriptionFragment : ButterKnifeFragment() {
     @BindView(R.id.root)
     lateinit var root: ViewGroup
     @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    lateinit var swipeRefreshLayout: SwipeRefreshLayout
     @BindView(R.id.text_number)
     lateinit var textName: TextView
     @BindView(R.id.text_status)
@@ -70,8 +68,8 @@ class PipelineDescriptionFragment : ButterKnifeFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        project = arguments?.getParcelerParcelable<Project>(KEY_PROJECT)!!
-        pipeline = arguments?.getParcelerParcelable<Pipeline>(KEY_PIPELINE)!!
+        project = arguments?.getParcelable(KEY_PROJECT)!!
+        pipeline = arguments?.getParcelable(KEY_PIPELINE)!!
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

@@ -7,8 +7,6 @@ import androidx.appcompat.widget.Toolbar
 import android.widget.ImageView
 import butterknife.BindView
 import butterknife.ButterKnife
-import com.commit451.addendum.parceler.getParcelerParcelableExtra
-import com.commit451.addendum.parceler.putParcelerParcelableExtra
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.api.Project
@@ -26,7 +24,7 @@ class FullscreenImageActivity : BaseActivity() {
 
         fun newIntent(context: Context, project: Project, url: String): Intent {
             val intent = Intent(context, FullscreenImageActivity::class.java)
-            intent.putParcelerParcelableExtra(KEY_PROJECT, project)
+            intent.putExtra(KEY_PROJECT, project)
             intent.putExtra(KEY_URL, url)
             return intent
         }
@@ -44,7 +42,7 @@ class FullscreenImageActivity : BaseActivity() {
         setContentView(R.layout.activity_fullscreen_image)
         ButterKnife.bind(this)
 
-        project = intent.getParcelerParcelableExtra(KEY_PROJECT)!!
+        project = intent.getParcelableExtra(KEY_PROJECT)!!
 
         toolbar.setNavigationIcon(R.drawable.ic_back_24dp)
         toolbar.setNavigationOnClickListener {

@@ -1,14 +1,35 @@
 package com.commit451.gitlab.model.api
 
+import android.os.Parcelable
 import androidx.annotation.StringDef
 import com.commit451.gitlab.api.converter.DashDateAdapter
 import com.squareup.moshi.Json
-import org.parceler.Parcel
-import java.util.*
+import kotlinx.android.parcel.Parcelize
+import java.util.Date
 
-@Parcel(Parcel.Serialization.BEAN)
-open class Milestone {
-
+@Parcelize
+data class Milestone(
+    @field:Json(name = "id")
+    var id: Long = 0,
+    @field:Json(name = "iid")
+    var iid: Long = 0,
+    @field:Json(name = "project_id")
+    var projectId: Long = 0,
+    @field:Json(name = "title")
+    var title: String? = null,
+    @field:Json(name = "description")
+    var description: String? = null,
+    @field:Json(name = "state")
+    @get:State
+    var state: String? = null,
+    @field:Json(name = "created_at")
+    var createdAt: Date? = null,
+    @field:Json(name = "updated_at")
+    var updatedAt: Date? = null,
+    @field:DashDateAdapter.DueDate
+    @field:Json(name = "due_date")
+    var dueDate: Date? = null
+) : Parcelable {
     companion object {
         const val STATE_ACTIVE = "active"
         const val STATE_CLOSED = "closed"
@@ -24,25 +45,4 @@ open class Milestone {
     @StringDef(STATE_EVENT_ACTIVATE, STATE_EVENT_CLOSE)
     @Retention(AnnotationRetention.SOURCE)
     annotation class StateEvent
-
-    @field:Json(name = "id")
-    var id: Long = 0
-    @field:Json(name = "iid")
-    var iid: Long = 0
-    @field:Json(name = "project_id")
-    var projectId: Long = 0
-    @field:Json(name = "title")
-    var title: String? = null
-    @field:Json(name = "description")
-    var description: String? = null
-    @field:Json(name = "state")
-    @get:State
-    var state: String? = null
-    @field:Json(name = "created_at")
-    var createdAt: Date? = null
-    @field:Json(name = "updated_at")
-    var updatedAt: Date? = null
-    @field:DashDateAdapter.DueDate
-    @field:Json(name = "due_date")
-    var dueDate: Date? = null
 }

@@ -11,8 +11,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import butterknife.BindView
-import com.commit451.addendum.parceler.getParcelerParcelable
-import com.commit451.addendum.parceler.putParcelerParcelable
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.DividerItemDecoration
@@ -63,7 +61,7 @@ class ProjectsFragment : ButterKnifeFragment() {
         fun newInstance(group: Group): ProjectsFragment {
             val args = Bundle()
             args.putInt(EXTRA_MODE, MODE_GROUP)
-            args.putParcelerParcelable(EXTRA_GROUP, group)
+            args.putParcelable(EXTRA_GROUP, group)
             val fragment = ProjectsFragment()
             fragment.arguments = args
             return fragment
@@ -71,13 +69,13 @@ class ProjectsFragment : ButterKnifeFragment() {
     }
 
     @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    lateinit var swipeRefreshLayout: SwipeRefreshLayout
     @BindView(R.id.list)
-    lateinit var listProjects: androidx.recyclerview.widget.RecyclerView
+    lateinit var listProjects: RecyclerView
     @BindView(R.id.message_text)
     lateinit var textMessage: TextView
 
-    lateinit var layoutManagerProjects: androidx.recyclerview.widget.LinearLayoutManager
+    lateinit var layoutManagerProjects: LinearLayoutManager
     lateinit var adapterProjects: ProjectAdapter
 
     var mode: Int = 0
@@ -127,7 +125,7 @@ class ProjectsFragment : ButterKnifeFragment() {
                 }
             }
         })
-        layoutManagerProjects = androidx.recyclerview.widget.LinearLayoutManager(activity)
+        layoutManagerProjects = LinearLayoutManager(activity)
         listProjects.layoutManager = layoutManagerProjects
         listProjects.addItemDecoration(DividerItemDecoration(baseActivty))
         listProjects.adapter = adapterProjects
@@ -162,7 +160,7 @@ class ProjectsFragment : ButterKnifeFragment() {
             }
             MODE_GROUP -> {
                 showLoading()
-                val group = arguments?.getParcelerParcelable<Group>(EXTRA_GROUP)
+                val group = arguments?.getParcelable<Group>(EXTRA_GROUP)
                         ?: throw IllegalStateException("You must also pass a group if you want to show a groups projects")
                 actuallyLoadIt(getGitLab().getGroupProjects(group.id))
             }

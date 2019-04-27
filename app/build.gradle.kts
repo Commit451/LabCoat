@@ -1,4 +1,6 @@
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import org.jetbrains.kotlin.gradle.internal.AndroidExtensionsExtension
+import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
 
 plugins {
     id("com.android.application")
@@ -56,10 +58,11 @@ android {
     }
 }
 
+apply { from("experimental.gradle") }
+
 val retrofitVersion = "2.5.0"
 val okHttpVersion = "3.14.1"
 val butterknifeVersion = "10.0.0"
-val parcelerVersion = "1.1.12"
 val reptarVersion = "2.5.1"
 
 val adapterLayout = "1.2.0"
@@ -112,9 +115,6 @@ dependencies {
     implementation("com.uber.autodispose:autodispose-android-kotlin:$autodisposeVersion")
     implementation("com.uber.autodispose:autodispose-android-archcomponents-kotlin:$autodisposeVersion")
 
-    implementation("org.parceler:parceler-api:$parcelerVersion")
-    kapt("org.parceler:parceler:$parcelerVersion")
-
     implementation("com.github.Commit451.Reptar:reptar:$reptarVersion")
     implementation("com.github.Commit451.Reptar:reptar-retrofit:$reptarVersion")
     implementation("com.github.Commit451.Reptar:reptar-kotlin:$reptarVersion")
@@ -140,7 +140,6 @@ dependencies {
     implementation("com.github.Commit451.Addendum:addendum:$addendumVersion")
     implementation("com.github.Commit451.Addendum:addendum-recyclerview:$addendumVersion")
     implementation("com.github.Commit451.Addendum:addendum-design:$addendumVersion")
-    implementation("com.github.Commit451.Addendum:addendum-parceler:$addendumVersion")
 
     implementation("com.github.chrisbanes:PhotoView:2.3.0")
 

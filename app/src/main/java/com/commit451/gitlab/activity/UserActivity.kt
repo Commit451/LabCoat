@@ -5,19 +5,14 @@ import android.animation.ObjectAnimator
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
-import android.os.Build
 import android.os.Bundle
-import com.google.android.material.appbar.CollapsingToolbarLayout
-import androidx.palette.graphics.Palette
-import androidx.appcompat.widget.Toolbar
 import android.widget.ImageView
+import androidx.appcompat.widget.Toolbar
+import androidx.palette.graphics.Palette
 import butterknife.BindView
 import butterknife.ButterKnife
-import com.commit451.addendum.parceler.getParcelerParcelableExtra
-import com.commit451.addendum.parceler.putParcelerParcelableExtra
 import com.commit451.addendum.themeAttrColor
 import com.commit451.alakazam.navigationBarColorAnimator
-
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.extension.feedUrl
@@ -25,6 +20,7 @@ import com.commit451.gitlab.fragment.FeedFragment
 import com.commit451.gitlab.model.api.User
 import com.commit451.gitlab.transformation.PaletteTransformation
 import com.commit451.gitlab.util.ImageUtil
+import com.google.android.material.appbar.CollapsingToolbarLayout
 
 /**
  * User activity, which shows the user!
@@ -37,7 +33,7 @@ class UserActivity : BaseActivity() {
 
         fun newIntent(context: Context, user: User): Intent {
             val intent = Intent(context, UserActivity::class.java)
-            intent.putParcelerParcelableExtra(KEY_USER, user)
+            intent.putExtra(KEY_USER, user)
             return intent
         }
     }
@@ -55,7 +51,7 @@ class UserActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user)
         ButterKnife.bind(this)
-        user = intent.getParcelerParcelableExtra<User>(KEY_USER)!!
+        user = intent.getParcelableExtra(KEY_USER)!!
 
         // Default content and scrim colors
         collapsingToolbarLayout.setCollapsedTitleTextColor(Color.WHITE)

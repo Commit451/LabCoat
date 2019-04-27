@@ -3,16 +3,12 @@ package com.commit451.gitlab.activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.tabs.TabLayout
-import androidx.viewpager.widget.ViewPager
-import androidx.appcompat.widget.Toolbar
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.Toolbar
+import androidx.viewpager.widget.ViewPager
 import butterknife.BindView
 import butterknife.ButterKnife
-import com.commit451.addendum.parceler.getParcelerParcelableExtra
-import com.commit451.addendum.parceler.putParcelerParcelableExtra
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.MergeRequestSectionsPagerAdapter
@@ -21,6 +17,8 @@ import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.MergeRequest
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
+import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.tabs.TabLayout
 import retrofit2.HttpException
 import timber.log.Timber
 
@@ -36,8 +34,8 @@ class MergeRequestActivity : BaseActivity() {
 
         fun newIntent(context: Context, project: Project, mergeRequest: MergeRequest): Intent {
             val intent = Intent(context, MergeRequestActivity::class.java)
-            intent.putParcelerParcelableExtra(KEY_PROJECT, project)
-            intent.putParcelerParcelableExtra(KEY_MERGE_REQUEST, mergeRequest)
+            intent.putExtra(KEY_PROJECT, project)
+            intent.putExtra(KEY_MERGE_REQUEST, mergeRequest)
             return intent
         }
     }
@@ -49,7 +47,7 @@ class MergeRequestActivity : BaseActivity() {
     @BindView(R.id.tabs)
     lateinit var tabLayout: TabLayout
     @BindView(R.id.pager)
-    lateinit var viewPager: androidx.viewpager.widget.ViewPager
+    lateinit var viewPager: ViewPager
     @BindView(R.id.progress)
     lateinit var progress: View
 
@@ -61,8 +59,8 @@ class MergeRequestActivity : BaseActivity() {
         setContentView(R.layout.activity_merge_request)
         ButterKnife.bind(this)
 
-        project = intent.getParcelerParcelableExtra<Project>(KEY_PROJECT)!!
-        mergeRequest = intent.getParcelerParcelableExtra<MergeRequest>(KEY_MERGE_REQUEST)!!
+        project = intent.getParcelableExtra(KEY_PROJECT)!!
+        mergeRequest = intent.getParcelableExtra(KEY_MERGE_REQUEST)!!
 
         toolbar.title = getString(R.string.merge_request_number) + mergeRequest.iid
         toolbar.setNavigationIcon(R.drawable.ic_back_24dp)

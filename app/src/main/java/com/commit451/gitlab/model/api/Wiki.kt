@@ -1,17 +1,17 @@
 package com.commit451.gitlab.model.api
 
+import android.os.Parcelable
 import com.squareup.moshi.Json
-import org.parceler.Parcel
+import kotlinx.android.parcel.Parcelize
 
-@Parcel(Parcel.Serialization.BEAN)
-open class Wiki {
-
+@Parcelize
+data class Wiki(
     @field:Json(name = "content")
-    var content: String? = null
+    var content: String? = null,
     @field:Json(name = "format")
-    var format: String? = null
+    var format: String? = null,
     @field:Json(name = "slug")
-    var slug: String? = null
+    var slug: String? = null,
     @field:Json(name = "title")
     var title: String? = null
-}
+) : Parcelable

@@ -9,8 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
-import com.commit451.addendum.parceler.getParcelerParcelableExtra
-import com.commit451.addendum.parceler.putParcelerParcelableExtra
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.PickBranchOrTagPagerAdapter
 import com.commit451.gitlab.model.Ref
@@ -31,7 +29,7 @@ class PickBranchOrTagActivity : AppCompatActivity() {
         fun newIntent(context: Context, projectId: Long, currentRef: Ref?): Intent {
             val intent = Intent(context, PickBranchOrTagActivity::class.java)
             intent.putExtra(EXTRA_PROJECT_ID, projectId)
-            intent.putParcelerParcelableExtra(EXTRA_CURRENT_REF, currentRef)
+            intent.putExtra(EXTRA_CURRENT_REF, currentRef)
             return intent
         }
     }
@@ -39,7 +37,7 @@ class PickBranchOrTagActivity : AppCompatActivity() {
     @BindView(R.id.tabs)
     lateinit var tabLayout: TabLayout
     @BindView(R.id.pager)
-    lateinit var viewPager: androidx.viewpager.widget.ViewPager
+    lateinit var viewPager: ViewPager
 
     @OnClick(R.id.root)
     fun onRootClicked() {
@@ -51,7 +49,7 @@ class PickBranchOrTagActivity : AppCompatActivity() {
         setContentView(R.layout.activity_pick_branch_or_tag)
         ButterKnife.bind(this)
         val projectId = intent.getLongExtra(EXTRA_PROJECT_ID, -1)
-        val currentRef = intent.getParcelerParcelableExtra<Ref>(EXTRA_CURRENT_REF)
+        val currentRef = intent.getParcelableExtra<Ref>(EXTRA_CURRENT_REF)
         viewPager.adapter = PickBranchOrTagPagerAdapter(this, supportFragmentManager, projectId, currentRef)
         tabLayout.setupWithViewPager(viewPager)
         if (currentRef != null) {

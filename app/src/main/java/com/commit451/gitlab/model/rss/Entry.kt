@@ -1,11 +1,9 @@
 package com.commit451.gitlab.model.rss
 
-import org.parceler.Parcel
 import org.simpleframework.xml.Element
 import org.simpleframework.xml.Root
 import java.util.*
 
-@Parcel(Parcel.Serialization.BEAN)
 @Root(strict = false)
 class Entry {
     @field:Element(name = "link", required = true)

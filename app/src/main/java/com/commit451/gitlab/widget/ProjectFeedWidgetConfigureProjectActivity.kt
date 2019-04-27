@@ -8,8 +8,6 @@ import com.google.android.material.tabs.TabLayout
 import androidx.viewpager.widget.ViewPager
 import butterknife.BindView
 import butterknife.ButterKnife
-import com.commit451.addendum.parceler.getParcelerParcelableExtra
-import com.commit451.addendum.parceler.putParcelerParcelableExtra
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.BaseActivity
 import com.commit451.gitlab.adapter.ProjectsPagerAdapter
@@ -32,7 +30,7 @@ class ProjectFeedWidgetConfigureProjectActivity : BaseActivity(), ProjectsFragme
 
         fun newIntent(context: Context, account: Account): Intent {
             val intent = Intent(context, ProjectFeedWidgetConfigureProjectActivity::class.java)
-            intent.putParcelerParcelableExtra(EXTRA_ACCOUNT, account)
+            intent.putExtra(EXTRA_ACCOUNT, account)
             return intent
         }
     }
@@ -40,7 +38,7 @@ class ProjectFeedWidgetConfigureProjectActivity : BaseActivity(), ProjectsFragme
     @BindView(R.id.tabs)
     lateinit var tabLayout: TabLayout
     @BindView(R.id.pager)
-    lateinit var viewPager: androidx.viewpager.widget.ViewPager
+    lateinit var viewPager: ViewPager
 
     private lateinit var gitLabInstance: GitLabService
 
@@ -49,7 +47,7 @@ class ProjectFeedWidgetConfigureProjectActivity : BaseActivity(), ProjectsFragme
         setContentView(R.layout.activity_project_feed_widget_configure)
         ButterKnife.bind(this)
 
-        val account = intent.getParcelerParcelableExtra<Account>(EXTRA_ACCOUNT)!!
+        val account = intent.getParcelableExtra<Account>(EXTRA_ACCOUNT)!!
         gitLabInstance = GitLabFactory.create(account, OkHttpClientFactory.create(account, false).build())
 
         viewPager.adapter = ProjectsPagerAdapter(this, supportFragmentManager)
@@ -58,7 +56,7 @@ class ProjectFeedWidgetConfigureProjectActivity : BaseActivity(), ProjectsFragme
 
     override fun onProjectClicked(project: Project) {
         val data = Intent()
-        data.putParcelerParcelableExtra(EXTRA_PROJECT, project)
+        data.putExtra(EXTRA_PROJECT, project)
         setResult(Activity.RESULT_OK, data)
         finish()
     }

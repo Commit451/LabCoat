@@ -16,8 +16,6 @@ import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
-import com.commit451.addendum.parceler.getParcelerParcelableExtra
-import com.commit451.addendum.parceler.putParcelerParcelableExtra
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.DividerItemDecoration
@@ -44,8 +42,8 @@ class MilestoneActivity : BaseActivity() {
 
         fun newIntent(context: Context, project: Project, milestone: Milestone): Intent {
             val intent = Intent(context, MilestoneActivity::class.java)
-            intent.putParcelerParcelableExtra(EXTRA_PROJECT, project)
-            intent.putParcelerParcelableExtra(EXTRA_MILESTONE, milestone)
+            intent.putExtra(EXTRA_PROJECT, project)
+            intent.putExtra(EXTRA_MILESTONE, milestone)
             return intent
         }
     }
@@ -55,16 +53,16 @@ class MilestoneActivity : BaseActivity() {
     @BindView(R.id.toolbar)
     lateinit var toolbar: Toolbar
     @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    lateinit var swipeRefreshLayout: SwipeRefreshLayout
     @BindView(R.id.list)
-    lateinit var listIssues: androidx.recyclerview.widget.RecyclerView
+    lateinit var listIssues: RecyclerView
     @BindView(R.id.message_text)
     lateinit var textMessage: TextView
     @BindView(R.id.progress)
     lateinit var progress: View
 
     lateinit var adapterMilestoneIssues: MilestoneIssueAdapter
-    lateinit var layoutManagerIssues: androidx.recyclerview.widget.LinearLayoutManager
+    lateinit var layoutManagerIssues: LinearLayoutManager
     lateinit var menuItemOpenClose: MenuItem
 
     lateinit var project: Project
@@ -100,8 +98,8 @@ class MilestoneActivity : BaseActivity() {
         ButterKnife.bind(this)
         App.bus().register(this)
 
-        project = intent.getParcelerParcelableExtra<Project>(EXTRA_PROJECT)!!
-        milestone = intent.getParcelerParcelableExtra<Milestone>(EXTRA_MILESTONE)!!
+        project = intent.getParcelableExtra(EXTRA_PROJECT)!!
+        milestone = intent.getParcelableExtra(EXTRA_MILESTONE)!!
 
         toolbar.setNavigationIcon(R.drawable.ic_back_24dp)
         toolbar.setNavigationOnClickListener { onBackPressed() }
@@ -124,7 +122,7 @@ class MilestoneActivity : BaseActivity() {
         })
         bind(milestone)
         listIssues.adapter = adapterMilestoneIssues
-        layoutManagerIssues = androidx.recyclerview.widget.LinearLayoutManager(this)
+        layoutManagerIssues = LinearLayoutManager(this)
         listIssues.layoutManager = layoutManagerIssues
         listIssues.addItemDecoration(DividerItemDecoration(this))
         listIssues.addOnScrollListener(onScrollListener)

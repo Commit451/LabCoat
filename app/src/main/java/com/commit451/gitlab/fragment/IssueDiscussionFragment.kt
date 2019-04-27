@@ -12,9 +12,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import butterknife.BindView
-import com.commit451.addendum.parceler.getParcelerParcelable
-import com.commit451.addendum.parceler.getParcelerParcelableExtra
-import com.commit451.addendum.parceler.putParcelerParcelable
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.AttachActivity
@@ -49,8 +46,8 @@ class IssueDiscussionFragment : ButterKnifeFragment() {
         fun newInstance(project: Project, issue: Issue): IssueDiscussionFragment {
             val fragment = IssueDiscussionFragment()
             val args = Bundle()
-            args.putParcelerParcelable(KEY_PROJECT, project)
-            args.putParcelerParcelable(KEY_ISSUE, issue)
+            args.putParcelable(KEY_PROJECT, project)
+            args.putParcelable(KEY_ISSUE, issue)
             fragment.arguments = args
             return fragment
         }
@@ -59,16 +56,16 @@ class IssueDiscussionFragment : ButterKnifeFragment() {
     @BindView(R.id.root)
     lateinit var root: ViewGroup
     @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    lateinit var swipeRefreshLayout: SwipeRefreshLayout
     @BindView(R.id.list)
-    lateinit var listNotes: androidx.recyclerview.widget.RecyclerView
+    lateinit var listNotes: RecyclerView
     @BindView(R.id.send_message_view)
     lateinit var sendMessageView: SendMessageView
     @BindView(R.id.progress)
     lateinit var progress: View
 
     lateinit var adapter: NotesAdapter
-    lateinit var layoutManagerNotes: androidx.recyclerview.widget.LinearLayoutManager
+    lateinit var layoutManagerNotes: LinearLayoutManager
     lateinit var teleprinter: Teleprinter
 
     lateinit var project: Project
@@ -90,8 +87,8 @@ class IssueDiscussionFragment : ButterKnifeFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        project = arguments?.getParcelerParcelable<Project>(KEY_PROJECT)!!
-        issue = arguments?.getParcelerParcelable<Issue>(KEY_ISSUE)!!
+        project = arguments?.getParcelable(KEY_PROJECT)!!
+        issue = arguments?.getParcelable(KEY_ISSUE)!!
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -103,7 +100,7 @@ class IssueDiscussionFragment : ButterKnifeFragment() {
         teleprinter = Teleprinter(baseActivty)
 
         adapter = NotesAdapter(project)
-        layoutManagerNotes = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, true)
+        layoutManagerNotes = LinearLayoutManager(context, RecyclerView.VERTICAL, true)
         listNotes.layoutManager = layoutManagerNotes
         listNotes.adapter = adapter
         listNotes.addOnScrollListener(onScrollListener)
@@ -131,7 +128,7 @@ class IssueDiscussionFragment : ButterKnifeFragment() {
         when (requestCode) {
             REQUEST_ATTACH -> {
                 if (resultCode == RESULT_OK) {
-                    val response = data!!.getParcelerParcelableExtra<FileUploadResponse>(AttachActivity.KEY_FILE_UPLOAD_RESPONSE)!!
+                    val response = data?.getParcelableExtra<FileUploadResponse>(AttachActivity.KEY_FILE_UPLOAD_RESPONSE)!!
                     progress.visibility = View.GONE
                     sendMessageView.appendText(response.markdown)
                 } else {

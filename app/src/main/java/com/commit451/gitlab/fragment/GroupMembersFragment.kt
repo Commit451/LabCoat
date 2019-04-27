@@ -10,8 +10,6 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import butterknife.BindView
 import butterknife.OnClick
-import com.commit451.addendum.parceler.getParcelerParcelable
-import com.commit451.addendum.parceler.putParcelerParcelable
 import com.commit451.aloy.DynamicGridLayoutManager
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
@@ -35,11 +33,11 @@ class GroupMembersFragment : ButterKnifeFragment() {
 
     companion object {
 
-        private val KEY_GROUP = "group"
+        private const val KEY_GROUP = "group"
 
         fun newInstance(group: Group): GroupMembersFragment {
             val args = Bundle()
-            args.putParcelerParcelable(KEY_GROUP, group)
+            args.putParcelable(KEY_GROUP, group)
 
             val fragment = GroupMembersFragment()
             fragment.arguments = args
@@ -108,7 +106,7 @@ class GroupMembersFragment : ButterKnifeFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        group = arguments?.getParcelerParcelable<Group>(KEY_GROUP)!!
+        group = arguments?.getParcelable(KEY_GROUP)!!
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

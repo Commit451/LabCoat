@@ -3,17 +3,14 @@ package com.commit451.gitlab.activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.appcompat.widget.Toolbar
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.widget.Toolbar
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import butterknife.BindView
 import butterknife.ButterKnife
-import com.commit451.addendum.parceler.getParcelerParcelableExtra
-import com.commit451.addendum.parceler.putParcelerParcelableExtra
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.DiffAdapter
@@ -36,8 +33,8 @@ class DiffActivity : BaseActivity() {
 
         fun newIntent(context: Context, project: Project, commit: RepositoryCommit): Intent {
             val intent = Intent(context, DiffActivity::class.java)
-            intent.putParcelerParcelableExtra(EXTRA_PROJECT, project)
-            intent.putParcelerParcelableExtra(EXTRA_COMMIT, commit)
+            intent.putExtra(EXTRA_PROJECT, project)
+            intent.putExtra(EXTRA_COMMIT, commit)
             return intent
         }
     }
@@ -47,9 +44,9 @@ class DiffActivity : BaseActivity() {
     @BindView(R.id.toolbar)
     lateinit var toolbar: Toolbar
     @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    lateinit var swipeRefreshLayout: SwipeRefreshLayout
     @BindView(R.id.list)
-    lateinit var listDiff: androidx.recyclerview.widget.RecyclerView
+    lateinit var listDiff: RecyclerView
     @BindView(R.id.message_text)
     lateinit var textMessage: TextView
 
@@ -63,8 +60,8 @@ class DiffActivity : BaseActivity() {
         setContentView(R.layout.activity_diff)
         ButterKnife.bind(this)
 
-        project = intent.getParcelerParcelableExtra<Project>(EXTRA_PROJECT)!!
-        commit = intent.getParcelerParcelableExtra<RepositoryCommit>(EXTRA_COMMIT)!!
+        project = intent.getParcelableExtra(EXTRA_PROJECT)!!
+        commit = intent.getParcelableExtra(EXTRA_COMMIT)!!
 
         toolbar.setNavigationIcon(R.drawable.ic_back_24dp)
         toolbar.setNavigationOnClickListener { onBackPressed() }

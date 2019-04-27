@@ -7,20 +7,14 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.tabs.TabLayout
-import androidx.viewpager.widget.ViewPager
-import androidx.appcompat.widget.Toolbar
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.widget.Toolbar
+import androidx.viewpager.widget.ViewPager
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.commit451.addendum.extraOrNull
-import com.commit451.addendum.parceler.getParcelerParcelable
-import com.commit451.addendum.parceler.getParcelerParcelableExtra
-import com.commit451.addendum.parceler.putParcelerParcelable
-import com.commit451.addendum.parceler.putParcelerParcelableExtra
 import com.commit451.alakazam.fadeOut
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
@@ -34,6 +28,8 @@ import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.navigation.DeepLinker
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.util.IntentUtil
+import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.tabs.TabLayout
 import io.reactivex.Single
 import timber.log.Timber
 
@@ -54,7 +50,7 @@ class ProjectActivity : BaseActivity() {
 
         fun newIntent(context: Context, project: Project): Intent {
             val intent = Intent(context, ProjectActivity::class.java)
-            intent.putParcelerParcelableExtra(EXTRA_PROJECT, project)
+            intent.putExtra(EXTRA_PROJECT, project)
             return intent
         }
 
@@ -82,7 +78,7 @@ class ProjectActivity : BaseActivity() {
     @BindView(R.id.progress)
     lateinit var progress: View
     @BindView(R.id.pager)
-    lateinit var viewPager: androidx.viewpager.widget.ViewPager
+    lateinit var viewPager: ViewPager
 
     var project: Project? = null
     var ref: Ref? = null
@@ -134,11 +130,11 @@ class ProjectActivity : BaseActivity() {
         Prefs.startingView = Prefs.STARTING_VIEW_PROJECTS
         setContentView(R.layout.activity_project)
         ButterKnife.bind(this)
-        var project: Project? = intent.getParcelerParcelableExtra(EXTRA_PROJECT)
+        var project: Project? = intent.getParcelableExtra(EXTRA_PROJECT)
 
         if (savedInstanceState != null) {
-            project = savedInstanceState.getParcelerParcelable<Project>(STATE_PROJECT)
-            ref = savedInstanceState.getParcelerParcelable<Ref>(STATE_REF)
+            project = savedInstanceState.getParcelable(STATE_PROJECT)
+            ref = savedInstanceState.getParcelable(STATE_REF)
         }
         toolbar.setNavigationIcon(R.drawable.ic_back_24dp)
         toolbar.setNavigationOnClickListener { finish() }
@@ -165,7 +161,7 @@ class ProjectActivity : BaseActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             REQUEST_BRANCH_OR_TAG -> if (resultCode == Activity.RESULT_OK) {
-                ref = data?.getParcelerParcelableExtra<Ref>(PickBranchOrTagActivity.EXTRA_REF)
+                ref = data?.getParcelableExtra(PickBranchOrTagActivity.EXTRA_REF)
                 broadcastLoad()
             }
         }
@@ -173,8 +169,8 @@ class ProjectActivity : BaseActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putParcelerParcelable(STATE_REF, ref)
-        outState.putParcelerParcelable(STATE_PROJECT, project)
+        outState.putParcelable(STATE_REF, ref)
+        outState.putParcelable(STATE_PROJECT, project)
     }
 
     override fun onBackPressed() {

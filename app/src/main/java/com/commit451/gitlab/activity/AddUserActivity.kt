@@ -4,17 +4,17 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.appcompat.widget.Toolbar
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import butterknife.*
-import com.commit451.addendum.parceler.getParcelerParcelableExtra
-import com.commit451.addendum.parceler.putParcelerParcelableExtra
+import androidx.appcompat.widget.Toolbar
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import butterknife.BindView
+import butterknife.ButterKnife
+import butterknife.OnClick
+import butterknife.OnEditorAction
+import butterknife.OnTextChanged
 import com.commit451.alakazam.fadeOut
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
@@ -28,6 +28,7 @@ import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
 import com.commit451.gitlab.viewHolder.UserViewHolder
 import com.commit451.teleprinter.Teleprinter
+import com.google.android.material.snackbar.Snackbar
 import io.reactivex.Single
 import retrofit2.HttpException
 import retrofit2.Response
@@ -51,7 +52,7 @@ class AddUserActivity : MorphActivity() {
 
         fun newIntent(context: Context, group: Group): Intent {
             val intent = Intent(context, AddUserActivity::class.java)
-            intent.putParcelerParcelableExtra(KEY_GROUP, group)
+            intent.putExtra(KEY_GROUP, group)
             return intent
         }
     }
@@ -63,9 +64,9 @@ class AddUserActivity : MorphActivity() {
     @BindView(R.id.search)
     lateinit var textSearch: EditText
     @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    lateinit var swipeRefreshLayout: SwipeRefreshLayout
     @BindView(R.id.list)
-    lateinit var list: androidx.recyclerview.widget.RecyclerView
+    lateinit var list: RecyclerView
     @BindView(R.id.clear)
     lateinit var buttonClear: View
 
@@ -115,7 +116,7 @@ class AddUserActivity : MorphActivity() {
         ButterKnife.bind(this)
         teleprinter = Teleprinter(this)
         projectId = intent.getLongExtra(KEY_PROJECT_ID, -1)
-        group = intent.getParcelerParcelableExtra<Group>(KEY_GROUP)
+        group = intent.getParcelableExtra(KEY_GROUP)
         dialogAccess = AccessDialog(this, object : AccessDialog.Listener {
             override fun onAccessApplied(accessLevel: Int) {
                 dialogAccess.showLoading()

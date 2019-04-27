@@ -5,20 +5,13 @@ import android.animation.ObjectAnimator
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
-import android.os.Build
 import android.os.Bundle
-import com.google.android.material.appbar.CollapsingToolbarLayout
-import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.tabs.TabLayout
-import androidx.viewpager.widget.ViewPager
-import androidx.palette.graphics.Palette
-import androidx.appcompat.widget.Toolbar
 import android.view.View
 import android.widget.ImageView
+import androidx.appcompat.widget.Toolbar
+import androidx.viewpager.widget.ViewPager
 import butterknife.BindView
 import butterknife.ButterKnife
-import com.commit451.addendum.parceler.getParcelerParcelableExtra
-import com.commit451.addendum.parceler.putParcelerParcelableExtra
 import com.commit451.addendum.themeAttrColor
 import com.commit451.alakazam.navigationBarColorAnimator
 import com.commit451.easel.Easel
@@ -29,6 +22,9 @@ import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Group
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.transformation.PaletteTransformation
+import com.google.android.material.appbar.CollapsingToolbarLayout
+import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.tabs.TabLayout
 import timber.log.Timber
 
 /**
@@ -43,7 +39,7 @@ class GroupActivity : BaseActivity() {
 
         fun newIntent(context: Context, group: Group): Intent {
             val intent = Intent(context, GroupActivity::class.java)
-            intent.putParcelerParcelableExtra(KEY_GROUP, group)
+            intent.putExtra(KEY_GROUP, group)
             return intent
         }
 
@@ -61,7 +57,7 @@ class GroupActivity : BaseActivity() {
     @BindView(R.id.collapsing_toolbar)
     lateinit var collapsingToolbarLayout: CollapsingToolbarLayout
     @BindView(R.id.viewpager)
-    lateinit var viewPager: androidx.viewpager.widget.ViewPager
+    lateinit var viewPager: ViewPager
     @BindView(R.id.tabs)
     lateinit var tabLayout: TabLayout
     @BindView(R.id.backdrop)
@@ -80,7 +76,7 @@ class GroupActivity : BaseActivity() {
         toolbar.setNavigationOnClickListener { onBackPressed() }
 
         if (intent.hasExtra(KEY_GROUP)) {
-            val group = intent.getParcelerParcelableExtra<Group>(KEY_GROUP)!!
+            val group = intent.getParcelableExtra<Group>(KEY_GROUP)!!
             bind(group)
         } else {
             progress.visibility = View.VISIBLE

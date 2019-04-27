@@ -6,18 +6,13 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.tabs.TabLayout
-import androidx.core.content.ContextCompat
-import androidx.viewpager.widget.ViewPager
-import androidx.appcompat.widget.Toolbar
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import butterknife.BindView
 import butterknife.ButterKnife
-import com.commit451.addendum.parceler.getParcelerParcelableExtra
-import com.commit451.addendum.parceler.putParcelerParcelableExtra
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.BuildPagerAdapter
@@ -28,6 +23,8 @@ import com.commit451.gitlab.model.api.Build
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.util.DownloadUtil
+import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.tabs.TabLayout
 import timber.log.Timber
 
 /**
@@ -44,8 +41,8 @@ class BuildActivity : BaseActivity() {
 
         fun newIntent(context: Context, project: Project, build: Build): Intent {
             val intent = Intent(context, BuildActivity::class.java)
-            intent.putParcelerParcelableExtra(KEY_PROJECT, project)
-            intent.putParcelerParcelableExtra(KEY_BUILD, build)
+            intent.putExtra(KEY_PROJECT, project)
+            intent.putExtra(KEY_BUILD, build)
             return intent
         }
     }
@@ -147,8 +144,8 @@ class BuildActivity : BaseActivity() {
         setContentView(R.layout.activity_build)
         ButterKnife.bind(this)
 
-        project = intent.getParcelerParcelableExtra<Project>(KEY_PROJECT)!!
-        build = intent.getParcelerParcelableExtra<Build>(KEY_BUILD)!!
+        project = intent.getParcelableExtra(KEY_PROJECT)!!
+        build = intent.getParcelableExtra(KEY_BUILD)!!
 
         toolbar.title = String.format(getString(R.string.build_number), build.id)
         toolbar.setNavigationIcon(R.drawable.ic_back_24dp)

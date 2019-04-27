@@ -11,7 +11,6 @@ import android.view.View
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
-import com.commit451.addendum.parceler.getParcelerParcelableExtra
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.BaseActivity
 import com.commit451.gitlab.data.Prefs
@@ -34,7 +33,7 @@ class ProjectFeedWidgetConfigureActivity : BaseActivity() {
     @BindView(R.id.message_text)
     lateinit var textMessage: TextView
     @BindView(R.id.list)
-    lateinit var list: androidx.recyclerview.widget.RecyclerView
+    lateinit var list: RecyclerView
 
     lateinit var adapterAccounts: AccountsAdapter
 
@@ -79,7 +78,7 @@ class ProjectFeedWidgetConfigureActivity : BaseActivity() {
         when (requestCode) {
             REQUEST_PROJECT -> {
                 if (resultCode == Activity.RESULT_OK) {
-                    val project = data?.getParcelerParcelableExtra<Project>(ProjectFeedWidgetConfigureProjectActivity.EXTRA_PROJECT)!!
+                    val project = data?.getParcelableExtra<Project>(ProjectFeedWidgetConfigureProjectActivity.EXTRA_PROJECT)!!
                     saveWidgetConfig(widgetAccount!!, project)
                 }
             }

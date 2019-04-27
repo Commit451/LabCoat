@@ -8,8 +8,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import butterknife.BindView
 import com.commit451.adapterflowlayout.AdapterFlowLayout
-import com.commit451.addendum.parceler.getParcelerParcelable
-import com.commit451.addendum.parceler.putParcelerParcelable
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.IssueLabelsAdapter
@@ -31,14 +29,14 @@ class IssueDetailsFragment : ButterKnifeFragment() {
 
     companion object {
 
-        private val KEY_PROJECT = "project"
-        private val KEY_ISSUE = "issue"
+        private const val KEY_PROJECT = "project"
+        private const val KEY_ISSUE = "issue"
 
         fun newInstance(project: Project, issue: Issue): IssueDetailsFragment {
             val fragment = IssueDetailsFragment()
             val args = Bundle()
-            args.putParcelerParcelable(KEY_PROJECT, project)
-            args.putParcelerParcelable(KEY_ISSUE, issue)
+            args.putParcelable(KEY_PROJECT, project)
+            args.putParcelable(KEY_ISSUE, issue)
             fragment.arguments = args
             return fragment
         }
@@ -66,8 +64,8 @@ class IssueDetailsFragment : ButterKnifeFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        project = arguments?.getParcelerParcelable<Project>(KEY_PROJECT)!!
-        issue = arguments?.getParcelerParcelable<Issue>(KEY_ISSUE)!!
+        project = arguments?.getParcelable(KEY_PROJECT)!!
+        issue = arguments?.getParcelable(KEY_ISSUE)!!
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

@@ -11,9 +11,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import butterknife.BindView
-import com.commit451.addendum.parceler.getParcelerParcelable
-import com.commit451.addendum.parceler.putParcelerParcelable
-import com.commit451.addendum.parceler.putParcelerParcelableExtra
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.PickBranchOrTagActivity
@@ -40,14 +37,14 @@ class PickBranchFragment : ButterKnifeFragment() {
             val fragment = PickBranchFragment()
             val args = Bundle()
             args.putLong(EXTRA_PROJECT_ID, projectId)
-            args.putParcelerParcelable(EXTRA_REF, ref)
+            args.putParcelable(EXTRA_REF, ref)
             fragment.arguments = args
             return fragment
         }
     }
 
     @BindView(R.id.list)
-    lateinit var listProjects: androidx.recyclerview.widget.RecyclerView
+    lateinit var listProjects: RecyclerView
     @BindView(R.id.message_text)
     lateinit var textMessage: TextView
     @BindView(R.id.progress)
@@ -72,17 +69,17 @@ class PickBranchFragment : ButterKnifeFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val existingRef = arguments?.getParcelerParcelable<Ref>(EXTRA_REF)!!
+        val existingRef = arguments?.getParcelable<Ref>(EXTRA_REF)!!
         adapterBranches = BranchAdapter(existingRef, object : BranchAdapter.Listener {
             override fun onBranchClicked(entry: Branch) {
                 val data = Intent()
                 val ref = Ref(Ref.TYPE_BRANCH, entry.name)
-                data.putParcelerParcelableExtra(PickBranchOrTagActivity.EXTRA_REF, ref)
+                data.putExtra(PickBranchOrTagActivity.EXTRA_REF, ref)
                 activity?.setResult(Activity.RESULT_OK, data)
                 activity?.finish()
             }
         })
-        val layoutManager = androidx.recyclerview.widget.LinearLayoutManager(activity)
+        val layoutManager = LinearLayoutManager(activity)
         listProjects.layoutManager = layoutManager
         listProjects.adapter = adapterBranches
         listProjects.addOnScrollListener(OnScrollLoadMoreListener(layoutManager, {

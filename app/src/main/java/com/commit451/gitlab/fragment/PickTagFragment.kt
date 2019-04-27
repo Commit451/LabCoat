@@ -10,9 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import butterknife.BindView
-import com.commit451.addendum.parceler.getParcelerParcelable
-import com.commit451.addendum.parceler.putParcelerParcelable
-import com.commit451.addendum.parceler.putParcelerParcelableExtra
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.PickBranchOrTagActivity
@@ -37,14 +34,14 @@ class PickTagFragment : ButterKnifeFragment() {
             val fragment = PickTagFragment()
             val args = Bundle()
             args.putLong(EXTRA_PROJECT_ID, projectId)
-            args.putParcelerParcelable(EXTRA_CURRENT_REF, ref)
+            args.putParcelable(EXTRA_CURRENT_REF, ref)
             fragment.arguments = args
             return fragment
         }
     }
 
     @BindView(R.id.list)
-    lateinit var listProjects: androidx.recyclerview.widget.RecyclerView
+    lateinit var listProjects: RecyclerView
     @BindView(R.id.message_text)
     lateinit var textMessage: TextView
     @BindView(R.id.progress)
@@ -66,17 +63,17 @@ class PickTagFragment : ButterKnifeFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val ref = arguments?.getParcelerParcelable<Ref>(EXTRA_CURRENT_REF)!!
+        val ref = arguments?.getParcelable<Ref>(EXTRA_CURRENT_REF)!!
         adapterTags = TagAdapter(ref, object : TagAdapter.Listener {
             override fun onTagClicked(entry: Tag) {
                 val data = Intent()
                 val newRef = Ref(Ref.TYPE_TAG, entry.name)
-                data.putParcelerParcelableExtra(PickBranchOrTagActivity.EXTRA_REF, newRef)
+                data.putExtra(PickBranchOrTagActivity.EXTRA_REF, newRef)
                 activity?.setResult(Activity.RESULT_OK, data)
                 activity?.finish()
             }
         })
-        listProjects.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(activity)
+        listProjects.layoutManager = LinearLayoutManager(activity)
         listProjects.adapter = adapterTags
 
         loadData()

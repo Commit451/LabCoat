@@ -3,19 +3,15 @@ package com.commit451.gitlab.activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.tabs.TabLayout
-import androidx.viewpager.widget.ViewPager
-import androidx.appcompat.widget.Toolbar
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.widget.Toolbar
+import androidx.viewpager.widget.ViewPager
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
-import com.commit451.addendum.parceler.getParcelerParcelableExtra
-import com.commit451.addendum.parceler.putParcelerParcelableExtra
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.IssuePagerAdapter
@@ -29,6 +25,8 @@ import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.util.IntentUtil
 import com.commit451.teleprinter.Teleprinter
+import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.tabs.TabLayout
 import io.reactivex.Single
 import org.greenrobot.eventbus.Subscribe
 import timber.log.Timber
@@ -45,8 +43,8 @@ class IssueActivity : BaseActivity() {
 
         fun newIntent(context: Context, project: Project, issue: Issue): Intent {
             val intent = Intent(context, IssueActivity::class.java)
-            intent.putParcelerParcelableExtra(EXTRA_PROJECT, project)
-            intent.putParcelerParcelableExtra(EXTRA_SELECTED_ISSUE, issue)
+            intent.putExtra(EXTRA_PROJECT, project)
+            intent.putExtra(EXTRA_SELECTED_ISSUE, issue)
             return intent
         }
     }
@@ -58,7 +56,7 @@ class IssueActivity : BaseActivity() {
     @BindView(R.id.tabs)
     lateinit var tabLayout: TabLayout
     @BindView(R.id.pager)
-    lateinit var viewPager: androidx.viewpager.widget.ViewPager
+    lateinit var viewPager: ViewPager
     @BindView(R.id.progress)
     lateinit var progress: View
 
@@ -111,8 +109,8 @@ class IssueActivity : BaseActivity() {
         teleprinter = Teleprinter(this)
         App.bus().register(this)
 
-        project = intent.getParcelerParcelableExtra<Project>(EXTRA_PROJECT)!!
-        issue = intent.getParcelerParcelableExtra<Issue>(EXTRA_SELECTED_ISSUE)!!
+        project = intent.getParcelableExtra(EXTRA_PROJECT)!!
+        issue = intent.getParcelableExtra(EXTRA_SELECTED_ISSUE)!!
 
         toolbar.setNavigationIcon(R.drawable.ic_back_24dp)
         toolbar.setNavigationOnClickListener { onBackPressed() }

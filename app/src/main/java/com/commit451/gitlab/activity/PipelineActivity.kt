@@ -3,16 +3,12 @@ package com.commit451.gitlab.activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.tabs.TabLayout
-import androidx.viewpager.widget.ViewPager
-import androidx.appcompat.widget.Toolbar
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.Toolbar
+import androidx.viewpager.widget.ViewPager
 import butterknife.BindView
 import butterknife.ButterKnife
-import com.commit451.addendum.parceler.getParcelerParcelableExtra
-import com.commit451.addendum.parceler.putParcelerParcelableExtra
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.PipelinePagerAdapter
@@ -21,6 +17,8 @@ import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Pipeline
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.rx.CustomSingleObserver
+import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.tabs.TabLayout
 import timber.log.Timber
 
 /**
@@ -35,8 +33,8 @@ class PipelineActivity : BaseActivity() {
 
         fun newIntent(context: Context, project: Project, pipeline: Pipeline): Intent {
             val intent = Intent(context, PipelineActivity::class.java)
-            intent.putParcelerParcelableExtra(KEY_PROJECT, project)
-            intent.putParcelerParcelableExtra(KEY_PIPELINE, pipeline)
+            intent.putExtra(KEY_PROJECT, project)
+            intent.putExtra(KEY_PIPELINE, pipeline)
             return intent
         }
     }
@@ -48,7 +46,7 @@ class PipelineActivity : BaseActivity() {
     @BindView(R.id.tabs)
     lateinit var tabLayout: TabLayout
     @BindView(R.id.pager)
-    lateinit var viewPager: androidx.viewpager.widget.ViewPager
+    lateinit var viewPager: ViewPager
     @BindView(R.id.progress)
     lateinit var progress: View
 
@@ -110,8 +108,8 @@ class PipelineActivity : BaseActivity() {
         setContentView(R.layout.activity_pipeline)
         ButterKnife.bind(this)
 
-        project = intent.getParcelerParcelableExtra<Project>(KEY_PROJECT)!!
-        pipeline = intent.getParcelerParcelableExtra<Pipeline>(KEY_PIPELINE)!!
+        project = intent.getParcelableExtra(KEY_PROJECT)!!
+        pipeline = intent.getParcelableExtra(KEY_PIPELINE)!!
 
         toolbar.title = String.format(getString(R.string.pipeline_number), pipeline.id)
         toolbar.setNavigationIcon(R.drawable.ic_back_24dp)

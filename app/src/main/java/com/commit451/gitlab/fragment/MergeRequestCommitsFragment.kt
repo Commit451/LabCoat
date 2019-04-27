@@ -9,8 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import butterknife.BindView
-import com.commit451.addendum.parceler.getParcelerParcelable
-import com.commit451.addendum.parceler.putParcelerParcelable
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.CommitAdapter
@@ -38,21 +36,21 @@ class MergeRequestCommitsFragment : ButterKnifeFragment() {
         fun newInstance(project: Project, mergeRequest: MergeRequest): MergeRequestCommitsFragment {
             val fragment = MergeRequestCommitsFragment()
             val args = Bundle()
-            args.putParcelerParcelable(KEY_PROJECT, project)
-            args.putParcelerParcelable(KEY_MERGE_REQUEST, mergeRequest)
+            args.putParcelable(KEY_PROJECT, project)
+            args.putParcelable(KEY_MERGE_REQUEST, mergeRequest)
             fragment.arguments = args
             return fragment
         }
     }
 
     @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    lateinit var swipeRefreshLayout: SwipeRefreshLayout
     @BindView(R.id.list)
-    lateinit var listCommits: androidx.recyclerview.widget.RecyclerView
+    lateinit var listCommits: RecyclerView
     @BindView(R.id.message_text)
     lateinit var textMessage: TextView
 
-    lateinit var layoutManagerCommits: androidx.recyclerview.widget.LinearLayoutManager
+    lateinit var layoutManagerCommits: LinearLayoutManager
     lateinit var adapterCommits: CommitAdapter
 
     var project: Project? = null
@@ -74,8 +72,8 @@ class MergeRequestCommitsFragment : ButterKnifeFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        project = arguments?.getParcelerParcelable<Project>(KEY_PROJECT)
-        mergeRequest = arguments?.getParcelerParcelable<MergeRequest>(KEY_MERGE_REQUEST)
+        project = arguments?.getParcelable(KEY_PROJECT)
+        mergeRequest = arguments?.getParcelable(KEY_MERGE_REQUEST)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -90,7 +88,7 @@ class MergeRequestCommitsFragment : ButterKnifeFragment() {
                 Navigator.navigateToDiffActivity(baseActivty, project!!, commit)
             }
         })
-        layoutManagerCommits = androidx.recyclerview.widget.LinearLayoutManager(activity)
+        layoutManagerCommits = LinearLayoutManager(activity)
         listCommits.layoutManager = layoutManagerCommits
         listCommits.addItemDecoration(DividerItemDecoration(baseActivty))
         listCommits.adapter = adapterCommits

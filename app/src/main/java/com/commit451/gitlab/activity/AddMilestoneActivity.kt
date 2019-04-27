@@ -13,8 +13,6 @@ import android.widget.FrameLayout
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
-import com.commit451.addendum.parceler.getParcelerParcelableExtra
-import com.commit451.addendum.parceler.putParcelerParcelableExtra
 import com.commit451.addendum.themeAttrColor
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
@@ -35,15 +33,15 @@ class AddMilestoneActivity : MorphActivity() {
 
     companion object {
 
-        private val KEY_PROJECT_ID = "project_id"
-        private val KEY_MILESTONE = "milestone"
+        private const val KEY_PROJECT_ID = "project_id"
+        private const val KEY_MILESTONE = "milestone"
 
         @JvmOverloads
         fun newIntent(context: Context, projectId: Long, milestone: Milestone? = null): Intent {
             val intent = Intent(context, AddMilestoneActivity::class.java)
             intent.putExtra(KEY_PROJECT_ID, projectId)
             if (milestone != null) {
-                intent.putParcelerParcelableExtra(KEY_MILESTONE, milestone)
+                intent.putExtra(KEY_MILESTONE, milestone)
             }
             return intent
         }
@@ -102,7 +100,7 @@ class AddMilestoneActivity : MorphActivity() {
         morph(root)
         teleprinter = Teleprinter(this)
         projectId = intent.getLongExtra(KEY_PROJECT_ID, -1)
-        milestone = intent.getParcelerParcelableExtra<Milestone>(KEY_MILESTONE)
+        milestone = intent.getParcelableExtra(KEY_MILESTONE)
         if (milestone != null) {
             bind(milestone!!)
             toolbar.inflateMenu(R.menu.edit)

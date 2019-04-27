@@ -9,8 +9,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.OnClick
-import com.commit451.addendum.parceler.getParcelerParcelable
-import com.commit451.addendum.parceler.putParcelerParcelable
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.event.BuildChangedEvent
@@ -35,15 +33,15 @@ class BuildLogFragment : ButterKnifeFragment() {
         fun newInstance(project: Project, build: Build): BuildLogFragment {
             val fragment = BuildLogFragment()
             val args = Bundle()
-            args.putParcelerParcelable(KEY_PROJECT, project)
-            args.putParcelerParcelable(KEY_BUILD, build)
+            args.putParcelable(KEY_PROJECT, project)
+            args.putParcelable(KEY_BUILD, build)
             fragment.arguments = args
             return fragment
         }
     }
 
     @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    lateinit var swipeRefreshLayout: SwipeRefreshLayout
     @BindView(R.id.scrollView)
     lateinit var scrollView: NestedScrollView
     @BindView(R.id.log)
@@ -66,8 +64,8 @@ class BuildLogFragment : ButterKnifeFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        project = arguments?.getParcelerParcelable<Project>(KEY_PROJECT)!!
-        build = arguments?.getParcelerParcelable<Build>(KEY_BUILD)!!
+        project = arguments?.getParcelable(KEY_PROJECT)!!
+        build = arguments?.getParcelable(KEY_BUILD)!!
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

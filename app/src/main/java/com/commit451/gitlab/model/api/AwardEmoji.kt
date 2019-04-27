@@ -1,27 +1,28 @@
 package com.commit451.gitlab.model.api
 
+import android.os.Parcelable
 import com.squareup.moshi.Json
-import org.parceler.Parcel
-import java.util.*
+import kotlinx.android.parcel.Parcelize
+import java.util.Date
 
 /**
  * http://docs.gitlab.com/ce/api/award_emoji.html
  */
-@Parcel(Parcel.Serialization.BEAN)
-open class AwardEmoji {
+@Parcelize
+data class AwardEmoji(
 
     @field:Json(name = "id")
-    var id: String? = null
+    var id: String? = null,
     @field:Json(name = "name")
-    var name: String? = null
+    var name: String? = null,
     @field:Json(name = "user")
-    var user: User? = null
+    var user: User? = null,
     @field:Json(name = "created_at")
-    var createdAt: Date? = null
+    var createdAt: Date? = null,
     @field:Json(name = "updated_at")
-    var updatedAt: Date? = null
+    var updatedAt: Date? = null,
     @field:Json(name = "awardable_id")
-    var awardableId: Int = 0
+    var awardableId: Int = 0,
     @field:Json(name = "awardable_type")
     var awardableType: String? = null
-}
+) : Parcelable

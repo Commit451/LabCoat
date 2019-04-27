@@ -4,7 +4,6 @@ package com.commit451.gitlab.activity
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.ViewAnimationUtils
@@ -13,9 +12,6 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
-import com.commit451.addendum.parceler.getParcelerParcelableExtra
-import com.commit451.addendum.parceler.putParcelerParcelableExtra
-import com.commit451.alakazam.fadeIn
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.api.response.FileUploadResponse
@@ -35,13 +31,13 @@ class AttachActivity : BaseActivity() {
 
     companion object {
 
-        val KEY_FILE_UPLOAD_RESPONSE = "response"
+        const val KEY_FILE_UPLOAD_RESPONSE = "response"
 
-        private val KEY_PROJECT = "project"
+        private const val KEY_PROJECT = "project"
 
         fun newIntent(context: Context, project: Project): Intent {
             val intent = Intent(context, AttachActivity::class.java)
-            intent.putParcelerParcelableExtra(KEY_PROJECT, project)
+            intent.putExtra(KEY_PROJECT, project)
             return intent
         }
     }
@@ -82,7 +78,7 @@ class AttachActivity : BaseActivity() {
 
         reveal()
 
-        project = intent.getParcelerParcelableExtra<Project>(KEY_PROJECT)
+        project = intent.getParcelableExtra(KEY_PROJECT)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -136,7 +132,7 @@ class AttachActivity : BaseActivity() {
 
                     override fun success(fileUploadResponse: FileUploadResponse) {
                         val data = Intent()
-                        data.putParcelerParcelableExtra(KEY_FILE_UPLOAD_RESPONSE, fileUploadResponse)
+                        data.putExtra(KEY_FILE_UPLOAD_RESPONSE, fileUploadResponse)
                         setResult(Activity.RESULT_OK, data)
                         finish()
                     }

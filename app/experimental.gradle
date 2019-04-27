@@ -1,0 +1,4 @@
+// https://github.com/gradle/kotlin-dsl/issues/644#issuecomment-356605347
+androidExtensions {
+    experimental = true
+}
