@@ -1,14 +1,13 @@
 package com.commit451.gitlab
 
 import android.app.Application
-import android.content.Context
+import com.commit451.firebaseshim.FirebaseShim
 import com.commit451.gitlab.api.GitLab
 import com.commit451.gitlab.api.GitLabFactory
 import com.commit451.gitlab.api.OkHttpClientFactory
 import com.commit451.gitlab.api.PicassoFactory
 import com.commit451.gitlab.data.Prefs
 import com.commit451.gitlab.model.Account
-import com.commit451.gitlab.util.FabricUtil
 import com.commit451.lift.Lift
 import com.jakewharton.threetenabp.AndroidThreeTen
 import com.novoda.simplechromecustomtabs.SimpleChromeCustomTabs
@@ -60,7 +59,7 @@ class App : Application() {
         setupThreeTen()
 
         Prefs.init(this)
-        setupCrashReporting()
+        FirebaseShim.init(this, BuildConfig.DEBUG)
 
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
@@ -96,10 +95,6 @@ class App : Application() {
 
     fun getAccount(): Account {
         return currentAccount
-    }
-
-    private fun setupCrashReporting() {
-        FabricUtil.init(this)
     }
 
     private fun setupLeakCanary() {

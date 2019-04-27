@@ -1,4 +1,4 @@
-package com.commit451.gitlab.util
+package com.commit451.firebaseshim
 
 import android.util.Log
 import com.crashlytics.android.Crashlytics

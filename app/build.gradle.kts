@@ -5,7 +5,7 @@ plugins {
     id("kotlin-android")
     id("kotlin-android-extensions")
     id("kotlin-kapt")
-    id("io.fabric")
+    id("io.fabric") apply false
     id("com.google.gms.google-services") apply false
 }
 
@@ -81,8 +81,6 @@ dependencies {
     implementation("androidx.browser:browser:1.0.0")
 
     implementation("com.google.android.material:material:1.0.0")
-
-    implementation("com.google.firebase:firebase-core:16.0.8")
 
     implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
     implementation("com.squareup.retrofit2:converter-simplexml:$retrofitVersion") {
@@ -171,7 +169,11 @@ dependencies {
 
     implementation("com.atlassian.commonmark:commonmark:0.12.1")
 
-    implementation("com.crashlytics.sdk.android:crashlytics:2.9.9")
+    implementation(project(":firebaseshim"))
+    if (BuildHelper.firebaseEnabled(project)) {
+        implementation("com.google.firebase:firebase-core:16.0.8")
+        implementation("com.crashlytics.sdk.android:crashlytics:2.9.9")
+    }
 
     debugImplementation("com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion")
     releaseImplementation("com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion")
@@ -183,4 +185,7 @@ dependencies {
     }
 }
 
-apply(mapOf("plugin" to "com.google.gms.google-services"))
+if (BuildHelper.firebaseEnabled(project)) {
+    apply(mapOf("plugin" to "com.google.gms.google-services"))
+    apply(mapOf("plugin" to "io.fabric"))
+}
