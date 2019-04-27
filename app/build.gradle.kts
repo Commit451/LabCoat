@@ -6,19 +6,18 @@ plugins {
     id("kotlin-android-extensions")
     id("kotlin-kapt")
     id("io.fabric")
+    id("com.google.gms.google-services") apply false
 }
 
 android {
     compileSdkVersion(28)
     defaultConfig {
         applicationId = "com.commit451.gitlab"
-        minSdkVersion(16)
+        minSdkVersion(21)
         targetSdkVersion(28)
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         versionCode = 2060400
         versionName = "2.6.4"
-        manifestPlaceholders = mapOf("fabric_key" to ProjectStuff.fabricKey(project))
-        vectorDrawables.useSupportLibrary = true
 
         multiDexEnabled = true
     }
@@ -30,7 +29,7 @@ android {
 
     flavorDimensions("type")
 
-    productFlavors{
+    productFlavors {
         create("normal") {
             setDimension("type")
         }
@@ -97,11 +96,13 @@ dependencies {
 
     implementation("com.google.android.material:material:1.0.0")
 
+    implementation("com.google.firebase:firebase-core:16.0.8")
+
     implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
     implementation("com.squareup.retrofit2:converter-simplexml:$retrofitVersion") {
-        exclude(group= "xpp3", module= "xpp3")
-        exclude(group= "stax", module= "stax-api")
-        exclude(group="stax", module="stax")
+        exclude(group = "xpp3", module = "xpp3")
+        exclude(group = "stax", module = "stax-api")
+        exclude(group = "stax", module = "stax")
     }
     implementation("com.squareup.retrofit2:converter-scalars:$retrofitVersion")
     implementation("com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion")
@@ -136,11 +137,11 @@ dependencies {
     implementation("com.github.Commit451:ElasticDragDismissLayout:1.0.4")
     implementation("com.github.Commit451.AdapterLayout:adapterlayout:$adapterLayout")
     implementation("com.github.Commit451.AdapterLayout:adapterflowlayout:$adapterLayout") {
-        exclude(group= "com.wefika", module= "flowlayout")
+        exclude(group = "com.wefika", module = "flowlayout")
     }
     //https://github.com/blazsolar/FlowLayout/issues/31
     implementation("com.wefika:flowlayout:0.4.1") {
-        exclude(group= "com.intellij", module= "annotations")
+        exclude(group = "com.intellij", module = "annotations")
     }
     implementation("com.github.Commit451:Easel:3.1.0")
     implementation("com.github.Commit451:Gimbal:2.0.2")
@@ -177,17 +178,14 @@ dependencies {
     implementation("de.hdodenhof:circleimageview:3.0.0")
 
     implementation("com.vdurmont:emoji-java:4.0.0") {
-        exclude(group= "org.json", module= "json")
+        exclude(group = "org.json", module = "json")
     }
 
     implementation("com.github.jkwiecien:EasyImage:2.1.1")
 
     implementation("com.atlassian.commonmark:commonmark:0.11.0")
 
-    if (ProjectStuff.fabricKey(project).isNotEmpty()) {
-        implementation("com.crashlytics.sdk.android:crashlytics:2.9.8")
-    }
-    //normalImplementation("com.crashlytics.sdk.android:crashlytics:2.9.8")
+    implementation("com.crashlytics.sdk.android:crashlytics:2.9.9")
 
     debugImplementation("com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion")
     releaseImplementation("com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion")
@@ -195,6 +193,8 @@ dependencies {
 
     testImplementation("junit:junit:4.12")
     testImplementation("org.threeten:threetenbp:1.3.6") {
-        exclude(group= "com.jakewharton.threetenabp", module= "threetenabp")
+        exclude(group = "com.jakewharton.threetenabp", module = "threetenabp")
     }
 }
+
+apply(mapOf("plugin" to "com.google.gms.google-services"))

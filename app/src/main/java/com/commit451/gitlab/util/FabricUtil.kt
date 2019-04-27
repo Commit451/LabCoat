@@ -1,10 +1,8 @@
 package com.commit451.gitlab.util
 
 import android.content.Context
-
 import com.commit451.gitlab.BuildConfig
 import com.crashlytics.android.Crashlytics
-
 import io.fabric.sdk.android.Fabric
 import timber.log.Timber
 
