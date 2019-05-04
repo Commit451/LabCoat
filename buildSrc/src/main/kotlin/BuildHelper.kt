@@ -4,6 +4,21 @@ object BuildHelper {
 
     private var locatedFile: Boolean? = null
 
+    fun appVersionName(): String {
+        return "2.7.0"
+    }
+
+    fun appVersionCode(): Int {
+        val parts = appVersionName().split(".")
+        val versionMajor = parts[0].toInt()
+        val versionMinor = parts[1].toInt()
+        val versionPatch = parts[2].toInt()
+        // this is something I got from u2020 a while back... meh
+        val version = versionMajor * 1000000 + versionMinor * 10000 + versionPatch * 100
+        println("Version: $version")
+        return version
+    }
+
     fun firebaseEnabled(project: Project): Boolean {
         return fileExists(project)
     }
@@ -22,7 +37,7 @@ object BuildHelper {
 
     private fun printFirebase() {
         println(
-            """
+                """
 
  / _(_)         | |
  | |_ _ _ __ ___| |__   __ _ ___  ___

@@ -1,6 +1,13 @@
 Change Log
 ==========
 
+Version 2.7.0
+----------------------------
+
+- Min SDK 21 (sry)
+- Show icon for internal visibility
+- Remove open and save options for file in favor of open in browser
+
 Version 2.6.3
 ----------------------------
 

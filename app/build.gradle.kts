@@ -16,8 +16,8 @@ android {
         minSdkVersion(21)
         targetSdkVersion(28)
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        versionCode = 2070000
-        versionName = "2.7.0"
+        versionCode = BuildHelper.appVersionCode()
+        versionName = BuildHelper.appVersionName()
     }
 
     compileOptions {
@@ -60,7 +60,7 @@ apply { from("experimental.gradle") }
 
 val retrofitVersion = "2.5.0"
 val okHttpVersion = "3.14.1"
-val butterknifeVersion = "10.0.0"
+val butterknifeVersion = "10.1.0"
 val reptarVersion = "2.5.1"
 
 val adapterLayout = "1.2.0"

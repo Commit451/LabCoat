@@ -14,5 +14,5 @@ android {
 
 dependencies {
     api("com.jakewharton.timber:timber:4.7.1")
-    compileOnly("com.crashlytics.sdk.android:crashlytics:2.9.9")
+    compileOnly("com.crashlytics.sdk.android:crashlytics:2.10.0")
 }
