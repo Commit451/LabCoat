@@ -14,6 +14,7 @@ import com.commit451.gitlab.model.Account
 import com.commit451.gitlab.navigation.BrowserFallback
 import com.commit451.gitlab.navigation.LabCoatIntentCustomizer
 import com.novoda.simplechromecustomtabs.SimpleChromeCustomTabs
+import timber.log.Timber
 
 /**
  * All the things to do with intents
@@ -26,6 +27,7 @@ object IntentUtil {
         }
         val resolvedUrl = if (account == null) url else url.resolveUrl(account)
 
+        Timber.d("Navigating to url: $resolvedUrl")
         val primaryColor = activity.themeAttrColor(R.attr.colorPrimary)
         SimpleChromeCustomTabs.getInstance()
                 .withFallback(BrowserFallback(activity))

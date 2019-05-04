@@ -128,8 +128,8 @@ object Navigator {
         activity.startActivity(intent)
     }
 
-    fun navigateToFile(activity: Activity, projectId: Long, path: String, branchName: String) {
-        activity.startActivity(FileActivity.newIntent(activity, projectId, path, branchName))
+    fun navigateToFile(activity: Activity, project: Project, path: String, branchName: String) {
+        activity.startActivity(FileActivity.newIntent(activity, project, path, branchName))
     }
 
     fun navigateToDiffActivity(activity: Activity, project: Project, commit: RepositoryCommit) {

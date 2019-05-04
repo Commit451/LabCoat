@@ -11,7 +11,7 @@ import java.util.*
 /**
  * Shows the files
  */
-class FileAdapter(private val listener: FileAdapter.Listener) : androidx.recyclerview.widget.RecyclerView.Adapter<FileViewHolder>() {
+class FileAdapter(private val listener: Listener) : RecyclerView.Adapter<FileViewHolder>() {
 
     val values: ArrayList<RepositoryTreeObject> = ArrayList()
 

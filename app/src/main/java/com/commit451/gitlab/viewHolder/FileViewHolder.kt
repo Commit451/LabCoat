@@ -16,7 +16,7 @@ import com.commit451.gitlab.model.api.RepositoryTreeObject
 /**
  * Files, yay!
  */
-class FileViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
+class FileViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     companion object {
 

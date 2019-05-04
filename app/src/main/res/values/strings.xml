@@ -120,8 +120,6 @@
 
     <string name="file_too_big">File too big to show</string>
     <string name="file_load_error">Failed to load file</string>
-    <string name="save_error">Could not write to storage medium</string>
-    <string name="open_error">File could not be opened</string>
 
     <string name="input_error">Please enter a title</string>
     <string name="user_error">User could not be added</string>

@@ -1,51 +1,43 @@
 package com.commit451.gitlab.activity
 
-import android.Manifest
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
-import android.os.Environment
-import com.google.android.material.snackbar.Snackbar
-import androidx.core.content.ContextCompat
-import androidx.appcompat.widget.Toolbar
 import android.text.Html
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.MimeTypeMap
 import android.webkit.WebView
+import androidx.appcompat.widget.Toolbar
 import butterknife.BindView
 import butterknife.ButterKnife
+import com.commit451.addendum.extra
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.extension.base64Decode
+import com.commit451.gitlab.extension.getUrl
 import com.commit451.gitlab.extension.with
+import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.model.api.RepositoryFile
-import com.commit451.gitlab.rx.CustomSingleObserver
-import com.commit451.gitlab.util.FileUtil
+import com.commit451.gitlab.util.IntentUtil
+import com.google.android.material.snackbar.Snackbar
 import timber.log.Timber
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
 import java.nio.charset.Charset
 
 class FileActivity : BaseActivity() {
 
     companion object {
 
-        private val REQUEST_PERMISSION_WRITE_STORAGE = 1337
+        private const val MAX_FILE_SIZE = (1024 * 1024).toLong()
+        private const val KEY_PROJECT = "project"
+        private const val KEY_PATH = "path"
+        private const val KEY_BRANCH = "branch"
 
-        private val MAX_FILE_SIZE = (1024 * 1024).toLong()
-        private val EXTRA_PROJECT_ID = "extra_project_id"
-        private val EXTRA_PATH = "extra_path"
-        private val EXTRA_REF = "extra_ref"
-
-        fun newIntent(context: Context, projectId: Long, path: String, ref: String): Intent {
+        fun newIntent(context: Context, project: Project, path: String, branch: String): Intent {
             val intent = Intent(context, FileActivity::class.java)
-            intent.putExtra(EXTRA_PROJECT_ID, projectId)
-            intent.putExtra(EXTRA_PATH, path)
-            intent.putExtra(EXTRA_REF, ref)
+            intent.putExtra(KEY_PROJECT, project)
+            intent.putExtra(KEY_PATH, path)
+            intent.putExtra(KEY_BRANCH, branch)
             return intent
         }
 
@@ -68,58 +60,47 @@ class FileActivity : BaseActivity() {
     @BindView(R.id.progress)
     lateinit var progress: View
 
-    var projectId: Long = 0
-    var path: String? = null
-    var ref: String? = null
-    var repositoryFile: RepositoryFile? = null
-    var fileName: String? = null
-    var blob: ByteArray? = null
+    private val project by extra<Project>(KEY_PROJECT)
+    private val path by extra<String>(KEY_PATH)
+    private val branch by extra<String>(KEY_BRANCH)
+    private var repositoryFile: RepositoryFile? = null
+    private var fileName: String? = null
+    private var blob: ByteArray? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_file)
         ButterKnife.bind(this)
 
-        projectId = intent.getLongExtra(EXTRA_PROJECT_ID, -1)
-        path = intent.getStringExtra(EXTRA_PATH)
-        ref = intent.getStringExtra(EXTRA_REF)
-
         toolbar.setNavigationIcon(R.drawable.ic_back_24dp)
         toolbar.setNavigationOnClickListener { onBackPressed() }
-        toolbar.setOnMenuItemClickListener(Toolbar.OnMenuItemClickListener { item ->
-            when (item.itemId) {
-                R.id.action_open -> {
-                    openFile()
-                    return@OnMenuItemClickListener true
-                }
-                R.id.action_save -> {
-                    checkAccountPermission()
-                    return@OnMenuItemClickListener true
+        toolbar.inflateMenu(R.menu.browser)
+        toolbar.setOnMenuItemClickListener {
+            when(it.itemId) {
+                R.id.action_browser -> {
+                    openInBrowser()
                 }
             }
             false
-        })
+        }
 
         loadData()
     }
 
+    override fun hasBrowsableLinks() = true
+
     private fun loadData() {
         progress.visibility = View.VISIBLE
-        App.get().gitLab.getFile(projectId, path!!, ref!!)
+        App.get().gitLab.getFile(project.id, path, branch)
                 .with(this)
-                .subscribe(object : CustomSingleObserver<RepositoryFile>() {
-
-                    override fun error(t: Throwable) {
-                        Timber.e(t)
-                        progress.visibility = View.GONE
-                        Snackbar.make(root, R.string.file_load_error, Snackbar.LENGTH_SHORT)
-                                .show()
-                    }
-
-                    override fun success(repositoryFile: RepositoryFile) {
-                        progress.visibility = View.GONE
-                        bindFile(repositoryFile)
-                    }
+                .subscribe({
+                    progress.visibility = View.GONE
+                    bindFile(it)
+                }, {
+                    Timber.e(it)
+                    progress.visibility = View.GONE
+                    Snackbar.make(root, R.string.file_load_error, Snackbar.LENGTH_SHORT)
+                            .show()
                 })
     }
 
@@ -129,6 +110,9 @@ class FileActivity : BaseActivity() {
         toolbar.title = fileName
         if (repositoryFile.size > MAX_FILE_SIZE) {
             Snackbar.make(root, R.string.file_too_big, Snackbar.LENGTH_SHORT)
+                    .setAction(R.string.action_open_in_browser) {
+                        openInBrowser()
+                    }
                     .show()
         } else {
             loadBlob(repositoryFile)
@@ -138,16 +122,14 @@ class FileActivity : BaseActivity() {
     private fun loadBlob(repositoryFile: RepositoryFile) {
         repositoryFile.content.base64Decode()
                 .with(this)
-                .subscribe(object : CustomSingleObserver<ByteArray>() {
-
-                    override fun error(t: Throwable) {
-                        Snackbar.make(root, R.string.failed_to_load, Snackbar.LENGTH_SHORT)
-                                .show()
-                    }
-
-                    override fun success(bytes: ByteArray) {
-                        bindBlob(bytes)
-                    }
+                .subscribe({
+                    bindBlob(it)
+                }, {
+                    Snackbar.make(root, R.string.failed_to_load, Snackbar.LENGTH_SHORT)
+                            .setAction(R.string.action_retry) {
+                                loadBlob(repositoryFile)
+                            }
+                            .show()
                 })
     }
 
@@ -190,89 +172,11 @@ class FileActivity : BaseActivity() {
         }
 
         webViewFileBlob.loadDataWithBaseURL("file:///android_asset/", content, "text/html", "utf8", null)
-        toolbar.inflateMenu(R.menu.menu_file)
     }
 
-    @SuppressLint("NewApi")
-    private fun checkAccountPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-            saveBlob()
-        } else {
-            requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), REQUEST_PERMISSION_WRITE_STORAGE)
-        }
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        when (requestCode) {
-            REQUEST_PERMISSION_WRITE_STORAGE -> {
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    saveBlob()
-                }
-            }
-        }
-    }
-
-    private fun saveBlob(): File? {
-        val state = Environment.getExternalStorageState()
-
-        if (Environment.MEDIA_MOUNTED == state && blob != null) {
-            val targetFile = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), fileName!!)
-
-            var outputStream: FileOutputStream? = null
-            try {
-                outputStream = FileOutputStream(targetFile)
-                outputStream.write(blob!!)
-
-                Snackbar.make(root, getString(R.string.file_saved), Snackbar.LENGTH_SHORT)
-                        .show()
-
-                return targetFile
-            } catch (e: IOException) {
-                Timber.e(e)
-                Snackbar.make(root, getString(R.string.save_error), Snackbar.LENGTH_SHORT)
-                        .show()
-            } finally {
-                if (outputStream != null) {
-                    try {
-                        outputStream.close()
-                    } catch (e: IOException) {
-                        Timber.e(e)
-                    }
-
-                }
-            }
-        } else {
-            Snackbar.make(root, getString(R.string.save_error), Snackbar.LENGTH_SHORT)
-                    .show()
-        }
-
-        return null
-    }
-
-    fun openFile() {
-
-        if (blob != null && fileName != null) {
-            val intent = Intent(Intent.ACTION_VIEW)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-
-            val file = FileUtil.saveBlobToProviderDirectory(this, blob!!, fileName!!)
-            val extension = fileExtension(fileName!!)
-            if (extension.isNotEmpty()) {
-                intent.type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
-            }
-            intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-            intent.data = FileUtil.uriForFile(this, file)
-
-            try {
-                startActivity(intent)
-            } catch (e: Exception) {
-                Timber.e(e)
-                Snackbar.make(root, getString(R.string.open_error), Snackbar.LENGTH_SHORT)
-                        .show()
-            }
-        } else {
-            Snackbar.make(root, getString(R.string.open_error), Snackbar.LENGTH_SHORT)
-                    .show()
+    private fun openInBrowser() {
+        repositoryFile?.let {file->
+            IntentUtil.openPage(this, file.getUrl(project, branch, path), App.get().currentAccount)
         }
     }
 }

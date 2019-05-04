@@ -46,29 +46,29 @@ class FilesFragment : ButterKnifeFragment() {
     @BindView(R.id.root)
     lateinit var root: View
     @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    lateinit var swipeRefreshLayout: SwipeRefreshLayout
     @BindView(R.id.list)
-    lateinit var list: androidx.recyclerview.widget.RecyclerView
+    lateinit var list: RecyclerView
     @BindView(R.id.breadcrumb)
-    lateinit var listBreadcrumbs: androidx.recyclerview.widget.RecyclerView
+    lateinit var listBreadcrumbs: RecyclerView
     @BindView(R.id.message_text)
     lateinit var textMessage: TextView
 
-    lateinit var adapterFiles: FileAdapter
-    lateinit var adapterBreadcrumb: BreadcrumbAdapter
+    private lateinit var adapterFiles: FileAdapter
+    private lateinit var adapterBreadcrumb: BreadcrumbAdapter
 
-    var project: Project? = null
-    var ref: String? = null
-    var currentPath = ""
+    private var project: Project? = null
+    private var ref: String? = null
+    private var currentPath = ""
 
-    val filesAdapterListener = object : FileAdapter.Listener {
+    private val filesAdapterListener = object : FileAdapter.Listener {
         override fun onFolderClicked(treeItem: RepositoryTreeObject) {
             loadData(currentPath + treeItem.name + "/")
         }
 
         override fun onFileClicked(treeItem: RepositoryTreeObject) {
             val path = currentPath + treeItem.name
-            Navigator.navigateToFile(baseActivty, project!!.id, path, ref!!)
+            Navigator.navigateToFile(baseActivty, project!!, path, ref!!)
         }
 
         override fun onCopyClicked(treeItem: RepositoryTreeObject) {
@@ -98,20 +98,17 @@ class FilesFragment : ButterKnifeFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         adapterFiles = FileAdapter(filesAdapterListener)
-        list.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(activity)
+        list.layoutManager = LinearLayoutManager(activity)
         list.addItemDecoration(DividerItemDecoration(baseActivty))
         list.adapter = adapterFiles
 
         adapterBreadcrumb = BreadcrumbAdapter()
-        listBreadcrumbs.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(activity, androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL, false)
+        listBreadcrumbs.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
         listBreadcrumbs.adapter = adapterBreadcrumb
 
         swipeRefreshLayout.setOnRefreshListener { loadData() }
 
-        var path = ""
-        if (savedInstanceState != null) {
-            path = savedInstanceState.getString(CURRENT_PATH)
-        }
+        val path = savedInstanceState?.getString(CURRENT_PATH) ?: ""
 
         if (activity is ProjectActivity) {
             project = (activity as ProjectActivity).project
@@ -176,7 +173,7 @@ class FilesFragment : ButterKnifeFragment() {
 
                     override fun success(repositoryTreeObjects: List<RepositoryTreeObject>) {
                         swipeRefreshLayout.isRefreshing = false
-                        if (!repositoryTreeObjects.isEmpty()) {
+                        if (repositoryTreeObjects.isNotEmpty()) {
                             textMessage.visibility = View.GONE
                         } else {
                             Timber.d("No files found")
@@ -208,7 +205,7 @@ class FilesFragment : ButterKnifeFragment() {
                 continue
             }
 
-            newPath += segment + "/"
+            newPath += "$segment/"
 
             val finalPath = newPath
             breadcrumbs.add(BreadcrumbAdapter.Breadcrumb(segment, object : BreadcrumbAdapter.Listener {

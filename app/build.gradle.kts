@@ -1,6 +1,4 @@
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
-import org.jetbrains.kotlin.gradle.internal.AndroidExtensionsExtension
-import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
 
 plugins {
     id("com.android.application")
@@ -18,8 +16,8 @@ android {
         minSdkVersion(21)
         targetSdkVersion(28)
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        versionCode = 2060400
-        versionName = "2.6.4"
+        versionCode = 2070000
+        versionName = "2.7.0"
     }
 
     compileOptions {
@@ -171,7 +169,7 @@ dependencies {
     implementation(project(":firebaseshim"))
     if (BuildHelper.firebaseEnabled(project)) {
         implementation("com.google.firebase:firebase-core:16.0.8")
-        implementation("com.crashlytics.sdk.android:crashlytics:2.9.9")
+        implementation("com.crashlytics.sdk.android:crashlytics:2.10.0")
     }
 
     debugImplementation("com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion")

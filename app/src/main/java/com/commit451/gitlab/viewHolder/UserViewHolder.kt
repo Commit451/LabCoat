@@ -8,15 +8,15 @@ import android.widget.ImageView
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
-import com.commit451.gitlab.App
 import com.commit451.gitlab.R
+import com.commit451.gitlab.extension.load
 import com.commit451.gitlab.model.api.User
 import com.commit451.gitlab.util.ImageUtil
 
 /**
  * Shows a single user
  */
-class UserViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
+class UserViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     companion object {
 
@@ -38,8 +38,6 @@ class UserViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.Vie
 
     fun bind(user: User) {
         textUsername.text = user.username
-        App.get().picasso
-                .load(ImageUtil.getAvatarUrl(user, itemView.resources.getDimensionPixelSize(R.dimen.user_list_image_size)))
-                .into(image)
+        image.load(ImageUtil.getAvatarUrl(user, itemView.resources.getDimensionPixelSize(R.dimen.user_list_image_size)))
     }
 }

@@ -18,7 +18,7 @@ import com.github.ivbaranov.mli.MaterialLetterIcon
 /**
  * Projects, yay!
  */
-class ProjectViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
+class ProjectViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     companion object {
 
@@ -45,7 +45,18 @@ class ProjectViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.
     }
 
     fun bind(project: Project, color: Int) {
-        if (!project.avatarUrl.isNullOrEmpty()) {
+        // There is no longer a way that we can load images for private
+        // repos, unfortunately. Passing the access token as a param
+        // no longer works. We just have to show the letter for private
+        // repos
+        if (project.avatarUrl.isNullOrBlank() || project.visibility != Project.VISIBILITY_PUBLIC) {
+            image.visibility = View.GONE
+
+            iconLetter.visibility = View.VISIBLE
+            iconLetter.letter = project.name!!.substring(0, 1)
+            iconLetter.letterColor = Color.WHITE
+            iconLetter.shapeColor = color
+        } else {
             iconLetter.visibility = View.GONE
 
             image.visibility = View.VISIBLE
@@ -53,13 +64,6 @@ class ProjectViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.
                     .load(project.avatarUrl)
                     .transform(CircleTransformation())
                     .into(image)
-        } else {
-            image.visibility = View.GONE
-
-            iconLetter.visibility = View.VISIBLE
-            iconLetter.letter = project.name!!.substring(0, 1)
-            iconLetter.letterColor = Color.WHITE
-            iconLetter.shapeColor = color
         }
 
         textTitle.text = project.nameWithNamespace
@@ -71,12 +75,11 @@ class ProjectViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.
             textDescription.text = ""
         }
 
-        if (project.visibility == Project.VISIBILITY_PUBLIC) {
-            iconVisibility.setImageResource(R.drawable.ic_public_24dp)
-        } else if (project.visibility == Project.VISIBILITY_INTERNAL) {
-            iconVisibility.setImageResource(R.drawable.ic_lock_open_24dp)
-        } else {
-            iconVisibility.setImageResource(R.drawable.ic_private_24dp)
+        val visibilityResource = when {
+            project.visibility == Project.VISIBILITY_PUBLIC -> R.drawable.ic_public_24dp
+            project.visibility == Project.VISIBILITY_INTERNAL -> R.drawable.ic_lock_open_24dp
+            else -> R.drawable.ic_private_24dp
         }
+        iconVisibility.setImageResource(visibilityResource)
     }
 }
