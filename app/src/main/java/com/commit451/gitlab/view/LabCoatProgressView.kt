@@ -26,6 +26,6 @@ class LabCoatProgressView : MaterialProgressBar {
 
     private fun init() {
         val color = context.themeAttrColor(R.attr.colorAccent)
-        progressTintList = ColorStateList.valueOf(color)
+        supportProgressTintList = ColorStateList.valueOf(color)
     }
 }

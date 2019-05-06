@@ -1,5 +1,7 @@
 import org.gradle.api.Project
+import java.io.File
 
+@Suppress("MemberVisibilityCanBePrivate")
 object BuildHelper {
 
     private var locatedFile: Boolean? = null
@@ -14,13 +16,15 @@ object BuildHelper {
         val versionMinor = parts[1].toInt()
         val versionPatch = parts[2].toInt()
         // this is something I got from u2020 a while back... meh
-        val version = versionMajor * 1000000 + versionMinor * 10000 + versionPatch * 100
-        println("Version: $version")
-        return version
+        return versionMajor * 1000000 + versionMinor * 10000 + versionPatch * 100
     }
 
     fun firebaseEnabled(project: Project): Boolean {
         return fileExists(project)
+    }
+
+    fun keystoreFile(project: Project): File {
+        return project.file("${project.rootDir}/app/${project.propertyOrEmpty("KEYSTORE_NAME")}")
     }
 
     private fun fileExists(project: Project): Boolean {

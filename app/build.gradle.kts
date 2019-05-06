@@ -27,7 +27,7 @@ android {
 
     signingConfigs {
         create("release") {
-            storeFile = File(project.propertyOrEmpty("KEYSTORE_PATH"))
+            storeFile = BuildHelper.keystoreFile(project)
             storePassword = project.propertyOrEmpty("KEYSTORE_PASSWORD")
             keyAlias = "commit451"
             keyPassword = project.propertyOrEmpty("KEY_PASSWORD")
@@ -48,11 +48,6 @@ android {
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-debug"
         }
-    }
-
-    packagingOptions {
-        exclude("META-INF/MANIFEST.MF")
-        exclude("META-INF/app_fdroidDebug.kotlin_module")
     }
 }
 

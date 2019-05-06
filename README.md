@@ -10,15 +10,19 @@
 Please see the [issues](https://gitlab.com/Commit451/LabCoat/issues) section to report any bugs or feature requests and to see the list of known issues.
 
 ## Building
-You should be able to build the project from Android Studio without any further setup. The app uses Fabric for crash reporting, so if you wanted to do a release build, you would need to generate your own Crashlytics/Fabric key. All in all, your `gradle.properties` will look something like this:
-```Gradle
-LABCOAT_FABRIC_KEY = FABRIC_KEY_GOES_HERE_BUT_ONLY_REALLY_NEEDED_FOR_RELEASE_BUILDS
+You should be able to build the project from Android Studio without any further setup. The app Firebase Fabric for crash reporting, so if you wanted to do a release build, you would need to generate your own Firebase project and place the `google-services.json` file in the `app` directory. Additionally, you would want to make a new keystore, placing the name of the keystore and password in the `app/gradle.properties` file:
 ```
-
-To build, run the following.
-
+KEYSTORE_NAME=keystore.jks
+KEYSTORE_PASSWORD=keystore_password_here
+KEY_PASSWORD=key_password_here
+```
+To build, run the following:
 ```bash
 ./gradlew assembleDebug
+```
+or, for release builds:
+```bash
+./gradlew assembleRelease
 ```
 
 ## Contributing
