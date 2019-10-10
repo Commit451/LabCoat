@@ -39,16 +39,16 @@ class MergeRequestsFragment : ButterKnifeFragment() {
     }
 
     @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    lateinit var swipeRefreshLayout: SwipeRefreshLayout
     @BindView(R.id.list)
-    lateinit var listMergeRequests: androidx.recyclerview.widget.RecyclerView
+    lateinit var listMergeRequests: RecyclerView
     @BindView(R.id.message_text)
     lateinit var textMessage: TextView
     @BindView(R.id.state_spinner)
     lateinit var spinnerState: Spinner
 
     lateinit var adapterMergeRequests: MergeRequestAdapter
-    lateinit var layoutManagerMergeRequests: androidx.recyclerview.widget.LinearLayoutManager
+    lateinit var layoutManagerMergeRequests: LinearLayoutManager
 
     lateinit var state: String
     lateinit var states: Array<String>
@@ -97,13 +97,13 @@ class MergeRequestsFragment : ButterKnifeFragment() {
                 Navigator.navigateToMergeRequest(baseActivty, project!!, mergeRequest)
             }
         })
-        layoutManagerMergeRequests = androidx.recyclerview.widget.LinearLayoutManager(activity)
+        layoutManagerMergeRequests = LinearLayoutManager(activity)
         listMergeRequests.layoutManager = layoutManagerMergeRequests
         listMergeRequests.addItemDecoration(DividerItemDecoration(baseActivty))
         listMergeRequests.adapter = adapterMergeRequests
         listMergeRequests.addOnScrollListener(onScrollListener)
 
-        spinnerState.adapter = ArrayAdapter(activity, android.R.layout.simple_list_item_1, android.R.id.text1, resources.getStringArray(R.array.merge_request_state_names))
+        spinnerState.adapter = ArrayAdapter(requireActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, resources.getStringArray(R.array.merge_request_state_names))
         spinnerState.onItemSelectedListener = onItemSelectedListener
 
         swipeRefreshLayout.setOnRefreshListener { loadData() }
@@ -156,7 +156,7 @@ class MergeRequestsFragment : ButterKnifeFragment() {
                         }
                         adapterMergeRequests.setData(mergeRequests)
                         nextPageUrl = LinkHeaderParser.parse(response()).next
-                        Timber.d("Next page url " + nextPageUrl)
+                        Timber.d("Next page url $nextPageUrl")
                     }
                 })
     }
@@ -170,7 +170,7 @@ class MergeRequestsFragment : ButterKnifeFragment() {
         }
         adapterMergeRequests.setLoading(true)
         loading = true
-        Timber.d("loadMore called for " + nextPageUrl!!)
+        Timber.d("loadMore called for ${nextPageUrl!!}")
         App.get().gitLab.getMergeRequests(nextPageUrl!!.toString(), state)
                 .with(this)
                 .subscribe(object : CustomResponseSingleObserver<List<MergeRequest>>() {

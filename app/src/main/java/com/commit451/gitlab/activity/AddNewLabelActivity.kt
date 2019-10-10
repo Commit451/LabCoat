@@ -128,7 +128,7 @@ class AddNewLabelActivity : BaseActivity(), ColorChooserDialog.ColorCallback {
                         override fun error(e: Throwable) {
                             Timber.e(e)
                             progress.visibility = View.GONE
-                            if (e is HttpException && e.response().code() == 409) {
+                            if (e is HttpException && e.response()?.code() == 409) {
                                 Snackbar.make(root, R.string.label_already_exists, Snackbar.LENGTH_SHORT)
                                         .show()
                             } else {

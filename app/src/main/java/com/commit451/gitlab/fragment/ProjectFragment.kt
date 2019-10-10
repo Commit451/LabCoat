@@ -44,7 +44,7 @@ class ProjectFragment : ButterKnifeFragment() {
     }
 
     @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    lateinit var swipeRefreshLayout: SwipeRefreshLayout
     @BindView(R.id.creator)
     lateinit var textCreator: TextView
     @BindView(R.id.star_count)
@@ -106,7 +106,7 @@ class ProjectFragment : ButterKnifeFragment() {
                         }
 
                         override fun success(projectResponse: Response<Project>) {
-                            if (projectResponse.raw().code() == 304) {
+                            if (projectResponse.raw().code == 304) {
                                 Snackbar.make(swipeRefreshLayout, R.string.project_already_starred, Snackbar.LENGTH_LONG)
                                         .setAction(R.string.project_unstar) { unstarProject() }
                                         .show()
@@ -203,7 +203,7 @@ class ProjectFragment : ButterKnifeFragment() {
         }
     }
 
-    fun bindProject(project: Project?) {
+    private fun bindProject(project: Project?) {
         if (project == null) {
             return
         }

@@ -99,7 +99,7 @@ class MergeRequestActivity : BaseActivity() {
                         progress.visibility = View.GONE
                         var message = getString(R.string.unable_to_merge)
                         if (e is HttpException) {
-                            val code = e.response().code()
+                            val code = e.response()?.code()
                             if (code == 406) {
                                 message = getString(R.string.merge_request_already_merged_or_closed)
                             }

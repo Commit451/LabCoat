@@ -76,7 +76,7 @@ class FilesFragment : ButterKnifeFragment() {
 
             // Creates a new text clip to put on the clipboard
             val clip = ClipData.newPlainText(treeItem.name, treeItem.getUrl(project!!, ref!!, currentPath).toString())
-            clipboard.primaryClip = clip
+            clipboard.setPrimaryClip(clip)
             Snackbar.make(root, R.string.copied_to_clipboard, Snackbar.LENGTH_SHORT)
                     .show()
         }

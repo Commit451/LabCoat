@@ -45,16 +45,16 @@ class PipelinesFragment : ButterKnifeFragment() {
     @BindView(R.id.root)
     lateinit var root: ViewGroup
     @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    lateinit var swipeRefreshLayout: SwipeRefreshLayout
     @BindView(R.id.list)
-    lateinit var listPipelines: androidx.recyclerview.widget.RecyclerView
+    lateinit var listPipelines: RecyclerView
     @BindView(R.id.message_text)
     lateinit var textMessage: TextView
     @BindView(R.id.issue_spinner)
     lateinit var spinnerIssue: Spinner
 
     lateinit var adapterPipelines: PipelineAdapter
-    lateinit var layoutManagerPipelines: androidx.recyclerview.widget.LinearLayoutManager
+    lateinit var layoutManagerPipelines: LinearLayoutManager
 
     lateinit var scopes: Array<String>
     var scope: String? = null
@@ -99,13 +99,13 @@ class PipelinesFragment : ButterKnifeFragment() {
                 }
             }
         })
-        layoutManagerPipelines = androidx.recyclerview.widget.LinearLayoutManager(activity)
+        layoutManagerPipelines = LinearLayoutManager(activity)
         listPipelines.layoutManager = layoutManagerPipelines
         listPipelines.addItemDecoration(DividerItemDecoration(baseActivty))
         listPipelines.adapter = adapterPipelines
         listPipelines.addOnScrollListener(onScrollListener)
 
-        spinnerIssue.adapter = ArrayAdapter(activity, android.R.layout.simple_list_item_1,
+        spinnerIssue.adapter = ArrayAdapter(requireActivity(), android.R.layout.simple_list_item_1,
                 android.R.id.text1, resources.getStringArray(R.array.pipeline_scope_names))
         spinnerIssue.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {

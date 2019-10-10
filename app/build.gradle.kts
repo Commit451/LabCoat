@@ -10,11 +10,11 @@ plugins {
 }
 
 android {
-    compileSdkVersion(28)
+    compileSdkVersion(29)
     defaultConfig {
         applicationId = "com.commit451.gitlab"
         minSdkVersion(21)
-        targetSdkVersion(28)
+        targetSdkVersion(29)
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         versionCode = BuildHelper.appVersionCode()
         versionName = BuildHelper.appVersionName()
@@ -53,24 +53,24 @@ android {
 
 apply { from("experimental.gradle") }
 
-val retrofitVersion = "2.5.0"
-val okHttpVersion = "3.14.1"
-val butterknifeVersion = "10.1.0"
+val retrofitVersion = "2.6.2"
+val okHttpVersion = "4.2.2"
+val butterknifeVersion = "10.2.0"
 val reptarVersion = "2.5.1"
 
 val adapterLayout = "1.2.0"
 val materialDialogsVersion = "0.9.6.0"
 val leakCanaryVersion = "1.6.3"
-val addendumVersion = "2.1.0"
+val addendumVersion = "2.1.1"
 val moshiVersion = "1.8.0"
 val autodisposeVersion = "0.8.0"
 
 dependencies {
     implementation(kotlin("stdlib-jdk7", KotlinCompilerVersion.VERSION))
 
-    implementation("androidx.core:core-ktx:1.0.1")
+    implementation("androidx.core:core-ktx:1.1.0")
 
-    implementation("androidx.appcompat:appcompat:1.0.2")
+    implementation("androidx.appcompat:appcompat:1.1.0")
     implementation("androidx.recyclerview:recyclerview:1.0.0")
     implementation("androidx.cardview:cardview:1.0.0")
     implementation("androidx.palette:palette:1.0.0")
@@ -97,11 +97,11 @@ dependencies {
     implementation("com.jakewharton:butterknife:$butterknifeVersion")
     kapt("com.jakewharton:butterknife-compiler:$butterknifeVersion")
     implementation("com.jakewharton.timber:timber:4.7.1")
-    implementation("com.jakewharton.threetenabp:threetenabp:1.2.0")
+    implementation("com.jakewharton.threetenabp:threetenabp:1.2.1")
 
     implementation("org.greenrobot:eventbus:3.1.1")
 
-    implementation("io.reactivex.rxjava2:rxjava:2.2.8")
+    implementation("io.reactivex.rxjava2:rxjava:2.2.12")
     implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
 
     implementation("com.uber.autodispose:autodispose-kotlin:$autodisposeVersion")
@@ -151,7 +151,7 @@ dependencies {
     implementation("com.afollestad.material-dialogs:core:$materialDialogsVersion")
     implementation("com.afollestad.material-dialogs:commons:$materialDialogsVersion")
 
-    implementation("de.hdodenhof:circleimageview:3.0.0")
+    implementation("de.hdodenhof:circleimageview:3.0.1")
 
     implementation("com.vdurmont:emoji-java:4.0.0") {
         exclude(group = "org.json", module = "json")
@@ -159,7 +159,7 @@ dependencies {
 
     implementation("com.github.jkwiecien:EasyImage:2.1.1")
 
-    implementation("com.atlassian.commonmark:commonmark:0.12.1")
+    implementation("com.atlassian.commonmark:commonmark:0.13.0")
 
     implementation(project(":firebaseshim"))
     if (BuildHelper.firebaseEnabled(project)) {

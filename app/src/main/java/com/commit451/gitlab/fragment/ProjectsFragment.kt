@@ -96,7 +96,7 @@ class ProjectsFragment : ButterKnifeFragment() {
         }
     }
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is Listener) {
             listener = context
@@ -164,7 +164,7 @@ class ProjectsFragment : ButterKnifeFragment() {
                         ?: throw IllegalStateException("You must also pass a group if you want to show a groups projects")
                 actuallyLoadIt(getGitLab().getGroupProjects(group.id))
             }
-            else -> throw IllegalStateException(mode.toString() + " is not defined")
+            else -> throw IllegalStateException("$mode is not defined")
         }
     }
 
@@ -192,7 +192,7 @@ class ProjectsFragment : ButterKnifeFragment() {
                         }
                         adapterProjects.setData(projects)
                         nextPageUrl = LinkHeaderParser.parse(response()).next
-                        Timber.d("Next page url " + nextPageUrl)
+                        Timber.d("Next page url $nextPageUrl")
                     }
                 })
     }

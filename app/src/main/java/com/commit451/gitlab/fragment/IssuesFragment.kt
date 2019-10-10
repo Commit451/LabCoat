@@ -47,9 +47,9 @@ class IssuesFragment : ButterKnifeFragment() {
     @BindView(R.id.root)
     lateinit var root: ViewGroup
     @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    lateinit var swipeRefreshLayout: SwipeRefreshLayout
     @BindView(R.id.list)
-    lateinit var listIssues: androidx.recyclerview.widget.RecyclerView
+    lateinit var listIssues: RecyclerView
     @BindView(R.id.message_text)
     lateinit var textMessage: TextView
     @BindView(R.id.issue_spinner)
@@ -111,13 +111,13 @@ class IssuesFragment : ButterKnifeFragment() {
                 }
             }
         })
-        layoutManagerIssues = androidx.recyclerview.widget.LinearLayoutManager(activity)
+        layoutManagerIssues = LinearLayoutManager(activity)
         listIssues.layoutManager = layoutManagerIssues
         listIssues.addItemDecoration(DividerItemDecoration(baseActivty))
         listIssues.adapter = adapterIssue
         listIssues.addOnScrollListener(onScrollListener)
 
-        spinnerIssue.adapter = ArrayAdapter(activity, android.R.layout.simple_list_item_1, android.R.id.text1, resources.getStringArray(R.array.issue_state_names))
+        spinnerIssue.adapter = ArrayAdapter<String>(requireActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, resources.getStringArray(R.array.issue_state_names))
         spinnerIssue.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 state = states[position]
@@ -171,7 +171,7 @@ class IssuesFragment : ButterKnifeFragment() {
                         }
                         adapterIssue.setIssues(issues)
                         nextPageUrl = LinkHeaderParser.parse(response()).next
-                        Timber.d("Next page url " + nextPageUrl)
+                        Timber.d("Next page url $nextPageUrl")
                     }
                 })
     }
@@ -184,7 +184,7 @@ class IssuesFragment : ButterKnifeFragment() {
         adapterIssue.setLoading(true)
         loading = true
 
-        Timber.d("loadMore called for " + nextPageUrl!!)
+        Timber.d("loadMore called for ${nextPageUrl!!}")
         App.get().gitLab.getIssues(nextPageUrl!!.toString())
                 .with(this)
                 .subscribe(object : CustomSingleObserver<Response<List<Issue>>>() {

@@ -54,7 +54,7 @@ class JobsFragment : ButterKnifeFragment() {
     lateinit var spinnerIssue: Spinner
 
     lateinit var adapterBuilds: BuildAdapter
-    lateinit var layoutManagerBuilds: androidx.recyclerview.widget.LinearLayoutManager
+    lateinit var layoutManagerBuilds: LinearLayoutManager
 
     lateinit var scopes: Array<String>
     var scope: String? = null
@@ -99,13 +99,13 @@ class JobsFragment : ButterKnifeFragment() {
                 }
             }
         })
-        layoutManagerBuilds = androidx.recyclerview.widget.LinearLayoutManager(activity)
+        layoutManagerBuilds = LinearLayoutManager(activity)
         listBuilds.layoutManager = layoutManagerBuilds
         listBuilds.addItemDecoration(DividerItemDecoration(baseActivty))
         listBuilds.adapter = adapterBuilds
         listBuilds.addOnScrollListener(onScrollListener)
 
-        spinnerIssue.adapter = ArrayAdapter(activity, android.R.layout.simple_list_item_1,
+        spinnerIssue.adapter = ArrayAdapter(requireActivity(), android.R.layout.simple_list_item_1,
                 android.R.id.text1, resources.getStringArray(R.array.build_scope_names))
         spinnerIssue.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {

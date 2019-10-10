@@ -101,13 +101,13 @@ class SnippetsFragment : ButterKnifeFragment() {
 
             }
         })
-        layoutManagerSnippets = androidx.recyclerview.widget.LinearLayoutManager(activity)
+        layoutManagerSnippets = LinearLayoutManager(activity)
         listSnippets.layoutManager = layoutManagerSnippets
         listSnippets.addItemDecoration(DividerItemDecoration(baseActivty))
         listSnippets.adapter = adapterSnippets
         listSnippets.addOnScrollListener(onScrollListener)
 
-        spinnerState.adapter = ArrayAdapter(activity, android.R.layout.simple_list_item_1, android.R.id.text1, resources.getStringArray(R.array.milestone_state_names))
+        spinnerState.adapter = ArrayAdapter<String>(requireActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, resources.getStringArray(R.array.milestone_state_names))
         spinnerState.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 state = states[position]

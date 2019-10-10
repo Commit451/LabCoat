@@ -7,7 +7,7 @@ import javax.net.ssl.SSLSession
 class CustomHostnameVerifier(private val trustedHostname: String?) : HostnameVerifier {
 
     companion object {
-        private val DEFAULT_HOSTNAME_VERIFIER = OkHostnameVerifier.INSTANCE
+        private val DEFAULT_HOSTNAME_VERIFIER = OkHostnameVerifier
     }
 
     var lastFailedHostname: String? = null

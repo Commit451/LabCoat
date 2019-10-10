@@ -18,7 +18,7 @@ class AuthenticationRequestInterceptor(private val account: Account) : Intercept
     override fun intercept(chain: Interceptor.Chain): Response {
         var request = chain.request()
 
-        val url = request.url()
+        val url = request.url
         val serverUrl = account.serverUrl ?: "https://example.com"
 
         if (isSameServer(url.toString(), serverUrl)) {

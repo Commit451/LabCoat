@@ -23,7 +23,7 @@ import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import com.commit451.gitlab.R
 
-class DividerItemDecoration(context: Context) : androidx.recyclerview.widget.RecyclerView.ItemDecoration() {
+class DividerItemDecoration(context: Context) : RecyclerView.ItemDecoration() {
 
     companion object {
         private val ATTRS = intArrayOf(android.R.attr.listDivider)
@@ -37,7 +37,7 @@ class DividerItemDecoration(context: Context) : androidx.recyclerview.widget.Rec
 
     init {
         val a = context.obtainStyledAttributes(ATTRS)
-        divider = a.getDrawable(0)
+        divider = a.getDrawable(0)!!
         a.recycle()
     }
 
@@ -49,7 +49,7 @@ class DividerItemDecoration(context: Context) : androidx.recyclerview.widget.Rec
         drawVertical(c, parent)
     }
 
-    fun drawVertical(c: Canvas, parent: androidx.recyclerview.widget.RecyclerView) {
+    fun drawVertical(c: Canvas, parent: RecyclerView) {
         val left = parent.paddingLeft
         val right = parent.width - parent.paddingRight
         val childCount = parent.childCount
@@ -57,7 +57,7 @@ class DividerItemDecoration(context: Context) : androidx.recyclerview.widget.Rec
             val child = parent.getChildAt(i)
             if (isSkipped(child, parent)) continue
             val params = child
-                    .layoutParams as androidx.recyclerview.widget.RecyclerView.LayoutParams
+                    .layoutParams as RecyclerView.LayoutParams
             val top = child.bottom + params.bottomMargin
             val bottom = top + dividerHeight
             divider.setBounds(left, top, right, bottom)

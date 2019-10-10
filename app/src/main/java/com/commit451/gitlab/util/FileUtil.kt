@@ -10,8 +10,10 @@ import android.provider.OpenableColumns
 import androidx.core.content.FileProvider
 import com.commit451.okyo.Okyo
 import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import timber.log.Timber
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -36,18 +38,18 @@ object FileUtil {
     }
 
     fun toPart(file: File): MultipartBody.Part {
-        val requestBody = RequestBody.create(MediaType.parse("image/png"), file)
+        val requestBody = file.asRequestBody("image/png".toMediaTypeOrNull())
         return MultipartBody.Part.createFormData("file", file.name, requestBody)
     }
 
-    fun toPart(bitmap: Bitmap, name: String): MultipartBody.Part {
+    private fun toPart(bitmap: Bitmap, name: String): MultipartBody.Part {
         val stream = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
-        val requestBody = RequestBody.create(MediaType.parse("image/png"), stream.toByteArray())
+        val requestBody = RequestBody.create("image/png".toMediaTypeOrNull(), stream.toByteArray())
         return MultipartBody.Part.createFormData("file", name, requestBody)
     }
 
-    fun getFileName(context: Context, imageUri: Uri): String {
+    private fun getFileName(context: Context, imageUri: Uri): String {
         val returnCursor = context.contentResolver.query(imageUri, null, null, null, null)
         var name = "file"
 
@@ -80,7 +82,7 @@ object FileUtil {
     /**
      * Piggy back off of EasyImage directory
      */
-    fun getProviderDirectory(context: Context): File {
+    private fun getProviderDirectory(context: Context): File {
         var cacheDir = context.cacheDir
 
         if (isExternalStorageWritable()) {
@@ -91,7 +93,7 @@ object FileUtil {
         return dir
     }
 
-    fun isExternalStorageWritable(): Boolean {
+    private fun isExternalStorageWritable(): Boolean {
         val state = Environment.getExternalStorageState()
         return Environment.MEDIA_MOUNTED == state
     }

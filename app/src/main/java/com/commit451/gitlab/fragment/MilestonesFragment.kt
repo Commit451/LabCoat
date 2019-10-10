@@ -44,16 +44,16 @@ class MilestonesFragment : ButterKnifeFragment() {
     @BindView(R.id.root)
     lateinit var root: ViewGroup
     @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    lateinit var swipeRefreshLayout: SwipeRefreshLayout
     @BindView(R.id.list)
-    lateinit var listMilestones: androidx.recyclerview.widget.RecyclerView
+    lateinit var listMilestones: RecyclerView
     @BindView(R.id.message_text)
     lateinit var textMessage: TextView
     @BindView(R.id.state_spinner)
     lateinit var spinnerStates: Spinner
 
     lateinit var adapterMilestones: MilestoneAdapter
-    lateinit var layoutManagerMilestones: androidx.recyclerview.widget.LinearLayoutManager
+    lateinit var layoutManagerMilestones: LinearLayoutManager
 
     var state: String? = null
     lateinit var states: Array<String>
@@ -103,13 +103,13 @@ class MilestonesFragment : ButterKnifeFragment() {
                 Navigator.navigateToMilestone(baseActivty, project!!, milestone)
             }
         })
-        layoutManagerMilestones = androidx.recyclerview.widget.LinearLayoutManager(activity)
+        layoutManagerMilestones = LinearLayoutManager(activity)
         listMilestones.layoutManager = layoutManagerMilestones
         listMilestones.addItemDecoration(DividerItemDecoration(baseActivty))
         listMilestones.adapter = adapterMilestones
         listMilestones.addOnScrollListener(onScrollListener)
 
-        spinnerStates.adapter = ArrayAdapter(activity, android.R.layout.simple_list_item_1, android.R.id.text1, resources.getStringArray(R.array.milestone_state_names))
+        spinnerStates.adapter = ArrayAdapter(requireActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, resources.getStringArray(R.array.milestone_state_names))
         spinnerStates.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 state = states[position]
@@ -163,7 +163,7 @@ class MilestonesFragment : ButterKnifeFragment() {
                         }
                         adapterMilestones.setData(milestones)
                         nextPageUrl = LinkHeaderParser.parse(response()).next
-                        Timber.d("Next page url " + nextPageUrl)
+                        Timber.d("Next page url $nextPageUrl")
                     }
                 })
     }
@@ -176,7 +176,7 @@ class MilestonesFragment : ButterKnifeFragment() {
         loading = true
         adapterMilestones.setLoading(true)
 
-        Timber.d("loadMore called for " + nextPageUrl!!)
+        Timber.d("loadMore called for ${nextPageUrl!!}")
         App.get().gitLab.getMilestones(nextPageUrl!!.toString())
                 .with(this)
                 .subscribe(object : CustomResponseSingleObserver<List<Milestone>>() {

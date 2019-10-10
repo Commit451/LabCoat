@@ -41,6 +41,7 @@ import com.commit451.gitlab.util.IntentUtil
 import com.commit451.teleprinter.Teleprinter
 import okhttp3.Credentials
 import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.HttpException
@@ -165,11 +166,11 @@ class LoginActivity : BaseActivity() {
         return true
     }
 
-    fun verifyUrl(): Boolean {
+    private fun verifyUrl(): Boolean {
         val url = textInputLayoutUrl.text()
         var uri: Uri? = null
         try {
-            if (HttpUrl.parse(url) != null) {
+            if (url.toHttpUrlOrNull() != null) {
                 uri = Uri.parse(url)
             }
         } catch (e: Exception) {
@@ -183,7 +184,7 @@ class LoginActivity : BaseActivity() {
             textInputLayoutUrl.error = null
         }
         if (!url.endsWith("/")) {
-            textInputLayoutUrl.editText?.setText(url + "/")
+            textInputLayoutUrl.editText?.setText("$url/")
         } else {
             textInputLayoutUrl.error = null
         }
@@ -215,7 +216,7 @@ class LoginActivity : BaseActivity() {
         loadUser(gitlabClientBuilder)
     }
 
-    fun loadUser(gitlabClientBuilder: OkHttpClient.Builder) {
+    private fun loadUser(gitlabClientBuilder: OkHttpClient.Builder) {
 
         val gitLabService = GitLabFactory.create(currentAccount, gitlabClientBuilder.build())
         gitLabService.getThisUser()
@@ -268,7 +269,7 @@ class LoginActivity : BaseActivity() {
             dialog.findViewById<TextView>(android.R.id.message).movementMethod = LinkMovementMethod.getInstance()
         } else if (t is SSLPeerUnverifiedException && t.message?.toLowerCase()!!.contains("hostname")) {
             currentAccount.trustedHostname = null
-            val hostNameVerifier = currentGitLab?.client?.hostnameVerifier() as? CustomHostnameVerifier
+            val hostNameVerifier = currentGitLab?.client?.hostnameVerifier as? CustomHostnameVerifier
             val finalHostname = hostNameVerifier?.lastFailedHostname
             val dialog = AlertDialog.Builder(this)
                     .setTitle(R.string.hostname_title)
@@ -304,9 +305,9 @@ class LoginActivity : BaseActivity() {
                 var errorMessage = getString(R.string.login_unauthorized)
                 try {
                     val adapter = MoshiProvider.moshi.adapter<Message>(Message::class.java)
-                    val message = adapter.fromJson(response.errorBody()!!.string())
-                    if (message?.message != null) {
-                        errorMessage = message.message
+                    val message = adapter.fromJson(response.errorBody()!!.string())?.message
+                    if (message != null) {
+                        errorMessage = message
                     }
                 } catch (e: IOException) {
                     Timber.e(e)
@@ -324,8 +325,8 @@ class LoginActivity : BaseActivity() {
         }
     }
 
-    fun handleBasicAuthentication(response: Response<*>) {
-        val header = response.headers().get("WWW-Authenticate")!!.trim { it <= ' ' }
+    private fun handleBasicAuthentication(response: Response<*>) {
+        val header = response.headers()["WWW-Authenticate"]!!.trim { it <= ' ' }
         if (!header.startsWith("Basic")) {
             Snackbar.make(root, getString(R.string.login_unsupported_authentication), Snackbar.LENGTH_LONG)
                     .show()
@@ -350,23 +351,23 @@ class LoginActivity : BaseActivity() {
         dialog.show()
     }
 
-    fun isAlreadySignedIn(url: String, usernameOrEmailOrPrivateToken: String): Boolean {
+    private fun isAlreadySignedIn(url: String, usernameOrEmailOrPrivateToken: String): Boolean {
         val accounts = Prefs.getAccounts()
         return accounts.any {
             it.serverUrl == url && usernameOrEmailOrPrivateToken == it.privateToken
         }
     }
 
-    fun snackbarWithDetails(throwable: Throwable) {
+    private fun snackbarWithDetails(throwable: Throwable) {
         Snackbar.make(root, getString(R.string.login_error), Snackbar.LENGTH_LONG)
-                .setAction(R.string.details, {
+                .setAction(R.string.details) {
                     val details = throwable.message ?: getString(R.string.no_error_details)
                     MaterialDialog.Builder(this)
                             .title(R.string.error)
                             .content(details)
                             .positiveText(R.string.ok)
                             .show()
-                })
+                }
                 .show()
     }
 }

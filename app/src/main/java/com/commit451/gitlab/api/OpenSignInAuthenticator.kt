@@ -23,7 +23,7 @@ class OpenSignInAuthenticator(private val account: Account) : Authenticator {
 
     @Throws(IOException::class)
     override fun authenticate(route: Route?, response: Response): Request? {
-        val url = response.request().url()
+        val url = response.request.url
 
         var cleanUrl = url.toString().toLowerCase()
         cleanUrl = cleanUrl.substring(cleanUrl.indexOf(':'))
@@ -34,9 +34,9 @@ class OpenSignInAuthenticator(private val account: Account) : Authenticator {
         //Ensure that we only check urls of the gitlab instance
         if (cleanUrl.startsWith(cleanServerUrl)) {
             //Special case for if someone just put in their username or password wrong
-            if ("session" != url.pathSegments()[url.pathSegments().size - 1]) {
+            if ("session" != url.pathSegments[url.pathSegments.size - 1]) {
                 //Off the background thread
-                Timber.wtf(RuntimeException("Got a 401 and showing sign in for url: " + response.request().url()))
+                Timber.wtf(RuntimeException("Got a 401 and showing sign in for url: " + response.request.url))
                 ThreadUtil.postOnMainThread(Runnable {
                     //Remove the account, so that the user can sign in again
                     Prefs.removeAccount(account)
