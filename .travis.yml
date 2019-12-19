@@ -7,7 +7,7 @@ env:
 install: true
 
 jdk:
-  - oraclejdk8
+  - openjdk8
 
 before_install:
   - rvm install 2.3.4
