@@ -9,12 +9,12 @@ import kotlinx.android.parcel.Parcelize
  */
 @Parcelize
 data class FileUploadResponse(
-    @field:Json(name = "alt")
+    @Json(name = "alt")
     var alt: String? = null,
-    @field:Json(name = "url")
+    @Json(name = "url")
     var url: String? = null,
-    @field:Json(name = "is_image")
+    @Json(name = "is_image")
     var isImage: Boolean = false,
-    @field:Json(name = "markdown")
+    @Json(name = "markdown")
     var markdown: String
 ): Parcelable

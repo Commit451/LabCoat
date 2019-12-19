@@ -11,7 +11,6 @@ import com.commit451.gitlab.model.Account
 import com.commit451.lift.Lift
 import com.jakewharton.threetenabp.AndroidThreeTen
 import com.novoda.simplechromecustomtabs.SimpleChromeCustomTabs
-import com.squareup.leakcanary.LeakCanary
 import com.squareup.picasso.Picasso
 import io.reactivex.plugins.RxJavaPlugins
 import okhttp3.OkHttpClient
@@ -44,12 +43,6 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        if (LeakCanary.isInAnalyzerProcess(this)) {
-            // This process is dedicated to LeakCanary for heap analysis.
-            // You should not init your app in this process.
-            return
-        }
-        setupLeakCanary()
         instance = this
         RxJavaPlugins.setErrorHandler { error ->
             //In case an error cannot be thrown properly anywhere else in the app
@@ -82,23 +75,21 @@ class App : Application() {
         // builds, and will actually speed up the init time to share the same client between all these
         val clientBuilder = OkHttpClientFactory.create(account)
         if (BuildConfig.DEBUG) {
-            clientBuilder.addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
+            val httpLoggingInterceptor = HttpLoggingInterceptor()
+            clientBuilder.addInterceptor(httpLoggingInterceptor.apply { httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BODY })
         }
-        val client = clientBuilder.build()
         initGitLab(account, clientBuilder)
-        if (BuildConfig.DEBUG) {
-            initPicasso(OkHttpClientFactory.create(account).build())
-        } else {
-            initPicasso(client)
-        }
+        val picassoClient = OkHttpClientFactory.create(
+                account = account,
+                includeSignInAuthenticator = false,
+                includeAuthenticationInterceptor = false
+        )
+                .build()
+        initPicasso(picassoClient)
     }
 
     fun getAccount(): Account {
         return currentAccount
-    }
-
-    private fun setupLeakCanary() {
-        LeakCanary.install(this)
     }
 
     private fun setupThreeTen() {

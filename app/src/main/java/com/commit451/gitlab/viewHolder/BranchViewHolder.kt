@@ -15,7 +15,7 @@ import com.commit451.gitlab.model.api.Branch
 /**
  * Label
  */
-class BranchViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
+class BranchViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     companion object {
 
@@ -29,7 +29,7 @@ class BranchViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.V
     @BindView(R.id.title)
     lateinit var textTitle: TextView
 
-    var colorHighlighted: Int = 0
+    private var colorHighlighted: Int = 0
 
     init {
         ButterKnife.bind(this, view)

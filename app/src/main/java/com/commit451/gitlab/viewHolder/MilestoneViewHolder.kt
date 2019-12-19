@@ -14,7 +14,7 @@ import com.commit451.gitlab.util.DateUtil
 /**
  * Milestone
  */
-class MilestoneViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
+class MilestoneViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     companion object {
 

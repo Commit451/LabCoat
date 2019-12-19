@@ -6,12 +6,12 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class Wiki(
-    @field:Json(name = "content")
+    @Json(name = "content")
     var content: String? = null,
-    @field:Json(name = "format")
+    @Json(name = "format")
     var format: String? = null,
-    @field:Json(name = "slug")
+    @Json(name = "slug")
     var slug: String? = null,
-    @field:Json(name = "title")
+    @Json(name = "title")
     var title: String? = null
 ) : Parcelable

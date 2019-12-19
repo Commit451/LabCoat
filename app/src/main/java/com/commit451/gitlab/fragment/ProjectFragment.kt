@@ -65,7 +65,7 @@ class ProjectFragment : ButterKnifeFragment() {
             if (owner != null) {
                 Navigator.navigateToUser(baseActivty, owner)
             } else {
-                Navigator.navigateToGroup(baseActivty, project.namespace.id)
+                Navigator.navigateToGroup(baseActivty, project.namespace!!.id)
             }
         }
     }
@@ -209,7 +209,7 @@ class ProjectFragment : ButterKnifeFragment() {
         }
 
         if (project.belongsToGroup()) {
-            textCreator.text = String.format(getString(R.string.created_by), project.namespace.name)
+            textCreator.text = String.format(getString(R.string.created_by), project.namespace?.name)
         } else {
             textCreator.text = String.format(getString(R.string.created_by), project.owner!!.username)
         }

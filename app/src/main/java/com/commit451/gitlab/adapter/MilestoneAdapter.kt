@@ -1,7 +1,7 @@
 package com.commit451.gitlab.adapter
 
-import androidx.recyclerview.widget.RecyclerView
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.api.Milestone
 import com.commit451.gitlab.viewHolder.LoadingFooterViewHolder
@@ -9,19 +9,19 @@ import com.commit451.gitlab.viewHolder.MilestoneViewHolder
 import java.util.*
 
 
-class MilestoneAdapter(private val listener: MilestoneAdapter.Listener) : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
+class MilestoneAdapter(private val listener: Listener) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     companion object {
 
-        val FOOTER_COUNT = 1
+        const val FOOTER_COUNT = 1
 
-        val TYPE_ITEM = 0
-        val TYPE_FOOTER = 1
+        const val TYPE_ITEM = 0
+        const val TYPE_FOOTER = 1
     }
 
     val values: MutableList<Milestone> = ArrayList()
     private var loading: Boolean = false
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         when (viewType) {
             TYPE_ITEM -> {
                 val holder = MilestoneViewHolder.inflate(parent)
@@ -36,7 +36,7 @@ class MilestoneAdapter(private val listener: MilestoneAdapter.Listener) : androi
         throw IllegalStateException("No holder for viewType " + viewType)
     }
 
-    override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is MilestoneViewHolder) {
             val milestone = getValueAt(position)
             holder.bind(milestone)
@@ -51,10 +51,10 @@ class MilestoneAdapter(private val listener: MilestoneAdapter.Listener) : androi
     }
 
     override fun getItemViewType(position: Int): Int {
-        if (position == values.size) {
-            return TYPE_FOOTER
+        return if (position == values.size) {
+            TYPE_FOOTER
         } else {
-            return TYPE_ITEM
+            TYPE_ITEM
         }
     }
 

@@ -1,7 +1,7 @@
 package com.commit451.gitlab.adapter
 
-import androidx.recyclerview.widget.RecyclerView
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.Ref
 import com.commit451.gitlab.model.api.Tag
@@ -11,7 +11,7 @@ import java.util.*
 /**
  * Tags
  */
-class TagAdapter(val ref: Ref?, val listener: TagAdapter.Listener) : androidx.recyclerview.widget.RecyclerView.Adapter<TagViewHolder>() {
+class TagAdapter(val ref: Ref?, val listener: Listener) : RecyclerView.Adapter<TagViewHolder>() {
 
     private val values: ArrayList<Tag> = ArrayList()
 

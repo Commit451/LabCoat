@@ -53,7 +53,7 @@ class LabCoatNavigationView : NavigationView {
     @BindView(R.id.button_debug)
     lateinit var buttonDebug: View
 
-    lateinit var listAccounts: androidx.recyclerview.widget.RecyclerView
+    lateinit var listAccounts: RecyclerView
     lateinit var adapterAccounts: AccountAdapter
     var user: User? = null
 
@@ -177,7 +177,7 @@ class LabCoatNavigationView : NavigationView {
         if (BuildConfig.DEBUG) {
             buttonDebug.visibility = View.VISIBLE
         }
-        listAccounts = androidx.recyclerview.widget.RecyclerView(context)
+        listAccounts = RecyclerView(context)
         listAccounts.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
         addView(listAccounts)
         val params = listAccounts.layoutParams as FrameLayout.LayoutParams

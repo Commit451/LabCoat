@@ -15,7 +15,7 @@ import com.commit451.gitlab.model.api.Group
 /**
  * View associated with a group
  */
-class GroupViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
+class GroupViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     companion object {
 

@@ -8,56 +8,56 @@ import java.util.Date
 
 @Parcelize
 open class MergeRequest(
-    @field:Json(name = "id")
+    @Json(name = "id")
     var id: Long = 0,
-    @field:Json(name = "iid")
+    @Json(name = "iid")
     var iid: Long = 0,
-    @field:Json(name = "project_id")
+    @Json(name = "project_id")
     var projectId: Long = 0,
-    @field:Json(name = "title")
+    @Json(name = "title")
     var title: String? = null,
-    @field:Json(name = "description")
+    @Json(name = "description")
     var description: String? = null,
-    @field:Json(name = "state")
+    @Json(name = "state")
     @State
     @get:State
     var state: String? = null,
-    @field:Json(name = "updated_at")
+    @Json(name = "updated_at")
     var updatedAt: Date? = null,
-    @field:Json(name = "created_at")
+    @Json(name = "created_at")
     var createdAt: Date? = null,
-    @field:Json(name = "target_branch")
+    @Json(name = "target_branch")
     var targetBranch: String? = null,
-    @field:Json(name = "source_branch")
+    @Json(name = "source_branch")
     var sourceBranch: String? = null,
-    @field:Json(name = "upvotes")
+    @Json(name = "upvotes")
     var upvotes: Long = 0,
-    @field:Json(name = "downvotes")
+    @Json(name = "downvotes")
     var downvotes: Long = 0,
-    @field:Json(name = "author")
+    @Json(name = "author")
     var author: User? = null,
-    @field:Json(name = "assignee")
+    @Json(name = "assignee")
     var assignee: User? = null,
-    @field:Json(name = "source_project_id")
+    @Json(name = "source_project_id")
     var sourceProjectId: Long? = 0,
-    @field:Json(name = "target_project_id")
+    @Json(name = "target_project_id")
     var targetProjectId: Long = 0,
-    @field:Json(name = "labels")
+    @Json(name = "labels")
     var labels: List<String>? = null,
-    @field:Json(name = "work_in_progress")
+    @Json(name = "work_in_progress")
     var isWorkInProgress: Boolean = false,
-    @field:Json(name = "milestone")
+    @Json(name = "milestone")
     var milestone: Milestone? = null,
-    @field:Json(name = "merge_when_build_succeeds")
+    @Json(name = "merge_when_build_succeeds")
     var isMergeWhenBuildSucceedsEnabled: Boolean = false,
-    @field:Json(name = "merge_status")
+    @Json(name = "merge_status")
     var mergeStatus: String? = null,
 
     /**
      * Get the changes. Only not null if this merge request was retrieved via [com.commit451.gitlab.api.GitLabService.getMergeRequestChanges]
      * @return the changes
      */
-    @field:Json(name = "changes")
+    @Json(name = "changes")
     var changes: MutableList<Diff>? = null
 ) : Parcelable {
 

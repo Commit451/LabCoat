@@ -17,7 +17,7 @@ import com.commit451.gitlab.util.ImageUtil
 /**
  * Shows assignee in a spinner
  */
-class AssigneeSpinnerViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
+class AssigneeSpinnerViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     companion object {
 

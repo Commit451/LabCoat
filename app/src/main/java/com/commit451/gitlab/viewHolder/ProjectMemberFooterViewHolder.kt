@@ -13,7 +13,7 @@ import com.commit451.gitlab.model.api.ProjectNamespace
 /**
  * Shows a button to take you to a group
  */
-class ProjectMemberFooterViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
+class ProjectMemberFooterViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     companion object {
 

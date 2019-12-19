@@ -6,20 +6,20 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class Diff(
-    @field:Json(name = "old_path")
+    @Json(name = "old_path")
     var oldPath: String? = null,
-    @field:Json(name = "new_path")
+    @Json(name = "new_path")
     var newPath: String? = null,
-    @field:Json(name = "a_mode")
+    @Json(name = "a_mode")
     var aMode: Int = 0,
-    @field:Json(name = "b_mode")
+    @Json(name = "b_mode")
     var bMode: Int = 0,
-    @field:Json(name = "diff")
+    @Json(name = "diff")
     var diff: String? = null,
-    @field:Json(name = "new_file")
+    @Json(name = "new_file")
     var isNewFile: Boolean = false,
-    @field:Json(name = "renamed_file")
+    @Json(name = "renamed_file")
     var isRenamedFile: Boolean = false,
-    @field:Json(name = "deleted_file")
+    @Json(name = "deleted_file")
     var isDeletedFile: Boolean = false
 ) : Parcelable

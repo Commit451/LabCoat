@@ -9,14 +9,14 @@ import kotlinx.android.parcel.Parcelize
  */
 @Parcelize
 data class Runner(
-    @field:Json(name = "id")
+    @Json(name = "id")
     var id: Long = 0,
-    @field:Json(name = "description")
+    @Json(name = "description")
     var description: String? = null,
-    @field:Json(name = "active")
+    @Json(name = "active")
     var isActive: Boolean = false,
-    @field:Json(name = "is_shared")
+    @Json(name = "is_shared")
     var isShared: Boolean = false,
-    @field:Json(name = "name")
+    @Json(name = "name")
     var name: String? = null
 ) : Parcelable

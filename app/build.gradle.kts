@@ -53,16 +53,15 @@ android {
 
 apply { from("experimental.gradle") }
 
-val retrofitVersion = "2.6.2"
+val retrofitVersion = "2.7.0"
 val okHttpVersion = "4.2.2"
 val butterknifeVersion = "10.2.0"
 val reptarVersion = "2.5.1"
 
 val adapterLayout = "1.2.0"
 val materialDialogsVersion = "0.9.6.0"
-val leakCanaryVersion = "1.6.3"
 val addendumVersion = "2.1.1"
-val moshiVersion = "1.8.0"
+val moshiVersion = "1.9.2"
 val autodisposeVersion = "0.8.0"
 
 dependencies {
@@ -71,10 +70,10 @@ dependencies {
     implementation("androidx.core:core-ktx:1.1.0")
 
     implementation("androidx.appcompat:appcompat:1.1.0")
-    implementation("androidx.recyclerview:recyclerview:1.0.0")
+    implementation("androidx.recyclerview:recyclerview:1.1.0")
     implementation("androidx.cardview:cardview:1.0.0")
     implementation("androidx.palette:palette:1.0.0")
-    implementation("androidx.browser:browser:1.0.0")
+    implementation("androidx.browser:browser:1.2.0")
 
     implementation("com.google.android.material:material:1.0.0")
 
@@ -91,6 +90,7 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor:$okHttpVersion")
     implementation("com.squareup.picasso:picasso:2.5.2")
     implementation("com.squareup.moshi:moshi:$moshiVersion")
+    implementation("com.squareup.moshi:moshi-kotlin:$moshiVersion")
     implementation("com.squareup.moshi:moshi-adapters:$moshiVersion")
 
     implementation("com.jakewharton.picasso:picasso2-okhttp3-downloader:1.1.0")
@@ -101,7 +101,7 @@ dependencies {
 
     implementation("org.greenrobot:eventbus:3.1.1")
 
-    implementation("io.reactivex.rxjava2:rxjava:2.2.12")
+    implementation("io.reactivex.rxjava2:rxjava:2.2.16")
     implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
 
     implementation("com.uber.autodispose:autodispose-kotlin:$autodisposeVersion")
@@ -121,8 +121,8 @@ dependencies {
         exclude(group = "com.intellij", module = "annotations")
     }
     implementation("com.github.Commit451:Easel:3.1.0")
-    implementation("com.github.Commit451:Gimbal:2.0.2")
-    implementation("com.github.Commit451:Teleprinter:2.2.0")
+    implementation("com.github.Commit451:Gimbal:3.0.0")
+    implementation("com.github.Commit451:Teleprinter:3.0.0")
     implementation("com.github.Commit451:Jounce:1.0.2")
     implementation("com.github.Commit451:ForegroundViews:2.5.0")
     implementation("com.github.Commit451:MorphTransitions:2.0.0")
@@ -144,7 +144,7 @@ dependencies {
 
     implementation("com.github.alorma:diff-textview:1.3.0")
 
-    implementation("com.wdullaer:materialdatetimepicker:4.1.2")
+    implementation("com.wdullaer:materialdatetimepicker:4.2.3")
 
     implementation("com.github.novoda:simple-chrome-custom-tabs:0.1.6")
 
@@ -159,17 +159,15 @@ dependencies {
 
     implementation("com.github.jkwiecien:EasyImage:2.1.1")
 
-    implementation("com.atlassian.commonmark:commonmark:0.13.0")
+    implementation("com.atlassian.commonmark:commonmark:0.13.1")
 
     implementation(project(":firebaseshim"))
     if (BuildHelper.firebaseEnabled(project)) {
-        implementation("com.google.firebase:firebase-core:16.0.8")
-        implementation("com.crashlytics.sdk.android:crashlytics:2.10.0")
+        implementation("com.google.firebase:firebase-core:17.2.1")
+        implementation("com.crashlytics.sdk.android:crashlytics:2.10.1")
     }
 
-    debugImplementation("com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion")
-    releaseImplementation("com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion")
-    testImplementation("com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion")
+    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.0")
 
     testImplementation("junit:junit:4.12")
     testImplementation("org.threeten:threetenbp:1.3.8") {

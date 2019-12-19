@@ -6,8 +6,8 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class Branch(
-    @field:Json(name = "name")
+    @Json(name = "name")
     var name: String? = null,
-    @field:Json(name = "protected")
+    @Json(name = "protected")
     var isProtected: Boolean = false
 ) : Parcelable

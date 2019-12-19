@@ -1,13 +1,13 @@
 package com.commit451.gitlab.fragment
 
 import android.os.Bundle
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import butterknife.BindView
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
@@ -33,13 +33,13 @@ class CommitsFragment : ButterKnifeFragment() {
     }
 
     @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    lateinit var swipeRefreshLayout: SwipeRefreshLayout
     @BindView(R.id.list)
-    lateinit var listCommits: androidx.recyclerview.widget.RecyclerView
+    lateinit var listCommits: RecyclerView
     @BindView(R.id.message_text)
     lateinit var textMessage: TextView
 
-    lateinit var layoutManagerCommits: androidx.recyclerview.widget.LinearLayoutManager
+    lateinit var layoutManagerCommits: LinearLayoutManager
     lateinit var adapterCommits: CommitAdapter
 
     var project: Project? = null
@@ -73,7 +73,7 @@ class CommitsFragment : ButterKnifeFragment() {
                 Navigator.navigateToDiffActivity(baseActivty, project!!, commit)
             }
         })
-        layoutManagerCommits = androidx.recyclerview.widget.LinearLayoutManager(activity)
+        layoutManagerCommits = LinearLayoutManager(activity)
         listCommits.layoutManager = layoutManagerCommits
         listCommits.addItemDecoration(DividerItemDecoration(baseActivty))
         listCommits.adapter = adapterCommits

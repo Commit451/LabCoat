@@ -12,7 +12,7 @@ import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
  */
 abstract class BaseActivity : AppCompatActivity() {
 
-    val scopeProvider by lazy { AndroidLifecycleScopeProvider.from(this) }
+    val scopeProvider: AndroidLifecycleScopeProvider by lazy { AndroidLifecycleScopeProvider.from(this) }
 
     val account: Account
         get() = App.get().gitLab.account

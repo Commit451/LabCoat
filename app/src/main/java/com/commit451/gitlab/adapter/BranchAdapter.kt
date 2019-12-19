@@ -1,7 +1,7 @@
 package com.commit451.gitlab.adapter
 
-import androidx.recyclerview.widget.RecyclerView
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.Ref
 import com.commit451.gitlab.model.api.Branch
@@ -11,7 +11,7 @@ import java.util.*
 /**
  * Adapts the feeds
  */
-class BranchAdapter(private val ref: Ref?, private val listener: BranchAdapter.Listener) : androidx.recyclerview.widget.RecyclerView.Adapter<BranchViewHolder>() {
+class BranchAdapter(private val ref: Ref?, private val listener: Listener) : RecyclerView.Adapter<BranchViewHolder>() {
 
     private val values: ArrayList<Branch> = ArrayList()
 

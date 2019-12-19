@@ -6,18 +6,18 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class Group (
-    @field:Json(name = "id")
+    @Json(name = "id")
     var id: Long = 0,
-    @field:Json(name = "name")
+    @Json(name = "name")
     var name: String? = null,
-    @field:Json(name = "path")
+    @Json(name = "path")
     var path: String? = null,
-    @field:Json(name = "description")
+    @Json(name = "description")
     var description: String? = null,
-    @field:Json(name = "avatar_url")
+    @Json(name = "avatar_url")
     var avatarUrl: String? = null,
-    @field:Json(name = "web_url")
-    var webUrl: String,
-    @field:Json(name = "projects")
+    @Json(name = "web_url")
+    var webUrl: String? = null,
+    @Json(name = "projects")
     var projects: MutableList<Project>? = null
 ): Parcelable

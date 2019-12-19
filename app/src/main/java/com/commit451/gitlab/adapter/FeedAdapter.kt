@@ -1,7 +1,7 @@
 package com.commit451.gitlab.adapter
 
-import androidx.recyclerview.widget.RecyclerView
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.rss.Entry
 import com.commit451.gitlab.viewHolder.FeedEntryViewHolder
@@ -10,7 +10,7 @@ import java.util.*
 /**
  * Adapts the feeds
  */
-class FeedAdapter(internal var listener: FeedAdapter.Listener) : androidx.recyclerview.widget.RecyclerView.Adapter<FeedEntryViewHolder>() {
+class FeedAdapter(internal var listener: Listener) : RecyclerView.Adapter<FeedEntryViewHolder>() {
 
     var values: ArrayList<Entry> = ArrayList()
 

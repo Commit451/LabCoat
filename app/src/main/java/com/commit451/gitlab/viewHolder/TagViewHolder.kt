@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.commit451.addendum.recyclerview.context
@@ -14,7 +15,7 @@ import com.commit451.gitlab.model.api.Tag
 /**
  * Label
  */
-class TagViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
+class TagViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     companion object {
 
@@ -28,7 +29,7 @@ class TagViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.View
     @BindView(R.id.title)
     lateinit var title: TextView
 
-    var colorHighlighted: Int = 0
+    private var colorHighlighted: Int = 0
 
     init {
         ButterKnife.bind(this, view)

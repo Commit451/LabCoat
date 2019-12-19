@@ -15,7 +15,7 @@ import com.commit451.gitlab.model.api.Label
 /**
  * Label
  */
-class LabelViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
+class LabelViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     companion object {
 

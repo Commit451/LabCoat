@@ -11,14 +11,14 @@ import java.util.*
 /**
  * Shows a bunch of labels
  */
-class LabelAdapter(private val listener: LabelAdapter.Listener) : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
+class LabelAdapter(private val listener: Listener) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
 
-        private val TYPE_ITEM = 0
+        private const val TYPE_ITEM = 0
     }
 
-    val items: ArrayList<Label> = ArrayList()
+    private val items: ArrayList<Label> = ArrayList()
 
     fun getItem(position: Int): Label {
         return items[position]
@@ -37,7 +37,7 @@ class LabelAdapter(private val listener: LabelAdapter.Listener) : androidx.recyc
         notifyItemInserted(0)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         when (viewType) {
             TYPE_ITEM -> {
                 val holder = LabelViewHolder.inflate(parent)
@@ -48,10 +48,10 @@ class LabelAdapter(private val listener: LabelAdapter.Listener) : androidx.recyc
                 return holder
             }
         }
-        throw IllegalStateException("No idea what to inflate with view type of " + viewType)
+        throw IllegalStateException("No idea what to inflate with view type of $viewType")
     }
 
-    override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is ProjectMemberFooterViewHolder) {
             //
         } else if (holder is LabelViewHolder) {

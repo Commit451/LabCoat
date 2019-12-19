@@ -17,7 +17,7 @@ import com.commit451.gitlab.util.ImageUtil
 /**
  * Represents a merge request within a list
  */
-class MergeRequestViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
+class MergeRequestViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     companion object {
 

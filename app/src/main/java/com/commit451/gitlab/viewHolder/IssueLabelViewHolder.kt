@@ -12,7 +12,7 @@ import com.commit451.gitlab.R
 /**
  * Shows the labels for an issue
  */
-class IssueLabelViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
+class IssueLabelViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     companion object {
 

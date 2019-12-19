@@ -11,18 +11,18 @@ import java.util.Date
 @Parcelize
 data class AwardEmoji(
 
-    @field:Json(name = "id")
+    @Json(name = "id")
     var id: String? = null,
-    @field:Json(name = "name")
+    @Json(name = "name")
     var name: String? = null,
-    @field:Json(name = "user")
+    @Json(name = "user")
     var user: User? = null,
-    @field:Json(name = "created_at")
+    @Json(name = "created_at")
     var createdAt: Date? = null,
-    @field:Json(name = "updated_at")
+    @Json(name = "updated_at")
     var updatedAt: Date? = null,
-    @field:Json(name = "awardable_id")
+    @Json(name = "awardable_id")
     var awardableId: Int = 0,
-    @field:Json(name = "awardable_type")
+    @Json(name = "awardable_type")
     var awardableType: String? = null
 ) : Parcelable

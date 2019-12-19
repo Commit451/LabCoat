@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
+import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.commit451.gitlab.R
@@ -25,7 +26,7 @@ class UserFeedWidgetConfigureActivity : BaseActivity() {
     @BindView(R.id.message_text)
     lateinit var textMessage: TextView
     @BindView(R.id.list)
-    lateinit var list: androidx.recyclerview.widget.RecyclerView
+    lateinit var list: RecyclerView
 
     private lateinit var adapterAccounts: AccountsAdapter
 

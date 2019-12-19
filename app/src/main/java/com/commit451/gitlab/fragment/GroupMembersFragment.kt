@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import butterknife.BindView
@@ -121,7 +122,7 @@ class GroupMembersFragment : ButterKnifeFragment() {
         adapterGroupMembers = GroupMembersAdapter(listener)
         layoutManagerGroupMembers = DynamicGridLayoutManager(baseActivty)
         layoutManagerGroupMembers.setMinimumSpanSize(baseActivty.resources.getDimensionPixelSize(R.dimen.user_list_image_size))
-        layoutManagerGroupMembers.spanSizeLookup = object : androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup() {
+        layoutManagerGroupMembers.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
                 if (adapterGroupMembers.isFooter(position)) {
                     return layoutManagerGroupMembers.spanCount

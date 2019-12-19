@@ -9,7 +9,7 @@ import com.commit451.gitlab.R
 /**
  * Footer to show loading in a RecyclerView
  */
-class LoadingFooterViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
+class LoadingFooterViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     companion object {
 

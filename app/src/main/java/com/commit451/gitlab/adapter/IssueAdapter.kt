@@ -11,20 +11,20 @@ import java.util.*
 /**
  * Issues adapter
  */
-class IssueAdapter(private val listener: IssueAdapter.Listener) : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
+class IssueAdapter(private val listener: Listener) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
 
-        private val FOOTER_COUNT = 1
+        private const val FOOTER_COUNT = 1
 
-        private val TYPE_ITEM = 0
-        private val TYPE_FOOTER = 1
+        private const val TYPE_ITEM = 0
+        private const val TYPE_FOOTER = 1
     }
 
     val values: ArrayList<Issue> = ArrayList()
     private var loading = false
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         when (viewType) {
             TYPE_ITEM -> {
                 val holder = IssueViewHolder.inflate(parent)
@@ -36,18 +36,22 @@ class IssueAdapter(private val listener: IssueAdapter.Listener) : androidx.recyc
             }
             TYPE_FOOTER -> return LoadingFooterViewHolder.inflate(parent)
         }
-        throw IllegalStateException("No holder for view type " + viewType)
+        throw IllegalStateException("No holder for view type $viewType")
     }
 
-    override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
-        if (holder is IssueViewHolder) {
-            val issue = getValueAt(position)
-            holder.bind(issue)
-            holder.itemView.setTag(R.id.list_position, position)
-        } else if (holder is LoadingFooterViewHolder) {
-            holder.bind(loading)
-        } else {
-            throw IllegalStateException("What is this holder?")
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when (holder) {
+            is IssueViewHolder -> {
+                val issue = getValueAt(position)
+                holder.bind(issue)
+                holder.itemView.setTag(R.id.list_position, position)
+            }
+            is LoadingFooterViewHolder -> {
+                holder.bind(loading)
+            }
+            else -> {
+                throw IllegalStateException("What is this holder?")
+            }
         }
     }
 
@@ -56,10 +60,10 @@ class IssueAdapter(private val listener: IssueAdapter.Listener) : androidx.recyc
     }
 
     override fun getItemViewType(position: Int): Int {
-        if (position == values.size) {
-            return TYPE_FOOTER
+        return if (position == values.size) {
+            TYPE_FOOTER
         } else {
-            return TYPE_ITEM
+            TYPE_ITEM
         }
     }
 

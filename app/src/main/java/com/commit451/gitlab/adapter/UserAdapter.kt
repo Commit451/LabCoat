@@ -12,61 +12,59 @@ import java.util.*
 /**
  * Adapter for a list of users
  */
-class UserAdapter(private val listener: UserAdapter.Listener) : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
+class UserAdapter(private val listener: Listener) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
 
-        private val FOOTER_COUNT = 1
+        private const val FOOTER_COUNT = 1
 
-        private val TYPE_ITEM = 0
-        private val TYPE_FOOTER = 1
+        private const val TYPE_ITEM = 0
+        private const val TYPE_FOOTER = 1
     }
 
     private val values: ArrayList<User> = ArrayList()
     private var loading: Boolean = false
 
-    val spanSizeLookup: androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup = object : androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup() {
+    val spanSizeLookup: GridLayoutManager.SpanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
         override fun getSpanSize(position: Int): Int {
             val viewType = getItemViewType(position)
-            if (viewType == TYPE_FOOTER) {
-                return 2
+            return if (viewType == TYPE_FOOTER) {
+                2
             } else {
-                return 1
+                1
             }
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         when (viewType) {
             TYPE_ITEM -> {
                 val holder = UserViewHolder.inflate(parent)
                 holder.itemView.setOnClickListener { v ->
                     val position = v.getTag(R.id.list_position) as Int
-                    val holder = v.getTag(R.id.list_view_holder) as UserViewHolder
                     listener.onUserClicked(getUser(position), holder)
                 }
                 return holder
             }
             TYPE_FOOTER -> return LoadingFooterViewHolder.inflate(parent)
         }
-        throw IllegalStateException("No known viewholder for type " + viewType)
+        throw IllegalStateException("No known viewholder for type $viewType")
     }
 
-    override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is UserViewHolder) {
             holder.bind(values[position])
             holder.itemView.setTag(R.id.list_position, position)
-            holder.itemView.setTag(R.id.list_view_holder, holder)
         } else if (holder is LoadingFooterViewHolder) {
             holder.bind(loading)
         }
     }
 
     override fun getItemViewType(position: Int): Int {
-        if (position == values.size) {
-            return TYPE_FOOTER
+        return if (position == values.size) {
+            TYPE_FOOTER
         } else {
-            return TYPE_ITEM
+            TYPE_ITEM
         }
     }
 

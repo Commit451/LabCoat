@@ -8,33 +8,33 @@ import java.util.Date
 
 @Parcelize
 data class Issue(
-    @field:Json(name = "id")
+    @Json(name = "id")
     var id: Long = 0,
-    @field:Json(name = "iid")
+    @Json(name = "iid")
     var iid: Long = 0,
-    @field:Json(name = "project_id")
+    @Json(name = "project_id")
     var projectId: Long = 0,
-    @field:Json(name = "title")
+    @Json(name = "title")
     var title: String? = null,
-    @field:Json(name = "description")
+    @Json(name = "description")
     var description: String? = null,
-    @field:Json(name = "state")
+    @Json(name = "state")
     @State
     @get:State
     var state: String? = null,
-    @field:Json(name = "created_at")
+    @Json(name = "created_at")
     var createdAt: Date? = null,
-    @field:Json(name = "updated_at")
+    @Json(name = "updated_at")
     var updatedAt: Date? = null,
-    @field:Json(name = "labels")
+    @Json(name = "labels")
     var labels: List<String>? = null,
-    @field:Json(name = "milestone")
+    @Json(name = "milestone")
     var milestone: Milestone? = null,
-    @field:Json(name = "assignee")
+    @Json(name = "assignee")
     var assignee: User? = null,
-    @field:Json(name = "author")
+    @Json(name = "author")
     var author: User? = null,
-    @field:Json(name = "confidential")
+    @Json(name = "confidential")
     var isConfidential: Boolean = false
 ) : Parcelable {
     companion object {

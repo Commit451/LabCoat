@@ -1,7 +1,7 @@
 package com.commit451.gitlab.adapter
 
-import androidx.recyclerview.widget.RecyclerView
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import com.commit451.gitlab.R
 import com.commit451.gitlab.viewHolder.BreadcrumbViewHolder
 import java.util.*
@@ -9,11 +9,11 @@ import java.util.*
 /**
  * Shows the current file path
  */
-class BreadcrumbAdapter : androidx.recyclerview.widget.RecyclerView.Adapter<BreadcrumbViewHolder>() {
+class BreadcrumbAdapter : RecyclerView.Adapter<BreadcrumbViewHolder>() {
     private val values: MutableList<Breadcrumb>
 
     init {
-        values = ArrayList<Breadcrumb>()
+        values = ArrayList()
         notifyDataSetChanged()
     }
 
@@ -22,9 +22,7 @@ class BreadcrumbAdapter : androidx.recyclerview.widget.RecyclerView.Adapter<Brea
         holder.itemView.setOnClickListener { v ->
             val position = v.getTag(R.id.list_position) as Int
             val breadcrumb = getValueAt(position)
-            if (breadcrumb != null) {
-                breadcrumb.listener.onClick()
-            }
+            breadcrumb?.listener?.onClick()
         }
         return holder
     }

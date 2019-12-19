@@ -18,7 +18,7 @@ import com.commit451.gitlab.util.ImageUtil
 /**
  * issues, yay!
  */
-class TodoViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
+class TodoViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     companion object {
 

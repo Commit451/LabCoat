@@ -1,10 +1,10 @@
 package com.commit451.gitlab.adapter
 
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.api.ProjectNamespace
 import com.commit451.gitlab.model.api.User
@@ -15,31 +15,31 @@ import java.util.*
 /**
  * Shows a projects members and a groups members
  */
-class ProjectMembersAdapter(private val listener: ProjectMembersAdapter.Listener) : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
+class ProjectMembersAdapter(private val listener: Listener) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
 
-        val TYPE_MEMBER = 0
-        val TYPE_FOOTER = 1
+        const val TYPE_MEMBER = 0
+        const val TYPE_FOOTER = 1
 
-        val FOOTER_COUNT = 1
+        const val FOOTER_COUNT = 1
     }
 
     private val members: ArrayList<User> = ArrayList()
     private var namespace: ProjectNamespace? = null
 
-    val spanSizeLookup: androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup = object : androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup() {
+    val spanSizeLookup: GridLayoutManager.SpanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
         override fun getSpanSize(position: Int): Int {
             val viewType = getItemViewType(position)
-            if (viewType == TYPE_FOOTER) {
-                return 2
+            return if (viewType == TYPE_FOOTER) {
+                2
             } else {
-                return 1
+                1
             }
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         when (viewType) {
             TYPE_MEMBER -> {
                 val projectViewHolder = ProjectMemberViewHolder.inflate(parent)
@@ -56,10 +56,10 @@ class ProjectMembersAdapter(private val listener: ProjectMembersAdapter.Listener
                 return footerHolder
             }
         }
-        throw IllegalStateException("No idea what to inflate with view type of " + viewType)
+        throw IllegalStateException("No idea what to inflate with view type of $viewType")
     }
 
-    override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is ProjectMemberFooterViewHolder) {
             if (namespace == null) {
                 holder.itemView.visibility = View.GONE
@@ -93,10 +93,10 @@ class ProjectMembersAdapter(private val listener: ProjectMembersAdapter.Listener
     }
 
     override fun getItemViewType(position: Int): Int {
-        if (position == members.size) {
-            return TYPE_FOOTER
+        return if (position == members.size) {
+            TYPE_FOOTER
         } else {
-            return TYPE_MEMBER
+            TYPE_MEMBER
         }
     }
 

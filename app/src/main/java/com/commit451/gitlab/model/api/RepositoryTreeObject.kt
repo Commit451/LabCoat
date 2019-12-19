@@ -7,15 +7,15 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class RepositoryTreeObject(
-    @field:Json(name = "id")
+    @Json(name = "id")
     var id: String? = null,
-    @field:Json(name = "name")
+    @Json(name = "name")
     var name: String? = null,
-    @field:Json(name = "type")
+    @Json(name = "type")
     @Type
     @get:Type
     var type: String? = null,
-    @field:Json(name = "mode")
+    @Json(name = "mode")
     var mode: String? = null
 ) : Parcelable {
     companion object {

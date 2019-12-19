@@ -2,13 +2,13 @@ package com.commit451.gitlab.fragment
 
 import android.net.Uri
 import android.os.Bundle
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import butterknife.BindView
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
@@ -25,7 +25,7 @@ class UsersFragment : ButterKnifeFragment() {
 
     companion object {
 
-        private val EXTRA_QUERY = "extra_query"
+        private const val EXTRA_QUERY = "extra_query"
 
         @JvmOverloads
         fun newInstance(query: String? = null): UsersFragment {
@@ -43,14 +43,14 @@ class UsersFragment : ButterKnifeFragment() {
     }
 
     @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    lateinit var swipeRefreshLayout: SwipeRefreshLayout
     @BindView(R.id.list)
-    lateinit var listUsers: androidx.recyclerview.widget.RecyclerView
+    lateinit var listUsers: RecyclerView
     @BindView(R.id.message_text)
     lateinit var textMessage: TextView
 
     lateinit var adapterUser: UserAdapter
-    lateinit var layoutManagerUser: androidx.recyclerview.widget.GridLayoutManager
+    lateinit var layoutManagerUser: GridLayoutManager
 
     var query: String? = null
     var loading: Boolean = false
@@ -85,7 +85,7 @@ class UsersFragment : ButterKnifeFragment() {
                 Navigator.navigateToUser(baseActivty, userViewHolder.image, user)
             }
         })
-        layoutManagerUser = androidx.recyclerview.widget.GridLayoutManager(activity, 2)
+        layoutManagerUser = GridLayoutManager(activity, 2)
         layoutManagerUser.spanSizeLookup = adapterUser.spanSizeLookup
         listUsers.layoutManager = layoutManagerUser
         listUsers.adapter = adapterUser

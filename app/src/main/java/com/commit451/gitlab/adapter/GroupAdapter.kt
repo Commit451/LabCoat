@@ -1,7 +1,7 @@
 package com.commit451.gitlab.adapter
 
-import androidx.recyclerview.widget.RecyclerView
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.api.Group
 import com.commit451.gitlab.viewHolder.GroupViewHolder
@@ -10,7 +10,7 @@ import java.util.*
 /**
  * All the groups
  */
-class GroupAdapter(private val listener: GroupAdapter.Listener) : androidx.recyclerview.widget.RecyclerView.Adapter<GroupViewHolder>() {
+class GroupAdapter(private val listener: Listener) : RecyclerView.Adapter<GroupViewHolder>() {
 
     val values: ArrayList<Group> = ArrayList()
 

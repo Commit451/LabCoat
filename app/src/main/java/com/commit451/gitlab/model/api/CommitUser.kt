@@ -6,16 +6,16 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class CommitUser(
-    @field:Json(name = "id")
+    @Json(name = "id")
     var id: String? = null,
-    @field:Json(name = "name")
+    @Json(name = "name")
     var name: String? = null,
-    @field:Json(name = "username")
+    @Json(name = "username")
     var username: String? = null,
-    @field:Json(name = "state")
+    @Json(name = "state")
     var state: String? = null,
-    @field:Json(name = "avatar_url")
+    @Json(name = "avatar_url")
     var avatarUrl: String? = null,
-    @field:Json(name = "web_url")
+    @Json(name = "web_url")
     var webUrl: String? = null
 ) : Parcelable

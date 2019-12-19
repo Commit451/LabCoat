@@ -15,7 +15,7 @@ import com.commit451.gitlab.model.api.Diff
 /**
  * Displays a diff to a user
  */
-class DiffViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
+class DiffViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     companion object {
 

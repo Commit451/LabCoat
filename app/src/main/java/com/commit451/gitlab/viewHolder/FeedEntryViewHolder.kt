@@ -18,7 +18,7 @@ import com.commit451.gitlab.util.DateUtil
 /**
  * Represents the view of an item in the RSS feed
  */
-class FeedEntryViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
+class FeedEntryViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     companion object {
 

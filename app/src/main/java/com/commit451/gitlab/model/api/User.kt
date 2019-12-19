@@ -8,55 +8,55 @@ import java.util.Date
 
 @Parcelize
 data class User(
-    @field:Json(name = "created_at")
+    @Json(name = "created_at")
     var createdAt: Date? = null,
-    @field:Json(name = "is_admin")
+    @Json(name = "is_admin")
     var isAdmin: Boolean = false,
-    @field:Json(name = "bio")
+    @Json(name = "bio")
     var bio: String? = null,
-    @field:Json(name = "skype")
+    @Json(name = "skype")
     var skype: String? = null,
-    @field:Json(name = "linkedin")
+    @Json(name = "linkedin")
     var linkedin: String? = null,
-    @field:Json(name = "twitter")
+    @Json(name = "twitter")
     var twitter: String? = null,
-    @field:Json(name = "website_url")
+    @Json(name = "website_url")
     var websiteUrl: String? = null,
-    @field:Json(name = "email")
+    @Json(name = "email")
     var email: String? = null,
-    @field:Json(name = "theme_id")
+    @Json(name = "theme_id")
     var themeId: Int? = 0,
-    @field:Json(name = "color_scheme_id")
+    @Json(name = "color_scheme_id")
     var colorSchemeId: Int = 0,
-    @field:Json(name = "projects_limit")
+    @Json(name = "projects_limit")
     var projectsLimit: Int = 0,
-    @field:Json(name = "current_sign_in_at")
+    @Json(name = "current_sign_in_at")
     var currentSignInAt: Date? = null,
-    @field:Json(name = "identities")
+    @Json(name = "identities")
     var identities: List<Identity>? = null,
-    @field:Json(name = "can_create_group")
+    @Json(name = "can_create_group")
     var canCreateGroup: Boolean = false,
-    @field:Json(name = "can_create_project")
+    @Json(name = "can_create_project")
     var canCreateProject: Boolean = false,
-    @field:Json(name = "two_factor_enabled")
+    @Json(name = "two_factor_enabled")
     var isTwoFactorEnabled: Boolean = false,
-    @field:Json(name = "id")
+    @Json(name = "id")
     var id: Long = 0,
-    @field:Json(name = "state")
+    @Json(name = "state")
     @State
     @get:State
     var state: String? = null,
-    @field:Json(name = "avatar_url")
+    @Json(name = "avatar_url")
     var avatarUrl: String? = null,
-    @field:Json(name = "web_url")
-    var webUrl: String,
-    @field:Json(name = "name")
+    @Json(name = "web_url")
+    var webUrl: String? = null,
+    @Json(name = "name")
     var name: String? = null,
-    @field:Json(name = "username")
+    @Json(name = "username")
     var username: String? = null,
-    @field:Json(name = "private_token")
+    @Json(name = "private_token")
     var privateToken: String? = null,
-    @field:Json(name = "access_level")
+    @Json(name = "access_level")
     var accessLevel: Int = 0
 ) : Parcelable {
 

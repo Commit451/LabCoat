@@ -13,7 +13,7 @@ import com.commit451.gitlab.model.api.Milestone
 /**
  * Shows milestone in a spinner
  */
-class MilestoneSpinnerViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
+class MilestoneSpinnerViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     companion object {
 

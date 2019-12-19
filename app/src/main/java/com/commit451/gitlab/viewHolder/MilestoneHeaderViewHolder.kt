@@ -14,7 +14,7 @@ import com.commit451.gitlab.util.DateUtil
 /**
  * Header with information for milestones
  */
-class MilestoneHeaderViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
+class MilestoneHeaderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     companion object {
 

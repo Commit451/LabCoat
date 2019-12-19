@@ -18,7 +18,7 @@ import com.commit451.gitlab.util.ImageUtil
 /**
  * A signed in account
  */
-class AccountViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
+class AccountViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     companion object {
 

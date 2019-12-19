@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import butterknife.BindView
@@ -84,7 +85,7 @@ class AddLabelActivity : BaseActivity() {
             }
         })
         list.adapter = adapterLabel
-        list.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
+        list.layoutManager = LinearLayoutManager(this)
 
         toolbar.setNavigationIcon(R.drawable.ic_back_24dp)
         toolbar.setNavigationOnClickListener { onBackPressed() }

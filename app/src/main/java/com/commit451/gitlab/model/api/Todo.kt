@@ -12,27 +12,27 @@ import java.util.Date
  */
 @Parcelize
 data class Todo(
-    @field:Json(name = "id")
+    @Json(name = "id")
     var id: String? = null,
-    @field:Json(name = "project")
+    @Json(name = "project")
     var project: Project? = null,
-    @field:Json(name = "author")
+    @Json(name = "author")
     var author: User? = null,
-    @field:Json(name = "action_name")
+    @Json(name = "action_name")
     var actionName: String? = null,
-    @field:Json(name = "target_type")
+    @Json(name = "target_type")
     @TargetType
     @get:TargetType
     var targetType: String? = null,
-    @field:Json(name = "target_url")
+    @Json(name = "target_url")
     var targetUrl: String? = null,
-    @field:Json(name = "body")
+    @Json(name = "body")
     var body: String? = null,
-    @field:Json(name = "state")
+    @Json(name = "state")
     @State
     @get:State
     var state: String? = null,
-    @field:Json(name = "created_at")
+    @Json(name = "created_at")
     var createdAt: Date? = null
 ) : Parcelable {
     companion object {

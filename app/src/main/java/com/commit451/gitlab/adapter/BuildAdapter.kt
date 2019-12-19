@@ -10,20 +10,20 @@ import java.util.*
 /**
  * Builds adapter
  */
-class BuildAdapter(private val listener: BuildAdapter.Listener) : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
+class BuildAdapter(private val listener: Listener) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
 
-        private val FOOTER_COUNT = 1
+        private const val FOOTER_COUNT = 1
 
-        private val TYPE_ITEM = 0
-        private val TYPE_FOOTER = 1
+        private const val TYPE_ITEM = 0
+        private const val TYPE_FOOTER = 1
     }
 
     private val values: ArrayList<Build> = ArrayList()
     private var loading = false
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         when (viewType) {
             TYPE_ITEM -> {
                 val holder = BuildViewHolder.inflate(parent)
@@ -35,17 +35,21 @@ class BuildAdapter(private val listener: BuildAdapter.Listener) : androidx.recyc
             }
             TYPE_FOOTER -> return LoadingFooterViewHolder.inflate(parent)
         }
-        throw IllegalStateException("No holder for view type " + viewType)
+        throw IllegalStateException("No holder for view type $viewType")
     }
 
-    override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
-        if (holder is BuildViewHolder) {
-            val build = getValueAt(position)
-            holder.bind(build)
-        } else if (holder is LoadingFooterViewHolder) {
-            holder.bind(loading)
-        } else {
-            throw IllegalStateException("What is this holder?")
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when (holder) {
+            is BuildViewHolder -> {
+                val build = getValueAt(position)
+                holder.bind(build)
+            }
+            is LoadingFooterViewHolder -> {
+                holder.bind(loading)
+            }
+            else -> {
+                throw IllegalStateException("What is this holder?")
+            }
         }
     }
 
@@ -54,10 +58,10 @@ class BuildAdapter(private val listener: BuildAdapter.Listener) : androidx.recyc
     }
 
     override fun getItemViewType(position: Int): Int {
-        if (position == values.size) {
-            return TYPE_FOOTER
+        return if (position == values.size) {
+            TYPE_FOOTER
         } else {
-            return TYPE_ITEM
+            TYPE_ITEM
         }
     }
 

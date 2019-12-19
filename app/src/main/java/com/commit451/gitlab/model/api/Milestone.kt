@@ -9,25 +9,25 @@ import java.util.Date
 
 @Parcelize
 data class Milestone(
-    @field:Json(name = "id")
+    @Json(name = "id")
     var id: Long = 0,
-    @field:Json(name = "iid")
+    @Json(name = "iid")
     var iid: Long = 0,
-    @field:Json(name = "project_id")
+    @Json(name = "project_id")
     var projectId: Long = 0,
-    @field:Json(name = "title")
+    @Json(name = "title")
     var title: String? = null,
-    @field:Json(name = "description")
+    @Json(name = "description")
     var description: String? = null,
-    @field:Json(name = "state")
+    @Json(name = "state")
     @get:State
     var state: String? = null,
-    @field:Json(name = "created_at")
+    @Json(name = "created_at")
     var createdAt: Date? = null,
-    @field:Json(name = "updated_at")
+    @Json(name = "updated_at")
     var updatedAt: Date? = null,
     @field:DashDateAdapter.DueDate
-    @field:Json(name = "due_date")
+    @Json(name = "due_date")
     var dueDate: Date? = null
 ) : Parcelable {
     companion object {

@@ -6,14 +6,14 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class Contributor(
-    @field:Json(name = "name")
+    @Json(name = "name")
     var name: String? = null,
-    @field:Json(name = "email")
+    @Json(name = "email")
     var email: String? = null,
-    @field:Json(name = "commits")
+    @Json(name = "commits")
     var commits: Int = 0,
-    @field:Json(name = "additions")
+    @Json(name = "additions")
     var additions: Int = 0,
-    @field:Json(name = "deletions")
+    @Json(name = "deletions")
     var deletions: Int = 0
 ): Parcelable

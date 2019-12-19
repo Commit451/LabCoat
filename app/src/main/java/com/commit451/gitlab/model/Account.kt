@@ -10,21 +10,21 @@ import java.util.*
  */
 @Parcelize
 data class Account(
-    @field:Json(name = "server_url")
+    @Json(name = "server_url")
     var serverUrl: String? = null,
-    @field:Json(name = "authorization_header")
+    @Json(name = "authorization_header")
     var authorizationHeader: String? = null,
-    @field:Json(name = "private_token")
+    @Json(name = "private_token")
     var privateToken: String? = null,
-    @field:Json(name = "trusted_certificate")
+    @Json(name = "trusted_certificate")
     var trustedCertificate: String? = null,
-    @field:Json(name = "trusted_hostname")
+    @Json(name = "trusted_hostname")
     var trustedHostname: String? = null,
-    @field:Json(name = "email")
+    @Json(name = "email")
     var email: String? = null,
-    @field:Json(name = "username")
+    @Json(name = "username")
     var username: String? = null,
-    @field:Json(name = "last_used")
+    @Json(name = "last_used")
     var lastUsed: Date? = null
 ) : Parcelable, Comparable<Account> {
 

@@ -1,7 +1,7 @@
 package com.commit451.gitlab.adapter
 
-import androidx.recyclerview.widget.RecyclerView
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import com.commit451.gitlab.model.api.Note
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.viewHolder.LoadingFooterViewHolder
@@ -11,20 +11,20 @@ import java.util.*
 /**
  * Nice notes
  */
-class NotesAdapter(private val project: Project) : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
+class NotesAdapter(private val project: Project) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
 
-        private val TYPE_COMMENT = 2
-        private val TYPE_FOOTER = 3
+        private const val TYPE_COMMENT = 2
+        private const val TYPE_FOOTER = 3
 
-        private val FOOTER_COUNT = 1
+        private const val FOOTER_COUNT = 1
     }
 
     private val notes: LinkedList<Note> = LinkedList()
     private var loading = false
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         if (viewType == TYPE_COMMENT) {
             return NoteViewHolder.inflate(parent)
         } else if (viewType == TYPE_FOOTER) {
@@ -33,7 +33,7 @@ class NotesAdapter(private val project: Project) : androidx.recyclerview.widget.
         throw IllegalArgumentException("No view type matches")
     }
 
-    override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is NoteViewHolder) {
             val note = getNoteAt(position)
             holder.bind(note, project)
@@ -47,10 +47,10 @@ class NotesAdapter(private val project: Project) : androidx.recyclerview.widget.
     }
 
     override fun getItemViewType(position: Int): Int {
-        if (position == notes.size) {
-            return TYPE_FOOTER
+        return if (position == notes.size) {
+            TYPE_FOOTER
         } else {
-            return TYPE_COMMENT
+            TYPE_COMMENT
         }
     }
 

@@ -144,7 +144,7 @@ class AddIssueActivity : MorphActivity() {
                         this@AddIssueActivity.members.addAll(members)
                         if (project.belongsToGroup()) {
                             Timber.d("Project belongs to a group, loading those users too")
-                            App.get().gitLab.getGroupMembers(project.namespace.id)
+                            App.get().gitLab.getGroupMembers(project.namespace!!.id)
                                     .with(this@AddIssueActivity)
                                     .subscribe(object : CustomResponseSingleObserver<List<User>>() {
 

@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.appcompat.widget.Toolbar
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import butterknife.BindView
@@ -70,7 +71,7 @@ class AddUserActivity : MorphActivity() {
     @BindView(R.id.clear)
     lateinit var buttonClear: View
 
-    lateinit var layoutManager: androidx.recyclerview.widget.GridLayoutManager
+    lateinit var layoutManager: GridLayoutManager
     lateinit var adapter: UserAdapter
     lateinit var dialogAccess: AccessDialog
     lateinit var teleprinter: Teleprinter
@@ -139,7 +140,7 @@ class AddUserActivity : MorphActivity() {
         })
         swipeRefreshLayout.setOnRefreshListener { loadData() }
         list.adapter = adapter
-        layoutManager = androidx.recyclerview.widget.GridLayoutManager(this, 2)
+        layoutManager = GridLayoutManager(this, 2)
         layoutManager.spanSizeLookup = adapter.spanSizeLookup
         list.layoutManager = layoutManager
         list.addOnScrollListener(object : RecyclerView.OnScrollListener() {

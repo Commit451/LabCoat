@@ -18,7 +18,7 @@ import com.commit451.gitlab.util.ImageUtil
 /**
  * issues, yay!
  */
-class IssueViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
+class IssueViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     companion object {
 

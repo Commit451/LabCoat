@@ -17,7 +17,7 @@ import com.commit451.gitlab.util.ImageUtil
 /**
  * Shows a project member
  */
-class ProjectMemberViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
+class ProjectMemberViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     companion object {
 

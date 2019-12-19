@@ -13,7 +13,7 @@ import com.commit451.gitlab.model.api.Pipeline
 /**
  * Pipelines, woot
  */
-class PipelineViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
+class PipelineViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     companion object {
 

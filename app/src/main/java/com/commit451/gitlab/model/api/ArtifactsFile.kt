@@ -6,8 +6,8 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class ArtifactsFile(
-    @field:Json(name = "filename")
+    @Json(name = "filename")
     var fileName: String = "",
-    @field:Json(name = "size")
+    @Json(name = "size")
     var size: Long = 0
 ) : Parcelable

@@ -12,14 +12,14 @@ import java.util.*
 /**
  * Adapter for a list of users
  */
-class GroupMembersAdapter(private val listener: GroupMembersAdapter.Listener) : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
+class GroupMembersAdapter(private val listener: Listener) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
 
-        private val TYPE_MEMBER = 0
-        private val TYPE_FOOTER = 1
+        private const val TYPE_MEMBER = 0
+        private const val TYPE_FOOTER = 1
 
-        private val FOOTER_COUNT = 1
+        private const val FOOTER_COUNT = 1
     }
 
     val values: ArrayList<User> = ArrayList()
@@ -30,7 +30,7 @@ class GroupMembersAdapter(private val listener: GroupMembersAdapter.Listener) : 
             notifyItemChanged(values.size)
         }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         when (viewType) {
             TYPE_MEMBER -> {
                 val holder = ProjectMemberViewHolder.inflate(parent)
@@ -42,11 +42,11 @@ class GroupMembersAdapter(private val listener: GroupMembersAdapter.Listener) : 
             }
             TYPE_FOOTER -> return LoadingFooterViewHolder.inflate(parent)
         }
-        throw IllegalStateException("No known ViewHolder for type " + viewType)
+        throw IllegalStateException("No known ViewHolder for type $viewType")
 
     }
 
-    override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is ProjectMemberViewHolder) {
             val member = values[position]
             holder.bind(member)

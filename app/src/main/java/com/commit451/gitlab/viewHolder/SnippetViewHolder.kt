@@ -13,7 +13,7 @@ import com.commit451.gitlab.model.api.Snippet
 /**
  * Snippet
  */
-class SnippetViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
+class SnippetViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     companion object {
 

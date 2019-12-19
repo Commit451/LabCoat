@@ -12,14 +12,11 @@ object OkHttpClientFactory {
 
     /**
      * Creates an [OkHttpClient] configured with the account configuration
-
-     * @param account                    the account
-     * *
+     * @param account the account
      * @param includeSignInAuthenticator include a sign in authenticator that checks signed in status
-     * *
      * @return a configured [okhttp3.OkHttpClient.Builder]
      */
-    fun create(account: Account, includeSignInAuthenticator: Boolean = true): OkHttpClient.Builder {
+    fun create(account: Account, includeSignInAuthenticator: Boolean = true, includeAuthenticationInterceptor: Boolean = true): OkHttpClient.Builder {
         // A custom trust manager, otherwise SSL won't work properly with some configurations
         val customTrustManager = CustomTrustManager()
         account.trustedCertificate?.let {
@@ -33,9 +30,12 @@ object OkHttpClientFactory {
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .readTimeout(30, TimeUnit.SECONDS)
                 .writeTimeout(30, TimeUnit.SECONDS)
-                .addInterceptor(AuthenticationRequestInterceptor(account))
                 .sslSocketFactory(customTrustManager.getSSLSocketFactory(), X509TrustManagerProvider.x509TrustManager)
                 .hostnameVerifier(customTrustManager.getHostnameVerifier())
+
+        if (includeAuthenticationInterceptor) {
+            builder.addInterceptor(AuthenticationRequestInterceptor(account))
+        }
 
         if (includeSignInAuthenticator) {
             val authenticator = OpenSignInAuthenticator(account)

@@ -12,19 +12,19 @@ import java.util.*
 /**
  * Shows a bunch of diffs
  */
-class DiffAdapter(private val repositoryCommit: RepositoryCommit, private val listener: DiffAdapter.Listener) : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
+class DiffAdapter(private val repositoryCommit: RepositoryCommit, private val listener: Listener) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
 
-        private val TYPE_HEADER = 0
-        val TYPE_ITEM = 1
+        private const val TYPE_HEADER = 0
+        const val TYPE_ITEM = 1
 
-        private val HEADER_COUNT = 1
+        private const val HEADER_COUNT = 1
     }
 
     private val values: ArrayList<Diff> = ArrayList()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         when (viewType) {
             TYPE_HEADER -> return DiffHeaderViewHolder.inflate(parent)
             TYPE_ITEM -> {
@@ -36,10 +36,10 @@ class DiffAdapter(private val repositoryCommit: RepositoryCommit, private val li
                 return holder
             }
         }
-        throw IllegalStateException("No known view holder for " + viewType)
+        throw IllegalStateException("No known view holder for $viewType")
     }
 
-    override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is DiffHeaderViewHolder) {
             holder.bind(repositoryCommit)
         } else if (holder is DiffViewHolder) {

@@ -15,7 +15,7 @@ import java.util.*
 /**
  * Builds, woot
  */
-class BuildViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
+class BuildViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     companion object {
 

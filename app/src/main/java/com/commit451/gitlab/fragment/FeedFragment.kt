@@ -2,14 +2,12 @@ package com.commit451.gitlab.fragment
 
 import android.net.Uri
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import butterknife.BindView
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
@@ -20,6 +18,7 @@ import com.commit451.gitlab.model.rss.Entry
 import com.commit451.gitlab.model.rss.Feed
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomSingleObserver
+import com.google.android.material.snackbar.Snackbar
 import com.novoda.simplechromecustomtabs.SimpleChromeCustomTabs
 import timber.log.Timber
 
@@ -43,9 +42,9 @@ class FeedFragment : ButterKnifeFragment() {
     }
 
     @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    lateinit var swipeRefreshLayout: SwipeRefreshLayout
     @BindView(R.id.list)
-    lateinit var listEntries: androidx.recyclerview.widget.RecyclerView
+    lateinit var listEntries: RecyclerView
     @BindView(R.id.message_text)
     lateinit var textMessage: TextView
 

@@ -43,13 +43,13 @@ class TodoFragment : ButterKnifeFragment() {
     }
 
     @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    lateinit var swipeRefreshLayout: SwipeRefreshLayout
     @BindView(R.id.list)
-    lateinit var listTodos: androidx.recyclerview.widget.RecyclerView
+    lateinit var listTodos: RecyclerView
     @BindView(R.id.message_text)
     lateinit var textMessage: TextView
 
-    lateinit var layoutManagerTodos: androidx.recyclerview.widget.LinearLayoutManager
+    lateinit var layoutManagerTodos: LinearLayoutManager
     lateinit var adapterTodos: TodoAdapter
 
     var mode: Int = 0
@@ -90,7 +90,7 @@ class TodoFragment : ButterKnifeFragment() {
                 }
             }
         })
-        layoutManagerTodos = androidx.recyclerview.widget.LinearLayoutManager(activity)
+        layoutManagerTodos = LinearLayoutManager(activity)
         listTodos.layoutManager = layoutManagerTodos
         listTodos.adapter = adapterTodos
         listTodos.addOnScrollListener(onScrollListener)

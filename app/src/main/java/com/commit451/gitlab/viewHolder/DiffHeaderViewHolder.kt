@@ -18,7 +18,7 @@ import com.commit451.gitlab.util.ImageUtil
 /**
  * Header that gives the details of a merge request
  */
-class DiffHeaderViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
+class DiffHeaderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     companion object {
 

@@ -15,7 +15,7 @@ import com.commit451.gitlab.model.api.Label
 /**
  * Shows the label on a screen where you can add labels
  */
-class AddLabelViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
+class AddLabelViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     companion object {
 

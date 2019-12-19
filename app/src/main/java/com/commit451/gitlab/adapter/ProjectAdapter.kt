@@ -12,21 +12,21 @@ import java.util.*
 /**
  * Shows a list of projects
  */
-class ProjectAdapter(context: Context, private val listener: ProjectAdapter.Listener) : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
+class ProjectAdapter(context: Context, private val listener: Listener) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
 
-        val FOOTER_COUNT = 1
+        const val FOOTER_COUNT = 1
 
-        val TYPE_ITEM = 0
-        val TYPE_FOOTER = 1
+        const val TYPE_ITEM = 0
+        const val TYPE_FOOTER = 1
     }
 
     private val values: MutableList<Project> = ArrayList()
     private val colors: IntArray = context.resources.getIntArray(R.array.cool_colors)
     private var loading: Boolean = false
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         when (viewType) {
             TYPE_ITEM -> {
                 val holder = ProjectViewHolder.inflate(parent)
@@ -38,10 +38,10 @@ class ProjectAdapter(context: Context, private val listener: ProjectAdapter.List
             }
             TYPE_FOOTER -> return LoadingFooterViewHolder.inflate(parent)
         }
-        throw IllegalStateException("No idea what to create for view type " + viewType)
+        throw IllegalStateException("No idea what to create for view type $viewType")
     }
 
-    override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is ProjectViewHolder) {
             val project = getValueAt(position)
             holder.bind(project, colors[position % colors.size])
@@ -56,10 +56,10 @@ class ProjectAdapter(context: Context, private val listener: ProjectAdapter.List
     }
 
     override fun getItemViewType(position: Int): Int {
-        if (position == values.size) {
-            return TYPE_FOOTER
+        return if (position == values.size) {
+            TYPE_FOOTER
         } else {
-            return TYPE_ITEM
+            TYPE_ITEM
         }
     }
 

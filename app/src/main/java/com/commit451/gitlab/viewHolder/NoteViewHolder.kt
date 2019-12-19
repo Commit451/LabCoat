@@ -21,7 +21,7 @@ import com.commit451.gitlab.util.InternalLinkMovementMethod
 /**
  * Notes, aka comments
  */
-class NoteViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
+class NoteViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     companion object {
 

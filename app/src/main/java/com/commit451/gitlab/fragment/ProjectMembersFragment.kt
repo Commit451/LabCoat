@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import butterknife.BindView
 import butterknife.OnClick
 import com.commit451.gitlab.App
@@ -45,9 +46,9 @@ class ProjectMembersFragment : ButterKnifeFragment() {
     @BindView(R.id.root)
     lateinit var root: View
     @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    lateinit var swipeRefreshLayout: SwipeRefreshLayout
     @BindView(R.id.list)
-    lateinit var listMembers: androidx.recyclerview.widget.RecyclerView
+    lateinit var listMembers: RecyclerView
     @BindView(R.id.message_text)
     lateinit var textMessage: TextView
     @BindView(R.id.add_user_button)
@@ -116,10 +117,10 @@ class ProjectMembersFragment : ButterKnifeFragment() {
             }
 
             override fun onSeeGroupClicked() {
-                Navigator.navigateToGroup(baseActivty, project!!.namespace.id)
+                Navigator.navigateToGroup(baseActivty, project!!.namespace!!.id)
             }
         })
-        layoutManagerMembers = androidx.recyclerview.widget.GridLayoutManager(activity, 2)
+        layoutManagerMembers = GridLayoutManager(activity, 2)
         layoutManagerMembers.spanSizeLookup = adapterProjectMembers.spanSizeLookup
         listMembers.layoutManager = layoutManagerMembers
         listMembers.adapter = adapterProjectMembers
@@ -172,7 +173,7 @@ class ProjectMembersFragment : ButterKnifeFragment() {
 
         loading = true
 
-        Timber.d("loadMore called for " + nextPageUrl!!)
+        Timber.d("loadMore called for ${nextPageUrl!!}")
         load(App.get().gitLab.getProjectMembers(nextPageUrl!!.toString()))
     }
 

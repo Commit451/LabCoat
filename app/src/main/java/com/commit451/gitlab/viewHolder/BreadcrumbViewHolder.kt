@@ -13,7 +13,7 @@ import com.commit451.gitlab.R
 /**
  * Breadcrumb view
  */
-class BreadcrumbViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
+class BreadcrumbViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     companion object {
 

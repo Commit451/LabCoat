@@ -1,16 +1,16 @@
 package com.commit451.gitlab.viewHolder
 
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import butterknife.ButterKnife
 import com.commit451.gitlab.R
 
 /**
  * Shows the "add account" button
  */
-class AccountFooterViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
+class AccountFooterViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     companion object {
 

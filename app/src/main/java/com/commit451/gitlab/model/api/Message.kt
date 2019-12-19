@@ -8,6 +8,6 @@ import com.squareup.moshi.Json
  */
 class Message {
 
-    @field:Json(name = "message")
+    @Json(name = "message")
     var message: String? = null
 }

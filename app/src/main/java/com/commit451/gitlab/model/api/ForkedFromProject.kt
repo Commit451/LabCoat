@@ -6,14 +6,14 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class ForkedFromProject(
-    @field:Json(name = "id")
+    @Json(name = "id")
     var id: Long = 0,
-    @field:Json(name = "name")
+    @Json(name = "name")
     var name: String? = null,
-    @field:Json(name = "name_with_namespace")
+    @Json(name = "name_with_namespace")
     var nameWithNamespace: String? = null,
-    @field:Json(name = "path")
+    @Json(name = "path")
     var path: String? = null,
-    @field:Json(name = "path_with_namespace")
+    @Json(name = "path_with_namespace")
     var pathWithNamespace: String? = null
 ) : Parcelable

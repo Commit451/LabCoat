@@ -11,21 +11,21 @@ import java.util.*
 /**
  * Merge request adapter!
  */
-class MergeRequestAdapter(private val listener: MergeRequestAdapter.Listener) : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
+class MergeRequestAdapter(private val listener: Listener) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
 
-        private val FOOTER_COUNT = 1
+        private const val FOOTER_COUNT = 1
 
-        private val TYPE_ITEM = 0
-        private val TYPE_FOOTER = 1
+        private const val TYPE_ITEM = 0
+        private const val TYPE_FOOTER = 1
     }
 
     private val values: MutableList<MergeRequest> = ArrayList()
 
     private var loading: Boolean = false
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         when (viewType) {
             TYPE_ITEM -> {
                 val holder = MergeRequestViewHolder.inflate(parent)
@@ -37,10 +37,10 @@ class MergeRequestAdapter(private val listener: MergeRequestAdapter.Listener) : 
             }
             TYPE_FOOTER -> return LoadingFooterViewHolder.inflate(parent)
         }
-        throw IllegalStateException("No holder for type " + viewType)
+        throw IllegalStateException("No holder for type $viewType")
     }
 
-    override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is MergeRequestViewHolder) {
             val mergeRequest = getValueAt(position)
             holder.bind(mergeRequest)
@@ -55,10 +55,10 @@ class MergeRequestAdapter(private val listener: MergeRequestAdapter.Listener) : 
     }
 
     override fun getItemViewType(position: Int): Int {
-        if (position == values.size) {
-            return TYPE_FOOTER
+        return if (position == values.size) {
+            TYPE_FOOTER
         } else {
-            return TYPE_ITEM
+            TYPE_ITEM
         }
     }
 

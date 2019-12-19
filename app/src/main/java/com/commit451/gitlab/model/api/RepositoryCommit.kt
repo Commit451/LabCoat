@@ -7,18 +7,18 @@ import java.util.Date
 
 @Parcelize
 data class RepositoryCommit(
-    @field:Json(name = "id")
+    @Json(name = "id")
     var id: String,
-    @field:Json(name = "short_id")
+    @Json(name = "short_id")
     var shortId: String? = null,
-    @field:Json(name = "title")
+    @Json(name = "title")
     var title: String? = null,
-    @field:Json(name = "author_name")
+    @Json(name = "author_name")
     var authorName: String? = null,
-    @field:Json(name = "author_email")
+    @Json(name = "author_email")
     var authorEmail: String? = null,
-    @field:Json(name = "created_at")
+    @Json(name = "created_at")
     var createdAt: Date? = null,
-    @field:Json(name = "message")
+    @Json(name = "message")
     var message: String? = null
 ) : Parcelable

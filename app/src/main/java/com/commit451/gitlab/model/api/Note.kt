@@ -8,25 +8,25 @@ import java.util.Date
 
 @Parcelize
 data class Note(
-    @field:Json(name = "id")
+    @Json(name = "id")
     var id: Long = 0,
-    @field:Json(name = "body")
+    @Json(name = "body")
     var body: String? = null,
-    @field:Json(name = "author")
+    @Json(name = "author")
     var author: User? = null,
-    @field:Json(name = "created_at")
+    @Json(name = "created_at")
     var createdAt: Date? = null,
-    @field:Json(name = "system")
+    @Json(name = "system")
     var isSystem: Boolean = false,
-    @field:Json(name = "noteable_id")
+    @Json(name = "noteable_id")
     var noteableId: Long = 0,
-    @field:Json(name = "noteable_type")
+    @Json(name = "noteable_type")
     @Type
     @get:Type
     var noteableType: String? = null,
-    @field:Json(name = "upvote?")
+    @Json(name = "upvote?")
     var isUpvote: Boolean = false,
-    @field:Json(name = "downvote?")
+    @Json(name = "downvote?")
     var isDownvote: Boolean = false
 ) : Parcelable {
     companion object {

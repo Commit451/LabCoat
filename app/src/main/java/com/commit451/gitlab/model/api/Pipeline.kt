@@ -10,20 +10,20 @@ import java.util.Date
  */
 @Parcelize
 data class Pipeline(
-    @field:Json(name = "user")
+    @Json(name = "user")
     var user: CommitUser? = null,
-    @field:Json(name = "id")
+    @Json(name = "id")
     var id: Long = 0,
-    @field:Json(name = "sha")
+    @Json(name = "sha")
     var sha: String? = null,
-    @field:Json(name = "ref")
+    @Json(name = "ref")
     var ref: String? = null,
-    @field:Json(name = "status")
+    @Json(name = "status")
     var status: String? = null,
-    @field:Json(name = "created_at")
+    @Json(name = "created_at")
     var createdAt: Date? = null,
-    @field:Json(name = "started_at")
+    @Json(name = "started_at")
     var startedAt: Date? = null,
-    @field:Json(name = "finished_at")
+    @Json(name = "finished_at")
     var finishedAt: Date? = null
 ) : Parcelable

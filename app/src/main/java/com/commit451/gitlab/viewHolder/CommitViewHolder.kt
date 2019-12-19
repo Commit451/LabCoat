@@ -18,7 +18,7 @@ import com.commit451.gitlab.util.ImageUtil
 /**
  * Shows a commit
  */
-class CommitViewHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
+class CommitViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     companion object {
 

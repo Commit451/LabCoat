@@ -6,8 +6,8 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class Identity(
-    @field:Json(name = "provider")
+    @Json(name = "provider")
     var provider: String? = null,
-    @field:Json(name = "extern_uid")
+    @Json(name = "extern_uid")
     var externUid: String? = null
 ) : Parcelable
