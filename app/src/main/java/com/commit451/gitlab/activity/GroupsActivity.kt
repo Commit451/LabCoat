@@ -86,7 +86,7 @@ class GroupsActivity : BaseActivity() {
         layoutManager = DynamicGridLayoutManager(this)
         layoutManager.setMinimumSpanSize(resources.getDimensionPixelSize(R.dimen.user_list_image_size))
         listGroups.layoutManager = layoutManager
-        adapterGroup = GroupAdapter(object : GroupAdapter.Listener {
+        adapterGroup = GroupAdapter(this, object : GroupAdapter.Listener {
             override fun onGroupClicked(group: Group, groupViewHolder: GroupViewHolder) {
                 Navigator.navigateToGroup(this@GroupsActivity, groupViewHolder.image, group)
             }

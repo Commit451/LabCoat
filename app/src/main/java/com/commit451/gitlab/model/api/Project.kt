@@ -63,10 +63,4 @@ data class Project(
     var forksCount: Int = 0,
     @Json(name = "open_issues_count")
     var openIssuesCount: Int = 0
-) : Parcelable {
-    companion object {
-        const val VISIBILITY_PRIVATE = "private"
-        const val VISIBILITY_INTERNAL = "internal"
-        const val VISIBILITY_PUBLIC = "public"
-    }
-}
+) : Parcelable

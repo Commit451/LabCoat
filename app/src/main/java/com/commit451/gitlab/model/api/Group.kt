@@ -14,10 +14,12 @@ data class Group (
     var path: String? = null,
     @Json(name = "description")
     var description: String? = null,
+    @Json(name = "visibility")
+    var visibility: String? = null,
     @Json(name = "avatar_url")
     var avatarUrl: String? = null,
     @Json(name = "web_url")
     var webUrl: String? = null,
     @Json(name = "projects")
-    var projects: MutableList<Project>? = null
+    var projects: List<Project>? = null
 ): Parcelable

@@ -1,5 +1,6 @@
 package com.commit451.gitlab.adapter
 
+import android.content.Context
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.commit451.gitlab.R
@@ -10,7 +11,9 @@ import java.util.*
 /**
  * All the groups
  */
-class GroupAdapter(private val listener: Listener) : RecyclerView.Adapter<GroupViewHolder>() {
+class GroupAdapter(context: Context, private val listener: Listener) : RecyclerView.Adapter<GroupViewHolder>() {
+
+    private val colors: IntArray = context.resources.getIntArray(R.array.cool_colors)
 
     val values: ArrayList<Group> = ArrayList()
 
@@ -26,7 +29,7 @@ class GroupAdapter(private val listener: Listener) : RecyclerView.Adapter<GroupV
     override fun onBindViewHolder(holder: GroupViewHolder, position: Int) {
         holder.itemView.setTag(R.id.list_position, position)
         holder.itemView.setTag(R.id.list_view_holder, holder)
-        holder.bind(getEntry(position))
+        holder.bind(getEntry(position), colors[position % colors.size])
     }
 
     override fun getItemCount(): Int {

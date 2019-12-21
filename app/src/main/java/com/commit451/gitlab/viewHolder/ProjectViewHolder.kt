@@ -12,6 +12,8 @@ import butterknife.ButterKnife
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.api.Project
+import com.commit451.gitlab.model.api.VISIBILITY_INTERNAL
+import com.commit451.gitlab.model.api.VISIBILITY_PUBLIC
 import com.commit451.gitlab.transformation.CircleTransformation
 import com.github.ivbaranov.mli.MaterialLetterIcon
 
@@ -49,7 +51,7 @@ class ProjectViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         // repos, unfortunately. Passing the access token as a param
         // no longer works. We just have to show the letter for private
         // repos
-        if (project.avatarUrl.isNullOrBlank() || project.visibility != Project.VISIBILITY_PUBLIC) {
+        if (project.avatarUrl.isNullOrBlank() || project.visibility != VISIBILITY_PUBLIC) {
             image.visibility = View.GONE
 
             iconLetter.visibility = View.VISIBLE
@@ -75,9 +77,9 @@ class ProjectViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             textDescription.text = ""
         }
 
-        val visibilityResource = when {
-            project.visibility == Project.VISIBILITY_PUBLIC -> R.drawable.ic_public_24dp
-            project.visibility == Project.VISIBILITY_INTERNAL -> R.drawable.ic_lock_open_24dp
+        val visibilityResource = when (project.visibility) {
+            VISIBILITY_PUBLIC -> R.drawable.ic_public_24dp
+            VISIBILITY_INTERNAL -> R.drawable.ic_lock_open_24dp
             else -> R.drawable.ic_private_24dp
         }
         iconVisibility.setImageResource(visibilityResource)

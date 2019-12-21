@@ -55,7 +55,7 @@ apply { from("experimental.gradle") }
 
 val retrofitVersion = "2.7.0"
 val okHttpVersion = "4.2.2"
-val butterknifeVersion = "10.2.0"
+val butterknifeVersion = "10.2.1"
 val reptarVersion = "2.5.1"
 
 val adapterLayout = "1.2.0"
