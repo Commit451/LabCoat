@@ -26,7 +26,7 @@ class GroupViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
         fun inflate(parent: ViewGroup): GroupViewHolder {
             val view = LayoutInflater.from(parent.context)
-                    .inflate(R.layout.item_user, parent, false)
+                    .inflate(R.layout.item_group, parent, false)
             return GroupViewHolder(view)
         }
     }

@@ -32,8 +32,6 @@ class UserViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     lateinit var textUsername: TextView
     @BindView(R.id.image)
     lateinit var image: ImageView
-    @BindView(R.id.letter)
-    lateinit var iconLetter: MaterialLetterIcon
 
     init {
         ButterKnife.bind(this, view)
