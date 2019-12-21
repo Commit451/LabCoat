@@ -26,11 +26,13 @@ import java.util.*
 class FeedRemoteViewsFactory(private val context: Context, intent: Intent, account: Account, private val feedUrl: String) : RemoteViewsService.RemoteViewsFactory {
 
     companion object {
-        val COUNT = 10
+        const val COUNT = 10
     }
 
-    val appWidgetId: Int = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
-            AppWidgetManager.INVALID_APPWIDGET_ID)
+    val appWidgetId: Int = intent.getIntExtra(
+            AppWidgetManager.EXTRA_APPWIDGET_ID,
+            AppWidgetManager.INVALID_APPWIDGET_ID
+    )
     var entries = mutableListOf<Entry>()
     val picasso: Picasso
     val rssClient: GitLabRss
@@ -39,7 +41,8 @@ class FeedRemoteViewsFactory(private val context: Context, intent: Intent, accou
 
         val gitlabRssClientBuilder = OkHttpClientFactory.create(account)
         if (BuildConfig.DEBUG) {
-            gitlabRssClientBuilder.addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
+            val httpLoggingInterceptor = HttpLoggingInterceptor()
+            gitlabRssClientBuilder.addInterceptor(httpLoggingInterceptor.apply { httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BODY })
         }
         rssClient = GitLabRssFactory.create(account, gitlabRssClientBuilder.build())
         val picassoClientBuilder = OkHttpClientFactory.create(account)

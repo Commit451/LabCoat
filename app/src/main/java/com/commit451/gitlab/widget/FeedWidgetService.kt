@@ -31,8 +31,8 @@ class FeedWidgetService : RemoteViewsService() {
 
     companion object {
 
-        val EXTRA_ACCOUNT_JSON = "account_json"
-        val EXTRA_FEED_URL = "feed_url"
+        const val EXTRA_ACCOUNT_JSON = "account_json"
+        const val EXTRA_FEED_URL = "feed_url"
 
         /**
          * Currently, when we pass this Intent along to certain launchers, they will not
@@ -50,12 +50,12 @@ class FeedWidgetService : RemoteViewsService() {
         }
     }
 
-    override fun onGetViewFactory(intent: Intent): RemoteViewsService.RemoteViewsFactory {
+    override fun onGetViewFactory(intent: Intent): RemoteViewsFactory {
         Timber.d("onGetViewFactory")
-        val accountJson = intent.getStringExtra(EXTRA_ACCOUNT_JSON)
+        val accountJson = intent.getStringExtra(EXTRA_ACCOUNT_JSON)!!
         val adapter = MoshiProvider.moshi.adapter<Account>(Account::class.java)
         val account = adapter.fromJson(accountJson)!!
-        val feedUrl = intent.getStringExtra(EXTRA_FEED_URL)
+        val feedUrl = intent.getStringExtra(EXTRA_FEED_URL)!!
         return FeedRemoteViewsFactory(applicationContext, intent, account, feedUrl)
     }
 }
