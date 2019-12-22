@@ -1,18 +1,18 @@
 package com.commit451.gitlab.viewHolder
 
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
 import butterknife.ButterKnife
-import com.commit451.gitlab.App
+import coil.api.load
+import coil.transform.CircleCropTransformation
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.Account
-import com.commit451.gitlab.transformation.CircleTransformation
 import com.commit451.gitlab.util.ImageUtil
 
 /**
@@ -59,9 +59,8 @@ class AccountViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             itemView.background = null
         }
 
-        App.get().picasso
-                .load(ImageUtil.getAvatarUrl(account.email, itemView.resources.getDimensionPixelSize(R.dimen.user_list_image_size)))
-                .transform(CircleTransformation())
-                .into(image)
+        image.load(ImageUtil.getAvatarUrl(account.email, itemView.resources.getDimensionPixelSize(R.dimen.user_list_image_size))) {
+            transformations(CircleCropTransformation())
+        }
     }
 }

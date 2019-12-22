@@ -1,15 +1,15 @@
 package com.commit451.gitlab.viewHolder
 
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
 import butterknife.ButterKnife
-import com.commit451.gitlab.App
+import coil.api.load
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.api.User
 import com.commit451.gitlab.util.ImageUtil
@@ -51,9 +51,6 @@ class ProjectMemberViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     fun bind(member: User) {
         textUsername.text = member.username
         textAccess.text = User.getAccessLevel(member.accessLevel)
-
-        App.get().picasso
-                .load(ImageUtil.getAvatarUrl(member, itemView.resources.getDimensionPixelSize(R.dimen.user_header_image_size)))
-                .into(image)
+        image.load(ImageUtil.getAvatarUrl(member, itemView.resources.getDimensionPixelSize(R.dimen.user_header_image_size)))
     }
 }

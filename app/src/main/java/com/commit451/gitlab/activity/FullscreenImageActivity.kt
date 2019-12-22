@@ -7,6 +7,7 @@ import androidx.appcompat.widget.Toolbar
 import android.widget.ImageView
 import butterknife.BindView
 import butterknife.ButterKnife
+import coil.api.load
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.api.Project
@@ -55,8 +56,6 @@ class FullscreenImageActivity : BaseActivity() {
         if (imageUrl.startsWith("/")) {
             imageUrl = App.get().getAccount().serverUrl.toString() + project.pathWithNamespace + imageUrl
         }
-        App.get().picasso
-                .load(imageUrl)
-                .into(photoView)
+        photoView.load(imageUrl)
     }
 }

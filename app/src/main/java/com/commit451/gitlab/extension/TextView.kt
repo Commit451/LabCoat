@@ -8,18 +8,18 @@ import com.vdurmont.emoji.EmojiParser
 import org.commonmark.parser.Parser
 import org.commonmark.renderer.html.HtmlRenderer
 
-fun TextView.setMarkdownText(text: String, project: Project? = null) {
+private val renderer: HtmlRenderer = HtmlRenderer.builder().build()
 
-    val parser = Parser.builder().build()
+private val parser: Parser = Parser.builder().build()
+
+fun TextView.setMarkdownText(text: String, project: Project? = null) {
     val document = parser.parse(text)
-    val renderer = HtmlRenderer.builder().build()
     val html = renderer.render(document)
 
     val emojiParsedHtml = EmojiParser.parseToUnicode(html)
 
-    //I don't like this too much for its global-ness
-    val picasso = App.get().picasso
-    val baseUrl = App.get().currentAccount.serverUrl
-    val getter = ImageGetterFactory.create(this, picasso, baseUrl!!, project)
+    // I don't like this too much for its global-ness
+    val baseUrl = App.get().currentAccount.serverUrl!!
+    val getter = ImageGetterFactory.create(this, baseUrl, project)
     this.text = emojiParsedHtml.formatAsHtml(getter)
 }

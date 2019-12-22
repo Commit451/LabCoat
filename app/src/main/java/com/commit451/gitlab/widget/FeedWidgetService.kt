@@ -56,6 +56,6 @@ class FeedWidgetService : RemoteViewsService() {
         val adapter = MoshiProvider.moshi.adapter<Account>(Account::class.java)
         val account = adapter.fromJson(accountJson)!!
         val feedUrl = intent.getStringExtra(EXTRA_FEED_URL)!!
-        return FeedRemoteViewsFactory(applicationContext, intent, account, feedUrl)
+        return FeedRemoteViewsFactory(applicationContext, account, feedUrl)
     }
 }

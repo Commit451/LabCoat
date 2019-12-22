@@ -1,19 +1,20 @@
 package com.commit451.gitlab.viewHolder
 
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
 import butterknife.ButterKnife
+import coil.api.load
+import coil.transform.CircleCropTransformation
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.extension.setMarkdownText
 import com.commit451.gitlab.model.api.Note
 import com.commit451.gitlab.model.api.Project
-import com.commit451.gitlab.transformation.CircleTransformation
 import com.commit451.gitlab.util.DateUtil
 import com.commit451.gitlab.util.ImageUtil
 import com.commit451.gitlab.util.InternalLinkMovementMethod
@@ -59,10 +60,8 @@ class NoteViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
         textSummary.setMarkdownText(summary, project)
         textSummary.movementMethod = InternalLinkMovementMethod(App.get().getAccount().serverUrl!!)
-
-        App.get().picasso
-                .load(ImageUtil.getAvatarUrl(note.author, itemView.resources.getDimensionPixelSize(R.dimen.image_size)))
-                .transform(CircleTransformation())
-                .into(imageAvatar)
+        imageAvatar.load(ImageUtil.getAvatarUrl(note.author, itemView.resources.getDimensionPixelSize(R.dimen.image_size))) {
+            transformations(CircleCropTransformation())
+        }
     }
 }

@@ -3,17 +3,17 @@ package com.commit451.gitlab.view
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
-import com.google.android.material.navigation.NavigationView
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.util.AttributeSet
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
+import coil.api.load
+import coil.transform.CircleCropTransformation
 import com.commit451.addendum.themeAttrColor
 import com.commit451.alakazam.fadeOut
 import com.commit451.gitlab.App
@@ -29,8 +29,9 @@ import com.commit451.gitlab.model.Account
 import com.commit451.gitlab.model.api.User
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
-import com.commit451.gitlab.transformation.CircleTransformation
 import com.commit451.gitlab.util.ImageUtil
+import com.google.android.material.navigation.NavigationView
+import com.google.android.material.navigation.NavigationView.OnNavigationItemSelectedListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import org.greenrobot.eventbus.Subscribe
@@ -243,10 +244,9 @@ class LabCoatNavigationView : NavigationView {
             textEmail.text = user.email
         }
         val url = ImageUtil.getAvatarUrl(user, resources.getDimensionPixelSize(R.dimen.larger_image_size))
-        App.get().picasso
-                .load(url)
-                .transform(CircleTransformation())
-                .into(imageProfile)
+        imageProfile.load(url) {
+            transformations(CircleCropTransformation())
+        }
     }
 
     /**

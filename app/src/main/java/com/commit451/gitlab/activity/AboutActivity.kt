@@ -9,6 +9,7 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
 import android.view.View
+import coil.api.load
 import com.commit451.gimbal.Gimbal
 import com.commit451.gitlab.App
 import com.commit451.gitlab.BuildConfig
@@ -139,9 +140,7 @@ class AboutActivity : BaseActivity() {
             physicsLayout.addView(imageView)
 
             val url = ImageUtil.getAvatarUrl(contributor.email, imageSize)
-            App.get().picasso
-                    .load(url)
-                    .into(imageView)
+            imageView.load(url)
         }
         physicsLayout.requestLayout()
     }

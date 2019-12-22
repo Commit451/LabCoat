@@ -11,14 +11,14 @@ import androidx.appcompat.widget.Toolbar
 import androidx.palette.graphics.Palette
 import butterknife.BindView
 import butterknife.ButterKnife
+import coil.api.load
 import com.commit451.addendum.themeAttrColor
 import com.commit451.alakazam.navigationBarColorAnimator
-import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.extension.feedUrl
 import com.commit451.gitlab.fragment.FeedFragment
+import com.commit451.gitlab.image.PaletteImageViewTarget
 import com.commit451.gitlab.model.api.User
-import com.commit451.gitlab.transformation.PaletteTransformation
 import com.commit451.gitlab.util.ImageUtil
 import com.google.android.material.appbar.CollapsingToolbarLayout
 
@@ -62,16 +62,12 @@ class UserActivity : BaseActivity() {
         toolbar.title = user.username
         val url = ImageUtil.getAvatarUrl(user, resources.getDimensionPixelSize(R.dimen.user_header_image_size))
 
-        App.get().picasso
-                .load(url)
-                .transform(PaletteTransformation.instance())
-                .into(backdrop, object : PaletteTransformation.PaletteCallback(backdrop) {
-                    override fun onSuccess(palette: androidx.palette.graphics.Palette?) {
-                        bindPalette(palette!!)
-                    }
-
-                    override fun onError() {}
-                })
+        val paletteImageViewTarget = PaletteImageViewTarget(backdrop) {
+            bindPalette(it)
+        }
+        backdrop.load(url) {
+            target(paletteImageViewTarget)
+        }
 
         if (savedInstanceState == null) {
             val fragmentTransaction = supportFragmentManager.beginTransaction()
@@ -95,8 +91,8 @@ class UserActivity : BaseActivity() {
         val darkerColor = this.themeAttrColor(vibrantColor)
 
         window.navigationBarColorAnimator(darkerColor)
-            .setDuration(animationTime.toLong())
-            .start()
+                .setDuration(animationTime.toLong())
+                .start()
         window.statusBarColor = darkerColor
 
         ObjectAnimator.ofObject(collapsingToolbarLayout, "contentScrimColor", ArgbEvaluator(),

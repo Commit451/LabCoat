@@ -1,20 +1,20 @@
 package com.commit451.gitlab.viewHolder
 
 import android.graphics.Color
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
 import butterknife.ButterKnife
-import com.commit451.gitlab.App
+import coil.api.load
+import coil.transform.CircleCropTransformation
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.model.api.VISIBILITY_INTERNAL
 import com.commit451.gitlab.model.api.VISIBILITY_PUBLIC
-import com.commit451.gitlab.transformation.CircleTransformation
 import com.github.ivbaranov.mli.MaterialLetterIcon
 
 /**
@@ -53,19 +53,16 @@ class ProjectViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         // repos
         if (project.avatarUrl.isNullOrBlank() || project.visibility != VISIBILITY_PUBLIC) {
             image.visibility = View.GONE
-
             iconLetter.visibility = View.VISIBLE
             iconLetter.letter = project.name!!.substring(0, 1)
             iconLetter.letterColor = Color.WHITE
             iconLetter.shapeColor = color
         } else {
             iconLetter.visibility = View.GONE
-
             image.visibility = View.VISIBLE
-            App.get().picasso
-                    .load(project.avatarUrl)
-                    .transform(CircleTransformation())
-                    .into(image)
+            image.load(project.avatarUrl) {
+                transformations(CircleCropTransformation())
+            }
         }
 
         textTitle.text = project.nameWithNamespace

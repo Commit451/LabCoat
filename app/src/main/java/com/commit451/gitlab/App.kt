@@ -5,13 +5,11 @@ import com.commit451.firebaseshim.FirebaseShim
 import com.commit451.gitlab.api.GitLab
 import com.commit451.gitlab.api.GitLabFactory
 import com.commit451.gitlab.api.OkHttpClientFactory
-import com.commit451.gitlab.api.PicassoFactory
 import com.commit451.gitlab.data.Prefs
 import com.commit451.gitlab.model.Account
 import com.commit451.lift.Lift
 import com.jakewharton.threetenabp.AndroidThreeTen
 import com.novoda.simplechromecustomtabs.SimpleChromeCustomTabs
-import com.squareup.picasso.Picasso
 import io.reactivex.plugins.RxJavaPlugins
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -39,7 +37,6 @@ class App : Application() {
 
     lateinit var gitLab: GitLab
     lateinit var currentAccount: Account
-    lateinit var picasso: Picasso
 
     override fun onCreate() {
         super.onCreate()
@@ -79,13 +76,6 @@ class App : Application() {
             clientBuilder.addInterceptor(httpLoggingInterceptor.apply { httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BODY })
         }
         initGitLab(account, clientBuilder)
-        val picassoClient = OkHttpClientFactory.create(
-                account = account,
-                includeSignInAuthenticator = false,
-                includeAuthenticationInterceptor = false
-        )
-                .build()
-        initPicasso(picassoClient)
     }
 
     fun getAccount(): Account {
@@ -98,9 +88,5 @@ class App : Application() {
 
     private fun initGitLab(account: Account, clientBuilder: OkHttpClient.Builder) {
         gitLab = GitLabFactory.createGitLab(account, clientBuilder)
-    }
-
-    private fun initPicasso(client: OkHttpClient) {
-        picasso = PicassoFactory.createPicasso(client)
     }
 }

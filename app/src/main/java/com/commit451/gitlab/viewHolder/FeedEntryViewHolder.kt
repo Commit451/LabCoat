@@ -1,18 +1,18 @@
 package com.commit451.gitlab.viewHolder
 
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
 import butterknife.ButterKnife
-import com.commit451.gitlab.App
+import coil.api.load
+import coil.transform.CircleCropTransformation
 import com.commit451.gitlab.R
 import com.commit451.gitlab.extension.formatAsHtml
 import com.commit451.gitlab.model.rss.Entry
-import com.commit451.gitlab.transformation.CircleTransformation
 import com.commit451.gitlab.util.DateUtil
 
 /**
@@ -43,10 +43,9 @@ class FeedEntryViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     }
 
     fun bind(entry: Entry) {
-        App.get().picasso
-                .load(entry.thumbnail.url)
-                .transform(CircleTransformation())
-                .into(image)
+        image.load(entry.thumbnail.url) {
+            transformations(CircleCropTransformation())
+        }
 
         textTitle.text = entry.title.formatAsHtml()
         textSummary.text = entry.summary.formatAsHtml()

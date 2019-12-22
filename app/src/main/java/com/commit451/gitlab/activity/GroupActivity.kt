@@ -9,9 +9,11 @@ import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
 import androidx.appcompat.widget.Toolbar
+import androidx.palette.graphics.Palette
 import androidx.viewpager.widget.ViewPager
 import butterknife.BindView
 import butterknife.ButterKnife
+import coil.api.load
 import com.commit451.addendum.themeAttrColor
 import com.commit451.alakazam.navigationBarColorAnimator
 import com.commit451.easel.Easel
@@ -19,9 +21,9 @@ import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.GroupPagerAdapter
 import com.commit451.gitlab.extension.with
+import com.commit451.gitlab.image.PaletteImageViewTarget
 import com.commit451.gitlab.model.api.Group
 import com.commit451.gitlab.rx.CustomSingleObserver
-import com.commit451.gitlab.transformation.PaletteTransformation
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
@@ -108,29 +110,25 @@ class GroupActivity : BaseActivity() {
     }
 
     fun bind(group: Group) {
-        App.get().picasso
-                .load(group.avatarUrl)
-                .transform(PaletteTransformation.instance())
-                .into(backdrop, object : PaletteTransformation.PaletteCallback(backdrop) {
-                    override fun onSuccess(palette: androidx.palette.graphics.Palette?) {
-                        bindPalette(palette!!)
-                    }
-
-                    override fun onError() {}
-                })
+        val paletteTarget = PaletteImageViewTarget(backdrop) {
+            bindPalette(it)
+        }
+        backdrop.load(group.avatarUrl) {
+            target(paletteTarget)
+        }
 
         viewPager.adapter = GroupPagerAdapter(this, supportFragmentManager, group)
         tabLayout.setupWithViewPager(viewPager)
     }
 
-    fun bindPalette(palette: androidx.palette.graphics.Palette) {
+    private fun bindPalette(palette: Palette) {
         val animationTime = 1000
         val vibrantColor = palette.getVibrantColor(this.themeAttrColor(R.attr.colorAccent))
         val darkerColor = Easel.darkerColor(vibrantColor)
 
         window.navigationBarColorAnimator(darkerColor)
-            .setDuration(animationTime.toLong())
-            .start()
+                .setDuration(animationTime.toLong())
+                .start()
 
         ObjectAnimator.ofObject(collapsingToolbarLayout, "contentScrimColor", ArgbEvaluator(),
                 this.themeAttrColor(R.attr.colorPrimary), vibrantColor)

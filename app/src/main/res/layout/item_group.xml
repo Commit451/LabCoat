@@ -16,6 +16,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
             android:contentDescription="@null"
+            android:scaleType="centerCrop"
             tools:src="@drawable/ic_person_add_24dp" />
 
         <com.github.ivbaranov.mli.MaterialLetterIcon
@@ -38,7 +39,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:textColor="@color/white"
-            android:padding="8dp" />
+            android:padding="8dp"
+            android:textColor="@color/white" />
     </LinearLayout>
 </FrameLayout>

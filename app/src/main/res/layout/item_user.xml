@@ -5,26 +5,14 @@
     android:layout_height="@dimen/user_list_image_size"
     android:foreground="?selectableItemBackground">
 
-    <FrameLayout
+    <ImageView
+        android:id="@+id/image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center_vertical">
-
-        <ImageView
-            android:id="@+id/image"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_vertical"
-            android:contentDescription="@null"
-            tools:src="@drawable/ic_person_add_24dp" />
-
-        <com.github.ivbaranov.mli.MaterialLetterIcon
-            android:id="@+id/letter"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_vertical" />
-
-    </FrameLayout>
+        android:layout_gravity="center_vertical"
+        android:contentDescription="@null"
+        android:scaleType="centerCrop"
+        tools:src="@drawable/ic_person_add_24dp" />
 
     <LinearLayout
         android:id="@+id/root_name"

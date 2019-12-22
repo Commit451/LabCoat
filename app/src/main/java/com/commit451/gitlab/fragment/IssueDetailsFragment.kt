@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import butterknife.BindView
+import coil.api.load
+import coil.transform.CircleCropTransformation
 import com.commit451.adapterflowlayout.AdapterFlowLayout
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
@@ -15,7 +17,6 @@ import com.commit451.gitlab.event.IssueChangedEvent
 import com.commit451.gitlab.extension.setMarkdownText
 import com.commit451.gitlab.model.api.Issue
 import com.commit451.gitlab.model.api.Project
-import com.commit451.gitlab.transformation.CircleTransformation
 import com.commit451.gitlab.util.DateUtil
 import com.commit451.gitlab.util.ImageUtil
 import com.commit451.gitlab.util.InternalLinkMovementMethod
@@ -102,10 +103,9 @@ class IssueDetailsFragment : ButterKnifeFragment() {
             textDescription.movementMethod = InternalLinkMovementMethod(App.get().getAccount().serverUrl!!)
         }
 
-        App.get().picasso
-                .load(ImageUtil.getAvatarUrl(issue.author, resources.getDimensionPixelSize(R.dimen.image_size)))
-                .transform(CircleTransformation())
-                .into(imageAuthor)
+        imageAuthor.load(ImageUtil.getAvatarUrl(issue.author, resources.getDimensionPixelSize(R.dimen.image_size))) {
+            transformations(CircleCropTransformation())
+        }
 
         var author = ""
         if (issue.author != null) {

@@ -8,12 +8,11 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
 import butterknife.ButterKnife
-import com.commit451.addendum.recyclerview.context
+import coil.api.load
+import coil.transform.CircleCropTransformation
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.Account
-import com.commit451.gitlab.transformation.CircleTransformation
 import com.commit451.gitlab.util.ImageUtil
-import com.squareup.picasso.Picasso
 
 /**
  * A signed in account
@@ -44,9 +43,8 @@ class AccountViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         textServer.text = item.serverUrl.toString()
         textUsername.text = item.email
 
-        Picasso.with(context)
-                .load(ImageUtil.getAvatarUrl(item.email, itemView.resources.getDimensionPixelSize(R.dimen.user_list_image_size)))
-                .transform(CircleTransformation())
-                .into(image)
+        image.load(ImageUtil.getAvatarUrl(item.email, itemView.resources.getDimensionPixelSize(R.dimen.user_list_image_size))) {
+            transformations(CircleCropTransformation())
+        }
     }
 }

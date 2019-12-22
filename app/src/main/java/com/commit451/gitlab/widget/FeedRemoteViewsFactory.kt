@@ -1,52 +1,47 @@
 package com.commit451.gitlab.widget
 
-import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
+import android.graphics.drawable.BitmapDrawable
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
+import coil.Coil
+import coil.api.load
+import coil.transform.CircleCropTransformation
 import com.commit451.gitlab.BuildConfig
 import com.commit451.gitlab.R
 import com.commit451.gitlab.api.GitLabRss
 import com.commit451.gitlab.api.GitLabRssFactory
 import com.commit451.gitlab.api.OkHttpClientFactory
-import com.commit451.gitlab.api.PicassoFactory
 import com.commit451.gitlab.model.Account
 import com.commit451.gitlab.model.rss.Entry
-import com.commit451.gitlab.transformation.CircleTransformation
-import com.squareup.picasso.Picasso
 import okhttp3.logging.HttpLoggingInterceptor
 import timber.log.Timber
-import java.io.IOException
 import java.util.*
 
 /**
  * Remote all the views
  */
-class FeedRemoteViewsFactory(private val context: Context, intent: Intent, account: Account, private val feedUrl: String) : RemoteViewsService.RemoteViewsFactory {
+class FeedRemoteViewsFactory(
+        private val context: Context,
+        account: Account,
+        private val feedUrl: String
+) : RemoteViewsService.RemoteViewsFactory {
 
     companion object {
         const val COUNT = 10
     }
 
-    val appWidgetId: Int = intent.getIntExtra(
-            AppWidgetManager.EXTRA_APPWIDGET_ID,
-            AppWidgetManager.INVALID_APPWIDGET_ID
-    )
-    var entries = mutableListOf<Entry>()
-    val picasso: Picasso
-    val rssClient: GitLabRss
+    private var entries = mutableListOf<Entry>()
+    private val rssClient: GitLabRss
 
     init {
-
         val gitlabRssClientBuilder = OkHttpClientFactory.create(account)
         if (BuildConfig.DEBUG) {
             val httpLoggingInterceptor = HttpLoggingInterceptor()
             gitlabRssClientBuilder.addInterceptor(httpLoggingInterceptor.apply { httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BODY })
         }
         rssClient = GitLabRssFactory.create(account, gitlabRssClientBuilder.build())
-        val picassoClientBuilder = OkHttpClientFactory.create(account)
-        picasso = PicassoFactory.createPicasso(picassoClientBuilder.build())
     }
 
     override fun onCreate() {
@@ -81,14 +76,13 @@ class FeedRemoteViewsFactory(private val context: Context, intent: Intent, accou
         fillInIntent.putExtra(UserFeedWidgetProvider.EXTRA_LINK, entry.link.href)
         rv.setOnClickFillInIntent(R.id.root, fillInIntent)
 
-        try {
-            val image = picasso
-                    .load(entry.thumbnail.url)
-                    .transform(CircleTransformation())
-                    .get()
-            rv.setImageViewBitmap(R.id.image, image)
-        } catch (e: IOException) {
-            //well, thats too bad
+        Coil.load(context, entry.thumbnail.url) {
+            transformations(CircleCropTransformation())
+            target {
+                if (it is BitmapDrawable) {
+                    rv.setImageViewBitmap(R.id.image, it.bitmap)
+                }
+            }
         }
 
         return rv

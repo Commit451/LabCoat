@@ -18,10 +18,10 @@ fun String.base64Decode(): Single<ByteArray> {
  */
 @Suppress("DEPRECATION")
 fun String.formatAsHtml(imageGetter: Html.ImageGetter? = null, tagHandler: Html.TagHandler? = null): Spanned {
-    if (Build.VERSION.SDK_INT >= 24) {
-        return Html.fromHtml(this, Html.FROM_HTML_MODE_LEGACY, imageGetter, tagHandler)
+    return if (Build.VERSION.SDK_INT >= 24) {
+        Html.fromHtml(this, Html.FROM_HTML_MODE_LEGACY, imageGetter, tagHandler)
     } else {
-        return Html.fromHtml(this, imageGetter, tagHandler)
+        Html.fromHtml(this, imageGetter, tagHandler)
     }
 }
 

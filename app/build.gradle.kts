@@ -51,6 +51,12 @@ android {
     }
 }
 
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
 apply { from("experimental.gradle") }
 
 val retrofitVersion = "2.7.0"
@@ -75,7 +81,7 @@ dependencies {
     implementation("androidx.palette:palette:1.0.0")
     implementation("androidx.browser:browser:1.2.0")
 
-    implementation("com.google.android.material:material:1.0.0")
+    implementation("com.google.android.material:material:1.2.0-alpha03")
 
     implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
     implementation("com.squareup.retrofit2:converter-simplexml:$retrofitVersion") {
@@ -88,12 +94,12 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-moshi:$retrofitVersion")
     implementation("com.squareup.okhttp3:okhttp:$okHttpVersion")
     implementation("com.squareup.okhttp3:logging-interceptor:$okHttpVersion")
-    implementation("com.squareup.picasso:picasso:2.5.2")
     implementation("com.squareup.moshi:moshi:$moshiVersion")
     implementation("com.squareup.moshi:moshi-kotlin:$moshiVersion")
     implementation("com.squareup.moshi:moshi-adapters:$moshiVersion")
 
-    implementation("com.jakewharton.picasso:picasso2-okhttp3-downloader:1.1.0")
+    implementation("io.coil-kt:coil:0.9.0-SNAPSHOT")
+
     implementation("com.jakewharton:butterknife:$butterknifeVersion")
     kapt("com.jakewharton:butterknife-compiler:$butterknifeVersion")
     implementation("com.jakewharton.timber:timber:4.7.1")

@@ -1,17 +1,17 @@
 package com.commit451.gitlab.viewHolder
 
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
 import butterknife.ButterKnife
-import com.commit451.gitlab.App
+import coil.api.load
+import coil.transform.CircleCropTransformation
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.api.Todo
-import com.commit451.gitlab.transformation.CircleTransformation
 import com.commit451.gitlab.util.DateUtil
 import com.commit451.gitlab.util.ImageUtil
 
@@ -45,10 +45,9 @@ class TodoViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     fun bind(todo: Todo) {
         textProject.text = todo.project!!.nameWithNamespace
         if (todo.author != null) {
-            App.get().picasso
-                    .load(ImageUtil.getAvatarUrl(todo.author, itemView.resources.getDimensionPixelSize(R.dimen.image_size)))
-                    .transform(CircleTransformation())
-                    .into(image)
+            image.load(ImageUtil.getAvatarUrl(todo.author, itemView.resources.getDimensionPixelSize(R.dimen.image_size))) {
+                transformations(CircleCropTransformation())
+            }
         } else {
             image.setImageBitmap(null)
         }

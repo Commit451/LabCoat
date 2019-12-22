@@ -24,9 +24,6 @@
 # So that Fabric can still have line numbers
 -keepattributes SourceFile,LineNumberTable
 
-# Picasso rules
--dontwarn com.squareup.okhttp.**
-
 # Simple-Xml Proguard Config
 # Keep public classes and methods.
 -dontwarn com.bea.xml.stream.**

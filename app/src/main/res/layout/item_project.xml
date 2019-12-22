@@ -6,13 +6,13 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center_vertical"
-    android:paddingBottom="8dp"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="8dp"
     android:background="?attr/selectableItemBackground"
     android:minHeight="72dp"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingTop="8dp"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingBottom="8dp">
 
     <FrameLayout
         android:layout_width="@dimen/image_size"
@@ -21,16 +21,16 @@
 
         <ImageView
             android:id="@+id/project_image"
-            android:layout_width="@dimen/image_size"
-            android:layout_height="@dimen/image_size"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
             android:contentDescription="@null"
             tools:src="@drawable/ic_person_add_24dp" />
 
         <com.github.ivbaranov.mli.MaterialLetterIcon
             android:id="@+id/project_letter"
-            android:layout_width="@dimen/image_size"
-            android:layout_height="@dimen/image_size"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_gravity="center_vertical" />
 
     </FrameLayout>
@@ -39,8 +39,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="8dp"
         android:layout_weight="1"
         android:orientation="vertical">
 
