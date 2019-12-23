@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                     xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                     android:id="@+id/root"
-                                                     android:layout_width="match_parent"
-                                                     android:layout_height="match_parent"
-                                                     android:transitionName="@string/transition_morph">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:transitionName="@string/transition_morph">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
+        style="@style/AppBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <androidx.appcompat.widget.Toolbar
+        <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
+            style="@style/Toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize" />
 
@@ -26,8 +28,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="16dp"
             android:layout_marginRight="@dimen/activity_horizontal_margin"
             android:layout_marginBottom="32dp"
             android:orientation="vertical">
@@ -65,9 +67,9 @@
             <CheckBox
                 android:id="@+id/checkConfidential"
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
-                android:layout_height="wrap_content"
                 android:checked="false"
                 android:text="@string/confidential_message" />
 
@@ -144,8 +146,8 @@
                     android:animateLayoutChanges="true"
                     android:background="?attr/selectableItemBackground"
                     android:orientation="vertical"
-                    android:paddingBottom="16dp"
                     android:paddingTop="16dp"
+                    android:paddingBottom="16dp"
                     android:visibility="gone">
 
                     <com.commit451.adapterflowlayout.AdapterFlowLayout
@@ -159,8 +161,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="?attr/selectableItemBackground"
-                        android:paddingBottom="4dp"
                         android:paddingTop="4dp"
+                        android:paddingBottom="4dp"
                         android:text="@string/add_labels" />
 
                 </LinearLayout>

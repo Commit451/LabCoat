@@ -1,42 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                     xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                     android:id="@+id/main_content"
-                                                     android:layout_width="match_parent"
-                                                     android:layout_height="match_parent"
-                                                     android:fitsSystemWindows="true">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
+        style="@style/AppBarLayout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/user_header_image_size"
-        android:fitsSystemWindows="true"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark">
+        android:fitsSystemWindows="true">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed"
             android:fitsSystemWindows="true"
+            app:expandedTitleMarginEnd="64dp"
             app:expandedTitleMarginStart="48dp"
-            app:expandedTitleMarginEnd="64dp">
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <ImageView
                 android:id="@+id/backdrop"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                android:fitsSystemWindows="true"
-                app:layout_collapseMode="parallax"
                 android:contentDescription="@null"
-                android:transitionName="@string/transition_user" />
+                android:fitsSystemWindows="true"
+                android:scaleType="centerCrop"
+                android:transitionName="@string/transition_user"
+                app:layout_collapseMode="parallax" />
 
-            <androidx.appcompat.widget.Toolbar
+            <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar"
+                style="@style/Toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
                 app:layout_collapseMode="pin" />
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
@@ -49,9 +49,9 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <FrameLayout
+            android:id="@+id/user_feed"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/user_feed"></FrameLayout>
+            android:layout_height="match_parent" />
 
     </FrameLayout>
 

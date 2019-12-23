@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                     xmlns:tools="http://schemas.android.com/tools"
-                                                     android:id="@+id/root"
-                                                     android:layout_width="match_parent"
-                                                     android:layout_height="match_parent">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <com.commit451.gitlab.view.LabCoatSwipeRefreshLayout
         android:id="@+id/swipe_layout"
@@ -19,8 +19,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <androidx.cardview.widget.CardView
-                    style="@style/Card"
+                <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="16dp">
@@ -36,8 +35,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="16dp"
-                            android:layout_marginRight="16dp"
                             android:layout_marginTop="16dp"
+                            android:layout_marginRight="16dp"
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             tools:text="Pipeline: #123" />
 
@@ -46,8 +45,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="16dp"
-                            android:layout_marginRight="16dp"
                             android:layout_marginTop="16dp"
+                            android:layout_marginRight="16dp"
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             tools:text="Status: success" />
 
@@ -56,8 +55,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="16dp"
-                            android:layout_marginRight="16dp"
                             android:layout_marginTop="16dp"
+                            android:layout_marginRight="16dp"
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             tools:text="Duration: 46 minutes" />
 
@@ -66,8 +65,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="16dp"
-                            android:layout_marginRight="16dp"
                             android:layout_marginTop="16dp"
+                            android:layout_marginRight="16dp"
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             tools:text="Created: 46 minutes ago" />
 
@@ -76,18 +75,17 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="16dp"
-                            android:layout_marginRight="16dp"
                             android:layout_marginTop="16dp"
+                            android:layout_marginRight="16dp"
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             tools:text="Finished: 46 minutes ago" />
 
 
                     </LinearLayout>
 
-                </androidx.cardview.widget.CardView>
+                </com.google.android.material.card.MaterialCardView>
 
-                <androidx.cardview.widget.CardView
-                    style="@style/Card"
+                <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="16dp">
@@ -102,8 +100,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="16dp"
-                            android:layout_marginRight="16dp"
                             android:layout_marginTop="16dp"
+                            android:layout_marginRight="16dp"
                             android:text="@string/build_commit"
                             android:textAppearance="?android:attr/textAppearanceLarge" />
 
@@ -112,8 +110,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="16dp"
-                            android:layout_marginRight="16dp"
                             android:layout_marginTop="16dp"
+                            android:layout_marginRight="16dp"
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             tools:text="Ref: master" />
 
@@ -122,8 +120,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="16dp"
-                            android:layout_marginRight="16dp"
                             android:layout_marginTop="16dp"
+                            android:layout_marginRight="16dp"
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             tools:text="SHA: f4hf92f7" />
 
@@ -132,8 +130,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="16dp"
-                            android:layout_marginRight="16dp"
                             android:layout_marginTop="16dp"
+                            android:layout_marginRight="16dp"
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             tools:text="Author: Noah Prail" />
 
@@ -142,14 +140,14 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="16dp"
-                            android:layout_marginRight="16dp"
                             android:layout_marginTop="16dp"
+                            android:layout_marginRight="16dp"
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             tools:text="Message: Some commit message." />
 
                     </LinearLayout>
 
-                </androidx.cardview.widget.CardView>
+                </com.google.android.material.card.MaterialCardView>
 
             </LinearLayout>
         </ScrollView>

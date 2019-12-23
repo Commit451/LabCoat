@@ -1,17 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Dark theme (default) -->
-    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/main_blue</item>
         <item name="colorAccent">@color/yellow</item>
+        <item name="colorSecondary">@color/yellow</item>
         <item name="colorPrimaryDark">@color/main_blue_darker</item>
-        <item name="android:navigationBarColor" tools:targetApi="lollipop">@color/main_blue_darker
-        </item>
         <item name="android:windowContentTransitions" tools:ignore="NewApi">true</item>
-        <item name="android:windowBackground">@color/window_background</item>
-        <item name="dialogTheme">@style/AppDialogTheme</item>
-        <item name="alertDialogTheme">@style/AppDialogTheme</item>
     </style>
 
     <style name="Activity" parent="AppTheme" />
@@ -20,7 +15,6 @@
         <item name="android:windowBackground">?attr/colorPrimary</item>
     </style>
 
-    <!-- Dark theme (default) -->
     <style name="Activity.Projects">
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
@@ -69,23 +63,11 @@
         <item name="android:windowDrawsSystemBarBackgrounds" tools:targetApi="lollipop">true</item>
     </style>
 
-    <!-- Widget styles -->
-    <style name="AppDialogTheme" parent="Theme.AppCompat.Dialog">
-        <item name="colorAccent">@color/yellow</item>
-        <item name="windowNoTitle">true</item>
-    </style>
+    <style name="AppBarLayout" parent="Widget.MaterialComponents.AppBarLayout.Primary" />
 
-    <style name="Card">
-        <item name="cardUseCompatPadding">true</item>
-        <item name="cardElevation">2dp</item>
-        <item name="cardCornerRadius">1dp</item>
-        <item name="android:foreground">?attr/selectableItemBackground</item>
-    </style>
+    <style name="Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary" />
 
-    <style name="Text" />
+    <style name="TabLayout" parent="Widget.MaterialComponents.TabLayout.Colored" />
 
-    <style name="Text.MonoRegular">
-        <item name="android:fontFamily">@font/roboto_mono_regular</item>
-    </style>
-
+    <style name="FloatingActionButton" parent="Widget.MaterialComponents.FloatingActionButton" />
 </resources>

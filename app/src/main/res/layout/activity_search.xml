@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                     xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                     android:id="@+id/root"
-                                                     android:layout_width="match_parent"
-                                                     android:layout_height="match_parent">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
+        style="@style/AppBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <androidx.appcompat.widget.Toolbar
+        <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
+            style="@style/Toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:layout_scrollFlags="scroll|enterAlways|snap">
@@ -19,33 +21,34 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginRight="16dp">
+                android:layout_marginRight="16dp"
+                android:orientation="horizontal">
 
                 <EditText
                     android:id="@+id/search"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="@string/action_search"
                     android:layout_marginRight="32dp"
-                    android:inputType="text"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:hint="@string/action_search"
                     android:imeOptions="actionSearch"
-                    android:background="@null" />
+                    android:inputType="text" />
 
                 <ImageView
                     android:id="@+id/clear"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:srcCompat="@drawable/ic_close_24dp"
                     android:contentDescription="@null"
-                    android:visibility="gone" />
+                    android:visibility="gone"
+                    app:srcCompat="@drawable/ic_close_24dp" />
             </LinearLayout>
 
-        </androidx.appcompat.widget.Toolbar>
+        </com.google.android.material.appbar.MaterialToolbar>
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabs"
+            style="@style/TabLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 

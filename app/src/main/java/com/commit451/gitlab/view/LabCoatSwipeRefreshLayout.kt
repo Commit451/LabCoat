@@ -1,16 +1,14 @@
 package com.commit451.gitlab.view
 
 import android.content.Context
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import android.util.AttributeSet
-
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.commit451.gitlab.R
-
 
 /**
  * Just so that we do not have to keep setting the colors everywhere
  */
-class LabCoatSwipeRefreshLayout : androidx.swiperefreshlayout.widget.SwipeRefreshLayout {
+class LabCoatSwipeRefreshLayout : SwipeRefreshLayout {
 
     constructor(context: Context) : super(context) {
         init()

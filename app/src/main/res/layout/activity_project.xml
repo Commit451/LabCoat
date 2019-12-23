@@ -8,16 +8,19 @@
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
+        style="@style/AppBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <androidx.appcompat.widget.Toolbar
+        <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
+            style="@style/Toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize" />
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabs"
+            style="@style/TabLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:tabMode="scrollable" />

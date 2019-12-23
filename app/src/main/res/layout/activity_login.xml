@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                     xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                     android:id="@+id/root"
-                                                     android:layout_width="match_parent"
-                                                     android:layout_height="match_parent">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <androidx.appcompat.widget.Toolbar
+    <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
@@ -33,11 +33,11 @@
                 app:srcCompat="@drawable/ic_logo" />
 
             <TextView
-                style="@style/Text.MonoRegular"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="16dp"
+                android:fontFamily="@font/roboto_mono_regular"
                 android:gravity="center_horizontal"
                 android:text="@string/welcome"
                 android:textSize="32sp" />
@@ -90,8 +90,8 @@
                 <ImageView
                     android:id="@+id/button_info"
                     android:layout_width="wrap_content"
-                    android:layout_gravity="center_vertical"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@null"
                     android:padding="8dp"

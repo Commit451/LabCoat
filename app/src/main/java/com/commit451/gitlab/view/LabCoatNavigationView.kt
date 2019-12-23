@@ -54,11 +54,11 @@ class LabCoatNavigationView : NavigationView {
     @BindView(R.id.button_debug)
     lateinit var buttonDebug: View
 
-    lateinit var listAccounts: RecyclerView
-    lateinit var adapterAccounts: AccountAdapter
+    private lateinit var listAccounts: RecyclerView
+    private lateinit var adapterAccounts: AccountAdapter
     var user: User? = null
 
-    val mOnNavigationItemSelectedListener = OnNavigationItemSelectedListener { menuItem ->
+    private val onNavigationItemSelectedListener = OnNavigationItemSelectedListener { menuItem ->
         when (menuItem.itemId) {
             R.id.nav_projects -> {
                 if (context !is ProjectsActivity) {
@@ -167,11 +167,9 @@ class LabCoatNavigationView : NavigationView {
 
     fun init() {
         App.bus().register(this)
-        val colorPrimary = context.themeAttrColor(R.attr.colorPrimary)
 
-        setNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
+        setNavigationItemSelectedListener(onNavigationItemSelectedListener)
         inflateMenu(R.menu.navigation)
-        setBackgroundColor(colorPrimary)
         val header = inflateHeaderView(R.layout.header_nav_drawer)
         ButterKnife.bind(this, header)
 
@@ -181,9 +179,8 @@ class LabCoatNavigationView : NavigationView {
         listAccounts = RecyclerView(context)
         listAccounts.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
         addView(listAccounts)
-        val params = listAccounts.layoutParams as FrameLayout.LayoutParams
+        val params = listAccounts.layoutParams as LayoutParams
         params.setMargins(0, resources.getDimensionPixelSize(R.dimen.account_header_height), 0, 0)
-        listAccounts.setBackgroundColor(colorPrimary)
         listAccounts.visibility = View.GONE
         adapterAccounts = AccountAdapter(context, accountsAdapterListener)
         listAccounts.adapter = adapterAccounts
@@ -198,27 +195,33 @@ class LabCoatNavigationView : NavigationView {
         super.onDetachedFromWindow()
     }
 
-    fun setSelectedNavigationItem() {
-        if (context is ProjectsActivity) {
-            setCheckedItem(R.id.nav_projects)
-        } else if (context is GroupsActivity) {
-            setCheckedItem(R.id.nav_groups)
-        } else if (context is ActivityActivity) {
-            setCheckedItem(R.id.nav_activity)
-        } else if (context is TodosActivity) {
-            setCheckedItem(R.id.nav_todos)
-        } else {
-            throw IllegalStateException("You need to defined a menu item for this activity")
+    private fun setSelectedNavigationItem() {
+        when (context) {
+            is ProjectsActivity -> {
+                setCheckedItem(R.id.nav_projects)
+            }
+            is GroupsActivity -> {
+                setCheckedItem(R.id.nav_groups)
+            }
+            is ActivityActivity -> {
+                setCheckedItem(R.id.nav_activity)
+            }
+            is TodosActivity -> {
+                setCheckedItem(R.id.nav_todos)
+            }
+            else -> {
+                throw IllegalStateException("You need to defined a menu item for this activity")
+            }
         }
     }
 
-    fun setAccounts() {
+    private fun setAccounts() {
         val accounts = Prefs.getAccounts()
         Timber.d("Got %s accounts", accounts.size)
         adapterAccounts.setAccounts(accounts)
     }
 
-    fun loadCurrentUser() {
+    private fun loadCurrentUser() {
         App.get().gitLab.getThisUser()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

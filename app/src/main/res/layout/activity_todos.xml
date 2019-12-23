@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                           xmlns:app="http://schemas.android.com/apk/res-auto"
-                                           android:id="@+id/drawer_layout"
-                                           android:layout_width="match_parent"
-                                           android:layout_height="match_parent"
-                                           android:fitsSystemWindows="true">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/main_content_container"
@@ -13,17 +13,20 @@
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/appbar"
+            style="@style/AppBarLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <androidx.appcompat.widget.Toolbar
+            <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar"
+                style="@style/Toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_scrollFlags="scroll|enterAlways|snap" />
 
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tabs"
+                style="@style/TabLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
