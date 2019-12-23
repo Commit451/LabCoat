@@ -1,13 +1,13 @@
 package com.commit451.gitlab.fragment
 
 import android.os.Bundle
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import butterknife.BindView
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
@@ -19,7 +19,6 @@ import com.commit451.gitlab.model.api.MergeRequest
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.model.api.RepositoryCommit
 import com.commit451.gitlab.navigation.Navigator
-import com.commit451.gitlab.rx.CustomSingleObserver
 import org.greenrobot.eventbus.Subscribe
 import timber.log.Timber
 
@@ -116,32 +115,27 @@ class MergeRequestCommitsFragment : ButterKnifeFragment() {
 
         App.get().gitLab.getMergeRequestCommits(project!!.id, mergeRequest!!.iid)
                 .with(this)
-                .subscribe(object : CustomSingleObserver<List<RepositoryCommit>>() {
-
-                    override fun error(e: Throwable) {
-                        loading = false
-                        Timber.e(e)
-                        swipeRefreshLayout.isRefreshing = false
+                .subscribe({
+                    loading = false
+                    swipeRefreshLayout.isRefreshing = false
+                    if (it.isNotEmpty()) {
+                        textMessage.visibility = View.GONE
+                    } else {
                         textMessage.visibility = View.VISIBLE
-                        textMessage.setText(R.string.connection_error_commits)
-                        adapterCommits.setData(null)
+                        textMessage.setText(R.string.no_commits_found)
+                    }
+                    adapterCommits.setData(it)
+                    if (it.isEmpty()) {
                         page = -1
                     }
-
-                    override fun success(repositoryCommits: List<RepositoryCommit>) {
-                        loading = false
-                        swipeRefreshLayout.isRefreshing = false
-                        if (!repositoryCommits.isEmpty()) {
-                            textMessage.visibility = View.GONE
-                        } else {
-                            textMessage.visibility = View.VISIBLE
-                            textMessage.setText(R.string.no_commits_found)
-                        }
-                        adapterCommits.setData(repositoryCommits)
-                        if (repositoryCommits.isEmpty()) {
-                            page = -1
-                        }
-                    }
+                }, {
+                    loading = false
+                    Timber.e(it)
+                    swipeRefreshLayout.isRefreshing = false
+                    textMessage.visibility = View.VISIBLE
+                    textMessage.setText(R.string.connection_error_commits)
+                    adapterCommits.setData(null)
+                    page = -1
                 })
     }
 

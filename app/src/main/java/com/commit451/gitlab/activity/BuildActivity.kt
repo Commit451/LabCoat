@@ -21,7 +21,6 @@ import com.commit451.gitlab.extension.getDownloadBuildUrl
 import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Build
 import com.commit451.gitlab.model.api.Project
-import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.util.DownloadUtil
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
@@ -69,21 +68,16 @@ class BuildActivity : BaseActivity() {
                 progress.visibility = View.VISIBLE
                 App.get().gitLab.retryBuild(project.id, build.id)
                         .with(this)
-                        .subscribe(object : CustomSingleObserver<Build>() {
-
-                            override fun error(t: Throwable) {
-                                Timber.e(t)
-                                progress.visibility = View.GONE
-                                Snackbar.make(root, R.string.unable_to_retry_build, Snackbar.LENGTH_LONG)
-                                        .show()
-                            }
-
-                            override fun success(build: Build) {
-                                progress.visibility = View.GONE
-                                Snackbar.make(root, R.string.build_started, Snackbar.LENGTH_LONG)
-                                        .show()
-                                App.bus().post(BuildChangedEvent(build))
-                            }
+                        .subscribe({
+                            progress.visibility = View.GONE
+                            Snackbar.make(root, R.string.build_started, Snackbar.LENGTH_LONG)
+                                    .show()
+                            App.bus().post(BuildChangedEvent(build))
+                        }, {
+                            Timber.e(it)
+                            progress.visibility = View.GONE
+                            Snackbar.make(root, R.string.unable_to_retry_build, Snackbar.LENGTH_LONG)
+                                    .show()
                         })
                 return@OnMenuItemClickListener true
             }
@@ -91,21 +85,16 @@ class BuildActivity : BaseActivity() {
                 progress.visibility = View.VISIBLE
                 App.get().gitLab.eraseBuild(project.id, build.id)
                         .with(this)
-                        .subscribe(object : CustomSingleObserver<Build>() {
-
-                            override fun error(t: Throwable) {
-                                Timber.e(t)
-                                progress.visibility = View.GONE
-                                Snackbar.make(root, R.string.unable_to_erase_build, Snackbar.LENGTH_LONG)
-                                        .show()
-                            }
-
-                            override fun success(build: Build) {
-                                progress.visibility = View.GONE
-                                Snackbar.make(root, R.string.build_erased, Snackbar.LENGTH_LONG)
-                                        .show()
-                                App.bus().post(BuildChangedEvent(build))
-                            }
+                        .subscribe({
+                            progress.visibility = View.GONE
+                            Snackbar.make(root, R.string.build_erased, Snackbar.LENGTH_LONG)
+                                    .show()
+                            App.bus().post(BuildChangedEvent(it))
+                        }, {
+                            Timber.e(it)
+                            progress.visibility = View.GONE
+                            Snackbar.make(root, R.string.unable_to_erase_build, Snackbar.LENGTH_LONG)
+                                    .show()
                         })
                 return@OnMenuItemClickListener true
             }
@@ -113,21 +102,16 @@ class BuildActivity : BaseActivity() {
                 progress.visibility = View.VISIBLE
                 App.get().gitLab.cancelBuild(project.id, build.id)
                         .with(this)
-                        .subscribe(object : CustomSingleObserver<Build>() {
-
-                            override fun error(t: Throwable) {
-                                Timber.e(t)
-                                progress.visibility = View.GONE
-                                Snackbar.make(root, R.string.unable_to_cancel_build, Snackbar.LENGTH_LONG)
-                                        .show()
-                            }
-
-                            override fun success(build: Build) {
-                                progress.visibility = View.GONE
-                                Snackbar.make(root, R.string.build_canceled, Snackbar.LENGTH_LONG)
-                                        .show()
-                                App.bus().post(BuildChangedEvent(build))
-                            }
+                        .subscribe({
+                            progress.visibility = View.GONE
+                            Snackbar.make(root, R.string.build_canceled, Snackbar.LENGTH_LONG)
+                                    .show()
+                            App.bus().post(BuildChangedEvent(it))
+                        }, {
+                            Timber.e(it)
+                            progress.visibility = View.GONE
+                            Snackbar.make(root, R.string.unable_to_cancel_build, Snackbar.LENGTH_LONG)
+                                    .show()
                         })
                 return@OnMenuItemClickListener true
             }
@@ -191,7 +175,7 @@ class BuildActivity : BaseActivity() {
         }
     }
 
-    fun downloadBuild() {
+    private fun downloadBuild() {
         val account = App.get().getAccount()
         val downloadUrl = build.getDownloadBuildUrl(App.get().getAccount().serverUrl!!, project)
         Timber.d("Downloading build: $downloadUrl")

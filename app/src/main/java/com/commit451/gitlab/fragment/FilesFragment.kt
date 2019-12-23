@@ -4,14 +4,13 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import butterknife.BindView
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
@@ -26,8 +25,8 @@ import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.model.api.RepositoryTreeObject
 import com.commit451.gitlab.navigation.Navigator
-import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.util.IntentUtil
+import com.google.android.material.snackbar.Snackbar
 import org.greenrobot.eventbus.Subscribe
 import timber.log.Timber
 import java.util.*
@@ -159,33 +158,28 @@ class FilesFragment : ButterKnifeFragment() {
 
         App.get().gitLab.getTree(project!!.id, ref, newPath)
                 .with(this)
-                .subscribe(object : CustomSingleObserver<List<RepositoryTreeObject>>() {
-
-                    override fun error(e: Throwable) {
-                        Timber.e(e)
-                        swipeRefreshLayout.isRefreshing = false
+                .subscribe({
+                    swipeRefreshLayout.isRefreshing = false
+                    if (it.isNotEmpty()) {
+                        textMessage.visibility = View.GONE
+                    } else {
+                        Timber.d("No files found")
                         textMessage.visibility = View.VISIBLE
-                        textMessage.setText(R.string.connection_error_files)
-                        adapterFiles.setData(null)
-                        currentPath = newPath
-                        updateBreadcrumbs()
+                        textMessage.setText(R.string.no_files_found)
                     }
 
-                    override fun success(repositoryTreeObjects: List<RepositoryTreeObject>) {
-                        swipeRefreshLayout.isRefreshing = false
-                        if (repositoryTreeObjects.isNotEmpty()) {
-                            textMessage.visibility = View.GONE
-                        } else {
-                            Timber.d("No files found")
-                            textMessage.visibility = View.VISIBLE
-                            textMessage.setText(R.string.no_files_found)
-                        }
-
-                        adapterFiles.setData(repositoryTreeObjects)
-                        list.scrollToPosition(0)
-                        currentPath = newPath
-                        updateBreadcrumbs()
-                    }
+                    adapterFiles.setData(it)
+                    list.scrollToPosition(0)
+                    currentPath = newPath
+                    updateBreadcrumbs()
+                }, {
+                    Timber.e(it)
+                    swipeRefreshLayout.isRefreshing = false
+                    textMessage.visibility = View.VISIBLE
+                    textMessage.setText(R.string.connection_error_files)
+                    adapterFiles.setData(null)
+                    currentPath = newPath
+                    updateBreadcrumbs()
                 })
     }
 

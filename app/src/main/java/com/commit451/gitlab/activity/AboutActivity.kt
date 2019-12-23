@@ -19,7 +19,6 @@ import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.Account
 import com.commit451.gitlab.model.api.Contributor
 import com.commit451.gitlab.navigation.Navigator
-import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.util.ImageUtil
 import com.commit451.gitlab.util.IntentUtil
 import com.google.android.material.snackbar.Snackbar
@@ -84,19 +83,14 @@ class AboutActivity : BaseActivity() {
         }
         gitLab.getContributors(REPO_ID)
                 .with(this)
-                .subscribe(object : CustomSingleObserver<List<Contributor>>() {
-
-                    override fun error(t: Throwable) {
-                        Timber.e(t)
-                        progress.visibility = View.GONE
-                        Snackbar.make(root, R.string.failed_to_load_contributors, Snackbar.LENGTH_SHORT)
-                                .show()
-                    }
-
-                    override fun success(contributors: List<Contributor>) {
-                        progress.visibility = View.GONE
-                        addContributors(contributors)
-                    }
+                .subscribe({
+                    progress.visibility = View.GONE
+                    addContributors(it)
+                }, {
+                    Timber.e(it)
+                    progress.visibility = View.GONE
+                    Snackbar.make(root, R.string.failed_to_load_contributors, Snackbar.LENGTH_SHORT)
+                            .show()
                 })
         progress.visibility = View.VISIBLE
         sauce.setOnClickListener {
@@ -122,7 +116,7 @@ class AboutActivity : BaseActivity() {
         return true
     }
 
-    fun addContributors(contributors: List<Contributor>) {
+    private fun addContributors(contributors: List<Contributor>) {
         val config = PhysicsConfig.create()
         config.shapeType = PhysicsConfig.SHAPE_TYPE_CIRCLE
         val borderSize = resources.getDimensionPixelSize(R.dimen.border_size)

@@ -19,7 +19,6 @@ import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.model.api.RepositoryCommit
 import com.commit451.gitlab.navigation.Navigator
-import com.commit451.gitlab.rx.CustomSingleObserver
 import org.greenrobot.eventbus.Subscribe
 import timber.log.Timber
 
@@ -112,32 +111,27 @@ class CommitsFragment : ButterKnifeFragment() {
 
         App.get().gitLab.getCommits(project!!.id, branchName!!, page)
                 .with(this)
-                .subscribe(object : CustomSingleObserver<List<RepositoryCommit>>() {
-
-                    override fun error(t: Throwable) {
-                        loading = false
-                        Timber.e(t)
-                        swipeRefreshLayout.isRefreshing = false
+                .subscribe({ repositoryCommits ->
+                    loading = false
+                    swipeRefreshLayout.isRefreshing = false
+                    if (repositoryCommits.isNotEmpty()) {
+                        textMessage.visibility = View.GONE
+                    } else {
                         textMessage.visibility = View.VISIBLE
-                        textMessage.setText(R.string.connection_error_commits)
-                        adapterCommits.setData(null)
+                        textMessage.setText(R.string.no_commits_found)
+                    }
+                    adapterCommits.setData(repositoryCommits)
+                    if (repositoryCommits.isEmpty()) {
                         page = -1
                     }
-
-                    override fun success(repositoryCommits: List<RepositoryCommit>) {
-                        loading = false
-                        swipeRefreshLayout.isRefreshing = false
-                        if (!repositoryCommits.isEmpty()) {
-                            textMessage.visibility = View.GONE
-                        } else {
-                            textMessage.visibility = View.VISIBLE
-                            textMessage.setText(R.string.no_commits_found)
-                        }
-                        adapterCommits.setData(repositoryCommits)
-                        if (repositoryCommits.isEmpty()) {
-                            page = -1
-                        }
-                    }
+                }, {
+                    loading = false
+                    Timber.e(it)
+                    swipeRefreshLayout.isRefreshing = false
+                    textMessage.visibility = View.VISIBLE
+                    textMessage.setText(R.string.connection_error_commits)
+                    adapterCommits.setData(null)
+                    page = -1
                 })
     }
 
@@ -157,23 +151,18 @@ class CommitsFragment : ButterKnifeFragment() {
         Timber.d("loadMore called for %s", page)
         App.get().gitLab.getCommits(project!!.id, branchName!!, page)
                 .with(this)
-                .subscribe(object : CustomSingleObserver<List<RepositoryCommit>>() {
-
-                    override fun error(e: Throwable) {
-                        loading = false
-                        Timber.e(e)
-                        adapterCommits.setLoading(false)
+                .subscribe({
+                    loading = false
+                    adapterCommits.setLoading(false)
+                    if (it.isEmpty()) {
+                        page = -1
+                    } else {
+                        adapterCommits.addData(it)
                     }
-
-                    override fun success(repositoryCommits: List<RepositoryCommit>) {
-                        loading = false
-                        adapterCommits.setLoading(false)
-                        if (repositoryCommits.isEmpty()) {
-                            page = -1
-                            return
-                        }
-                        adapterCommits.addData(repositoryCommits)
-                    }
+                }, {
+                    loading = false
+                    Timber.e(it)
+                    adapterCommits.setLoading(false)
                 })
     }
 

@@ -12,7 +12,6 @@ import com.commit451.gitlab.R
 import com.commit451.gitlab.event.BuildChangedEvent
 import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.*
-import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.util.DateUtil
 import com.google.android.material.snackbar.Snackbar
 import org.greenrobot.eventbus.Subscribe
@@ -95,24 +94,19 @@ class BuildDescriptionFragment : ButterKnifeFragment() {
     fun load() {
         App.get().gitLab.getBuild(project.id, build.id)
                 .with(this)
-                .subscribe(object : CustomSingleObserver<Build>() {
-
-                    override fun error(t: Throwable) {
-                        Timber.e(t)
-                        Snackbar.make(root, R.string.unable_to_load_build, Snackbar.LENGTH_LONG)
-                                .show()
-                    }
-
-                    override fun success(build: Build) {
-                        swipeRefreshLayout.isRefreshing = false
-                        this@BuildDescriptionFragment.build = build
-                        bindBuild(build)
-                        App.bus().post(BuildChangedEvent(build))
-                    }
+                .subscribe({
+                    swipeRefreshLayout.isRefreshing = false
+                    build = it
+                    bindBuild(build)
+                    App.bus().post(BuildChangedEvent(it))
+                }, {
+                    Timber.e(it)
+                    Snackbar.make(root, R.string.unable_to_load_build, Snackbar.LENGTH_LONG)
+                            .show()
                 })
     }
 
-    fun bindBuild(build: Build) {
+    private fun bindBuild(build: Build) {
         var finishedTime: Date? = build.finishedAt
         if (finishedTime == null) {
             finishedTime = Date()

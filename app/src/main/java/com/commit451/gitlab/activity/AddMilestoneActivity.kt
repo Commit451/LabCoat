@@ -3,13 +3,11 @@ package com.commit451.gitlab.activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.textfield.TextInputLayout
-import androidx.appcompat.widget.Toolbar
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.FrameLayout
+import androidx.appcompat.widget.Toolbar
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
@@ -22,8 +20,9 @@ import com.commit451.gitlab.event.MilestoneCreatedEvent
 import com.commit451.gitlab.extension.checkValid
 import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Milestone
-import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.teleprinter.Teleprinter
+import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.textfield.TextInputLayout
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
 import io.reactivex.Single
 import timber.log.Timber
@@ -68,7 +67,7 @@ class AddMilestoneActivity : MorphActivity() {
     var milestone: Milestone? = null
     var currentDate: Date? = null
 
-    val onDateSetListener = DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
+    private val onDateSetListener = DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
         val calendar = Calendar.getInstance()
         calendar.set(Calendar.YEAR, year)
         calendar.set(Calendar.MONTH, monthOfYear)
@@ -80,8 +79,8 @@ class AddMilestoneActivity : MorphActivity() {
     @OnClick(R.id.due_date)
     fun onDueDateClicked() {
         val now = Calendar.getInstance()
-        if (currentDate != null) {
-            now.time = currentDate
+        currentDate?.let {
+            now.time = it
         }
         val dpd = DatePickerDialog.newInstance(
                 onDateSetListener,
@@ -120,7 +119,7 @@ class AddMilestoneActivity : MorphActivity() {
         })
     }
 
-    fun createMilestone() {
+    private fun createMilestone() {
         teleprinter.hideKeyboard()
         if (!textInputLayoutTitle.checkValid()) {
             return
@@ -128,6 +127,7 @@ class AddMilestoneActivity : MorphActivity() {
 
         progress.visibility = View.VISIBLE
         var dueDate: String? = null
+        val currentDate = currentDate
         if (currentDate != null) {
             dueDate = DashDateAdapter.format.format(currentDate)
         }
@@ -147,29 +147,24 @@ class AddMilestoneActivity : MorphActivity() {
 
     }
 
-    fun createOrEditMilestone(observable: Single<Milestone>) {
+    private fun createOrEditMilestone(observable: Single<Milestone>) {
         observable.with(this)
-                .subscribe(object : CustomSingleObserver<Milestone>() {
-
-                    override fun error(t: Throwable) {
-                        Timber.e(t)
-                        progress.visibility = View.GONE
-                        showError()
+                .subscribe({
+                    progress.visibility = View.GONE
+                    if (milestone == null) {
+                        App.bus().post(MilestoneCreatedEvent(it))
+                    } else {
+                        App.bus().post(MilestoneChangedEvent(it))
                     }
-
-                    override fun success(milestone: Milestone) {
-                        progress.visibility = View.GONE
-                        if (this@AddMilestoneActivity.milestone == null) {
-                            App.bus().post(MilestoneCreatedEvent(milestone))
-                        } else {
-                            App.bus().post(MilestoneChangedEvent(milestone))
-                        }
-                        finish()
-                    }
+                    finish()
+                }, {
+                    Timber.e(it)
+                    progress.visibility = View.GONE
+                    showError()
                 })
     }
 
-    fun showError() {
+    private fun showError() {
         Snackbar.make(root, getString(R.string.failed_to_create_milestone), Snackbar.LENGTH_SHORT)
                 .show()
     }

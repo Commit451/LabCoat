@@ -1,13 +1,12 @@
 package com.commit451.gitlab.fragment
 
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import androidx.appcompat.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import butterknife.BindView
 import butterknife.OnClick
 import com.commit451.gitlab.App
@@ -18,12 +17,12 @@ import com.commit451.gitlab.extension.*
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.model.api.RepositoryFile
 import com.commit451.gitlab.navigation.Navigator
-import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.util.InternalLinkMovementMethod
+import com.google.android.material.snackbar.Snackbar
 import io.reactivex.Single
 import org.greenrobot.eventbus.Subscribe
-import retrofit2.Response
 import timber.log.Timber
+import java.util.*
 
 /**
  * Shows the overview of the project
@@ -98,23 +97,18 @@ class ProjectFragment : ButterKnifeFragment() {
         if (project != null) {
             App.get().gitLab.starProject(project!!.id)
                     .with(this)
-                    .subscribe(object : CustomSingleObserver<Response<Project>>() {
-
-                        override fun error(t: Throwable) {
-                            Snackbar.make(swipeRefreshLayout, R.string.project_star_failed, Snackbar.LENGTH_SHORT)
+                    .subscribe({
+                        if (it.raw().code == 304) {
+                            Snackbar.make(swipeRefreshLayout, R.string.project_already_starred, Snackbar.LENGTH_LONG)
+                                    .setAction(R.string.project_unstar) { unstarProject() }
+                                    .show()
+                        } else {
+                            Snackbar.make(swipeRefreshLayout, R.string.project_starred, Snackbar.LENGTH_SHORT)
                                     .show()
                         }
-
-                        override fun success(projectResponse: Response<Project>) {
-                            if (projectResponse.raw().code == 304) {
-                                Snackbar.make(swipeRefreshLayout, R.string.project_already_starred, Snackbar.LENGTH_LONG)
-                                        .setAction(R.string.project_unstar) { unstarProject() }
-                                        .show()
-                            } else {
-                                Snackbar.make(swipeRefreshLayout, R.string.project_starred, Snackbar.LENGTH_SHORT)
-                                        .show()
-                            }
-                        }
+                    }, {
+                        Snackbar.make(swipeRefreshLayout, R.string.project_star_failed, Snackbar.LENGTH_SHORT)
+                                .show()
                     })
         }
     }
@@ -172,30 +166,25 @@ class ProjectFragment : ButterKnifeFragment() {
                 Single.just(readmeResult)
             }
                     .with(this)
-                    .subscribe(object : CustomSingleObserver<ReadmeResult>() {
-
-                        override fun error(t: Throwable) {
-                            Timber.e(t)
-                            swipeRefreshLayout.isRefreshing = false
-                            textOverview.setText(R.string.connection_error_readme)
-                        }
-
-                        override fun success(result: ReadmeResult) {
-                            swipeRefreshLayout.isRefreshing = false
-                            val repositoryFile = result.repositoryFile
-                            val bytes = result.bytes
-                            if (repositoryFile != null && bytes != null) {
-                                val text = String(bytes)
-                                when (getReadmeType(repositoryFile.fileName!!)) {
-                                    README_TYPE_MARKDOWN -> textOverview.setMarkdownText(text, project)
-                                    README_TYPE_HTML -> textOverview.text = text.formatAsHtml()
-                                    README_TYPE_TEXT -> textOverview.text = text
-                                    README_TYPE_NO_EXTENSION -> textOverview.text = text
-                                }
-                            } else {
-                                textOverview.setText(R.string.no_readme_found)
+                    .subscribe({
+                        swipeRefreshLayout.isRefreshing = false
+                        val repositoryFile = it.repositoryFile
+                        val bytes = it.bytes
+                        if (repositoryFile != null && bytes != null) {
+                            val text = String(bytes)
+                            when (getReadmeType(repositoryFile.fileName!!)) {
+                                README_TYPE_MARKDOWN -> textOverview.setMarkdownText(text, project)
+                                README_TYPE_HTML -> textOverview.text = text.formatAsHtml()
+                                README_TYPE_TEXT -> textOverview.text = text
+                                README_TYPE_NO_EXTENSION -> textOverview.text = text
                             }
+                        } else {
+                            textOverview.setText(R.string.no_readme_found)
                         }
+                    }, {
+                        Timber.e(it)
+                        swipeRefreshLayout.isRefreshing = false
+                        textOverview.setText(R.string.connection_error_readme)
                     })
 
         } else {
@@ -217,8 +206,8 @@ class ProjectFragment : ButterKnifeFragment() {
         textForksCount.text = project.forksCount.toString()
     }
 
-    fun getReadmeType(filename: String): Int {
-        when (filename.toLowerCase()) {
+    private fun getReadmeType(filename: String): Int {
+        when (filename.toLowerCase(Locale.ROOT)) {
             "readme.md" -> return README_TYPE_MARKDOWN
             "readme.html", "readme.htm" -> return README_TYPE_HTML
             "readme.txt" -> return README_TYPE_TEXT
@@ -227,20 +216,16 @@ class ProjectFragment : ButterKnifeFragment() {
         return README_TYPE_UNKNOWN
     }
 
-    fun unstarProject() {
+    private fun unstarProject() {
         App.get().gitLab.unstarProject(project!!.id)
                 .with(this)
-                .subscribe(object : CustomSingleObserver<Project>() {
-
-                    override fun error(t: Throwable) {
-                        Snackbar.make(swipeRefreshLayout, R.string.unstar_failed, Snackbar.LENGTH_SHORT)
-                                .show()
-                    }
-
-                    override fun success(project: Project) {
-                        Snackbar.make(swipeRefreshLayout, com.commit451.gitlab.R.string.project_unstarred, Snackbar.LENGTH_SHORT)
-                                .show()
-                    }
+                .subscribe({
+                    Snackbar.make(swipeRefreshLayout, R.string.project_unstarred, Snackbar.LENGTH_SHORT)
+                            .show()
+                }, {
+                    Timber.e(it)
+                    Snackbar.make(swipeRefreshLayout, R.string.unstar_failed, Snackbar.LENGTH_SHORT)
+                            .show()
                 })
     }
 

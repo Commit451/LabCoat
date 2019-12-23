@@ -17,22 +17,16 @@ import com.commit451.gitlab.event.IssueCreatedEvent
 import com.commit451.gitlab.extension.belongsToGroup
 import com.commit451.gitlab.extension.checkValid
 import com.commit451.gitlab.extension.with
-import com.commit451.gitlab.model.api.Issue
-import com.commit451.gitlab.model.api.Label
-import com.commit451.gitlab.model.api.Milestone
-import com.commit451.gitlab.model.api.Project
-import com.commit451.gitlab.model.api.User
+import com.commit451.gitlab.model.api.*
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
-import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.teleprinter.Teleprinter
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.Single
 import kotlinx.android.synthetic.main.activity_add_issue.*
 import kotlinx.android.synthetic.main.progress.*
 import timber.log.Timber
-import java.util.ArrayList
-import java.util.HashSet
+import java.util.*
 
 /**
  * Activity to input new issues, but not really a dialog at all wink wink
@@ -166,20 +160,15 @@ class AddIssueActivity : MorphActivity() {
                 })
         App.get().gitLab.getLabels(project.id)
                 .with(this)
-                .subscribe(object : CustomSingleObserver<List<Label>>() {
-
-                    override fun error(t: Throwable) {
-                        Timber.e(t)
-                        listLabels.visibility = View.GONE
-                        progressLabels.visibility = View.GONE
-                        textLabel.visibility = View.GONE
-                    }
-
-                    override fun success(labels: List<Label>) {
-                        progressLabels.visibility = View.GONE
-                        rootAddLabels.visibility = View.VISIBLE
-                        setLabels(labels)
-                    }
+                .subscribe({
+                    progressLabels.visibility = View.GONE
+                    rootAddLabels.visibility = View.VISIBLE
+                    setLabels(it)
+                }, {
+                    Timber.e(it)
+                    listLabels.visibility = View.GONE
+                    progressLabels.visibility = View.GONE
+                    textLabel.visibility = View.GONE
                 })
     }
 
@@ -312,22 +301,17 @@ class AddIssueActivity : MorphActivity() {
 
     private fun observeUpdate(observable: Single<Issue>) {
         observable.with(this)
-                .subscribe(object : CustomSingleObserver<Issue>() {
-
-                    override fun error(t: Throwable) {
-                        Timber.e(t)
-                        Snackbar.make(root, getString(R.string.failed_to_create_issue), Snackbar.LENGTH_SHORT)
-                                .show()
+                .subscribe({
+                    if (issue == null) {
+                        App.bus().post(IssueCreatedEvent(it))
+                    } else {
+                        App.bus().post(IssueChangedEvent(it))
                     }
-
-                    override fun success(issue: Issue) {
-                        if (this@AddIssueActivity.issue == null) {
-                            App.bus().post(IssueCreatedEvent(issue))
-                        } else {
-                            App.bus().post(IssueChangedEvent(issue))
-                        }
-                        dismiss()
-                    }
+                    dismiss()
+                }, {
+                    Timber.e(it)
+                    Snackbar.make(root, getString(R.string.failed_to_create_issue), Snackbar.LENGTH_SHORT)
+                            .show()
                 })
     }
 }

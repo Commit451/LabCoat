@@ -23,7 +23,6 @@ import com.commit451.gitlab.adapter.GroupPagerAdapter
 import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.image.PaletteImageViewTarget
 import com.commit451.gitlab.model.api.Group
-import com.commit451.gitlab.rx.CustomSingleObserver
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
@@ -85,18 +84,13 @@ class GroupActivity : BaseActivity() {
             val groupId = intent.getLongExtra(KEY_GROUP_ID, -1)
             App.get().gitLab.getGroup(groupId)
                     .with(this)
-                    .subscribe(object : CustomSingleObserver<Group>() {
-
-                        override fun error(t: Throwable) {
-                            Timber.e(t)
-                            progress.visibility = View.GONE
-                            showError()
-                        }
-
-                        override fun success(groupDetail: Group) {
-                            progress.visibility = View.GONE
-                            bind(groupDetail)
-                        }
+                    .subscribe({
+                        progress.visibility = View.GONE
+                        bind(it)
+                    }, {
+                        Timber.e(it)
+                        progress.visibility = View.GONE
+                        showError()
                     })
         }
     }
@@ -146,7 +140,7 @@ class GroupActivity : BaseActivity() {
                 .start()
     }
 
-    fun showError() {
+    private fun showError() {
         Snackbar.make(root, R.string.connection_error, Snackbar.LENGTH_SHORT)
                 .show()
     }

@@ -15,9 +15,7 @@ import com.commit451.gitlab.adapter.DividerItemDecoration
 import com.commit451.gitlab.adapter.FeedAdapter
 import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.rss.Entry
-import com.commit451.gitlab.model.rss.Feed
 import com.commit451.gitlab.navigation.Navigator
-import com.commit451.gitlab.rx.CustomSingleObserver
 import com.google.android.material.snackbar.Snackbar
 import com.novoda.simplechromecustomtabs.SimpleChromeCustomTabs
 import timber.log.Timber
@@ -108,27 +106,23 @@ class FeedFragment : ButterKnifeFragment() {
         swipeRefreshLayout.isRefreshing = true
         App.get().gitLab.getFeed(feedUrl!!.toString())
                 .with(this)
-                .subscribe(object : CustomSingleObserver<Feed>() {
-                    override fun success(feed: Feed) {
-                        swipeRefreshLayout.isRefreshing = false
-                        val entries = feed.entries
-                        if (entries != null && !entries.isEmpty()) {
-                            textMessage.visibility = View.GONE
-                        } else {
-                            Timber.d("No activity in the feed")
-                            textMessage.visibility = View.VISIBLE
-                            textMessage.setText(R.string.no_activity)
-                        }
-                        adapterFeed.setEntries(feed.entries)
-                    }
-
-                    override fun error(e: Throwable) {
-                        Timber.e(e)
-                        swipeRefreshLayout.isRefreshing = false
+                .subscribe({
+                    swipeRefreshLayout.isRefreshing = false
+                    val entries = it.entries
+                    if (entries != null && entries.isNotEmpty()) {
+                        textMessage.visibility = View.GONE
+                    } else {
+                        Timber.d("No activity in the feed")
                         textMessage.visibility = View.VISIBLE
-                        textMessage.setText(R.string.connection_error_feed)
-                        adapterFeed.setEntries(null)
+                        textMessage.setText(R.string.no_activity)
                     }
+                    adapterFeed.setEntries(it.entries)
+                }, {
+                    Timber.e(it)
+                    swipeRefreshLayout.isRefreshing = false
+                    textMessage.visibility = View.VISIBLE
+                    textMessage.setText(R.string.connection_error_feed)
+                    adapterFeed.setEntries(null)
                 })
     }
 }

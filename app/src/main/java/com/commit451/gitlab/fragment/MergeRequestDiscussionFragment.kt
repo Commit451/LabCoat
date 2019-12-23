@@ -23,7 +23,6 @@ import com.commit451.gitlab.model.api.Note
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.navigation.TransitionFactory
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
-import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
 import com.commit451.gitlab.view.SendMessageView
 import com.commit451.teleprinter.Teleprinter
@@ -205,20 +204,15 @@ class MergeRequestDiscussionFragment : ButterKnifeFragment() {
 
         App.get().gitLab.addMergeRequestNote(project.id, mergeRequest.iid, message)
                 .with(this)
-                .subscribe(object : CustomSingleObserver<Note>() {
-
-                    override fun error(e: Throwable) {
-                        Timber.e(e)
-                        progress.visibility = View.GONE
-                        Snackbar.make(root, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
-                                .show()
-                    }
-
-                    override fun success(note: Note) {
-                        progress.visibility = View.GONE
-                        adapterNotes.addNote(note)
-                        listNotes.smoothScrollToPosition(0)
-                    }
+                .subscribe({
+                    progress.visibility = View.GONE
+                    adapterNotes.addNote(it)
+                    listNotes.smoothScrollToPosition(0)
+                }, {
+                    Timber.e(it)
+                    progress.visibility = View.GONE
+                    Snackbar.make(root, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
+                            .show()
                 })
     }
 

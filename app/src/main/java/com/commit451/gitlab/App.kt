@@ -23,7 +23,7 @@ class App : Application() {
 
     companion object {
 
-        var bus: EventBus = EventBus.getDefault()
+        private var bus: EventBus = EventBus.getDefault()
         private lateinit var instance: App
 
         fun bus(): EventBus {
@@ -58,8 +58,8 @@ class App : Application() {
         SimpleChromeCustomTabs.initialize(this)
 
         val accounts = Prefs.getAccounts()
-        if (!accounts.isEmpty()) {
-            setAccount(accounts[0])
+        if (accounts.isNotEmpty()) {
+            setAccount(accounts.first())
         }
 
         Lift.track(this)

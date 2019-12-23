@@ -1,12 +1,12 @@
 package com.commit451.gitlab.fragment
 
 import android.os.Bundle
-import androidx.core.widget.NestedScrollView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.widget.NestedScrollView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import butterknife.BindView
 import butterknife.OnClick
 import com.commit451.gitlab.App
@@ -16,7 +16,6 @@ import com.commit451.gitlab.extension.getRawBuildUrl
 import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Build
 import com.commit451.gitlab.model.api.Project
-import com.commit451.gitlab.rx.CustomSingleObserver
 import org.greenrobot.eventbus.Subscribe
 import timber.log.Timber
 
@@ -96,18 +95,13 @@ class BuildLogFragment : ButterKnifeFragment() {
 
         App.get().gitLab.getRaw(url)
                 .with(this)
-                .subscribe(object : CustomSingleObserver<String>() {
-
-                    override fun error(t: Throwable) {
-                        Timber.e(t)
-                        swipeRefreshLayout.isRefreshing = false
-                        textMessage.visibility = View.VISIBLE
-                    }
-
-                    override fun success(log: String) {
-                        swipeRefreshLayout.isRefreshing = false
-                        textLog.text = log
-                    }
+                .subscribe({
+                    swipeRefreshLayout.isRefreshing = false
+                    textLog.text = it
+                }, {
+                    Timber.e(it)
+                    swipeRefreshLayout.isRefreshing = false
+                    textMessage.visibility = View.VISIBLE
                 })
     }
 

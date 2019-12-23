@@ -9,23 +9,23 @@ import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.api.Group
 import com.commit451.gitlab.model.api.User
-import com.commit451.gitlab.rx.CustomSingleObserver
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
-import java.util.*
 
 /**
  * Change a users access level, either for a group or for a project
  */
-class AccessDialog private constructor(context: Context, internal var member: User?, internal var group: Group?, projectId: Long) : MaterialDialog(MaterialDialog.Builder(context)
+class AccessDialog private constructor(context: Context, internal var member: User?, internal var group: Group?, projectId: Long) : MaterialDialog(Builder(context)
         .items(if (group == null) R.array.project_role_names else R.array.group_role_names)
         .itemsCallbackSingleChoice(-1) { _, _, _, _ -> true }
         .theme(Theme.DARK)
         .progress(true, 0) // So we can later show loading progress
         .positiveText(R.string.action_apply)
-        .negativeText(R.string.md_cancel_label)) {
+        .negativeText(R.string.cancel)) {
 
     private var onAccessChangedListener: OnAccessChangedListener? = null
     var listener: Listener? = null
@@ -35,6 +35,7 @@ class AccessDialog private constructor(context: Context, internal var member: Us
     else
         R.array.group_role_names)
     var projectId: Long = -1
+    val disposables = CompositeDisposable()
 
     constructor(context: Context, accessAppliedListener: Listener) : this(context, null, null, -1) {
         listener = accessAppliedListener
@@ -49,43 +50,42 @@ class AccessDialog private constructor(context: Context, internal var member: Us
         getActionButton(DialogAction.NEGATIVE).setOnClickListener { onCancel() }
         this.projectId = projectId
         if (this.member != null) {
-            selectedIndex = Arrays.asList(*roleNames).indexOf(
+            selectedIndex = listOf(*roleNames).indexOf(
                     User.getAccessLevel(this.member!!.accessLevel))
         }
     }
 
-    fun changeAccess(accessLevel: Int) {
-
-        if (group != null) {
-            showLoading()
-            editGroupOrProjectMember(App.get().gitLab.editGroupMember(group!!.id, member!!.id, accessLevel))
-        } else if (projectId != -1L) {
-            showLoading()
-            editGroupOrProjectMember(App.get().gitLab.editProjectMember(projectId, member!!.id, accessLevel))
-        } else if (listener != null) {
-            listener!!.onAccessApplied(accessLevel)
-        } else {
-            throw IllegalStateException("Not sure what to apply this access change to. Check the constructors plz")
+    private fun changeAccess(accessLevel: Int) {
+        when {
+            group != null -> {
+                showLoading()
+                editGroupOrProjectMember(App.get().gitLab.editGroupMember(group!!.id, member!!.id, accessLevel))
+            }
+            projectId != -1L -> {
+                showLoading()
+                editGroupOrProjectMember(App.get().gitLab.editProjectMember(projectId, member!!.id, accessLevel))
+            }
+            listener != null -> {
+                listener!!.onAccessApplied(accessLevel)
+            }
+            else -> {
+                throw IllegalStateException("Not sure what to apply this access change to. Check the constructors plz")
+            }
         }
     }
 
-    fun editGroupOrProjectMember(observable: Single<User>) {
-        observable
+    private fun editGroupOrProjectMember(observable: Single<User>) {
+        disposables += observable
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : CustomSingleObserver<User>() {
-
-                    override fun error(t: Throwable) {
-                        Timber.e(t)
-                        this@AccessDialog.onError()
+                .subscribe({
+                    if (onAccessChangedListener != null) {
+                        onAccessChangedListener!!.onAccessChanged(this@AccessDialog.member!!, roleNames[selectedIndex])
                     }
-
-                    override fun success(member: User) {
-                        if (onAccessChangedListener != null) {
-                            onAccessChangedListener!!.onAccessChanged(this@AccessDialog.member!!, roleNames[selectedIndex])
-                        }
-                        dismiss()
-                    }
+                    dismiss()
+                }, {
+                    Timber.e(it)
+                    this@AccessDialog.onError()
                 })
     }
 
@@ -93,7 +93,7 @@ class AccessDialog private constructor(context: Context, internal var member: Us
         getActionButton(DialogAction.POSITIVE).isEnabled = false
     }
 
-    fun onError() {
+    private fun onError() {
         Toast.makeText(context, R.string.failed_to_apply_access_level, Toast.LENGTH_SHORT).show()
         dismiss()
     }
@@ -102,7 +102,7 @@ class AccessDialog private constructor(context: Context, internal var member: Us
         onAccessChangedListener = listener
     }
 
-    fun onApply() {
+    private fun onApply() {
         if (selectedIndex == -1) {
             Toast.makeText(context, R.string.please_select_access_level, Toast.LENGTH_LONG)
                     .show()
@@ -112,8 +112,13 @@ class AccessDialog private constructor(context: Context, internal var member: Us
         changeAccess(User.getAccessLevel(accessLevel))
     }
 
-    fun onCancel() {
+    private fun onCancel() {
         dismiss()
+    }
+
+    override fun onDetachedFromWindow() {
+        disposables.clear()
+        super.onDetachedFromWindow()
     }
 
     interface OnAccessChangedListener {

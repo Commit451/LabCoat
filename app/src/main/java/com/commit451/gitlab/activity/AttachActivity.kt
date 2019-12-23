@@ -14,11 +14,9 @@ import butterknife.ButterKnife
 import butterknife.OnClick
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
-import com.commit451.gitlab.api.response.FileUploadResponse
 import com.commit451.gitlab.extension.toPart
 import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Project
-import com.commit451.gitlab.rx.CustomSingleObserver
 import pl.aprilapps.easyphotopicker.DefaultCallback
 import pl.aprilapps.easyphotopicker.EasyImage
 import timber.log.Timber
@@ -115,7 +113,7 @@ class AttachActivity : BaseActivity() {
 
             //it's using a 3rd-party ViewAnimationUtils class for compat reasons (up to API 14)
             val animator = ViewAnimationUtils
-                .createCircularReveal(card, 0, card.height, 0f, finalRadius)
+                    .createCircularReveal(card, 0, card.height, 0f, finalRadius)
             animator.duration = 500
             animator.interpolator = AccelerateDecelerateInterpolator()
             animator.start()
@@ -128,19 +126,14 @@ class AttachActivity : BaseActivity() {
         photo.toPart()
                 .flatMap { part -> App.get().gitLab.uploadFile(project!!.id, part) }
                 .with(this)
-                .subscribe(object : CustomSingleObserver<FileUploadResponse>() {
-
-                    override fun success(fileUploadResponse: FileUploadResponse) {
-                        val data = Intent()
-                        data.putExtra(KEY_FILE_UPLOAD_RESPONSE, fileUploadResponse)
-                        setResult(Activity.RESULT_OK, data)
-                        finish()
-                    }
-
-                    override fun error(t: Throwable) {
-                        Timber.e(t)
-                        finish()
-                    }
+                .subscribe({
+                    val data = Intent()
+                    data.putExtra(KEY_FILE_UPLOAD_RESPONSE, it)
+                    setResult(Activity.RESULT_OK, data)
+                    finish()
+                }, {
+                    Timber.e(it)
+                    finish()
                 })
     }
 }

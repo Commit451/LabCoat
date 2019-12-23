@@ -3,12 +3,12 @@ package com.commit451.gitlab.fragment
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
@@ -17,7 +17,6 @@ import com.commit451.gitlab.adapter.TagAdapter
 import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.Ref
 import com.commit451.gitlab.model.api.Tag
-import com.commit451.gitlab.rx.CustomSingleObserver
 import timber.log.Timber
 
 /**
@@ -88,18 +87,13 @@ class PickTagFragment : ButterKnifeFragment() {
 
         App.get().gitLab.getTags(projectId)
                 .with(this)
-                .subscribe(object : CustomSingleObserver<List<Tag>>() {
-
-                    override fun error(e: Throwable) {
-                        Timber.e(e)
-                        progress.visibility = View.GONE
-                        textMessage.visibility = View.VISIBLE
-                    }
-
-                    override fun success(tags: List<Tag>) {
-                        progress.visibility = View.GONE
-                        adapterTags.setEntries(tags)
-                    }
+                .subscribe({
+                    progress.visibility = View.GONE
+                    adapterTags.setEntries(it)
+                }, {
+                    Timber.e(it)
+                    progress.visibility = View.GONE
+                    textMessage.visibility = View.VISIBLE
                 })
     }
 }

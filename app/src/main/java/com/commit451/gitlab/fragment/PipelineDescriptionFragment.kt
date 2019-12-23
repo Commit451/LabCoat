@@ -15,7 +15,6 @@ import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.CommitUser
 import com.commit451.gitlab.model.api.Pipeline
 import com.commit451.gitlab.model.api.Project
-import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.util.DateUtil
 import org.greenrobot.eventbus.Subscribe
 import timber.log.Timber
@@ -94,25 +93,20 @@ class PipelineDescriptionFragment : ButterKnifeFragment() {
         swipeRefreshLayout.isRefreshing = true
         App.get().gitLab.getPipeline(project.id, pipeline.id)
                 .with(this)
-                .subscribe(object : CustomSingleObserver<Pipeline>() {
-
-                    override fun error(t: Throwable) {
-                        Timber.e(t)
-                        swipeRefreshLayout.isRefreshing = false
-                        Snackbar.make(root, R.string.unable_to_load_pipeline, Snackbar.LENGTH_LONG)
-                                .show()
-                    }
-
-                    override fun success(pipeline: Pipeline) {
-                        swipeRefreshLayout.isRefreshing = false
-                        this@PipelineDescriptionFragment.pipeline = pipeline
-                        bindPipeline(pipeline)
-                        App.bus().post(PipelineChangedEvent(pipeline))
-                    }
+                .subscribe({
+                    swipeRefreshLayout.isRefreshing = false
+                    pipeline = it
+                    bindPipeline(pipeline)
+                    App.bus().post(PipelineChangedEvent(pipeline))
+                }, {
+                    Timber.e(it)
+                    swipeRefreshLayout.isRefreshing = false
+                    Snackbar.make(root, R.string.unable_to_load_pipeline, Snackbar.LENGTH_LONG)
+                            .show()
                 })
     }
 
-    fun bindPipeline(pipeline: Pipeline) {
+    private fun bindPipeline(pipeline: Pipeline) {
         var finishedTime: Date? = pipeline.finishedAt
         if (finishedTime == null) {
             finishedTime = Date()
@@ -160,7 +154,7 @@ class PipelineDescriptionFragment : ButterKnifeFragment() {
         }
     }
 
-    fun bindUser(user: CommitUser) {
+    private fun bindUser(user: CommitUser) {
         val authorText = String.format(getString(R.string.pipeline_commit_author), user.name)
         textAuthor.text = authorText
     }

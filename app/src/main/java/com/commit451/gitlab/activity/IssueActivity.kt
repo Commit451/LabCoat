@@ -22,7 +22,6 @@ import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Issue
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.navigation.Navigator
-import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.util.IntentUtil
 import com.commit451.teleprinter.Teleprinter
 import com.google.android.material.snackbar.Snackbar
@@ -66,7 +65,7 @@ class IssueActivity : BaseActivity() {
     lateinit var project: Project
     lateinit var issue: Issue
 
-    val onMenuItemClickListener = Toolbar.OnMenuItemClickListener { item ->
+    private val onMenuItemClickListener = Toolbar.OnMenuItemClickListener { item ->
         when (item.itemId) {
             R.id.action_share -> {
                 IntentUtil.share(root, issue.getUrl(project))
@@ -136,13 +135,13 @@ class IssueActivity : BaseActivity() {
         super.onDestroy()
     }
 
-    fun bindIssue() {
+    private fun bindIssue() {
         setOpenCloseMenuStatus()
         toolbar.title = getString(R.string.issue_number, issue.iid)
         toolbar.subtitle = project.nameWithNamespace
     }
 
-    fun closeOrOpenIssue() {
+    private fun closeOrOpenIssue() {
         progress.visibility = View.VISIBLE
         if (issue.state == Issue.STATE_CLOSED) {
             updateIssueStatus(App.get().gitLab.updateIssueStatus(project.id, issue.iid, Issue.STATE_REOPEN))
@@ -151,29 +150,24 @@ class IssueActivity : BaseActivity() {
         }
     }
 
-    fun updateIssueStatus(observable: Single<Issue>) {
+    private fun updateIssueStatus(observable: Single<Issue>) {
         observable
                 .with(this)
-                .subscribe(object : CustomSingleObserver<Issue>() {
-
-                    override fun error(t: Throwable) {
-                        Timber.e(t)
-                        progress.visibility = View.GONE
-                        Snackbar.make(root, getString(R.string.error_changing_issue), Snackbar.LENGTH_SHORT)
-                                .show()
-                    }
-
-                    override fun success(issue: Issue) {
-                        progress.visibility = View.GONE
-                        this@IssueActivity.issue = issue
-                        App.bus().post(IssueChangedEvent(this@IssueActivity.issue))
-                        App.bus().post(IssueReloadEvent())
-                        setOpenCloseMenuStatus()
-                    }
+                .subscribe({
+                    progress.visibility = View.GONE
+                    this@IssueActivity.issue = it
+                    App.bus().post(IssueChangedEvent(issue))
+                    App.bus().post(IssueReloadEvent())
+                    setOpenCloseMenuStatus()
+                }, {
+                    Timber.e(it)
+                    progress.visibility = View.GONE
+                    Snackbar.make(root, getString(R.string.error_changing_issue), Snackbar.LENGTH_SHORT)
+                            .show()
                 })
     }
 
-    fun setOpenCloseMenuStatus() {
+    private fun setOpenCloseMenuStatus() {
         menuItemOpenClose.setTitle(if (issue.state == Issue.STATE_CLOSED) R.string.reopen else R.string.close)
     }
 

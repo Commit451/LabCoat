@@ -20,7 +20,6 @@ import com.commit451.gitlab.adapter.LabelAdapter
 import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Label
 import com.commit451.gitlab.navigation.Navigator
-import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.viewHolder.LabelViewHolder
 import timber.log.Timber
 
@@ -108,21 +107,16 @@ class AddLabelActivity : BaseActivity() {
         swipeRefreshLayout.isRefreshing = true
         App.get().gitLab.getLabels(projectId)
                 .with(this)
-                .subscribe(object : CustomSingleObserver<List<Label>>() {
-
-                    override fun error(t: Throwable) {
-                        Timber.e(t)
-                        swipeRefreshLayout.isRefreshing = false
+                .subscribe({
+                    swipeRefreshLayout.isRefreshing = false
+                    if (it.isEmpty()) {
                         textMessage.visibility = View.VISIBLE
                     }
-
-                    override fun success(labels: List<Label>) {
-                        swipeRefreshLayout.isRefreshing = false
-                        if (labels.isEmpty()) {
-                            textMessage.visibility = View.VISIBLE
-                        }
-                        adapterLabel.setItems(labels)
-                    }
+                    adapterLabel.setItems(it)
+                }, {
+                    Timber.e(it)
+                    swipeRefreshLayout.isRefreshing = false
+                    textMessage.visibility = View.VISIBLE
                 })
     }
 }

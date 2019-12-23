@@ -5,14 +5,13 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.appcompat.widget.Toolbar
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
+import androidx.appcompat.widget.Toolbar
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
@@ -27,8 +26,8 @@ import com.commit451.gitlab.model.api.Milestone
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
-import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
+import com.google.android.material.snackbar.Snackbar
 import io.reactivex.Single
 import org.greenrobot.eventbus.Subscribe
 import timber.log.Timber
@@ -203,7 +202,7 @@ class MilestoneActivity : BaseActivity() {
                 })
     }
 
-    fun closeOrOpenIssue() {
+    private fun closeOrOpenIssue() {
         progress.visibility = View.VISIBLE
         if (milestone.state == Milestone.STATE_ACTIVE) {
             updateMilestoneStatus(App.get().gitLab.updateMilestoneStatus(project.id, milestone.id, Milestone.STATE_EVENT_CLOSE))
@@ -212,27 +211,22 @@ class MilestoneActivity : BaseActivity() {
         }
     }
 
-    fun updateMilestoneStatus(observable: Single<Milestone>) {
+    private fun updateMilestoneStatus(observable: Single<Milestone>) {
         observable.with(this)
-                .subscribe(object : CustomSingleObserver<Milestone>() {
-
-                    override fun error(e: Throwable) {
-                        Timber.e(e)
-                        progress.visibility = View.GONE
-                        Snackbar.make(root, getString(R.string.failed_to_create_milestone), Snackbar.LENGTH_SHORT)
-                                .show()
-                    }
-
-                    override fun success(milestone: Milestone) {
-                        progress.visibility = View.GONE
-                        this@MilestoneActivity.milestone = milestone
-                        App.bus().post(MilestoneChangedEvent(this@MilestoneActivity.milestone))
-                        setOpenCloseMenuStatus()
-                    }
+                .subscribe({
+                    progress.visibility = View.GONE
+                    milestone = it
+                    App.bus().post(MilestoneChangedEvent(milestone))
+                    setOpenCloseMenuStatus()
+                }, {
+                    Timber.e(it)
+                    progress.visibility = View.GONE
+                    Snackbar.make(root, getString(R.string.failed_to_create_milestone), Snackbar.LENGTH_SHORT)
+                            .show()
                 })
     }
 
-    fun setOpenCloseMenuStatus() {
+    private fun setOpenCloseMenuStatus() {
         menuItemOpenClose.setTitle(if (milestone.state == Milestone.STATE_CLOSED) R.string.reopen else R.string.close)
     }
 

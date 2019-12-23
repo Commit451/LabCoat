@@ -16,7 +16,6 @@ import com.commit451.gitlab.event.PipelineChangedEvent
 import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Pipeline
 import com.commit451.gitlab.model.api.Project
-import com.commit451.gitlab.rx.CustomSingleObserver
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import timber.log.Timber
@@ -59,21 +58,16 @@ class PipelineActivity : BaseActivity() {
                 progress.visibility = View.VISIBLE
                 App.get().gitLab.retryPipeline(project.id, pipeline.id)
                         .with(this)
-                        .subscribe(object : CustomSingleObserver<Pipeline>() {
-
-                            override fun error(t: Throwable) {
-                                Timber.e(t)
-                                progress.visibility = View.GONE
-                                Snackbar.make(root, R.string.unable_to_retry_pipeline, Snackbar.LENGTH_LONG)
-                                        .show()
-                            }
-
-                            override fun success(pipeline: Pipeline) {
-                                progress.visibility = View.GONE
-                                Snackbar.make(root, R.string.pipeline_started, Snackbar.LENGTH_LONG)
-                                        .show()
-                                App.bus().post(PipelineChangedEvent(pipeline))
-                            }
+                        .subscribe({
+                            progress.visibility = View.GONE
+                            Snackbar.make(root, R.string.pipeline_started, Snackbar.LENGTH_LONG)
+                                    .show()
+                            App.bus().post(PipelineChangedEvent(it))
+                        }, {
+                            Timber.e(it)
+                            progress.visibility = View.GONE
+                            Snackbar.make(root, R.string.unable_to_retry_pipeline, Snackbar.LENGTH_LONG)
+                                    .show()
                         })
                 return@OnMenuItemClickListener true
             }
@@ -81,21 +75,16 @@ class PipelineActivity : BaseActivity() {
                 progress.visibility = View.VISIBLE
                 App.get().gitLab.cancelPipeline(project.id, pipeline.id)
                         .with(this)
-                        .subscribe(object : CustomSingleObserver<Pipeline>() {
-
-                            override fun error(t: Throwable) {
-                                Timber.e(t)
-                                progress.visibility = View.GONE
-                                Snackbar.make(root, R.string.unable_to_cancel_pipeline, Snackbar.LENGTH_LONG)
-                                        .show()
-                            }
-
-                            override fun success(pipeline: Pipeline) {
-                                progress.visibility = View.GONE
-                                Snackbar.make(root, R.string.pipeline_canceled, Snackbar.LENGTH_LONG)
-                                        .show()
-                                App.bus().post(PipelineChangedEvent(pipeline))
-                            }
+                        .subscribe({
+                            progress.visibility = View.GONE
+                            Snackbar.make(root, R.string.pipeline_canceled, Snackbar.LENGTH_LONG)
+                                    .show()
+                            App.bus().post(PipelineChangedEvent(it))
+                        }, {
+                            Timber.e(it)
+                            progress.visibility = View.GONE
+                            Snackbar.make(root, R.string.unable_to_cancel_pipeline, Snackbar.LENGTH_LONG)
+                                    .show()
                         })
                 return@OnMenuItemClickListener true
             }
@@ -126,7 +115,8 @@ class PipelineActivity : BaseActivity() {
                 this,
                 supportFragmentManager,
                 project,
-                pipeline)
+                pipeline
+        )
 
         viewPager.adapter = sectionsPagerAdapter
         tabLayout.setupWithViewPager(viewPager)

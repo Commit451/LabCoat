@@ -2,10 +2,6 @@ package com.commit451.gitlab.fragment
 
 import android.net.Uri
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +9,9 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import butterknife.BindView
 import butterknife.OnClick
 import com.commit451.gitlab.App
@@ -29,10 +28,9 @@ import com.commit451.gitlab.model.api.Issue
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
-import com.commit451.gitlab.rx.CustomSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
+import com.google.android.material.snackbar.Snackbar
 import org.greenrobot.eventbus.Subscribe
-import retrofit2.Response
 import timber.log.Timber
 
 class IssuesFragment : ButterKnifeFragment() {
@@ -187,20 +185,15 @@ class IssuesFragment : ButterKnifeFragment() {
         Timber.d("loadMore called for ${nextPageUrl!!}")
         App.get().gitLab.getIssues(nextPageUrl!!.toString())
                 .with(this)
-                .subscribe(object : CustomSingleObserver<Response<List<Issue>>>() {
-
-                    override fun error(e: Throwable) {
-                        Timber.e(e)
-                        loading = false
-                        adapterIssue.setLoading(false)
-                    }
-
-                    override fun success(listResponse: Response<List<Issue>>) {
-                        loading = false
-                        adapterIssue.setLoading(false)
-                        nextPageUrl = LinkHeaderParser.parse(listResponse).next
-                        adapterIssue.addIssues(listResponse.body())
-                    }
+                .subscribe({
+                    loading = false
+                    adapterIssue.setLoading(false)
+                    nextPageUrl = LinkHeaderParser.parse(it).next
+                    adapterIssue.addIssues(it.body())
+                }, {
+                    Timber.e(it)
+                    loading = false
+                    adapterIssue.setLoading(false)
                 })
     }
 

@@ -18,7 +18,6 @@ import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Diff
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.model.api.RepositoryCommit
-import com.commit451.gitlab.rx.CustomSingleObserver
 import timber.log.Timber
 
 /**
@@ -84,19 +83,14 @@ class DiffActivity : BaseActivity() {
         swipeRefreshLayout.isRefreshing = true
         App.get().gitLab.getCommitDiff(project.id, commit.id)
                 .with(this)
-                .subscribe(object : CustomSingleObserver<List<Diff>>() {
-
-                    override fun error(t: Throwable) {
-                        swipeRefreshLayout.isRefreshing = false
-                        Timber.e(t)
-                        textMessage.setText(R.string.connection_error)
-                        textMessage.visibility = View.VISIBLE
-                    }
-
-                    override fun success(diffs: List<Diff>) {
-                        swipeRefreshLayout.isRefreshing = false
-                        adapterDiff.setData(diffs)
-                    }
+                .subscribe({
+                    swipeRefreshLayout.isRefreshing = false
+                    adapterDiff.setData(it)
+                }, {
+                    swipeRefreshLayout.isRefreshing = false
+                    Timber.e(it)
+                    textMessage.setText(R.string.connection_error)
+                    textMessage.visibility = View.VISIBLE
                 })
     }
 }

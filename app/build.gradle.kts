@@ -109,6 +109,7 @@ dependencies {
 
     implementation("io.reactivex.rxjava2:rxjava:2.2.16")
     implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
+    implementation("io.reactivex.rxjava2:rxkotlin:2.4.0")
 
     implementation("com.uber.autodispose:autodispose-kotlin:$autodisposeVersion")
     implementation("com.uber.autodispose:autodispose-android-kotlin:$autodisposeVersion")
