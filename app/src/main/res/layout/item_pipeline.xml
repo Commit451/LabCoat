@@ -9,16 +9,6 @@
     android:padding="16dp">
 
     <TextView
-        android:id="@+id/number"
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_margin="8dp"
-        android:textSize="@dimen/text_size_small"
-        tools:text="Pipeline: #123" />
-
-    <TextView
         android:id="@+id/status"
         android:layout_width="0dp"
         android:layout_weight="1"
@@ -27,6 +17,16 @@
         android:layout_margin="8dp"
         android:textSize="@dimen/text_size_small"
         tools:text="Status: running" />
+
+    <TextView
+        android:id="@+id/number"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_margin="8dp"
+        android:textSize="@dimen/text_size_small"
+        tools:text="Pipeline: #123" />
 
     <TextView
         android:id="@+id/sha"

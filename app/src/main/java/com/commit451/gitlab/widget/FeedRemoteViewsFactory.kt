@@ -5,14 +5,13 @@ import android.content.Intent
 import android.graphics.drawable.BitmapDrawable
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
-import coil.Coil
-import coil.api.load
 import coil.transform.CircleCropTransformation
 import com.commit451.gitlab.BuildConfig
 import com.commit451.gitlab.R
 import com.commit451.gitlab.api.GitLabRss
 import com.commit451.gitlab.api.GitLabRssFactory
 import com.commit451.gitlab.api.OkHttpClientFactory
+import com.commit451.gitlab.image.CoilCompat
 import com.commit451.gitlab.model.Account
 import com.commit451.gitlab.model.rss.Entry
 import okhttp3.logging.HttpLoggingInterceptor
@@ -76,13 +75,15 @@ class FeedRemoteViewsFactory(
         fillInIntent.putExtra(UserFeedWidgetProvider.EXTRA_LINK, entry.link.href)
         rv.setOnClickFillInIntent(R.id.root, fillInIntent)
 
-        Coil.load(context, entry.thumbnail.url) {
-            transformations(CircleCropTransformation())
-            target {
-                if (it is BitmapDrawable) {
-                    rv.setImageViewBitmap(R.id.image, it.bitmap)
-                }
+        try {
+            val drawable = CoilCompat.getBlocking(entry.thumbnail.url) {
+                transformations(CircleCropTransformation())
             }
+            if (drawable is BitmapDrawable) {
+                rv.setImageViewBitmap(R.id.image, drawable.bitmap)
+            }
+        } catch (e: Exception) {
+            Timber.e(e)
         }
 
         return rv

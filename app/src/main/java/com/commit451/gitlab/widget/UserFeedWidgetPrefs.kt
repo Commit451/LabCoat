@@ -13,7 +13,7 @@ object UserFeedWidgetPrefs {
 
     var FILE_NAME = "LabCoatUsWidgetPrefs"
 
-    private val KEY_ACCOUNT = "_account"
+    private const val KEY_ACCOUNT = "_account"
 
     private fun getSharedPrefs(context: Context): SharedPreferences {
         return context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE)
