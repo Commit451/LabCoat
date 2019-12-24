@@ -6,13 +6,13 @@
         <item name="colorAccent">@color/yellow</item>
         <item name="colorSecondary">@color/yellow</item>
         <item name="colorPrimaryDark">@color/main_blue_darker</item>
-        <item name="android:windowContentTransitions" tools:ignore="NewApi">true</item>
+        <item name="android:windowContentTransitions">true</item>
     </style>
 
     <style name="Activity" parent="AppTheme" />
 
     <style name="Activity.Login">
-        <item name="android:windowBackground">?attr/colorPrimary</item>
+        <item name="colorPrimaryDark">?android:attr/windowBackground</item>
     </style>
 
     <style name="Activity.Projects">
@@ -49,7 +49,7 @@
     </style>
 
     <style name="Activity.Launch">
-        <item name="android:windowBackground">?attr/colorPrimary</item>
+        <item name="colorPrimaryDark">?android:attr/windowBackground</item>
     </style>
 
     <style name="Activity.Translucent">
@@ -69,5 +69,16 @@
 
     <style name="TabLayout" parent="Widget.MaterialComponents.TabLayout.Colored" />
 
-    <style name="FloatingActionButton" parent="Widget.MaterialComponents.FloatingActionButton" />
+    <style name="FloatingActionButton" parent="Widget.MaterialComponents.FloatingActionButton">
+        <item name="tint">@color/white</item>
+    </style>
+
+    <style name="TextInputLayout" parent="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox" />
+
+    <style name="Button" parent="Widget.MaterialComponents.Button" />
+
+    <style name="Button.Accent" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">?attr/colorAccent</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
 </resources>

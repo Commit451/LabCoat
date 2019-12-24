@@ -149,7 +149,10 @@ dependencies {
 
     implementation("com.github.ivbaranov:materiallettericon:0.2.3")
 
-    implementation("com.github.alorma:diff-textview:1.3.0")
+    implementation("com.github.alorma:diff-textview:1.1.0") {
+        @Suppress("UnstableApiUsage")
+        because("Don't upgrade this. Anything above it is bad. Will cause crashes")
+    }
 
     implementation("com.wdullaer:materialdatetimepicker:4.2.3")
 

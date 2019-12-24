@@ -1,6 +1,5 @@
 package com.commit451.gitlab.activity
 
-import android.annotation.TargetApi
 import android.app.Activity
 import android.app.KeyguardManager
 import android.content.Context
@@ -50,13 +49,17 @@ class LaunchActivity : BaseActivity() {
 
     private fun figureOutWhatToDo() {
         val accounts = Prefs.getAccounts()
-        if (accounts.isEmpty()) {
-            Navigator.navigateToLogin(this)
-            finish()
-        } else if (Prefs.isRequiredDeviceAuth) {
-            showKeyguard()
-        } else {
-            moveAlong()
+        when {
+            accounts.isEmpty() -> {
+                Navigator.navigateToLogin(this)
+                finish()
+            }
+            Prefs.isRequiredDeviceAuth -> {
+                showKeyguard()
+            }
+            else -> {
+                moveAlong()
+            }
         }
     }
 
@@ -80,7 +83,7 @@ class LaunchActivity : BaseActivity() {
                     }, {
                         Timber.e(it)
                         Toast.makeText(this, "Unable to migrate. Unfortunately, you probably need to re-install the app", Toast.LENGTH_LONG)
-                            .show()
+                                .show()
                         finish()
                     })
         } else {

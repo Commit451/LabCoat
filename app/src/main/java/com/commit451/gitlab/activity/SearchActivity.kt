@@ -3,16 +3,16 @@ package com.commit451.gitlab.activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import com.google.android.material.tabs.TabLayout
-import androidx.viewpager.widget.ViewPager
-import androidx.appcompat.widget.Toolbar
 import android.view.View
 import android.widget.EditText
+import androidx.appcompat.widget.Toolbar
+import androidx.viewpager.widget.ViewPager
 import butterknife.*
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.SearchPagerAdapter
 import com.commit451.jounce.Debouncer
 import com.commit451.teleprinter.Teleprinter
+import com.google.android.material.tabs.TabLayout
 import timber.log.Timber
 
 
@@ -24,8 +24,7 @@ class SearchActivity : BaseActivity() {
     companion object {
 
         fun newIntent(context: Context): Intent {
-            val intent = Intent(context, SearchActivity::class.java)
-            return intent
+            return Intent(context, SearchActivity::class.java)
         }
     }
 
@@ -34,7 +33,7 @@ class SearchActivity : BaseActivity() {
     @BindView(R.id.tabs)
     lateinit var tabLayout: TabLayout
     @BindView(R.id.pager)
-    lateinit var viewPager: androidx.viewpager.widget.ViewPager
+    lateinit var viewPager: ViewPager
     @BindView(R.id.toolbar)
     lateinit var toolbar: Toolbar
     @BindView(R.id.search)

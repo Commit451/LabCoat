@@ -3,11 +3,12 @@ package com.commit451.gitlab.view
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
+import android.graphics.Color
 import android.util.AttributeSet
 import android.view.View
-import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
 import butterknife.ButterKnife
@@ -16,6 +17,7 @@ import coil.api.load
 import coil.transform.CircleCropTransformation
 import com.commit451.addendum.themeAttrColor
 import com.commit451.alakazam.fadeOut
+import com.commit451.easel.Easel
 import com.commit451.gitlab.App
 import com.commit451.gitlab.BuildConfig
 import com.commit451.gitlab.R
@@ -177,7 +179,8 @@ class LabCoatNavigationView : NavigationView {
             buttonDebug.visibility = View.VISIBLE
         }
         listAccounts = RecyclerView(context)
-        listAccounts.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
+        listAccounts.layoutManager = LinearLayoutManager(context)
+        listAccounts.setBackgroundColor(context.themeAttrColor(android.R.attr.windowBackground))
         addView(listAccounts)
         val params = listAccounts.layoutParams as LayoutParams
         params.setMargins(0, resources.getDimensionPixelSize(R.dimen.account_header_height), 0, 0)
