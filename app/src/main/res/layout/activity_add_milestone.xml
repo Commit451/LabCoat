@@ -50,6 +50,7 @@
                 style="@style/TextInputLayout"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
+                android:layout_marginTop="8dp"
                 android:layout_weight="1">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -62,10 +63,12 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/due_date"
+                style="@style/Button.Accent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
                 android:text="@string/due_date" />
 

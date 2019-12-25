@@ -16,4 +16,12 @@
         <item name="android:tint">@color/white</item>
     </style>
 
+    <style name="TextInputLayout" parent="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="android:theme">@style/TextInputLayoutTheme</item>
+    </style>
+
+    <style name="TextInputLayoutTheme">
+        <item name="colorPrimary">@color/yellow</item>
+    </style>
+
 </resources>
