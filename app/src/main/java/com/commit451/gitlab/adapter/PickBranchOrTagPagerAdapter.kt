@@ -13,11 +13,16 @@ import com.commit451.gitlab.model.Ref
 /**
  * Projects Pager Adapter
  */
-class PickBranchOrTagPagerAdapter(context: Context, fm: androidx.fragment.app.FragmentManager, private val projectId: Long, private val ref: Ref?) : androidx.fragment.app.FragmentPagerAdapter(fm) {
+class PickBranchOrTagPagerAdapter(
+        context: Context,
+        fm: FragmentManager,
+        private val projectId: Long,
+        private val ref: Ref?
+) : FragmentPagerAdapter(fm) {
 
     private val titles: Array<String> = context.resources.getStringArray(R.array.tabs_branch_tag)
 
-    override fun getItem(position: Int): androidx.fragment.app.Fragment {
+    override fun getItem(position: Int): Fragment {
 
         when (position) {
             0 -> return PickBranchFragment.newInstance(projectId, ref)
