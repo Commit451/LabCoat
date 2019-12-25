@@ -37,8 +37,7 @@ class GroupsActivity : BaseActivity() {
     companion object {
 
         fun newIntent(context: Context): Intent {
-            val intent = Intent(context, GroupsActivity::class.java)
-            return intent
+            return Intent(context, GroupsActivity::class.java)
         }
     }
 

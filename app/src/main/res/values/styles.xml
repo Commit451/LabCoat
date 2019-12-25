@@ -33,6 +33,11 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 
+    <style name="Activity.Todos">
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+
     <style name="Activity.User">
         <item name="colorPrimaryDark">@android:color/transparent</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
@@ -40,12 +45,6 @@
     </style>
 
     <style name="Activity.Group">
-        <item name="colorPrimaryDark">@android:color/transparent</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:windowTranslucentStatus">true</item>
-    </style>
-
-    <style name="Activity.Todos">
         <item name="colorPrimaryDark">@android:color/transparent</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowTranslucentStatus">true</item>

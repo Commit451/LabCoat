@@ -26,8 +26,7 @@ class ProjectsActivity : BaseActivity() {
     companion object {
 
         fun newIntent(context: Context): Intent {
-            val intent = Intent(context, ProjectsActivity::class.java)
-            return intent
+            return Intent(context, ProjectsActivity::class.java)
         }
     }
 
@@ -36,11 +35,11 @@ class ProjectsActivity : BaseActivity() {
     @BindView(R.id.tabs)
     lateinit var tabLayout: TabLayout
     @BindView(R.id.pager)
-    lateinit var viewPager: androidx.viewpager.widget.ViewPager
+    lateinit var viewPager: ViewPager
     @BindView(R.id.drawer_layout)
-    lateinit var drawerLayout: androidx.drawerlayout.widget.DrawerLayout
+    lateinit var drawerLayout: DrawerLayout
 
-    val onMenuItemClickListener = Toolbar.OnMenuItemClickListener { item ->
+    private val onMenuItemClickListener = Toolbar.OnMenuItemClickListener { item ->
         when (item.itemId) {
             R.id.action_search -> {
                 Navigator.navigateToSearch(this@ProjectsActivity)
