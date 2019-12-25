@@ -31,7 +31,7 @@
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar"
-                style="@style/Toolbar"
+                style="@style/Toolbar.Collapse"
                 android:layout_width="match_parent"
                 android:layout_height="104dp"
                 android:gravity="top"
@@ -41,10 +41,11 @@
 
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tabs"
-                style="@style/TabLayout"
+                style="@style/TabLayout.Collapse"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom" />
+                android:layout_gravity="bottom"
+                android:background="@null" />
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
 

@@ -4,9 +4,11 @@
     <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/main_blue</item>
         <item name="colorAccent">@color/yellow</item>
+        <item name="colorSecondary">@color/yellow</item>
         <item name="colorPrimaryDark">@color/main_blue_darker</item>
         <item name="android:windowContentTransitions">true</item>
         <item name="android:windowBackground">@color/window_background</item>
+        <item name="colorControlNormal">@color/white</item>
     </style>
 
 </resources>

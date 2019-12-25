@@ -43,7 +43,7 @@
                     android:layout_height="wrap_content"
                     android:contentDescription="@null"
                     android:visibility="gone"
-                    app:srcCompat="@drawable/ic_close_24dp" />
+                    app:srcCompat="@drawable/ic_close_white_24dp" />
             </LinearLayout>
 
         </com.google.android.material.appbar.MaterialToolbar>

@@ -27,4 +27,5 @@
 
     <dimen name="divider_height">1dp</dimen>
     <dimen name="toolbar_elevation">4dp</dimen>
+    <dimen name="navigation_view_width">304dp</dimen>
 </resources>
