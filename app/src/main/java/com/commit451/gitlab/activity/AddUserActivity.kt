@@ -74,7 +74,7 @@ class AddUserActivity : MorphActivity() {
     lateinit var layoutManager: GridLayoutManager
     lateinit var adapter: UserAdapter
     lateinit var dialogAccess: AccessDialog
-    lateinit var teleprinter: Teleprinter
+    private lateinit var teleprinter: Teleprinter
 
     var projectId: Long = 0
     var group: Group? = null
@@ -103,7 +103,7 @@ class AddUserActivity : MorphActivity() {
 
     @OnTextChanged(R.id.search)
     fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-        if (s.isNullOrEmpty()) {
+        if (s.isEmpty()) {
             buttonClear.fadeOut()
         } else {
             buttonClear.visibility = View.VISIBLE
@@ -156,6 +156,7 @@ class AddUserActivity : MorphActivity() {
         })
 
         morph(root)
+        textSearch.requestFocus()
     }
 
     private fun loadData() {

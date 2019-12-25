@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.EditText
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.postDelayed
 import androidx.viewpager.widget.ViewPager
 import butterknife.*
 import com.commit451.gitlab.R
@@ -42,7 +43,7 @@ class SearchActivity : BaseActivity() {
     lateinit var buttonClear: View
 
     lateinit var adapterSearch: SearchPagerAdapter
-    lateinit var mTeleprinter: Teleprinter
+    lateinit var teleprinter: Teleprinter
 
     private val debouncer = object : Debouncer<CharSequence>() {
         override fun onValueSet(value: CharSequence) {
@@ -54,7 +55,7 @@ class SearchActivity : BaseActivity() {
     fun onClearClick() {
         buttonClear.animate().alpha(0.0f).withEndAction { buttonClear.visibility = View.GONE }
         textSearch.text.clear()
-        mTeleprinter.showKeyboard(textSearch)
+        teleprinter.showKeyboard(textSearch)
         debouncer.cancel()
     }
 
@@ -64,7 +65,7 @@ class SearchActivity : BaseActivity() {
             textSearch.setText("labcoat")
         }
         search()
-        mTeleprinter.hideKeyboard()
+        teleprinter.hideKeyboard()
         return false
     }
 
@@ -91,12 +92,13 @@ class SearchActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
         ButterKnife.bind(this)
-        mTeleprinter = Teleprinter(this)
+        teleprinter = Teleprinter(this)
         toolbar.setNavigationIcon(R.drawable.ic_back_24dp)
         toolbar.setNavigationOnClickListener { onBackPressed() }
         adapterSearch = SearchPagerAdapter(this, supportFragmentManager)
         viewPager.adapter = adapterSearch
         tabLayout.setupWithViewPager(viewPager)
+        textSearch.requestFocus()
     }
 
     fun search() {

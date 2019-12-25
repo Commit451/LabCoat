@@ -8,7 +8,12 @@
         <item name="colorPrimaryDark">@color/main_blue_darker</item>
         <item name="android:windowContentTransitions">true</item>
         <item name="android:windowBackground">@color/window_background</item>
-        <item name="colorControlNormal">@color/white</item>
+        <!-- color of the menu overflow icon -->
+        <item name="actionOverflowButtonStyle">@style/OverflowStyle</item>
+    </style>
+
+    <style name="OverflowStyle" parent="@style/Widget.AppCompat.ActionButton.Overflow">
+        <item name="android:tint">@color/white</item>
     </style>
 
 </resources>
