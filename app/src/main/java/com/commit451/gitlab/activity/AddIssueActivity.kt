@@ -24,7 +24,7 @@ import com.commit451.teleprinter.Teleprinter
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.Single
 import kotlinx.android.synthetic.main.activity_add_issue.*
-import kotlinx.android.synthetic.main.progress.*
+import kotlinx.android.synthetic.main.progress_fullscreen.*
 import timber.log.Timber
 import java.util.*
 
