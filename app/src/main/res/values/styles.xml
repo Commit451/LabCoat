@@ -73,13 +73,12 @@
         <item name="android:theme">@style/ToolbarTheme</item>
     </style>
 
-    <style name="Toolbar.Collapse" parent="Widget.MaterialComponents.Toolbar">
-        <item name="android:background">@null</item>
+    <style name="ToolbarTheme" parent="ThemeOverlay.MaterialComponents.ActionBar">
+        <item name="colorControlNormal">@color/white</item>
     </style>
 
-    <!--  Fixes Toolbar non-icon menu item text color  -->
-    <style name="ToolbarTheme" parent="AppTheme">
-        <item name="actionMenuTextColor">@color/white</item>
+    <style name="Toolbar.Collapse" parent="Widget.MaterialComponents.Toolbar">
+        <item name="android:background">@null</item>
     </style>
 
     <style name="TabLayout" parent="Widget.MaterialComponents.TabLayout.Colored">

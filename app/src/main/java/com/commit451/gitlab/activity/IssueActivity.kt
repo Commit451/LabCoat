@@ -59,8 +59,8 @@ class IssueActivity : BaseActivity() {
     @BindView(R.id.progress)
     lateinit var progress: View
 
-    lateinit var menuItemOpenClose: MenuItem
-    lateinit var teleprinter: Teleprinter
+    private lateinit var menuItemOpenClose: MenuItem
+    private lateinit var teleprinter: Teleprinter
 
     lateinit var project: Project
     lateinit var issue: Issue
