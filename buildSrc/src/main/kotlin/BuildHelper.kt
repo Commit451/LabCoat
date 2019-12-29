@@ -7,7 +7,7 @@ object BuildHelper {
     private var locatedFile: Boolean? = null
 
     fun appVersionName(): String {
-        return "2.7.1"
+        return "2.7.2"
     }
 
     fun appVersionCode(): Int {
