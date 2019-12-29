@@ -1,6 +1,7 @@
 package com.commit451.gitlab
 
 import android.app.Application
+import androidx.appcompat.app.AppCompatDelegate
 import com.commit451.firebaseshim.FirebaseShim
 import com.commit451.gitlab.api.GitLab
 import com.commit451.gitlab.api.GitLabFactory
@@ -63,6 +64,7 @@ class App : Application() {
         }
 
         Lift.track(this)
+        AppCompatDelegate.setDefaultNightMode(Prefs.theme)
     }
 
     fun setAccount(account: Account) {

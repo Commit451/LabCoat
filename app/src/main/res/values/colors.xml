@@ -26,4 +26,6 @@
     <color name="black_overlay">#66000000</color>
 
     <color name="icon_color">#000000</color>
+
+    <color name="divider_color">#66000000</color>
 </resources>

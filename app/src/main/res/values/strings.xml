@@ -484,6 +484,11 @@
     <string name="setting_see_network_activity_description">View the recent network activity of the app, for debugging purposes</string>
     <string name="device_auth_title">Authenticate</string>
     <string name="device_auth_message">Please authenticate to access LabCoat</string>
+    <string name="setting_appearance">Appearance</string>
+    <string name="setting_appearance_description">Choose your light or dark theme preference</string>
+    <string name="light_theme">Light theme</string>
+    <string name="dark_theme">Dark theme</string>
+    <string name="device_theme">Use device theme</string>
 
     <!-- Todos -->
     <string name="no_todos">No todos.</string>

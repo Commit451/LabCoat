@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import androidx.annotation.IntDef
+import androidx.appcompat.app.AppCompatDelegate
 import com.commit451.gitlab.api.MoshiProvider
 import com.commit451.gitlab.model.Account
 import java.io.IOException
@@ -20,6 +21,7 @@ object Prefs {
     private const val KEY_ACCOUNTS = "accounts"
     private const val KEY_STARTING_VIEW = "starting_view"
     private const val KEY_REQUIRE_DEVICE_AUTH = "require_device_auth"
+    private const val KEY_THEME = "theme"
 
     const val STARTING_VIEW_PROJECTS = 0
     const val STARTING_VIEW_GROUPS = 1
@@ -101,5 +103,11 @@ object Prefs {
         get() = prefs.getBoolean(KEY_REQUIRE_DEVICE_AUTH, false)
         set(value) = prefs.edit()
                 .putBoolean(KEY_REQUIRE_DEVICE_AUTH, value)
+                .apply()
+
+    var theme: Int
+        get() = prefs.getInt(KEY_THEME, AppCompatDelegate.MODE_NIGHT_YES)
+        set(value) = prefs.edit()
+                .putInt(KEY_THEME, value)
                 .apply()
 }
