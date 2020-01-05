@@ -16,12 +16,14 @@
         app:srcCompat="@drawable/header" />
 
     <ImageView
-        android:id="@+id/profile_image"
+        android:id="@+id/imageProfile"
         android:layout_width="@dimen/larger_image_size"
         android:layout_height="@dimen/larger_image_size"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginRight="16dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@null"
         android:fitsSystemWindows="true"
         tools:src="@drawable/ic_assign_24dp" />
 
@@ -31,7 +33,7 @@
         android:background="@drawable/gradient_header" />
 
     <FrameLayout
-        android:id="@+id/drawer_header"
+        android:id="@+id/drawerHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
@@ -44,7 +46,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/profile_user"
+                android:id="@+id/textUsername"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
@@ -55,7 +57,7 @@
                 tools:text="Jawnnypew" />
 
             <TextView
-                android:id="@+id/profile_email"
+                android:id="@+id/textEmail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
@@ -66,7 +68,7 @@
         </LinearLayout>
 
         <ImageView
-            android:id="@+id/arrow"
+            android:id="@+id/iconArrow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right|center_vertical"
@@ -75,7 +77,7 @@
     </FrameLayout>
 
     <ImageView
-        android:id="@+id/button_debug"
+        android:id="@+id/buttonDebug"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right"
@@ -86,7 +88,7 @@
         app:srcCompat="@drawable/ic_adb_white_24dp" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/account_list"
+        android:id="@+id/listAccounts"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone" />

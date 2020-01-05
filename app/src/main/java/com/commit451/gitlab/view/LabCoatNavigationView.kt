@@ -3,21 +3,16 @@ package com.commit451.gitlab.view
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
-import android.graphics.Color
 import android.util.AttributeSet
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import butterknife.BindView
-import butterknife.ButterKnife
-import butterknife.OnClick
 import coil.api.load
 import coil.transform.CircleCropTransformation
 import com.commit451.addendum.themeAttrColor
 import com.commit451.alakazam.fadeOut
-import com.commit451.easel.Easel
 import com.commit451.gitlab.App
 import com.commit451.gitlab.BuildConfig
 import com.commit451.gitlab.R
@@ -27,15 +22,15 @@ import com.commit451.gitlab.data.Prefs
 import com.commit451.gitlab.event.CloseDrawerEvent
 import com.commit451.gitlab.event.LoginEvent
 import com.commit451.gitlab.event.ReloadDataEvent
+import com.commit451.gitlab.extension.baseActivity
+import com.commit451.gitlab.extension.mapResponseSuccess
+import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.Account
 import com.commit451.gitlab.model.api.User
 import com.commit451.gitlab.navigation.Navigator
-import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.util.ImageUtil
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.navigation.NavigationView.OnNavigationItemSelectedListener
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import org.greenrobot.eventbus.Subscribe
 import timber.log.Timber
 import java.util.*
@@ -45,18 +40,12 @@ import java.util.*
  */
 class LabCoatNavigationView : NavigationView {
 
-    @BindView(R.id.profile_image)
-    lateinit var imageProfile: ImageView
-    @BindView(R.id.profile_user)
-    lateinit var textUserName: TextView
-    @BindView(R.id.profile_email)
-    lateinit var textEmail: TextView
-    @BindView(R.id.arrow)
-    lateinit var iconArrow: View
-    @BindView(R.id.button_debug)
-    lateinit var buttonDebug: View
-
     private lateinit var listAccounts: RecyclerView
+    private lateinit var iconArrow: View
+    private lateinit var textUsername: TextView
+    private lateinit var textEmail: TextView
+    private lateinit var imageProfile: ImageView
+
     private lateinit var adapterAccounts: AccountAdapter
     var user: User? = null
 
@@ -138,23 +127,6 @@ class LabCoatNavigationView : NavigationView {
         }
     }
 
-    @OnClick(R.id.profile_image)
-    fun onUserImageClick(imageView: ImageView) {
-        user?.let {
-            Navigator.navigateToUser(context as Activity, imageView, it)
-        }
-    }
-
-    @OnClick(R.id.button_debug)
-    fun onDebugClicked() {
-        context.startActivity(DebugActivity.newIntent(context))
-    }
-
-    @OnClick(R.id.drawer_header)
-    fun onHeaderClick() {
-        toggleAccounts()
-    }
-
     constructor(context: Context) : super(context) {
         init()
     }
@@ -173,8 +145,27 @@ class LabCoatNavigationView : NavigationView {
         setNavigationItemSelectedListener(onNavigationItemSelectedListener)
         inflateMenu(R.menu.navigation)
         val header = inflateHeaderView(R.layout.header_nav_drawer)
-        ButterKnife.bind(this, header)
+        // We have to do it like this due to inflation
+        imageProfile = header.findViewById(R.id.imageProfile)
+        iconArrow = header.findViewById(R.id.iconArrow)
+        textUsername = header.findViewById(R.id.textUsername)
+        textEmail = header.findViewById(R.id.textEmail)
+        val buttonDebug = header.findViewById<View>(R.id.buttonDebug)
+        val drawerHeader = header.findViewById<View>(R.id.drawerHeader)
 
+        imageProfile.setOnClickListener {
+            user?.let {
+                Navigator.navigateToUser(context as Activity, imageProfile, it)
+            }
+        }
+
+        buttonDebug.setOnClickListener {
+            context.startActivity(DebugActivity.newIntent(context))
+        }
+
+        drawerHeader.setOnClickListener {
+            toggleAccounts()
+        }
         if (BuildConfig.DEBUG) {
             buttonDebug.visibility = View.VISIBLE
         }
@@ -226,25 +217,19 @@ class LabCoatNavigationView : NavigationView {
 
     private fun loadCurrentUser() {
         App.get().gitLab.getThisUser()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : CustomResponseSingleObserver<User>() {
-
-                    override fun error(e: Throwable) {
-                        Timber.e(e)
-                    }
-
-                    override fun responseNonNullSuccess(userFull: User) {
-                        //Store the newly retrieved user to the account so that it stays up to date
-                        // in local storage
-                        bindUser(userFull)
-                    }
+                .mapResponseSuccess()
+                .with(baseActivity())
+                .subscribe({
+                    bindUser(it)
+                }, {
+                    Timber.e(it)
                 })
     }
 
-    fun bindUser(user: User) {
+    private fun bindUser(user: User) {
+        this.user = user
         if (user.username != null) {
-            textUserName.text = user.username
+            textUsername.text = user.username
         }
         if (user.email != null) {
             textEmail.text = user.email

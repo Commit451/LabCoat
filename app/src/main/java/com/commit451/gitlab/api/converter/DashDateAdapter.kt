@@ -9,6 +9,7 @@ import java.util.*
 /**
  * Converts due dates
  */
+@Suppress("unused")
 class DashDateAdapter {
 
     companion object {
@@ -29,6 +30,6 @@ class DashDateAdapter {
     @FromJson
     @DueDate
     fun fromJson(json: String): Date {
-        return format.parse(json)
+        return format.parse(json)!!
     }
 }
