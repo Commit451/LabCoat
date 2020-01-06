@@ -31,13 +31,13 @@
             android:orientation="vertical">
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/title_text_input_layout"
+                android:id="@+id/textInputLayoutTitle"
                 style="@style/TextInputLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/title"
+                    android:id="@+id/textTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/milestone_hint_title"
@@ -54,7 +54,7 @@
                 android:layout_weight="1">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/description"
+                    android:id="@+id/textDescription"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/milestone_hint_description"
@@ -64,7 +64,7 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/due_date"
+                android:id="@+id/buttonDueDate"
                 style="@style/Button.Accent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

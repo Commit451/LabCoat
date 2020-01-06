@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import butterknife.BindView
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.event.PipelineChangedEvent
@@ -16,6 +15,7 @@ import com.commit451.gitlab.model.api.Pipeline
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.util.DateUtil
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.fragment_pipeline_description.*
 import org.greenrobot.eventbus.Subscribe
 import timber.log.Timber
 import java.util.*
@@ -23,7 +23,7 @@ import java.util.*
 /**
  * Shows the details of a pipeline
  */
-class PipelineJobsFragment : ButterKnifeFragment() {
+class PipelineJobsFragment : BaseFragment() {
 
     companion object {
 
@@ -40,31 +40,8 @@ class PipelineJobsFragment : ButterKnifeFragment() {
         }
     }
 
-    @BindView(R.id.root)
-    lateinit var root: ViewGroup
-    @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.text_number)
-    lateinit var textName: TextView
-    @BindView(R.id.text_status)
-    lateinit var textStatus: TextView
-    @BindView(R.id.text_duration)
-    lateinit var textDuration: TextView
-    @BindView(R.id.text_created)
-    lateinit var textCreated: TextView
-    @BindView(R.id.text_finished)
-    lateinit var textFinished: TextView
-    @BindView(R.id.text_ref)
-    lateinit var textRef: TextView
-    @BindView(R.id.text_sha)
-    lateinit var textSha: TextView
-    @BindView(R.id.text_author)
-    lateinit var textAuthor: TextView
-    @BindView(R.id.text_message)
-    lateinit var textMessage: TextView
-
-    lateinit var project: Project
-    lateinit var pipeline: Pipeline
+    private lateinit var project: Project
+    private lateinit var pipeline: Pipeline
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -117,7 +94,7 @@ class PipelineJobsFragment : ButterKnifeFragment() {
         textStatus.text = status
 
         val name = String.format(getString(R.string.pipeline_name), pipeline.id)
-        textName.text = name
+        textNumber.text = name
 
         val created = String.format(getString(R.string.build_created), DateUtil.getRelativeTimeSpanString(baseActivty, pipeline.createdAt))
         textCreated.text = created

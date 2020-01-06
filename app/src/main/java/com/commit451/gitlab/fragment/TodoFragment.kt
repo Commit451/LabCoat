@@ -10,7 +10,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import butterknife.BindView
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.TodoAdapter
@@ -20,10 +19,11 @@ import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
 import io.reactivex.Single
+import kotlinx.android.synthetic.main.fragment_todo.*
 import retrofit2.Response
 import timber.log.Timber
 
-class TodoFragment : ButterKnifeFragment() {
+class TodoFragment : BaseFragment() {
 
     companion object {
 
@@ -42,21 +42,14 @@ class TodoFragment : ButterKnifeFragment() {
         }
     }
 
-    @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.list)
-    lateinit var listTodos: RecyclerView
-    @BindView(R.id.message_text)
-    lateinit var textMessage: TextView
+    private lateinit var layoutManagerTodos: LinearLayoutManager
+    private lateinit var adapterTodos: TodoAdapter
 
-    lateinit var layoutManagerTodos: LinearLayoutManager
-    lateinit var adapterTodos: TodoAdapter
+    private var mode: Int = 0
+    private var nextPageUrl: Uri? = null
+    private var loading = false
 
-    var mode: Int = 0
-    var nextPageUrl: Uri? = null
-    var loading = false
-
-    val onScrollListener = object : RecyclerView.OnScrollListener() {
+    private val onScrollListener = object : RecyclerView.OnScrollListener() {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
             val visibleItemCount = layoutManagerTodos.childCount
@@ -117,11 +110,11 @@ class TodoFragment : ButterKnifeFragment() {
                 showLoading()
                 getTodos(App.get().gitLab.getTodos(Todo.STATE_DONE))
             }
-            else -> throw IllegalStateException(mode.toString() + " is not defined")
+            else -> throw IllegalStateException("$mode is not defined")
         }
     }
 
-    fun getTodos(observable: Single<Response<List<Todo>>>) {
+    private fun getTodos(observable: Single<Response<List<Todo>>>) {
         observable
                 .with(this)
                 .subscribe(object : CustomResponseSingleObserver<List<Todo>>() {
@@ -146,7 +139,7 @@ class TodoFragment : ButterKnifeFragment() {
                         }
                         adapterTodos.setData(todos)
                         nextPageUrl = LinkHeaderParser.parse(response()).next
-                        Timber.d("Next page url " + nextPageUrl)
+                        Timber.d("Next page url $nextPageUrl")
                     }
                 })
     }
@@ -177,12 +170,12 @@ class TodoFragment : ButterKnifeFragment() {
                         adapterTodos.setLoading(false)
                         adapterTodos.addData(todos)
                         nextPageUrl = LinkHeaderParser.parse(response()).next
-                        Timber.d("Next page url " + nextPageUrl)
+                        Timber.d("Next page url $nextPageUrl")
                     }
                 })
     }
 
-    fun showLoading() {
+    private fun showLoading() {
         loading = true
         swipeRefreshLayout.isRefreshing = true
     }

@@ -10,20 +10,20 @@
         android:orientation="vertical">
 
         <com.commit451.gitlab.view.LabCoatSwipeRefreshLayout
-            android:id="@+id/swipe_layout"
+            android:id="@+id/swipeRefreshLayout"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1">
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/list"
+                android:id="@+id/listNotes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
         </com.commit451.gitlab.view.LabCoatSwipeRefreshLayout>
 
         <com.commit451.gitlab.view.SendMessageView
-            android:id="@+id/send_message_view"
+            android:id="@+id/sendMessageView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom" />

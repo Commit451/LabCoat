@@ -5,16 +5,13 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import butterknife.BindView
-import butterknife.ButterKnife
-import butterknife.OnClick
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.navigation.Navigator
+import kotlinx.android.synthetic.main.activity_loading.*
 import timber.log.Timber
-
 
 /**
  * Intermediate activity when deep linking to another activity and things need to load
@@ -84,22 +81,16 @@ class LoadSomeInfoActivity : BaseActivity() {
         }
     }
 
-    @BindView(R.id.progress)
-    lateinit var progress: View
-
     private var loadType: Int = 0
 
     private var project: Project? = null
 
-    @OnClick(R.id.root)
-    fun onRootClicked() {
-        finish()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_loading)
-        ButterKnife.bind(this)
+        root.setOnClickListener {
+            finish()
+        }
         progress.visibility = View.VISIBLE
         loadType = intent.getIntExtra(EXTRA_LOAD_TYPE, -1)
         Timber.d("Loading some info type: %d", loadType)

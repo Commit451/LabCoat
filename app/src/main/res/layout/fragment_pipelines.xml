@@ -10,14 +10,14 @@
         android:orientation="vertical">
 
         <Spinner
-            android:id="@+id/issue_spinner"
+            android:id="@+id/spinnerIssue"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp" />
 
         <com.commit451.gitlab.view.LabCoatSwipeRefreshLayout
-            android:id="@+id/swipe_layout"
+            android:id="@+id/swipeRefreshLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -26,7 +26,7 @@
                 It is the size of the FAB 56dp + 8dp padding
             -->
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/list"
+                android:id="@+id/listPipelines"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:paddingBottom="64dp"
@@ -37,7 +37,7 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/message_text"
+        android:id="@+id/textMessage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"

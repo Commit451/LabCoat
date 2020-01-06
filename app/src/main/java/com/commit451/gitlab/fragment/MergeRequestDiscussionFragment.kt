@@ -9,8 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import butterknife.BindView
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.AttachActivity
@@ -27,13 +25,15 @@ import com.commit451.gitlab.util.LinkHeaderParser
 import com.commit451.gitlab.view.SendMessageView
 import com.commit451.teleprinter.Teleprinter
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.fragment_merge_request_discussion.*
+import kotlinx.android.synthetic.main.progress_fullscreen.*
 import org.greenrobot.eventbus.Subscribe
 import timber.log.Timber
 
 /**
  * Shows the discussion of a merge request
  */
-class MergeRequestDiscussionFragment : ButterKnifeFragment() {
+class MergeRequestDiscussionFragment : BaseFragment() {
 
     companion object {
 
@@ -52,27 +52,16 @@ class MergeRequestDiscussionFragment : ButterKnifeFragment() {
         }
     }
 
-    @BindView(R.id.root)
-    lateinit var root: ViewGroup
-    @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.list)
-    lateinit var listNotes: RecyclerView
-    @BindView(R.id.send_message_view)
-    lateinit var sendMessageView: SendMessageView
-    @BindView(R.id.progress)
-    lateinit var progress: View
+    private lateinit var adapterNotes: NotesAdapter
+    private lateinit var layoutManagerNotes: LinearLayoutManager
+    private lateinit var teleprinter: Teleprinter
 
-    lateinit var adapterNotes: NotesAdapter
-    lateinit var layoutManagerNotes: LinearLayoutManager
-    lateinit var teleprinter: Teleprinter
+    private lateinit var project: Project
+    private lateinit var mergeRequest: MergeRequest
+    private var nextPageUrl: Uri? = null
+    private var loading: Boolean = false
 
-    lateinit var project: Project
-    lateinit var mergeRequest: MergeRequest
-    var nextPageUrl: Uri? = null
-    var loading: Boolean = false
-
-    val onScrollListener = object : RecyclerView.OnScrollListener() {
+    private val onScrollListener = object : RecyclerView.OnScrollListener() {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
             val visibleItemCount = layoutManagerNotes.childCount
@@ -143,7 +132,7 @@ class MergeRequestDiscussionFragment : ButterKnifeFragment() {
         super.onDestroyView()
     }
 
-    fun loadNotes() {
+    private fun loadNotes() {
         swipeRefreshLayout.isRefreshing = true
         App.get().gitLab.getMergeRequestNotes(project.id, mergeRequest.iid)
                 .with(this)

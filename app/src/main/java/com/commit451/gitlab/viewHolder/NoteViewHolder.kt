@@ -6,10 +6,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import butterknife.BindView
-import butterknife.ButterKnife
 import coil.api.load
 import coil.transform.CircleCropTransformation
+import com.commit451.addendum.recyclerview.bindView
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.extension.setMarkdownText
@@ -33,18 +32,10 @@ class NoteViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
     }
 
-    @BindView(R.id.title)
-    lateinit var textTitle: TextView
-    @BindView(R.id.summary)
-    lateinit var textSummary: TextView
-    @BindView(R.id.creation_date)
-    lateinit var textCreationDate: TextView
-    @BindView(R.id.icon)
-    lateinit var imageAvatar: ImageView
-
-    init {
-        ButterKnife.bind(this, view)
-    }
+    private val textTitle: TextView by bindView(R.id.title)
+    private val textSummary: TextView by bindView(R.id.summary)
+    private val textCreationDate: TextView by bindView(R.id.creation_date)
+    private val imageAvatar: ImageView by bindView(R.id.icon)
 
     fun bind(note: Note, project: Project) {
         if (note.createdAt != null) {

@@ -5,8 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import butterknife.BindView
-import butterknife.ButterKnife
+import com.commit451.addendum.recyclerview.bindView
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.api.Milestone
 
@@ -24,12 +23,7 @@ class MilestoneSpinnerViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
     }
 
-    @BindView(R.id.title)
-    lateinit var textTitle: TextView
-
-    init {
-        ButterKnife.bind(this, view)
-    }
+    private val textTitle: TextView by bindView(R.id.title)
 
     fun bind(milestone: Milestone?) {
         if (milestone == null) {

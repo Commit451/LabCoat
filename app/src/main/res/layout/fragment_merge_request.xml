@@ -9,7 +9,7 @@
         android:orientation="vertical">
 
         <Spinner
-            android:id="@+id/state_spinner"
+            android:id="@+id/spinnerState"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
@@ -17,12 +17,12 @@
 
 
         <com.commit451.gitlab.view.LabCoatSwipeRefreshLayout
-            android:id="@+id/swipe_layout"
+            android:id="@+id/swipeRefreshLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/list"
+                android:id="@+id/listMergeRequests"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
@@ -31,7 +31,7 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/message_text"
+        android:id="@+id/textMessage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"

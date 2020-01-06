@@ -5,8 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import butterknife.BindView
-import butterknife.ButterKnife
+import com.commit451.addendum.recyclerview.bindView
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.api.Pipeline
 
@@ -24,18 +23,10 @@ class PipelineViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
     }
 
-    @BindView(R.id.sha)
-    lateinit var textSha: TextView
-    @BindView(R.id.number)
-    lateinit var textPipelineNumber: TextView
-    @BindView(R.id.status)
-    lateinit var textStatus: TextView
-    @BindView(R.id.ref)
-    lateinit var textRef: TextView
-
-    init {
-        ButterKnife.bind(this, view)
-    }
+    private val textSha: TextView by bindView(R.id.sha)
+    private val textPipelineNumber: TextView by bindView(R.id.number)
+    private val textStatus: TextView by bindView(R.id.status)
+    private val textRef: TextView by bindView(R.id.ref)
 
     fun bind(pipeline: Pipeline) {
         val pipeSha = pipeline.sha!!.substring(0, 8)

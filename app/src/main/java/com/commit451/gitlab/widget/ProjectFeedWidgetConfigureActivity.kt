@@ -4,19 +4,15 @@ import android.app.Activity
 import android.appwidget.AppWidgetManager
 import android.content.Intent
 import android.os.Bundle
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.appcompat.widget.Toolbar
 import android.view.View
-import android.widget.TextView
-import butterknife.BindView
-import butterknife.ButterKnife
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.BaseActivity
 import com.commit451.gitlab.data.Prefs
 import com.commit451.gitlab.extension.feedUrl
 import com.commit451.gitlab.model.Account
 import com.commit451.gitlab.model.api.Project
+import kotlinx.android.synthetic.main.activity_feed_widget_configure.*
 import timber.log.Timber
 
 /**
@@ -28,23 +24,15 @@ class ProjectFeedWidgetConfigureActivity : BaseActivity() {
         private const val REQUEST_PROJECT = 1
     }
 
-    @BindView(R.id.toolbar)
-    lateinit var toolbar: Toolbar
-    @BindView(R.id.message_text)
-    lateinit var textMessage: TextView
-    @BindView(R.id.list)
-    lateinit var list: RecyclerView
+    private lateinit var adapterAccounts: AccountsAdapter
 
-    lateinit var adapterAccounts: AccountsAdapter
-
-    var widgetAccount: Account? = null
-    var appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
+    private var widgetAccount: Account? = null
+    private var appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
 
     public override fun onCreate(icicle: Bundle?) {
         super.onCreate(icicle)
         setResult(Activity.RESULT_CANCELED)
         setContentView(R.layout.activity_feed_widget_configure)
-        ButterKnife.bind(this)
 
         // Find the widget id from the intent.
         val intent = intent
@@ -85,7 +73,7 @@ class ProjectFeedWidgetConfigureActivity : BaseActivity() {
         }
     }
 
-    fun loadAccounts() {
+    private fun loadAccounts() {
         val accounts = Prefs.getAccounts()
         Timber.d("Got %s accounts", accounts.size)
         accounts.sort()
@@ -98,12 +86,12 @@ class ProjectFeedWidgetConfigureActivity : BaseActivity() {
         }
     }
 
-    fun moveAlongToChooseProject(account: Account) {
+    private fun moveAlongToChooseProject(account: Account) {
         val intent = ProjectFeedWidgetConfigureProjectActivity.newIntent(this, account)
         startActivityForResult(intent, REQUEST_PROJECT)
     }
 
-    fun saveWidgetConfig(account: Account, project: Project) {
+    private fun saveWidgetConfig(account: Account, project: Project) {
         ProjectFeedWidgetPrefs.setAccount(this, appWidgetId, account)
         ProjectFeedWidgetPrefs.setFeedUrl(this, appWidgetId, project.feedUrl)
 

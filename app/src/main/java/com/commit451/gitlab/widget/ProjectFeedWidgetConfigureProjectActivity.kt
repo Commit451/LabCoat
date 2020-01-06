@@ -4,10 +4,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import com.google.android.material.tabs.TabLayout
-import androidx.viewpager.widget.ViewPager
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.BaseActivity
 import com.commit451.gitlab.adapter.ProjectsPagerAdapter
@@ -17,6 +13,7 @@ import com.commit451.gitlab.api.OkHttpClientFactory
 import com.commit451.gitlab.fragment.ProjectsFragment
 import com.commit451.gitlab.model.Account
 import com.commit451.gitlab.model.api.Project
+import kotlinx.android.synthetic.main.activity_project_feed_widget_configure.*
 
 /**
  * You chose your account, now choose your project!
@@ -35,17 +32,11 @@ class ProjectFeedWidgetConfigureProjectActivity : BaseActivity(), ProjectsFragme
         }
     }
 
-    @BindView(R.id.tabs)
-    lateinit var tabLayout: TabLayout
-    @BindView(R.id.pager)
-    lateinit var viewPager: ViewPager
-
     private lateinit var gitLabInstance: GitLabService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_project_feed_widget_configure)
-        ButterKnife.bind(this)
 
         val account = intent.getParcelableExtra<Account>(EXTRA_ACCOUNT)!!
         gitLabInstance = GitLabFactory.create(account, OkHttpClientFactory.create(account, false).build())

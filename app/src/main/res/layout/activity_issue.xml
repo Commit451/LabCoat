@@ -18,7 +18,7 @@
             android:layout_height="?attr/actionBarSize" />
 
         <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabs"
+            android:id="@+id/tabLayout"
             style="@style/TabLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -32,7 +32,7 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <androidx.viewpager.widget.ViewPager
-            android:id="@+id/pager"
+            android:id="@+id/viewPager"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
@@ -41,7 +41,7 @@
     </FrameLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_edit_issue"
+        android:id="@+id/buttonEditIssue"
         style="@style/FloatingActionButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

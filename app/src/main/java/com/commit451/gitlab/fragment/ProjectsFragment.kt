@@ -3,14 +3,11 @@ package com.commit451.gitlab.fragment
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import butterknife.BindView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.DividerItemDecoration
@@ -23,10 +20,11 @@ import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
 import io.reactivex.Single
+import kotlinx.android.synthetic.main.fragment_projects.*
 import retrofit2.Response
 import timber.log.Timber
 
-class ProjectsFragment : ButterKnifeFragment() {
+class ProjectsFragment : BaseFragment() {
 
     companion object {
 
@@ -68,23 +66,16 @@ class ProjectsFragment : ButterKnifeFragment() {
         }
     }
 
-    @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.list)
-    lateinit var listProjects: RecyclerView
-    @BindView(R.id.message_text)
-    lateinit var textMessage: TextView
+    private lateinit var layoutManagerProjects: LinearLayoutManager
+    private lateinit var adapterProjects: ProjectAdapter
 
-    lateinit var layoutManagerProjects: LinearLayoutManager
-    lateinit var adapterProjects: ProjectAdapter
+    private var mode: Int = 0
+    private var query: String? = null
+    private var nextPageUrl: Uri? = null
+    private var loading = false
+    private var listener: Listener? = null
 
-    var mode: Int = 0
-    var query: String? = null
-    var nextPageUrl: Uri? = null
-    var loading = false
-    var listener: Listener? = null
-
-    val onScrollListener = object : RecyclerView.OnScrollListener() {
+    private val onScrollListener = object : RecyclerView.OnScrollListener() {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
             val visibleItemCount = layoutManagerProjects.childCount

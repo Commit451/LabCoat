@@ -7,10 +7,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import butterknife.BindView
-import butterknife.ButterKnife
 import coil.api.load
 import coil.transform.CircleCropTransformation
+import com.commit451.addendum.recyclerview.bindView
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.model.api.VISIBILITY_INTERNAL
@@ -31,20 +30,11 @@ class ProjectViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
     }
 
-    @BindView(R.id.project_image)
-    lateinit var image: ImageView
-    @BindView(R.id.project_letter)
-    lateinit var iconLetter: MaterialLetterIcon
-    @BindView(R.id.project_title)
-    lateinit var textTitle: TextView
-    @BindView(R.id.project_description)
-    lateinit var textDescription: TextView
-    @BindView(R.id.project_visibility)
-    lateinit var iconVisibility: ImageView
-
-    init {
-        ButterKnife.bind(this, view)
-    }
+    private val image: ImageView by bindView(R.id.project_image)
+    private val iconLetter: MaterialLetterIcon by bindView(R.id.project_letter)
+    private val textTitle: TextView by bindView(R.id.project_title)
+    private val textDescription: TextView by bindView(R.id.project_description)
+    private val iconVisibility: ImageView by bindView(R.id.project_visibility)
 
     fun bind(project: Project, color: Int) {
         // There is no longer a way that we can load images for private

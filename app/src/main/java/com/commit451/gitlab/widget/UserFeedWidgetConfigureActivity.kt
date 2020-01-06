@@ -5,29 +5,18 @@ import android.appwidget.AppWidgetManager
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.TextView
-import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.BaseActivity
 import com.commit451.gitlab.data.Prefs
 import com.commit451.gitlab.model.Account
+import kotlinx.android.synthetic.main.activity_feed_widget_configure.*
 import timber.log.Timber
 
 /**
  * The configuration screen for the ExampleAppWidgetProvider widget sample.
  */
 class UserFeedWidgetConfigureActivity : BaseActivity() {
-
-    @BindView(R.id.toolbar)
-    lateinit var toolbar: Toolbar
-    @BindView(R.id.message_text)
-    lateinit var textMessage: TextView
-    @BindView(R.id.list)
-    lateinit var list: RecyclerView
 
     private lateinit var adapterAccounts: AccountsAdapter
 
@@ -37,7 +26,6 @@ class UserFeedWidgetConfigureActivity : BaseActivity() {
         super.onCreate(icicle)
         setResult(Activity.RESULT_CANCELED)
         setContentView(R.layout.activity_feed_widget_configure)
-        ButterKnife.bind(this)
 
         // Find the widget id from the intent.
         val intent = intent

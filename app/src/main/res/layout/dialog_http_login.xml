@@ -6,13 +6,13 @@
     android:padding="8dp">
 
     <TextView
-        android:id="@+id/message_text"
+        android:id="@+id/textMessage"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical" />
 
     <EditText
-        android:id="@+id/login_username"
+        android:id="@+id/textUsername"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="text"
@@ -22,7 +22,7 @@
     </EditText>
 
     <EditText
-        android:id="@+id/login_password"
+        android:id="@+id/textPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textPassword"
@@ -35,7 +35,7 @@
 
         <Button
             style="?android:attr/buttonBarButtonStyle"
-            android:id="@+id/ok_button"
+            android:id="@+id/buttonOk"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
@@ -43,7 +43,7 @@
 
         <Button
             style="?android:attr/buttonBarButtonStyle"
-            android:id="@+id/cancel_button"
+            android:id="@+id/buttonCancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"

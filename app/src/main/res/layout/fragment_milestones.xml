@@ -11,19 +11,19 @@
         android:orientation="vertical">
 
         <Spinner
-            android:id="@+id/state_spinner"
+            android:id="@+id/spinnerStates"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp" />
 
         <com.commit451.gitlab.view.LabCoatSwipeRefreshLayout
-            android:id="@+id/swipe_layout"
+            android:id="@+id/swipeRefreshLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/list"
+                android:id="@+id/listMilestones"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
@@ -32,7 +32,7 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/message_text"
+        android:id="@+id/textMessage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -42,7 +42,7 @@
         android:visibility="gone" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/add"
+        android:id="@+id/buttonAdd"
         style="@style/FloatingActionButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

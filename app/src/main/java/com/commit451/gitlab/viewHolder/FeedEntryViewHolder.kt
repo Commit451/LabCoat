@@ -6,10 +6,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import butterknife.BindView
-import butterknife.ButterKnife
 import coil.api.load
 import coil.transform.CircleCropTransformation
+import com.commit451.addendum.recyclerview.bindView
 import com.commit451.gitlab.R
 import com.commit451.gitlab.extension.formatAsHtml
 import com.commit451.gitlab.model.rss.Entry
@@ -29,18 +28,10 @@ class FeedEntryViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
     }
 
-    @BindView(R.id.image)
-    lateinit var image: ImageView
-    @BindView(R.id.title)
-    lateinit var textTitle: TextView
-    @BindView(R.id.description)
-    lateinit var textSummary: TextView
-    @BindView(R.id.updated)
-    lateinit var textUpdated: TextView
-
-    init {
-        ButterKnife.bind(this, view)
-    }
+    private val image: ImageView by bindView(R.id.image)
+    private val textTitle: TextView by bindView(R.id.title)
+    private val textSummary: TextView by bindView(R.id.description)
+    private val textUpdated: TextView by bindView(R.id.updated)
 
     fun bind(entry: Entry) {
         image.load(entry.thumbnail.url) {

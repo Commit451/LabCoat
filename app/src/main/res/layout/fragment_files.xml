@@ -10,16 +10,16 @@
         android:orientation="vertical">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/breadcrumb"
+            android:id="@+id/listBreadcrumbs"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:clipChildren="false"
             android:clipToPadding="false"
-            android:clipChildren="false" />
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin" />
 
         <com.commit451.gitlab.view.LabCoatSwipeRefreshLayout
-            android:id="@+id/swipe_layout"
+            android:id="@+id/swipeRefreshLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -33,13 +33,13 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/message_text"
+        android:id="@+id/textMessage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:text="@string/no_files_found"
-        android:gravity="center"
         android:layout_gravity="center"
+        android:layout_margin="10dp"
+        android:gravity="center"
+        android:text="@string/no_files_found"
         android:visibility="gone" />
 
 </FrameLayout>

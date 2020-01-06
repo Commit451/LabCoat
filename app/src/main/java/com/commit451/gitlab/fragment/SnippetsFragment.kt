@@ -2,19 +2,13 @@ package com.commit451.gitlab.fragment
 
 import android.net.Uri
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Spinner
-import android.widget.TextView
-import butterknife.BindView
-import butterknife.OnClick
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.ProjectActivity
@@ -27,10 +21,12 @@ import com.commit451.gitlab.model.api.Snippet
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
+import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.fragment_snippets.*
 import org.greenrobot.eventbus.Subscribe
 import timber.log.Timber
 
-class SnippetsFragment : ButterKnifeFragment() {
+class SnippetsFragment : BaseFragment() {
 
     companion object {
 
@@ -39,27 +35,16 @@ class SnippetsFragment : ButterKnifeFragment() {
         }
     }
 
-    @BindView(R.id.root)
-    lateinit var root: ViewGroup
-    @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.list)
-    lateinit var listSnippets: RecyclerView
-    @BindView(R.id.message_text)
-    lateinit var textMessage: TextView
-    @BindView(R.id.state_spinner)
-    lateinit var spinnerState: Spinner
+    private lateinit var adapterSnippets: SnippetAdapter
+    private lateinit var layoutManagerSnippets: LinearLayoutManager
 
-    lateinit var adapterSnippets: SnippetAdapter
-    lateinit var layoutManagerSnippets: LinearLayoutManager
+    private lateinit var state: String
+    private lateinit var states: Array<String>
+    private var project: Project? = null
+    private var loading = false
+    private var nextPageUrl: Uri? = null
 
-    lateinit var state: String
-    lateinit var states: Array<String>
-    var project: Project? = null
-    var loading = false
-    var nextPageUrl: Uri? = null
-
-    val onScrollListener = object : RecyclerView.OnScrollListener() {
+    private val onScrollListener = object : RecyclerView.OnScrollListener() {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
             val visibleItemCount = layoutManagerSnippets.childCount
@@ -68,16 +53,6 @@ class SnippetsFragment : ButterKnifeFragment() {
             if (firstVisibleItem + visibleItemCount >= totalItemCount && !loading && nextPageUrl != null) {
                 loadMore()
             }
-        }
-    }
-
-    @OnClick(R.id.add)
-    fun onAddClicked(fab: View) {
-        if (project != null) {
-            Navigator.navigateToAddMilestone(baseActivty, fab, project!!)
-        } else {
-            Snackbar.make(root, getString(R.string.wait_for_project_to_load), Snackbar.LENGTH_SHORT)
-                    .show()
         }
     }
 
@@ -96,6 +71,14 @@ class SnippetsFragment : ButterKnifeFragment() {
 
         App.bus().register(this)
 
+        buttonAdd.setOnClickListener {
+            if (project != null) {
+                Navigator.navigateToAddMilestone(baseActivty, buttonAdd, project!!)
+            } else {
+                Snackbar.make(root, getString(R.string.wait_for_project_to_load), Snackbar.LENGTH_SHORT)
+                        .show()
+            }
+        }
         adapterSnippets = SnippetAdapter(object : SnippetAdapter.Listener {
             override fun onSnippetClicked(snippet: Snippet) {
 

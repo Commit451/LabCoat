@@ -6,10 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import butterknife.BindView
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.PickBranchOrTagActivity
@@ -17,12 +14,14 @@ import com.commit451.gitlab.adapter.TagAdapter
 import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.Ref
 import com.commit451.gitlab.model.api.Tag
+import kotlinx.android.synthetic.main.fragment_pick_tag.*
+import kotlinx.android.synthetic.main.progress.*
 import timber.log.Timber
 
 /**
  * Pick a branch, any branch
  */
-class PickTagFragment : ButterKnifeFragment() {
+class PickTagFragment : BaseFragment() {
 
     companion object {
 
@@ -39,16 +38,9 @@ class PickTagFragment : ButterKnifeFragment() {
         }
     }
 
-    @BindView(R.id.list)
-    lateinit var listProjects: RecyclerView
-    @BindView(R.id.message_text)
-    lateinit var textMessage: TextView
-    @BindView(R.id.progress)
-    lateinit var progress: View
+    private lateinit var adapterTags: TagAdapter
 
-    lateinit var adapterTags: TagAdapter
-
-    var projectId: Long = 0
+    private var projectId: Long = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -8,9 +8,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.ColorInt
 import androidx.recyclerview.widget.RecyclerView
-import butterknife.BindView
-import butterknife.ButterKnife
 import coil.api.load
+import com.commit451.addendum.recyclerview.bindView
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.api.Group
 import com.commit451.gitlab.model.api.VISIBILITY_PUBLIC
@@ -30,16 +29,9 @@ class GroupViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
     }
 
-    @BindView(R.id.image)
-    lateinit var image: ImageView
-    @BindView(R.id.letter)
-    lateinit var iconLetter: MaterialLetterIcon
-    @BindView(R.id.name)
-    lateinit var textName: TextView
-
-    init {
-        ButterKnife.bind(this, view)
-    }
+    val image: ImageView by bindView(R.id.image)
+    private val iconLetter: MaterialLetterIcon by bindView(R.id.letter)
+    private val textName: TextView by bindView(R.id.name)
 
     fun bind(group: Group, @ColorInt color: Int) {
         textName.text = group.name

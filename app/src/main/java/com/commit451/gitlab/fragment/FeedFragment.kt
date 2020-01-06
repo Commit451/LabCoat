@@ -5,10 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import butterknife.BindView
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.DividerItemDecoration
@@ -18,12 +14,13 @@ import com.commit451.gitlab.model.rss.Entry
 import com.commit451.gitlab.navigation.Navigator
 import com.google.android.material.snackbar.Snackbar
 import com.novoda.simplechromecustomtabs.SimpleChromeCustomTabs
+import kotlinx.android.synthetic.main.fragment_feed.*
 import timber.log.Timber
 
 /**
  * Takes an RSS feed url and shows the feed
  */
-class FeedFragment : ButterKnifeFragment() {
+class FeedFragment : BaseFragment() {
 
     companion object {
 
@@ -39,16 +36,9 @@ class FeedFragment : ButterKnifeFragment() {
         }
     }
 
-    @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.list)
-    lateinit var listEntries: RecyclerView
-    @BindView(R.id.message_text)
-    lateinit var textMessage: TextView
+    private lateinit var adapterFeed: FeedAdapter
 
-    lateinit var adapterFeed: FeedAdapter
-
-    var feedUrl: Uri? = null
+    private var feedUrl: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

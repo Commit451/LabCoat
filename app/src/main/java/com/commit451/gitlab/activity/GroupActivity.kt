@@ -7,12 +7,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
-import android.widget.ImageView
-import androidx.appcompat.widget.Toolbar
 import androidx.palette.graphics.Palette
-import androidx.viewpager.widget.ViewPager
-import butterknife.BindView
-import butterknife.ButterKnife
 import coil.api.load
 import com.commit451.addendum.themeAttrColor
 import com.commit451.alakazam.navigationBarColorAnimator
@@ -23,9 +18,9 @@ import com.commit451.gitlab.adapter.GroupPagerAdapter
 import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.image.PaletteImageViewTarget
 import com.commit451.gitlab.model.api.Group
-import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.tabs.TabLayout
+import kotlinx.android.synthetic.main.activity_group.*
+import kotlinx.android.synthetic.main.progress.*
 import timber.log.Timber
 
 /**
@@ -51,25 +46,9 @@ class GroupActivity : BaseActivity() {
         }
     }
 
-    @BindView(R.id.root)
-    lateinit var root: View
-    @BindView(R.id.toolbar)
-    lateinit var toolbar: Toolbar
-    @BindView(R.id.collapsing_toolbar)
-    lateinit var collapsingToolbarLayout: CollapsingToolbarLayout
-    @BindView(R.id.viewpager)
-    lateinit var viewPager: ViewPager
-    @BindView(R.id.tabs)
-    lateinit var tabLayout: TabLayout
-    @BindView(R.id.backdrop)
-    lateinit var backdrop: ImageView
-    @BindView(R.id.progress)
-    lateinit var progress: View
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_group)
-        ButterKnife.bind(this)
 
         // Default content and scrim colors
 

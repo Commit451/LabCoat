@@ -5,8 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import butterknife.BindView
-import butterknife.ButterKnife
+import com.commit451.addendum.recyclerview.bindView
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.api.Snippet
 
@@ -24,14 +23,8 @@ class SnippetViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
     }
 
-    @BindView(R.id.title)
-    lateinit var textTitle: TextView
-    @BindView(R.id.file_name)
-    lateinit var textFileName: TextView
-
-    init {
-        ButterKnife.bind(this, view)
-    }
+    private val textTitle: TextView by bindView(R.id.title)
+    private val textFileName: TextView by bindView(R.id.file_name)
 
     fun bind(snippet: Snippet) {
         textTitle.text = snippet.title

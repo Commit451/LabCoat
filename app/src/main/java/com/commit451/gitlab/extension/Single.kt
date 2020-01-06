@@ -1,7 +1,9 @@
 package com.commit451.gitlab.extension
 
 import com.commit451.gitlab.activity.BaseActivity
+import com.commit451.gitlab.api.BodyWithPagination
 import com.commit451.gitlab.fragment.BaseFragment
+import com.commit451.gitlab.util.LinkHeaderParser
 import com.commit451.reptar.kotlin.fromIoToMainThread
 import com.uber.autodispose.SingleSubscribeProxy
 import com.uber.autodispose.kotlin.autoDisposable
@@ -23,6 +25,18 @@ fun <T> Single<Response<T>>.mapResponseSuccess(): Single<T> {
             error(HttpException(response))
         } else {
             Single.just(response.body())
+        }
+    }
+}
+
+fun <T> Single<Response<T>>.mapResponseSuccessWithPaginationData(): Single<BodyWithPagination<T>> {
+    return flatMap { response ->
+        if (!response.isSuccessful) {
+            error(HttpException(response))
+        } else {
+            val body = response.body()!!
+            val paginationData = LinkHeaderParser.parse(response)
+            Single.just(BodyWithPagination(body, paginationData))
         }
     }
 }

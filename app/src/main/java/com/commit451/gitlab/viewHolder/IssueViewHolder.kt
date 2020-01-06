@@ -6,10 +6,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import butterknife.BindView
-import butterknife.ButterKnife
 import coil.api.load
 import coil.transform.CircleCropTransformation
+import com.commit451.addendum.recyclerview.bindView
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.api.Issue
 import com.commit451.gitlab.util.DateUtil
@@ -29,18 +28,10 @@ class IssueViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
     }
 
-    @BindView(R.id.issue_state)
-    lateinit var textState: TextView
-    @BindView(R.id.issue_image)
-    lateinit var image: ImageView
-    @BindView(R.id.issue_message)
-    lateinit var textMessage: TextView
-    @BindView(R.id.issue_creator)
-    lateinit var textCreator: TextView
-
-    init {
-        ButterKnife.bind(this, view)
-    }
+    private val textState: TextView by bindView(R.id.issue_state)
+    private val image: ImageView by bindView(R.id.issue_image)
+    private val textMessage: TextView by bindView(R.id.issue_message)
+    private val textCreator: TextView by bindView(R.id.issue_creator)
 
     fun bind(issue: Issue) {
 

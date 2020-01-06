@@ -2,17 +2,13 @@ package com.commit451.gitlab.fragment
 
 import android.net.Uri
 import android.os.Bundle
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Spinner
-import android.widget.TextView
-import butterknife.BindView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.ProjectActivity
@@ -26,10 +22,11 @@ import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
+import kotlinx.android.synthetic.main.fragment_merge_request.*
 import org.greenrobot.eventbus.Subscribe
 import timber.log.Timber
 
-class MergeRequestsFragment : ButterKnifeFragment() {
+class MergeRequestsFragment : BaseFragment() {
 
     companion object {
 
@@ -38,25 +35,16 @@ class MergeRequestsFragment : ButterKnifeFragment() {
         }
     }
 
-    @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.list)
-    lateinit var listMergeRequests: RecyclerView
-    @BindView(R.id.message_text)
-    lateinit var textMessage: TextView
-    @BindView(R.id.state_spinner)
-    lateinit var spinnerState: Spinner
+    private lateinit var adapterMergeRequests: MergeRequestAdapter
+    private lateinit var layoutManagerMergeRequests: LinearLayoutManager
 
-    lateinit var adapterMergeRequests: MergeRequestAdapter
-    lateinit var layoutManagerMergeRequests: LinearLayoutManager
+    private lateinit var state: String
+    private lateinit var states: Array<String>
+    private var project: Project? = null
+    private var nextPageUrl: Uri? = null
+    private var loading = false
 
-    lateinit var state: String
-    lateinit var states: Array<String>
-    var project: Project? = null
-    var nextPageUrl: Uri? = null
-    var loading = false
-
-    val onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+    private val onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
         override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
             state = states[position]
             loadData()

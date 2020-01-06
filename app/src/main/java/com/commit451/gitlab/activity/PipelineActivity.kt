@@ -4,11 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
-import androidx.viewpager.widget.ViewPager
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.PipelinePagerAdapter
@@ -17,7 +13,8 @@ import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Pipeline
 import com.commit451.gitlab.model.api.Project
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.tabs.TabLayout
+import kotlinx.android.synthetic.main.activity_pipeline.*
+import kotlinx.android.synthetic.main.progress_fullscreen.*
 import timber.log.Timber
 
 /**
@@ -38,19 +35,8 @@ class PipelineActivity : BaseActivity() {
         }
     }
 
-    @BindView(R.id.root)
-    lateinit var root: ViewGroup
-    @BindView(R.id.toolbar)
-    lateinit var toolbar: Toolbar
-    @BindView(R.id.tabs)
-    lateinit var tabLayout: TabLayout
-    @BindView(R.id.pager)
-    lateinit var viewPager: ViewPager
-    @BindView(R.id.progress)
-    lateinit var progress: View
-
-    lateinit var project: Project
-    lateinit var pipeline: Pipeline
+    private lateinit var project: Project
+    private lateinit var pipeline: Pipeline
 
     private val onMenuItemClickListener = Toolbar.OnMenuItemClickListener { item ->
         when (item.itemId) {
@@ -95,7 +81,6 @@ class PipelineActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pipeline)
-        ButterKnife.bind(this)
 
         project = intent.getParcelableExtra(KEY_PROJECT)!!
         pipeline = intent.getParcelableExtra(KEY_PIPELINE)!!

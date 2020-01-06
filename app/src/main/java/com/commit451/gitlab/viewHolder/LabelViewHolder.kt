@@ -1,12 +1,11 @@
 package com.commit451.gitlab.viewHolder
 
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import butterknife.BindView
-import butterknife.ButterKnife
+import androidx.recyclerview.widget.RecyclerView
+import com.commit451.addendum.recyclerview.bindView
 import com.commit451.gitlab.R
 import com.commit451.gitlab.extension.getColor
 import com.commit451.gitlab.extension.getTitleColor
@@ -26,14 +25,8 @@ class LabelViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
     }
 
-    @BindView(R.id.title)
-    lateinit var textTitle: TextView
-    @BindView(R.id.color)
-    lateinit var viewColor: View
-
-    init {
-        ButterKnife.bind(this, view)
-    }
+    private val textTitle: TextView by bindView(R.id.title)
+    private val viewColor: View by bindView(R.id.color)
 
     fun bind(label: Label) {
         textTitle.text = label.name

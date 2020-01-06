@@ -1,39 +1,17 @@
 package com.commit451.gitlab.view
 
-import android.annotation.TargetApi
 import android.content.Context
-import android.os.Build
 import android.util.AttributeSet
 import android.view.View
-import android.widget.EditText
 import android.widget.LinearLayout
-import butterknife.BindView
-import butterknife.ButterKnife
-import butterknife.OnClick
 import com.commit451.addendum.themeAttrColor
 import com.commit451.gitlab.R
+import kotlinx.android.synthetic.main.view_send_message.view.*
 
 /**
  * View that show UI for sending a message
  */
 class SendMessageView : LinearLayout {
-
-    @BindView(R.id.text_note)
-    lateinit var textNote: EditText
-
-    @OnClick(R.id.button_send)
-    fun onSend() {
-        if (callback != null) {
-            callback!!.onSendClicked(textNote.text.toString())
-        }
-    }
-
-    @OnClick(R.id.button_attach)
-    fun onAttachClicked() {
-        if (callback != null) {
-            callback!!.onAttachmentClicked()
-        }
-    }
 
     var callback: Callback? = null
 
@@ -56,9 +34,14 @@ class SendMessageView : LinearLayout {
     private fun init() {
         View.inflate(context, R.layout.view_send_message, this)
         orientation = HORIZONTAL
-        ButterKnife.bind(this)
         setBackgroundColor(context.themeAttrColor(R.attr.colorPrimary))
         elevation = resources.getDimensionPixelSize(R.dimen.toolbar_elevation).toFloat()
+        buttonSend.setOnClickListener {
+            callback?.onSendClicked(textNote.text.toString())
+        }
+        buttonAttach.setOnClickListener {
+            callback?.onAttachmentClicked()
+        }
     }
 
     fun clearText() {

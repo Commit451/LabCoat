@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <com.commit451.gitlab.view.LabCoatSwipeRefreshLayout
-        android:id="@+id/swipe_layout"
+        android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -18,7 +18,7 @@
     </com.commit451.gitlab.view.LabCoatSwipeRefreshLayout>
 
     <TextView
-        android:id="@+id/message_text"
+        android:id="@+id/textMessage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -28,7 +28,7 @@
         android:visibility="gone" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/add_user_button"
+        android:id="@+id/buttonAddUser"
         style="@style/FloatingActionButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

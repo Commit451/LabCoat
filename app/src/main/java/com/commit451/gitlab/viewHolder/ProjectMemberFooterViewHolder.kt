@@ -5,8 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import butterknife.BindView
-import butterknife.ButterKnife
+import com.commit451.addendum.recyclerview.bindView
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.api.ProjectNamespace
 
@@ -24,12 +23,7 @@ class ProjectMemberFooterViewHolder(view: View) : RecyclerView.ViewHolder(view) 
         }
     }
 
-    @BindView(R.id.button)
-    lateinit var button: Button
-
-    init {
-        ButterKnife.bind(this, view)
-    }
+    private val button: Button by bindView(R.id.button)
 
     fun bind(namespace: ProjectNamespace) {
         button.text = String.format(itemView.resources.getString(R.string.group_members), namespace.name)

@@ -3,7 +3,7 @@
     android:layout_height="match_parent">
 
     <com.github.chrisbanes.photoview.PhotoView
-        android:id="@+id/photo_view"
+        android:id="@+id/photoView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"

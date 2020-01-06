@@ -2,18 +2,13 @@ package com.commit451.gitlab.fragment
 
 import android.net.Uri
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Spinner
-import android.widget.TextView
-import butterknife.BindView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.ProjectActivity
@@ -27,13 +22,15 @@ import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
+import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.fragment_jobs.*
 import org.greenrobot.eventbus.Subscribe
 import timber.log.Timber
 
 /**
  * Shows the jobs of a project
  */
-class JobsFragment : ButterKnifeFragment() {
+class JobsFragment : BaseFragment() {
 
     companion object {
 
@@ -42,27 +39,16 @@ class JobsFragment : ButterKnifeFragment() {
         }
     }
 
-    @BindView(R.id.root)
-    lateinit var root: ViewGroup
-    @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.list)
-    lateinit var listBuilds: RecyclerView
-    @BindView(R.id.message_text)
-    lateinit var textMessage: TextView
-    @BindView(R.id.issue_spinner)
-    lateinit var spinnerIssue: Spinner
+    private lateinit var adapterBuilds: BuildAdapter
+    private lateinit var layoutManagerBuilds: LinearLayoutManager
 
-    lateinit var adapterBuilds: BuildAdapter
-    lateinit var layoutManagerBuilds: LinearLayoutManager
+    private lateinit var scopes: Array<String>
+    private var scope: String? = null
+    private var project: Project? = null
+    private var nextPageUrl: Uri? = null
+    private var loading: Boolean = false
 
-    lateinit var scopes: Array<String>
-    var scope: String? = null
-    var project: Project? = null
-    var nextPageUrl: Uri? = null
-    var loading: Boolean = false
-
-    val onScrollListener = object : RecyclerView.OnScrollListener() {
+    private val onScrollListener = object : RecyclerView.OnScrollListener() {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
             val visibleItemCount = layoutManagerBuilds.childCount

@@ -3,20 +3,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.commit451.gitlab.view.LabCoatSwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/swipe_layout"
+    <com.commit451.gitlab.view.LabCoatSwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/list"
+            android:id="@+id/listProjects"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
     </com.commit451.gitlab.view.LabCoatSwipeRefreshLayout>
 
     <TextView
-        android:id="@+id/message_text"
+        android:id="@+id/textMessage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"

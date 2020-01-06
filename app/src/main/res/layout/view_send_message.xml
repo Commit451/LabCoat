@@ -5,7 +5,7 @@
     android:layout_height="wrap_content">
 
     <ImageView
-        android:id="@+id/button_attach"
+        android:id="@+id/buttonAttach"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
@@ -16,7 +16,7 @@
         app:srcCompat="@drawable/ic_attachment_24dp" />
 
     <EditText
-        android:id="@+id/text_note"
+        android:id="@+id/textNote"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
@@ -33,7 +33,7 @@
         android:textColorHint="@color/white_60" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/button_send"
+        android:id="@+id/buttonSend"
         style="@style/FloatingActionButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

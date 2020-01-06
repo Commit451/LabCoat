@@ -4,12 +4,12 @@
     android:layout_height="match_parent">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/list"
+        android:id="@+id/listProjects"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
     <TextView
-        android:id="@+id/message_text"
+        android:id="@+id/textMessage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"

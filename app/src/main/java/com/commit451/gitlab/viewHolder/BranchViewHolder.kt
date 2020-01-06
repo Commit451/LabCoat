@@ -5,8 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import butterknife.BindView
-import butterknife.ButterKnife
+import com.commit451.addendum.recyclerview.bindView
 import com.commit451.addendum.recyclerview.context
 import com.commit451.addendum.themeAttrColor
 import com.commit451.gitlab.R
@@ -26,13 +25,11 @@ class BranchViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
     }
 
-    @BindView(R.id.title)
-    lateinit var textTitle: TextView
+    private val textTitle: TextView by bindView(R.id.title)
 
     private var colorHighlighted: Int = 0
 
     init {
-        ButterKnife.bind(this, view)
         colorHighlighted = context.themeAttrColor(R.attr.colorControlHighlight)
     }
 

@@ -8,11 +8,8 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.BuildPagerAdapter
@@ -23,7 +20,8 @@ import com.commit451.gitlab.model.api.Build
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.util.DownloadUtil
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.tabs.TabLayout
+import kotlinx.android.synthetic.main.activity_build.*
+import kotlinx.android.synthetic.main.progress_fullscreen.*
 import timber.log.Timber
 
 /**
@@ -46,21 +44,10 @@ class BuildActivity : BaseActivity() {
         }
     }
 
-    @BindView(R.id.root)
-    lateinit var root: ViewGroup
-    @BindView(R.id.toolbar)
-    lateinit var toolbar: Toolbar
-    @BindView(R.id.tabs)
-    lateinit var tabLayout: TabLayout
-    @BindView(R.id.pager)
-    lateinit var viewPager: androidx.viewpager.widget.ViewPager
-    @BindView(R.id.progress)
-    lateinit var progress: View
+    private lateinit var menuItemDownload: MenuItem
 
-    lateinit var menuItemDownload: MenuItem
-
-    lateinit var project: Project
-    lateinit var build: Build
+    private lateinit var project: Project
+    private lateinit var build: Build
 
     private val onMenuItemClickListener = Toolbar.OnMenuItemClickListener { item ->
         when (item.itemId) {
@@ -126,7 +113,6 @@ class BuildActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_build)
-        ButterKnife.bind(this)
 
         project = intent.getParcelableExtra(KEY_PROJECT)!!
         build = intent.getParcelableExtra(KEY_BUILD)!!

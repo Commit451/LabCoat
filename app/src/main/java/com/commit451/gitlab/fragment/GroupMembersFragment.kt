@@ -5,12 +5,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import butterknife.BindView
-import butterknife.OnClick
 import com.commit451.aloy.DynamicGridLayoutManager
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
@@ -26,11 +22,12 @@ import com.commit451.gitlab.util.LinkHeaderParser
 import com.commit451.gitlab.viewHolder.ProjectMemberViewHolder
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.Single
+import kotlinx.android.synthetic.main.fragment_group_members.*
 import org.greenrobot.eventbus.Subscribe
 import retrofit2.Response
 import timber.log.Timber
 
-class GroupMembersFragment : ButterKnifeFragment() {
+class GroupMembersFragment : BaseFragment() {
 
     companion object {
 
@@ -46,23 +43,12 @@ class GroupMembersFragment : ButterKnifeFragment() {
         }
     }
 
-    @BindView(R.id.root)
-    lateinit var root: View
-    @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.list)
-    lateinit var list: RecyclerView
-    @BindView(R.id.message_text)
-    lateinit var textMessage: TextView
-    @BindView(R.id.add_user_button)
-    lateinit var buttonAddUser: View
+    private lateinit var adapterGroupMembers: GroupMembersAdapter
+    private lateinit var layoutManagerGroupMembers: DynamicGridLayoutManager
 
-    lateinit var adapterGroupMembers: GroupMembersAdapter
-    lateinit var layoutManagerGroupMembers: DynamicGridLayoutManager
-
-    var member: User? = null
-    lateinit var group: Group
-    var nextPageUrl: Uri? = null
+    private var member: User? = null
+    private lateinit var group: Group
+    private var nextPageUrl: Uri? = null
 
     private val mOnScrollListener = object : RecyclerView.OnScrollListener() {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -136,17 +122,15 @@ class GroupMembersFragment : ButterKnifeFragment() {
 
         swipeRefreshLayout.setOnRefreshListener { loadData() }
 
+        buttonAddUser.setOnClickListener {
+            Navigator.navigateToAddGroupMember(baseActivty, buttonAddUser, group)
+        }
         loadData()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         App.bus().unregister(this)
-    }
-
-    @OnClick(R.id.add_user_button)
-    fun onAddUserClick(fab: View) {
-        Navigator.navigateToAddGroupMember(baseActivty, fab, group)
     }
 
     override fun loadData() {

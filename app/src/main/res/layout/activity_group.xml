@@ -13,7 +13,7 @@
         android:fitsSystemWindows="true">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
-            android:id="@+id/collapsing_toolbar"
+            android:id="@+id/collapsingToolbarLayout"
             android:layout_width="match_parent"
             android:layout_height="256dp"
             android:fitsSystemWindows="true"
@@ -40,7 +40,7 @@
                 app:titleMarginTop="13dp" />
 
             <com.google.android.material.tabs.TabLayout
-                android:id="@+id/tabs"
+                android:id="@+id/tabLayout"
                 style="@style/TabLayout.Collapse"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -50,7 +50,7 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.viewpager.widget.ViewPager
-        android:id="@+id/viewpager"
+        android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />

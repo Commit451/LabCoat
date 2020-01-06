@@ -10,7 +10,7 @@
     android:foreground="?attr/selectableItemBackground">
 
     <ImageView
-        android:id="@+id/account_image"
+        android:id="@+id/image"
         android:layout_width="@dimen/image_size"
         android:layout_height="@dimen/image_size"
         android:layout_marginRight="8dp"
@@ -29,7 +29,7 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/account_username"
+            android:id="@+id/textUsername"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/text_size_small"
@@ -38,7 +38,7 @@
             tools:text="Jawnnypoo" />
 
         <TextView
-            android:id="@+id/account_server"
+            android:id="@+id/textServer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/text_size_tiny"

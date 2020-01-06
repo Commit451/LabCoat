@@ -31,7 +31,7 @@
         android:paddingTop="@dimen/activity_vertical_margin">
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/title_text_input_layout"
+            android:id="@+id/textInputLayoutTitle"
             style="@style/TextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -52,7 +52,7 @@
             android:layout_height="wrap_content">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/description"
+                android:id="@+id/textDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/add_new_label_description"
@@ -62,7 +62,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <LinearLayout
-            android:id="@+id/root_color"
+            android:id="@+id/rootColor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?attr/selectableItemBackground"
@@ -76,7 +76,7 @@
                 android:text="@string/add_new_label_color" />
 
             <ImageView
-                android:id="@+id/image_color"
+                android:id="@+id/imageColor"
                 android:layout_width="96dp"
                 android:layout_height="96dp"
                 android:contentDescription="@null"

@@ -5,8 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import butterknife.BindView
-import butterknife.ButterKnife
+import com.commit451.addendum.recyclerview.bindView
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.api.Milestone
 import com.commit451.gitlab.util.DateUtil
@@ -25,14 +24,8 @@ class MilestoneViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
     }
 
-    @BindView(R.id.title)
-    lateinit var textTitle: TextView
-    @BindView(R.id.due_date)
-    lateinit var textDueDate: TextView
-
-    init {
-        ButterKnife.bind(this, view)
-    }
+    private val textTitle: TextView by bindView(R.id.title)
+    private val textDueDate: TextView by bindView(R.id.due_date)
 
     fun bind(milestone: Milestone) {
         textTitle.text = milestone.title

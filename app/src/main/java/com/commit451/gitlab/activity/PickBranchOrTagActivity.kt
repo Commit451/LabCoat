@@ -3,16 +3,11 @@ package com.commit451.gitlab.activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import com.google.android.material.tabs.TabLayout
-import androidx.viewpager.widget.ViewPager
 import androidx.appcompat.app.AppCompatActivity
-import butterknife.BindView
-import butterknife.ButterKnife
-import butterknife.OnClick
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.PickBranchOrTagPagerAdapter
 import com.commit451.gitlab.model.Ref
-
+import kotlinx.android.synthetic.main.activity_pick_branch_or_tag.*
 
 /**
  * Intermediate activity when deep linking to another activity and things need to load
@@ -34,20 +29,9 @@ class PickBranchOrTagActivity : AppCompatActivity() {
         }
     }
 
-    @BindView(R.id.tabs)
-    lateinit var tabLayout: TabLayout
-    @BindView(R.id.pager)
-    lateinit var viewPager: ViewPager
-
-    @OnClick(R.id.root)
-    fun onRootClicked() {
-        finish()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pick_branch_or_tag)
-        ButterKnife.bind(this)
         val projectId = intent.getLongExtra(EXTRA_PROJECT_ID, -1)
         val currentRef = intent.getParcelableExtra<Ref>(EXTRA_CURRENT_REF)
         viewPager.adapter = PickBranchOrTagPagerAdapter(this, supportFragmentManager, projectId, currentRef)
@@ -56,6 +40,9 @@ class PickBranchOrTagActivity : AppCompatActivity() {
             val position = if (currentRef.type == Ref.TYPE_BRANCH) 0 else 1
             tabLayout.getTabAt(position)!!.select()
             viewPager.currentItem = position
+        }
+        root.setOnClickListener {
+            finish()
         }
     }
 

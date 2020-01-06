@@ -7,16 +7,14 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.ViewAnimationUtils
-import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
-import butterknife.BindView
-import butterknife.ButterKnife
-import butterknife.OnClick
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.extension.toPart
 import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Project
+import kotlinx.android.synthetic.main.activity_attach.*
+import kotlinx.android.synthetic.main.progress.*
 import pl.aprilapps.easyphotopicker.DefaultCallback
 import pl.aprilapps.easyphotopicker.EasyImage
 import timber.log.Timber
@@ -40,40 +38,24 @@ class AttachActivity : BaseActivity() {
         }
     }
 
-    @BindView(R.id.root_buttons)
-    lateinit var rootButtons: ViewGroup
-    @BindView(R.id.progress)
-    lateinit var progress: View
-    @BindView(R.id.attachCard)
-    lateinit var card: View
-
-    var project: Project? = null
-
-    @OnClick(R.id.root)
-    fun onRootClicked() {
-        onBackPressed()
-    }
-
-    @OnClick(R.id.button_choose_photo)
-    fun onChoosePhotoClicked() {
-        EasyImage.openGallery(this, 0)
-    }
-
-    @OnClick(R.id.button_take_photo)
-    fun onTakePhotoClicked() {
-        EasyImage.openCameraForImage(this, 0)
-    }
-
-    @OnClick(R.id.button_choose_file)
-    fun onChooseFileClicked() {
-        EasyImage.openChooserWithDocuments(this, "Choose file", 0)
-    }
+    private var project: Project? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_attach)
-        ButterKnife.bind(this)
 
+        root.setOnClickListener {
+            onBackPressed()
+        }
+        buttonTakePhoto.setOnClickListener {
+            EasyImage.openCameraForImage(this, 0)
+        }
+        buttonChoosePhoto.setOnClickListener {
+            EasyImage.openGallery(this, 0)
+        }
+        buttonChooseFile.setOnClickListener {
+            EasyImage.openChooserWithDocuments(this, "Choose file", 0)
+        }
         reveal()
 
         project = intent.getParcelableExtra(KEY_PROJECT)
@@ -105,7 +87,7 @@ class AttachActivity : BaseActivity() {
         overridePendingTransition(R.anim.do_nothing, R.anim.fade_out)
     }
 
-    fun reveal() {
+    private fun reveal() {
         //Run the runnable after the view has been measured
         card.post {
             //we need the radius of the animation circle, which is the diagonal of the view

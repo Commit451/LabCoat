@@ -8,12 +8,8 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
-import androidx.viewpager.widget.ViewPager
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.commit451.addendum.extraOrNull
 import com.commit451.alakazam.fadeOut
 import com.commit451.gitlab.App
@@ -29,8 +25,9 @@ import com.commit451.gitlab.navigation.DeepLinker
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.util.IntentUtil
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.tabs.TabLayout
 import io.reactivex.Single
+import kotlinx.android.synthetic.main.activity_project.*
+import kotlinx.android.synthetic.main.progress_fullscreen.*
 import timber.log.Timber
 
 class ProjectActivity : BaseActivity() {
@@ -69,19 +66,8 @@ class ProjectActivity : BaseActivity() {
         }
     }
 
-    @BindView(R.id.root)
-    lateinit var root: ViewGroup
-    @BindView(R.id.toolbar)
-    lateinit var toolbar: Toolbar
-    @BindView(R.id.tabs)
-    lateinit var tabLayout: TabLayout
-    @BindView(R.id.progress)
-    lateinit var progress: View
-    @BindView(R.id.pager)
-    lateinit var viewPager: ViewPager
-
     var project: Project? = null
-    var ref: Ref? = null
+    private var ref: Ref? = null
 
     private var adapter: ProjectPagerAdapter? = null
 
@@ -129,7 +115,6 @@ class ProjectActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         Prefs.startingView = Prefs.STARTING_VIEW_PROJECTS
         setContentView(R.layout.activity_project)
-        ButterKnife.bind(this)
         var project: Project? = intent.getParcelableExtra(EXTRA_PROJECT)
 
         if (savedInstanceState != null) {
@@ -144,13 +129,17 @@ class ProjectActivity : BaseActivity() {
         if (project == null) {
             val projectId = intent.getStringExtra(EXTRA_PROJECT_ID)
             val projectNamespace = intent.getStringExtra(EXTRA_PROJECT_NAMESPACE)
-            if (projectId != null) {
-                loadProject(projectId)
-            } else if (projectNamespace != null) {
-                val projectName = intent.getStringExtra(EXTRA_PROJECT_NAME)
-                loadProject(projectNamespace, projectName)
-            } else {
-                throw IllegalStateException("You did something wrong and now we don't know what project to load. :(")
+            when {
+                projectId != null -> {
+                    loadProject(projectId)
+                }
+                projectNamespace != null -> {
+                    val projectName = intent.getStringExtra(EXTRA_PROJECT_NAME)!!
+                    loadProject(projectNamespace, projectName)
+                }
+                else -> {
+                    throw IllegalStateException("You did something wrong and now we don't know what project to load. :(")
+                }
             }
         } else {
             bindProject(project)
@@ -174,7 +163,7 @@ class ProjectActivity : BaseActivity() {
     }
 
     override fun onBackPressed() {
-        val fragment = supportFragmentManager.findFragmentByTag("android:switcher:" + R.id.pager + ":" + viewPager.currentItem)
+        val fragment = supportFragmentManager.findFragmentByTag("android:switcher:" + R.id.viewPager + ":" + viewPager.currentItem)
         if (fragment is BaseFragment) {
             if (fragment.onBackPressed()) {
                 return

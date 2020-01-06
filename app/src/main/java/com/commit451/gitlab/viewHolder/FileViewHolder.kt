@@ -7,8 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
-import butterknife.BindView
-import butterknife.ButterKnife
+import com.commit451.addendum.recyclerview.bindView
 import com.commit451.gitlab.R
 import com.commit451.gitlab.extension.getDrawableForType
 import com.commit451.gitlab.model.api.RepositoryTreeObject
@@ -27,18 +26,13 @@ class FileViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
     }
 
-    @BindView(R.id.file_title)
-    lateinit var textTitle: TextView
-    @BindView(R.id.file_image)
-    lateinit var image: ImageView
-    @BindView(R.id.file_more)
-    lateinit var buttonMore: ImageView
+    private val textTitle: TextView by bindView(R.id.file_title)
+    private val image: ImageView by bindView(R.id.file_image)
+    private val buttonMore: ImageView by bindView(R.id.file_more)
 
     val popupMenu: PopupMenu
 
     init {
-        ButterKnife.bind(this, view)
-
         popupMenu = PopupMenu(itemView.context, buttonMore)
         popupMenu.menuInflater.inflate(R.menu.item_menu_file, popupMenu.menu)
 

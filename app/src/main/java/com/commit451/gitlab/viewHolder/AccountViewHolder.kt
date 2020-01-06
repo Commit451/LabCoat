@@ -7,10 +7,9 @@ import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import butterknife.BindView
-import butterknife.ButterKnife
 import coil.api.load
 import coil.transform.CircleCropTransformation
+import com.commit451.addendum.recyclerview.bindView
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.Account
 import com.commit451.gitlab.util.ImageUtil
@@ -29,20 +28,14 @@ class AccountViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
     }
 
-    @BindView(R.id.account_image)
-    lateinit var image: ImageView
-    @BindView(R.id.account_username)
-    lateinit var textUsername: TextView
-    @BindView(R.id.account_server)
-    lateinit var textServer: TextView
-    @BindView(R.id.account_more)
-    lateinit var buttonMore: View
+    private val image: ImageView by bindView(R.id.account_image)
+    private val textUsername: TextView by bindView(R.id.account_username)
+    private val textServer: TextView by bindView(R.id.account_server)
+    private val buttonMore: View by bindView(R.id.account_more)
 
     val popupMenu: PopupMenu
 
     init {
-        ButterKnife.bind(this, view)
-
         popupMenu = PopupMenu(itemView.context, buttonMore)
         popupMenu.menuInflater.inflate(R.menu.logout, popupMenu.menu)
 

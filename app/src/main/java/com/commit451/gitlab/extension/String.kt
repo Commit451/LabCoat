@@ -6,6 +6,7 @@ import android.text.Spanned
 import android.util.Base64
 import com.commit451.gitlab.model.Account
 import io.reactivex.Single
+import java.util.*
 
 fun String.base64Decode(): Single<ByteArray> {
     return Single.fromCallable {
@@ -30,4 +31,8 @@ fun String.resolveUrl(account: Account): String {
         return account.serverUrl + this.replaceFirst("/", "")
     }
     return this
+}
+
+fun String.toLowercaseRoot(): String {
+    return toLowerCase(Locale.ROOT)
 }

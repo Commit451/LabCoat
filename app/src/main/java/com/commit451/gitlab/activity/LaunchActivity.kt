@@ -5,10 +5,7 @@ import android.app.KeyguardManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.ViewGroup
 import android.widget.Toast
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.commit451.gitlab.R
 import com.commit451.gitlab.data.Prefs
 import com.commit451.gitlab.extension.with
@@ -26,13 +23,9 @@ class LaunchActivity : BaseActivity() {
         private const val REQUEST_DEVICE_AUTH = 123
     }
 
-    @BindView(R.id.root)
-    lateinit var root: ViewGroup
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_launch)
-        ButterKnife.bind(this)
         figureOutWhatToDo()
     }
 

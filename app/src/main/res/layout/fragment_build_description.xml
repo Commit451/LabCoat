@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <com.commit451.gitlab.view.LabCoatSwipeRefreshLayout
-        android:id="@+id/swipe_layout"
+        android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -31,7 +31,7 @@
                         android:padding="8dp">
 
                         <TextView
-                            android:id="@+id/text_pipeline"
+                            android:id="@+id/textPipeline"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="16dp"
@@ -41,7 +41,7 @@
                             tools:text="Pipeline: #123" />
 
                         <TextView
-                            android:id="@+id/text_stage"
+                            android:id="@+id/textStage"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="16dp"
@@ -51,7 +51,7 @@
                             tools:text="Stage: build" />
 
                         <TextView
-                            android:id="@+id/text_name"
+                            android:id="@+id/textName"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="16dp"
@@ -61,7 +61,7 @@
                             tools:text="Name: build" />
 
                         <TextView
-                            android:id="@+id/text_status"
+                            android:id="@+id/textStatus"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="16dp"
@@ -71,7 +71,7 @@
                             tools:text="Status: success" />
 
                         <TextView
-                            android:id="@+id/text_duration"
+                            android:id="@+id/textDuration"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="16dp"
@@ -81,7 +81,7 @@
                             tools:text="Duration: 46 minutes" />
 
                         <TextView
-                            android:id="@+id/text_created"
+                            android:id="@+id/textCreated"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="16dp"
@@ -91,7 +91,7 @@
                             tools:text="Created: 46 minutes ago" />
 
                         <TextView
-                            android:id="@+id/text_finished"
+                            android:id="@+id/textFinished"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="16dp"
@@ -101,7 +101,7 @@
                             tools:text="Finished: 46 minutes ago" />
 
                         <TextView
-                            android:id="@+id/text_runner"
+                            android:id="@+id/textRunner"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="16dp"
@@ -135,7 +135,7 @@
                             android:textAppearance="?android:attr/textAppearanceLarge" />
 
                         <TextView
-                            android:id="@+id/text_ref"
+                            android:id="@+id/textRef"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="16dp"
@@ -145,7 +145,7 @@
                             tools:text="Ref: master" />
 
                         <TextView
-                            android:id="@+id/text_author"
+                            android:id="@+id/textAuthor"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="16dp"
@@ -155,7 +155,7 @@
                             tools:text="Finished: 46 minutes ago" />
 
                         <TextView
-                            android:id="@+id/text_message"
+                            android:id="@+id/textMessage"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="16dp"

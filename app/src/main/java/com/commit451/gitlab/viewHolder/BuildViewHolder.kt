@@ -5,8 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import butterknife.BindView
-import butterknife.ButterKnife
+import com.commit451.addendum.recyclerview.bindView
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.api.Build
 import com.commit451.gitlab.util.DateUtil
@@ -26,18 +25,10 @@ class BuildViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
     }
 
-    @BindView(R.id.name)
-    lateinit var textBuildName: TextView
-    @BindView(R.id.number)
-    lateinit var textBuildNumber: TextView
-    @BindView(R.id.status)
-    lateinit var textStatus: TextView
-    @BindView(R.id.duration)
-    lateinit var textDuration: TextView
-
-    init {
-        ButterKnife.bind(this, view)
-    }
+    private val textBuildName: TextView by bindView(R.id.name)
+    private val textBuildNumber: TextView by bindView(R.id.number)
+    private val textStatus: TextView by bindView(R.id.status)
+    private val textDuration: TextView by bindView(R.id.duration)
 
     fun bind(build: Build) {
         val buildNameText = String.format(itemView.resources.getString(R.string.build_name), build.name)

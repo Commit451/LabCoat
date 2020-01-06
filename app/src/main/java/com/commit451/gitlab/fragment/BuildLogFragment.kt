@@ -4,11 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.core.widget.NestedScrollView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import butterknife.BindView
-import butterknife.OnClick
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.event.BuildChangedEvent
@@ -16,13 +11,14 @@ import com.commit451.gitlab.extension.getRawBuildUrl
 import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Build
 import com.commit451.gitlab.model.api.Project
+import kotlinx.android.synthetic.main.fragment_build_log.*
 import org.greenrobot.eventbus.Subscribe
 import timber.log.Timber
 
 /**
  * Shows the build log
  */
-class BuildLogFragment : ButterKnifeFragment() {
+class BuildLogFragment : BaseFragment() {
 
     companion object {
 
@@ -39,27 +35,8 @@ class BuildLogFragment : ButterKnifeFragment() {
         }
     }
 
-    @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.scrollView)
-    lateinit var scrollView: NestedScrollView
-    @BindView(R.id.log)
-    lateinit var textLog: TextView
-    @BindView(R.id.message_text)
-    lateinit var textMessage: TextView
-
-    lateinit var project: Project
-    lateinit var build: Build
-
-    @OnClick(R.id.buttonBottom)
-    fun onBottomClicked() {
-        scrollView.smoothScrollTo(0, Int.MAX_VALUE)
-    }
-
-    @OnClick(R.id.buttonTop)
-    fun onTopClicked() {
-        scrollView.smoothScrollTo(0, 0)
-    }
+    private lateinit var project: Project
+    private lateinit var build: Build
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,6 +51,12 @@ class BuildLogFragment : ButterKnifeFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        buttonTop.setOnClickListener {
+            scrollView.smoothScrollTo(0, 0)
+        }
+        buttonBottom.setOnClickListener {
+            scrollView.smoothScrollTo(0, Int.MAX_VALUE)
+        }
         swipeRefreshLayout.setOnRefreshListener { loadData() }
         loadData()
         App.bus().register(this)

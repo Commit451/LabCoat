@@ -6,10 +6,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import butterknife.BindView
-import butterknife.ButterKnife
 import coil.api.load
 import coil.transform.CircleCropTransformation
+import com.commit451.addendum.recyclerview.bindView
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.api.Todo
 import com.commit451.gitlab.util.DateUtil
@@ -29,18 +28,10 @@ class TodoViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
     }
 
-    @BindView(R.id.text_project)
-    lateinit var textProject: TextView
-    @BindView(R.id.issue_image)
-    internal lateinit var image: ImageView
-    @BindView(R.id.issue_message)
-    internal lateinit var textMessage: TextView
-    @BindView(R.id.issue_creator)
-    internal lateinit var textCreator: TextView
-
-    init {
-        ButterKnife.bind(this, view)
-    }
+    private val textProject: TextView by bindView(R.id.text_project)
+    private val image: ImageView by bindView(R.id.issue_image)
+    private val textMessage: TextView by bindView(R.id.issue_message)
+    private val textCreator: TextView by bindView(R.id.issue_creator)
 
     fun bind(todo: Todo) {
         textProject.text = todo.project!!.nameWithNamespace

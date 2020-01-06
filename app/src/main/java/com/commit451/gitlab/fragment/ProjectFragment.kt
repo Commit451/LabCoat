@@ -4,11 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import butterknife.BindView
-import butterknife.OnClick
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.ProjectActivity
@@ -20,6 +16,7 @@ import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.util.InternalLinkMovementMethod
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.Single
+import kotlinx.android.synthetic.main.fragment_project.*
 import org.greenrobot.eventbus.Subscribe
 import timber.log.Timber
 import java.util.*
@@ -27,7 +24,7 @@ import java.util.*
 /**
  * Shows the overview of the project
  */
-class ProjectFragment : ButterKnifeFragment() {
+class ProjectFragment : BaseFragment() {
 
     companion object {
 
@@ -42,76 +39,8 @@ class ProjectFragment : ButterKnifeFragment() {
         }
     }
 
-    @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.creator)
-    lateinit var textCreator: TextView
-    @BindView(R.id.star_count)
-    lateinit var textStarCount: TextView
-    @BindView(R.id.forks_count)
-    lateinit var textForksCount: TextView
-    @BindView(R.id.overview_text)
-    lateinit var textOverview: TextView
-
-    var project: Project? = null
-    var branchName: String? = null
-
-    @OnClick(R.id.creator)
-    fun onCreatorClick() {
-        val project = project
-        if (project != null) {
-            val owner = project.owner
-            if (owner != null) {
-                Navigator.navigateToUser(baseActivty, owner)
-            } else {
-                Navigator.navigateToGroup(baseActivty, project.namespace!!.id)
-            }
-        }
-    }
-
-    @OnClick(R.id.root_fork)
-    fun onForkClicked() {
-        project?.let { project ->
-            AlertDialog.Builder(baseActivty)
-                    .setTitle(R.string.project_fork_title)
-                    .setMessage(R.string.project_fork_message)
-                    .setNegativeButton(R.string.cancel, null)
-                    .setPositiveButton(R.string.ok) { _, _ ->
-                        App.get().gitLab.forkProject(project.id)
-                                .with(this)
-                                .subscribe({
-                                    Snackbar.make(swipeRefreshLayout, R.string.project_forked, Snackbar.LENGTH_SHORT)
-                                            .show()
-                                }, {
-                                    Timber.e(it)
-                                    Snackbar.make(swipeRefreshLayout, R.string.fork_failed, Snackbar.LENGTH_SHORT)
-                                            .show()
-                                })
-                    }
-                    .show()
-        }
-    }
-
-    @OnClick(R.id.root_star)
-    fun onStarClicked() {
-        if (project != null) {
-            App.get().gitLab.starProject(project!!.id)
-                    .with(this)
-                    .subscribe({
-                        if (it.raw().code == 304) {
-                            Snackbar.make(swipeRefreshLayout, R.string.project_already_starred, Snackbar.LENGTH_LONG)
-                                    .setAction(R.string.project_unstar) { unstarProject() }
-                                    .show()
-                        } else {
-                            Snackbar.make(swipeRefreshLayout, R.string.project_starred, Snackbar.LENGTH_SHORT)
-                                    .show()
-                        }
-                    }, {
-                        Snackbar.make(swipeRefreshLayout, R.string.project_star_failed, Snackbar.LENGTH_SHORT)
-                                .show()
-                    })
-        }
-    }
+    private var project: Project? = null
+    private var branchName: String? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_project, container, false)
@@ -126,6 +55,57 @@ class ProjectFragment : ButterKnifeFragment() {
 
         swipeRefreshLayout.setOnRefreshListener { loadData() }
 
+        rootStar.setOnClickListener {
+            if (project != null) {
+                App.get().gitLab.starProject(project!!.id)
+                        .with(this)
+                        .subscribe({
+                            if (it.raw().code == 304) {
+                                Snackbar.make(swipeRefreshLayout, R.string.project_already_starred, Snackbar.LENGTH_LONG)
+                                        .setAction(R.string.project_unstar) { unstarProject() }
+                                        .show()
+                            } else {
+                                Snackbar.make(swipeRefreshLayout, R.string.project_starred, Snackbar.LENGTH_SHORT)
+                                        .show()
+                            }
+                        }, {
+                            Snackbar.make(swipeRefreshLayout, R.string.project_star_failed, Snackbar.LENGTH_SHORT)
+                                    .show()
+                        })
+            }
+        }
+        rootFork.setOnClickListener {
+            project?.let { project ->
+                AlertDialog.Builder(baseActivty)
+                        .setTitle(R.string.project_fork_title)
+                        .setMessage(R.string.project_fork_message)
+                        .setNegativeButton(R.string.cancel, null)
+                        .setPositiveButton(R.string.ok) { _, _ ->
+                            App.get().gitLab.forkProject(project.id)
+                                    .with(this)
+                                    .subscribe({
+                                        Snackbar.make(swipeRefreshLayout, R.string.project_forked, Snackbar.LENGTH_SHORT)
+                                                .show()
+                                    }, {
+                                        Timber.e(it)
+                                        Snackbar.make(swipeRefreshLayout, R.string.fork_failed, Snackbar.LENGTH_SHORT)
+                                                .show()
+                                    })
+                        }
+                        .show()
+            }
+        }
+        textCreator.setOnClickListener {
+            val project = project
+            if (project != null) {
+                val owner = project.owner
+                if (owner != null) {
+                    Navigator.navigateToUser(baseActivty, owner)
+                } else {
+                    Navigator.navigateToGroup(baseActivty, project.namespace!!.id)
+                }
+            }
+        }
         if (activity is ProjectActivity) {
             project = (activity as ProjectActivity).project
             branchName = (activity as ProjectActivity).getRefRef()

@@ -5,15 +5,9 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.textfield.TextInputLayout
-import androidx.appcompat.widget.Toolbar
 import android.text.method.LinkMovementMethod
 import android.view.View
 import android.widget.TextView
-import butterknife.BindView
-import butterknife.ButterKnife
-import butterknife.OnClick
 import com.afollestad.materialdialogs.MaterialDialog
 import com.commit451.gitlab.App
 import com.commit451.gitlab.BuildConfig
@@ -39,8 +33,10 @@ import com.commit451.gitlab.ssl.X509CertificateException
 import com.commit451.gitlab.ssl.X509Util
 import com.commit451.gitlab.util.IntentUtil
 import com.commit451.teleprinter.Teleprinter
+import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.activity_login.*
+import kotlinx.android.synthetic.main.progress_fullscreen.*
 import okhttp3.Credentials
-import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -71,47 +67,12 @@ class LoginActivity : BaseActivity() {
         }
     }
 
-    @BindView(R.id.root)
-    lateinit var root: View
-    @BindView(R.id.toolbar)
-    lateinit var toolbar: Toolbar
-    @BindView(R.id.text_input_layout_server)
-    lateinit var textInputLayoutUrl: TextInputLayout
-    @BindView(R.id.token_hint)
-    lateinit var textInputLayoutToken: TextInputLayout
-    @BindView(R.id.token_input)
-    lateinit var textToken: TextView
-    @BindView(R.id.progress)
-    lateinit var progress: View
+    private lateinit var teleprinter: Teleprinter
 
-    lateinit var teleprinter: Teleprinter
+    private var currentAccount: Account = Account()
+    private var currentGitLab: GitLab? = null
 
-    var currentAccount: Account = Account()
-    var currentGitLab: GitLab? = null
-
-    @OnClick(R.id.button_info)
-    fun onInfoClicked() {
-        MaterialDialog.Builder(this)
-                .title(R.string.access_token_info_title)
-                .content(R.string.access_token_info_message)
-                .positiveText(R.string.create_personal_access_token)
-                .onPositive { _, _ ->
-                    val validUrl = verifyUrl()
-                    if (validUrl) {
-                        val url = textInputLayoutUrl.text()
-                        val accessTokenUrl = "$url/profile/personal_access_tokens"
-                        IntentUtil.openPage(this, accessTokenUrl)
-                    } else {
-                        Snackbar.make(root, R.string.not_a_valid_url, Snackbar.LENGTH_SHORT)
-                                .show()
-                    }
-                }
-                .negativeText(R.string.cancel)
-                .show()
-    }
-
-    @OnClick(R.id.login_button)
-    fun onLoginClick() {
+    private fun onLoginClick() {
         teleprinter.hideKeyboard()
 
         if (!textInputLayoutUrl.checkValid()) {
@@ -126,7 +87,7 @@ class LoginActivity : BaseActivity() {
         if (!textInputLayoutToken.checkValid()) {
             return
         }
-        if (!tokenPattern.matcher(textToken.text).matches()) {
+        if (!tokenPattern.matcher(textToken.text!!).matches()) {
             textInputLayoutToken.error = getString(R.string.not_a_valid_private_token)
             return
         } else {
@@ -149,7 +110,28 @@ class LoginActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-        ButterKnife.bind(this)
+        buttonLogin.setOnClickListener {
+            onLoginClick()
+        }
+        buttonInfo.setOnClickListener {
+            MaterialDialog.Builder(this)
+                    .title(R.string.access_token_info_title)
+                    .content(R.string.access_token_info_message)
+                    .positiveText(R.string.create_personal_access_token)
+                    .onPositive { _, _ ->
+                        val validUrl = verifyUrl()
+                        if (validUrl) {
+                            val url = textInputLayoutUrl.text()
+                            val accessTokenUrl = "$url/profile/personal_access_tokens"
+                            IntentUtil.openPage(this, accessTokenUrl)
+                        } else {
+                            Snackbar.make(root, R.string.not_a_valid_url, Snackbar.LENGTH_SHORT)
+                                    .show()
+                        }
+                    }
+                    .negativeText(R.string.cancel)
+                    .show()
+        }
 
         teleprinter = Teleprinter(this)
         val showClose = intent.getBooleanExtra(KEY_SHOW_CLOSE, false)

@@ -5,22 +5,20 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Html
 import android.view.View
-import android.view.ViewGroup
 import android.webkit.MimeTypeMap
-import android.webkit.WebView
-import androidx.appcompat.widget.Toolbar
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.commit451.addendum.extra
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.extension.base64Decode
 import com.commit451.gitlab.extension.getUrl
+import com.commit451.gitlab.extension.toLowercaseRoot
 import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.model.api.RepositoryFile
 import com.commit451.gitlab.util.IntentUtil
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.activity_file.*
+import kotlinx.android.synthetic.main.progress_fullscreen.*
 import timber.log.Timber
 import java.nio.charset.Charset
 
@@ -51,15 +49,6 @@ class FileActivity : BaseActivity() {
         }
     }
 
-    @BindView(R.id.root)
-    lateinit var root: ViewGroup
-    @BindView(R.id.toolbar)
-    lateinit var toolbar: Toolbar
-    @BindView(R.id.file_blob)
-    lateinit var webViewFileBlob: WebView
-    @BindView(R.id.progress)
-    lateinit var progress: View
-
     private val project by extra<Project>(KEY_PROJECT)
     private val path by extra<String>(KEY_PATH)
     private val branch by extra<String>(KEY_BRANCH)
@@ -70,13 +59,12 @@ class FileActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_file)
-        ButterKnife.bind(this)
 
         toolbar.setNavigationIcon(R.drawable.ic_back_24dp)
         toolbar.setNavigationOnClickListener { onBackPressed() }
         toolbar.inflateMenu(R.menu.browser)
         toolbar.setOnMenuItemClickListener {
-            when(it.itemId) {
+            when (it.itemId) {
                 R.id.action_browser -> {
                     openInBrowser()
                 }
@@ -140,7 +128,7 @@ class FileActivity : BaseActivity() {
         val extension = fileExtension(fileName!!)
         mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
         if (mimeType != null) {
-            mimeType = mimeType.toLowerCase()
+            mimeType = mimeType.toLowercaseRoot()
         }
 
         if (mimeType != null && mimeType.startsWith("image/")) {
@@ -175,7 +163,7 @@ class FileActivity : BaseActivity() {
     }
 
     private fun openInBrowser() {
-        repositoryFile?.let {file->
+        repositoryFile?.let { file ->
             IntentUtil.openPage(this, file.getUrl(project, branch, path), App.get().currentAccount)
         }
     }

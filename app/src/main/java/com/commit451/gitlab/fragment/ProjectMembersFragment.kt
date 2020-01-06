@@ -5,13 +5,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import butterknife.BindView
-import butterknife.OnClick
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.ProjectActivity
@@ -27,14 +23,14 @@ import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
 import com.commit451.gitlab.viewHolder.ProjectMemberViewHolder
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.Single
+import kotlinx.android.synthetic.main.fragment_members.*
 import org.greenrobot.eventbus.Subscribe
 import retrofit2.Response
 import timber.log.Timber
 
-class ProjectMembersFragment : ButterKnifeFragment() {
+class ProjectMembersFragment : BaseFragment() {
 
     companion object {
 
@@ -43,26 +39,15 @@ class ProjectMembersFragment : ButterKnifeFragment() {
         }
     }
 
-    @BindView(R.id.root)
-    lateinit var root: View
-    @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.list)
-    lateinit var listMembers: RecyclerView
-    @BindView(R.id.message_text)
-    lateinit var textMessage: TextView
-    @BindView(R.id.add_user_button)
-    lateinit var buttonAddUser: FloatingActionButton
+    private lateinit var adapterProjectMembers: ProjectMembersAdapter
+    private lateinit var layoutManagerMembers: GridLayoutManager
 
-    lateinit var adapterProjectMembers: ProjectMembersAdapter
-    lateinit var layoutManagerMembers: GridLayoutManager
+    private var project: Project? = null
+    private var member: User? = null
+    private var nextPageUrl: Uri? = null
+    private var loading = false
 
-    var project: Project? = null
-    var member: User? = null
-    var nextPageUrl: Uri? = null
-    var loading = false
-
-    val onScrollListener = object : RecyclerView.OnScrollListener() {
+    private val onScrollListener = object : RecyclerView.OnScrollListener() {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
             val visibleItemCount = layoutManagerMembers.childCount
@@ -74,11 +59,6 @@ class ProjectMembersFragment : ButterKnifeFragment() {
         }
     }
 
-    @OnClick(R.id.add_user_button)
-    fun onAddUserClick(fab: View) {
-        Navigator.navigateToAddProjectMember(baseActivty, fab, project!!.id)
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_members, container, false)
     }
@@ -88,6 +68,9 @@ class ProjectMembersFragment : ButterKnifeFragment() {
 
         App.bus().register(this)
 
+        buttonAddUser.setOnClickListener {
+            Navigator.navigateToAddProjectMember(baseActivty, buttonAddUser, project!!.id)
+        }
         adapterProjectMembers = ProjectMembersAdapter(object : ProjectMembersAdapter.Listener {
             override fun onProjectMemberClicked(member: User, memberGroupViewHolder: ProjectMemberViewHolder) {
                 Navigator.navigateToUser(baseActivty, memberGroupViewHolder.image, member)

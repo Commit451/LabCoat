@@ -4,11 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
-import androidx.viewpager.widget.ViewPager
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.MergeRequestSectionsPagerAdapter
@@ -18,7 +14,8 @@ import com.commit451.gitlab.model.api.MergeRequest
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.tabs.TabLayout
+import kotlinx.android.synthetic.main.activity_merge_request.*
+import kotlinx.android.synthetic.main.progress_fullscreen.*
 import retrofit2.HttpException
 import timber.log.Timber
 
@@ -40,24 +37,12 @@ class MergeRequestActivity : BaseActivity() {
         }
     }
 
-    @BindView(R.id.root)
-    lateinit var root: ViewGroup
-    @BindView(R.id.toolbar)
-    lateinit var toolbar: Toolbar
-    @BindView(R.id.tabs)
-    lateinit var tabLayout: TabLayout
-    @BindView(R.id.pager)
-    lateinit var viewPager: ViewPager
-    @BindView(R.id.progress)
-    lateinit var progress: View
-
-    lateinit var project: Project
-    lateinit var mergeRequest: MergeRequest
+    private lateinit var project: Project
+    private lateinit var mergeRequest: MergeRequest
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_merge_request)
-        ButterKnife.bind(this)
 
         project = intent.getParcelableExtra(KEY_PROJECT)!!
         mergeRequest = intent.getParcelableExtra(KEY_MERGE_REQUEST)!!

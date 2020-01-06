@@ -4,12 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-import butterknife.BindView
 import coil.api.load
 import coil.transform.CircleCropTransformation
-import com.commit451.adapterflowlayout.AdapterFlowLayout
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.IssueLabelsAdapter
@@ -21,12 +17,13 @@ import com.commit451.gitlab.util.DateUtil
 import com.commit451.gitlab.util.ImageUtil
 import com.commit451.gitlab.util.InternalLinkMovementMethod
 import com.commit451.gitlab.viewHolder.IssueLabelViewHolder
+import kotlinx.android.synthetic.main.fragment_issue_details.*
 import org.greenrobot.eventbus.Subscribe
 
 /**
  * Shows the discussion of an issue
  */
-class MergeRequestDetailsFragment : ButterKnifeFragment() {
+class MergeRequestDetailsFragment : BaseFragment() {
 
     companion object {
 
@@ -42,21 +39,6 @@ class MergeRequestDetailsFragment : ButterKnifeFragment() {
             return fragment
         }
     }
-
-    @BindView(R.id.root)
-    lateinit var root: ViewGroup
-    @BindView(R.id.text_description)
-    lateinit var textDescription: TextView
-    @BindView(R.id.author_image)
-    lateinit var imageAuthor: ImageView
-    @BindView(R.id.author)
-    lateinit var textAuthor: TextView
-    @BindView(R.id.milestone_root)
-    lateinit var rootMilestone: ViewGroup
-    @BindView(R.id.milestone_text)
-    lateinit var textMilestone: TextView
-    @BindView(R.id.list_labels)
-    lateinit var listLabels: AdapterFlowLayout
 
     lateinit var adapterLabels: IssueLabelsAdapter
 

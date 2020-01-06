@@ -6,8 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import butterknife.BindView
-import butterknife.ButterKnife
+import com.commit451.addendum.recyclerview.bindView
 import com.commit451.gitlab.R
 
 /**
@@ -24,14 +23,8 @@ class BreadcrumbViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
     }
 
-    @BindView(R.id.breadcrumb_text)
-    lateinit var textBreadcrumb: TextView
-    @BindView(R.id.breadcrumb_arrow)
-    lateinit var buttonArrow: ImageView
-
-    init {
-        ButterKnife.bind(this, view)
-    }
+    private val textBreadcrumb: TextView by bindView(R.id.breadcrumb_text)
+    private val buttonArrow: ImageView by bindView(R.id.breadcrumb_arrow)
 
     fun bind(breadcrumb: String, showArrow: Boolean) {
         textBreadcrumb.text = breadcrumb

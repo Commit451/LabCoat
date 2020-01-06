@@ -6,11 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.widget.ImageView
-import androidx.appcompat.widget.Toolbar
 import androidx.palette.graphics.Palette
-import butterknife.BindView
-import butterknife.ButterKnife
 import coil.api.load
 import com.commit451.addendum.themeAttrColor
 import com.commit451.alakazam.navigationBarColorAnimator
@@ -20,7 +16,7 @@ import com.commit451.gitlab.fragment.FeedFragment
 import com.commit451.gitlab.image.PaletteImageViewTarget
 import com.commit451.gitlab.model.api.User
 import com.commit451.gitlab.util.ImageUtil
-import com.google.android.material.appbar.CollapsingToolbarLayout
+import kotlinx.android.synthetic.main.activity_user.*
 
 /**
  * User activity, which shows the user!
@@ -38,19 +34,11 @@ class UserActivity : BaseActivity() {
         }
     }
 
-    @BindView(R.id.toolbar)
-    lateinit var toolbar: Toolbar
-    @BindView(R.id.collapsing_toolbar)
-    lateinit var collapsingToolbarLayout: CollapsingToolbarLayout
-    @BindView(R.id.backdrop)
-    lateinit var backdrop: ImageView
-
-    lateinit var user: User
+    private lateinit var user: User
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user)
-        ButterKnife.bind(this)
         user = intent.getParcelableExtra(KEY_USER)!!
 
         // Default content and scrim colors
@@ -85,7 +73,7 @@ class UserActivity : BaseActivity() {
         return true
     }
 
-    fun bindPalette(palette: Palette) {
+    private fun bindPalette(palette: Palette) {
         val animationTime = 1000
         val vibrantColor = palette.getVibrantColor(this.themeAttrColor(R.attr.colorPrimary))
         val darkerColor = this.themeAttrColor(vibrantColor)

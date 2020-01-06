@@ -4,9 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import butterknife.BindView
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.event.BuildChangedEvent
@@ -14,6 +11,7 @@ import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.*
 import com.commit451.gitlab.util.DateUtil
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.fragment_build_description.*
 import org.greenrobot.eventbus.Subscribe
 import timber.log.Timber
 import java.util.*
@@ -21,7 +19,7 @@ import java.util.*
 /**
  * Shows the details of a build
  */
-class BuildDescriptionFragment : ButterKnifeFragment() {
+class BuildDescriptionFragment : BaseFragment() {
 
     companion object {
 
@@ -38,35 +36,8 @@ class BuildDescriptionFragment : ButterKnifeFragment() {
         }
     }
 
-    @BindView(R.id.root)
-    lateinit var root: ViewGroup
-    @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.text_name)
-    lateinit var textName: TextView
-    @BindView(R.id.text_pipeline)
-    lateinit var textPipeline: TextView
-    @BindView(R.id.text_stage)
-    lateinit var textStage: TextView
-    @BindView(R.id.text_status)
-    lateinit var textStatus: TextView
-    @BindView(R.id.text_duration)
-    lateinit var textDuration: TextView
-    @BindView(R.id.text_created)
-    lateinit var textCreated: TextView
-    @BindView(R.id.text_finished)
-    lateinit var textFinished: TextView
-    @BindView(R.id.text_runner)
-    lateinit var textRunner: TextView
-    @BindView(R.id.text_ref)
-    lateinit var textRef: TextView
-    @BindView(R.id.text_author)
-    lateinit var textAuthor: TextView
-    @BindView(R.id.text_message)
-    lateinit var textMessage: TextView
-
-    lateinit var project: Project
-    lateinit var build: Build
+    private lateinit var project: Project
+    private lateinit var build: Build
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

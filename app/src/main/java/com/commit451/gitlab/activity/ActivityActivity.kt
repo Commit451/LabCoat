@@ -5,10 +5,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.core.view.GravityCompat
-import androidx.drawerlayout.widget.DrawerLayout
-import androidx.appcompat.widget.Toolbar
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.data.Prefs

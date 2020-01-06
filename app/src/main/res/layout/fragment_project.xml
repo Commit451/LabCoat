@@ -2,7 +2,7 @@
 <com.commit451.gitlab.view.LabCoatSwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/swipe_layout"
+    android:id="@+id/swipeRefreshLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -21,7 +21,7 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/creator"
+                    android:id="@+id/textCreator"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginRight="8dp"
@@ -34,7 +34,7 @@
                     tools:text="Created by Commit451" />
 
                 <LinearLayout
-                    android:id="@+id/root_star"
+                    android:id="@+id/rootStar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -49,7 +49,7 @@
                         app:srcCompat="@drawable/ic_star_24dp" />
 
                     <TextView
-                        android:id="@+id/star_count"
+                        android:id="@+id/textStarCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
@@ -61,7 +61,7 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/root_fork"
+                    android:id="@+id/rootFork"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -77,7 +77,7 @@
                         app:srcCompat="@drawable/ic_fork" />
 
                     <TextView
-                        android:id="@+id/forks_count"
+                        android:id="@+id/textForksCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
@@ -90,7 +90,7 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/overview_text"
+                android:id="@+id/textOverview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="16dp" />

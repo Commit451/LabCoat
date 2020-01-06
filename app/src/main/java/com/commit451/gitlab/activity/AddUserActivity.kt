@@ -5,32 +5,25 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
-import android.view.ViewGroup
-import android.widget.EditText
-import androidx.appcompat.widget.Toolbar
+import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import butterknife.BindView
-import butterknife.ButterKnife
-import butterknife.OnClick
-import butterknife.OnEditorAction
-import butterknife.OnTextChanged
+import com.commit451.addendum.design.snackbar
 import com.commit451.alakazam.fadeOut
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.UserAdapter
 import com.commit451.gitlab.dialog.AccessDialog
 import com.commit451.gitlab.event.MemberAddedEvent
+import com.commit451.gitlab.extension.mapResponseSuccess
+import com.commit451.gitlab.extension.mapResponseSuccessWithPaginationData
 import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Group
 import com.commit451.gitlab.model.api.User
-import com.commit451.gitlab.rx.CustomResponseSingleObserver
-import com.commit451.gitlab.util.LinkHeaderParser
 import com.commit451.gitlab.viewHolder.UserViewHolder
 import com.commit451.teleprinter.Teleprinter
-import com.google.android.material.snackbar.Snackbar
 import io.reactivex.Single
+import kotlinx.android.synthetic.main.activity_add_user.*
 import retrofit2.HttpException
 import retrofit2.Response
 import timber.log.Timber
@@ -58,63 +51,21 @@ class AddUserActivity : MorphActivity() {
         }
     }
 
-    @BindView(R.id.root)
-    lateinit var root: ViewGroup
-    @BindView(R.id.toolbar)
-    lateinit var toolbar: Toolbar
-    @BindView(R.id.search)
-    lateinit var textSearch: EditText
-    @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.list)
-    lateinit var list: RecyclerView
-    @BindView(R.id.clear)
-    lateinit var buttonClear: View
-
-    lateinit var layoutManager: GridLayoutManager
-    lateinit var adapter: UserAdapter
-    lateinit var dialogAccess: AccessDialog
+    private lateinit var layoutManager: GridLayoutManager
+    private lateinit var adapter: UserAdapter
+    private lateinit var dialogAccess: AccessDialog
     private lateinit var teleprinter: Teleprinter
 
-    var projectId: Long = 0
-    var group: Group? = null
-    var query: String? = null
-    var nextPageUrl: Uri? = null
-    var loading = false
-    var selectedUser: User? = null
-
-    @OnClick(R.id.clear)
-    fun onClearClick() {
-        buttonClear.animate().alpha(0.0f).withEndAction {
-            buttonClear.visibility = View.GONE
-            textSearch.text.clear()
-            teleprinter.showKeyboard(textSearch)
-        }
-    }
-
-    @OnEditorAction(R.id.search)
-    fun onEditorAction(): Boolean {
-        if (!textSearch.text.isNullOrEmpty()) {
-            query = textSearch.text.toString()
-            loadData()
-        }
-        return true
-    }
-
-    @OnTextChanged(R.id.search)
-    fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-        if (s.isEmpty()) {
-            buttonClear.fadeOut()
-        } else {
-            buttonClear.visibility = View.VISIBLE
-            buttonClear.animate().alpha(1.0f)
-        }
-    }
+    private var projectId: Long = 0
+    private var group: Group? = null
+    private var query: String? = null
+    private var nextPageUrl: Uri? = null
+    private var loading = false
+    private var selectedUser: User? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_user)
-        ButterKnife.bind(this)
         teleprinter = Teleprinter(this)
         projectId = intent.getLongExtra(KEY_PROJECT_ID, -1)
         group = intent.getParcelableExtra(KEY_GROUP)
@@ -157,6 +108,28 @@ class AddUserActivity : MorphActivity() {
 
         morph(root)
         textSearch.requestFocus()
+        textSearch.setOnEditorActionListener { _, _, _ ->
+            if (!textSearch.text.isNullOrEmpty()) {
+                query = textSearch.text.toString()
+                loadData()
+            }
+            true
+        }
+        textSearch.addTextChangedListener {
+            if (it.isNullOrBlank()) {
+                buttonClear.fadeOut()
+            } else {
+                buttonClear.visibility = View.VISIBLE
+                buttonClear.animate().alpha(1.0f)
+            }
+        }
+        buttonClear.setOnClickListener {
+            buttonClear.animate().alpha(0.0f).withEndAction {
+                buttonClear.visibility = View.GONE
+                textSearch.text.clear()
+                teleprinter.showKeyboard(textSearch)
+            }
+        }
     }
 
     private fun loadData() {
@@ -164,24 +137,19 @@ class AddUserActivity : MorphActivity() {
         swipeRefreshLayout.isRefreshing = true
         loading = true
         App.get().gitLab.searchUsers(query!!)
+                .mapResponseSuccessWithPaginationData()
                 .with(this)
-                .subscribe(object : CustomResponseSingleObserver<List<User>>() {
-
-                    override fun error(t: Throwable) {
-                        Timber.e(t)
-                        swipeRefreshLayout.isRefreshing = false
-                        loading = false
-                        Snackbar.make(root, getString(R.string.connection_error_users), Snackbar.LENGTH_SHORT)
-                                .show()
-                    }
-
-                    override fun responseNonNullSuccess(users: List<User>) {
-                        swipeRefreshLayout.isRefreshing = false
-                        loading = false
-                        adapter.setData(users)
-                        nextPageUrl = LinkHeaderParser.parse(response()).next
-                        Timber.d("Next page url is %s", nextPageUrl)
-                    }
+                .subscribe({
+                    swipeRefreshLayout.isRefreshing = false
+                    loading = false
+                    adapter.setData(it.body)
+                    nextPageUrl = it.paginationData.next
+                    Timber.d("Next page url is %s", nextPageUrl)
+                }, {
+                    Timber.e(it)
+                    swipeRefreshLayout.isRefreshing = false
+                    loading = false
+                    root.snackbar(getString(R.string.connection_error_users))
                 })
     }
 
@@ -190,46 +158,37 @@ class AddUserActivity : MorphActivity() {
         adapter.setLoading(true)
         Timber.d("loadMore " + nextPageUrl!!.toString() + " " + query)
         App.get().gitLab.searchUsers(nextPageUrl!!.toString(), query!!)
+                .mapResponseSuccessWithPaginationData()
                 .with(this)
-                .subscribe(object : CustomResponseSingleObserver<List<User>>() {
-
-                    override fun error(t: Throwable) {
-                        Timber.e(t)
-                        adapter.setLoading(false)
-                    }
-
-                    override fun responseNonNullSuccess(users: List<User>) {
-                        loading = false
-                        adapter.setLoading(false)
-                        adapter.addData(users)
-                        nextPageUrl = LinkHeaderParser.parse(response()).next
-                    }
+                .subscribe({
+                    loading = false
+                    adapter.setLoading(false)
+                    adapter.addData(it.body)
+                    nextPageUrl = it.paginationData.next
+                }, {
+                    Timber.e(it)
+                    adapter.setLoading(false)
                 })
     }
 
     private fun add(observable: Single<Response<User>>) {
-        observable.with(this)
-                .subscribe(object : CustomResponseSingleObserver<User>() {
-
-                    override fun error(t: Throwable) {
-                        Timber.e(t)
-                        var message = getString(R.string.error_failed_to_add_user)
-                        if (t is HttpException) {
-                            when (t.code()) {
-                                409 -> message = getString(R.string.error_user_conflict)
-                            }
+        observable
+                .mapResponseSuccess()
+                .with(this)
+                .subscribe({
+                    root.snackbar(R.string.user_added_successfully)
+                    dialogAccess.dismiss()
+                    dismiss()
+                    App.bus().post(MemberAddedEvent(it))
+                }, {
+                    Timber.e(it)
+                    var message = getString(R.string.error_failed_to_add_user)
+                    if (it is HttpException) {
+                        when (it.code()) {
+                            409 -> message = getString(R.string.error_user_conflict)
                         }
-                        Snackbar.make(root, message, Snackbar.LENGTH_SHORT)
-                                .show()
                     }
-
-                    override fun responseNonNullSuccess(member: User) {
-                        Snackbar.make(root, R.string.user_added_successfully, Snackbar.LENGTH_SHORT)
-                                .show()
-                        dialogAccess.dismiss()
-                        dismiss()
-                        App.bus().post(MemberAddedEvent(member))
-                    }
+                    root.snackbar(message)
                 })
     }
 }

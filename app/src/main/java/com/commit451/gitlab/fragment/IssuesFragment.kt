@@ -7,13 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Spinner
-import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import butterknife.BindView
-import butterknife.OnClick
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.ProjectActivity
@@ -30,10 +25,11 @@ import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.fragment_issues.*
 import org.greenrobot.eventbus.Subscribe
 import timber.log.Timber
 
-class IssuesFragment : ButterKnifeFragment() {
+class IssuesFragment : BaseFragment() {
 
     companion object {
 
@@ -42,27 +38,16 @@ class IssuesFragment : ButterKnifeFragment() {
         }
     }
 
-    @BindView(R.id.root)
-    lateinit var root: ViewGroup
-    @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.list)
-    lateinit var listIssues: RecyclerView
-    @BindView(R.id.message_text)
-    lateinit var textMessage: TextView
-    @BindView(R.id.issue_spinner)
-    lateinit var spinnerIssue: Spinner
+    private lateinit var adapterIssue: IssueAdapter
+    private lateinit var layoutManagerIssues: LinearLayoutManager
 
-    lateinit var adapterIssue: IssueAdapter
-    lateinit var layoutManagerIssues: LinearLayoutManager
+    private var project: Project? = null
+    private lateinit var state: String
+    private lateinit var states: Array<String>
+    private var nextPageUrl: Uri? = null
+    private var loading = false
 
-    var project: Project? = null
-    lateinit var state: String
-    lateinit var states: Array<String>
-    var nextPageUrl: Uri? = null
-    var loading = false
-
-    val onScrollListener = object : RecyclerView.OnScrollListener() {
+    private val onScrollListener = object : RecyclerView.OnScrollListener() {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
             val visibleItemCount = layoutManagerIssues.childCount
@@ -71,16 +56,6 @@ class IssuesFragment : ButterKnifeFragment() {
             if (firstVisibleItem + visibleItemCount >= totalItemCount && !loading && nextPageUrl != null) {
                 loadMore()
             }
-        }
-    }
-
-    @OnClick(R.id.add_issue_button)
-    fun onAddIssueClick(fab: View) {
-        if (project != null) {
-            Navigator.navigateToAddIssue(baseActivty, fab, project!!)
-        } else {
-            Snackbar.make(root, getString(R.string.wait_for_project_to_load), Snackbar.LENGTH_SHORT)
-                    .show()
         }
     }
 
@@ -99,6 +74,14 @@ class IssuesFragment : ButterKnifeFragment() {
 
         App.bus().register(this)
 
+        buttonAddIssue.setOnClickListener {
+            if (project != null) {
+                Navigator.navigateToAddIssue(baseActivty, buttonAddIssue, project!!)
+            } else {
+                Snackbar.make(root, getString(R.string.wait_for_project_to_load), Snackbar.LENGTH_SHORT)
+                        .show()
+            }
+        }
         adapterIssue = IssueAdapter(object : IssueAdapter.Listener {
             override fun onIssueClicked(issue: Issue) {
                 if (project != null) {

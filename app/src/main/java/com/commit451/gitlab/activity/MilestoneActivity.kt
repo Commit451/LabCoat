@@ -7,14 +7,9 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
-import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import butterknife.BindView
-import butterknife.ButterKnife
-import butterknife.OnClick
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.DividerItemDecoration
@@ -29,6 +24,8 @@ import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.Single
+import kotlinx.android.synthetic.main.activity_milestone.*
+import kotlinx.android.synthetic.main.progress_fullscreen.*
 import org.greenrobot.eventbus.Subscribe
 import timber.log.Timber
 
@@ -47,29 +44,16 @@ class MilestoneActivity : BaseActivity() {
         }
     }
 
-    @BindView(R.id.root)
-    lateinit var root: View
-    @BindView(R.id.toolbar)
-    lateinit var toolbar: Toolbar
-    @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.list)
-    lateinit var listIssues: RecyclerView
-    @BindView(R.id.message_text)
-    lateinit var textMessage: TextView
-    @BindView(R.id.progress)
-    lateinit var progress: View
+    private lateinit var adapterMilestoneIssues: MilestoneIssueAdapter
+    private lateinit var layoutManagerIssues: LinearLayoutManager
+    private lateinit var menuItemOpenClose: MenuItem
 
-    lateinit var adapterMilestoneIssues: MilestoneIssueAdapter
-    lateinit var layoutManagerIssues: LinearLayoutManager
-    lateinit var menuItemOpenClose: MenuItem
+    private lateinit var project: Project
+    private lateinit var milestone: Milestone
+    private var nextPageUrl: Uri? = null
+    private var loading = false
 
-    lateinit var project: Project
-    lateinit var milestone: Milestone
-    var nextPageUrl: Uri? = null
-    var loading = false
-
-    val onScrollListener = object : RecyclerView.OnScrollListener() {
+    private val onScrollListener = object : RecyclerView.OnScrollListener() {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
             val visibleItemCount = layoutManagerIssues.childCount
@@ -81,20 +65,9 @@ class MilestoneActivity : BaseActivity() {
         }
     }
 
-    @OnClick(R.id.add)
-    fun onAddClick(fab: View) {
-        Navigator.navigateToAddIssue(this@MilestoneActivity, fab, project)
-    }
-
-    @OnClick(R.id.edit)
-    fun onEditClicked(fab: View) {
-        Navigator.navigateToEditMilestone(this@MilestoneActivity, project, milestone)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_milestone)
-        ButterKnife.bind(this)
         App.bus().register(this)
 
         project = intent.getParcelableExtra(EXTRA_PROJECT)!!
@@ -127,6 +100,12 @@ class MilestoneActivity : BaseActivity() {
         listIssues.addOnScrollListener(onScrollListener)
         swipeRefreshLayout.setOnRefreshListener { loadData() }
 
+        buttonEdit.setOnClickListener {
+            Navigator.navigateToEditMilestone(this@MilestoneActivity, project, milestone)
+        }
+        buttonAdd.setOnClickListener {
+            Navigator.navigateToAddIssue(this@MilestoneActivity, buttonAdd, project)
+        }
         loadData()
     }
 

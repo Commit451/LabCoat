@@ -6,10 +6,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import butterknife.BindView
-import butterknife.ButterKnife
 import coil.api.load
 import coil.transform.CircleCropTransformation
+import com.commit451.addendum.recyclerview.bindView
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.api.User
 import com.commit451.gitlab.util.ImageUtil
@@ -28,14 +27,8 @@ class AssigneeSpinnerViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
     }
 
-    @BindView(R.id.user_image)
-    lateinit var image: ImageView
-    @BindView(R.id.user_username)
-    lateinit var textUsername: TextView
-
-    init {
-        ButterKnife.bind(this, view)
-    }
+    private val image: ImageView by bindView(R.id.user_image)
+    private val textUsername: TextView by bindView(R.id.user_username)
 
     fun bind(user: User?) {
         if (user == null) {

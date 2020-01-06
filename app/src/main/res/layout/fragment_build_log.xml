@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <com.commit451.gitlab.view.LabCoatSwipeRefreshLayout
-        android:id="@+id/swipe_layout"
+        android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -32,7 +32,7 @@
                     app:srcCompat="@drawable/ic_keyboard_arrow_down_white_24dp" />
 
                 <TextView
-                    android:id="@+id/log"
+                    android:id="@+id/textLog"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginBottom="@dimen/activity_vertical_margin"
@@ -58,7 +58,7 @@
     </com.commit451.gitlab.view.LabCoatSwipeRefreshLayout>
 
     <TextView
-        android:id="@+id/message_text"
+        android:id="@+id/textMessage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"

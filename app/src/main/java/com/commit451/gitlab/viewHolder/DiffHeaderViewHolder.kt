@@ -6,10 +6,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import butterknife.BindView
-import butterknife.ButterKnife
 import coil.api.load
 import coil.transform.CircleCropTransformation
+import com.commit451.addendum.recyclerview.bindView
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.api.RepositoryCommit
 import com.commit451.gitlab.util.DateUtil
@@ -29,20 +28,11 @@ class DiffHeaderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
     }
 
-    @BindView(R.id.commit_author_image)
-    lateinit var image: ImageView
-    @BindView(R.id.commit_author)
-    lateinit var textAuthor: TextView
-    @BindView(R.id.commit_time)
-    lateinit var textTime: TextView
-    @BindView(R.id.commit_title)
-    lateinit var textTitle: TextView
-    @BindView(R.id.commit_message)
-    lateinit var textMessage: TextView
-
-    init {
-        ButterKnife.bind(this, view)
-    }
+    private val image: ImageView by bindView(R.id.commit_author_image)
+    private val textAuthor: TextView by bindView(R.id.commit_author)
+    private val textTime: TextView by bindView(R.id.commit_time)
+    private val textTitle: TextView by bindView(R.id.commit_title)
+    private val textMessage: TextView by bindView(R.id.commit_message)
 
     fun bind(commit: RepositoryCommit) {
         image.load(ImageUtil.getAvatarUrl(commit.authorEmail, itemView.resources.getDimensionPixelSize(R.dimen.image_size))) {

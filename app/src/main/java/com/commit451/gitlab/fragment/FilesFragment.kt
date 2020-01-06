@@ -7,11 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import butterknife.BindView
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.BaseActivity
@@ -27,11 +23,12 @@ import com.commit451.gitlab.model.api.RepositoryTreeObject
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.util.IntentUtil
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.fragment_files.*
 import org.greenrobot.eventbus.Subscribe
 import timber.log.Timber
 import java.util.*
 
-class FilesFragment : ButterKnifeFragment() {
+class FilesFragment : BaseFragment() {
 
     companion object {
 
@@ -41,17 +38,6 @@ class FilesFragment : ButterKnifeFragment() {
             return FilesFragment()
         }
     }
-
-    @BindView(R.id.root)
-    lateinit var root: View
-    @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.list)
-    lateinit var list: RecyclerView
-    @BindView(R.id.breadcrumb)
-    lateinit var listBreadcrumbs: RecyclerView
-    @BindView(R.id.message_text)
-    lateinit var textMessage: TextView
 
     private lateinit var adapterFiles: FileAdapter
     private lateinit var adapterBreadcrumb: BreadcrumbAdapter

@@ -12,7 +12,7 @@
         android:layout_height="wrap_content">
 
         <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabs"
+            android:id="@+id/tabLayout"
             style="@style/TabLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -20,7 +20,7 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.viewpager.widget.ViewPager
-        android:id="@+id/pager"
+        android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />

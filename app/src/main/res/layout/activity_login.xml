@@ -50,7 +50,7 @@
                 android:text="@string/welcome_message" />
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/text_input_layout_server"
+                android:id="@+id/textInputLayoutUrl"
                 style="@style/TextInputLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -73,14 +73,14 @@
                 android:orientation="horizontal">
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/token_hint"
+                    android:id="@+id/textInputLayoutToken"
                     style="@style/TextInputLayout"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/token_input"
+                        android:id="@+id/textToken"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_alignParentTop="true"
@@ -90,7 +90,7 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <ImageView
-                    android:id="@+id/button_info"
+                    android:id="@+id/buttonInfo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -105,7 +105,7 @@
     </androidx.core.widget.NestedScrollView>
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/login_button"
+        android:id="@+id/buttonLogin"
         style="@style/Button.Accent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

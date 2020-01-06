@@ -1,14 +1,13 @@
 package com.commit451.gitlab.viewHolder
 
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import butterknife.BindView
-import butterknife.ButterKnife
+import androidx.recyclerview.widget.RecyclerView
 import coil.api.load
+import com.commit451.addendum.recyclerview.bindView
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.api.User
 import com.commit451.gitlab.util.ImageUtil
@@ -27,14 +26,8 @@ class UserViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
     }
 
-    @BindView(R.id.name)
-    lateinit var textUsername: TextView
-    @BindView(R.id.image)
-    lateinit var image: ImageView
-
-    init {
-        ButterKnife.bind(this, view)
-    }
+    private val textUsername: TextView by bindView(R.id.name)
+    val image: ImageView by bindView(R.id.image)
 
     fun bind(user: User) {
         textUsername.text = user.username

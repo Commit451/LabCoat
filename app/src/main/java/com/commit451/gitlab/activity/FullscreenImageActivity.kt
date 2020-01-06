@@ -3,15 +3,12 @@ package com.commit451.gitlab.activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.widget.Toolbar
 import android.widget.ImageView
-import butterknife.BindView
-import butterknife.ButterKnife
 import coil.api.load
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.model.api.Project
-import com.github.chrisbanes.photoview.PhotoView
+import kotlinx.android.synthetic.main.activity_fullscreen_image.*
 
 /**
  * A full-screen activity that opens the clicked images
@@ -31,17 +28,11 @@ class FullscreenImageActivity : BaseActivity() {
         }
     }
 
-    @BindView(R.id.toolbar)
-    lateinit var toolbar: Toolbar
-    @BindView(R.id.photo_view)
-    lateinit var photoView: PhotoView
-
-    lateinit var project: Project
+    private lateinit var project: Project
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_fullscreen_image)
-        ButterKnife.bind(this)
 
         project = intent.getParcelableExtra(KEY_PROJECT)!!
 
@@ -52,7 +43,7 @@ class FullscreenImageActivity : BaseActivity() {
 
         photoView.scaleType = ImageView.ScaleType.FIT_CENTER
 
-        var imageUrl: String = intent.getStringExtra(KEY_URL)
+        var imageUrl: String = intent.getStringExtra(KEY_URL)!!
         if (imageUrl.startsWith("/")) {
             imageUrl = App.get().getAccount().serverUrl.toString() + project.pathWithNamespace + imageUrl
         }

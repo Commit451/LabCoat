@@ -4,7 +4,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import butterknife.ButterKnife
 import com.commit451.gitlab.R
 
 /**
@@ -19,9 +18,5 @@ class AccountFooterViewHolder(view: View) : RecyclerView.ViewHolder(view) {
                     .inflate(R.layout.footer_account, parent, false)
             return AccountFooterViewHolder(view)
         }
-    }
-
-    init {
-        ButterKnife.bind(this, view)
     }
 }

@@ -4,11 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import butterknife.BindView
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.ProjectActivity
@@ -19,10 +16,11 @@ import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.model.api.RepositoryCommit
 import com.commit451.gitlab.navigation.Navigator
+import kotlinx.android.synthetic.main.fragment_commits.*
 import org.greenrobot.eventbus.Subscribe
 import timber.log.Timber
 
-class CommitsFragment : ButterKnifeFragment() {
+class CommitsFragment : BaseFragment() {
 
     companion object {
 
@@ -31,22 +29,15 @@ class CommitsFragment : ButterKnifeFragment() {
         }
     }
 
-    @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.list)
-    lateinit var listCommits: RecyclerView
-    @BindView(R.id.message_text)
-    lateinit var textMessage: TextView
+    private lateinit var layoutManagerCommits: LinearLayoutManager
+    private lateinit var adapterCommits: CommitAdapter
 
-    lateinit var layoutManagerCommits: LinearLayoutManager
-    lateinit var adapterCommits: CommitAdapter
+    private var project: Project? = null
+    private var branchName: String? = null
+    private var page = -1
+    private var loading: Boolean = false
 
-    var project: Project? = null
-    var branchName: String? = null
-    internal var page = -1
-    internal var loading: Boolean = false
-
-    val onScrollListener = object : RecyclerView.OnScrollListener() {
+    private val onScrollListener = object : RecyclerView.OnScrollListener() {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
             val visibleItemCount = layoutManagerCommits.childCount

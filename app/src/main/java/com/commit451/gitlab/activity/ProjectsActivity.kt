@@ -3,20 +3,15 @@ package com.commit451.gitlab.activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import com.google.android.material.tabs.TabLayout
-import androidx.core.view.GravityCompat
-import androidx.viewpager.widget.ViewPager
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.widget.Toolbar
-import butterknife.BindView
-import butterknife.ButterKnife
+import androidx.core.view.GravityCompat
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.ProjectsPagerAdapter
 import com.commit451.gitlab.event.CloseDrawerEvent
 import com.commit451.gitlab.navigation.Navigator
+import kotlinx.android.synthetic.main.activity_projects.*
 import org.greenrobot.eventbus.Subscribe
-
 
 /**
  * Shows the projects
@@ -29,15 +24,6 @@ class ProjectsActivity : BaseActivity() {
             return Intent(context, ProjectsActivity::class.java)
         }
     }
-
-    @BindView(R.id.toolbar)
-    lateinit var toolbar: Toolbar
-    @BindView(R.id.tabs)
-    lateinit var tabLayout: TabLayout
-    @BindView(R.id.pager)
-    lateinit var viewPager: ViewPager
-    @BindView(R.id.drawer_layout)
-    lateinit var drawerLayout: DrawerLayout
 
     private val onMenuItemClickListener = Toolbar.OnMenuItemClickListener { item ->
         when (item.itemId) {
@@ -52,7 +38,6 @@ class ProjectsActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_projects)
-        ButterKnife.bind(this)
         App.bus().register(this)
 
         toolbar.setTitle(R.string.projects)

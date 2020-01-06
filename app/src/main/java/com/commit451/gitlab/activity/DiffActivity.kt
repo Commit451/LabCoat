@@ -4,13 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
-import androidx.appcompat.widget.Toolbar
-import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.DiffAdapter
@@ -18,6 +11,7 @@ import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Diff
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.model.api.RepositoryCommit
+import kotlinx.android.synthetic.main.activity_diff.*
 import timber.log.Timber
 
 /**
@@ -38,26 +32,14 @@ class DiffActivity : BaseActivity() {
         }
     }
 
-    @BindView(R.id.root)
-    lateinit var root: ViewGroup
-    @BindView(R.id.toolbar)
-    lateinit var toolbar: Toolbar
-    @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.list)
-    lateinit var listDiff: RecyclerView
-    @BindView(R.id.message_text)
-    lateinit var textMessage: TextView
+    private lateinit var adapterDiff: DiffAdapter
 
-    lateinit var adapterDiff: DiffAdapter
-
-    lateinit var project: Project
-    lateinit var commit: RepositoryCommit
+    private lateinit var project: Project
+    private lateinit var commit: RepositoryCommit
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_diff)
-        ButterKnife.bind(this)
 
         project = intent.getParcelableExtra(EXTRA_PROJECT)!!
         commit = intent.getParcelableExtra(EXTRA_COMMIT)!!

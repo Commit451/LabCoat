@@ -5,11 +5,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import butterknife.BindView
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.UserAdapter
@@ -19,15 +16,15 @@ import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
 import com.commit451.gitlab.viewHolder.UserViewHolder
+import kotlinx.android.synthetic.main.fragment_users.*
 import timber.log.Timber
 
-class UsersFragment : ButterKnifeFragment() {
+class UsersFragment : BaseFragment() {
 
     companion object {
 
         private const val EXTRA_QUERY = "extra_query"
 
-        @JvmOverloads
         fun newInstance(query: String? = null): UsersFragment {
             val args = Bundle()
             if (query != null) {
@@ -41,13 +38,6 @@ class UsersFragment : ButterKnifeFragment() {
             return fragment
         }
     }
-
-    @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.list)
-    lateinit var listUsers: RecyclerView
-    @BindView(R.id.message_text)
-    lateinit var textMessage: TextView
 
     lateinit var adapterUser: UserAdapter
     lateinit var layoutManagerUser: GridLayoutManager

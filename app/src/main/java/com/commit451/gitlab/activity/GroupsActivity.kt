@@ -4,15 +4,9 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import androidx.core.view.GravityCompat
-import androidx.drawerlayout.widget.DrawerLayout
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import androidx.recyclerview.widget.RecyclerView
-import androidx.appcompat.widget.Toolbar
 import android.view.View
-import android.widget.TextView
-import butterknife.BindView
-import butterknife.ButterKnife
+import androidx.core.view.GravityCompat
+import androidx.recyclerview.widget.RecyclerView
 import com.commit451.aloy.DynamicGridLayoutManager
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
@@ -26,6 +20,7 @@ import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
 import com.commit451.gitlab.viewHolder.GroupViewHolder
+import kotlinx.android.synthetic.main.activity_groups.*
 import org.greenrobot.eventbus.Subscribe
 import timber.log.Timber
 
@@ -41,24 +36,13 @@ class GroupsActivity : BaseActivity() {
         }
     }
 
-    @BindView(R.id.drawer_layout)
-    lateinit var drawerLayout: DrawerLayout
-    @BindView(R.id.toolbar)
-    lateinit var toolbar: Toolbar
-    @BindView(R.id.swipe_layout)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    @BindView(R.id.list)
-    lateinit var listGroups: RecyclerView
-    @BindView(R.id.message_text)
-    lateinit var textMessage: TextView
+    private lateinit var adapterGroup: GroupAdapter
+    private lateinit var layoutManager: DynamicGridLayoutManager
 
-    lateinit var adapterGroup: GroupAdapter
-    lateinit var layoutManager: DynamicGridLayoutManager
+    private var nextPageUrl: Uri? = null
+    private var loading = false
 
-    var nextPageUrl: Uri? = null
-    var loading = false
-
-    val onScrollListener = object : RecyclerView.OnScrollListener() {
+    private val onScrollListener = object : RecyclerView.OnScrollListener() {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
             val visibleItemCount = layoutManager.childCount
@@ -74,7 +58,6 @@ class GroupsActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         Prefs.startingView = Prefs.STARTING_VIEW_GROUPS
         setContentView(R.layout.activity_groups)
-        ButterKnife.bind(this)
         App.bus().register(this)
 
         toolbar.setTitle(R.string.nav_groups)

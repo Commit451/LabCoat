@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/drawer_layout"
+    android:id="@+id/drawerLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:id="@+id/main_content_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -32,19 +31,19 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <com.commit451.gitlab.view.LabCoatSwipeRefreshLayout
-                android:id="@+id/swipe_layout"
+                android:id="@+id/swipeRefreshLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/list"
+                    android:id="@+id/listGroups"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
 
             </com.commit451.gitlab.view.LabCoatSwipeRefreshLayout>
 
             <TextView
-                android:id="@+id/message_text"
+                android:id="@+id/textMessage"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
@@ -58,7 +57,6 @@
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     <com.commit451.gitlab.view.LabCoatNavigationView
-        android:id="@+id/navigation_view"
         style="@style/NavigationView"
         android:layout_width="@dimen/navigation_view_width"
         android:layout_height="match_parent"

@@ -5,13 +5,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
-import androidx.viewpager.widget.ViewPager
-import butterknife.BindView
-import butterknife.ButterKnife
-import butterknife.OnClick
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.IssuePagerAdapter
@@ -25,8 +20,9 @@ import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.util.IntentUtil
 import com.commit451.teleprinter.Teleprinter
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.tabs.TabLayout
 import io.reactivex.Single
+import kotlinx.android.synthetic.main.activity_issue.*
+import kotlinx.android.synthetic.main.progress_fullscreen.*
 import org.greenrobot.eventbus.Subscribe
 import timber.log.Timber
 
@@ -48,22 +44,11 @@ class IssueActivity : BaseActivity() {
         }
     }
 
-    @BindView(R.id.root)
-    lateinit var root: ViewGroup
-    @BindView(R.id.toolbar)
-    lateinit var toolbar: Toolbar
-    @BindView(R.id.tabs)
-    lateinit var tabLayout: TabLayout
-    @BindView(R.id.pager)
-    lateinit var viewPager: ViewPager
-    @BindView(R.id.progress)
-    lateinit var progress: View
-
     private lateinit var menuItemOpenClose: MenuItem
     private lateinit var teleprinter: Teleprinter
 
-    lateinit var project: Project
-    lateinit var issue: Issue
+    private lateinit var project: Project
+    private lateinit var issue: Issue
 
     private val onMenuItemClickListener = Toolbar.OnMenuItemClickListener { item ->
         when (item.itemId) {
@@ -94,17 +79,9 @@ class IssueActivity : BaseActivity() {
         false
     }
 
-    @OnClick(R.id.fab_edit_issue)
-    fun onEditIssueClick() {
-        val project = project
-        val issue = issue
-        Navigator.navigateToEditIssue(this@IssueActivity, project, issue)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_issue)
-        ButterKnife.bind(this)
         teleprinter = Teleprinter(this)
         App.bus().register(this)
 
@@ -127,6 +104,11 @@ class IssueActivity : BaseActivity() {
 
         viewPager.adapter = sectionsPagerAdapter
         tabLayout.setupWithViewPager(viewPager)
+        buttonEditIssue.setOnClickListener {
+            val project = project
+            val issue = issue
+            Navigator.navigateToEditIssue(this@IssueActivity, project, issue)
+        }
         bindIssue()
     }
 
@@ -155,7 +137,7 @@ class IssueActivity : BaseActivity() {
                 .with(this)
                 .subscribe({
                     progress.visibility = View.GONE
-                    this@IssueActivity.issue = it
+                    issue = it
                     App.bus().post(IssueChangedEvent(issue))
                     App.bus().post(IssueReloadEvent())
                     setOpenCloseMenuStatus()

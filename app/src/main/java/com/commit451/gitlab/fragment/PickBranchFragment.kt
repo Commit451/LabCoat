@@ -4,13 +4,10 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import butterknife.BindView
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.PickBranchOrTagActivity
@@ -21,12 +18,14 @@ import com.commit451.gitlab.model.api.Branch
 import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
 import com.commit451.gitlab.util.OnScrollLoadMoreListener
+import kotlinx.android.synthetic.main.fragment_pick_branch.*
+import kotlinx.android.synthetic.main.progress.*
 import timber.log.Timber
 
 /**
  * Pick a branch, any branch
  */
-class PickBranchFragment : ButterKnifeFragment() {
+class PickBranchFragment : BaseFragment() {
 
     companion object {
 
@@ -43,19 +42,12 @@ class PickBranchFragment : ButterKnifeFragment() {
         }
     }
 
-    @BindView(R.id.list)
-    lateinit var listProjects: RecyclerView
-    @BindView(R.id.message_text)
-    lateinit var textMessage: TextView
-    @BindView(R.id.progress)
-    lateinit var progress: View
+    private lateinit var adapterBranches: BranchAdapter
 
-    lateinit var adapterBranches: BranchAdapter
+    private var projectId: Long = 0
 
-    var projectId: Long = 0
-
-    var nextPageUrl: Uri? = null
-    var loading: Boolean = false
+    private var nextPageUrl: Uri? = null
+    private var loading: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

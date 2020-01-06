@@ -16,6 +16,7 @@ import com.commit451.gitlab.event.IssueChangedEvent
 import com.commit451.gitlab.event.IssueCreatedEvent
 import com.commit451.gitlab.extension.belongsToGroup
 import com.commit451.gitlab.extension.checkValid
+import com.commit451.gitlab.extension.mapResponseSuccess
 import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.*
 import com.commit451.gitlab.navigation.Navigator
@@ -103,60 +104,48 @@ class AddIssueActivity : MorphActivity() {
 
     private fun load() {
         App.get().gitLab.getMilestones(project.id, getString(R.string.milestone_state_value_default))
+                .mapResponseSuccess()
                 .with(this)
-                .subscribe(object : CustomResponseSingleObserver<List<Milestone>>() {
-
-                    override fun error(t: Throwable) {
-                        Timber.e(t)
-                        progressMilestone.visibility = View.GONE
-                        spinnerMilestone.visibility = View.GONE
+                .subscribe({
+                    progressMilestone.visibility = View.GONE
+                    spinnerMilestone.visibility = View.VISIBLE
+                    val maybeNullMilestones = mutableListOf<Milestone?>()
+                    maybeNullMilestones.addAll(it)
+                    val milestoneSpinnerAdapter = MilestoneSpinnerAdapter(this@AddIssueActivity, maybeNullMilestones)
+                    spinnerMilestone.adapter = milestoneSpinnerAdapter
+                    if (issue != null) {
+                        spinnerMilestone.setSelection(milestoneSpinnerAdapter.getSelectedItemPosition(issue!!.milestone))
                     }
-
-                    override fun responseNonNullSuccess(milestones: List<Milestone>) {
-                        progressMilestone.visibility = View.GONE
-                        spinnerMilestone.visibility = View.VISIBLE
-                        val maybeNullMilestones = mutableListOf<Milestone?>()
-                        maybeNullMilestones.addAll(milestones)
-                        val milestoneSpinnerAdapter = MilestoneSpinnerAdapter(this@AddIssueActivity, maybeNullMilestones)
-                        spinnerMilestone.adapter = milestoneSpinnerAdapter
-                        if (issue != null) {
-                            spinnerMilestone.setSelection(milestoneSpinnerAdapter.getSelectedItemPosition(issue!!.milestone))
-                        }
-                    }
+                }, {
+                    Timber.e(it)
+                    progressMilestone.visibility = View.GONE
+                    spinnerMilestone.visibility = View.GONE
                 })
         App.get().gitLab.getProjectMembers(project.id)
+                .mapResponseSuccess()
                 .with(this)
-                .subscribe(object : CustomResponseSingleObserver<List<User>>() {
-
-                    override fun error(t: Throwable) {
-                        Timber.e(t)
-                        spinnerAssignee.visibility = View.GONE
-                        progressAssignee.visibility = View.GONE
+                .subscribe({
+                    this.members.addAll(members)
+                    if (project.belongsToGroup()) {
+                        Timber.d("Project belongs to a group, loading those users too")
+                        App.get().gitLab.getGroupMembers(project.namespace!!.id)
+                                .mapResponseSuccess()
+                                .with(this@AddIssueActivity)
+                                .subscribe( {
+                                    this.members.addAll(it)
+                                    setAssignees()
+                                }, {
+                                    Timber.e(it)
+                                    spinnerAssignee.visibility = View.GONE
+                                    progressAssignee.visibility = View.GONE
+                                })
+                    } else {
+                        setAssignees()
                     }
-
-                    override fun responseNonNullSuccess(members: List<User>) {
-                        this@AddIssueActivity.members.addAll(members)
-                        if (project.belongsToGroup()) {
-                            Timber.d("Project belongs to a group, loading those users too")
-                            App.get().gitLab.getGroupMembers(project.namespace!!.id)
-                                    .with(this@AddIssueActivity)
-                                    .subscribe(object : CustomResponseSingleObserver<List<User>>() {
-
-                                        override fun error(t: Throwable) {
-                                            Timber.e(t)
-                                            spinnerAssignee.visibility = View.GONE
-                                            progressAssignee.visibility = View.GONE
-                                        }
-
-                                        override fun responseNonNullSuccess(members: List<User>) {
-                                            this@AddIssueActivity.members.addAll(members)
-                                            setAssignees()
-                                        }
-                                    })
-                        } else {
-                            setAssignees()
-                        }
-                    }
+                }, {
+                    Timber.e(it)
+                    spinnerAssignee.visibility = View.GONE
+                    progressAssignee.visibility = View.GONE
                 })
         App.get().gitLab.getLabels(project.id)
                 .with(this)
@@ -208,7 +197,7 @@ class AddIssueActivity : MorphActivity() {
                     }
                 }
             }
-            if (!currentLabels.isEmpty()) {
+            if (currentLabels.isNotEmpty()) {
                 adapterLabels.setLabels(currentLabels)
             }
         }
@@ -247,24 +236,16 @@ class AddIssueActivity : MorphActivity() {
             if (spinnerAssignee.adapter != null) {
                 //the user did make a selection of some sort. So update it
                 val member = spinnerAssignee.selectedItem as? User?
-                if (member == null) {
-                    //Removes the assignment
-                    assigneeId = 0L
-                } else {
-                    assigneeId = member.id
-                }
+                assigneeId = member?.id ?: //Removes the assignment
+                        0L
             }
 
             var milestoneId: Long? = null
             if (spinnerMilestone.adapter != null) {
                 //the user did make a selection of some sort. So update it
                 val milestone = spinnerMilestone.selectedItem as? Milestone?
-                if (milestone == null) {
-                    //Removes the assignment
-                    milestoneId = 0L
-                } else {
-                    milestoneId = milestone.id
-                }
+                milestoneId = milestone?.id ?: //Removes the assignment
+                        0L
             }
             val labelsCommaSeperated = adapterLabels.getCommaSeperatedStringOfLabels()
             createOrSaveIssue(textInputLayoutTitle.editText!!.text.toString(),

@@ -29,12 +29,12 @@
         </com.google.android.material.appbar.AppBarLayout>
 
         <com.commit451.gitlab.view.LabCoatSwipeRefreshLayout
-            android:id="@+id/swipe_layout"
+            android:id="@+id/swipeRefreshLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/list"
+                android:id="@+id/listIssues"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
@@ -42,7 +42,7 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/message_text"
+        android:id="@+id/textMessage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
@@ -52,7 +52,7 @@
         android:visibility="gone" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/edit"
+        android:id="@+id/buttonEdit"
         style="@style/FloatingActionButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -63,7 +63,7 @@
         app:srcCompat="@drawable/ic_edit_24dp" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/add"
+        android:id="@+id/buttonAdd"
         style="@style/FloatingActionButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

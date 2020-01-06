@@ -4,13 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.FrameLayout
 import androidx.appcompat.widget.Toolbar
-import butterknife.BindView
-import butterknife.ButterKnife
-import butterknife.OnClick
 import com.commit451.addendum.themeAttrColor
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
@@ -22,9 +16,10 @@ import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Milestone
 import com.commit451.teleprinter.Teleprinter
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.textfield.TextInputLayout
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
 import io.reactivex.Single
+import kotlinx.android.synthetic.main.activity_add_milestone.*
+import kotlinx.android.synthetic.main.progress_fullscreen.*
 import timber.log.Timber
 import java.util.*
 
@@ -46,21 +41,6 @@ class AddMilestoneActivity : MorphActivity() {
         }
     }
 
-    @BindView(R.id.root)
-    lateinit var root: FrameLayout
-    @BindView(R.id.toolbar)
-    lateinit var toolbar: Toolbar
-    @BindView(R.id.title_text_input_layout)
-    lateinit var textInputLayoutTitle: TextInputLayout
-    @BindView(R.id.title)
-    lateinit var textTitle: EditText
-    @BindView(R.id.description)
-    lateinit var textDescription: EditText
-    @BindView(R.id.due_date)
-    lateinit var buttonDueDate: Button
-    @BindView(R.id.progress)
-    lateinit var progress: View
-
     lateinit var teleprinter: Teleprinter
 
     var projectId: Long = 0
@@ -73,29 +53,12 @@ class AddMilestoneActivity : MorphActivity() {
         calendar.set(Calendar.MONTH, monthOfYear)
         calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
         currentDate = calendar.time
-        bind(currentDate!!)
-    }
-
-    @OnClick(R.id.due_date)
-    fun onDueDateClicked() {
-        val now = Calendar.getInstance()
-        currentDate?.let {
-            now.time = it
-        }
-        val dpd = DatePickerDialog.newInstance(
-                onDateSetListener,
-                now.get(Calendar.YEAR),
-                now.get(Calendar.MONTH),
-                now.get(Calendar.DAY_OF_MONTH)
-        )
-        dpd.accentColor = this.themeAttrColor(R.attr.colorAccent)
-        dpd.show(supportFragmentManager, "date_picker")
+        bind(calendar.time)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_milestone)
-        ButterKnife.bind(this)
         morph(root)
         teleprinter = Teleprinter(this)
         projectId = intent.getLongExtra(KEY_PROJECT_ID, -1)
@@ -117,6 +80,20 @@ class AddMilestoneActivity : MorphActivity() {
             }
             false
         })
+        buttonDueDate.setOnClickListener {
+            val now = Calendar.getInstance()
+            currentDate?.let {
+                now.time = it
+            }
+            val dpd = DatePickerDialog.newInstance(
+                    onDateSetListener,
+                    now.get(Calendar.YEAR),
+                    now.get(Calendar.MONTH),
+                    now.get(Calendar.DAY_OF_MONTH)
+            )
+            dpd.accentColor = this.themeAttrColor(R.attr.colorAccent)
+            dpd.show(supportFragmentManager, "date_picker")
+        }
     }
 
     private fun createMilestone() {
