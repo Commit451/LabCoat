@@ -1,6 +1,5 @@
 package com.commit451.gitlab.fragment
 
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,12 +15,11 @@ import com.commit451.gitlab.adapter.DividerItemDecoration
 import com.commit451.gitlab.adapter.MergeRequestAdapter
 import com.commit451.gitlab.event.MergeRequestChangedEvent
 import com.commit451.gitlab.event.ProjectReloadEvent
+import com.commit451.gitlab.extension.mapResponseSuccessWithPaginationData
 import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.MergeRequest
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.navigation.Navigator
-import com.commit451.gitlab.rx.CustomResponseSingleObserver
-import com.commit451.gitlab.util.LinkHeaderParser
 import kotlinx.android.synthetic.main.fragment_merge_request.*
 import org.greenrobot.eventbus.Subscribe
 import timber.log.Timber
@@ -41,7 +39,7 @@ class MergeRequestsFragment : BaseFragment() {
     private lateinit var state: String
     private lateinit var states: Array<String>
     private var project: Project? = null
-    private var nextPageUrl: Uri? = null
+    private var nextPageUrl: String? = null
     private var loading = false
 
     private val onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -122,30 +120,26 @@ class MergeRequestsFragment : BaseFragment() {
         nextPageUrl = null
         loading = true
         App.get().gitLab.getMergeRequests(project!!.id, state)
+                .mapResponseSuccessWithPaginationData()
                 .with(this)
-                .subscribe(object : CustomResponseSingleObserver<List<MergeRequest>>() {
-
-                    override fun error(e: Throwable) {
-                        loading = false
-                        Timber.e(e)
-                        swipeRefreshLayout.isRefreshing = false
+                .subscribe({
+                    loading = false
+                    swipeRefreshLayout.isRefreshing = false
+                    if (it.body.isEmpty()) {
                         textMessage.visibility = View.VISIBLE
-                        textMessage.setText(R.string.connection_error_merge_requests)
-                        adapterMergeRequests.setData(null)
-                        nextPageUrl = null
+                        textMessage.setText(R.string.no_merge_requests)
                     }
-
-                    override fun responseNonNullSuccess(mergeRequests: List<MergeRequest>) {
-                        loading = false
-                        swipeRefreshLayout.isRefreshing = false
-                        if (mergeRequests.isEmpty()) {
-                            textMessage.visibility = View.VISIBLE
-                            textMessage.setText(R.string.no_merge_requests)
-                        }
-                        adapterMergeRequests.setData(mergeRequests)
-                        nextPageUrl = LinkHeaderParser.parse(response()).next
-                        Timber.d("Next page url $nextPageUrl")
-                    }
+                    adapterMergeRequests.setData(it.body)
+                    nextPageUrl = it.paginationData.next
+                    Timber.d("Next page url $nextPageUrl")
+                }, {
+                    loading = false
+                    Timber.e(it)
+                    swipeRefreshLayout.isRefreshing = false
+                    textMessage.visibility = View.VISIBLE
+                    textMessage.setText(R.string.connection_error_merge_requests)
+                    adapterMergeRequests.setData(null)
+                    nextPageUrl = null
                 })
     }
 
@@ -160,21 +154,17 @@ class MergeRequestsFragment : BaseFragment() {
         loading = true
         Timber.d("loadMore called for ${nextPageUrl!!}")
         App.get().gitLab.getMergeRequests(nextPageUrl!!.toString(), state)
+                .mapResponseSuccessWithPaginationData()
                 .with(this)
-                .subscribe(object : CustomResponseSingleObserver<List<MergeRequest>>() {
-
-                    override fun error(e: Throwable) {
-                        Timber.e(e)
-                        adapterMergeRequests.setLoading(false)
-                        loading = false
-                    }
-
-                    override fun responseNonNullSuccess(mergeRequests: List<MergeRequest>) {
-                        loading = false
-                        adapterMergeRequests.setLoading(false)
-                        nextPageUrl = LinkHeaderParser.parse(response()).next
-                        adapterMergeRequests.addData(mergeRequests)
-                    }
+                .subscribe({
+                    loading = false
+                    adapterMergeRequests.setLoading(false)
+                    nextPageUrl = it.paginationData.next
+                    adapterMergeRequests.addData(it.body)
+                }, {
+                    Timber.e(it)
+                    adapterMergeRequests.setLoading(false)
+                    loading = false
                 })
     }
 

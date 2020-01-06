@@ -1,6 +1,5 @@
 package com.commit451.gitlab.fragment
 
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,12 +15,11 @@ import com.commit451.gitlab.dialog.AccessDialog
 import com.commit451.gitlab.event.MemberAddedEvent
 import com.commit451.gitlab.event.ProjectReloadEvent
 import com.commit451.gitlab.extension.belongsToGroup
+import com.commit451.gitlab.extension.mapResponseSuccessWithPaginationData
 import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.model.api.User
 import com.commit451.gitlab.navigation.Navigator
-import com.commit451.gitlab.rx.CustomResponseSingleObserver
-import com.commit451.gitlab.util.LinkHeaderParser
 import com.commit451.gitlab.viewHolder.ProjectMemberViewHolder
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.Single
@@ -44,7 +42,7 @@ class ProjectMembersFragment : BaseFragment() {
 
     private var project: Project? = null
     private var member: User? = null
-    private var nextPageUrl: Uri? = null
+    private var nextPageUrl: String? = null
     private var loading = false
 
     private val onScrollListener = object : RecyclerView.OnScrollListener() {
@@ -162,46 +160,42 @@ class ProjectMembersFragment : BaseFragment() {
 
     fun load(observable: Single<Response<List<User>>>) {
         observable
+                .mapResponseSuccessWithPaginationData()
                 .with(this)
-                .subscribe(object : CustomResponseSingleObserver<List<User>>() {
-
-                    override fun error(t: Throwable) {
-                        loading = false
-                        Timber.e(t)
-                        swipeRefreshLayout.isRefreshing = false
+                .subscribe({
+                    loading = false
+                    swipeRefreshLayout.isRefreshing = false
+                    if (it.body.isNotEmpty()) {
+                        textMessage.visibility = View.GONE
+                    } else if (nextPageUrl == null) {
+                        Timber.d("No project members found")
+                        textMessage.setText(R.string.no_project_members)
                         textMessage.visibility = View.VISIBLE
-                        textMessage.setText(R.string.connection_error_users)
-                        buttonAddUser.isVisible = false
-                        adapterProjectMembers.setProjectMembers(null)
-                        nextPageUrl = null
                     }
 
-                    override fun responseNonNullSuccess(members: List<User>) {
-                        loading = false
-                        swipeRefreshLayout.isRefreshing = false
-                        if (!members.isEmpty()) {
-                            textMessage.visibility = View.GONE
-                        } else if (nextPageUrl == null) {
-                            Timber.d("No project members found")
-                            textMessage.setText(R.string.no_project_members)
-                            textMessage.visibility = View.VISIBLE
-                        }
+                    buttonAddUser.isVisible = true
 
-                        buttonAddUser.isVisible = true
-
-                        if (nextPageUrl == null) {
-                            adapterProjectMembers.setProjectMembers(members)
-                        } else {
-                            adapterProjectMembers.addProjectMembers(members)
-                        }
-
-                        nextPageUrl = LinkHeaderParser.parse(response()).next
-                        Timber.d("Next page url " + nextPageUrl)
+                    if (nextPageUrl == null) {
+                        adapterProjectMembers.setProjectMembers(it.body)
+                    } else {
+                        adapterProjectMembers.addProjectMembers(it.body)
                     }
+
+                    nextPageUrl = it.paginationData.next
+                    Timber.d("Next page url " + nextPageUrl)
+                }, {
+                    loading = false
+                    Timber.e(it)
+                    swipeRefreshLayout.isRefreshing = false
+                    textMessage.visibility = View.VISIBLE
+                    textMessage.setText(R.string.connection_error_users)
+                    buttonAddUser.isVisible = false
+                    adapterProjectMembers.setProjectMembers(null)
+                    nextPageUrl = null
                 })
     }
 
-    fun setNamespace() {
+    private fun setNamespace() {
         if (project == null) {
             return
         }

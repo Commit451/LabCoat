@@ -14,11 +14,10 @@ import com.commit451.gitlab.adapter.GroupAdapter
 import com.commit451.gitlab.data.Prefs
 import com.commit451.gitlab.event.CloseDrawerEvent
 import com.commit451.gitlab.event.ReloadDataEvent
+import com.commit451.gitlab.extension.mapResponseSuccessWithPaginationData
 import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Group
 import com.commit451.gitlab.navigation.Navigator
-import com.commit451.gitlab.rx.CustomResponseSingleObserver
-import com.commit451.gitlab.util.LinkHeaderParser
 import com.commit451.gitlab.viewHolder.GroupViewHolder
 import kotlinx.android.synthetic.main.activity_groups.*
 import org.greenrobot.eventbus.Subscribe
@@ -39,7 +38,7 @@ class GroupsActivity : BaseActivity() {
     private lateinit var adapterGroup: GroupAdapter
     private lateinit var layoutManager: DynamicGridLayoutManager
 
-    private var nextPageUrl: Uri? = null
+    private var nextPageUrl: String? = null
     private var loading = false
 
     private val onScrollListener = object : RecyclerView.OnScrollListener() {
@@ -99,31 +98,27 @@ class GroupsActivity : BaseActivity() {
         loading = true
 
         App.get().gitLab.getGroups()
+                .mapResponseSuccessWithPaginationData()
                 .with(this)
-                .subscribe(object : CustomResponseSingleObserver<List<Group>>() {
-
-                    override fun error(e: Throwable) {
-                        Timber.e(e)
-                        swipeRefreshLayout.isRefreshing = false
-                        loading = false
+                .subscribe({
+                    loading = false
+                    swipeRefreshLayout.isRefreshing = false
+                    if (it.body.isEmpty()) {
+                        textMessage.setText(R.string.no_groups)
                         textMessage.visibility = View.VISIBLE
-                        textMessage.setText(R.string.connection_error)
+                        listGroups.visibility = View.GONE
+                    } else {
+                        adapterGroup.setGroups(it.body)
+                        textMessage.visibility = View.GONE
+                        listGroups.visibility = View.VISIBLE
+                        nextPageUrl = it.paginationData.next
                     }
-
-                    override fun responseNonNullSuccess(groups: List<Group>) {
-                        loading = false
-                        swipeRefreshLayout.isRefreshing = false
-                        if (groups.isEmpty()) {
-                            textMessage.setText(R.string.no_groups)
-                            textMessage.visibility = View.VISIBLE
-                            listGroups.visibility = View.GONE
-                        } else {
-                            adapterGroup.setGroups(groups)
-                            textMessage.visibility = View.GONE
-                            listGroups.visibility = View.VISIBLE
-                            nextPageUrl = LinkHeaderParser.parse(response()).next
-                        }
-                    }
+                }, {
+                    Timber.e(it)
+                    swipeRefreshLayout.isRefreshing = false
+                    loading = false
+                    textMessage.visibility = View.VISIBLE
+                    textMessage.setText(R.string.connection_error)
                 })
     }
 
@@ -138,19 +133,15 @@ class GroupsActivity : BaseActivity() {
 
         Timber.d("loadMore called for %s", nextPageUrl)
         App.get().gitLab.getGroups(nextPageUrl!!.toString())
+                .mapResponseSuccessWithPaginationData()
                 .with(this)
-                .subscribe(object : CustomResponseSingleObserver<List<Group>>() {
-
-                    override fun error(e: Throwable) {
-                        Timber.e(e)
-                        loading = false
-                    }
-
-                    override fun responseNonNullSuccess(groups: List<Group>) {
-                        loading = false
-                        adapterGroup.addGroups(groups)
-                        nextPageUrl = LinkHeaderParser.parse(response()).next
-                    }
+                .subscribe({
+                    loading = false
+                    adapterGroup.addGroups(it.body)
+                    nextPageUrl = it.paginationData.next
+                }, {
+                    Timber.e(it)
+                    loading = false
                 })
     }
 

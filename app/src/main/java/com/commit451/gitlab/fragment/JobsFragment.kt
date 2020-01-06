@@ -1,6 +1,5 @@
 package com.commit451.gitlab.fragment
 
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,12 +15,11 @@ import com.commit451.gitlab.adapter.BuildAdapter
 import com.commit451.gitlab.adapter.DividerItemDecoration
 import com.commit451.gitlab.event.BuildChangedEvent
 import com.commit451.gitlab.event.ProjectReloadEvent
+import com.commit451.gitlab.extension.mapResponseSuccessWithPaginationData
 import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Build
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.navigation.Navigator
-import com.commit451.gitlab.rx.CustomResponseSingleObserver
-import com.commit451.gitlab.util.LinkHeaderParser
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_jobs.*
 import org.greenrobot.eventbus.Subscribe
@@ -45,7 +43,7 @@ class JobsFragment : BaseFragment() {
     private lateinit var scopes: Array<String>
     private var scope: String? = null
     private var project: Project? = null
-    private var nextPageUrl: Uri? = null
+    private var nextPageUrl: String? = null
     private var loading: Boolean = false
 
     private val onScrollListener = object : RecyclerView.OnScrollListener() {
@@ -124,31 +122,27 @@ class JobsFragment : BaseFragment() {
         nextPageUrl = null
         loading = true
         App.get().gitLab.getBuilds(project!!.id, scope)
+                .mapResponseSuccessWithPaginationData()
                 .with(this)
-                .subscribe(object : CustomResponseSingleObserver<List<Build>>() {
+                .subscribe({
+                    loading = false
 
-                    override fun error(e: Throwable) {
-                        loading = false
-                        Timber.e(e)
-                        swipeRefreshLayout.isRefreshing = false
+                    swipeRefreshLayout.isRefreshing = false
+                    if (it.body.isEmpty()) {
                         textMessage.visibility = View.VISIBLE
-                        textMessage.setText(R.string.failed_to_load_builds)
-                        adapterBuilds.setValues(null)
-                        nextPageUrl = null
+                        textMessage.setText(R.string.no_builds)
                     }
-
-                    override fun responseNonNullSuccess(builds: List<Build>) {
-                        loading = false
-
-                        swipeRefreshLayout.isRefreshing = false
-                        if (builds.isEmpty()) {
-                            textMessage.visibility = View.VISIBLE
-                            textMessage.setText(R.string.no_builds)
-                        }
-                        adapterBuilds.setValues(builds)
-                        nextPageUrl = LinkHeaderParser.parse(response()).next
-                        Timber.d("Next page url %s", nextPageUrl)
-                    }
+                    adapterBuilds.setValues(it.body)
+                    nextPageUrl = it.paginationData.next
+                    Timber.d("Next page url %s", nextPageUrl)
+                }, {
+                    loading = false
+                    Timber.e(it)
+                    swipeRefreshLayout.isRefreshing = false
+                    textMessage.visibility = View.VISIBLE
+                    textMessage.setText(R.string.failed_to_load_builds)
+                    adapterBuilds.setValues(null)
+                    nextPageUrl = null
                 })
     }
 
@@ -161,22 +155,18 @@ class JobsFragment : BaseFragment() {
         loading = true
 
         Timber.d("loadMore called for %s", nextPageUrl)
-        App.get().gitLab.getBuilds(nextPageUrl!!.toString(), scope)
+        App.get().gitLab.getBuilds(nextPageUrl!!, scope)
+                .mapResponseSuccessWithPaginationData()
                 .with(this)
-                .subscribe(object : CustomResponseSingleObserver<List<Build>>() {
-
-                    override fun error(e: Throwable) {
-                        Timber.e(e)
-                        loading = false
-                        adapterBuilds.setLoading(false)
-                    }
-
-                    override fun responseNonNullSuccess(builds: List<Build>) {
-                        loading = false
-                        adapterBuilds.setLoading(false)
-                        nextPageUrl = LinkHeaderParser.parse(response()).next
-                        adapterBuilds.addValues(builds)
-                    }
+                .subscribe({
+                    loading = false
+                    adapterBuilds.setLoading(false)
+                    nextPageUrl = it.paginationData.next
+                    adapterBuilds.addValues(it.body)
+                }, {
+                    Timber.e(it)
+                    loading = false
+                    adapterBuilds.setLoading(false)
                 })
     }
 

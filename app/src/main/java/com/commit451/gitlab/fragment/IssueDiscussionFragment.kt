@@ -15,13 +15,11 @@ import com.commit451.gitlab.activity.AttachActivity
 import com.commit451.gitlab.adapter.NotesAdapter
 import com.commit451.gitlab.api.response.FileUploadResponse
 import com.commit451.gitlab.event.IssueChangedEvent
+import com.commit451.gitlab.extension.mapResponseSuccessWithPaginationData
 import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Issue
-import com.commit451.gitlab.model.api.Note
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.navigation.TransitionFactory
-import com.commit451.gitlab.rx.CustomResponseSingleObserver
-import com.commit451.gitlab.util.LinkHeaderParser
 import com.commit451.gitlab.view.SendMessageView
 import com.commit451.teleprinter.Teleprinter
 import com.google.android.material.snackbar.Snackbar
@@ -58,7 +56,7 @@ class IssueDiscussionFragment : BaseFragment() {
 
     private lateinit var project: Project
     private lateinit var issue: Issue
-    private var nextPageUrl: Uri? = null
+    private var nextPageUrl: String? = null
     private var loading: Boolean = false
 
     private val onScrollListener = object : RecyclerView.OnScrollListener() {
@@ -135,46 +133,38 @@ class IssueDiscussionFragment : BaseFragment() {
     private fun loadNotes() {
         swipeRefreshLayout.isRefreshing = true
         App.get().gitLab.getIssueNotes(project.id, issue.iid)
+                .mapResponseSuccessWithPaginationData()
                 .with(this)
-                .subscribe(object : CustomResponseSingleObserver<List<Note>>() {
-
-                    override fun error(e: Throwable) {
-                        loading = false
-                        Timber.e(e)
-                        swipeRefreshLayout.isRefreshing = false
-                        Snackbar.make(root, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
-                                .show()
-                    }
-
-                    override fun responseNonNullSuccess(notes: List<Note>) {
-                        swipeRefreshLayout.isRefreshing = false
-                        loading = false
-                        nextPageUrl = LinkHeaderParser.parse(response()).next
-                        adapter.setNotes(notes)
-                    }
+                .subscribe({
+                    swipeRefreshLayout.isRefreshing = false
+                    loading = false
+                    nextPageUrl = it.paginationData.next
+                    adapter.setNotes(it.body)
+                }, {
+                    loading = false
+                    Timber.e(it)
+                    swipeRefreshLayout.isRefreshing = false
+                    Snackbar.make(root, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
+                            .show()
                 })
     }
 
     fun loadMoreNotes() {
         adapter.setLoading(true)
         App.get().gitLab.getIssueNotes(nextPageUrl!!.toString())
+                .mapResponseSuccessWithPaginationData()
                 .with(this)
-                .subscribe(object : CustomResponseSingleObserver<List<Note>>() {
-
-                    override fun error(e: Throwable) {
-                        loading = false
-                        Timber.e(e)
-                        adapter.setLoading(false)
-                        Snackbar.make(root, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
-                                .show()
-                    }
-
-                    override fun responseNonNullSuccess(notes: List<Note>) {
-                        adapter.setLoading(false)
-                        loading = false
-                        nextPageUrl = LinkHeaderParser.parse(response()).next
-                        adapter.addNotes(notes)
-                    }
+                .subscribe({
+                    adapter.setLoading(false)
+                    loading = false
+                    nextPageUrl = it.paginationData.next
+                    adapter.addNotes(it.body)
+                }, {
+                    loading = false
+                    Timber.e(it)
+                    adapter.setLoading(false)
+                    Snackbar.make(root, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
+                            .show()
                 })
     }
 

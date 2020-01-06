@@ -1,6 +1,5 @@
 package com.commit451.gitlab.fragment
 
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,12 +16,11 @@ import com.commit451.gitlab.adapter.MilestoneAdapter
 import com.commit451.gitlab.event.MilestoneChangedEvent
 import com.commit451.gitlab.event.MilestoneCreatedEvent
 import com.commit451.gitlab.event.ProjectReloadEvent
+import com.commit451.gitlab.extension.mapResponseSuccessWithPaginationData
 import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Milestone
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.navigation.Navigator
-import com.commit451.gitlab.rx.CustomResponseSingleObserver
-import com.commit451.gitlab.util.LinkHeaderParser
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_milestones.*
 import org.greenrobot.eventbus.Subscribe
@@ -44,7 +42,7 @@ class MilestonesFragment : BaseFragment() {
     private lateinit var states: Array<String>
     private var project: Project? = null
     private var loading = false
-    private var nextPageUrl: Uri? = null
+    private var nextPageUrl: String? = null
 
     private val onScrollListener = object : RecyclerView.OnScrollListener() {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -124,30 +122,26 @@ class MilestonesFragment : BaseFragment() {
         nextPageUrl = null
         loading = true
         App.get().gitLab.getMilestones(project!!.id, state)
+                .mapResponseSuccessWithPaginationData()
                 .with(this)
-                .subscribe(object : CustomResponseSingleObserver<List<Milestone>>() {
-
-                    override fun error(e: Throwable) {
-                        loading = false
-                        Timber.e(e)
-                        swipeRefreshLayout.isRefreshing = false
+                .subscribe({
+                    loading = false
+                    swipeRefreshLayout.isRefreshing = false
+                    if (it.body.isEmpty()) {
                         textMessage.visibility = View.VISIBLE
-                        textMessage.setText(R.string.connection_error_milestones)
-                        adapterMilestones.setData(null)
-                        nextPageUrl = null
+                        textMessage.setText(R.string.no_milestones)
                     }
-
-                    override fun responseNonNullSuccess(milestones: List<Milestone>) {
-                        loading = false
-                        swipeRefreshLayout.isRefreshing = false
-                        if (milestones.isEmpty()) {
-                            textMessage.visibility = View.VISIBLE
-                            textMessage.setText(R.string.no_milestones)
-                        }
-                        adapterMilestones.setData(milestones)
-                        nextPageUrl = LinkHeaderParser.parse(response()).next
-                        Timber.d("Next page url $nextPageUrl")
-                    }
+                    adapterMilestones.setData(it.body)
+                    nextPageUrl = it.paginationData.next
+                    Timber.d("Next page url $nextPageUrl")
+                }, {
+                    loading = false
+                    Timber.e(it)
+                    swipeRefreshLayout.isRefreshing = false
+                    textMessage.visibility = View.VISIBLE
+                    textMessage.setText(R.string.connection_error_milestones)
+                    adapterMilestones.setData(null)
+                    nextPageUrl = null
                 })
     }
 
@@ -161,21 +155,17 @@ class MilestonesFragment : BaseFragment() {
 
         Timber.d("loadMore called for ${nextPageUrl!!}")
         App.get().gitLab.getMilestones(nextPageUrl!!.toString())
+                .mapResponseSuccessWithPaginationData()
                 .with(this)
-                .subscribe(object : CustomResponseSingleObserver<List<Milestone>>() {
-
-                    override fun error(e: Throwable) {
-                        Timber.e(e)
-                        adapterMilestones.setLoading(false)
-                        loading = false
-                    }
-
-                    override fun responseNonNullSuccess(milestones: List<Milestone>) {
-                        loading = false
-                        adapterMilestones.setLoading(false)
-                        nextPageUrl = LinkHeaderParser.parse(response()).next
-                        adapterMilestones.addData(milestones)
-                    }
+                .subscribe({
+                    loading = false
+                    adapterMilestones.setLoading(false)
+                    nextPageUrl = it.paginationData.next
+                    adapterMilestones.addData(it.body)
+                }, {
+                    Timber.e(it)
+                    adapterMilestones.setLoading(false)
+                    loading = false
                 })
     }
 

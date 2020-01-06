@@ -2,7 +2,6 @@ package com.commit451.gitlab.fragment
 
 import android.app.Activity
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,11 +11,10 @@ import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.PickBranchOrTagActivity
 import com.commit451.gitlab.adapter.BranchAdapter
+import com.commit451.gitlab.extension.mapResponseSuccessWithPaginationData
 import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.Ref
 import com.commit451.gitlab.model.api.Branch
-import com.commit451.gitlab.rx.CustomResponseSingleObserver
-import com.commit451.gitlab.util.LinkHeaderParser
 import com.commit451.gitlab.util.OnScrollLoadMoreListener
 import kotlinx.android.synthetic.main.fragment_pick_branch.*
 import kotlinx.android.synthetic.main.progress.*
@@ -46,7 +44,7 @@ class PickBranchFragment : BaseFragment() {
 
     private var projectId: Long = 0
 
-    private var nextPageUrl: Uri? = null
+    private var nextPageUrl: String? = null
     private var loading: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -89,40 +87,32 @@ class PickBranchFragment : BaseFragment() {
         textMessage.visibility = View.GONE
 
         App.get().gitLab.getBranches(projectId)
+                .mapResponseSuccessWithPaginationData()
                 .with(this)
-                .subscribe(object : CustomResponseSingleObserver<List<Branch>>() {
-
-                    override fun error(e: Throwable) {
-                        Timber.e(e)
-                        progress.visibility = View.GONE
-                        textMessage.visibility = View.VISIBLE
-                    }
-
-                    override fun responseNonNullSuccess(branches: List<Branch>) {
-                        loading = false
-                        nextPageUrl = LinkHeaderParser.parse(response()).next
-                        progress.visibility = View.GONE
-                        adapterBranches.setEntries(branches)
-                    }
+                .subscribe({
+                    loading = false
+                    nextPageUrl = it.paginationData.next
+                    progress.visibility = View.GONE
+                    adapterBranches.setEntries(it.body)
+                }, {
+                    Timber.e(it)
+                    progress.visibility = View.GONE
+                    textMessage.visibility = View.VISIBLE
                 })
     }
 
     fun loadMore() {
         loading = true
         App.get().gitLab.getBranches(nextPageUrl.toString())
+                .mapResponseSuccessWithPaginationData()
                 .with(this)
-                .subscribe(object : CustomResponseSingleObserver<List<Branch>>() {
-
-                    override fun error(e: Throwable) {
-                        Timber.e(e)
-                        loading = false
-                    }
-
-                    override fun responseNonNullSuccess(branches: List<Branch>) {
-                        loading = false
-                        nextPageUrl = LinkHeaderParser.parse(response()).next
-                        adapterBranches.addEntries(branches)
-                    }
+                .subscribe({
+                    loading = false
+                    nextPageUrl = it.paginationData.next
+                    adapterBranches.addEntries(it.body)
+                }, {
+                    Timber.e(it)
+                    loading = false
                 })
     }
 }

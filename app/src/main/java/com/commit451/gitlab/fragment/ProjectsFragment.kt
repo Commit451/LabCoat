@@ -1,7 +1,6 @@
 package com.commit451.gitlab.fragment
 
 import android.content.Context
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,12 +12,11 @@ import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.DividerItemDecoration
 import com.commit451.gitlab.adapter.ProjectAdapter
 import com.commit451.gitlab.api.GitLabService
+import com.commit451.gitlab.extension.mapResponseSuccessWithPaginationData
 import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Group
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.navigation.Navigator
-import com.commit451.gitlab.rx.CustomResponseSingleObserver
-import com.commit451.gitlab.util.LinkHeaderParser
 import io.reactivex.Single
 import kotlinx.android.synthetic.main.fragment_projects.*
 import retrofit2.Response
@@ -71,7 +69,7 @@ class ProjectsFragment : BaseFragment() {
 
     private var mode: Int = 0
     private var query: String? = null
-    private var nextPageUrl: Uri? = null
+    private var nextPageUrl: String? = null
     private var loading = false
     private var listener: Listener? = null
 
@@ -161,30 +159,26 @@ class ProjectsFragment : BaseFragment() {
 
     private fun actuallyLoadIt(observable: Single<Response<List<Project>>>) {
         observable
+                .mapResponseSuccessWithPaginationData()
                 .with(this)
-                .subscribe(object : CustomResponseSingleObserver<List<Project>>() {
-
-                    override fun error(e: Throwable) {
-                        loading = false
-                        Timber.e(e)
-                        swipeRefreshLayout.isRefreshing = false
+                .subscribe({
+                    loading = false
+                    swipeRefreshLayout.isRefreshing = false
+                    if (it.body.isEmpty()) {
                         textMessage.visibility = View.VISIBLE
-                        textMessage.setText(R.string.connection_error)
-                        adapterProjects.setData(null)
-                        nextPageUrl = null
+                        textMessage.setText(R.string.no_projects)
                     }
-
-                    override fun responseNonNullSuccess(projects: List<Project>) {
-                        loading = false
-                        swipeRefreshLayout.isRefreshing = false
-                        if (projects.isEmpty()) {
-                            textMessage.visibility = View.VISIBLE
-                            textMessage.setText(R.string.no_projects)
-                        }
-                        adapterProjects.setData(projects)
-                        nextPageUrl = LinkHeaderParser.parse(response()).next
-                        Timber.d("Next page url $nextPageUrl")
-                    }
+                    adapterProjects.setData(it.body)
+                    nextPageUrl = it.paginationData.next
+                    Timber.d("Next page url $nextPageUrl")
+                }, {
+                    loading = false
+                    Timber.e(it)
+                    swipeRefreshLayout.isRefreshing = false
+                    textMessage.visibility = View.VISIBLE
+                    textMessage.setText(R.string.connection_error)
+                    adapterProjects.setData(null)
+                    nextPageUrl = null
                 })
     }
 
@@ -196,22 +190,18 @@ class ProjectsFragment : BaseFragment() {
         adapterProjects.setLoading(true)
         Timber.d("loadMore called for %s", nextPageUrl)
         getGitLab().getProjects(nextPageUrl!!.toString())
+                .mapResponseSuccessWithPaginationData()
                 .with(this)
-                .subscribe(object : CustomResponseSingleObserver<List<Project>>() {
-
-                    override fun error(e: Throwable) {
-                        loading = false
-                        Timber.e(e)
-                        adapterProjects.setLoading(false)
-                    }
-
-                    override fun responseNonNullSuccess(projects: List<Project>) {
-                        loading = false
-                        adapterProjects.setLoading(false)
-                        adapterProjects.addData(projects)
-                        nextPageUrl = LinkHeaderParser.parse(response()).next
-                        Timber.d("Next page url $nextPageUrl")
-                    }
+                .subscribe({
+                    loading = false
+                    adapterProjects.setLoading(false)
+                    adapterProjects.addData(it.body)
+                    nextPageUrl = it.paginationData.next
+                    Timber.d("Next page url $nextPageUrl")
+                }, {
+                    loading = false
+                    Timber.e(it)
+                    adapterProjects.setLoading(false)
                 })
     }
 

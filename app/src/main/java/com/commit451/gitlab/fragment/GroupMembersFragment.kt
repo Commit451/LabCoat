@@ -13,12 +13,11 @@ import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.GroupMembersAdapter
 import com.commit451.gitlab.dialog.AccessDialog
 import com.commit451.gitlab.event.MemberAddedEvent
+import com.commit451.gitlab.extension.mapResponseSuccessWithPaginationData
 import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Group
 import com.commit451.gitlab.model.api.User
 import com.commit451.gitlab.navigation.Navigator
-import com.commit451.gitlab.rx.CustomResponseSingleObserver
-import com.commit451.gitlab.util.LinkHeaderParser
 import com.commit451.gitlab.viewHolder.ProjectMemberViewHolder
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.Single
@@ -48,7 +47,7 @@ class GroupMembersFragment : BaseFragment() {
 
     private var member: User? = null
     private lateinit var group: Group
-    private var nextPageUrl: Uri? = null
+    private var nextPageUrl: String? = null
 
     private val mOnScrollListener = object : RecyclerView.OnScrollListener() {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -160,35 +159,31 @@ class GroupMembersFragment : BaseFragment() {
 
     private fun loadGroupMembers(observable: Single<Response<List<User>>>) {
         observable
+                .mapResponseSuccessWithPaginationData()
                 .with(this)
-                .subscribe(object : CustomResponseSingleObserver<List<User>>() {
-
-                    override fun error(e: Throwable) {
-                        Timber.e(e)
-                        swipeRefreshLayout.isRefreshing = false
+                .subscribe({
+                    swipeRefreshLayout.isRefreshing = false
+                    if (it.body.isEmpty()) {
                         textMessage.visibility = View.VISIBLE
-                        textMessage.setText(R.string.connection_error_users)
-                        buttonAddUser.visibility = View.GONE
-                        adapterGroupMembers.setData(null)
+                        textMessage.setText(R.string.no_project_members)
                     }
-
-                    override fun responseNonNullSuccess(members: List<User>) {
-                        swipeRefreshLayout.isRefreshing = false
-                        if (members.isEmpty()) {
-                            textMessage.visibility = View.VISIBLE
-                            textMessage.setText(R.string.no_project_members)
-                        }
-                        buttonAddUser.visibility = View.VISIBLE
-                        if (nextPageUrl == null) {
-                            adapterGroupMembers.setData(members)
-                        } else {
-                            adapterGroupMembers.addData(members)
-                        }
-                        adapterGroupMembers.isLoading = false
-
-                        nextPageUrl = LinkHeaderParser.parse(response()).next
-                        Timber.d("Next page url %s", nextPageUrl)
+                    buttonAddUser.visibility = View.VISIBLE
+                    if (nextPageUrl == null) {
+                        adapterGroupMembers.setData(it.body)
+                    } else {
+                        adapterGroupMembers.addData(it.body)
                     }
+                    adapterGroupMembers.isLoading = false
+
+                    nextPageUrl = it.paginationData.next
+                    Timber.d("Next page url %s", nextPageUrl)
+                }, {
+                    Timber.e(it)
+                    swipeRefreshLayout.isRefreshing = false
+                    textMessage.visibility = View.VISIBLE
+                    textMessage.setText(R.string.connection_error_users)
+                    buttonAddUser.visibility = View.GONE
+                    adapterGroupMembers.setData(null)
                 })
     }
 

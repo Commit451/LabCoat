@@ -2,7 +2,6 @@ package com.commit451.gitlab.fragment
 
 import android.app.Activity.RESULT_OK
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,13 +14,11 @@ import com.commit451.gitlab.activity.AttachActivity
 import com.commit451.gitlab.adapter.NotesAdapter
 import com.commit451.gitlab.api.response.FileUploadResponse
 import com.commit451.gitlab.event.MergeRequestChangedEvent
+import com.commit451.gitlab.extension.mapResponseSuccessWithPaginationData
 import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.MergeRequest
-import com.commit451.gitlab.model.api.Note
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.navigation.TransitionFactory
-import com.commit451.gitlab.rx.CustomResponseSingleObserver
-import com.commit451.gitlab.util.LinkHeaderParser
 import com.commit451.gitlab.view.SendMessageView
 import com.commit451.teleprinter.Teleprinter
 import com.google.android.material.snackbar.Snackbar
@@ -58,7 +55,7 @@ class MergeRequestDiscussionFragment : BaseFragment() {
 
     private lateinit var project: Project
     private lateinit var mergeRequest: MergeRequest
-    private var nextPageUrl: Uri? = null
+    private var nextPageUrl: String? = null
     private var loading: Boolean = false
 
     private val onScrollListener = object : RecyclerView.OnScrollListener() {
@@ -135,46 +132,38 @@ class MergeRequestDiscussionFragment : BaseFragment() {
     private fun loadNotes() {
         swipeRefreshLayout.isRefreshing = true
         App.get().gitLab.getMergeRequestNotes(project.id, mergeRequest.iid)
+                .mapResponseSuccessWithPaginationData()
                 .with(this)
-                .subscribe(object : CustomResponseSingleObserver<List<Note>>() {
-
-                    override fun error(e: Throwable) {
-                        loading = false
-                        Timber.e(e)
-                        swipeRefreshLayout.isRefreshing = false
-                        Snackbar.make(root, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
-                                .show()
-                    }
-
-                    override fun responseNonNullSuccess(notes: List<Note>) {
-                        swipeRefreshLayout.isRefreshing = false
-                        loading = false
-                        nextPageUrl = LinkHeaderParser.parse(response()).next
-                        adapterNotes.setNotes(notes)
-                    }
+                .subscribe({
+                    swipeRefreshLayout.isRefreshing = false
+                    loading = false
+                    nextPageUrl = it.paginationData.next
+                    adapterNotes.setNotes(it.body)
+                }, {
+                    loading = false
+                    Timber.e(it)
+                    swipeRefreshLayout.isRefreshing = false
+                    Snackbar.make(root, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
+                            .show()
                 })
     }
 
     fun loadMoreNotes() {
         adapterNotes.setLoading(true)
         App.get().gitLab.getMergeRequestNotes(nextPageUrl!!.toString())
+                .mapResponseSuccessWithPaginationData()
                 .with(this)
-                .subscribe(object : CustomResponseSingleObserver<List<Note>>() {
-
-                    override fun error(e: Throwable) {
-                        loading = false
-                        Timber.e(e)
-                        adapterNotes.setLoading(false)
-                        Snackbar.make(root, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
-                                .show()
-                    }
-
-                    override fun responseNonNullSuccess(notes: List<Note>) {
-                        adapterNotes.setLoading(false)
-                        loading = false
-                        nextPageUrl = LinkHeaderParser.parse(response()).next
-                        adapterNotes.addNotes(notes)
-                    }
+                .subscribe({
+                    adapterNotes.setLoading(false)
+                    loading = false
+                    nextPageUrl = it.paginationData.next
+                    adapterNotes.addNotes(it.body)
+                }, {
+                    loading = false
+                    Timber.e(it)
+                    adapterNotes.setLoading(false)
+                    Snackbar.make(root, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
+                            .show()
                 })
     }
 

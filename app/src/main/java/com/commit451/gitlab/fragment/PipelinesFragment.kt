@@ -1,6 +1,5 @@
 package com.commit451.gitlab.fragment
 
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,12 +15,11 @@ import com.commit451.gitlab.adapter.DividerItemDecoration
 import com.commit451.gitlab.adapter.PipelineAdapter
 import com.commit451.gitlab.event.PipelineChangedEvent
 import com.commit451.gitlab.event.ProjectReloadEvent
+import com.commit451.gitlab.extension.mapResponseSuccessWithPaginationData
 import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Pipeline
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.navigation.Navigator
-import com.commit451.gitlab.rx.CustomResponseSingleObserver
-import com.commit451.gitlab.util.LinkHeaderParser
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_pipelines.*
 import org.greenrobot.eventbus.Subscribe
@@ -45,7 +43,7 @@ class PipelinesFragment : BaseFragment() {
     private lateinit var scopes: Array<String>
     private var scope: String? = null
     private var project: Project? = null
-    private var nextPageUrl: Uri? = null
+    private var nextPageUrl: String? = null
     private var loading: Boolean = false
 
     private val onScrollListener = object : RecyclerView.OnScrollListener() {
@@ -124,31 +122,26 @@ class PipelinesFragment : BaseFragment() {
         nextPageUrl = null
         loading = true
         App.get().gitLab.getPipelines(project!!.id, scope)
+                .mapResponseSuccessWithPaginationData()
                 .with(this)
-                .subscribe(object : CustomResponseSingleObserver<List<Pipeline>>() {
-
-                    override fun error(e: Throwable) {
-                        loading = false
-                        Timber.e(e)
-                        swipeRefreshLayout.isRefreshing = false
+                .subscribe({
+                    loading = false
+                    swipeRefreshLayout.isRefreshing = false
+                    if (it.body.isEmpty()) {
                         textMessage.visibility = View.VISIBLE
-                        textMessage.setText(R.string.failed_to_load_pipelines)
-                        adapterPipelines.setValues(null)
-                        nextPageUrl = null
+                        textMessage.setText(R.string.no_pipelines)
                     }
-
-                    override fun responseNonNullSuccess(pipelines: List<Pipeline>) {
-                        loading = false
-
-                        swipeRefreshLayout.isRefreshing = false
-                        if (pipelines.isEmpty()) {
-                            textMessage.visibility = View.VISIBLE
-                            textMessage.setText(R.string.no_pipelines)
-                        }
-                        adapterPipelines.setValues(pipelines)
-                        nextPageUrl = LinkHeaderParser.parse(response()).next
-                        Timber.d("Next page url %s", nextPageUrl)
-                    }
+                    adapterPipelines.setValues(it.body)
+                    nextPageUrl = it.paginationData.next
+                    Timber.d("Next page url %s", nextPageUrl)
+                }, {
+                    loading = false
+                    Timber.e(it)
+                    swipeRefreshLayout.isRefreshing = false
+                    textMessage.visibility = View.VISIBLE
+                    textMessage.setText(R.string.failed_to_load_pipelines)
+                    adapterPipelines.setValues(null)
+                    nextPageUrl = null
                 })
     }
 
@@ -162,21 +155,17 @@ class PipelinesFragment : BaseFragment() {
 
         Timber.d("loadMore called for %s", nextPageUrl)
         App.get().gitLab.getPipelines(nextPageUrl!!.toString(), scope)
+                .mapResponseSuccessWithPaginationData()
                 .with(this)
-                .subscribe(object : CustomResponseSingleObserver<List<Pipeline>>() {
-
-                    override fun error(e: Throwable) {
-                        Timber.e(e)
-                        loading = false
-                        adapterPipelines.setLoading(false)
-                    }
-
-                    override fun responseNonNullSuccess(pipelines: List<Pipeline>) {
-                        loading = false
-                        adapterPipelines.setLoading(false)
-                        nextPageUrl = LinkHeaderParser.parse(response()).next
-                        adapterPipelines.addValues(pipelines)
-                    }
+                .subscribe({
+                    loading = false
+                    adapterPipelines.setLoading(false)
+                    nextPageUrl = it.paginationData.next
+                    adapterPipelines.addValues(it.body)
+                }, {
+                    Timber.e(it)
+                    loading = false
+                    adapterPipelines.setLoading(false)
                 })
     }
 

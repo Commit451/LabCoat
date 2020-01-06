@@ -2,15 +2,20 @@ package com.commit451.gitlab.extension
 
 import com.commit451.gitlab.activity.BaseActivity
 import com.commit451.gitlab.fragment.BaseFragment
-import com.commit451.reptar.kotlin.fromIoToMainThread
 import com.uber.autodispose.CompletableSubscribeProxy
 import com.uber.autodispose.kotlin.autoDisposable
 import io.reactivex.Completable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 
 fun Completable.with(baseActivity: BaseActivity): CompletableSubscribeProxy {
-    return this.fromIoToMainThread().autoDisposable(baseActivity.scopeProvider)
+    return subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .autoDisposable(baseActivity.scopeProvider)
 }
 
 fun Completable.with(baseFragment: BaseFragment): CompletableSubscribeProxy {
-    return this.fromIoToMainThread().autoDisposable(baseFragment.scopeProvider)
+    return subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .autoDisposable(baseFragment.scopeProvider)
 }

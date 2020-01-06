@@ -1,7 +1,5 @@
 package com.commit451.gitlab.util
 
-import android.net.Uri
-
 import retrofit2.Response
 import timber.log.Timber
 
@@ -11,45 +9,27 @@ import timber.log.Timber
  */
 object LinkHeaderParser {
 
-    private const val PREV_PAGE_SUFFIX = "rel=\"prev\""
     private const val NEXT_PAGE_SUFFIX = "rel=\"next\""
-    private const val FIRST_PAGE_SUFFIX = "rel=\"first\""
-    private const val LAST_PAGE_SUFFIX = "rel=\"last\""
 
     fun parse(response: Response<*>): PaginationData {
-        var prev: Uri? = null
-        var next: Uri? = null
-        var first: Uri? = null
-        var last: Uri? = null
+        var next: String? = null
 
-        val header = response.headers().get("Link")
+        val header = response.headers()["Link"]
         if (header != null) {
-            val parts = header.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-            for (part in parts) {
-                try {
-                    val linkStart = part.indexOf('<') + 1
-                    val linkEnd = part.indexOf('>')
+            val nextPagePart = header.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+                    .find { it.contains(NEXT_PAGE_SUFFIX) } ?: ""
+            try {
+                val linkStart = nextPagePart.indexOf('<') + 1
+                val linkEnd = nextPagePart.indexOf('>')
 
-                    val link = Uri.parse(part.substring(linkStart, linkEnd))
-
-                    if (part.contains(PREV_PAGE_SUFFIX)) {
-                        prev = link
-                    } else if (part.contains(NEXT_PAGE_SUFFIX)) {
-                        next = link
-                    } else if (part.contains(FIRST_PAGE_SUFFIX)) {
-                        first = link
-                    } else if (part.contains(LAST_PAGE_SUFFIX)) {
-                        last = link
-                    }
-                } catch (e: Exception) {
-                    Timber.e(e)
-                }
-
+                next = nextPagePart.substring(linkStart, linkEnd)
+            } catch (e: Exception) {
+                Timber.e(e)
             }
         }
 
-        return PaginationData(prev, next, first, last)
+        return PaginationData(next)
     }
 
-    class PaginationData internal constructor(val prev: Uri?, val next: Uri?, val first: Uri?, val last: Uri?)
+    data class PaginationData(val next: String?)
 }

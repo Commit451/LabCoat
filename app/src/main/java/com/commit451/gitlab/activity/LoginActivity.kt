@@ -21,13 +21,12 @@ import com.commit451.gitlab.dialog.HttpLoginDialog
 import com.commit451.gitlab.event.LoginEvent
 import com.commit451.gitlab.event.ReloadDataEvent
 import com.commit451.gitlab.extension.checkValid
+import com.commit451.gitlab.extension.mapResponseSuccess
 import com.commit451.gitlab.extension.text
 import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.Account
 import com.commit451.gitlab.model.api.Message
-import com.commit451.gitlab.model.api.User
 import com.commit451.gitlab.navigation.Navigator
-import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.ssl.CustomHostnameVerifier
 import com.commit451.gitlab.ssl.X509CertificateException
 import com.commit451.gitlab.ssl.X509Util
@@ -202,30 +201,26 @@ class LoginActivity : BaseActivity() {
 
         val gitLabService = GitLabFactory.create(currentAccount, gitlabClientBuilder.build())
         gitLabService.getThisUser()
+                .mapResponseSuccess()
                 .with(this)
-                .subscribe(object : CustomResponseSingleObserver<User>() {
-
-                    override fun error(e: Throwable) {
-                        Timber.e(e)
-                        if (e is HttpException) {
-                            handleConnectionResponse(response(), e)
-                        } else {
-                            handleConnectionError(e)
-                        }
-                    }
-
-                    override fun responseNonNullSuccess(userFull: User) {
-                        progress.visibility = View.GONE
-                        currentAccount.lastUsed = Date()
-                        currentAccount.email = userFull.email
-                        currentAccount.username = userFull.username
-                        Prefs.addAccount(currentAccount)
-                        App.get().setAccount(currentAccount)
-                        App.bus().post(LoginEvent(currentAccount))
-                        //This is mostly for if projects already exists, then we will reload the data
-                        App.bus().post(ReloadDataEvent())
-                        Navigator.navigateToStartingActivity(this@LoginActivity)
-                        finish()
+                .subscribe({
+                    progress.visibility = View.GONE
+                    currentAccount.lastUsed = Date()
+                    currentAccount.email = it.email
+                    currentAccount.username = it.username
+                    Prefs.addAccount(currentAccount)
+                    App.get().setAccount(currentAccount)
+                    App.bus().post(LoginEvent(currentAccount))
+                    //This is mostly for if projects already exists, then we will reload the data
+                    App.bus().post(ReloadDataEvent())
+                    Navigator.navigateToStartingActivity(this@LoginActivity)
+                    finish()
+                }, {
+                    Timber.e(it)
+                    if (it is HttpException) {
+                        handleConnectionResponse(it.response()!!, it)
+                    } else {
+                        handleConnectionError(it)
                     }
                 })
     }
@@ -273,13 +268,13 @@ class LoginActivity : BaseActivity() {
         }
     }
 
-    fun handleConnectionResponse(response: Response<*>, throwable: Throwable) {
+    private fun handleConnectionResponse(response: Response<*>, throwable: Throwable) {
         progress.visibility = View.GONE
         when (response.code()) {
             401 -> {
                 currentAccount.authorizationHeader = null
 
-                val header = response.headers().get("WWW-Authenticate")
+                val header = response.headers()["WWW-Authenticate"]
                 if (header != null) {
                     handleBasicAuthentication(response)
                     return

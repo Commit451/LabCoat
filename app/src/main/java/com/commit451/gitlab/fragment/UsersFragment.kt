@@ -1,6 +1,5 @@
 package com.commit451.gitlab.fragment
 
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,11 +9,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.UserAdapter
+import com.commit451.gitlab.extension.mapResponseSuccessWithPaginationData
 import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.User
 import com.commit451.gitlab.navigation.Navigator
-import com.commit451.gitlab.rx.CustomResponseSingleObserver
-import com.commit451.gitlab.util.LinkHeaderParser
 import com.commit451.gitlab.viewHolder.UserViewHolder
 import kotlinx.android.synthetic.main.fragment_users.*
 import timber.log.Timber
@@ -44,7 +42,7 @@ class UsersFragment : BaseFragment() {
 
     var query: String? = null
     var loading: Boolean = false
-    var nextPageUrl: Uri? = null
+    var nextPageUrl: String? = null
 
     val onScrollListener = object : RecyclerView.OnScrollListener() {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -101,28 +99,24 @@ class UsersFragment : BaseFragment() {
         swipeRefreshLayout.isRefreshing = true
 
         App.get().gitLab.searchUsers(query!!)
+                .mapResponseSuccessWithPaginationData()
                 .with(this)
-                .subscribe(object : CustomResponseSingleObserver<List<User>>() {
-
-                    override fun error(e: Throwable) {
-                        Timber.e(e)
-                        loading = false
-                        swipeRefreshLayout.isRefreshing = false
-                        textMessage.setText(R.string.connection_error_users)
+                .subscribe({
+                    swipeRefreshLayout.isRefreshing = false
+                    loading = false
+                    if (it.body.isEmpty()) {
                         textMessage.visibility = View.VISIBLE
-                        adapterUser.setData(null)
+                        textMessage.setText(R.string.no_users_found)
                     }
-
-                    override fun responseNonNullSuccess(users: List<User>) {
-                        swipeRefreshLayout.isRefreshing = false
-                        loading = false
-                        if (users.isEmpty()) {
-                            textMessage.visibility = View.VISIBLE
-                            textMessage.setText(R.string.no_users_found)
-                        }
-                        adapterUser.setData(users)
-                        nextPageUrl = LinkHeaderParser.parse(response()).next
-                    }
+                    adapterUser.setData(it.body)
+                    nextPageUrl = it.paginationData.next
+                }, {
+                    Timber.e(it)
+                    loading = false
+                    swipeRefreshLayout.isRefreshing = false
+                    textMessage.setText(R.string.connection_error_users)
+                    textMessage.visibility = View.VISIBLE
+                    adapterUser.setData(null)
                 })
     }
 
@@ -131,23 +125,19 @@ class UsersFragment : BaseFragment() {
         adapterUser.setLoading(true)
         Timber.d("loadMore called for %s %s", nextPageUrl!!.toString(), query)
         App.get().gitLab.searchUsers(nextPageUrl!!.toString(), query!!)
+                .mapResponseSuccessWithPaginationData()
                 .with(this)
-                .subscribe(object : CustomResponseSingleObserver<List<User>>() {
-
-                    override fun error(e: Throwable) {
-                        Timber.e(e)
-                        loading = false
-                        swipeRefreshLayout.isRefreshing = false
-                        adapterUser.setLoading(false)
-                    }
-
-                    override fun responseNonNullSuccess(users: List<User>) {
-                        loading = false
-                        swipeRefreshLayout.isRefreshing = false
-                        adapterUser.addData(users)
-                        nextPageUrl = LinkHeaderParser.parse(response()).next
-                        adapterUser.setLoading(false)
-                    }
+                .subscribe({
+                    loading = false
+                    swipeRefreshLayout.isRefreshing = false
+                    adapterUser.addData(it.body)
+                    nextPageUrl = it.paginationData.next
+                    adapterUser.setLoading(false)
+                }, {
+                    Timber.e(it)
+                    loading = false
+                    swipeRefreshLayout.isRefreshing = false
+                    adapterUser.setLoading(false)
                 })
     }
 

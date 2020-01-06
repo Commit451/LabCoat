@@ -15,13 +15,12 @@ import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.DividerItemDecoration
 import com.commit451.gitlab.adapter.MilestoneIssueAdapter
 import com.commit451.gitlab.event.MilestoneChangedEvent
+import com.commit451.gitlab.extension.mapResponseSuccessWithPaginationData
 import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Issue
 import com.commit451.gitlab.model.api.Milestone
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.navigation.Navigator
-import com.commit451.gitlab.rx.CustomResponseSingleObserver
-import com.commit451.gitlab.util.LinkHeaderParser
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.Single
 import kotlinx.android.synthetic.main.activity_milestone.*
@@ -50,7 +49,7 @@ class MilestoneActivity : BaseActivity() {
 
     private lateinit var project: Project
     private lateinit var milestone: Milestone
-    private var nextPageUrl: Uri? = null
+    private var nextPageUrl: String? = null
     private var loading = false
 
     private val onScrollListener = object : RecyclerView.OnScrollListener() {
@@ -125,33 +124,30 @@ class MilestoneActivity : BaseActivity() {
         loading = true
         swipeRefreshLayout.isRefreshing = true
         App.get().gitLab.getMilestoneIssues(project.id, milestone.id)
+                .mapResponseSuccessWithPaginationData()
                 .with(this)
-                .subscribe(object : CustomResponseSingleObserver<List<Issue>>() {
+                .subscribe({
 
-                    override fun error(t: Throwable) {
-                        Timber.e(t)
-                        loading = false
-                        swipeRefreshLayout.isRefreshing = false
+                    swipeRefreshLayout.isRefreshing = false
+                    loading = false
+
+                    if (it.body.isNotEmpty()) {
+                        textMessage.visibility = View.GONE
+                    } else {
+                        Timber.d("No issues found")
                         textMessage.visibility = View.VISIBLE
-                        textMessage.setText(R.string.connection_error_issues)
-                        adapterMilestoneIssues.setIssues(null)
+                        textMessage.setText(R.string.no_issues)
                     }
 
-                    override fun responseNonNullSuccess(issues: List<Issue>) {
-                        swipeRefreshLayout.isRefreshing = false
-                        loading = false
-
-                        if (!issues.isEmpty()) {
-                            textMessage.visibility = View.GONE
-                        } else {
-                            Timber.d("No issues found")
-                            textMessage.visibility = View.VISIBLE
-                            textMessage.setText(R.string.no_issues)
-                        }
-
-                        nextPageUrl = LinkHeaderParser.parse(response()).next
-                        adapterMilestoneIssues.setIssues(issues)
-                    }
+                    nextPageUrl = it.paginationData.next
+                    adapterMilestoneIssues.setIssues(it.body)
+                }, {
+                    Timber.e(it)
+                    loading = false
+                    swipeRefreshLayout.isRefreshing = false
+                    textMessage.visibility = View.VISIBLE
+                    textMessage.setText(R.string.connection_error_issues)
+                    adapterMilestoneIssues.setIssues(null)
                 })
     }
 
@@ -165,19 +161,15 @@ class MilestoneActivity : BaseActivity() {
 
         Timber.d("loadMore called for %s", nextPageUrl)
         App.get().gitLab.getMilestoneIssues(nextPageUrl!!.toString())
+                .mapResponseSuccessWithPaginationData()
                 .with(this)
-                .subscribe(object : CustomResponseSingleObserver<List<Issue>>() {
-
-                    override fun error(e: Throwable) {
-                        Timber.e(e)
-                        loading = false
-                    }
-
-                    override fun responseNonNullSuccess(issues: List<Issue>) {
-                        loading = false
-                        nextPageUrl = LinkHeaderParser.parse(response()).next
-                        adapterMilestoneIssues.addIssues(issues)
-                    }
+                .subscribe({
+                    loading = false
+                    nextPageUrl = it.paginationData.next
+                    adapterMilestoneIssues.addIssues(it.body)
+                }, {
+                    Timber.e(it)
+                    loading = false
                 })
     }
 

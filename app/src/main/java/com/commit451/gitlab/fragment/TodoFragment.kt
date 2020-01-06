@@ -1,23 +1,19 @@
 package com.commit451.gitlab.fragment
 
-import android.net.Uri
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.TodoAdapter
+import com.commit451.gitlab.extension.mapResponseSuccessWithPaginationData
 import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Todo
 import com.commit451.gitlab.navigation.Navigator
-import com.commit451.gitlab.rx.CustomResponseSingleObserver
-import com.commit451.gitlab.util.LinkHeaderParser
+import com.google.android.material.snackbar.Snackbar
 import io.reactivex.Single
 import kotlinx.android.synthetic.main.fragment_todo.*
 import retrofit2.Response
@@ -46,7 +42,7 @@ class TodoFragment : BaseFragment() {
     private lateinit var adapterTodos: TodoAdapter
 
     private var mode: Int = 0
-    private var nextPageUrl: Uri? = null
+    private var nextPageUrl: String? = null
     private var loading = false
 
     private val onScrollListener = object : RecyclerView.OnScrollListener() {
@@ -116,31 +112,26 @@ class TodoFragment : BaseFragment() {
 
     private fun getTodos(observable: Single<Response<List<Todo>>>) {
         observable
+                .mapResponseSuccessWithPaginationData()
                 .with(this)
-                .subscribe(object : CustomResponseSingleObserver<List<Todo>>() {
-
-                    override fun error(e: Throwable) {
-                        loading = false
-                        Timber.e(e)
-                        swipeRefreshLayout.isRefreshing = false
+                .subscribe({
+                    loading = false
+                    swipeRefreshLayout.isRefreshing = false
+                    if (it.body.isEmpty()) {
                         textMessage.visibility = View.VISIBLE
-                        textMessage.setText(R.string.connection_error)
-                        adapterTodos.setData(null)
-                        nextPageUrl = null
+                        textMessage.setText(R.string.no_todos)
                     }
-
-                    override fun responseNonNullSuccess(todos: List<Todo>) {
-                        loading = false
-
-                        swipeRefreshLayout.isRefreshing = false
-                        if (todos.isEmpty()) {
-                            textMessage.visibility = View.VISIBLE
-                            textMessage.setText(R.string.no_todos)
-                        }
-                        adapterTodos.setData(todos)
-                        nextPageUrl = LinkHeaderParser.parse(response()).next
-                        Timber.d("Next page url $nextPageUrl")
-                    }
+                    adapterTodos.setData(it.body)
+                    nextPageUrl = it.paginationData.next
+                    Timber.d("Next page url $nextPageUrl")
+                }, {
+                    loading = false
+                    Timber.e(it)
+                    swipeRefreshLayout.isRefreshing = false
+                    textMessage.visibility = View.VISIBLE
+                    textMessage.setText(R.string.connection_error)
+                    adapterTodos.setData(null)
+                    nextPageUrl = null
                 })
     }
 
@@ -156,22 +147,18 @@ class TodoFragment : BaseFragment() {
         adapterTodos.setLoading(true)
         Timber.d("loadMore called for " + nextPageUrl!!)
         App.get().gitLab.getTodosByUrl(nextPageUrl!!.toString())
+                .mapResponseSuccessWithPaginationData()
                 .with(this)
-                .subscribe(object : CustomResponseSingleObserver<List<Todo>>() {
-
-                    override fun error(e: Throwable) {
-                        loading = false
-                        Timber.e(e)
-                        adapterTodos.setLoading(false)
-                    }
-
-                    override fun responseNonNullSuccess(todos: List<Todo>) {
-                        loading = false
-                        adapterTodos.setLoading(false)
-                        adapterTodos.addData(todos)
-                        nextPageUrl = LinkHeaderParser.parse(response()).next
-                        Timber.d("Next page url $nextPageUrl")
-                    }
+                .subscribe({
+                    loading = false
+                    adapterTodos.setLoading(false)
+                    adapterTodos.addData(it.body)
+                    nextPageUrl = it.paginationData.next
+                    Timber.d("Next page url $nextPageUrl")
+                }, {
+                    loading = false
+                    Timber.e(it)
+                    adapterTodos.setLoading(false)
                 })
     }
 

@@ -1,6 +1,5 @@
 package com.commit451.gitlab.fragment
 
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,12 +14,11 @@ import com.commit451.gitlab.activity.ProjectActivity
 import com.commit451.gitlab.adapter.DividerItemDecoration
 import com.commit451.gitlab.adapter.SnippetAdapter
 import com.commit451.gitlab.event.ProjectReloadEvent
+import com.commit451.gitlab.extension.mapResponseSuccessWithPaginationData
 import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.model.api.Snippet
 import com.commit451.gitlab.navigation.Navigator
-import com.commit451.gitlab.rx.CustomResponseSingleObserver
-import com.commit451.gitlab.util.LinkHeaderParser
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_snippets.*
 import org.greenrobot.eventbus.Subscribe
@@ -42,7 +40,7 @@ class SnippetsFragment : BaseFragment() {
     private lateinit var states: Array<String>
     private var project: Project? = null
     private var loading = false
-    private var nextPageUrl: Uri? = null
+    private var nextPageUrl: String? = null
 
     private val onScrollListener = object : RecyclerView.OnScrollListener() {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -128,30 +126,26 @@ class SnippetsFragment : BaseFragment() {
         nextPageUrl = null
         loading = true
         App.get().gitLab.getSnippets(project!!.id)
+                .mapResponseSuccessWithPaginationData()
                 .with(this)
-                .subscribe(object : CustomResponseSingleObserver<List<Snippet>>() {
-
-                    override fun error(e: Throwable) {
-                        loading = false
-                        Timber.e(e)
-                        swipeRefreshLayout.isRefreshing = false
+                .subscribe({
+                    loading = false
+                    swipeRefreshLayout.isRefreshing = false
+                    if (it.body.isEmpty()) {
                         textMessage.visibility = View.VISIBLE
-                        textMessage.setText(R.string.connection_error_milestones)
-                        adapterSnippets.setData(null)
-                        nextPageUrl = null
+                        textMessage.setText(R.string.no_milestones)
                     }
-
-                    override fun responseNonNullSuccess(snippets: List<Snippet>) {
-                        loading = false
-                        swipeRefreshLayout.isRefreshing = false
-                        if (snippets.isEmpty()) {
-                            textMessage.visibility = View.VISIBLE
-                            textMessage.setText(R.string.no_milestones)
-                        }
-                        adapterSnippets.setData(snippets)
-                        nextPageUrl = LinkHeaderParser.parse(response()).next
-                        Timber.d("Next page url %s", nextPageUrl)
-                    }
+                    adapterSnippets.setData(it.body)
+                    nextPageUrl = it.paginationData.next
+                    Timber.d("Next page url %s", nextPageUrl)
+                }, {
+                    loading = false
+                    Timber.e(it)
+                    swipeRefreshLayout.isRefreshing = false
+                    textMessage.visibility = View.VISIBLE
+                    textMessage.setText(R.string.connection_error_milestones)
+                    adapterSnippets.setData(null)
+                    nextPageUrl = null
                 })
     }
 
@@ -169,21 +163,17 @@ class SnippetsFragment : BaseFragment() {
 
         Timber.d("loadMore called for %s", nextPageUrl)
         App.get().gitLab.getSnippets(nextPageUrl!!.toString())
+                .mapResponseSuccessWithPaginationData()
                 .with(this)
-                .subscribe(object : CustomResponseSingleObserver<List<Snippet>>() {
-
-                    override fun error(e: Throwable) {
-                        Timber.e(e)
-                        adapterSnippets.setLoading(false)
-                        loading = false
-                    }
-
-                    override fun responseNonNullSuccess(snippets: List<Snippet>) {
-                        loading = false
-                        adapterSnippets.setLoading(false)
-                        nextPageUrl = LinkHeaderParser.parse(response()).next
-                        adapterSnippets.addData(snippets)
-                    }
+                .subscribe({
+                    loading = false
+                    adapterSnippets.setLoading(false)
+                    nextPageUrl = it.paginationData.next
+                    adapterSnippets.addData(it.body)
+                }, {
+                    Timber.e(it)
+                    adapterSnippets.setLoading(false)
+                    loading = false
                 })
     }
 

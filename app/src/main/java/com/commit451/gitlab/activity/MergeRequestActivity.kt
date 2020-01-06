@@ -9,10 +9,10 @@ import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.MergeRequestSectionsPagerAdapter
 import com.commit451.gitlab.event.MergeRequestChangedEvent
+import com.commit451.gitlab.extension.mapResponseSuccess
 import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.MergeRequest
 import com.commit451.gitlab.model.api.Project
-import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_merge_request.*
 import kotlinx.android.synthetic.main.progress_fullscreen.*
@@ -76,29 +76,25 @@ class MergeRequestActivity : BaseActivity() {
     fun merge() {
         progress.visibility = View.VISIBLE
         App.get().gitLab.acceptMergeRequest(project.id, mergeRequest.iid)
+                .mapResponseSuccess()
                 .with(this)
-                .subscribe(object : CustomResponseSingleObserver<MergeRequest>() {
-
-                    override fun error(e: Throwable) {
-                        Timber.e(e)
-                        progress.visibility = View.GONE
-                        var message = getString(R.string.unable_to_merge)
-                        if (e is HttpException) {
-                            val code = e.response()?.code()
-                            if (code == 406) {
-                                message = getString(R.string.merge_request_already_merged_or_closed)
-                            }
+                .subscribe({
+                    progress.visibility = View.GONE
+                    Snackbar.make(root, R.string.merge_request_accepted, Snackbar.LENGTH_LONG)
+                            .show()
+                    App.bus().post(MergeRequestChangedEvent(mergeRequest))
+                }, {
+                    Timber.e(it)
+                    progress.visibility = View.GONE
+                    var message = getString(R.string.unable_to_merge)
+                    if (it is HttpException) {
+                        val code = it.response()?.code()
+                        if (code == 406) {
+                            message = getString(R.string.merge_request_already_merged_or_closed)
                         }
-                        Snackbar.make(root, message, Snackbar.LENGTH_LONG)
-                                .show()
                     }
-
-                    override fun responseNonNullSuccess(mergeRequest: MergeRequest) {
-                        progress.visibility = View.GONE
-                        Snackbar.make(root, R.string.merge_request_accepted, Snackbar.LENGTH_LONG)
-                                .show()
-                        App.bus().post(MergeRequestChangedEvent(mergeRequest))
-                    }
+                    Snackbar.make(root, message, Snackbar.LENGTH_LONG)
+                            .show()
                 })
     }
 }

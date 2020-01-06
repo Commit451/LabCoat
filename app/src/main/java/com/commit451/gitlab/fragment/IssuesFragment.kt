@@ -18,11 +18,11 @@ import com.commit451.gitlab.event.IssueChangedEvent
 import com.commit451.gitlab.event.IssueCreatedEvent
 import com.commit451.gitlab.event.IssueReloadEvent
 import com.commit451.gitlab.event.ProjectReloadEvent
+import com.commit451.gitlab.extension.mapResponseSuccessWithPaginationData
 import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Issue
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.navigation.Navigator
-import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.gitlab.util.LinkHeaderParser
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_issues.*
@@ -44,7 +44,7 @@ class IssuesFragment : BaseFragment() {
     private var project: Project? = null
     private lateinit var state: String
     private lateinit var states: Array<String>
-    private var nextPageUrl: Uri? = null
+    private var nextPageUrl: String? = null
     private var loading = false
 
     private val onScrollListener = object : RecyclerView.OnScrollListener() {
@@ -130,34 +130,30 @@ class IssuesFragment : BaseFragment() {
         nextPageUrl = null
         loading = true
         App.get().gitLab.getIssues(project!!.id, state)
+                .mapResponseSuccessWithPaginationData()
                 .with(this)
-                .subscribe(object : CustomResponseSingleObserver<List<Issue>>() {
-
-                    override fun error(e: Throwable) {
-                        loading = false
-                        Timber.e(e)
-                        swipeRefreshLayout.isRefreshing = false
+                .subscribe({
+                    loading = false
+                    swipeRefreshLayout.isRefreshing = false
+                    if (it.body.isEmpty()) {
                         textMessage.visibility = View.VISIBLE
-                        textMessage.setText(R.string.connection_error_issues)
-                        adapterIssue.setIssues(null)
-                        nextPageUrl = null
+                        textMessage.setText(R.string.no_issues)
                     }
-
-                    override fun responseNonNullSuccess(issues: List<Issue>) {
-                        loading = false
-                        swipeRefreshLayout.isRefreshing = false
-                        if (issues.isEmpty()) {
-                            textMessage.visibility = View.VISIBLE
-                            textMessage.setText(R.string.no_issues)
-                        }
-                        adapterIssue.setIssues(issues)
-                        nextPageUrl = LinkHeaderParser.parse(response()).next
-                        Timber.d("Next page url $nextPageUrl")
-                    }
+                    adapterIssue.setIssues(it.body)
+                    nextPageUrl = it.paginationData.next
+                    Timber.d("Next page url $nextPageUrl")
+                }, {
+                    loading = false
+                    Timber.e(it)
+                    swipeRefreshLayout.isRefreshing = false
+                    textMessage.visibility = View.VISIBLE
+                    textMessage.setText(R.string.connection_error_issues)
+                    adapterIssue.setIssues(null)
+                    nextPageUrl = null
                 })
     }
 
-    fun loadMore() {
+    private fun loadMore() {
         if (nextPageUrl == null) {
             return
         }

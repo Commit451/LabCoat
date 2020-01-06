@@ -59,7 +59,7 @@ class AddUserActivity : MorphActivity() {
     private var projectId: Long = 0
     private var group: Group? = null
     private var query: String? = null
-    private var nextPageUrl: Uri? = null
+    private var nextPageUrl: String? = null
     private var loading = false
     private var selectedUser: User? = null
 

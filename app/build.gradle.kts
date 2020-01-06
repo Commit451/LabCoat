@@ -61,7 +61,6 @@ apply { from("experimental.gradle") }
 
 val retrofitVersion = "2.7.0"
 val okHttpVersion = "4.2.2"
-val reptarVersion = "2.5.1"
 
 val adapterLayout = "1.2.0"
 val materialDialogsVersion = "0.9.6.0"
@@ -112,9 +111,6 @@ dependencies {
     implementation("com.uber.autodispose:autodispose-android-kotlin:$autodisposeVersion")
     implementation("com.uber.autodispose:autodispose-android-archcomponents-kotlin:$autodisposeVersion")
 
-    implementation("com.github.Commit451.Reptar:reptar:$reptarVersion")
-    implementation("com.github.Commit451.Reptar:reptar-retrofit:$reptarVersion")
-    implementation("com.github.Commit451.Reptar:reptar-kotlin:$reptarVersion")
     implementation("com.github.Commit451:ElasticDragDismissLayout:1.0.4")
     implementation("com.github.Commit451.AdapterLayout:adapterlayout:$adapterLayout")
     implementation("com.github.Commit451.AdapterLayout:adapterflowlayout:$adapterLayout") {

@@ -20,7 +20,6 @@ import com.commit451.gitlab.extension.mapResponseSuccess
 import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.*
 import com.commit451.gitlab.navigation.Navigator
-import com.commit451.gitlab.rx.CustomResponseSingleObserver
 import com.commit451.teleprinter.Teleprinter
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.Single
