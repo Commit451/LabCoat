@@ -74,6 +74,7 @@
     </style>
 
     <style name="ToolbarTheme" parent="ThemeOverlay.MaterialComponents.ActionBar">
+        <item name="actionMenuTextColor">@color/white</item>
         <item name="colorControlNormal">@color/white</item>
     </style>
 

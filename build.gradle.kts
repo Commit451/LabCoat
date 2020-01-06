@@ -24,7 +24,6 @@ allprojects {
         mavenCentral()
         jcenter()
         maven(url = "https://maven.fabric.io/public")
-        maven(url = "https://oss.sonatype.org/content/repositories/snapshots")
     }
 }
 

@@ -59,8 +59,8 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 
 apply { from("experimental.gradle") }
 
-val retrofitVersion = "2.7.0"
-val okHttpVersion = "4.2.2"
+val retrofitVersion = "2.7.1"
+val okHttpVersion = "4.3.0"
 
 val adapterLayout = "1.2.0"
 val materialDialogsVersion = "0.9.6.0"
@@ -156,7 +156,7 @@ dependencies {
 
     implementation("de.hdodenhof:circleimageview:3.0.1")
 
-    implementation("com.vdurmont:emoji-java:4.0.0") {
+    implementation("com.vdurmont:emoji-java:5.1.1") {
         exclude(group = "org.json", module = "json")
     }
 
@@ -170,9 +170,9 @@ dependencies {
         implementation("com.crashlytics.sdk.android:crashlytics:2.10.1")
     }
 
-    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.0")
+    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.1")
 
-    testImplementation("junit:junit:4.12")
+    testImplementation("junit:junit:4.13")
     testImplementation("org.threeten:threetenbp:1.3.8") {
         exclude(group = "com.jakewharton.threetenabp", module = "threetenabp")
     }
