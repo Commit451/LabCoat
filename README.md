@@ -1,6 +1,6 @@
 # LabCoat for GitLab
 
-[![build status](https://gitlab.com/Commit451/LabCoat/badges/master/build.svg)](https://gitlab.com/Commit451/LabCoat/commits/master) [![Discord](https://img.shields.io/discord/304078613114781696.svg)](https://discord.gg/SDxsaKE)
+[![pipeline status](https://gitlab.com/Commit451/LabCoat/badges/master/pipeline.svg)](https://gitlab.com/Commit451/LabCoat/commits/master) [![Discord](https://img.shields.io/discord/304078613114781696.svg)](https://discord.gg/SDxsaKE)
 
 ![Image](art/screenshot-1.png)
 
