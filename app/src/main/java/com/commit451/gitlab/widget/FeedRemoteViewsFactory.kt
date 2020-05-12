@@ -76,7 +76,7 @@ class FeedRemoteViewsFactory(
         rv.setOnClickFillInIntent(R.id.root, fillInIntent)
 
         try {
-            val drawable = CoilCompat.getBlocking(entry.thumbnail.url) {
+            val drawable = CoilCompat.getBlocking(context, entry.thumbnail.url) {
                 transformations(CircleCropTransformation())
             }
             if (drawable is BitmapDrawable) {

@@ -21,8 +21,9 @@ import okhttp3.OkHttpClient
  */
 class GitLab private constructor(
         builder: Builder,
-        gitLabService: GitLabService, gitLabRss: GitLabRss) : GitLabService by gitLabService,
-        GitLabRss by gitLabRss {
+        gitLabService: GitLabService,
+        gitLabRss: GitLabRss
+) : GitLabService by gitLabService, GitLabRss by gitLabRss {
 
     private val moshi: Moshi
     private val apolloClient: ApolloClient
