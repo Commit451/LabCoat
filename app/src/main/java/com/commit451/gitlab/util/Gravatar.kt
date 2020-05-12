@@ -10,20 +10,20 @@ object Gravatar {
 
     class Builder constructor(private val mEmail: String?) {
 
-        private var mSSL = false
-        private var mExtension = false
-        private var mSize = -1
-        private var mDefaultImage: String? = null
-        private var mForceDefault = false
-        private var mRating: String? = null
+        private var ssl = false
+        private var extension = false
+        private var size = -1
+        private var defaultImage: String? = null
+        private var forceDefault = false
+        private var rating: String? = null
 
         fun ssl(): Builder {
-            mSSL = true
+            ssl = true
             return this
         }
 
         fun extension(): Builder {
-            mExtension = true
+            extension = true
             return this
         }
 
@@ -32,19 +32,19 @@ object Gravatar {
                 throw IllegalArgumentException("Image size must be from 1px up to 2048px")
             }
 
-            mSize = size
+            this.size = size
             return this
         }
 
         fun defaultImage(defaultImage: DefaultImage): Builder {
             when (defaultImage) {
-                Gravatar.DefaultImage._404 -> mDefaultImage = "404"
-                Gravatar.DefaultImage.MYSTERY_MAN -> mDefaultImage = "mm"
-                Gravatar.DefaultImage.IDENTICON -> mDefaultImage = "identicon"
-                Gravatar.DefaultImage.MONSTERID -> mDefaultImage = "monsterid"
-                Gravatar.DefaultImage.WAVATAR -> mDefaultImage = "wavatar"
-                Gravatar.DefaultImage.RETRO -> mDefaultImage = "retro"
-                Gravatar.DefaultImage.BLANK -> mDefaultImage = "blank"
+                DefaultImage._404 -> this.defaultImage = "404"
+                DefaultImage.MYSTERY_MAN -> this.defaultImage = "mm"
+                DefaultImage.IDENTICON -> this.defaultImage = "identicon"
+                DefaultImage.MONSTERID -> this.defaultImage = "monsterid"
+                DefaultImage.WAVATAR -> this.defaultImage = "wavatar"
+                DefaultImage.RETRO -> this.defaultImage = "retro"
+                DefaultImage.BLANK -> this.defaultImage = "blank"
             }
 
             return this
@@ -52,7 +52,7 @@ object Gravatar {
 
         fun build(): Uri {
             val uriBuilder = StringBuilder()
-            if (mSSL) {
+            if (ssl) {
                 uriBuilder.append("https://secure.gravatar.com/avatar/")
             } else {
                 uriBuilder.append("http://www.gravatar.com/avatar/")
@@ -62,22 +62,22 @@ object Gravatar {
             } else {
                 uriBuilder.append("00000000000000000000000000000000")
             }
-            if (mExtension) {
+            if (extension) {
                 uriBuilder.append(".jpg")
             }
 
             val queryBuilder = StringBuilder()
-            if (mSize != -1) {
-                queryBuilder.append("&s=").append(mSize)
+            if (size != -1) {
+                queryBuilder.append("&s=").append(size)
             }
-            if (mDefaultImage != null) {
-                queryBuilder.append("&d=").append(mDefaultImage)
+            if (defaultImage != null) {
+                queryBuilder.append("&d=").append(defaultImage)
             }
-            if (mForceDefault) {
+            if (forceDefault) {
                 queryBuilder.append("&f=y")
             }
-            if (mRating != null) {
-                queryBuilder.append("&r=").append(mRating)
+            if (rating != null) {
+                queryBuilder.append("&r=").append(rating)
             }
             val query = queryBuilder.toString()
             if (query.isNotEmpty()) {

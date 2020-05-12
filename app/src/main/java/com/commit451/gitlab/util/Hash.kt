@@ -8,9 +8,9 @@ import java.security.NoSuchAlgorithmException
  * Modified from https://github.com/mcxiaoke/kotlin-koi
  */
 object Hash {
-    private val MD5 = "MD5"
-    private val SHA_1 = "SHA-1"
-    private val SHA_256 = "SHA-256"
+    private const val MD5 = "MD5"
+    private const val SHA_1 = "SHA-1"
+    private const val SHA_256 = "SHA-256"
     private val DIGITS_LOWER = charArrayOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f')
     private val DIGITS_UPPER = charArrayOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F')
 
@@ -22,7 +22,7 @@ object Hash {
         return String(encodeHex(md5Bytes(getRawBytes(text))))
     }
 
-    fun md5Bytes(data: ByteArray): ByteArray {
+    private fun md5Bytes(data: ByteArray): ByteArray {
         return getDigest(MD5).digest(data)
     }
 
@@ -34,7 +34,7 @@ object Hash {
         return String(encodeHex(sha1Bytes(getRawBytes(text))))
     }
 
-    fun sha1Bytes(data: ByteArray): ByteArray {
+    private fun sha1Bytes(data: ByteArray): ByteArray {
         return getDigest(SHA_1).digest(data)
     }
 
@@ -46,11 +46,11 @@ object Hash {
         return String(encodeHex(sha256Bytes(getRawBytes(text))))
     }
 
-    fun sha256Bytes(data: ByteArray): ByteArray {
+    private fun sha256Bytes(data: ByteArray): ByteArray {
         return getDigest(SHA_256).digest(data)
     }
 
-    fun getDigest(algorithm: String): MessageDigest {
+    private fun getDigest(algorithm: String): MessageDigest {
         try {
             return MessageDigest.getInstance(algorithm)
         } catch (e: NoSuchAlgorithmException) {
@@ -59,11 +59,11 @@ object Hash {
 
     }
 
-    fun encodeHex(data: ByteArray, toLowerCase: Boolean = true): CharArray {
+    private fun encodeHex(data: ByteArray, toLowerCase: Boolean = true): CharArray {
         return encodeHex(data, if (toLowerCase) DIGITS_LOWER else DIGITS_UPPER)
     }
 
-    fun encodeHex(data: ByteArray, toDigits: CharArray): CharArray {
+    private fun encodeHex(data: ByteArray, toDigits: CharArray): CharArray {
         val l = data.size
         val out = CharArray(l shl 1)
         var i = 0
@@ -76,11 +76,11 @@ object Hash {
         return out
     }
 
-    fun getRawBytes(text: String): ByteArray {
-        try {
-            return text.toByteArray(Charsets.UTF_8)
+    private fun getRawBytes(text: String): ByteArray {
+        return try {
+            text.toByteArray(Charsets.UTF_8)
         } catch (e: UnsupportedEncodingException) {
-            return text.toByteArray()
+            text.toByteArray()
         }
     }
 }

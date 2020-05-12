@@ -101,6 +101,7 @@ dependencies {
     implementation("com.apollographql.apollo:apollo-rx2-support:$apolloVersion")
 
     implementation("io.coil-kt:coil:0.10.1")
+    implementation("com.github.Commit451:CoilImageGetter:1.0.1")
 
     implementation("com.jakewharton.timber:timber:4.7.1")
     implementation("com.jakewharton.threetenabp:threetenabp:1.2.4")

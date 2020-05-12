@@ -2,6 +2,7 @@ package com.commit451.gitlab.util
 
 import android.text.Html
 import android.widget.TextView
+import com.commit451.coilimagegetter.CoilImageGetter
 import com.commit451.gitlab.model.api.Project
 
 object ImageGetterFactory {

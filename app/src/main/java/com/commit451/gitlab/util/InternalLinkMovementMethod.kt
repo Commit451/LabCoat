@@ -2,6 +2,7 @@ package com.commit451.gitlab.util
 
 
 import android.net.Uri
+import android.text.Spannable
 import android.text.method.LinkMovementMethod
 import android.text.style.URLSpan
 import android.view.MotionEvent
@@ -14,7 +15,7 @@ import timber.log.Timber
  */
 class InternalLinkMovementMethod(private val serverUrl: String) : LinkMovementMethod() {
 
-    override fun onTouchEvent(widget: TextView, buffer: android.text.Spannable, event: android.view.MotionEvent): Boolean {
+    override fun onTouchEvent(widget: TextView, buffer: Spannable, event: MotionEvent): Boolean {
         val action = event.action
 
         //http://stackoverflow.com/a/16644228/895797
