@@ -4,7 +4,7 @@ plugins {
     id("com.android.application")
     id("kotlin-android")
     id("kotlin-android-extensions")
-    id("kotlin-kapt")
+    id("com.apollographql.apollo")
     id("io.fabric") apply false
     id("com.google.gms.google-services") apply false
 }
@@ -71,7 +71,7 @@ val autodisposeVersion = "0.8.0"
 dependencies {
     implementation(kotlin("stdlib-jdk7", KotlinCompilerVersion.VERSION))
 
-    implementation("androidx.core:core-ktx:1.1.0")
+    implementation("androidx.core:core-ktx:1.2.0")
 
     implementation("androidx.appcompat:appcompat:1.1.0")
     implementation("androidx.recyclerview:recyclerview:1.1.0")
@@ -79,7 +79,7 @@ dependencies {
     implementation("androidx.palette:palette:1.0.0")
     implementation("androidx.browser:browser:1.2.0")
 
-    implementation("com.google.android.material:material:1.2.0-alpha03")
+    implementation("com.google.android.material:material:1.2.0-alpha06")
 
     implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
     implementation("com.squareup.retrofit2:converter-simplexml:$retrofitVersion") {
@@ -96,14 +96,18 @@ dependencies {
     implementation("com.squareup.moshi:moshi-kotlin:$moshiVersion")
     implementation("com.squareup.moshi:moshi-adapters:$moshiVersion")
 
-    implementation("io.coil-kt:coil:0.9.1")
+    val apolloVersion = "2.0.2"
+    implementation("com.apollographql.apollo:apollo-runtime:$apolloVersion")
+    implementation("com.apollographql.apollo:apollo-rx2-support:$apolloVersion")
+
+    implementation("io.coil-kt:coil:0.10.1")
 
     implementation("com.jakewharton.timber:timber:4.7.1")
-    implementation("com.jakewharton.threetenabp:threetenabp:1.2.1")
+    implementation("com.jakewharton.threetenabp:threetenabp:1.2.4")
 
-    implementation("org.greenrobot:eventbus:3.1.1")
+    implementation("org.greenrobot:eventbus:3.2.0")
 
-    implementation("io.reactivex.rxjava2:rxjava:2.2.16")
+    implementation("io.reactivex.rxjava2:rxjava:2.2.19")
     implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
     implementation("io.reactivex.rxjava2:rxkotlin:2.4.0")
 
@@ -138,7 +142,7 @@ dependencies {
 
     implementation("me.zhanghai.android.materialprogressbar:library:1.6.1")
 
-    implementation("com.github.Jawnnypoo:PhysicsLayout:2.2.0")
+    implementation("com.github.Jawnnypoo:PhysicsLayout:3.0.0")
 
     implementation("com.github.ivbaranov:materiallettericon:0.2.3")
 
@@ -154,7 +158,7 @@ dependencies {
     implementation("com.afollestad.material-dialogs:core:$materialDialogsVersion")
     implementation("com.afollestad.material-dialogs:commons:$materialDialogsVersion")
 
-    implementation("de.hdodenhof:circleimageview:3.0.1")
+    implementation("de.hdodenhof:circleimageview:3.1.0")
 
     implementation("com.vdurmont:emoji-java:5.1.1") {
         exclude(group = "org.json", module = "json")
@@ -162,7 +166,7 @@ dependencies {
 
     implementation("com.github.jkwiecien:EasyImage:2.1.1")
 
-    implementation("com.atlassian.commonmark:commonmark:0.13.1")
+    implementation("com.atlassian.commonmark:commonmark:0.14.0")
 
     implementation(project(":firebaseshim"))
     if (BuildHelper.firebaseEnabled(project)) {
@@ -170,7 +174,7 @@ dependencies {
         implementation("com.crashlytics.sdk.android:crashlytics:2.10.1")
     }
 
-    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.1")
+    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.3")
 
     testImplementation("junit:junit:4.13")
     testImplementation("org.threeten:threetenbp:1.3.8") {

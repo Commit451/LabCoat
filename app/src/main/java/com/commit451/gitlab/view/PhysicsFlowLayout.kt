@@ -59,16 +59,11 @@ class PhysicsFlowLayout : FlowLayout {
         return physics.onTouchEvent(event)
     }
 
-    override fun generateLayoutParams(attrs: AttributeSet?): LayoutParams {
-        return PhysicsFlowLayout.LayoutParams(context, attrs)
+    override fun generateLayoutParams(attrs: AttributeSet): LayoutParams {
+        return LayoutParams(context, attrs)
     }
 
-    class LayoutParams(c: Context, attrs: AttributeSet?) : FlowLayout.LayoutParams(c, attrs), PhysicsLayoutParams {
-
-        internal var config: PhysicsConfig = PhysicsLayoutParamsProcessor.process(c, attrs)
-
-        override fun getConfig(): PhysicsConfig {
-            return config
-        }
+    class LayoutParams(c: Context, attrs: AttributeSet) : FlowLayout.LayoutParams(c, attrs), PhysicsLayoutParams {
+        override var config: PhysicsConfig = PhysicsLayoutParamsProcessor.process(c, attrs)
     }
 }

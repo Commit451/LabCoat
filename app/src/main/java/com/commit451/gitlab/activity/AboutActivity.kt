@@ -24,6 +24,7 @@ import com.commit451.gitlab.util.IntentUtil
 import com.google.android.material.snackbar.Snackbar
 import com.jawnnypoo.physicslayout.Physics
 import com.jawnnypoo.physicslayout.PhysicsConfig
+import com.jawnnypoo.physicslayout.Shape
 import com.wefika.flowlayout.FlowLayout
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.activity_about.*
@@ -53,7 +54,7 @@ class AboutActivity : BaseActivity() {
             if (event.sensor.type == Sensor.TYPE_GRAVITY) {
                 if (physicsLayout.physics.world != null) {
                     gimbal.normalizeGravityEvent(event)
-                    physicsLayout.physics.world.gravity = Vec2(-event.values[0], event.values[1])
+                    physicsLayout.physics.world?.gravity = Vec2(-event.values[0], event.values[1])
                 }
             }
         }
@@ -70,7 +71,7 @@ class AboutActivity : BaseActivity() {
         toolbar.setNavigationOnClickListener { onBackPressed() }
         toolbar.setTitle(R.string.about)
         toolbar.subtitle = BuildConfig.VERSION_NAME
-        physicsLayout.physics.enableFling()
+        physicsLayout.physics.isFlingEnabled = true
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
         gravitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY)
         var gitLab = App.get().gitLab
@@ -117,8 +118,9 @@ class AboutActivity : BaseActivity() {
     }
 
     private fun addContributors(contributors: List<Contributor>) {
-        val config = PhysicsConfig.create()
-        config.shapeType = PhysicsConfig.SHAPE_TYPE_CIRCLE
+        val config = PhysicsConfig(
+                shape = Shape.CIRCLE
+        )
         val borderSize = resources.getDimensionPixelSize(R.dimen.border_size)
         val imageSize = resources.getDimensionPixelSize(R.dimen.circle_size)
         for (i in contributors.indices) {

@@ -12,6 +12,10 @@ import retrofit2.converter.scalars.ScalarsConverterFactory
  */
 object GitLabFactory {
 
+    /**
+     * Create [GitLab], which allows you to access the API, RSS, GraphQL, etc. Use [create] if you
+     * are just wanting to log in.
+     */
     fun createGitLab(account: Account, clientBuilder: OkHttpClient.Builder): GitLab {
         return GitLab.Builder(account)
                 .clientBuilder(clientBuilder)
@@ -19,7 +23,8 @@ object GitLabFactory {
     }
 
     /**
-     * Create a GitLabService get with the current account passed.
+     * Create a GitLabService get with the current account passed. Should only really be used for
+     * login purposes.
      * @param account the account to try and log in with
      * *
      * @return the GitLabService configured client
