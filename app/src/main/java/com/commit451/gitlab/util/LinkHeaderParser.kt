@@ -23,9 +23,7 @@ object LinkHeaderParser {
                 val linkEnd = nextPagePart.indexOf('>')
 
                 next = nextPagePart.substring(linkStart, linkEnd)
-            } catch (e: Exception) {
-                Timber.e(e)
-            }
+            } catch (e: Exception) {}
         }
 
         return PaginationData(next)

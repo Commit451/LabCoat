@@ -9,7 +9,6 @@ import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.BaseAdapter
 import com.commit451.gitlab.adapter.DividerItemDecoration
 import com.commit451.gitlab.event.MergeRequestChangedEvent
-import com.commit451.gitlab.extension.mapResponseSuccessWithPaginationData
 import com.commit451.gitlab.model.api.MergeRequest
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.model.api.RepositoryCommit
@@ -77,11 +76,9 @@ class MergeRequestCommitsFragment : BaseFragment() {
                 errorOrEmptyTextView = textMessage,
                 loadInitial = {
                     gitLab.getMergeRequestCommits(project!!.id, mergeRequest!!.iid)
-                            .mapResponseSuccessWithPaginationData()
                 },
                 loadMore = {
-                    gitLab.loadAnyList<RepositoryCommit>(it)
-                            .mapResponseSuccessWithPaginationData()
+                    gitLab.loadAnyList(it)
                 }
         )
 

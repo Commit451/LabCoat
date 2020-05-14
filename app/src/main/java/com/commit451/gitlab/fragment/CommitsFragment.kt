@@ -10,7 +10,6 @@ import com.commit451.gitlab.activity.ProjectActivity
 import com.commit451.gitlab.adapter.BaseAdapter
 import com.commit451.gitlab.adapter.DividerItemDecoration
 import com.commit451.gitlab.event.ProjectReloadEvent
-import com.commit451.gitlab.extension.mapResponseSuccessWithPaginationData
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.model.api.RepositoryCommit
 import com.commit451.gitlab.navigation.Navigator
@@ -62,11 +61,9 @@ class CommitsFragment : BaseFragment() {
                 errorOrEmptyTextView = textMessage,
                 loadInitial = {
                     gitLab.getCommits(project!!.id, branchName!!)
-                            .mapResponseSuccessWithPaginationData()
                 },
                 loadMore = {
-                    gitLab.loadAnyList<RepositoryCommit>(it)
-                            .mapResponseSuccessWithPaginationData()
+                    gitLab.loadAnyList(it)
                 }
         )
 

@@ -412,9 +412,6 @@ interface GitLabService {
     @GET("todos")
     fun getTodos(@Query("state") @Todo.State state: String): Single<Response<List<Todo>>>
 
-    @GET
-    fun getTodosByUrl(@Url url: String): Single<Response<List<Todo>>>
-
     /* --- TAGS --- */
     @GET("projects/{id}/repository/tags")
     fun getTags(@Path("id") projectId: Long): Single<List<Tag>>

@@ -5,17 +5,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.commit451.gitlab.App
 import com.commit451.gitlab.R
-import com.commit451.gitlab.adapter.UserAdapter
+import com.commit451.gitlab.adapter.BaseAdapter
 import com.commit451.gitlab.extension.mapResponseSuccessWithPaginationData
-import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.User
 import com.commit451.gitlab.navigation.Navigator
+import com.commit451.gitlab.util.LoadHelper
 import com.commit451.gitlab.viewHolder.UserViewHolder
 import kotlinx.android.synthetic.main.fragment_users.*
-import timber.log.Timber
+import kotlinx.android.synthetic.main.fragment_users.swipeRefreshLayout
 
 class UsersFragment : BaseFragment() {
 
@@ -37,28 +35,14 @@ class UsersFragment : BaseFragment() {
         }
     }
 
-    lateinit var adapterUser: UserAdapter
-    lateinit var layoutManagerUser: GridLayoutManager
+    private var query: String = ""
 
-    var query: String? = null
-    var loading: Boolean = false
-    var nextPageUrl: String? = null
-
-    val onScrollListener = object : RecyclerView.OnScrollListener() {
-        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-            super.onScrolled(recyclerView, dx, dy)
-            val visibleItemCount = layoutManagerUser.childCount
-            val totalItemCount = layoutManagerUser.itemCount
-            val firstVisibleItem = layoutManagerUser.findFirstVisibleItemPosition()
-            if (firstVisibleItem + visibleItemCount >= totalItemCount && !loading && nextPageUrl != null) {
-                loadMore()
-            }
-        }
-    }
+    private lateinit var adapter: BaseAdapter<User, UserViewHolder>
+    private lateinit var loadHelper: LoadHelper<User>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        query = arguments?.getString(EXTRA_QUERY)
+        query = arguments?.getString(EXTRA_QUERY) ?: ""
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -68,82 +52,48 @@ class UsersFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapterUser = UserAdapter(object : UserAdapter.Listener {
-            override fun onUserClicked(user: User, userViewHolder: UserViewHolder) {
-                Navigator.navigateToUser(baseActivty, userViewHolder.image, user)
-            }
-        })
-        layoutManagerUser = GridLayoutManager(activity, 2)
-        layoutManagerUser.spanSizeLookup = adapterUser.spanSizeLookup
-        listUsers.layoutManager = layoutManagerUser
-        listUsers.adapter = adapterUser
-        listUsers.addOnScrollListener(onScrollListener)
-
-        swipeRefreshLayout.setOnRefreshListener { loadData() }
+        val spanCount = 2
+        val layoutManager = GridLayoutManager(activity, spanCount)
+        layoutManager.spanSizeLookup = BaseAdapter.createSpanSizeLookup(adapter, spanCount)
+        adapter = BaseAdapter(
+                onCreateViewHolder = { parent, _ ->
+                    val viewHolder = UserViewHolder.inflate(parent)
+                    viewHolder.itemView.setOnClickListener {
+                        val user = adapter.items[viewHolder.adapterPosition]
+                        Navigator.navigateToUser(baseActivty, viewHolder.image, user)
+                    }
+                    viewHolder
+                },
+                onBindViewHolder = { viewHolder, _, item -> viewHolder.bind(item) }
+        )
+        loadHelper = LoadHelper(
+                lifecycleOwner = this,
+                recyclerView = listUsers,
+                baseAdapter = adapter,
+                layoutManager = GridLayoutManager(activity, 2),
+                swipeRefreshLayout = swipeRefreshLayout,
+                errorOrEmptyTextView = textMessage,
+                loadInitial = {
+                    gitLab.searchUsers(query)
+                },
+                loadMore = {
+                    gitLab.loadAnyList(it)
+                }
+        )
 
         loadData()
     }
 
     override fun loadData() {
-        loading = true
-        if (view == null) {
+        if (query.isEmpty()) {
             return
         }
-
-        if (query.isNullOrEmpty()) {
-            swipeRefreshLayout.isRefreshing = false
-            return
-        }
-
-        textMessage.visibility = View.GONE
-        swipeRefreshLayout.isRefreshing = true
-
-        App.get().gitLab.searchUsers(query!!)
-                .mapResponseSuccessWithPaginationData()
-                .with(this)
-                .subscribe({
-                    swipeRefreshLayout.isRefreshing = false
-                    loading = false
-                    if (it.body.isEmpty()) {
-                        textMessage.visibility = View.VISIBLE
-                        textMessage.setText(R.string.no_users_found)
-                    }
-                    adapterUser.setData(it.body)
-                    nextPageUrl = it.paginationData.next
-                }, {
-                    Timber.e(it)
-                    loading = false
-                    swipeRefreshLayout.isRefreshing = false
-                    textMessage.setText(R.string.connection_error_users)
-                    textMessage.visibility = View.VISIBLE
-                    adapterUser.setData(null)
-                })
-    }
-
-    fun loadMore() {
-        loading = true
-        adapterUser.setLoading(true)
-        Timber.d("loadMore called for %s %s", nextPageUrl!!.toString(), query)
-        App.get().gitLab.searchUsers(nextPageUrl!!.toString(), query!!)
-                .mapResponseSuccessWithPaginationData()
-                .with(this)
-                .subscribe({
-                    loading = false
-                    swipeRefreshLayout.isRefreshing = false
-                    adapterUser.addData(it.body)
-                    nextPageUrl = it.paginationData.next
-                    adapterUser.setLoading(false)
-                }, {
-                    Timber.e(it)
-                    loading = false
-                    swipeRefreshLayout.isRefreshing = false
-                    adapterUser.setLoading(false)
-                })
+        loadHelper.load()
     }
 
     fun searchQuery(query: String) {
         this.query = query
-        adapterUser.clearData()
+        adapter.clear()
         loadData()
     }
 }

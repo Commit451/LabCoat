@@ -6,23 +6,22 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.ProjectActivity
-import com.commit451.gitlab.adapter.DividerItemDecoration
-import com.commit451.gitlab.adapter.SnippetAdapter
+import com.commit451.gitlab.adapter.BaseAdapter
 import com.commit451.gitlab.event.ProjectReloadEvent
-import com.commit451.gitlab.extension.mapResponseSuccessWithPaginationData
-import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.model.api.Snippet
 import com.commit451.gitlab.navigation.Navigator
+import com.commit451.gitlab.util.LoadHelper
+import com.commit451.gitlab.viewHolder.SnippetViewHolder
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.fragment_commits.*
 import kotlinx.android.synthetic.main.fragment_snippets.*
+import kotlinx.android.synthetic.main.fragment_snippets.swipeRefreshLayout
+import kotlinx.android.synthetic.main.fragment_snippets.textMessage
 import org.greenrobot.eventbus.Subscribe
-import timber.log.Timber
 
 class SnippetsFragment : BaseFragment() {
 
@@ -33,26 +32,12 @@ class SnippetsFragment : BaseFragment() {
         }
     }
 
-    private lateinit var adapterSnippets: SnippetAdapter
-    private lateinit var layoutManagerSnippets: LinearLayoutManager
-
     private lateinit var state: String
     private lateinit var states: Array<String>
     private var project: Project? = null
-    private var loading = false
-    private var nextPageUrl: String? = null
 
-    private val onScrollListener = object : RecyclerView.OnScrollListener() {
-        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-            super.onScrolled(recyclerView, dx, dy)
-            val visibleItemCount = layoutManagerSnippets.childCount
-            val totalItemCount = layoutManagerSnippets.itemCount
-            val firstVisibleItem = layoutManagerSnippets.findFirstVisibleItemPosition()
-            if (firstVisibleItem + visibleItemCount >= totalItemCount && !loading && nextPageUrl != null) {
-                loadMore()
-            }
-        }
-    }
+    private lateinit var adapter: BaseAdapter<Snippet, SnippetViewHolder>
+    private lateinit var loadHelper: LoadHelper<Snippet>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,18 +62,33 @@ class SnippetsFragment : BaseFragment() {
                         .show()
             }
         }
-        adapterSnippets = SnippetAdapter(object : SnippetAdapter.Listener {
-            override fun onSnippetClicked(snippet: Snippet) {
 
-            }
-        })
-        layoutManagerSnippets = LinearLayoutManager(activity)
-        listSnippets.layoutManager = layoutManagerSnippets
-        listSnippets.addItemDecoration(DividerItemDecoration(baseActivty))
-        listSnippets.adapter = adapterSnippets
-        listSnippets.addOnScrollListener(onScrollListener)
+        adapter = BaseAdapter(
+                onCreateViewHolder = { parent, _ ->
+                    val viewHolder = SnippetViewHolder.inflate(parent)
+                    viewHolder.itemView.setOnClickListener {
+                        val snippet = adapter.items[viewHolder.adapterPosition]
+                        //do something!
+                    }
+                    viewHolder
+                },
+                onBindViewHolder = { viewHolder, _, item -> viewHolder.bind(item) }
+        )
+        loadHelper = LoadHelper(
+                lifecycleOwner = this,
+                recyclerView = listCommits,
+                baseAdapter = adapter,
+                swipeRefreshLayout = swipeRefreshLayout,
+                errorOrEmptyTextView = textMessage,
+                loadInitial = {
+                    gitLab.getSnippets(project!!.id)
+                },
+                loadMore = {
+                    gitLab.loadAnyList(it)
+                }
+        )
 
-        spinnerState.adapter = ArrayAdapter<String>(requireActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, resources.getStringArray(R.array.milestone_state_names))
+        spinnerState.adapter = ArrayAdapter(requireActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, resources.getStringArray(R.array.milestone_state_names))
         spinnerState.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 state = states[position]
@@ -97,8 +97,6 @@ class SnippetsFragment : BaseFragment() {
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
-
-        swipeRefreshLayout.setOnRefreshListener { loadData() }
 
         if (activity is ProjectActivity) {
             project = (activity as ProjectActivity).project
@@ -114,67 +112,7 @@ class SnippetsFragment : BaseFragment() {
     }
 
     override fun loadData() {
-        if (view == null) {
-            return
-        }
-        if (project == null) {
-            swipeRefreshLayout.isRefreshing = false
-            return
-        }
-        textMessage.visibility = View.GONE
-        swipeRefreshLayout.isRefreshing = true
-        nextPageUrl = null
-        loading = true
-        App.get().gitLab.getSnippets(project!!.id)
-                .mapResponseSuccessWithPaginationData()
-                .with(this)
-                .subscribe({
-                    loading = false
-                    swipeRefreshLayout.isRefreshing = false
-                    if (it.body.isEmpty()) {
-                        textMessage.visibility = View.VISIBLE
-                        textMessage.setText(R.string.no_milestones)
-                    }
-                    adapterSnippets.setData(it.body)
-                    nextPageUrl = it.paginationData.next
-                    Timber.d("Next page url %s", nextPageUrl)
-                }, {
-                    loading = false
-                    Timber.e(it)
-                    swipeRefreshLayout.isRefreshing = false
-                    textMessage.visibility = View.VISIBLE
-                    textMessage.setText(R.string.connection_error_milestones)
-                    adapterSnippets.setData(null)
-                    nextPageUrl = null
-                })
-    }
-
-    fun loadMore() {
-        if (view == null) {
-            return
-        }
-
-        if (nextPageUrl == null) {
-            return
-        }
-
-        loading = true
-        adapterSnippets.setLoading(true)
-
-        Timber.d("loadMore called for %s", nextPageUrl)
-        App.get().gitLab.getSnippets(nextPageUrl!!.toString())
-                .mapResponseSuccessWithPaginationData()
-                .with(this)
-                .subscribe({
-                    loading = false
-                    adapterSnippets.setLoading(false)
-                    nextPageUrl = it.paginationData.next
-                    adapterSnippets.addData(it.body)
-                }, {
-                    Timber.e(it)
-                    adapterSnippets.setLoading(false)
-                    loading = false
-                })
+        loadHelper.load()
     }
 
     @Suppress("unused")

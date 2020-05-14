@@ -68,7 +68,7 @@ class IssueViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         if (issueId < 1) {
             issueId = issue.id
         }
-        id = "#" + issueId
+        id = "#$issueId"
 
         textCreator.text = String.format(itemView.context.getString(R.string.opened_time), id, time, author)
     }

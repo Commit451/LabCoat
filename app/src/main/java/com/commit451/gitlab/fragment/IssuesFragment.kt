@@ -1,33 +1,28 @@
 package com.commit451.gitlab.fragment
 
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.ProjectActivity
+import com.commit451.gitlab.adapter.BaseAdapter
 import com.commit451.gitlab.adapter.DividerItemDecoration
-import com.commit451.gitlab.adapter.IssueAdapter
 import com.commit451.gitlab.event.IssueChangedEvent
 import com.commit451.gitlab.event.IssueCreatedEvent
 import com.commit451.gitlab.event.IssueReloadEvent
 import com.commit451.gitlab.event.ProjectReloadEvent
-import com.commit451.gitlab.extension.mapResponseSuccessWithPaginationData
-import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Issue
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.navigation.Navigator
-import com.commit451.gitlab.util.LinkHeaderParser
+import com.commit451.gitlab.util.LoadHelper
+import com.commit451.gitlab.viewHolder.IssueViewHolder
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_issues.*
 import org.greenrobot.eventbus.Subscribe
-import timber.log.Timber
 
 class IssuesFragment : BaseFragment() {
 
@@ -38,26 +33,12 @@ class IssuesFragment : BaseFragment() {
         }
     }
 
-    private lateinit var adapterIssue: IssueAdapter
-    private lateinit var layoutManagerIssues: LinearLayoutManager
-
     private var project: Project? = null
     private lateinit var state: String
     private lateinit var states: Array<String>
-    private var nextPageUrl: String? = null
-    private var loading = false
 
-    private val onScrollListener = object : RecyclerView.OnScrollListener() {
-        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-            super.onScrolled(recyclerView, dx, dy)
-            val visibleItemCount = layoutManagerIssues.childCount
-            val totalItemCount = layoutManagerIssues.itemCount
-            val firstVisibleItem = layoutManagerIssues.findFirstVisibleItemPosition()
-            if (firstVisibleItem + visibleItemCount >= totalItemCount && !loading && nextPageUrl != null) {
-                loadMore()
-            }
-        }
-    }
+    private lateinit var adapter: BaseAdapter<Issue, IssueViewHolder>
+    private lateinit var loadHelper: LoadHelper<Issue>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,34 +63,41 @@ class IssuesFragment : BaseFragment() {
                         .show()
             }
         }
-        adapterIssue = IssueAdapter(object : IssueAdapter.Listener {
-            override fun onIssueClicked(issue: Issue) {
-                if (project != null) {
-                    Navigator.navigateToIssue(baseActivty, project!!, issue)
-                } else {
-                    Snackbar.make(root, getString(R.string.wait_for_project_to_load), Snackbar.LENGTH_SHORT)
-                            .show()
+        adapter = BaseAdapter(
+                onCreateViewHolder = { parent, _ ->
+                    val viewHolder = IssueViewHolder.inflate(parent)
+                    viewHolder.itemView.setOnClickListener {
+                        val issue = adapter.items[viewHolder.adapterPosition]
+                        Navigator.navigateToIssue(baseActivty, project!!, issue)
+                    }
+                    viewHolder
+                },
+                onBindViewHolder = { viewHolder, _, item -> viewHolder.bind(item) }
+        )
+        loadHelper = LoadHelper(
+                lifecycleOwner = this,
+                recyclerView = listIssues,
+                baseAdapter = adapter,
+                swipeRefreshLayout = swipeRefreshLayout,
+                errorOrEmptyTextView = textMessage,
+                loadInitial = {
+                    gitLab.getIssues(project!!.id, state)
+                },
+                loadMore = {
+                    gitLab.loadAnyList(it)
                 }
-            }
-        })
-        layoutManagerIssues = LinearLayoutManager(activity)
-        listIssues.layoutManager = layoutManagerIssues
+        )
         listIssues.addItemDecoration(DividerItemDecoration(baseActivty))
-        listIssues.adapter = adapterIssue
-        listIssues.addOnScrollListener(onScrollListener)
 
-        spinnerIssue.adapter = ArrayAdapter<String>(requireActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, resources.getStringArray(R.array.issue_state_names))
+        spinnerIssue.adapter = ArrayAdapter(requireActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, resources.getStringArray(R.array.issue_state_names))
         spinnerIssue.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 state = states[position]
                 loadData()
             }
 
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
-
-        swipeRefreshLayout.setOnRefreshListener { loadData() }
 
         if (activity is ProjectActivity) {
             project = (activity as ProjectActivity).project
@@ -125,55 +113,7 @@ class IssuesFragment : BaseFragment() {
     }
 
     override fun loadData() {
-        textMessage.visibility = View.GONE
-        swipeRefreshLayout.isRefreshing = true
-        nextPageUrl = null
-        loading = true
-        App.get().gitLab.getIssues(project!!.id, state)
-                .mapResponseSuccessWithPaginationData()
-                .with(this)
-                .subscribe({
-                    loading = false
-                    swipeRefreshLayout.isRefreshing = false
-                    if (it.body.isEmpty()) {
-                        textMessage.visibility = View.VISIBLE
-                        textMessage.setText(R.string.no_issues)
-                    }
-                    adapterIssue.setIssues(it.body)
-                    nextPageUrl = it.paginationData.next
-                    Timber.d("Next page url $nextPageUrl")
-                }, {
-                    loading = false
-                    Timber.e(it)
-                    swipeRefreshLayout.isRefreshing = false
-                    textMessage.visibility = View.VISIBLE
-                    textMessage.setText(R.string.connection_error_issues)
-                    adapterIssue.setIssues(null)
-                    nextPageUrl = null
-                })
-    }
-
-    private fun loadMore() {
-        if (nextPageUrl == null) {
-            return
-        }
-
-        adapterIssue.setLoading(true)
-        loading = true
-
-        Timber.d("loadMore called for ${nextPageUrl!!}")
-        App.get().gitLab.getIssues(nextPageUrl!!.toString())
-                .with(this)
-                .subscribe({
-                    loading = false
-                    adapterIssue.setLoading(false)
-                    nextPageUrl = LinkHeaderParser.parse(it).next
-                    adapterIssue.addIssues(it.body())
-                }, {
-                    Timber.e(it)
-                    loading = false
-                    adapterIssue.setLoading(false)
-                })
+        loadHelper.load()
     }
 
     @Subscribe
@@ -184,7 +124,7 @@ class IssuesFragment : BaseFragment() {
 
     @Subscribe
     fun onEvent(event: IssueCreatedEvent) {
-        adapterIssue.addIssue(event.issue)
+        adapter.add(event.issue, 0)
         if (view != null) {
             textMessage.visibility = View.GONE
             listIssues.smoothScrollToPosition(0)
@@ -193,7 +133,7 @@ class IssuesFragment : BaseFragment() {
 
     @Subscribe
     fun onEvent(event: IssueChangedEvent) {
-        adapterIssue.updateIssue(event.issue)
+        adapter.update(event.issue)
     }
 
     @Suppress("UNUSED_PARAMETER")

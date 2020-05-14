@@ -7,6 +7,7 @@ import android.os.Bundle
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.BaseActivity
 import com.commit451.gitlab.adapter.ProjectsPagerAdapter
+import com.commit451.gitlab.api.GitLab
 import com.commit451.gitlab.api.GitLabFactory
 import com.commit451.gitlab.api.GitLabService
 import com.commit451.gitlab.api.OkHttpClientFactory
@@ -32,14 +33,14 @@ class ProjectFeedWidgetConfigureProjectActivity : BaseActivity(), ProjectsFragme
         }
     }
 
-    private lateinit var gitLabInstance: GitLabService
+    private lateinit var gitLabInstance: GitLab
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_project_feed_widget_configure)
 
         val account = intent.getParcelableExtra<Account>(EXTRA_ACCOUNT)!!
-        gitLabInstance = GitLabFactory.create(account, OkHttpClientFactory.create(account, false).build())
+        gitLabInstance = GitLabFactory.createGitLab(account, OkHttpClientFactory.create(account, false))
 
         viewPager.adapter = ProjectsPagerAdapter(this, supportFragmentManager)
         tabLayout.setupWithViewPager(viewPager)
@@ -52,7 +53,7 @@ class ProjectFeedWidgetConfigureProjectActivity : BaseActivity(), ProjectsFragme
         finish()
     }
 
-    override fun getGitLab(): GitLabService {
+    override fun providedGitLab(): GitLab {
         return gitLabInstance
     }
 }

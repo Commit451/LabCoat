@@ -9,8 +9,10 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.BaseAdapter
 import com.commit451.gitlab.api.BodyWithPagination
+import com.commit451.gitlab.extension.mapResponseSuccessWithPaginationData
 import com.commit451.gitlab.extension.with
 import io.reactivex.Single
+import retrofit2.Response
 import timber.log.Timber
 
 /**
@@ -22,17 +24,16 @@ class LoadHelper<T>(
         private val lifecycleOwner: LifecycleOwner,
         recyclerView: RecyclerView,
         private val baseAdapter: BaseAdapter<T, *>,
+        layoutManager: LinearLayoutManager = LinearLayoutManager(recyclerView.context),
         private val swipeRefreshLayout: SwipeRefreshLayout,
         private val errorOrEmptyTextView: TextView,
-        createLayoutManager: () -> LinearLayoutManager = { LinearLayoutManager(recyclerView.context) },
-        private val loadInitial: () -> Single<BodyWithPagination<List<T>>>,
-        private val loadMore: (url: String) -> Single<BodyWithPagination<List<T>>>? = { null }
+        private val loadInitial: () -> Single<Response<List<T>>>,
+        private val loadMore: (url: String) -> Single<Response<List<T>>>? = { null }
 ) {
 
     private var nextPageUrl: String? = null
 
     init {
-        val layoutManager = createLayoutManager.invoke()
         recyclerView.layoutManager = layoutManager
         recyclerView.addOnScrollListener(
                 OnScrollLoadMoreListener(
@@ -54,6 +55,7 @@ class LoadHelper<T>(
         nextPageUrl = null
         baseAdapter.setLoading(false)
         loadInitial.invoke()
+                .mapResponseSuccessWithPaginationData()
                 .with(lifecycleOwner)
                 .subscribe({
                     baseAdapter.set(it.body)
@@ -82,7 +84,9 @@ class LoadHelper<T>(
         // reset this to null, so that we don't keep triggering the reload over and over
         nextPageUrl = null
         baseAdapter.setLoading(true)
-        single.with(lifecycleOwner)
+        single
+                .mapResponseSuccessWithPaginationData()
+                .with(lifecycleOwner)
                 .subscribe({
                     baseAdapter.setLoading(false)
                     baseAdapter.addAll(it.body)

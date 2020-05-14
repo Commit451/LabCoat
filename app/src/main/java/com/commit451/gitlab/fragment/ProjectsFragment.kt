@@ -5,22 +5,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
+import com.commit451.gitlab.adapter.BaseAdapter
 import com.commit451.gitlab.adapter.DividerItemDecoration
-import com.commit451.gitlab.adapter.ProjectAdapter
-import com.commit451.gitlab.api.GitLabService
-import com.commit451.gitlab.extension.mapResponseSuccessWithPaginationData
-import com.commit451.gitlab.extension.with
+import com.commit451.gitlab.api.GitLab
 import com.commit451.gitlab.model.api.Group
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.navigation.Navigator
+import com.commit451.gitlab.util.LoadHelper
+import com.commit451.gitlab.viewHolder.ProjectViewHolder
 import io.reactivex.Single
 import kotlinx.android.synthetic.main.fragment_projects.*
+import kotlinx.android.synthetic.main.fragment_projects.swipeRefreshLayout
 import retrofit2.Response
-import timber.log.Timber
 
 class ProjectsFragment : BaseFragment() {
 
@@ -64,26 +62,13 @@ class ProjectsFragment : BaseFragment() {
         }
     }
 
-    private lateinit var layoutManagerProjects: LinearLayoutManager
-    private lateinit var adapterProjects: ProjectAdapter
-
     private var mode: Int = 0
     private var query: String? = null
-    private var nextPageUrl: String? = null
-    private var loading = false
     private var listener: Listener? = null
+    private lateinit var colors: IntArray
 
-    private val onScrollListener = object : RecyclerView.OnScrollListener() {
-        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-            super.onScrolled(recyclerView, dx, dy)
-            val visibleItemCount = layoutManagerProjects.childCount
-            val totalItemCount = layoutManagerProjects.itemCount
-            val firstVisibleItem = layoutManagerProjects.findFirstVisibleItemPosition()
-            if (firstVisibleItem + visibleItemCount >= totalItemCount && !loading && nextPageUrl != null) {
-                loadMore()
-            }
-        }
-    }
+    private lateinit var adapter: BaseAdapter<Project, ProjectViewHolder>
+    private lateinit var loadHelper: LoadHelper<Project>
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -96,6 +81,7 @@ class ProjectsFragment : BaseFragment() {
         super.onCreate(savedInstanceState)
         mode = arguments?.getInt(EXTRA_MODE)!!
         query = arguments?.getString(EXTRA_QUERY)
+        colors = requireContext().resources.getIntArray(R.array.cool_colors)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -105,124 +91,88 @@ class ProjectsFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapterProjects = ProjectAdapter(baseActivty, object : ProjectAdapter.Listener {
-            override fun onProjectClicked(project: Project) {
-                if (listener == null) {
-                    Navigator.navigateToProject(baseActivty, project)
-                } else {
-                    listener!!.onProjectClicked(project)
+        adapter = BaseAdapter(
+                onCreateViewHolder = { parent, _ ->
+                    val viewHolder = ProjectViewHolder.inflate(parent)
+                    viewHolder.itemView.setOnClickListener {
+                        val project = adapter.items[viewHolder.adapterPosition]
+                        if (listener == null) {
+                            Navigator.navigateToProject(baseActivty, project)
+                        } else {
+                            listener?.onProjectClicked(project)
+                        }
+                    }
+                    viewHolder
+                },
+                onBindViewHolder = { viewHolder, position, item ->
+                    val color = colors[position % colors.size]
+                    viewHolder.bind(item, color)
                 }
-            }
-        })
-        layoutManagerProjects = LinearLayoutManager(activity)
-        listProjects.layoutManager = layoutManagerProjects
-        listProjects.addItemDecoration(DividerItemDecoration(baseActivty))
-        listProjects.adapter = adapterProjects
-        listProjects.addOnScrollListener(onScrollListener)
+        )
+        loadHelper = LoadHelper(
+                lifecycleOwner = this,
+                recyclerView = listProjects,
+                baseAdapter = adapter,
+                swipeRefreshLayout = swipeRefreshLayout,
+                errorOrEmptyTextView = textMessage,
+                loadInitial = {
+                    mapModeToSingle()
+                },
+                loadMore = {
+                    gitLab.loadAnyList(it)
+                }
+        )
 
-        swipeRefreshLayout.setOnRefreshListener { loadData() }
+        listProjects.addItemDecoration(DividerItemDecoration(baseActivty))
 
         loadData()
     }
 
     override fun loadData() {
-        textMessage.visibility = View.GONE
+        loadHelper.load()
+    }
 
-        nextPageUrl = null
-
-        when (mode) {
+    private fun mapModeToSingle(): Single<Response<List<Project>>> {
+        return when (mode) {
             MODE_ALL -> {
-                showLoading()
-                actuallyLoadIt(getGitLab().getAllProjects())
+                gitLab().getAllProjects()
             }
             MODE_MINE -> {
-                showLoading()
-                actuallyLoadIt(getGitLab().getMyProjects(baseActivty.account.username!!))
+                gitLab().getMyProjects(baseActivty.account.username!!)
             }
             MODE_STARRED -> {
-                showLoading()
-                actuallyLoadIt(getGitLab().getStarredProjects())
+                gitLab().getStarredProjects()
             }
             MODE_SEARCH -> if (query != null) {
-                showLoading()
-                actuallyLoadIt(getGitLab().searchAllProjects(query!!))
+                gitLab().searchAllProjects(query!!)
+            } else {
+                Single.never()
             }
             MODE_GROUP -> {
-                showLoading()
                 val group = arguments?.getParcelable<Group>(EXTRA_GROUP)
                         ?: throw IllegalStateException("You must also pass a group if you want to show a groups projects")
-                actuallyLoadIt(getGitLab().getGroupProjects(group.id))
+                gitLab().getGroupProjects(group.id)
             }
             else -> throw IllegalStateException("$mode is not defined")
         }
     }
 
-    private fun actuallyLoadIt(observable: Single<Response<List<Project>>>) {
-        observable
-                .mapResponseSuccessWithPaginationData()
-                .with(this)
-                .subscribe({
-                    loading = false
-                    swipeRefreshLayout.isRefreshing = false
-                    if (it.body.isEmpty()) {
-                        textMessage.visibility = View.VISIBLE
-                        textMessage.setText(R.string.no_projects)
-                    }
-                    adapterProjects.setData(it.body)
-                    nextPageUrl = it.paginationData.next
-                    Timber.d("Next page url $nextPageUrl")
-                }, {
-                    loading = false
-                    Timber.e(it)
-                    swipeRefreshLayout.isRefreshing = false
-                    textMessage.visibility = View.VISIBLE
-                    textMessage.setText(R.string.connection_error)
-                    adapterProjects.setData(null)
-                    nextPageUrl = null
-                })
-    }
-
-    private fun loadMore() {
-        if (nextPageUrl == null) {
-            return
-        }
-        loading = true
-        adapterProjects.setLoading(true)
-        Timber.d("loadMore called for %s", nextPageUrl)
-        getGitLab().getProjects(nextPageUrl!!.toString())
-                .mapResponseSuccessWithPaginationData()
-                .with(this)
-                .subscribe({
-                    loading = false
-                    adapterProjects.setLoading(false)
-                    adapterProjects.addData(it.body)
-                    nextPageUrl = it.paginationData.next
-                    Timber.d("Next page url $nextPageUrl")
-                }, {
-                    loading = false
-                    Timber.e(it)
-                    adapterProjects.setLoading(false)
-                })
-    }
-
-    private fun showLoading() {
-        loading = true
-        swipeRefreshLayout.isRefreshing = true
-    }
-
     fun searchQuery(query: String) {
         this.query = query
-        adapterProjects.clearData()
+        adapter.clear()
         loadData()
     }
 
-    private fun getGitLab(): GitLabService {
-        return listener?.getGitLab() ?: App.get().gitLab
+    private fun gitLab(): GitLab {
+        return listener?.providedGitLab() ?: App.get().gitLab
     }
 
     interface Listener {
         fun onProjectClicked(project: Project)
 
-        fun getGitLab(): GitLabService
+        /**
+         * We need this for configuring widgets
+         */
+        fun providedGitLab(): GitLab
     }
 }

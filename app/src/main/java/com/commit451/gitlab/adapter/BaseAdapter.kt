@@ -1,16 +1,17 @@
 package com.commit451.gitlab.adapter
 
 import android.view.ViewGroup
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.commit451.gitlab.viewHolder.LoadingFooterViewHolder
 
 /**
  * An adapter that supports showing loading.
  */
-class BaseAdapter<T, VH: RecyclerView.ViewHolder>(
+class BaseAdapter<T, VH : RecyclerView.ViewHolder>(
         private val onCreateViewHolder: (parent: ViewGroup, viewType: Int) -> RecyclerView.ViewHolder,
         private val onBindViewHolder: (viewHolder: VH, position: Int, item: T) -> Unit
-): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
 
@@ -18,6 +19,17 @@ class BaseAdapter<T, VH: RecyclerView.ViewHolder>(
 
         private const val TYPE_ITEM = 0
         private const val TYPE_FOOTER = Int.MAX_VALUE
+
+        fun createSpanSizeLookup(adapter: RecyclerView.Adapter<*>, span: Int): GridLayoutManager.SpanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            override fun getSpanSize(position: Int): Int {
+                val viewType = adapter.getItemViewType(position)
+                return if (viewType == TYPE_FOOTER) {
+                    span
+                } else {
+                    1
+                }
+            }
+        }
     }
 
     val items = mutableListOf<T>()
