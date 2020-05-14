@@ -197,7 +197,7 @@ interface GitLabService {
 
     @GET("projects/{id}/merge_requests/{merge_request_id}/commits")
     fun getMergeRequestCommits(@Path("id") projectId: Long,
-                               @Path("merge_request_id") mergeRequestId: Long): Single<List<RepositoryCommit>>
+                               @Path("merge_request_id") mergeRequestId: Long): Single<Response<List<RepositoryCommit>>>
 
     @GET("projects/{id}/merge_requests/{merge_request_id}/changes")
     fun getMergeRequestChanges(@Path("id") projectId: Long,

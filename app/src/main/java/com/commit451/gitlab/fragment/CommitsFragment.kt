@@ -61,11 +61,11 @@ class CommitsFragment : BaseFragment() {
                 swipeRefreshLayout = swipeRefreshLayout,
                 errorOrEmptyTextView = textMessage,
                 loadInitial = {
-                    App.get().gitLab.getCommits(project!!.id, branchName!!)
+                    gitLab.getCommits(project!!.id, branchName!!)
                             .mapResponseSuccessWithPaginationData()
                 },
                 loadMore = {
-                    baseActivty.gitLab.loadAnyList<RepositoryCommit>(it)
+                    gitLab.loadAnyList<RepositoryCommit>(it)
                             .mapResponseSuccessWithPaginationData()
                 }
         )
