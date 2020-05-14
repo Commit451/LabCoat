@@ -1,7 +1,9 @@
 package com.commit451.gitlab
 
+import com.commit451.gitlab.api.GitLab
 import com.commit451.gitlab.api.GitLabService
 import com.commit451.gitlab.model.api.Project
+import com.commit451.gitlab.model.api.RepositoryCommit
 import org.junit.Assert.assertNotNull
 import org.junit.BeforeClass
 import org.junit.Test
@@ -17,7 +19,7 @@ class ApiTests {
         private const val PROJECT_ID: Long = 376651
 
         private var fakeProject: Project? = null
-        private lateinit var gitLab: GitLabService
+        private lateinit var gitLab: GitLab
 
         @JvmStatic
         @BeforeClass
@@ -88,9 +90,9 @@ class ApiTests {
     fun getCommits() {
         val defaultBranch = "master"
         val commitsResponse = gitLab
-                .getCommits(fakeProject!!.id, defaultBranch, 1)
+                .getCommits(fakeProject!!.id, defaultBranch)
                 .blockingGet()
-        assertNotNull(commitsResponse)
+        assertNotNull(commitsResponse.body())
     }
 
     @Test
@@ -110,5 +112,14 @@ class ApiTests {
                 .blockingGet()
         TestUtil.assertRetrofitResponseSuccess(userFullResponse)
         assertNotNull(userFullResponse.body())
+    }
+
+    @Test
+    fun loadAnyList() {
+        val url = "https://gitlab.com/api/v4/projects/473568/repository/commits?id=473568&order=default&page=2&per_page=20"
+        val result = gitLab.loadAnyList<RepositoryCommit>(url)
+                .blockingGet()
+        val commit = result.body()?.first()
+        assertNotNull(commit)
     }
 }

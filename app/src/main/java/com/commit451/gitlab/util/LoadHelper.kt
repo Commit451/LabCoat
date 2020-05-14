@@ -18,18 +18,17 @@ import timber.log.Timber
  * with pagination and load more indication at the bottom. See also [BaseAdapter]
  * and [OnScrollLoadMoreListener]
  */
-class LoadHelper<T, VH : RecyclerView.ViewHolder>(
+class LoadHelper<T>(
         private val lifecycleOwner: LifecycleOwner,
         recyclerView: RecyclerView,
+        private val baseAdapter: BaseAdapter<T, *>,
         private val swipeRefreshLayout: SwipeRefreshLayout,
         private val errorOrEmptyTextView: TextView,
         createLayoutManager: () -> LinearLayoutManager = { LinearLayoutManager(recyclerView.context) },
-        createAdapter: () -> BaseAdapter<T, VH>,
         private val loadInitial: () -> Single<BodyWithPagination<List<T>>>,
         private val loadMore: (url: String) -> Single<BodyWithPagination<List<T>>>? = { null }
 ) {
 
-    private var baseAdapter: BaseAdapter<T, VH> = createAdapter.invoke()
     private var nextPageUrl: String? = null
 
     init {
@@ -42,7 +41,6 @@ class LoadHelper<T, VH : RecyclerView.ViewHolder>(
                         loadMore = { loadNext() }
                 )
         )
-        baseAdapter = createAdapter.invoke()
         recyclerView.adapter = baseAdapter
         swipeRefreshLayout.setOnRefreshListener { load() }
     }
@@ -54,7 +52,7 @@ class LoadHelper<T, VH : RecyclerView.ViewHolder>(
         errorOrEmptyTextView.isVisible = false
         swipeRefreshLayout.isRefreshing = true
         nextPageUrl = null
-        baseAdapter.isLoading = false
+        baseAdapter.setLoading(false)
         loadInitial.invoke()
                 .with(lifecycleOwner)
                 .subscribe({
@@ -83,15 +81,15 @@ class LoadHelper<T, VH : RecyclerView.ViewHolder>(
         val single = loadMore.invoke(url) ?: return
         // reset this to null, so that we don't keep triggering the reload over and over
         nextPageUrl = null
-        baseAdapter.isLoading = true
+        baseAdapter.setLoading(true)
         single.with(lifecycleOwner)
                 .subscribe({
-                    baseAdapter.isLoading = false
+                    baseAdapter.setLoading(false)
                     baseAdapter.addAll(it.body)
                     nextPageUrl = it.paginationData.next
                 }, {
                     Timber.e(it)
-                    baseAdapter.isLoading = false
+                    baseAdapter.setLoading(false)
                 })
     }
 }

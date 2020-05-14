@@ -1,17 +1,12 @@
 package com.commit451.gitlab.api
 
 import com.apollographql.apollo.ApolloClient
-import com.apollographql.apollo.api.Response
-import com.apollographql.apollo.rx2.rx
-import com.apollographql.apollo.rx2.rxQuery
 import com.commit451.gitlab.CurrentUserQuery
-import com.commit451.gitlab.api.graphql.ResponseException
 import com.commit451.gitlab.api.graphql.rxQueryMapErrors
 import com.commit451.gitlab.model.Account
 import com.squareup.moshi.Moshi
-import io.reactivex.Observable
+import com.squareup.moshi.Types
 import io.reactivex.Single
-import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.OkHttpClient
 
@@ -25,7 +20,7 @@ class GitLab private constructor(
         gitLabRss: GitLabRss
 ) : GitLabService by gitLabService, GitLabRss by gitLabRss {
 
-    private val moshi: Moshi
+    val moshi: Moshi
     private val apolloClient: ApolloClient
     val client: OkHttpClient
     val account: Account
@@ -43,6 +38,25 @@ class GitLab private constructor(
                 .serverUrl(apolloUrl)
                 .okHttpClient(client)
                 .build()
+    }
+
+    inline fun <reified T> loadAny(url: String): Single<retrofit2.Response<T>> {
+        return get(url)
+                .map {
+                    val source = it.body()?.source() ?: throw NullBodyException()
+                    val body = moshi.adapter(T::class.java).fromJson(source)
+                    retrofit2.Response.success(body)
+                }
+    }
+
+    inline fun <reified T> loadAnyList(url: String): Single<retrofit2.Response<List<T>>> {
+        return get(url)
+                .map {
+                    val source = it.body()?.source() ?: throw NullBodyException()
+                    val type = Types.newParameterizedType(List::class.java, T::class.java)
+                    val body = moshi.adapter<List<T>>(type).fromJson(source)
+                    retrofit2.Response.success(body)
+                }
     }
 
     fun currentUser(): Single<CurrentUserQuery.CurrentUser> {
@@ -69,4 +83,5 @@ class GitLab private constructor(
             return GitLab(this, gitLabService, gitLabRss)
         }
     }
+
 }

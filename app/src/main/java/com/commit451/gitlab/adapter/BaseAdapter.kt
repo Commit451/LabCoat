@@ -20,9 +20,9 @@ class BaseAdapter<T, VH: RecyclerView.ViewHolder>(
         private const val TYPE_FOOTER = Int.MAX_VALUE
     }
 
-    private val items = mutableListOf<T>()
+    val items = mutableListOf<T>()
 
-    var isLoading = false
+    private var isLoading = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         when (viewType) {
@@ -69,7 +69,9 @@ class BaseAdapter<T, VH: RecyclerView.ViewHolder>(
 
     fun addAll(collection: Collection<T>, index: Int = items.size) {
         items.addAll(index, collection)
-        notifyItemRangeInserted(index, items.size)
+        //for some reason (probably because of the loading indicator) this is broken
+        //notifyItemRangeInserted(index, items.size)
+        notifyDataSetChanged()
     }
 
     fun remove(item: T) {
@@ -103,5 +105,10 @@ class BaseAdapter<T, VH: RecyclerView.ViewHolder>(
         val size = items.size
         items.clear()
         notifyItemRangeRemoved(0, size)
+    }
+
+    fun setLoading(loading: Boolean) {
+        this.isLoading = loading
+        notifyItemChanged(items.size)
     }
 }

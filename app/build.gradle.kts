@@ -59,8 +59,8 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 
 apply { from("experimental.gradle") }
 
-val retrofitVersion = "2.7.1"
-val okHttpVersion = "4.3.0"
+val retrofitVersion = "2.8.1"
+val okHttpVersion = "4.6.0"
 
 val adapterLayout = "1.2.0"
 val materialDialogsVersion = "0.9.6.0"
@@ -81,6 +81,7 @@ dependencies {
 
     implementation("com.google.android.material:material:1.2.0-alpha06")
 
+    implementation("com.squareup.okio:okio:2.6.0")
     implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
     implementation("com.squareup.retrofit2:converter-simplexml:$retrofitVersion") {
         exclude(group = "xpp3", module = "xpp3")
@@ -96,12 +97,12 @@ dependencies {
     implementation("com.squareup.moshi:moshi-kotlin:$moshiVersion")
     implementation("com.squareup.moshi:moshi-adapters:$moshiVersion")
 
-    val apolloVersion = "2.0.2"
+    val apolloVersion = "2.0.3"
     implementation("com.apollographql.apollo:apollo-runtime:$apolloVersion")
     implementation("com.apollographql.apollo:apollo-rx2-support:$apolloVersion")
 
     implementation("io.coil-kt:coil:0.10.1")
-    implementation("com.github.Commit451:CoilImageGetter:1.0.1")
+    implementation("com.github.Commit451:CoilImageGetter:1.1.0")
 
     implementation("com.jakewharton.timber:timber:4.7.1")
     implementation("com.jakewharton.threetenabp:threetenabp:1.2.4")

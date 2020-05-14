@@ -6,6 +6,7 @@ import com.commit451.gitlab.model.api.Tag
 import io.reactivex.Completable
 import io.reactivex.Single
 import okhttp3.MultipartBody
+import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -297,8 +298,7 @@ interface GitLabService {
 
     @GET("projects/{id}/repository/commits")
     fun getCommits(@Path("id") projectId: Long,
-                   @Query("ref_name") branchName: String,
-                   @Query("page") page: Int): Single<List<RepositoryCommit>>
+                   @Query("ref_name") branchName: String): Single<Response<List<RepositoryCommit>>>
 
     @GET("projects/{id}/repository/commits/{sha}")
     fun getCommit(@Path("id") projectId: Long,
@@ -484,4 +484,7 @@ interface GitLabService {
     /* --- MISC --- */
     @GET
     fun getRaw(@Url url: String): Single<String>
+
+    @GET
+    fun get(@Url url: String): Single<Response<ResponseBody>>
 }

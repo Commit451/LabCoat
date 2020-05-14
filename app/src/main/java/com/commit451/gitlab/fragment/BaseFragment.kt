@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.View
 import com.commit451.gitlab.App
 import com.commit451.gitlab.activity.BaseActivity
+import com.commit451.gitlab.api.GitLab
 import com.commit451.gitlab.event.ReloadDataEvent
 import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
 import org.greenrobot.eventbus.Subscribe
@@ -20,6 +21,9 @@ abstract class BaseFragment : Fragment() {
     val baseActivty by lazy {
         activity as BaseActivity
     }
+
+    val gitLab: GitLab
+        get() = App.get().gitLab
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
