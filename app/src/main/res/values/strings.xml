@@ -101,6 +101,7 @@
     <!-- Error messages -->
     <string name="error">Error</string>
     <string name="connection_error">Connection failed</string>
+    <string name="unable_to_load">Unable to load</string>
     <string name="connection_error_commits">Failed to load commits</string>
     <string name="connection_error_issues">Failed to load issues</string>
     <string name="connection_error_files">Failed to load files</string>
@@ -169,6 +170,7 @@
     <string name="project_fork_message">Do you want to fork this project?</string>
     <!-- Commits -->
     <string name="no_commits_found">No commits found.</string>
+    <string name="no_data_found">No data found</string>
 
     <!-- Files -->
     <string name="file_saved">File saved successfully to Download folder</string>

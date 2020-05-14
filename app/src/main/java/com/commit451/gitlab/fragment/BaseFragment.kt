@@ -11,11 +11,11 @@ import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
 import org.greenrobot.eventbus.Subscribe
 
 
-abstract class BaseFragment : androidx.fragment.app.Fragment() {
+abstract class BaseFragment : Fragment() {
 
     private var baseEventReceiver: EventReceiver? = null
 
-    val scopeProvider by lazy { AndroidLifecycleScopeProvider.from(this) }
+    val scopeProvider: AndroidLifecycleScopeProvider by lazy { AndroidLifecycleScopeProvider.from(this) }
 
     val baseActivty by lazy {
         activity as BaseActivity

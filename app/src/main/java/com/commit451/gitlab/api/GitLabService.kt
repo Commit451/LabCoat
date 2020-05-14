@@ -9,7 +9,6 @@ import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.*
 
-
 /**
  * Defines the interface for Retrofit for the GitLabService API
  * http://doc.gitlab.com/ce/api/README.html
