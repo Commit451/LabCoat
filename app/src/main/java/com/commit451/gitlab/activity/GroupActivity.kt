@@ -88,6 +88,7 @@ class GroupActivity : BaseActivity() {
             bindPalette(it)
         }
         backdrop.load(group.avatarUrl) {
+            allowHardware(false)
             target(paletteTarget)
         }
 

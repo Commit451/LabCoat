@@ -70,7 +70,7 @@ class GitLab private constructor(
     }
 
     fun feed(url: String): Single<Response<List<Entry>>> {
-        return getFeed(url).map { Response.success(it.body()?.entries, it.raw()) }
+        return getFeed(url).map { Response.success(it.body()?.entries ?: emptyList(), it.raw()) }
     }
 
     class Builder(internal val account: Account) {

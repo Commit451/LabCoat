@@ -3,6 +3,7 @@ package com.commit451.gitlab.extension
 import androidx.lifecycle.LifecycleOwner
 import com.commit451.gitlab.activity.BaseActivity
 import com.commit451.gitlab.api.BodyWithPagination
+import com.commit451.gitlab.api.NullBodyException
 import com.commit451.gitlab.fragment.BaseFragment
 import com.commit451.gitlab.util.LinkHeaderParser
 import com.uber.autodispose.SingleSubscribeProxy
@@ -47,7 +48,7 @@ fun <T> Single<Response<T>>.mapResponseSuccessWithPaginationData(): Single<BodyW
         if (!response.isSuccessful) {
             error(HttpException(response))
         } else {
-            val body = response.body()!!
+            val body = response.body() ?: throw NullBodyException()
             val paginationData = LinkHeaderParser.parse(response)
             Single.just(BodyWithPagination(body, paginationData))
         }

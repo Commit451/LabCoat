@@ -54,6 +54,7 @@ class UserActivity : BaseActivity() {
             bindPalette(it)
         }
         backdrop.load(url) {
+            allowHardware(false)
             target(paletteImageViewTarget)
         }
 

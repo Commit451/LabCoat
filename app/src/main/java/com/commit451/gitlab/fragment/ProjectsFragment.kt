@@ -115,13 +115,11 @@ class ProjectsFragment : BaseFragment() {
                 dividers = true,
                 swipeRefreshLayout = swipeRefreshLayout,
                 errorOrEmptyTextView = textMessage,
-                loadInitial = {
-                    mapModeToSingle()
-                },
-                loadMore = {
-                    gitLab.loadAnyList(it)
-                }
+                loadInitial = { mapModeToSingle() },
+                loadMore = { gitLab.loadAnyList(it) }
         )
+
+        loadHelper.load()
     }
 
     override fun loadData() {
@@ -139,10 +137,13 @@ class ProjectsFragment : BaseFragment() {
             MODE_STARRED -> {
                 gitLab().getStarredProjects()
             }
-            MODE_SEARCH -> if (query != null) {
-                gitLab().searchAllProjects(query!!)
-            } else {
-                Single.never()
+            MODE_SEARCH -> {
+                val query = query
+                if (query != null) {
+                    gitLab().searchAllProjects(query)
+                } else {
+                    Single.never()
+                }
             }
             MODE_GROUP -> {
                 val group = arguments?.getParcelable<Group>(EXTRA_GROUP)
