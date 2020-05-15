@@ -44,7 +44,6 @@ class GroupsActivity : BaseActivity() {
         toolbar.setNavigationOnClickListener { drawerLayout.openDrawer(GravityCompat.START) }
         val layoutManager = DynamicGridLayoutManager(this)
         layoutManager.setMinimumSpanSize(resources.getDimensionPixelSize(R.dimen.user_list_image_size))
-        listGroups.layoutManager = layoutManager
 
         val colors: IntArray = resources.getIntArray(R.array.cool_colors)
         adapter = BaseAdapter(
@@ -65,12 +64,8 @@ class GroupsActivity : BaseActivity() {
                 layoutManager = layoutManager,
                 swipeRefreshLayout = swipeRefreshLayout,
                 errorOrEmptyTextView = textMessage,
-                loadInitial = {
-                    gitLab.getGroups()
-                },
-                loadMore = {
-                    gitLab.loadAnyList(it)
-                }
+                loadInitial = { gitLab.getGroups() },
+                loadMore = { gitLab.loadAnyList(it) }
         )
         load()
     }

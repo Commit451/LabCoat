@@ -27,7 +27,10 @@ object DeepLinker {
             return
         }
         // It doesn't like it if we have a host like this, so replace it
-        val link = url.replaceFirst("labcoat://", "https://").toHttpUrlOrNull()
+        val link = url.replaceFirst("labcoat://", "https://")
+                // I don't know why this is added to some links
+                .replaceFirst("/-/", "/")
+                .toHttpUrlOrNull()
         if (link == null) {
             navigator.onRouteUnknown(url)
             return

@@ -18,11 +18,11 @@ import timber.log.Timber
  */
 class RoutingActivity : BaseActivity() {
 
-    var originalUri: Uri? = null
+    private var originalUri: Uri? = null
 
     val navigator = object : DeepLinker.Callbacks {
         override fun onRouteToIssue(projectNamespace: String, projectName: String, issueIid: String) {
-            Timber.d("Routing to issue")
+            Timber.d("Routing to issue $projectNamespace/$projectName/$issueIid")
             startActivity(LoadSomeInfoActivity.newIssueIntent(this@RoutingActivity, projectNamespace, projectName, issueIid))
             overridePendingTransition(R.anim.fade_in, R.anim.do_nothing)
         }
