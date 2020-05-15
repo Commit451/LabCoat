@@ -6,24 +6,20 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.ProjectActivity
-import com.commit451.gitlab.adapter.BuildAdapter
-import com.commit451.gitlab.adapter.DividerItemDecoration
+import com.commit451.gitlab.adapter.BaseAdapter
 import com.commit451.gitlab.event.BuildChangedEvent
 import com.commit451.gitlab.event.ProjectReloadEvent
-import com.commit451.gitlab.extension.mapResponseSuccessWithPaginationData
-import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Build
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.navigation.Navigator
+import com.commit451.gitlab.util.LoadHelper
+import com.commit451.gitlab.viewHolder.BuildViewHolder
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_jobs.*
 import org.greenrobot.eventbus.Subscribe
-import timber.log.Timber
 
 /**
  * Shows the jobs of a project
@@ -37,31 +33,17 @@ class JobsFragment : BaseFragment() {
         }
     }
 
-    private lateinit var adapterBuilds: BuildAdapter
-    private lateinit var layoutManagerBuilds: LinearLayoutManager
+    private lateinit var adapter: BaseAdapter<Build, BuildViewHolder>
+    private lateinit var loadHelper: LoadHelper<Build>
 
     private lateinit var scopes: Array<String>
     private var scope: String? = null
     private var project: Project? = null
-    private var nextPageUrl: String? = null
-    private var loading: Boolean = false
-
-    private val onScrollListener = object : RecyclerView.OnScrollListener() {
-        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-            super.onScrolled(recyclerView, dx, dy)
-            val visibleItemCount = layoutManagerBuilds.childCount
-            val totalItemCount = layoutManagerBuilds.itemCount
-            val firstVisibleItem = layoutManagerBuilds.findFirstVisibleItemPosition()
-            if (firstVisibleItem + visibleItemCount >= totalItemCount && !loading && nextPageUrl != null) {
-                loadMore()
-            }
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         scopes = resources.getStringArray(R.array.build_scope_values)
-        scope = scopes[0]
+        scope = scopes.first()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -73,21 +55,35 @@ class JobsFragment : BaseFragment() {
 
         App.bus().register(this)
 
-        adapterBuilds = BuildAdapter(object : BuildAdapter.Listener {
-            override fun onBuildClicked(build: Build) {
-                if (project != null) {
-                    Navigator.navigateToBuild(baseActivty, project!!, build)
-                } else {
-                    Snackbar.make(root, getString(R.string.wait_for_project_to_load), Snackbar.LENGTH_SHORT)
-                            .show()
+        adapter = BaseAdapter(
+                onCreateViewHolder = { parent, _ ->
+                    val viewHolder = BuildViewHolder.inflate(parent)
+                    viewHolder.itemView.setOnClickListener {
+                        val build = adapter.items[viewHolder.adapterPosition]
+                        if (project != null) {
+                            Navigator.navigateToBuild(baseActivty, project!!, build)
+                        } else {
+                            Snackbar.make(root, getString(R.string.wait_for_project_to_load), Snackbar.LENGTH_SHORT)
+                                    .show()
+                        }
+                    }
+                    viewHolder
+                },
+                onBindViewHolder = { viewHolder, _, item -> viewHolder.bind(item) }
+        )
+        loadHelper = LoadHelper(
+                lifecycleOwner = this,
+                recyclerView = listBuilds,
+                baseAdapter = adapter,
+                swipeRefreshLayout = swipeRefreshLayout,
+                errorOrEmptyTextView = textMessage,
+                loadInitial = {
+                    gitLab.getBuilds(project!!.id, scope)
+                },
+                loadMore = {
+                    gitLab.loadAnyList(it)
                 }
-            }
-        })
-        layoutManagerBuilds = LinearLayoutManager(activity)
-        listBuilds.layoutManager = layoutManagerBuilds
-        listBuilds.addItemDecoration(DividerItemDecoration(baseActivty))
-        listBuilds.adapter = adapterBuilds
-        listBuilds.addOnScrollListener(onScrollListener)
+        )
 
         spinnerIssue.adapter = ArrayAdapter(requireActivity(), android.R.layout.simple_list_item_1,
                 android.R.id.text1, resources.getStringArray(R.array.build_scope_names))
@@ -97,8 +93,7 @@ class JobsFragment : BaseFragment() {
                 loadData()
             }
 
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
 
         swipeRefreshLayout.setOnRefreshListener { loadData() }
@@ -117,57 +112,7 @@ class JobsFragment : BaseFragment() {
     }
 
     override fun loadData() {
-        textMessage.visibility = View.GONE
-        swipeRefreshLayout.isRefreshing = true
-        nextPageUrl = null
-        loading = true
-        App.get().gitLab.getBuilds(project!!.id, scope)
-                .mapResponseSuccessWithPaginationData()
-                .with(this)
-                .subscribe({
-                    loading = false
-
-                    swipeRefreshLayout.isRefreshing = false
-                    if (it.body.isEmpty()) {
-                        textMessage.visibility = View.VISIBLE
-                        textMessage.setText(R.string.no_builds)
-                    }
-                    adapterBuilds.setValues(it.body)
-                    nextPageUrl = it.paginationData.next
-                    Timber.d("Next page url %s", nextPageUrl)
-                }, {
-                    loading = false
-                    Timber.e(it)
-                    swipeRefreshLayout.isRefreshing = false
-                    textMessage.visibility = View.VISIBLE
-                    textMessage.setText(R.string.failed_to_load_builds)
-                    adapterBuilds.setValues(null)
-                    nextPageUrl = null
-                })
-    }
-
-    fun loadMore() {
-        if (nextPageUrl == null) {
-            return
-        }
-
-        adapterBuilds.setLoading(true)
-        loading = true
-
-        Timber.d("loadMore called for %s", nextPageUrl)
-        App.get().gitLab.getBuilds(nextPageUrl!!, scope)
-                .mapResponseSuccessWithPaginationData()
-                .with(this)
-                .subscribe({
-                    loading = false
-                    adapterBuilds.setLoading(false)
-                    nextPageUrl = it.paginationData.next
-                    adapterBuilds.addValues(it.body)
-                }, {
-                    Timber.e(it)
-                    loading = false
-                    adapterBuilds.setLoading(false)
-                })
+        loadHelper.load()
     }
 
     @Subscribe
@@ -178,6 +123,6 @@ class JobsFragment : BaseFragment() {
 
     @Subscribe
     fun onEvent(event: BuildChangedEvent) {
-        adapterBuilds.updateBuild(event.build)
+        adapter.update(event.build)
     }
 }

@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
+import com.commit451.addendum.design.snackbar
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.AddIssueLabelAdapter
@@ -187,7 +188,7 @@ class AddIssueActivity : MorphActivity() {
     }
 
     private fun setLabels(projectLabels: List<Label>?) {
-        if (projectLabels != null && !projectLabels.isEmpty() && issue != null && issue!!.labels != null) {
+        if (projectLabels != null && projectLabels.isNotEmpty() && issue != null && issue!!.labels != null) {
             val currentLabels = ArrayList<Label>()
             for (label in projectLabels) {
                 for (labelName in issue!!.labels!!) {
@@ -290,8 +291,7 @@ class AddIssueActivity : MorphActivity() {
                     dismiss()
                 }, {
                     Timber.e(it)
-                    Snackbar.make(root, getString(R.string.failed_to_create_issue), Snackbar.LENGTH_SHORT)
-                            .show()
+                    root.snackbar(R.string.failed_to_create_issue)
                 })
     }
 }

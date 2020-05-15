@@ -8,21 +8,24 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.commit451.addendum.design.snackbar
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.AttachActivity
-import com.commit451.gitlab.adapter.NotesAdapter
+import com.commit451.gitlab.adapter.BaseAdapter
 import com.commit451.gitlab.api.response.FileUploadResponse
 import com.commit451.gitlab.event.MergeRequestChangedEvent
-import com.commit451.gitlab.extension.mapResponseSuccessWithPaginationData
 import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.MergeRequest
+import com.commit451.gitlab.model.api.Note
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.navigation.TransitionFactory
+import com.commit451.gitlab.util.LoadHelper
 import com.commit451.gitlab.view.SendMessageView
+import com.commit451.gitlab.viewHolder.NoteViewHolder
 import com.commit451.teleprinter.Teleprinter
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_merge_request_discussion.*
+import kotlinx.android.synthetic.main.fragment_merge_request_discussion.swipeRefreshLayout
 import kotlinx.android.synthetic.main.progress_fullscreen.*
 import org.greenrobot.eventbus.Subscribe
 import timber.log.Timber
@@ -49,26 +52,12 @@ class MergeRequestDiscussionFragment : BaseFragment() {
         }
     }
 
-    private lateinit var adapterNotes: NotesAdapter
-    private lateinit var layoutManagerNotes: LinearLayoutManager
+    private lateinit var adapter: BaseAdapter<Note, NoteViewHolder>
+    private lateinit var loadHelper: LoadHelper<Note>
     private lateinit var teleprinter: Teleprinter
 
     private lateinit var project: Project
     private lateinit var mergeRequest: MergeRequest
-    private var nextPageUrl: String? = null
-    private var loading: Boolean = false
-
-    private val onScrollListener = object : RecyclerView.OnScrollListener() {
-        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-            super.onScrolled(recyclerView, dx, dy)
-            val visibleItemCount = layoutManagerNotes.childCount
-            val totalItemCount = layoutManagerNotes.itemCount
-            val firstVisibleItem = layoutManagerNotes.findFirstVisibleItemPosition()
-            if (firstVisibleItem + visibleItemCount >= totalItemCount && !loading && nextPageUrl != null) {
-                loadMoreNotes()
-            }
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,11 +73,21 @@ class MergeRequestDiscussionFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         teleprinter = Teleprinter(baseActivty)
 
-        adapterNotes = NotesAdapter(project)
-        layoutManagerNotes = LinearLayoutManager(activity, RecyclerView.VERTICAL, true)
-        listNotes.layoutManager = layoutManagerNotes
-        listNotes.adapter = adapterNotes
-        listNotes.addOnScrollListener(onScrollListener)
+        val layoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, true)
+        adapter = BaseAdapter(
+                onCreateViewHolder = { parent, _ -> NoteViewHolder.inflate(parent) },
+                onBindViewHolder = { viewHolder, _, item -> viewHolder.bind(item, project) }
+        )
+        loadHelper = LoadHelper(
+                lifecycleOwner = this,
+                recyclerView = listNotes,
+                baseAdapter = adapter,
+                layoutManager = layoutManager,
+                swipeRefreshLayout = swipeRefreshLayout,
+                errorOrEmptyTextView = textMessage,
+                loadInitial = { gitLab.getMergeRequestNotes(project.id, mergeRequest.iid) },
+                loadMore = { gitLab.loadAnyList(it) }
+        )
 
         sendMessageView.callback = object : SendMessageView.Callback {
             override fun onSendClicked(message: String) {
@@ -101,9 +100,7 @@ class MergeRequestDiscussionFragment : BaseFragment() {
                 startActivityForResult(intent, REQUEST_ATTACH, activityOptions.toBundle())
             }
         }
-
-        swipeRefreshLayout.setOnRefreshListener { loadNotes() }
-        loadNotes()
+        load()
 
         App.bus().register(this)
     }
@@ -117,8 +114,7 @@ class MergeRequestDiscussionFragment : BaseFragment() {
                     progress.visibility = View.GONE
                     sendMessageView.appendText(response.markdown)
                 } else {
-                    Snackbar.make(root, R.string.failed_to_upload_file, Snackbar.LENGTH_LONG)
-                            .show()
+                    root.snackbar(R.string.failed_to_upload_file)
                 }
             }
         }
@@ -129,42 +125,8 @@ class MergeRequestDiscussionFragment : BaseFragment() {
         super.onDestroyView()
     }
 
-    private fun loadNotes() {
-        swipeRefreshLayout.isRefreshing = true
-        App.get().gitLab.getMergeRequestNotes(project.id, mergeRequest.iid)
-                .mapResponseSuccessWithPaginationData()
-                .with(this)
-                .subscribe({
-                    swipeRefreshLayout.isRefreshing = false
-                    loading = false
-                    nextPageUrl = it.paginationData.next
-                    adapterNotes.setNotes(it.body)
-                }, {
-                    loading = false
-                    Timber.e(it)
-                    swipeRefreshLayout.isRefreshing = false
-                    Snackbar.make(root, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
-                            .show()
-                })
-    }
-
-    fun loadMoreNotes() {
-        adapterNotes.setLoading(true)
-        App.get().gitLab.getMergeRequestNotes(nextPageUrl!!.toString())
-                .mapResponseSuccessWithPaginationData()
-                .with(this)
-                .subscribe({
-                    adapterNotes.setLoading(false)
-                    loading = false
-                    nextPageUrl = it.paginationData.next
-                    adapterNotes.addNotes(it.body)
-                }, {
-                    loading = false
-                    Timber.e(it)
-                    adapterNotes.setLoading(false)
-                    Snackbar.make(root, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
-                            .show()
-                })
+    private fun load() {
+        loadHelper.load()
     }
 
     fun postNote(message: String) {
@@ -184,13 +146,12 @@ class MergeRequestDiscussionFragment : BaseFragment() {
                 .with(this)
                 .subscribe({
                     progress.visibility = View.GONE
-                    adapterNotes.addNote(it)
+                    adapter.add(it, 0)
                     listNotes.smoothScrollToPosition(0)
                 }, {
                     Timber.e(it)
                     progress.visibility = View.GONE
-                    Snackbar.make(root, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
-                            .show()
+                    root.snackbar(getString(R.string.connection_error))
                 })
     }
 
@@ -199,7 +160,7 @@ class MergeRequestDiscussionFragment : BaseFragment() {
     fun onMergeRequestChangedEvent(event: MergeRequestChangedEvent) {
         if (mergeRequest.id == event.mergeRequest.id) {
             mergeRequest = event.mergeRequest
-            loadNotes()
+            load()
         }
     }
 }

@@ -8,10 +8,12 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.BaseAdapter
+import com.commit451.gitlab.adapter.DividerItemDecoration
 import com.commit451.gitlab.api.BodyWithPagination
 import com.commit451.gitlab.extension.mapResponseSuccessWithPaginationData
 import com.commit451.gitlab.extension.with
 import io.reactivex.Single
+import kotlinx.android.synthetic.main.fragment_merge_request.*
 import retrofit2.Response
 import timber.log.Timber
 
@@ -25,6 +27,7 @@ class LoadHelper<T>(
         recyclerView: RecyclerView,
         private val baseAdapter: BaseAdapter<T, *>,
         layoutManager: LinearLayoutManager = LinearLayoutManager(recyclerView.context),
+        dividers: Boolean = false,
         private val swipeRefreshLayout: SwipeRefreshLayout,
         private val errorOrEmptyTextView: TextView,
         private val loadInitial: () -> Single<Response<List<T>>>,
@@ -43,6 +46,9 @@ class LoadHelper<T>(
                 )
         )
         recyclerView.adapter = baseAdapter
+        if (dividers) {
+            recyclerView.addItemDecoration(DividerItemDecoration(recyclerView.context))
+        }
         swipeRefreshLayout.setOnRefreshListener { load() }
     }
 

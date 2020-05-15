@@ -9,6 +9,7 @@ import android.view.View
 import androidx.annotation.ColorInt
 import androidx.appcompat.widget.Toolbar
 import com.afollestad.materialdialogs.color.ColorChooserDialog
+import com.commit451.addendum.design.snackbar
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.extension.checkValid
@@ -82,8 +83,7 @@ class AddNewLabelActivity : BaseActivity(), ColorChooserDialog.ColorCallback {
         val valid = textInputLayoutTitle.checkValid()
         if (valid) {
             if (chosenColor == -1) {
-                Snackbar.make(root, R.string.add_new_label_color_is_required, Snackbar.LENGTH_SHORT)
-                        .show()
+                root.snackbar(R.string.add_new_label_color_is_required)
                 return
             }
             val title = textInputLayoutTitle.text()
@@ -110,11 +110,9 @@ class AddNewLabelActivity : BaseActivity(), ColorChooserDialog.ColorCallback {
                         Timber.e(it)
                         progress.visibility = View.GONE
                         if (it is HttpException && it.response()?.code() == 409) {
-                            Snackbar.make(root, R.string.label_already_exists, Snackbar.LENGTH_SHORT)
-                                    .show()
+                            root.snackbar(R.string.label_already_exists)
                         } else {
-                            Snackbar.make(root, R.string.failed_to_create_label, Snackbar.LENGTH_SHORT)
-                                    .show()
+                            root.snackbar(R.string.failed_to_create_label)
                         }
                     })
         }

@@ -6,25 +6,26 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.ProjectActivity
+import com.commit451.gitlab.adapter.BaseAdapter
 import com.commit451.gitlab.adapter.DividerItemDecoration
-import com.commit451.gitlab.adapter.MilestoneAdapter
 import com.commit451.gitlab.event.MilestoneChangedEvent
 import com.commit451.gitlab.event.MilestoneCreatedEvent
 import com.commit451.gitlab.event.ProjectReloadEvent
-import com.commit451.gitlab.extension.mapResponseSuccessWithPaginationData
-import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Milestone
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.navigation.Navigator
+import com.commit451.gitlab.util.LoadHelper
+import com.commit451.gitlab.viewHolder.CommitViewHolder
+import com.commit451.gitlab.viewHolder.MilestoneViewHolder
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.fragment_commits.*
 import kotlinx.android.synthetic.main.fragment_milestones.*
+import kotlinx.android.synthetic.main.fragment_milestones.swipeRefreshLayout
+import kotlinx.android.synthetic.main.fragment_milestones.textMessage
 import org.greenrobot.eventbus.Subscribe
-import timber.log.Timber
 
 class MilestonesFragment : BaseFragment() {
 
@@ -35,31 +36,17 @@ class MilestonesFragment : BaseFragment() {
         }
     }
 
-    private lateinit var adapterMilestones: MilestoneAdapter
-    private lateinit var layoutManagerMilestones: LinearLayoutManager
+    private lateinit var adapter: BaseAdapter<Milestone, MilestoneViewHolder>
+    private lateinit var loadHelper: LoadHelper<Milestone>
 
     private var state: String? = null
     private lateinit var states: Array<String>
     private var project: Project? = null
-    private var loading = false
-    private var nextPageUrl: String? = null
-
-    private val onScrollListener = object : RecyclerView.OnScrollListener() {
-        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-            super.onScrolled(recyclerView, dx, dy)
-            val visibleItemCount = layoutManagerMilestones.childCount
-            val totalItemCount = layoutManagerMilestones.itemCount
-            val firstVisibleItem = layoutManagerMilestones.findFirstVisibleItemPosition()
-            if (firstVisibleItem + visibleItemCount >= totalItemCount && !loading && nextPageUrl != null) {
-                loadMore()
-            }
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        state = resources.getString(R.string.milestone_state_value_default)
         states = resources.getStringArray(R.array.milestone_state_values)
+        state = states.first()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -79,16 +66,28 @@ class MilestonesFragment : BaseFragment() {
                         .show()
             }
         }
-        adapterMilestones = MilestoneAdapter(object : MilestoneAdapter.Listener {
-            override fun onMilestoneClicked(milestone: Milestone) {
-                Navigator.navigateToMilestone(baseActivty, project!!, milestone)
-            }
-        })
-        layoutManagerMilestones = LinearLayoutManager(activity)
-        listMilestones.layoutManager = layoutManagerMilestones
+
+        adapter = BaseAdapter(
+                onCreateViewHolder = { parent, _ ->
+                    val viewHolder = CommitViewHolder.inflate(parent)
+                    viewHolder.itemView.setOnClickListener {
+                        val milestone = adapter.items[viewHolder.adapterPosition]
+                        Navigator.navigateToMilestone(baseActivty, project!!, milestone)
+                    }
+                    viewHolder
+                },
+                onBindViewHolder = { viewHolder, _, item -> viewHolder.bind(item) }
+        )
+        loadHelper = LoadHelper(
+                lifecycleOwner = this,
+                recyclerView = listMilestones,
+                baseAdapter = adapter,
+                swipeRefreshLayout = swipeRefreshLayout,
+                errorOrEmptyTextView = textMessage,
+                loadInitial = { gitLab.getMilestones(project!!.id, state) },
+                loadMore = { gitLab.loadAnyList(it) }
+        )
         listMilestones.addItemDecoration(DividerItemDecoration(baseActivty))
-        listMilestones.adapter = adapterMilestones
-        listMilestones.addOnScrollListener(onScrollListener)
 
         spinnerStates.adapter = ArrayAdapter(requireActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, resources.getStringArray(R.array.milestone_state_names))
         spinnerStates.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -97,11 +96,8 @@ class MilestonesFragment : BaseFragment() {
                 loadData()
             }
 
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
-
-        swipeRefreshLayout.setOnRefreshListener { loadData() }
 
         if (activity is ProjectActivity) {
             project = (activity as ProjectActivity).project
@@ -117,56 +113,7 @@ class MilestonesFragment : BaseFragment() {
     }
 
     override fun loadData() {
-        textMessage.visibility = View.GONE
-        swipeRefreshLayout.isRefreshing = true
-        nextPageUrl = null
-        loading = true
-        App.get().gitLab.getMilestones(project!!.id, state)
-                .mapResponseSuccessWithPaginationData()
-                .with(this)
-                .subscribe({
-                    loading = false
-                    swipeRefreshLayout.isRefreshing = false
-                    if (it.body.isEmpty()) {
-                        textMessage.visibility = View.VISIBLE
-                        textMessage.setText(R.string.no_milestones)
-                    }
-                    adapterMilestones.setData(it.body)
-                    nextPageUrl = it.paginationData.next
-                    Timber.d("Next page url $nextPageUrl")
-                }, {
-                    loading = false
-                    Timber.e(it)
-                    swipeRefreshLayout.isRefreshing = false
-                    textMessage.visibility = View.VISIBLE
-                    textMessage.setText(R.string.connection_error_milestones)
-                    adapterMilestones.setData(null)
-                    nextPageUrl = null
-                })
-    }
-
-    fun loadMore() {
-        if (nextPageUrl == null) {
-            return
-        }
-
-        loading = true
-        adapterMilestones.setLoading(true)
-
-        Timber.d("loadMore called for ${nextPageUrl!!}")
-        App.get().gitLab.getMilestones(nextPageUrl!!.toString())
-                .mapResponseSuccessWithPaginationData()
-                .with(this)
-                .subscribe({
-                    loading = false
-                    adapterMilestones.setLoading(false)
-                    nextPageUrl = it.paginationData.next
-                    adapterMilestones.addData(it.body)
-                }, {
-                    Timber.e(it)
-                    adapterMilestones.setLoading(false)
-                    loading = false
-                })
+        loadHelper.load()
     }
 
     @Subscribe
@@ -177,13 +124,13 @@ class MilestonesFragment : BaseFragment() {
 
     @Subscribe
     fun onEvent(event: MilestoneCreatedEvent) {
-        adapterMilestones.addMilestone(event.milestone)
+        adapter.add(event.milestone, 0)
         textMessage.visibility = View.GONE
         listMilestones.smoothScrollToPosition(0)
     }
 
     @Subscribe
     fun onEvent(event: MilestoneChangedEvent) {
-        adapterMilestones.updateIssue(event.milestone)
+        adapter.update(event.milestone)
     }
 }

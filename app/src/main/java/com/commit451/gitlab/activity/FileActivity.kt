@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.text.Html
 import android.view.View
 import android.webkit.MimeTypeMap
+import com.commit451.addendum.design.snackbar
 import com.commit451.addendum.extra
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
@@ -87,8 +88,7 @@ class FileActivity : BaseActivity() {
                 }, {
                     Timber.e(it)
                     progress.visibility = View.GONE
-                    Snackbar.make(root, R.string.file_load_error, Snackbar.LENGTH_SHORT)
-                            .show()
+                    root.snackbar(R.string.file_load_error)
                 })
     }
 
@@ -97,7 +97,7 @@ class FileActivity : BaseActivity() {
         fileName = repositoryFile.fileName
         toolbar.title = fileName
         if (repositoryFile.size > MAX_FILE_SIZE) {
-            Snackbar.make(root, R.string.file_too_big, Snackbar.LENGTH_SHORT)
+            root.snackbar(R.string.file_too_big)
                     .setAction(R.string.action_open_in_browser) {
                         openInBrowser()
                     }
@@ -113,7 +113,7 @@ class FileActivity : BaseActivity() {
                 .subscribe({
                     bindBlob(it)
                 }, {
-                    Snackbar.make(root, R.string.failed_to_load, Snackbar.LENGTH_SHORT)
+                    root.snackbar(R.string.failed_to_load)
                             .setAction(R.string.action_retry) {
                                 loadBlob(repositoryFile)
                             }

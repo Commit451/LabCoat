@@ -2,25 +2,27 @@ package com.commit451.gitlab.fragment
 
 import android.app.Activity.RESULT_OK
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.commit451.addendum.design.snackbar
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.AttachActivity
-import com.commit451.gitlab.adapter.NotesAdapter
+import com.commit451.gitlab.adapter.BaseAdapter
 import com.commit451.gitlab.api.response.FileUploadResponse
 import com.commit451.gitlab.event.IssueChangedEvent
-import com.commit451.gitlab.extension.mapResponseSuccessWithPaginationData
 import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Issue
+import com.commit451.gitlab.model.api.Note
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.navigation.TransitionFactory
+import com.commit451.gitlab.util.LoadHelper
 import com.commit451.gitlab.view.SendMessageView
+import com.commit451.gitlab.viewHolder.NoteViewHolder
 import com.commit451.teleprinter.Teleprinter
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_merge_request_discussion.*
@@ -50,26 +52,12 @@ class IssueDiscussionFragment : BaseFragment() {
         }
     }
 
-    private lateinit var adapter: NotesAdapter
-    private lateinit var layoutManagerNotes: LinearLayoutManager
+    private lateinit var adapter: BaseAdapter<Note, NoteViewHolder>
+    private lateinit var loadHelper: LoadHelper<Note>
     private lateinit var teleprinter: Teleprinter
 
     private lateinit var project: Project
     private lateinit var issue: Issue
-    private var nextPageUrl: String? = null
-    private var loading: Boolean = false
-
-    private val onScrollListener = object : RecyclerView.OnScrollListener() {
-        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-            super.onScrolled(recyclerView, dx, dy)
-            val visibleItemCount = layoutManagerNotes.childCount
-            val totalItemCount = layoutManagerNotes.itemCount
-            val firstVisibleItem = layoutManagerNotes.findFirstVisibleItemPosition()
-            if (firstVisibleItem + visibleItemCount >= totalItemCount && !loading && nextPageUrl != null) {
-                loadMoreNotes()
-            }
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -85,11 +73,23 @@ class IssueDiscussionFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         teleprinter = Teleprinter(baseActivty)
 
-        adapter = NotesAdapter(project)
-        layoutManagerNotes = LinearLayoutManager(context, RecyclerView.VERTICAL, true)
-        listNotes.layoutManager = layoutManagerNotes
-        listNotes.adapter = adapter
-        listNotes.addOnScrollListener(onScrollListener)
+        val layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, true)
+        adapter = BaseAdapter(
+                onCreateViewHolder = { parent, _ ->
+                    NoteViewHolder.inflate(parent)
+                },
+                onBindViewHolder = { viewHolder, _, item -> viewHolder.bind(item, project) }
+        )
+        loadHelper = LoadHelper(
+                lifecycleOwner = this,
+                recyclerView = listNotes,
+                baseAdapter = adapter,
+                layoutManager = layoutManager,
+                swipeRefreshLayout = swipeRefreshLayout,
+                errorOrEmptyTextView = textMessage,
+                loadInitial = { gitLab.getIssueNotes(project.id, issue.iid) },
+                loadMore = { gitLab.loadAnyList(it) }
+        )
 
         sendMessageView.callback = object : SendMessageView.Callback {
             override fun onSendClicked(message: String) {
@@ -102,8 +102,6 @@ class IssueDiscussionFragment : BaseFragment() {
                 startActivityForResult(intent, REQUEST_ATTACH, activityOptions.toBundle())
             }
         }
-
-        swipeRefreshLayout.setOnRefreshListener { loadNotes() }
         loadNotes()
 
         App.bus().register(this)
@@ -118,8 +116,7 @@ class IssueDiscussionFragment : BaseFragment() {
                     progress.visibility = View.GONE
                     sendMessageView.appendText(response.markdown)
                 } else {
-                    Snackbar.make(root, R.string.failed_to_upload_file, Snackbar.LENGTH_LONG)
-                            .show()
+                    root.snackbar(R.string.failed_to_upload_file)
                 }
             }
         }
@@ -131,45 +128,10 @@ class IssueDiscussionFragment : BaseFragment() {
     }
 
     private fun loadNotes() {
-        swipeRefreshLayout.isRefreshing = true
-        App.get().gitLab.getIssueNotes(project.id, issue.iid)
-                .mapResponseSuccessWithPaginationData()
-                .with(this)
-                .subscribe({
-                    swipeRefreshLayout.isRefreshing = false
-                    loading = false
-                    nextPageUrl = it.paginationData.next
-                    adapter.setNotes(it.body)
-                }, {
-                    loading = false
-                    Timber.e(it)
-                    swipeRefreshLayout.isRefreshing = false
-                    Snackbar.make(root, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
-                            .show()
-                })
-    }
-
-    fun loadMoreNotes() {
-        adapter.setLoading(true)
-        App.get().gitLab.getIssueNotes(nextPageUrl!!.toString())
-                .mapResponseSuccessWithPaginationData()
-                .with(this)
-                .subscribe({
-                    adapter.setLoading(false)
-                    loading = false
-                    nextPageUrl = it.paginationData.next
-                    adapter.addNotes(it.body)
-                }, {
-                    loading = false
-                    Timber.e(it)
-                    adapter.setLoading(false)
-                    Snackbar.make(root, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
-                            .show()
-                })
+        loadHelper.load()
     }
 
     fun postNote(message: String) {
-
         if (message.isBlank()) {
             return
         }
@@ -185,7 +147,7 @@ class IssueDiscussionFragment : BaseFragment() {
                 .with(this)
                 .subscribe({
                     progress.visibility = View.GONE
-                    adapter.addNote(it)
+                    adapter.add(it, 0)
                     listNotes.smoothScrollToPosition(0)
                 }, {
                     Timber.e(it)

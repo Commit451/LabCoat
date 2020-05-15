@@ -10,6 +10,7 @@ import android.hardware.SensorManager
 import android.os.Bundle
 import android.view.View
 import coil.api.load
+import com.commit451.addendum.design.snackbar
 import com.commit451.gimbal.Gimbal
 import com.commit451.gitlab.App
 import com.commit451.gitlab.BuildConfig
@@ -90,8 +91,7 @@ class AboutActivity : BaseActivity() {
                 }, {
                     Timber.e(it)
                     progress.visibility = View.GONE
-                    Snackbar.make(root, R.string.failed_to_load_contributors, Snackbar.LENGTH_SHORT)
-                            .show()
+                    root.snackbar(R.string.failed_to_load_contributors)
                 })
         progress.visibility = View.VISIBLE
         sauce.setOnClickListener {

@@ -30,6 +30,15 @@
 
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/textMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="16dp"
+        android:gravity="center"
+        android:visibility="gone" />
+
     <include layout="@layout/progress_fullscreen" />
 
 </FrameLayout>

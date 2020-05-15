@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.widget.Toolbar
+import com.commit451.addendum.design.snackbar
 import com.commit451.addendum.themeAttrColor
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
@@ -142,8 +143,7 @@ class AddMilestoneActivity : MorphActivity() {
     }
 
     private fun showError() {
-        Snackbar.make(root, getString(R.string.failed_to_create_milestone), Snackbar.LENGTH_SHORT)
-                .show()
+        root.snackbar(R.string.failed_to_create_milestone)
     }
 
     fun bind(date: Date) {

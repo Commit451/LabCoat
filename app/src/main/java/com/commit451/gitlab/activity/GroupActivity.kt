@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.palette.graphics.Palette
 import coil.api.load
+import com.commit451.addendum.design.snackbar
 import com.commit451.addendum.themeAttrColor
 import com.commit451.alakazam.navigationBarColorAnimator
 import com.commit451.easel.Easel
@@ -120,7 +121,6 @@ class GroupActivity : BaseActivity() {
     }
 
     private fun showError() {
-        Snackbar.make(root, R.string.connection_error, Snackbar.LENGTH_SHORT)
-                .show()
+        root.snackbar(R.string.connection_error)
     }
 }

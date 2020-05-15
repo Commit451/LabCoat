@@ -10,6 +10,7 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import com.commit451.addendum.design.snackbar
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.BuildPagerAdapter
@@ -57,14 +58,12 @@ class BuildActivity : BaseActivity() {
                         .with(this)
                         .subscribe({
                             progress.visibility = View.GONE
-                            Snackbar.make(root, R.string.build_started, Snackbar.LENGTH_LONG)
-                                    .show()
+                            root.snackbar(R.string.build_started)
                             App.bus().post(BuildChangedEvent(build))
                         }, {
                             Timber.e(it)
                             progress.visibility = View.GONE
-                            Snackbar.make(root, R.string.unable_to_retry_build, Snackbar.LENGTH_LONG)
-                                    .show()
+                            root.snackbar(R.string.unable_to_retry_build)
                         })
                 return@OnMenuItemClickListener true
             }
@@ -74,14 +73,12 @@ class BuildActivity : BaseActivity() {
                         .with(this)
                         .subscribe({
                             progress.visibility = View.GONE
-                            Snackbar.make(root, R.string.build_erased, Snackbar.LENGTH_LONG)
-                                    .show()
+                            root.snackbar(R.string.build_erased)
                             App.bus().post(BuildChangedEvent(it))
                         }, {
                             Timber.e(it)
                             progress.visibility = View.GONE
-                            Snackbar.make(root, R.string.unable_to_erase_build, Snackbar.LENGTH_LONG)
-                                    .show()
+                            root.snackbar(R.string.unable_to_erase_build)
                         })
                 return@OnMenuItemClickListener true
             }
@@ -91,14 +88,12 @@ class BuildActivity : BaseActivity() {
                         .with(this)
                         .subscribe({
                             progress.visibility = View.GONE
-                            Snackbar.make(root, R.string.build_canceled, Snackbar.LENGTH_LONG)
-                                    .show()
+                            root.snackbar(R.string.build_canceled)
                             App.bus().post(BuildChangedEvent(it))
                         }, {
                             Timber.e(it)
                             progress.visibility = View.GONE
-                            Snackbar.make(root, R.string.unable_to_cancel_build, Snackbar.LENGTH_LONG)
-                                    .show()
+                            root.snackbar(R.string.unable_to_cancel_build)
                         })
                 return@OnMenuItemClickListener true
             }

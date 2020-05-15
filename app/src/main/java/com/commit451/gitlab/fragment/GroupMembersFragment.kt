@@ -1,6 +1,5 @@
 package com.commit451.gitlab.fragment
 
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
