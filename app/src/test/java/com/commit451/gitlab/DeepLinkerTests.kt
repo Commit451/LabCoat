@@ -22,7 +22,7 @@ class DeepLinkerTests {
         val link = "https://gitlab.com/Commit451/LabCoatTestGrounds/-/issues/33"
         val callbacks = CounterCallbacks()
         DeepLinker.route(link, callbacks)
-        Assert.assertEquals(1, callbacks.project)
+        Assert.assertEquals(1, callbacks.issue)
     }
 
     @Test
