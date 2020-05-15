@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.BaseAdapter
-import com.commit451.gitlab.extension.mapResponseSuccessWithPaginationData
 import com.commit451.gitlab.model.api.User
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.util.LoadHelper
@@ -46,7 +45,7 @@ class UsersFragment : BaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_projects, container, false)
+        return inflater.inflate(R.layout.fragment_users, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -54,7 +53,7 @@ class UsersFragment : BaseFragment() {
 
         val spanCount = 2
         val layoutManager = GridLayoutManager(activity, spanCount)
-        layoutManager.spanSizeLookup = BaseAdapter.createSpanSizeLookup(adapter, spanCount)
+        layoutManager.spanSizeLookup = BaseAdapter.createSpanSizeLookup(spanCount) { adapter }
         adapter = BaseAdapter(
                 onCreateViewHolder = { parent, _ ->
                     val viewHolder = UserViewHolder.inflate(parent)

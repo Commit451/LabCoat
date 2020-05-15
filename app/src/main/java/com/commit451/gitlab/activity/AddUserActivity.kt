@@ -2,28 +2,29 @@ package com.commit451.gitlab.activity
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.commit451.addendum.design.snackbar
 import com.commit451.alakazam.fadeOut
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
-import com.commit451.gitlab.adapter.UserAdapter
+import com.commit451.gitlab.adapter.BaseAdapter
 import com.commit451.gitlab.dialog.AccessDialog
 import com.commit451.gitlab.event.MemberAddedEvent
 import com.commit451.gitlab.extension.mapResponseSuccess
-import com.commit451.gitlab.extension.mapResponseSuccessWithPaginationData
 import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Group
 import com.commit451.gitlab.model.api.User
+import com.commit451.gitlab.util.LoadHelper
+import com.commit451.gitlab.viewHolder.CommitViewHolder
 import com.commit451.gitlab.viewHolder.UserViewHolder
 import com.commit451.teleprinter.Teleprinter
 import io.reactivex.Single
 import kotlinx.android.synthetic.main.activity_add_user.*
+import kotlinx.android.synthetic.main.activity_add_user.swipeRefreshLayout
+import kotlinx.android.synthetic.main.fragment_commits.*
 import retrofit2.HttpException
 import retrofit2.Response
 import timber.log.Timber
@@ -51,16 +52,14 @@ class AddUserActivity : MorphActivity() {
         }
     }
 
-    private lateinit var layoutManager: GridLayoutManager
-    private lateinit var adapter: UserAdapter
+    private lateinit var adapter: BaseAdapter<User, UserViewHolder>
+    private lateinit var loadHelper: LoadHelper<User>
     private lateinit var dialogAccess: AccessDialog
     private lateinit var teleprinter: Teleprinter
 
     private var projectId: Long = 0
     private var group: Group? = null
     private var query: String? = null
-    private var nextPageUrl: String? = null
-    private var loading = false
     private var selectedUser: User? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -74,37 +73,44 @@ class AddUserActivity : MorphActivity() {
                 dialogAccess.showLoading()
                 val group = group
                 if (group == null) {
-                    add(App.get().gitLab.addProjectMember(projectId, selectedUser!!.id, accessLevel))
+                    add(gitLab.addProjectMember(projectId, selectedUser!!.id, accessLevel))
                 } else {
-                    add(App.get().gitLab.addGroupMember(group.id, selectedUser!!.id, accessLevel))
+                    add(gitLab.addGroupMember(group.id, selectedUser!!.id, accessLevel))
                 }
             }
         })
         toolbar.setNavigationIcon(R.drawable.ic_back_24dp)
         toolbar.setNavigationOnClickListener { onBackPressed() }
 
-        adapter = UserAdapter(object : UserAdapter.Listener {
-            override fun onUserClicked(user: User, userViewHolder: UserViewHolder) {
-                selectedUser = user
-                dialogAccess.show()
-            }
-        })
-        swipeRefreshLayout.setOnRefreshListener { loadData() }
-        list.adapter = adapter
-        layoutManager = GridLayoutManager(this, 2)
-        layoutManager.spanSizeLookup = adapter.spanSizeLookup
-        list.layoutManager = layoutManager
-        list.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                val visibleItemCount = layoutManager.childCount
-                val totalItemCount = layoutManager.itemCount
-                val firstVisibleItem = layoutManager.findFirstVisibleItemPosition()
-                if (firstVisibleItem + visibleItemCount >= totalItemCount && !loading && nextPageUrl != null) {
-                    loadMore()
+        val spanCount = 2
+        val layoutManager = GridLayoutManager(this, spanCount)
+        layoutManager.spanSizeLookup = BaseAdapter.createSpanSizeLookup(spanCount) { adapter }
+        adapter = BaseAdapter(
+                onCreateViewHolder = { parent, _ ->
+                    val viewHolder = CommitViewHolder.inflate(parent)
+                    viewHolder.itemView.setOnClickListener {
+                        val user = adapter.items[viewHolder.adapterPosition]
+                        selectedUser = user
+                        dialogAccess.show()
+                    }
+                    viewHolder
+                },
+                onBindViewHolder = { viewHolder, _, item -> viewHolder.bind(item) }
+        )
+        loadHelper = LoadHelper(
+                lifecycleOwner = this,
+                recyclerView = list,
+                baseAdapter = adapter,
+                layoutManager = layoutManager,
+                swipeRefreshLayout = swipeRefreshLayout,
+                errorOrEmptyTextView = textMessage,
+                loadInitial = {
+                    gitLab.searchUsers(query!!)
+                },
+                loadMore = {
+                    gitLab.loadAnyList(it)
                 }
-            }
-        })
+        )
 
         morph(root)
         textSearch.requestFocus()
@@ -133,42 +139,8 @@ class AddUserActivity : MorphActivity() {
     }
 
     private fun loadData() {
+        loadHelper.load()
         teleprinter.hideKeyboard()
-        swipeRefreshLayout.isRefreshing = true
-        loading = true
-        App.get().gitLab.searchUsers(query!!)
-                .mapResponseSuccessWithPaginationData()
-                .with(this)
-                .subscribe({
-                    swipeRefreshLayout.isRefreshing = false
-                    loading = false
-                    adapter.setData(it.body)
-                    nextPageUrl = it.paginationData.next
-                    Timber.d("Next page url is %s", nextPageUrl)
-                }, {
-                    Timber.e(it)
-                    swipeRefreshLayout.isRefreshing = false
-                    loading = false
-                    root.snackbar(getString(R.string.connection_error_users))
-                })
-    }
-
-    private fun loadMore() {
-        loading = true
-        adapter.setLoading(true)
-        Timber.d("loadMore " + nextPageUrl!!.toString() + " " + query)
-        App.get().gitLab.searchUsers(nextPageUrl!!.toString(), query!!)
-                .mapResponseSuccessWithPaginationData()
-                .with(this)
-                .subscribe({
-                    loading = false
-                    adapter.setLoading(false)
-                    adapter.addData(it.body)
-                    nextPageUrl = it.paginationData.next
-                }, {
-                    Timber.e(it)
-                    adapter.setLoading(false)
-                })
     }
 
     private fun add(observable: Single<Response<User>>) {

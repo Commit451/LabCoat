@@ -20,13 +20,15 @@ class BaseAdapter<T, VH : RecyclerView.ViewHolder>(
         private const val TYPE_ITEM = 0
         private const val TYPE_FOOTER = Int.MAX_VALUE
 
-        fun createSpanSizeLookup(adapter: RecyclerView.Adapter<*>, span: Int): GridLayoutManager.SpanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-            override fun getSpanSize(position: Int): Int {
-                val viewType = adapter.getItemViewType(position)
-                return if (viewType == TYPE_FOOTER) {
-                    span
-                } else {
-                    1
+        fun createSpanSizeLookup(span: Int, adapter: () ->RecyclerView.Adapter<*>): GridLayoutManager.SpanSizeLookup {
+            return object : GridLayoutManager.SpanSizeLookup() {
+                override fun getSpanSize(position: Int): Int {
+                    val viewType = adapter.invoke().getItemViewType(position)
+                    return if (viewType == TYPE_FOOTER) {
+                        span
+                    } else {
+                        1
+                    }
                 }
             }
         }

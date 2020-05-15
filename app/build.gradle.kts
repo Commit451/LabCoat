@@ -101,7 +101,7 @@ dependencies {
     implementation("com.apollographql.apollo:apollo-runtime:$apolloVersion")
     implementation("com.apollographql.apollo:apollo-rx2-support:$apolloVersion")
 
-    implementation("io.coil-kt:coil:0.10.1")
+    implementation("io.coil-kt:coil:0.11.0")
     implementation("com.github.Commit451:CoilImageGetter:1.1.0")
 
     implementation("com.jakewharton.timber:timber:4.7.1")
@@ -172,14 +172,14 @@ dependencies {
 
     implementation(project(":firebaseshim"))
     if (BuildHelper.firebaseEnabled(project)) {
-        implementation("com.google.firebase:firebase-core:17.2.1")
+        implementation("com.google.firebase:firebase-core:17.4.1")
         implementation("com.crashlytics.sdk.android:crashlytics:2.10.1")
     }
 
     debugImplementation("com.squareup.leakcanary:leakcanary-android:2.3")
 
     testImplementation("junit:junit:4.13")
-    testImplementation("org.threeten:threetenbp:1.3.8") {
+    testImplementation("org.threeten:threetenbp:1.4.4") {
         exclude(group = "com.jakewharton.threetenabp", module = "threetenabp")
     }
 }

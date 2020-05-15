@@ -8,9 +8,10 @@ import android.widget.RemoteViewsService
 import coil.transform.CircleCropTransformation
 import com.commit451.gitlab.BuildConfig
 import com.commit451.gitlab.R
-import com.commit451.gitlab.api.GitLabRss
-import com.commit451.gitlab.api.GitLabRssFactory
+import com.commit451.gitlab.api.GitLab
+import com.commit451.gitlab.api.GitLabFactory
 import com.commit451.gitlab.api.OkHttpClientFactory
+import com.commit451.gitlab.extension.mapResponseSuccess
 import com.commit451.gitlab.image.CoilCompat
 import com.commit451.gitlab.model.Account
 import com.commit451.gitlab.model.rss.Entry
@@ -32,7 +33,7 @@ class FeedRemoteViewsFactory(
     }
 
     private var entries = mutableListOf<Entry>()
-    private val rssClient: GitLabRss
+    private val gitLab: GitLab
 
     init {
         val gitlabRssClientBuilder = OkHttpClientFactory.create(account)
@@ -40,7 +41,7 @@ class FeedRemoteViewsFactory(
             val httpLoggingInterceptor = HttpLoggingInterceptor()
             gitlabRssClientBuilder.addInterceptor(httpLoggingInterceptor.apply { httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BODY })
         }
-        rssClient = GitLabRssFactory.create(account, gitlabRssClientBuilder.build())
+        gitLab = GitLabFactory.createGitLab(account, gitlabRssClientBuilder)
     }
 
     override fun onCreate() {
@@ -116,13 +117,11 @@ class FeedRemoteViewsFactory(
         // locking up the widget.
 
         try {
-            val feed = rssClient.getFeed(feedUrl)
+            val feed = gitLab.feed(feedUrl)
+                    .mapResponseSuccess()
                     .blockingGet()
             entries.clear()
-            val nextEntries = feed.entries
-            if (nextEntries != null) {
-                entries.addAll(nextEntries)
-            }
+            entries.addAll(feed)
         } catch (e: Exception) {
             //maybe let the user know somehow?
             Timber.e(e)

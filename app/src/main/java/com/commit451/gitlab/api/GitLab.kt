@@ -4,11 +4,13 @@ import com.apollographql.apollo.ApolloClient
 import com.commit451.gitlab.CurrentUserQuery
 import com.commit451.gitlab.api.graphql.rxQueryMapErrors
 import com.commit451.gitlab.model.Account
+import com.commit451.gitlab.model.rss.Entry
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import io.reactivex.Single
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.OkHttpClient
+import retrofit2.Response
 
 /**
  * Provides access to all the GitLab things. Wraps RSS and the Retrofit service, in
@@ -65,6 +67,10 @@ class GitLab private constructor(
         return apolloClient.rxQueryMapErrors(query)
                 .singleOrError()
                 .map { it.currentUser() }
+    }
+
+    fun feed(url: String): Single<Response<List<Entry>>> {
+        return getFeed(url).map { Response.success(it.body()?.entries, it.raw()) }
     }
 
     class Builder(internal val account: Account) {

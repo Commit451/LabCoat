@@ -62,6 +62,7 @@ class GroupsActivity : BaseActivity() {
                 lifecycleOwner = this,
                 recyclerView = listGroups,
                 baseAdapter = adapter,
+                layoutManager = layoutManager,
                 swipeRefreshLayout = swipeRefreshLayout,
                 errorOrEmptyTextView = textMessage,
                 loadInitial = {

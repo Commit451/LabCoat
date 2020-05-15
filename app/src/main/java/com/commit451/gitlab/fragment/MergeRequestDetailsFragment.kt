@@ -40,10 +40,10 @@ class MergeRequestDetailsFragment : BaseFragment() {
         }
     }
 
-    lateinit var adapterLabels: IssueLabelsAdapter
+    private lateinit var adapterLabels: IssueLabelsAdapter
 
-    lateinit var project: Project
-    lateinit var mergeRequest: MergeRequest
+    private lateinit var project: Project
+    private lateinit var mergeRequest: MergeRequest
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
