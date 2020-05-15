@@ -25,8 +25,8 @@ class SearchActivity : BaseActivity() {
         }
     }
 
-    lateinit var adapterSearch: SearchPagerAdapter
-    lateinit var teleprinter: Teleprinter
+    private lateinit var adapterSearch: SearchPagerAdapter
+    private lateinit var teleprinter: Teleprinter
 
     private val debouncer = object : Debouncer<CharSequence>() {
         override fun onValueSet(value: CharSequence) {
@@ -58,29 +58,29 @@ class SearchActivity : BaseActivity() {
             teleprinter.hideKeyboard()
             false
         }
-        textSearch.addTextChangedListener(
-                onTextChanged = { s, start, before, count ->
-                    if (s.isNullOrEmpty()) {
-                        buttonClear.animate().alpha(0.0f).withEndAction { buttonClear.visibility = View.GONE }
-                    } else if (count == 1) {
-                        buttonClear.visibility = View.VISIBLE
-                        buttonClear.animate().alpha(1.0f)
-                    }
-                    if (s != null && s.length > 3) {
-                        Timber.d("Posting new future search")
-                        debouncer.value = s
-                    }
-                    //This means they are backspacing
-                    if (before > count) {
-                        Timber.d("Removing future search")
-                        debouncer.cancel()
-                    }
-                }
+        textSearch.addTextChangedListener(onTextChanged = { s, _, before, count ->
+            if (s.isNullOrEmpty()) {
+                buttonClear.animate().alpha(0.0f).withEndAction { buttonClear.visibility = View.GONE }
+            } else if (count == 1) {
+                buttonClear.visibility = View.VISIBLE
+                buttonClear.animate().alpha(1.0f)
+            }
+            if (s != null && s.length > 3) {
+                Timber.d("Posting new future search")
+                debouncer.value = s
+            }
+            //This means they are backspacing
+            if (before > count) {
+                Timber.d("Removing future search")
+                debouncer.cancel()
+            }
+        }
         )
     }
 
     private fun search() {
-        Timber.d("Searching")
-        adapterSearch.searchQuery(textSearch.text.toString())
+        val query = textSearch.text.toString()
+        Timber.d("Searching $query")
+        adapterSearch.searchQuery(query)
     }
 }

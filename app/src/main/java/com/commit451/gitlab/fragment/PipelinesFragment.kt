@@ -10,7 +10,6 @@ import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.ProjectActivity
 import com.commit451.gitlab.adapter.BaseAdapter
-import com.commit451.gitlab.adapter.DividerItemDecoration
 import com.commit451.gitlab.event.PipelineChangedEvent
 import com.commit451.gitlab.event.ProjectReloadEvent
 import com.commit451.gitlab.model.api.Pipeline
@@ -70,12 +69,12 @@ class PipelinesFragment : BaseFragment() {
                 lifecycleOwner = this,
                 recyclerView = listPipelines,
                 baseAdapter = adapter,
+                dividers = true,
                 swipeRefreshLayout = swipeRefreshLayout,
                 errorOrEmptyTextView = textMessage,
                 loadInitial = { gitLab.getPipelines(project!!.id, scope) },
                 loadMore = { gitLab.loadAnyList(it) }
         )
-        listPipelines.addItemDecoration(DividerItemDecoration(baseActivty))
 
         spinnerIssue.adapter = ArrayAdapter(requireActivity(), android.R.layout.simple_list_item_1,
                 android.R.id.text1, resources.getStringArray(R.array.pipeline_scope_names))

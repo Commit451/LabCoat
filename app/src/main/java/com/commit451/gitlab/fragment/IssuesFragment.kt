@@ -10,7 +10,6 @@ import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.ProjectActivity
 import com.commit451.gitlab.adapter.BaseAdapter
-import com.commit451.gitlab.adapter.DividerItemDecoration
 import com.commit451.gitlab.event.IssueChangedEvent
 import com.commit451.gitlab.event.IssueCreatedEvent
 import com.commit451.gitlab.event.IssueReloadEvent
@@ -78,6 +77,7 @@ class IssuesFragment : BaseFragment() {
                 lifecycleOwner = this,
                 recyclerView = listIssues,
                 baseAdapter = adapter,
+                dividers = true,
                 swipeRefreshLayout = swipeRefreshLayout,
                 errorOrEmptyTextView = textMessage,
                 loadInitial = {
@@ -87,7 +87,6 @@ class IssuesFragment : BaseFragment() {
                     gitLab.loadAnyList(it)
                 }
         )
-        listIssues.addItemDecoration(DividerItemDecoration(baseActivty))
 
         spinnerIssue.adapter = ArrayAdapter(requireActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, resources.getStringArray(R.array.issue_state_names))
         spinnerIssue.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {

@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.BaseAdapter
-import com.commit451.gitlab.adapter.DividerItemDecoration
 import com.commit451.gitlab.api.GitLab
 import com.commit451.gitlab.model.api.Group
 import com.commit451.gitlab.model.api.Project
@@ -113,6 +112,7 @@ class ProjectsFragment : BaseFragment() {
                 lifecycleOwner = this,
                 recyclerView = listProjects,
                 baseAdapter = adapter,
+                dividers = true,
                 swipeRefreshLayout = swipeRefreshLayout,
                 errorOrEmptyTextView = textMessage,
                 loadInitial = {
@@ -122,10 +122,6 @@ class ProjectsFragment : BaseFragment() {
                     gitLab.loadAnyList(it)
                 }
         )
-
-        listProjects.addItemDecoration(DividerItemDecoration(baseActivty))
-
-        loadData()
     }
 
     override fun loadData() {

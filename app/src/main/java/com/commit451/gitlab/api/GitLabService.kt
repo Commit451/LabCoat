@@ -30,26 +30,11 @@ interface GitLabService {
     fun getThisUser(): Single<Response<User>>
 
     @GET("users")
-    fun getUsers(): Single<List<User>>
-
-    @GET
-    fun getUsers(@Url url: String): Single<List<User>>
-
-    @GET("users")
     fun searchUsers(@Query("search") query: String): Single<Response<List<User>>>
-
-    @GET
-    fun searchUsers(@Url url: String, @Query("search") query: String): Single<Response<List<User>>>
-
-    @GET("users/{id}")
-    fun getUser(@Path("id") userId: Long): Single<User>
 
     /* --- GROUPS --- */
     @GET("groups")
     fun getGroups(): Single<Response<List<Group>>>
-
-    @GET
-    fun getGroups(@Url url: String): Single<Response<List<Group>>>
 
     @GET("groups/{id}")
     fun getGroup(@Path("id") id: Long): Single<Group>
@@ -94,9 +79,6 @@ interface GitLabService {
     @GET("projects/{namespace}%2F{project_name}")
     fun getProject(@Path("namespace") namespace: String,
                    @Path("project_name") projectName: String): Single<Project>
-
-    @GET
-    fun getProjects(@Url url: String): Single<Response<List<Project>>>
 
     @GET("projects")
     fun searchAllProjects(@Query("search") query: String): Single<Response<List<Project>>>
@@ -183,10 +165,6 @@ interface GitLabService {
     fun getMergeRequests(@Path("id") projectId: Long,
                          @Query("state") state: String): Single<Response<List<MergeRequest>>>
 
-    @GET
-    fun getMergeRequests(@Url url: String,
-                         @Query("state") state: String): Single<Response<List<MergeRequest>>>
-
     @GET("projects/{id}/merge_requests")
     fun getMergeRequestsByIid(@Path("id") projectId: Long,
                               @Query("iids") internalMergeRequestId: String): Single<List<MergeRequest>>
@@ -206,9 +184,6 @@ interface GitLabService {
     @GET("projects/{id}/merge_requests/{merge_request_id}/notes")
     fun getMergeRequestNotes(@Path("id") projectId: Long,
                              @Path("merge_request_id") mergeRequestId: Long): Single<Response<List<Note>>>
-
-    @GET
-    fun getMergeRequestNotes(@Url url: String): Single<Response<List<Note>>>
 
     @FormUrlEncoded
     @POST("projects/{id}/merge_requests/{merge_request_id}/notes")
@@ -261,9 +236,6 @@ interface GitLabService {
     @GET("projects/{id}/issues/{issue_iid}/notes")
     fun getIssueNotes(@Path("id") projectId: Long,
                       @Path("issue_iid") issueIid: Long): Single<Response<List<Note>>>
-
-    @GET
-    fun getIssueNotes(@Url url: String): Single<Response<List<Note>>>
 
     @FormUrlEncoded
     @POST("projects/{id}/issues/{issue_iid}/notes")
@@ -335,17 +307,6 @@ interface GitLabService {
                     @Query("color") color: String?,
                     @Query("description") description: String?): Single<Response<Label>>
 
-    /**
-     * Delete the label by its name
-
-     * @param projectId id
-     * *
-     * @return all the labels within a project
-     */
-    @DELETE("projects/{id}/labels")
-    fun deleteLabel(@Path("id") projectId: Long,
-                    @Query("name") name: String): Single<Label>
-
 
     /* --- BUILDS --- */
     @GET("projects/{id}/jobs")
@@ -377,18 +338,6 @@ interface GitLabService {
     fun getPipelines(@Path("id") projectId: Long,
                      @Query("scope") scope: String?): Single<Response<List<Pipeline>>>
 
-    @GET
-    fun getPipelines(@Url url: String,
-                     @Query("scope") state: String?): Single<Response<List<Pipeline>>>
-
-    @GET("projects/{id}/pipelines/{pipeline_id}/jobs")
-    fun getPipelineJobs(@Path("id") projectId: Long, @Path("pipeline_id") pipelineId: Long,
-                        @Query("scope") scope: String?): Single<Response<List<Pipeline>>>
-
-    @GET
-    fun getPipelineJobs(@Url url: String,
-                        @Query("scope") state: String?): Single<Response<List<Pipeline>>>
-
     @GET("projects/{id}/pipelines/{pipeline_id}")
     fun getPipeline(@Path("id") projectId: Long,
                     @Path("pipeline_id") pipelineId: Long): Single<Pipeline>
@@ -405,9 +354,6 @@ interface GitLabService {
     @GET("projects/{id}/snippets")
     fun getSnippets(@Path("id") projectId: Long): Single<Response<List<Snippet>>>
 
-    @GET
-    fun getSnippets(@Url url: String): Single<Response<List<Snippet>>>
-
     /* --- TODOS --- */
     @GET("todos")
     fun getTodos(@Query("state") @Todo.State state: String): Single<Response<List<Todo>>>
@@ -415,68 +361,6 @@ interface GitLabService {
     /* --- TAGS --- */
     @GET("projects/{id}/repository/tags")
     fun getTags(@Path("id") projectId: Long): Single<List<Tag>>
-
-    /* --- AWARD EMOJI --- */
-    @GET("projects/{id}/issues/{issue_id}/award_emoji")
-    fun getAwardEmojiForIssue(@Path("id") projectId: Long,
-                              @Path("issue_id") issueId: String): Single<List<AwardEmoji>>
-
-    @GET("projects/{id}/merge_requests/{merge_request_id}/award_emoji")
-    fun getAwardEmojiForMergeRequest(@Path("id") projectId: Long,
-                                     @Path("merge_request_id") mergeRequestId: String): Single<List<AwardEmoji>>
-
-    @GET("projects/{id}/issues/{issue_id}/notes/{note_id}/award_emoji")
-    fun getAwardEmojiForIssueNote(@Path("id") projectId: Long,
-                                  @Path("issue_id") issueId: String,
-                                  @Path("note_id") noteId: String): Single<List<AwardEmoji>>
-
-    @GET("projects/{id}/merge_requests/{merge_request_id}/notes/{note_id}/award_emoji")
-    fun getAwardEmojiForMergeRequestNote(@Path("id") projectId: Long,
-                                         @Path("merge_request_id") mergeRequestId: String,
-                                         @Path("note_id") noteId: String): Single<List<AwardEmoji>>
-
-    @POST("projects/{id}/issues/{issue_id}/award_emoji")
-    fun postAwardEmojiForIssue(@Path("id") projectId: Long,
-                               @Path("issue_id") issueId: String): Single<AwardEmoji>
-
-    @GET("projects/{id}/merge_requests/{merge_request_id}/award_emoji")
-    fun postAwardEmojiForMergeRequest(@Path("id") projectId: Long,
-                                      @Path("merge_request_id") mergeRequestId: String): Single<AwardEmoji>
-
-    @GET("projects/{id}/merge_requests/{merge_request_id}/notes/{note_id}/award_emoji")
-    fun postAwardEmojiForMergeRequestNote(@Path("id") projectId: Long,
-                                          @Path("merge_request_id") mergeRequestId: String,
-                                          @Path("note_id") noteId: String): Single<AwardEmoji>
-
-    @POST("projects/{id}/issues/{issue_id}/notes/{note_id}/award_emoji")
-    fun postAwardEmojiForIssueNote(@Path("id") projectId: Long,
-                                   @Path("issue_id") issueId: String,
-                                   @Path("note_id") noteId: String): Single<AwardEmoji>
-
-    @DELETE("projects/{id}/issues/{issue_id}/award_emoji/{award_id}")
-    fun deleteAwardEmojiForIssue(@Path("id") projectId: Long,
-                                 @Path("issue_id") issueId: String,
-                                 @Path("award_id") awardId: String): Single<AwardEmoji>
-
-    @DELETE("projects/{id}/merge_requests/{merge_request_id}/award_emoji/{award_id}")
-    fun deleteAwardEmojiForMergeRequest(@Path("id") projectId: Long,
-                                        @Path("merge_request_id") mergeRequestId: String,
-                                        @Path("award_id") awardId: String): Single<AwardEmoji>
-
-    @DELETE("projects/{id}/issues/{issue_id}/notes/{note_id}/award_emoji/{award_id}")
-    fun deleteAwardEmojiForIssueNote(@Path("id") projectId: Long,
-                                     @Path("issue_id") issueId: String,
-                                     @Path("note_id") noteId: String,
-                                     @Path("award_id") awardId: String): Single<AwardEmoji>
-
-    @DELETE("projects/{id}/merge_requests/{merge_request_id}/notes/{note_id}/award_emoji/{award_id}")
-    fun deleteAwardEmojiForMergeRequestNote(@Path("id") projectId: Long,
-                                            @Path("merge_request_id") mergeRequestId: String,
-                                            @Path("note_id") noteId: String,
-                                            @Path("award_id") awardId: String): Single<AwardEmoji>
-
-    @GET("projects/{id}/wikis")
-    fun getWikiPages(@Path("id") projectId: Long): Single<List<Wiki>>
 
     /* --- MISC --- */
     @GET

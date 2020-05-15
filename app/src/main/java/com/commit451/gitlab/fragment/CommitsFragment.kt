@@ -8,7 +8,6 @@ import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.ProjectActivity
 import com.commit451.gitlab.adapter.BaseAdapter
-import com.commit451.gitlab.adapter.DividerItemDecoration
 import com.commit451.gitlab.event.ProjectReloadEvent
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.model.api.RepositoryCommit
@@ -57,6 +56,7 @@ class CommitsFragment : BaseFragment() {
                 lifecycleOwner = this,
                 recyclerView = listCommits,
                 baseAdapter = adapter,
+                dividers = true,
                 swipeRefreshLayout = swipeRefreshLayout,
                 errorOrEmptyTextView = textMessage,
                 loadInitial = {
@@ -66,8 +66,6 @@ class CommitsFragment : BaseFragment() {
                     gitLab.loadAnyList(it)
                 }
         )
-
-        listCommits.addItemDecoration(DividerItemDecoration(baseActivty))
 
         if (activity is ProjectActivity) {
             project = (activity as ProjectActivity).project

@@ -10,7 +10,6 @@ import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.ProjectActivity
 import com.commit451.gitlab.adapter.BaseAdapter
-import com.commit451.gitlab.adapter.DividerItemDecoration
 import com.commit451.gitlab.event.MilestoneChangedEvent
 import com.commit451.gitlab.event.MilestoneCreatedEvent
 import com.commit451.gitlab.event.ProjectReloadEvent
@@ -79,12 +78,12 @@ class MilestonesFragment : BaseFragment() {
                 lifecycleOwner = this,
                 recyclerView = listMilestones,
                 baseAdapter = adapter,
+                dividers = true,
                 swipeRefreshLayout = swipeRefreshLayout,
                 errorOrEmptyTextView = textMessage,
                 loadInitial = { gitLab.getMilestones(project!!.id, state) },
                 loadMore = { gitLab.loadAnyList(it) }
         )
-        listMilestones.addItemDecoration(DividerItemDecoration(baseActivty))
 
         spinnerStates.adapter = ArrayAdapter(requireActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, resources.getStringArray(R.array.milestone_state_names))
         spinnerStates.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {

@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.BaseAdapter
-import com.commit451.gitlab.adapter.DividerItemDecoration
 import com.commit451.gitlab.event.MergeRequestChangedEvent
 import com.commit451.gitlab.model.api.MergeRequest
 import com.commit451.gitlab.model.api.Project
@@ -72,6 +71,7 @@ class MergeRequestCommitsFragment : BaseFragment() {
                 lifecycleOwner = this,
                 recyclerView = listCommits,
                 baseAdapter = adapter,
+                dividers = true,
                 swipeRefreshLayout = swipeRefreshLayout,
                 errorOrEmptyTextView = textMessage,
                 loadInitial = {
@@ -82,9 +82,7 @@ class MergeRequestCommitsFragment : BaseFragment() {
                 }
         )
 
-        listCommits.addItemDecoration(DividerItemDecoration(baseActivty))
-
-        loadHelper.load()
+        loadData()
         App.bus().register(this)
     }
 
@@ -94,17 +92,13 @@ class MergeRequestCommitsFragment : BaseFragment() {
     }
 
     override fun loadData() {
-        if (view == null) {
-            return
-        }
-
         loadHelper.load()
     }
 
     @Suppress("unused")
     @Subscribe
     fun onMergeRequestChangedEvent(event: MergeRequestChangedEvent) {
-        if (mergeRequest!!.iid == event.mergeRequest.id) {
+        if (mergeRequest?.iid == event.mergeRequest.id) {
             mergeRequest = event.mergeRequest
             loadData()
         }
