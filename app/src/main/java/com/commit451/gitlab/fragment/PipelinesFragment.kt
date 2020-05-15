@@ -17,7 +17,6 @@ import com.commit451.gitlab.model.api.Pipeline
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.util.LoadHelper
-import com.commit451.gitlab.viewHolder.CommitViewHolder
 import com.commit451.gitlab.viewHolder.PipelineViewHolder
 import kotlinx.android.synthetic.main.fragment_pipelines.*
 import org.greenrobot.eventbus.Subscribe
@@ -58,7 +57,7 @@ class PipelinesFragment : BaseFragment() {
 
         adapter = BaseAdapter(
                 onCreateViewHolder = { parent, _ ->
-                    val viewHolder = CommitViewHolder.inflate(parent)
+                    val viewHolder = PipelineViewHolder.inflate(parent)
                     viewHolder.itemView.setOnClickListener {
                         val pipeline = adapter.items[viewHolder.adapterPosition]
                         Navigator.navigateToPipeline(baseActivty, project!!, pipeline)

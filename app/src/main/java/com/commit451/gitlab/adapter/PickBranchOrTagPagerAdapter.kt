@@ -18,9 +18,9 @@ class PickBranchOrTagPagerAdapter(
         fm: FragmentManager,
         private val projectId: Long,
         private val ref: Ref?
-) : FragmentPagerAdapter(fm) {
+) : FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
-    private val titles: Array<String> = context.resources.getStringArray(R.array.tabs_branch_tag)
+    private val titles = context.resources.getStringArray(R.array.tabs_branch_tag)
 
     override fun getItem(position: Int): Fragment {
 

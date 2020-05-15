@@ -4,18 +4,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.commit451.addendum.design.snackbar
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.adapter.BaseAdapter
 import com.commit451.gitlab.model.api.Todo
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.util.LoadHelper
-import com.commit451.gitlab.viewHolder.CommitViewHolder
 import com.commit451.gitlab.viewHolder.TodoViewHolder
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.fragment_commits.*
-import kotlinx.android.synthetic.main.fragment_todo.swipeRefreshLayout
-import kotlinx.android.synthetic.main.fragment_todo.textMessage
+import kotlinx.android.synthetic.main.fragment_todo.*
 
 class TodoFragment : BaseFragment() {
 
@@ -55,14 +53,14 @@ class TodoFragment : BaseFragment() {
 
         adapter = BaseAdapter(
                 onCreateViewHolder = { parent, _ ->
-                    val viewHolder = CommitViewHolder.inflate(parent)
+                    val viewHolder = TodoViewHolder.inflate(parent)
                     viewHolder.itemView.setOnClickListener {
                         val todo = adapter.items[viewHolder.adapterPosition]
                         val targetUrl = todo.targetUrl
                         if (targetUrl != null) {
                             Navigator.navigateToUrl(baseActivty, targetUrl, App.get().getAccount())
                         } else {
-                            Snackbar.make(swipeRefreshLayout, R.string.not_a_valid_url, Snackbar.LENGTH_SHORT)
+                            root.snackbar(R.string.not_a_valid_url, Snackbar.LENGTH_SHORT)
                         }
                     }
                     viewHolder
@@ -71,7 +69,7 @@ class TodoFragment : BaseFragment() {
         )
         loadHelper = LoadHelper(
                 lifecycleOwner = this,
-                recyclerView = listCommits,
+                recyclerView = listTodos,
                 baseAdapter = adapter,
                 swipeRefreshLayout = swipeRefreshLayout,
                 errorOrEmptyTextView = textMessage,

@@ -6,32 +6,20 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.ProjectActivity
 import com.commit451.gitlab.adapter.BaseAdapter
-import com.commit451.gitlab.adapter.DividerItemDecoration
-import com.commit451.gitlab.adapter.MergeRequestAdapter
 import com.commit451.gitlab.event.MergeRequestChangedEvent
 import com.commit451.gitlab.event.ProjectReloadEvent
-import com.commit451.gitlab.extension.mapResponseSuccessWithPaginationData
-import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.MergeRequest
-import com.commit451.gitlab.model.api.Milestone
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.util.LoadHelper
-import com.commit451.gitlab.viewHolder.CommitViewHolder
 import com.commit451.gitlab.viewHolder.MergeRequestViewHolder
-import com.commit451.gitlab.viewHolder.MilestoneViewHolder
 import kotlinx.android.synthetic.main.fragment_merge_request.*
 import kotlinx.android.synthetic.main.fragment_merge_request.swipeRefreshLayout
-import kotlinx.android.synthetic.main.fragment_merge_request.textMessage
-import kotlinx.android.synthetic.main.fragment_milestones.*
 import org.greenrobot.eventbus.Subscribe
-import timber.log.Timber
 
 class MergeRequestsFragment : BaseFragment() {
 

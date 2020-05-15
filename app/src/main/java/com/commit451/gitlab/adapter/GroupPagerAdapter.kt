@@ -15,24 +15,21 @@ import java.util.*
 /**
  * Group pager adapter
  */
-class GroupPagerAdapter(context: Context, fm: androidx.fragment.app.FragmentManager, private val group: Group) : androidx.fragment.app.FragmentPagerAdapter(fm) {
+class GroupPagerAdapter(context: Context, fm: FragmentManager, private val group: Group) : FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
     companion object {
 
-        private val SECTION_COUNT = 3
-        private val ACTIVITY_POS = 0
-        private val PROJECTS_POS = 1
-        private val MEMBERS_POS = 2
+        private const val SECTION_COUNT = 3
+        private const val ACTIVITY_POS = 0
+        private const val PROJECTS_POS = 1
+        private const val MEMBERS_POS = 2
     }
 
-    val titles: Array<String> = context.resources.getStringArray(R.array.group_tabs)
-    val disabledSections = HashSet<Int>()
+    private val titles: Array<String> = context.resources.getStringArray(R.array.group_tabs)
+    private val disabledSections = HashSet<Int>()
 
-    override fun getItem(position: Int): androidx.fragment.app.Fragment {
-        var position = position
-        position = getCorrectPosition(position)
-
-        when (position) {
+    override fun getItem(position: Int): Fragment {
+        when (getCorrectPosition(position)) {
             ACTIVITY_POS -> return FeedFragment.newInstance(group.feedUrl)
             PROJECTS_POS -> return ProjectsFragment.newInstance(group)
             MEMBERS_POS -> return GroupMembersFragment.newInstance(group)

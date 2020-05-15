@@ -11,11 +11,11 @@ import com.commit451.gitlab.fragment.TodoFragment
 /**
  * Projects Pager Adapter
  */
-class TodoPagerAdapter(context: Context, fm: androidx.fragment.app.FragmentManager) : androidx.fragment.app.FragmentPagerAdapter(fm) {
+class TodoPagerAdapter(context: Context, fm: FragmentManager) : FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
-    private val titles: Array<String> = context.resources.getStringArray(R.array.tabs_todo)
+    private val titles = context.resources.getStringArray(R.array.tabs_todo)
 
-    override fun getItem(position: Int): androidx.fragment.app.Fragment {
+    override fun getItem(position: Int): Fragment {
 
         when (position) {
             0 -> return TodoFragment.newInstance(TodoFragment.MODE_TODO)

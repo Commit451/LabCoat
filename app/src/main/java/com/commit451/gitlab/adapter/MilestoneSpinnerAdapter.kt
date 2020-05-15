@@ -23,7 +23,7 @@ class MilestoneSpinnerAdapter(context: Context, milestones: MutableList<Mileston
         if (currentMilestone == null) {
             return 0
         }
-        for (i in 0..count - 1) {
+        for (i in 0 until count) {
             val milestone = getItem(i)
             if (milestone != null && currentMilestone.id == milestone.id) {
                 return i

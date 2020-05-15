@@ -18,13 +18,10 @@ import com.commit451.gitlab.model.api.Milestone
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.util.LoadHelper
-import com.commit451.gitlab.viewHolder.CommitViewHolder
 import com.commit451.gitlab.viewHolder.MilestoneViewHolder
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.fragment_commits.*
 import kotlinx.android.synthetic.main.fragment_milestones.*
 import kotlinx.android.synthetic.main.fragment_milestones.swipeRefreshLayout
-import kotlinx.android.synthetic.main.fragment_milestones.textMessage
 import org.greenrobot.eventbus.Subscribe
 
 class MilestonesFragment : BaseFragment() {
@@ -69,7 +66,7 @@ class MilestonesFragment : BaseFragment() {
 
         adapter = BaseAdapter(
                 onCreateViewHolder = { parent, _ ->
-                    val viewHolder = CommitViewHolder.inflate(parent)
+                    val viewHolder = MilestoneViewHolder.inflate(parent)
                     viewHolder.itemView.setOnClickListener {
                         val milestone = adapter.items[viewHolder.adapterPosition]
                         Navigator.navigateToMilestone(baseActivty, project!!, milestone)

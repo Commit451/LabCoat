@@ -12,14 +12,14 @@ import com.commit451.gitlab.model.api.Project
 /**
  * Pipeline sections
  */
-class PipelinePagerAdapter(context: Context, fm: androidx.fragment.app.FragmentManager, private val project: Project, private val pipeline: Pipeline) : androidx.fragment.app.FragmentPagerAdapter(fm) {
-    private val titles: Array<String> = context.resources.getStringArray(R.array.pipeline_tabs)
+class PipelinePagerAdapter(context: Context, fm: FragmentManager, private val project: Project, private val pipeline: Pipeline) : FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+    private val titles = context.resources.getStringArray(R.array.pipeline_tabs)
 
-    override fun getItem(position: Int): androidx.fragment.app.Fragment {
+    override fun getItem(position: Int): Fragment {
 
         when (position) {
             0 -> return PipelineDescriptionFragment.newInstance(project, pipeline)
-        //1 -> return PipelineDescriptionFragment.newInstance(project, pipeline)
+            //1 -> return PipelineDescriptionFragment.newInstance(project, pipeline)
         }
 
         throw IllegalStateException("Position exceeded on view pager")

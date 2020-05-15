@@ -34,7 +34,6 @@ class ProjectPagerAdapter(context: ProjectActivity, fm: FragmentManager) : Fragm
     private val sections = mutableListOf<Section>()
 
     init {
-        val project = context.project!!
         sections.add(Section(SECTION_PROJECT, context.getString(R.string.title_project)))
         sections.add(Section(SECTION_ACTIVITY, context.getString(R.string.title_activity)))
         if (!isDisabled(project.isIssuesEnabled)) {

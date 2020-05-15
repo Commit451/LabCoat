@@ -11,11 +11,11 @@ import com.commit451.gitlab.fragment.ProjectsFragment
 /**
  * Projects Pager Adapter
  */
-class ProjectsPagerAdapter(context: Context, fm: androidx.fragment.app.FragmentManager) : androidx.fragment.app.FragmentPagerAdapter(fm) {
+class ProjectsPagerAdapter(context: Context, fm: FragmentManager) : FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
     private val titles: Array<String> = context.resources.getStringArray(R.array.projects_tabs)
 
-    override fun getItem(position: Int): androidx.fragment.app.Fragment {
+    override fun getItem(position: Int): Fragment {
 
         when (position) {
             0 -> return ProjectsFragment.newInstance(ProjectsFragment.MODE_ALL)

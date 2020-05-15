@@ -15,10 +15,10 @@ import com.commit451.gitlab.model.api.Project
 /**
  * Merge request pager adapter
  */
-class MergeRequestSectionsPagerAdapter(context: Context, fm: androidx.fragment.app.FragmentManager, private val project: Project, private val mergeRequest: MergeRequest) : androidx.fragment.app.FragmentPagerAdapter(fm) {
+class MergeRequestSectionsPagerAdapter(context: Context, fm: FragmentManager, private val project: Project, private val mergeRequest: MergeRequest) : FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
     private val titles: Array<String> = context.resources.getStringArray(R.array.merge_request_tabs)
 
-    override fun getItem(position: Int): androidx.fragment.app.Fragment {
+    override fun getItem(position: Int): Fragment {
 
         when (position) {
             0 -> return MergeRequestDetailsFragment.newInstance(project, mergeRequest)

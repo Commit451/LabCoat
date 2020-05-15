@@ -13,11 +13,11 @@ import com.commit451.gitlab.model.api.Project
 /**
  * Issue Pager Adapter
  */
-class IssuePagerAdapter(context: Context, fm: androidx.fragment.app.FragmentManager, private val project: Project, private val issue: Issue) : androidx.fragment.app.FragmentPagerAdapter(fm) {
+class IssuePagerAdapter(context: Context, fm: FragmentManager, private val project: Project, private val issue: Issue) : FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
     private val titles: Array<String> = context.resources.getStringArray(R.array.issue_tabs)
 
-    override fun getItem(position: Int): androidx.fragment.app.Fragment {
+    override fun getItem(position: Int): Fragment {
 
         when (position) {
             0 -> return IssueDetailsFragment.newInstance(project, issue)
