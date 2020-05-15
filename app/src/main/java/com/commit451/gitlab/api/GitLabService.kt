@@ -350,10 +350,6 @@ interface GitLabService {
     fun cancelPipeline(@Path("id") projectId: Long,
                        @Path("pipeline_id") pipelineId: Long): Single<Pipeline>
 
-    /* --- SNIPPETS --- */
-    @GET("projects/{id}/snippets")
-    fun getSnippets(@Path("id") projectId: Long): Single<Response<List<Snippet>>>
-
     /* --- TODOS --- */
     @GET("todos")
     fun getTodos(@Query("state") @Todo.State state: String): Single<Response<List<Todo>>>

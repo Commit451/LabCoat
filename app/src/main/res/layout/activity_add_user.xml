@@ -31,12 +31,12 @@
                     android:layout_height="wrap_content"
                     android:layout_marginRight="32dp"
                     android:layout_weight="1"
-                    android:textColor="@color/white"
-                    android:textColorHint="@color/white_60"
                     android:background="@null"
                     android:hint="@string/action_search"
                     android:imeOptions="actionSearch"
-                    android:inputType="text" />
+                    android:inputType="text"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/white_60" />
 
                 <ImageView
                     android:id="@+id/buttonClear"
@@ -62,5 +62,13 @@
             android:layout_height="match_parent" />
 
     </com.commit451.gitlab.view.LabCoatSwipeRefreshLayout>
+
+    <TextView
+        android:id="@+id/textMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="16dp"
+        android:gravity="center" />
 
 </LinearLayout>

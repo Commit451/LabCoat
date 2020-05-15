@@ -43,7 +43,7 @@ class App : Application() {
         super.onCreate()
         instance = this
         RxJavaPlugins.setErrorHandler { error ->
-            //In case an error cannot be thrown properly anywhere else in the app
+            // In case an error cannot be thrown properly anywhere else in the app
             Timber.e(error)
         }
 

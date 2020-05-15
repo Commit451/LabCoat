@@ -24,7 +24,6 @@ import com.commit451.teleprinter.Teleprinter
 import io.reactivex.Single
 import kotlinx.android.synthetic.main.activity_add_user.*
 import kotlinx.android.synthetic.main.activity_add_user.swipeRefreshLayout
-import kotlinx.android.synthetic.main.fragment_commits.*
 import retrofit2.HttpException
 import retrofit2.Response
 import timber.log.Timber

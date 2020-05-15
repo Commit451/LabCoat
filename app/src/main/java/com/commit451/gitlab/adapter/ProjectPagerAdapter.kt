@@ -27,7 +27,6 @@ class ProjectPagerAdapter(context: ProjectActivity, fm: FragmentManager) : Fragm
         const val SECTION_ISSUES = "issues"
         const val SECTION_MERGE_REQUESTS = "merge_requests"
         const val SECTION_MEMBERS = "members"
-        const val SECTION_SNIPPETS = "snippets"
     }
 
     private val project: Project = context.project!!
@@ -50,11 +49,6 @@ class ProjectPagerAdapter(context: ProjectActivity, fm: FragmentManager) : Fragm
         }
         if (!isDisabled(project.isIssuesEnabled) && !isDisabled(project.isMergeRequestsEnabled)) {
             sections.add(Section(SECTION_MILESTONES, context.getString(R.string.title_milestones)))
-        }
-        //TODO enable snippets when they are done
-        if (BuildConfig.DEBUG && project.isSnippetsEnabled == true) {
-            Timber.d("Snippets are disabled")
-            sections.add(Section(SECTION_SNIPPETS, context.getString(R.string.title_snippets)))
         }
         sections.add(Section(SECTION_MEMBERS, context.getString(R.string.title_members)))
     }
@@ -81,7 +75,6 @@ class ProjectPagerAdapter(context: ProjectActivity, fm: FragmentManager) : Fragm
             SECTION_ISSUES -> return IssuesFragment.newInstance()
             SECTION_MERGE_REQUESTS -> return MergeRequestsFragment.newInstance()
             SECTION_MEMBERS -> return ProjectMembersFragment.newInstance()
-            SECTION_SNIPPETS -> return SnippetsFragment.newInstance()
         }
 
         throw IllegalStateException("Nothing to do with sectionId $sectionId")
