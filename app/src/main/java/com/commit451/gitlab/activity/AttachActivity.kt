@@ -14,7 +14,6 @@ import com.commit451.gitlab.extension.toPart
 import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Project
 import kotlinx.android.synthetic.main.activity_attach.*
-import kotlinx.android.synthetic.main.progress.*
 import pl.aprilapps.easyphotopicker.DefaultCallback
 import pl.aprilapps.easyphotopicker.EasyImage
 import timber.log.Timber

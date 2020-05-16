@@ -16,7 +16,6 @@ import com.commit451.gitlab.extension.checkValid
 import com.commit451.gitlab.extension.text
 import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.util.ColorUtil
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_add_new_label.*
 import kotlinx.android.synthetic.main.progress_fullscreen.*
 import retrofit2.HttpException
@@ -96,9 +95,9 @@ class AddNewLabelActivity : BaseActivity(), ColorChooserDialog.ColorCallback {
                 color = ColorUtil.convertColorIntToString(chosenColor)
                 Timber.d("Setting color to %s", color)
             }
-            progress.visibility = View.VISIBLE
-            progress.alpha = 0.0f
-            progress.animate().alpha(1.0f)
+            fullscreenProgress.visibility = View.VISIBLE
+            fullscreenProgress.alpha = 0.0f
+            fullscreenProgress.animate().alpha(1.0f)
             App.get().gitLab.createLabel(projectId, title, color, description)
                     .with(this)
                     .subscribe({
@@ -108,7 +107,7 @@ class AddNewLabelActivity : BaseActivity(), ColorChooserDialog.ColorCallback {
                         finish()
                     }, {
                         Timber.e(it)
-                        progress.visibility = View.GONE
+                        fullscreenProgress.visibility = View.GONE
                         if (it is HttpException && it.response()?.code() == 409) {
                             root.snackbar(R.string.label_already_exists)
                         } else {

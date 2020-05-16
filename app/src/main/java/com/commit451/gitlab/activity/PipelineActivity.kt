@@ -41,34 +41,34 @@ class PipelineActivity : BaseActivity() {
     private val onMenuItemClickListener = Toolbar.OnMenuItemClickListener { item ->
         when (item.itemId) {
             R.id.action_retry -> {
-                progress.visibility = View.VISIBLE
+                fullscreenProgress.visibility = View.VISIBLE
                 App.get().gitLab.retryPipeline(project.id, pipeline.id)
                         .with(this)
                         .subscribe({
-                            progress.visibility = View.GONE
+                            fullscreenProgress.visibility = View.GONE
                             Snackbar.make(root, R.string.pipeline_started, Snackbar.LENGTH_LONG)
                                     .show()
                             App.bus().post(PipelineChangedEvent(it))
                         }, {
                             Timber.e(it)
-                            progress.visibility = View.GONE
+                            fullscreenProgress.visibility = View.GONE
                             Snackbar.make(root, R.string.unable_to_retry_pipeline, Snackbar.LENGTH_LONG)
                                     .show()
                         })
                 return@OnMenuItemClickListener true
             }
             R.id.action_cancel -> {
-                progress.visibility = View.VISIBLE
+                fullscreenProgress.visibility = View.VISIBLE
                 App.get().gitLab.cancelPipeline(project.id, pipeline.id)
                         .with(this)
                         .subscribe({
-                            progress.visibility = View.GONE
+                            fullscreenProgress.visibility = View.GONE
                             Snackbar.make(root, R.string.pipeline_canceled, Snackbar.LENGTH_LONG)
                                     .show()
                             App.bus().post(PipelineChangedEvent(it))
                         }, {
                             Timber.e(it)
-                            progress.visibility = View.GONE
+                            fullscreenProgress.visibility = View.GONE
                             Snackbar.make(root, R.string.unable_to_cancel_pipeline, Snackbar.LENGTH_LONG)
                                     .show()
                         })

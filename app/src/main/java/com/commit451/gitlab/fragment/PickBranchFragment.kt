@@ -17,7 +17,6 @@ import com.commit451.gitlab.model.Ref
 import com.commit451.gitlab.model.api.Branch
 import com.commit451.gitlab.util.OnScrollLoadMoreListener
 import kotlinx.android.synthetic.main.fragment_pick_branch.*
-import kotlinx.android.synthetic.main.progress.*
 import timber.log.Timber
 
 /**

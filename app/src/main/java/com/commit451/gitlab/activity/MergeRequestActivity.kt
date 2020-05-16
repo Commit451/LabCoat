@@ -74,18 +74,18 @@ class MergeRequestActivity : BaseActivity() {
     }
 
     fun merge() {
-        progress.visibility = View.VISIBLE
+        fullscreenProgress.visibility = View.VISIBLE
         App.get().gitLab.acceptMergeRequest(project.id, mergeRequest.iid)
                 .mapResponseSuccess()
                 .with(this)
                 .subscribe({
-                    progress.visibility = View.GONE
+                    fullscreenProgress.visibility = View.GONE
                     Snackbar.make(root, R.string.merge_request_accepted, Snackbar.LENGTH_LONG)
                             .show()
                     App.bus().post(MergeRequestChangedEvent(mergeRequest))
                 }, {
                     Timber.e(it)
-                    progress.visibility = View.GONE
+                    fullscreenProgress.visibility = View.GONE
                     var message = getString(R.string.unable_to_merge)
                     if (it is HttpException) {
                         val code = it.response()?.code()

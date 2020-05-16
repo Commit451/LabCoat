@@ -20,7 +20,6 @@ import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Build
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.util.DownloadUtil
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_build.*
 import kotlinx.android.synthetic.main.progress_fullscreen.*
 import timber.log.Timber
@@ -53,46 +52,46 @@ class BuildActivity : BaseActivity() {
     private val onMenuItemClickListener = Toolbar.OnMenuItemClickListener { item ->
         when (item.itemId) {
             R.id.action_retry -> {
-                progress.visibility = View.VISIBLE
+                fullscreenProgress.visibility = View.VISIBLE
                 App.get().gitLab.retryBuild(project.id, build.id)
                         .with(this)
                         .subscribe({
-                            progress.visibility = View.GONE
+                            fullscreenProgress.visibility = View.GONE
                             root.snackbar(R.string.build_started)
                             App.bus().post(BuildChangedEvent(build))
                         }, {
                             Timber.e(it)
-                            progress.visibility = View.GONE
+                            fullscreenProgress.visibility = View.GONE
                             root.snackbar(R.string.unable_to_retry_build)
                         })
                 return@OnMenuItemClickListener true
             }
             R.id.action_erase -> {
-                progress.visibility = View.VISIBLE
+                fullscreenProgress.visibility = View.VISIBLE
                 App.get().gitLab.eraseBuild(project.id, build.id)
                         .with(this)
                         .subscribe({
-                            progress.visibility = View.GONE
+                            fullscreenProgress.visibility = View.GONE
                             root.snackbar(R.string.build_erased)
                             App.bus().post(BuildChangedEvent(it))
                         }, {
                             Timber.e(it)
-                            progress.visibility = View.GONE
+                            fullscreenProgress.visibility = View.GONE
                             root.snackbar(R.string.unable_to_erase_build)
                         })
                 return@OnMenuItemClickListener true
             }
             R.id.action_cancel -> {
-                progress.visibility = View.VISIBLE
+                fullscreenProgress.visibility = View.VISIBLE
                 App.get().gitLab.cancelBuild(project.id, build.id)
                         .with(this)
                         .subscribe({
-                            progress.visibility = View.GONE
+                            fullscreenProgress.visibility = View.GONE
                             root.snackbar(R.string.build_canceled)
                             App.bus().post(BuildChangedEvent(it))
                         }, {
                             Timber.e(it)
-                            progress.visibility = View.GONE
+                            fullscreenProgress.visibility = View.GONE
                             root.snackbar(R.string.unable_to_cancel_build)
                         })
                 return@OnMenuItemClickListener true

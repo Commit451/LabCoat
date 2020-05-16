@@ -22,14 +22,12 @@ import com.commit451.gitlab.model.api.Contributor
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.util.ImageUtil
 import com.commit451.gitlab.util.IntentUtil
-import com.google.android.material.snackbar.Snackbar
 import com.jawnnypoo.physicslayout.Physics
 import com.jawnnypoo.physicslayout.PhysicsConfig
 import com.jawnnypoo.physicslayout.Shape
 import com.wefika.flowlayout.FlowLayout
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.activity_about.*
-import kotlinx.android.synthetic.main.progress.*
 import org.jbox2d.common.Vec2
 import timber.log.Timber
 

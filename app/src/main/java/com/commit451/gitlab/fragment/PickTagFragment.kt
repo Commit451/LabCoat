@@ -15,7 +15,6 @@ import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.Ref
 import com.commit451.gitlab.model.api.Tag
 import kotlinx.android.synthetic.main.fragment_pick_tag.*
-import kotlinx.android.synthetic.main.progress.*
 import timber.log.Timber
 
 /**

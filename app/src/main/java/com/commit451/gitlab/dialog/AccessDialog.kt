@@ -30,12 +30,12 @@ class AccessDialog private constructor(context: Context, internal var member: Us
     private var onAccessChangedListener: OnAccessChangedListener? = null
     var listener: Listener? = null
 
-    var roleNames: Array<String> = getContext().resources.getStringArray(if (group == null)
+    private var roleNames: Array<String> = getContext().resources.getStringArray(if (group == null)
         R.array.project_role_names
     else
         R.array.group_role_names)
-    var projectId: Long = -1
-    val disposables = CompositeDisposable()
+    private var projectId: Long = -1
+    private val disposables = CompositeDisposable()
 
     constructor(context: Context, accessAppliedListener: Listener) : this(context, null, null, -1) {
         listener = accessAppliedListener

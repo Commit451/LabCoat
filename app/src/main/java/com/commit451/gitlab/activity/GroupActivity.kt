@@ -19,9 +19,7 @@ import com.commit451.gitlab.adapter.GroupPagerAdapter
 import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.image.PaletteImageViewTarget
 import com.commit451.gitlab.model.api.Group
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_group.*
-import kotlinx.android.synthetic.main.progress.*
 import timber.log.Timber
 
 /**

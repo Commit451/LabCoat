@@ -74,6 +74,12 @@
 
     </LinearLayout>
 
-    <include layout="@layout/progress" />
+    <com.commit451.gitlab.view.LabCoatProgressView
+        android:id="@+id/progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:indeterminate="true"
+        android:visibility="gone" />
 
 </FrameLayout>

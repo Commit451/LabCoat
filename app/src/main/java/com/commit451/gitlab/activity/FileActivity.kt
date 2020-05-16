@@ -17,7 +17,6 @@ import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.model.api.RepositoryFile
 import com.commit451.gitlab.util.IntentUtil
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_file.*
 import kotlinx.android.synthetic.main.progress_fullscreen.*
 import timber.log.Timber
@@ -79,15 +78,15 @@ class FileActivity : BaseActivity() {
     override fun hasBrowsableLinks() = true
 
     private fun loadData() {
-        progress.visibility = View.VISIBLE
+        fullscreenProgress.visibility = View.VISIBLE
         App.get().gitLab.getFile(project.id, path, branch)
                 .with(this)
                 .subscribe({
-                    progress.visibility = View.GONE
+                    fullscreenProgress.visibility = View.GONE
                     bindFile(it)
                 }, {
                     Timber.e(it)
-                    progress.visibility = View.GONE
+                    fullscreenProgress.visibility = View.GONE
                     root.snackbar(R.string.file_load_error)
                 })
     }

@@ -124,7 +124,7 @@ class IssueActivity : BaseActivity() {
     }
 
     private fun closeOrOpenIssue() {
-        progress.visibility = View.VISIBLE
+        fullscreenProgress.visibility = View.VISIBLE
         if (issue.state == Issue.STATE_CLOSED) {
             updateIssueStatus(App.get().gitLab.updateIssueStatus(project.id, issue.iid, Issue.STATE_REOPEN))
         } else {
@@ -136,14 +136,14 @@ class IssueActivity : BaseActivity() {
         observable
                 .with(this)
                 .subscribe({
-                    progress.visibility = View.GONE
+                    fullscreenProgress.visibility = View.GONE
                     issue = it
                     App.bus().post(IssueChangedEvent(issue))
                     App.bus().post(IssueReloadEvent())
                     setOpenCloseMenuStatus()
                 }, {
                     Timber.e(it)
-                    progress.visibility = View.GONE
+                    fullscreenProgress.visibility = View.GONE
                     Snackbar.make(root, getString(R.string.error_changing_issue), Snackbar.LENGTH_SHORT)
                             .show()
                 })

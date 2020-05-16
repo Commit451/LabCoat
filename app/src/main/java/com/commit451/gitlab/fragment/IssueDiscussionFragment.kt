@@ -6,9 +6,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.commit451.addendum.design.snackbar
+import com.commit451.alakazam.fadeIn
 import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.AttachActivity
@@ -25,7 +27,7 @@ import com.commit451.gitlab.view.SendMessageView
 import com.commit451.gitlab.viewHolder.NoteViewHolder
 import com.commit451.teleprinter.Teleprinter
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.fragment_merge_request_discussion.*
+import kotlinx.android.synthetic.main.fragment_issue_discussion.*
 import kotlinx.android.synthetic.main.progress_fullscreen.*
 import org.greenrobot.eventbus.Subscribe
 import timber.log.Timber
@@ -66,7 +68,7 @@ class IssueDiscussionFragment : BaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_merge_request_discussion, container, false)
+        return inflater.inflate(R.layout.fragment_issue_discussion, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -113,7 +115,7 @@ class IssueDiscussionFragment : BaseFragment() {
             REQUEST_ATTACH -> {
                 if (resultCode == RESULT_OK) {
                     val response = data?.getParcelableExtra<FileUploadResponse>(AttachActivity.KEY_FILE_UPLOAD_RESPONSE)!!
-                    progress.visibility = View.GONE
+                    fullscreenProgress.visibility = View.GONE
                     sendMessageView.appendText(response.markdown)
                 } else {
                     root.snackbar(R.string.failed_to_upload_file)
@@ -131,14 +133,12 @@ class IssueDiscussionFragment : BaseFragment() {
         loadHelper.load()
     }
 
-    fun postNote(message: String) {
+    private fun postNote(message: String) {
         if (message.isBlank()) {
             return
         }
 
-        progress.visibility = View.VISIBLE
-        progress.alpha = 0.0f
-        progress.animate().alpha(1.0f)
+        fullscreenProgress.fadeIn()
         // Clear text & collapse keyboard
         teleprinter.hideKeyboard()
         sendMessageView.clearText()
@@ -146,12 +146,13 @@ class IssueDiscussionFragment : BaseFragment() {
         App.get().gitLab.addIssueNote(project.id, issue.iid, message)
                 .with(this)
                 .subscribe({
-                    progress.visibility = View.GONE
+                    fullscreenProgress.isVisible = false
+                    textMessage.isVisible = false
                     adapter.add(it, 0)
                     listNotes.smoothScrollToPosition(0)
                 }, {
                     Timber.e(it)
-                    progress.visibility = View.GONE
+                    fullscreenProgress.isVisible = false
                     Snackbar.make(root, getString(R.string.connection_error), Snackbar.LENGTH_SHORT)
                             .show()
                 })

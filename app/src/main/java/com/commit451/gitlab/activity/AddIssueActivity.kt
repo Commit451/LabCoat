@@ -162,9 +162,9 @@ class AddIssueActivity : MorphActivity() {
     }
 
     private fun showLoading() {
-        progress.visibility = View.VISIBLE
-        progress.alpha = 0.0f
-        progress.animate().alpha(1.0f)
+        fullscreenProgress.visibility = View.VISIBLE
+        fullscreenProgress.alpha = 0.0f
+        fullscreenProgress.animate().alpha(1.0f)
     }
 
     private fun bindIssue() {

@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.commit451.addendum.design.snackbar
@@ -25,7 +26,6 @@ import com.commit451.gitlab.view.SendMessageView
 import com.commit451.gitlab.viewHolder.NoteViewHolder
 import com.commit451.teleprinter.Teleprinter
 import kotlinx.android.synthetic.main.fragment_merge_request_discussion.*
-import kotlinx.android.synthetic.main.fragment_merge_request_discussion.swipeRefreshLayout
 import kotlinx.android.synthetic.main.progress_fullscreen.*
 import org.greenrobot.eventbus.Subscribe
 import timber.log.Timber
@@ -111,7 +111,7 @@ class MergeRequestDiscussionFragment : BaseFragment() {
             REQUEST_ATTACH -> {
                 if (resultCode == RESULT_OK) {
                     val response = data?.getParcelableExtra<FileUploadResponse>(AttachActivity.KEY_FILE_UPLOAD_RESPONSE)!!
-                    progress.visibility = View.GONE
+                    fullscreenProgress.visibility = View.GONE
                     sendMessageView.appendText(response.markdown)
                 } else {
                     root.snackbar(R.string.failed_to_upload_file)
@@ -135,9 +135,9 @@ class MergeRequestDiscussionFragment : BaseFragment() {
             return
         }
 
-        progress.visibility = View.VISIBLE
-        progress.alpha = 0.0f
-        progress.animate().alpha(1.0f)
+        fullscreenProgress.visibility = View.VISIBLE
+        fullscreenProgress.alpha = 0.0f
+        fullscreenProgress.animate().alpha(1.0f)
         // Clear text & collapse keyboard
         teleprinter.hideKeyboard()
         sendMessageView.clearText()
@@ -145,12 +145,13 @@ class MergeRequestDiscussionFragment : BaseFragment() {
         App.get().gitLab.addMergeRequestNote(project.id, mergeRequest.iid, message)
                 .with(this)
                 .subscribe({
-                    progress.visibility = View.GONE
+                    fullscreenProgress.visibility = View.GONE
+                    textMessage.isVisible = false
                     adapter.add(it, 0)
                     listNotes.smoothScrollToPosition(0)
                 }, {
                     Timber.e(it)
-                    progress.visibility = View.GONE
+                    fullscreenProgress.visibility = View.GONE
                     root.snackbar(getString(R.string.connection_error))
                 })
     }

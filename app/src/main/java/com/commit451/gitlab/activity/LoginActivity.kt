@@ -181,9 +181,9 @@ class LoginActivity : BaseActivity() {
         newAccount.authorizationHeader = currentAccount.authorizationHeader
         currentAccount = newAccount
 
-        progress.visibility = View.VISIBLE
-        progress.alpha = 0.0f
-        progress.animate().alpha(1.0f)
+        fullscreenProgress.visibility = View.VISIBLE
+        fullscreenProgress.alpha = 0.0f
+        fullscreenProgress.animate().alpha(1.0f)
 
         currentAccount.privateToken = textToken.text.toString()
         val gitlabClientBuilder = OkHttpClientFactory.create(currentAccount, false)
@@ -203,7 +203,7 @@ class LoginActivity : BaseActivity() {
                 .mapResponseSuccess()
                 .with(this)
                 .subscribe({
-                    progress.visibility = View.GONE
+                    fullscreenProgress.visibility = View.GONE
                     currentAccount.lastUsed = Date()
                     currentAccount.email = it.email
                     currentAccount.username = it.username
@@ -225,7 +225,7 @@ class LoginActivity : BaseActivity() {
     }
 
     fun handleConnectionError(t: Throwable) {
-        progress.visibility = View.GONE
+        fullscreenProgress.visibility = View.GONE
 
         if (t is SSLHandshakeException && t.cause is X509CertificateException) {
             currentAccount.trustedCertificate = null
@@ -268,7 +268,7 @@ class LoginActivity : BaseActivity() {
     }
 
     private fun handleConnectionResponse(response: Response<*>, throwable: Throwable) {
-        progress.visibility = View.GONE
+        fullscreenProgress.visibility = View.GONE
         when (response.code()) {
             401 -> {
                 currentAccount.authorizationHeader = null

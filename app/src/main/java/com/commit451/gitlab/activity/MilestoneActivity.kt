@@ -3,7 +3,6 @@ package com.commit451.gitlab.activity
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -174,7 +173,7 @@ class MilestoneActivity : BaseActivity() {
     }
 
     private fun closeOrOpenIssue() {
-        progress.visibility = View.VISIBLE
+        fullscreenProgress.visibility = View.VISIBLE
         if (milestone.state == Milestone.STATE_ACTIVE) {
             updateMilestoneStatus(App.get().gitLab.updateMilestoneStatus(project.id, milestone.id, Milestone.STATE_EVENT_CLOSE))
         } else {
@@ -185,13 +184,13 @@ class MilestoneActivity : BaseActivity() {
     private fun updateMilestoneStatus(observable: Single<Milestone>) {
         observable.with(this)
                 .subscribe({
-                    progress.visibility = View.GONE
+                    fullscreenProgress.visibility = View.GONE
                     milestone = it
                     App.bus().post(MilestoneChangedEvent(milestone))
                     setOpenCloseMenuStatus()
                 }, {
                     Timber.e(it)
-                    progress.visibility = View.GONE
+                    fullscreenProgress.visibility = View.GONE
                     Snackbar.make(root, getString(R.string.failed_to_create_milestone), Snackbar.LENGTH_SHORT)
                             .show()
                 })

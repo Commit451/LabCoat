@@ -201,20 +201,20 @@ class ProjectActivity : BaseActivity() {
     private fun loadProject(observable: Single<Project>) {
         observable.with(this)
                 .subscribe({
-                    progress.fadeOut()
+                    fullscreenProgress.fadeOut()
                     bindProject(it)
                 }, {
                     Timber.e(it)
-                    progress.fadeOut()
+                    fullscreenProgress.fadeOut()
                     Snackbar.make(root, getString(R.string.connection_error), Snackbar.LENGTH_INDEFINITE)
                             .show()
                 })
     }
 
     private fun showProgress() {
-        progress.alpha = 0.0f
-        progress.visibility = View.VISIBLE
-        progress.animate().alpha(1.0f)
+        fullscreenProgress.alpha = 0.0f
+        fullscreenProgress.visibility = View.VISIBLE
+        fullscreenProgress.animate().alpha(1.0f)
     }
 
     private fun broadcastLoad() {

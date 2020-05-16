@@ -16,7 +16,6 @@ import com.commit451.gitlab.extension.checkValid
 import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Milestone
 import com.commit451.teleprinter.Teleprinter
-import com.google.android.material.snackbar.Snackbar
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
 import io.reactivex.Single
 import kotlinx.android.synthetic.main.activity_add_milestone.*
@@ -103,7 +102,7 @@ class AddMilestoneActivity : MorphActivity() {
             return
         }
 
-        progress.visibility = View.VISIBLE
+        fullscreenProgress.visibility = View.VISIBLE
         var dueDate: String? = null
         val currentDate = currentDate
         if (currentDate != null) {
@@ -128,7 +127,7 @@ class AddMilestoneActivity : MorphActivity() {
     private fun createOrEditMilestone(observable: Single<Milestone>) {
         observable.with(this)
                 .subscribe({
-                    progress.visibility = View.GONE
+                    fullscreenProgress.visibility = View.GONE
                     if (milestone == null) {
                         App.bus().post(MilestoneCreatedEvent(it))
                     } else {
@@ -137,7 +136,7 @@ class AddMilestoneActivity : MorphActivity() {
                     finish()
                 }, {
                     Timber.e(it)
-                    progress.visibility = View.GONE
+                    fullscreenProgress.visibility = View.GONE
                     showError()
                 })
     }
