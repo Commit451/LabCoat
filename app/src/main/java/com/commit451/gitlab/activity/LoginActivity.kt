@@ -48,7 +48,6 @@ import java.util.regex.Pattern
 import javax.net.ssl.SSLHandshakeException
 import javax.net.ssl.SSLPeerUnverifiedException
 
-
 class LoginActivity : BaseActivity() {
 
     companion object {
@@ -211,7 +210,7 @@ class LoginActivity : BaseActivity() {
                     Prefs.addAccount(currentAccount)
                     App.get().setAccount(currentAccount)
                     App.bus().post(LoginEvent(currentAccount))
-                    //This is mostly for if projects already exists, then we will reload the data
+                    // This is mostly for if projects already exists, then we will reload the data
                     App.bus().post(ReloadDataEvent())
                     Navigator.navigateToStartingActivity(this@LoginActivity)
                     finish()

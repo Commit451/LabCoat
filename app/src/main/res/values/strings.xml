@@ -199,13 +199,12 @@
     <string name="error_changing_issue">There was an error changing the issue</string>
     <string name="no_issues">No issues</string>
     <string name="no_wiki">No wiki</string>
-    <string name="issue_opened">Opened</string>
     <string name="issue_open">Open</string>
     <string name="issue_closed">Closed</string>
     <string name="issue_all">All</string>
     <string name="issue_state_value_default">opened</string>
     <string-array name="issue_state_names">
-        <item>@string/issue_opened</item>
+        <item>@string/issue_open</item>
         <item>@string/issue_closed</item>
         <item>@string/issue_all</item>
     </string-array>

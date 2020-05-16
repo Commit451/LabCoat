@@ -47,7 +47,7 @@ class GitLab private constructor(
                 .map {
                     val source = it.body()?.source() ?: throw NullBodyException()
                     val body = moshi.adapter(T::class.java).fromJson(source)
-                    retrofit2.Response.success(body, it.raw())
+                    Response.success(body, it.raw())
                 }
     }
 
@@ -57,7 +57,7 @@ class GitLab private constructor(
                     val source = it.body()?.source() ?: throw NullBodyException()
                     val type = Types.newParameterizedType(List::class.java, T::class.java)
                     val body = moshi.adapter<List<T>>(type).fromJson(source)
-                    retrofit2.Response.success(body, it.raw())
+                    Response.success(body, it.raw())
                 }
     }
 
