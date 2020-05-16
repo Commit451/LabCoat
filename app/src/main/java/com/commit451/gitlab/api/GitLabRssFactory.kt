@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.commit451.gitlab.api
 
 import com.commit451.gitlab.api.rss.SimpleXmlPersisterFactory
@@ -12,7 +14,6 @@ import retrofit2.converter.simplexml.SimpleXmlConverterFactory
  */
 object GitLabRssFactory {
 
-    @Suppress("DEPRECATION")
     fun create(account: Account, client: OkHttpClient): GitLabRss {
         val persister = SimpleXmlPersisterFactory.createPersister()
         val restAdapter = Retrofit.Builder()
