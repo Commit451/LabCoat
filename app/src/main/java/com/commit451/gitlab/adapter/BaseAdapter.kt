@@ -48,6 +48,7 @@ class BaseAdapter<T, VH : RecyclerView.ViewHolder>(
         throw IllegalStateException("No known ViewHolder for type $viewType")
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is LoadingFooterViewHolder) {
             holder.bind(isLoading)

@@ -2,19 +2,17 @@ package com.commit451.gitlab.adapter
 
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
-import com.commit451.gitlab.BuildConfig
 import com.commit451.gitlab.R
 import com.commit451.gitlab.activity.ProjectActivity
 import com.commit451.gitlab.extension.feedUrl
 import com.commit451.gitlab.fragment.*
 import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.navigation.DeepLinker
-import timber.log.Timber
 
 /**
  * Controls the sections that should be shown in a [com.commit451.gitlab.activity.ProjectActivity]
  */
-class ProjectPagerAdapter(context: ProjectActivity, fm: FragmentManager) : FragmentPagerAdapter(fm) {
+class ProjectPagerAdapter(context: ProjectActivity, fm: FragmentManager) : FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
     companion object {
         const val SECTION_PROJECT = "project"

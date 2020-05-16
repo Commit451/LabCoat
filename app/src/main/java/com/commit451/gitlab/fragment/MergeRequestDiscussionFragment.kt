@@ -16,6 +16,7 @@ import com.commit451.gitlab.activity.AttachActivity
 import com.commit451.gitlab.adapter.BaseAdapter
 import com.commit451.gitlab.api.response.FileUploadResponse
 import com.commit451.gitlab.event.MergeRequestChangedEvent
+import com.commit451.gitlab.extension.mapResponseSuccessResponse
 import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.MergeRequest
 import com.commit451.gitlab.model.api.Note
@@ -143,12 +144,17 @@ class MergeRequestDiscussionFragment : BaseFragment() {
         sendMessageView.clearText()
 
         App.get().gitLab.addMergeRequestNote(project.id, mergeRequest.iid, message)
+                .mapResponseSuccessResponse()
                 .with(this)
                 .subscribe({
-                    fullscreenProgress.visibility = View.GONE
-                    textMessage.isVisible = false
-                    adapter.add(it, 0)
-                    listNotes.smoothScrollToPosition(0)
+                    if (it.first.code() == 202) {
+                        load()
+                    } else {
+                        fullscreenProgress.visibility = View.GONE
+                        textMessage.isVisible = false
+                        adapter.add(it.second, 0)
+                        listNotes.smoothScrollToPosition(0)
+                    }
                 }, {
                     Timber.e(it)
                     fullscreenProgress.visibility = View.GONE

@@ -14,6 +14,7 @@ import com.commit451.gitlab.model.Account
  */
 object DownloadUtil {
 
+    @Suppress("DEPRECATION")
     fun download(context: Context, account: Account, url: String, filename: String) {
         val request = DownloadManager.Request(Uri.parse(url))
         request.setTitle(filename)

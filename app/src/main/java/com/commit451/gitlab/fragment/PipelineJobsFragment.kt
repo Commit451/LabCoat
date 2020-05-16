@@ -99,9 +99,6 @@ class PipelineJobsFragment : BaseFragment() {
         val created = String.format(getString(R.string.build_created), DateUtil.getRelativeTimeSpanString(baseActivty, pipeline.createdAt))
         textCreated.text = created
 
-        val finished = String.format(getString(R.string.pipeline_finished), pipeline.finishedAt)
-        textFinished.text = finished
-
         val timeTaken = DateUtil.getTimeTaken(startedTime, finishedTime)
         val duration = String.format(getString(R.string.pipeline_duration), timeTaken)
         textDuration.text = duration

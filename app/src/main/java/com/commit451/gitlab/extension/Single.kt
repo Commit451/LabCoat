@@ -43,6 +43,16 @@ fun <T> Single<Response<T>>.mapResponseSuccess(): Single<T> {
     }
 }
 
+fun <T> Single<Response<T>>.mapResponseSuccessResponse(): Single<Pair<Response<T>, T>> {
+    return flatMap { response ->
+        if (!response.isSuccessful) {
+            error(HttpException(response))
+        } else {
+            Single.just(Pair(response, response.body()!!))
+        }
+    }
+}
+
 fun <T> Single<Response<T>>.mapResponseSuccessWithPaginationData(): Single<BodyWithPagination<T>> {
     return flatMap { response ->
         if (!response.isSuccessful) {

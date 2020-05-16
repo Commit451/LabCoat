@@ -13,10 +13,10 @@ import com.commit451.gitlab.model.api.Project
 /**
  * Build sections
  */
-class BuildPagerAdapter(context: Context, fm: androidx.fragment.app.FragmentManager, private val project: Project, private val build: Build) : androidx.fragment.app.FragmentPagerAdapter(fm) {
+class BuildPagerAdapter(context: Context, fm: FragmentManager, private val project: Project, private val build: Build) : FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
     private val titles: Array<String> = context.resources.getStringArray(R.array.build_tabs)
 
-    override fun getItem(position: Int): androidx.fragment.app.Fragment {
+    override fun getItem(position: Int): Fragment {
 
         when (position) {
             0 -> return BuildDescriptionFragment.newInstance(project, build)

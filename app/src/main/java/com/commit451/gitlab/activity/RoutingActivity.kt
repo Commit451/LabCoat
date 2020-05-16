@@ -4,14 +4,12 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
-import com.commit451.gitlab.App
 import com.commit451.gitlab.R
 import com.commit451.gitlab.data.Prefs
 import com.commit451.gitlab.navigation.DeepLinker
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.util.IntentUtil
 import timber.log.Timber
-
 
 /**
  * The easy way to do deep links. Just route everything here, and it does all the work.
@@ -46,7 +44,7 @@ class RoutingActivity : BaseActivity() {
 
         override fun onRouteToBuild(projectNamespace: String, projectName: String, buildNumber: String) {
             Timber.d("Routing to build")
-            startActivity(LoadSomeInfoActivity.newBuildIntent(this@RoutingActivity, projectNamespace, projectName, java.lang.Long.valueOf(buildNumber)!!))
+            startActivity(LoadSomeInfoActivity.newBuildIntent(this@RoutingActivity, projectNamespace, projectName, buildNumber.toLong()))
             overridePendingTransition(R.anim.fade_in, R.anim.do_nothing)
         }
 

@@ -189,7 +189,7 @@ interface GitLabService {
     @POST("projects/{id}/merge_requests/{merge_request_id}/notes")
     fun addMergeRequestNote(@Path("id") projectId: Long,
                             @Path("merge_request_id") mergeRequestId: Long,
-                            @Field("body") body: String): Single<Note>
+                            @Field("body") body: String): Single<Response<Note>>
 
     @PUT("projects/{id}/merge_requests/{merge_request_id}/merge")
     fun acceptMergeRequest(@Path("id") projectId: Long,
@@ -237,11 +237,15 @@ interface GitLabService {
     fun getIssueNotes(@Path("id") projectId: Long,
                       @Path("issue_iid") issueIid: Long): Single<Response<List<Note>>>
 
+    /**
+     * Be aware, if a user posts a command like /assign me, this returns a 202 instead of a 200
+     * and you need to refresh to get the posted message
+     */
     @FormUrlEncoded
     @POST("projects/{id}/issues/{issue_iid}/notes")
     fun addIssueNote(@Path("id") projectId: Long,
                      @Path("issue_iid") issueIid: Long,
-                     @Field("body") body: String): Single<Note>
+                     @Field("body") body: String): Single<Response<Note>>
 
     @DELETE("projects/{id}/issues/{issue_iid}")
     fun deleteIssue(@Path("id") projectId: Long,

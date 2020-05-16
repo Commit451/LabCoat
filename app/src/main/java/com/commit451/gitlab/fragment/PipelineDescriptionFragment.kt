@@ -103,9 +103,6 @@ class PipelineDescriptionFragment : BaseFragment() {
         val created = String.format(getString(R.string.pipeline_created), DateUtil.getRelativeTimeSpanString(baseActivty, createdTime))
         textCreated.text = created
 
-        val finished = String.format(getString(R.string.pipeline_finished), pipeline.finishedAt)
-        textFinished.text = finished
-
         val timeTaken = DateUtil.getTimeTaken(startedTime, finishedTime)
         val duration = String.format(getString(R.string.pipeline_duration), timeTaken)
         textDuration.text = duration
@@ -115,7 +112,6 @@ class PipelineDescriptionFragment : BaseFragment() {
 
         val sha = String.format(getString(R.string.pipeline_sha), pipeline.sha)
         textSha.text = sha
-
 
         if (pipeline.finishedAt != null) {
             val finished = String.format(getString(R.string.pipeline_finished), DateUtil.getRelativeTimeSpanString(baseActivty, pipeline.finishedAt))

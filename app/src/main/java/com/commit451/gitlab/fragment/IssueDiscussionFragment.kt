@@ -17,6 +17,7 @@ import com.commit451.gitlab.activity.AttachActivity
 import com.commit451.gitlab.adapter.BaseAdapter
 import com.commit451.gitlab.api.response.FileUploadResponse
 import com.commit451.gitlab.event.IssueChangedEvent
+import com.commit451.gitlab.extension.mapResponseSuccessResponse
 import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Issue
 import com.commit451.gitlab.model.api.Note
@@ -104,7 +105,7 @@ class IssueDiscussionFragment : BaseFragment() {
                 startActivityForResult(intent, REQUEST_ATTACH, activityOptions.toBundle())
             }
         }
-        loadNotes()
+        load()
 
         App.bus().register(this)
     }
@@ -129,7 +130,7 @@ class IssueDiscussionFragment : BaseFragment() {
         super.onDestroyView()
     }
 
-    private fun loadNotes() {
+    private fun load() {
         loadHelper.load()
     }
 
@@ -143,13 +144,18 @@ class IssueDiscussionFragment : BaseFragment() {
         teleprinter.hideKeyboard()
         sendMessageView.clearText()
 
-        App.get().gitLab.addIssueNote(project.id, issue.iid, message)
+        gitLab.addIssueNote(project.id, issue.iid, message)
+                .mapResponseSuccessResponse()
                 .with(this)
                 .subscribe({
-                    fullscreenProgress.isVisible = false
-                    textMessage.isVisible = false
-                    adapter.add(it, 0)
-                    listNotes.smoothScrollToPosition(0)
+                    if (it.first.code() == 202) {
+                        load()
+                    } else {
+                        fullscreenProgress.isVisible = false
+                        textMessage.isVisible = false
+                        adapter.add(it.second, 0)
+                        listNotes.smoothScrollToPosition(0)
+                    }
                 }, {
                     Timber.e(it)
                     fullscreenProgress.isVisible = false
@@ -162,7 +168,7 @@ class IssueDiscussionFragment : BaseFragment() {
     fun onEvent(event: IssueChangedEvent) {
         if (issue.iid == event.issue.iid) {
             issue = event.issue
-            loadNotes()
+            load()
         }
     }
 }
