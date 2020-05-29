@@ -18,7 +18,6 @@ import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Group
 import com.commit451.gitlab.model.api.User
 import com.commit451.gitlab.util.LoadHelper
-import com.commit451.gitlab.viewHolder.CommitViewHolder
 import com.commit451.gitlab.viewHolder.UserViewHolder
 import com.commit451.teleprinter.Teleprinter
 import io.reactivex.Single
@@ -86,7 +85,7 @@ class AddUserActivity : MorphActivity() {
         layoutManager.spanSizeLookup = BaseAdapter.createSpanSizeLookup(spanCount) { adapter }
         adapter = BaseAdapter(
                 onCreateViewHolder = { parent, _ ->
-                    val viewHolder = CommitViewHolder.inflate(parent)
+                    val viewHolder = UserViewHolder.inflate(parent)
                     viewHolder.itemView.setOnClickListener {
                         val user = adapter.items[viewHolder.adapterPosition]
                         selectedUser = user

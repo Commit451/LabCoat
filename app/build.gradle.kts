@@ -59,8 +59,8 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 
 apply { from("experimental.gradle") }
 
-val retrofitVersion = "2.8.1"
-val okHttpVersion = "4.6.0"
+val retrofitVersion = "2.9.0"
+val okHttpVersion = "4.7.2"
 
 val adapterLayout = "1.2.0"
 val materialDialogsVersion = "0.9.6.0"
@@ -71,7 +71,7 @@ val autodisposeVersion = "0.8.0"
 dependencies {
     implementation(kotlin("stdlib-jdk7", KotlinCompilerVersion.VERSION))
 
-    implementation("androidx.core:core-ktx:1.2.0")
+    implementation("androidx.core:core-ktx:1.3.0")
 
     implementation("androidx.appcompat:appcompat:1.1.0")
     implementation("androidx.recyclerview:recyclerview:1.1.0")
@@ -97,7 +97,7 @@ dependencies {
     implementation("com.squareup.moshi:moshi-kotlin:$moshiVersion")
     implementation("com.squareup.moshi:moshi-adapters:$moshiVersion")
 
-    val apolloVersion = "2.0.3"
+    val apolloVersion = "2.1.0"
     implementation("com.apollographql.apollo:apollo-runtime:$apolloVersion")
     implementation("com.apollographql.apollo:apollo-rx2-support:$apolloVersion")
 
@@ -168,7 +168,7 @@ dependencies {
 
     implementation("com.github.jkwiecien:EasyImage:2.1.1")
 
-    implementation("com.atlassian.commonmark:commonmark:0.14.0")
+    implementation("com.atlassian.commonmark:commonmark:0.15.0")
 
     implementation(project(":firebaseshim"))
     if (BuildHelper.firebaseEnabled(project)) {
