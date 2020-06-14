@@ -6,7 +6,7 @@ import com.commit451.gitlab.api.rss.SimpleXmlPersisterFactory
 import com.commit451.gitlab.model.Account
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.simplexml.SimpleXmlConverterFactory
 
 /**
@@ -19,7 +19,7 @@ object GitLabRssFactory {
         val restAdapter = Retrofit.Builder()
                 .baseUrl(account.serverUrl.toString())
                 .client(client)
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
                 .addConverterFactory(SimpleXmlConverterFactory.create(persister))
                 .build()
         return restAdapter.create(GitLabRss::class.java)

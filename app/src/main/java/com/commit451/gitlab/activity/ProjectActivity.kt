@@ -25,7 +25,7 @@ import com.commit451.gitlab.navigation.DeepLinker
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.util.IntentUtil
 import com.google.android.material.snackbar.Snackbar
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Single
 import kotlinx.android.synthetic.main.activity_project.*
 import kotlinx.android.synthetic.main.progress_fullscreen.*
 import timber.log.Timber

@@ -4,9 +4,9 @@ import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.ApolloQueryCall
 import com.apollographql.apollo.api.Operation
 import com.apollographql.apollo.api.Query
-import com.apollographql.apollo.rx2.rx
-import io.reactivex.Observable
-import io.reactivex.annotations.CheckReturnValue
+import com.apollographql.apollo.rx3.rx
+import io.reactivex.rxjava3.annotations.CheckReturnValue
+import io.reactivex.rxjava3.core.Observable
 
 /**
  * Creates a new [ApolloQueryCall] call and then converts it to an [Observable], mapping errors that

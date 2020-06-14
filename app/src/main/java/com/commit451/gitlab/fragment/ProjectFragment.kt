@@ -15,7 +15,7 @@ import com.commit451.gitlab.model.api.RepositoryFile
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.util.InternalLinkMovementMethod
 import com.google.android.material.snackbar.Snackbar
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Single
 import kotlinx.android.synthetic.main.fragment_project.*
 import org.greenrobot.eventbus.Subscribe
 import timber.log.Timber

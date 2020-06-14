@@ -1,36 +1,36 @@
 package com.commit451.gitlab.extension
 
 import androidx.lifecycle.LifecycleOwner
+import autodispose2.SingleSubscribeProxy
+import autodispose2.androidx.lifecycle.AndroidLifecycleScopeProvider
+import autodispose2.autoDispose
 import com.commit451.gitlab.activity.BaseActivity
 import com.commit451.gitlab.api.BodyWithPagination
 import com.commit451.gitlab.api.NullBodyException
 import com.commit451.gitlab.fragment.BaseFragment
 import com.commit451.gitlab.util.LinkHeaderParser
-import com.uber.autodispose.SingleSubscribeProxy
-import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
-import com.uber.autodispose.kotlin.autoDisposable
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.schedulers.Schedulers
 import retrofit2.HttpException
 import retrofit2.Response
 
 fun <T> Single<T>.with(lifecycleOwner: LifecycleOwner): SingleSubscribeProxy<T> {
     return subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .autoDisposable(AndroidLifecycleScopeProvider.from(lifecycleOwner))
+            .autoDispose(AndroidLifecycleScopeProvider.from(lifecycleOwner))
 }
 
 fun <T> Single<T>.with(baseActivity: BaseActivity): SingleSubscribeProxy<T> {
     return subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .autoDisposable(baseActivity.scopeProvider)
+            .autoDispose(baseActivity.scopeProvider)
 }
 
 fun <T> Single<T>.with(baseFragment: BaseFragment): SingleSubscribeProxy<T> {
     return subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .autoDisposable(baseFragment.scopeProvider)
+            .autoDispose(baseFragment.scopeProvider)
 }
 
 fun <T> Single<Response<T>>.mapResponseSuccess(): Single<T> {

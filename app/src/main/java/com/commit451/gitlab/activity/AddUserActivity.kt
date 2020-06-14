@@ -20,7 +20,7 @@ import com.commit451.gitlab.model.api.User
 import com.commit451.gitlab.util.LoadHelper
 import com.commit451.gitlab.viewHolder.UserViewHolder
 import com.commit451.teleprinter.Teleprinter
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Single
 import kotlinx.android.synthetic.main.activity_add_user.*
 import kotlinx.android.synthetic.main.activity_add_user.swipeRefreshLayout
 import retrofit2.HttpException

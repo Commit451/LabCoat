@@ -22,7 +22,7 @@ import com.commit451.gitlab.model.api.User
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.viewHolder.ProjectMemberViewHolder
 import com.google.android.material.snackbar.Snackbar
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Single
 import kotlinx.android.synthetic.main.fragment_members.*
 import org.greenrobot.eventbus.Subscribe
 import retrofit2.Response

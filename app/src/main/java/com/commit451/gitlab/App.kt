@@ -11,7 +11,7 @@ import com.commit451.gitlab.model.Account
 import com.commit451.lift.Lift
 import com.jakewharton.threetenabp.AndroidThreeTen
 import com.novoda.simplechromecustomtabs.SimpleChromeCustomTabs
-import io.reactivex.plugins.RxJavaPlugins
+import io.reactivex.rxjava3.plugins.RxJavaPlugins
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.greenrobot.eventbus.EventBus

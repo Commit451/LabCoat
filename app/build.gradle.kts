@@ -65,8 +65,8 @@ val okHttpVersion = "4.7.2"
 val adapterLayout = "1.2.0"
 val materialDialogsVersion = "0.9.6.0"
 val addendumVersion = "2.1.1"
-val moshiVersion = "1.9.2"
-val autodisposeVersion = "0.8.0"
+val moshiVersion = "1.9.3"
+val autodisposeVersion = "2.0.0"
 
 dependencies {
     implementation(kotlin("stdlib-jdk7", KotlinCompilerVersion.VERSION))
@@ -89,7 +89,7 @@ dependencies {
         exclude(group = "stax", module = "stax")
     }
     implementation("com.squareup.retrofit2:converter-scalars:$retrofitVersion")
-    implementation("com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion")
+    implementation("com.squareup.retrofit2:adapter-rxjava3:$retrofitVersion")
     implementation("com.squareup.retrofit2:converter-moshi:$retrofitVersion")
     implementation("com.squareup.okhttp3:okhttp:$okHttpVersion")
     implementation("com.squareup.okhttp3:logging-interceptor:$okHttpVersion")
@@ -97,9 +97,9 @@ dependencies {
     implementation("com.squareup.moshi:moshi-kotlin:$moshiVersion")
     implementation("com.squareup.moshi:moshi-adapters:$moshiVersion")
 
-    val apolloVersion = "2.1.0"
+    val apolloVersion = "2.2.0"
     implementation("com.apollographql.apollo:apollo-runtime:$apolloVersion")
-    implementation("com.apollographql.apollo:apollo-rx2-support:$apolloVersion")
+    implementation("com.apollographql.apollo:apollo-rx3-support:$apolloVersion")
 
     implementation("io.coil-kt:coil:0.11.0")
     implementation("com.github.Commit451:CoilImageGetter:1.1.0")
@@ -109,13 +109,12 @@ dependencies {
 
     implementation("org.greenrobot:eventbus:3.2.0")
 
-    implementation("io.reactivex.rxjava2:rxjava:2.2.19")
-    implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
-    implementation("io.reactivex.rxjava2:rxkotlin:2.4.0")
+    implementation("io.reactivex.rxjava3:rxjava:3.0.4")
+    implementation("io.reactivex.rxjava3:rxandroid:3.0.0")
+    implementation("io.reactivex.rxjava3:rxkotlin:3.0.0")
 
-    implementation("com.uber.autodispose:autodispose-kotlin:$autodisposeVersion")
-    implementation("com.uber.autodispose:autodispose-android-kotlin:$autodisposeVersion")
-    implementation("com.uber.autodispose:autodispose-android-archcomponents-kotlin:$autodisposeVersion")
+    implementation("com.uber.autodispose2:autodispose-android:$autodisposeVersion")
+    implementation("com.uber.autodispose2:autodispose-androidx-lifecycle:$autodisposeVersion")
 
     implementation("com.github.Commit451:ElasticDragDismissLayout:1.0.4")
     implementation("com.github.Commit451.AdapterLayout:adapterlayout:$adapterLayout")
@@ -168,7 +167,7 @@ dependencies {
 
     implementation("com.github.jkwiecien:EasyImage:2.1.1")
 
-    implementation("com.atlassian.commonmark:commonmark:0.15.0")
+    implementation("com.atlassian.commonmark:commonmark:0.15.1")
 
     implementation(project(":firebaseshim"))
     if (BuildHelper.firebaseEnabled(project)) {
@@ -176,7 +175,7 @@ dependencies {
         implementation("com.crashlytics.sdk.android:crashlytics:2.10.1")
     }
 
-    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.3")
+    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.4")
 
     testImplementation("junit:junit:4.13")
     testImplementation("org.threeten:threetenbp:1.4.4") {

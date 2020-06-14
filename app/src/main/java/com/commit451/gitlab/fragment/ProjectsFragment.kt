@@ -14,7 +14,7 @@ import com.commit451.gitlab.model.api.Project
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.util.LoadHelper
 import com.commit451.gitlab.viewHolder.ProjectViewHolder
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Single
 import kotlinx.android.synthetic.main.fragment_projects.*
 import kotlinx.android.synthetic.main.fragment_projects.swipeRefreshLayout
 import retrofit2.Response

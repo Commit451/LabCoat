@@ -17,7 +17,7 @@ import com.commit451.gitlab.extension.with
 import com.commit451.gitlab.model.api.Milestone
 import com.commit451.teleprinter.Teleprinter
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Single
 import kotlinx.android.synthetic.main.activity_add_milestone.*
 import kotlinx.android.synthetic.main.progress_fullscreen.*
 import timber.log.Timber

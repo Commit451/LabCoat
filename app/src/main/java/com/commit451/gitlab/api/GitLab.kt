@@ -7,7 +7,7 @@ import com.commit451.gitlab.model.Account
 import com.commit451.gitlab.model.rss.Entry
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Single
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.OkHttpClient
 import retrofit2.Response
@@ -42,7 +42,7 @@ class GitLab private constructor(
                 .build()
     }
 
-    inline fun <reified T> loadAny(url: String): Single<retrofit2.Response<T>> {
+    inline fun <reified T> loadAny(url: String): Single<Response<T>> {
         return get(url)
                 .map {
                     val source = it.body()?.source() ?: throw NullBodyException()

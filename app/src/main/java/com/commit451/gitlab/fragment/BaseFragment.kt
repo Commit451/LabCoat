@@ -1,16 +1,14 @@
 package com.commit451.gitlab.fragment
 
-
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.View
+import autodispose2.androidx.lifecycle.AndroidLifecycleScopeProvider
 import com.commit451.gitlab.App
 import com.commit451.gitlab.activity.BaseActivity
 import com.commit451.gitlab.api.GitLab
 import com.commit451.gitlab.event.ReloadDataEvent
-import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
 import org.greenrobot.eventbus.Subscribe
-
 
 abstract class BaseFragment : Fragment() {
 

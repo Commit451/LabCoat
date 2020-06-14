@@ -1,11 +1,11 @@
 package com.commit451.gitlab.activity
 
 import androidx.appcompat.app.AppCompatActivity
+import autodispose2.androidx.lifecycle.AndroidLifecycleScopeProvider
 import com.commit451.gitlab.App
 import com.commit451.gitlab.api.GitLab
 import com.commit451.gitlab.model.Account
 import com.novoda.simplechromecustomtabs.SimpleChromeCustomTabs
-import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
 
 /**
  * Base activity for others to derive from

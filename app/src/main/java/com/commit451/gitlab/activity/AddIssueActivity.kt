@@ -23,7 +23,7 @@ import com.commit451.gitlab.model.api.*
 import com.commit451.gitlab.navigation.Navigator
 import com.commit451.teleprinter.Teleprinter
 import com.google.android.material.snackbar.Snackbar
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Single
 import kotlinx.android.synthetic.main.activity_add_issue.*
 import kotlinx.android.synthetic.main.progress_fullscreen.*
 import timber.log.Timber
@@ -280,8 +280,8 @@ class AddIssueActivity : MorphActivity() {
         }
     }
 
-    private fun observeUpdate(observable: Single<Issue>) {
-        observable.with(this)
+    private fun observeUpdate(single: Single<Issue>) {
+        single.with(this)
                 .subscribe({
                     if (issue == null) {
                         App.bus().post(IssueCreatedEvent(it))

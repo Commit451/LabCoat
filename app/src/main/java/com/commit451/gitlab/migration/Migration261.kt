@@ -2,7 +2,7 @@ package com.commit451.gitlab.migration
 
 import com.commit451.gitlab.App
 import com.commit451.gitlab.data.Prefs
-import io.reactivex.Completable
+import io.reactivex.rxjava3.core.Completable
 import java.util.*
 
 /**

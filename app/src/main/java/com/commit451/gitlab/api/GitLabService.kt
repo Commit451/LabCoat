@@ -3,8 +3,8 @@ package com.commit451.gitlab.api
 import com.commit451.gitlab.api.response.FileUploadResponse
 import com.commit451.gitlab.model.api.*
 import com.commit451.gitlab.model.api.Tag
-import io.reactivex.Completable
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Single
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
 import retrofit2.Response

@@ -12,9 +12,8 @@ import com.commit451.gitlab.adapter.DividerItemDecoration
 import com.commit451.gitlab.api.BodyWithPagination
 import com.commit451.gitlab.extension.mapResponseSuccessWithPaginationData
 import com.commit451.gitlab.extension.with
-import io.reactivex.Single
-import io.reactivex.internal.operators.single.SingleNever
-import kotlinx.android.synthetic.main.fragment_merge_request.*
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.internal.operators.single.SingleNever
 import retrofit2.Response
 import timber.log.Timber
 

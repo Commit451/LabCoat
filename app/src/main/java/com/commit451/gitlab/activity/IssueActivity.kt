@@ -20,7 +20,7 @@ import com.commit451.gitlab.navigation.Navigator
 import com.commit451.gitlab.util.IntentUtil
 import com.commit451.teleprinter.Teleprinter
 import com.google.android.material.snackbar.Snackbar
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Single
 import kotlinx.android.synthetic.main.activity_issue.*
 import kotlinx.android.synthetic.main.progress_fullscreen.*
 import org.greenrobot.eventbus.Subscribe
